@@ -1,0 +1,69 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  name       String?
+  role       Role     @default(STUDENT)
+  metadata   Json?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+enum Role {
+  STUDENT
+  TUTOR
+  ADMIN
+}
+
+model Article {
+  id                String   @id @default(uuid())
+  title             String
+  passage           String
+  cefr_level        String
+  word_count        Int
+  target_vocabulary String[]
+  timepoints        Json
+  metadata          Json?
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+}
+
+model LessonPlan {
+  id         String   @id @default(uuid())
+  title      String
+  cefr_level String
+  stages     Json
+  metadata   Json?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model StudentProgress {
+  id         String   @id @default(uuid())
+  user_id    String
+  lesson_id  String
+  stage      String
+  status     String
+  score      Int?
+  notes      String?
+  details    Json?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model ChatMessage {
+  id         String   @id @default(uuid())
+  user_id    String
+  lesson_id  String
+  message    String
+  metadata   Json?
+  created_at DateTime @default(now())
+}
