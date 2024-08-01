@@ -13,17 +13,20 @@ Tutor Advantage is an innovative educational technology platform designed to rev
 ### Learning and Teaching Tools
 
 1. **AI-powered Extensive Reading System**
+
    - Generates articles across CEFR levels A1 to C2
    - Creates comprehension questions and practice activities
    - Adapts content difficulty based on student performance
 
 2. **Interactive Lesson Components**
+
    - Audio playback for listening exercises
    - Sentence translation feature
    - Vocabulary games and SRS (Spaced Repetition System) flashcards
    - Speaking exercise recording and playback
 
 3. **Comprehensive Student Progress Tracking**
+
    - Initial placement test
    - Continuous assessment system
    - Performance analytics dashboard
@@ -35,15 +38,18 @@ Tutor Advantage is an innovative educational technology platform designed to rev
 ### Tutor Development and Networking
 
 5. **Comprehensive Onboarding Program**
+
    - Video tutorials on app features and teaching methodologies
    - Training modules on curriculum and ethical business practices
 
 6. **Professional Development System**
+
    - Ongoing training modules
    - Peer learning communities and forums
    - Mock lesson scheduling and feedback system
 
 7. **Ethical Networking Tools**
+
    - Single-use referral code generation
    - Ethical recruitment practice guides
 
@@ -54,6 +60,7 @@ Tutor Advantage is an innovative educational technology platform designed to rev
 ### Quality Control Measures
 
 9. **Standardized Curriculum**
+
    - Scripted lesson plans
    - Regular content updates based on educational best practices
 
@@ -66,8 +73,8 @@ Tutor Advantage is an innovative educational technology platform designed to rev
 
 - Frontend: Next.js 14 with app router
 - Backend: Google Cloud Platform
-- Database: Firebase Realtime Database
-- Authentication: Firebase Authentication
+- Database: Suapbase Postgresql
+- Authentication: Supabase Authentication
 - AI Integration: Custom models for content generation and personalization
 
 ## Business Model
