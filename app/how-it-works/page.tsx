@@ -14,7 +14,6 @@ export default function HowItWorks() {
       <header className="p-5 flex justify-between items-center">
         <Link href="/" className="text-2xl font-bold">Tutor Advantage</Link>
         <nav>
-          <Link href="/about" className="mr-4">เกี่ยวกับเรา</Link>
           <Button asChild>
             <Link href="/login">เข้าสู่ระบบ</Link>
           </Button>

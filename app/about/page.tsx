@@ -13,8 +13,6 @@ export default function About() {
       <header className="p-5 flex justify-between items-center">
         <Link href="/" className="text-2xl font-bold">Tutor Advantage</Link>
         <nav>
-          <Link href="/for-students" className="mr-4">สำหรับนักเรียน</Link>
-          <Link href="/for-tutors" className="mr-4">สำหรับติวเตอร์</Link>
           <Button asChild>
             <Link href="/login">เข้าสู่ระบบ</Link>
           </Button>

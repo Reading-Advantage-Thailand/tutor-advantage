@@ -21,8 +21,6 @@ export default function Home() {
       <header className="p-5 flex justify-between items-center">
         <h1 className="text-2xl font-bold">Tutor Advantage</h1>
         <nav>
-          <Link href="/about" className="mr-4">เกี่ยวกับเรา</Link>
-          <Link href="/how-it-works" className="mr-4">วิธีการทำงาน</Link>
           <Button asChild>
             <Link href="/login">เข้าสู่ระบบ</Link>
           </Button>
