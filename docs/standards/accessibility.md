@@ -12,10 +12,7 @@ This document outlines the accessibility requirements and standards for the Tuto
 
 ```html
 <!-- Good Example -->
-<img
-  src="/path/to/image.jpg"
-  alt="Student completing an English exercise on a tablet"
-/>
+<img src="/path/to/image.jpg" alt="Student completing an English exercise on a tablet" />
 
 <!-- For decorative images -->
 <img src="/path/to/decorative.jpg" alt="" role="presentation" />
@@ -287,12 +284,12 @@ Checklist for manual testing:
 ```javascript
 // .eslintrc.js
 module.exports = {
-  extends: ["plugin:jsx-a11y/recommended"],
-  plugins: ["jsx-a11y"],
+  extends: ['plugin:jsx-a11y/recommended'],
+  plugins: ['jsx-a11y'],
   rules: {
-    "jsx-a11y/anchor-is-valid": "error",
-    "jsx-a11y/click-events-have-key-events": "error",
-    "jsx-a11y/no-noninteractive-element-interactions": "error",
+    'jsx-a11y/anchor-is-valid': 'error',
+    'jsx-a11y/click-events-have-key-events': 'error',
+    'jsx-a11y/no-noninteractive-element-interactions': 'error',
   },
 };
 ```
@@ -331,7 +328,7 @@ jobs:
       - name: Run Lighthouse CI
         uses: treosh/lighthouse-ci-action@v3
         with:
-          configPath: "./lighthouserc.json"
+          configPath: './lighthouserc.json'
           uploadArtifacts: true
 ```
 

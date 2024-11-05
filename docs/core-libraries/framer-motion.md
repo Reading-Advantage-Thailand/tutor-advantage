@@ -15,12 +15,12 @@ export const motionConfig = {
   transitions: {
     ease: [0.6, 0.01, -0.05, 0.9],
     spring: {
-      type: "spring",
+      type: 'spring',
       stiffness: 400,
       damping: 30,
     },
     springStiff: {
-      type: "spring",
+      type: 'spring',
       stiffness: 600,
       damping: 35,
     },
@@ -337,7 +337,7 @@ export function OptimizedAnimation() {
 
 ```typescript
 // hooks/useAnimationConfig.ts
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from 'framer-motion';
 
 export function useAnimationConfig() {
   const shouldReduceMotion = useReducedMotion();

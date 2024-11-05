@@ -32,8 +32,8 @@ This document outlines the testing standards and requirements for the Tutor Adva
 2. **Arrange-Act-Assert Pattern**
 
    ```typescript
-   describe("TutorCommission", () => {
-     it("calculates commission correctly", () => {
+   describe('TutorCommission', () => {
+     it('calculates commission correctly', () => {
        // Arrange
        const sales = 1000;
        const rate = 0.1;
@@ -79,11 +79,11 @@ describe("Button", () => {
 ### Hook Testing
 
 ```typescript
-import { renderHook, act } from "@testing-library/react-hooks";
-import useCounter from "./useCounter";
+import { renderHook, act } from '@testing-library/react-hooks';
+import useCounter from './useCounter';
 
-describe("useCounter", () => {
-  it("increments counter", () => {
+describe('useCounter', () => {
+  it('increments counter', () => {
     const { result } = renderHook(() => useCounter());
 
     act(() => {
@@ -100,16 +100,16 @@ describe("useCounter", () => {
 ### API Route Testing
 
 ```typescript
-import { createMocks } from "node-mocks-http";
-import handler from "./api/users";
+import { createMocks } from 'node-mocks-http';
+import handler from './api/users';
 
-describe("Users API", () => {
-  it("creates a user successfully", async () => {
+describe('Users API', () => {
+  it('creates a user successfully', async () => {
     const { req, res } = createMocks({
-      method: "POST",
+      method: 'POST',
       body: {
-        name: "John Doe",
-        email: "john@example.com",
+        name: 'John Doe',
+        email: 'john@example.com',
       },
     });
 
@@ -119,7 +119,7 @@ describe("Users API", () => {
     expect(JSON.parse(res._getData())).toEqual(
       expect.objectContaining({
         id: expect.any(String),
-        name: "John Doe",
+        name: 'John Doe',
       })
     );
   });
@@ -131,20 +131,18 @@ describe("Users API", () => {
 ### Test Structure
 
 ```typescript
-import { test, expect } from "@playwright/test";
+import { test, expect } from '@playwright/test';
 
-test.describe("Authentication", () => {
-  test("successful login flow", async ({ page }) => {
-    await page.goto("/login");
+test.describe('Authentication', () => {
+  test('successful login flow', async ({ page }) => {
+    await page.goto('/login');
 
-    await page.fill('[data-testid="email"]', "user@example.com");
-    await page.fill('[data-testid="password"]', "password123");
+    await page.fill('[data-testid="email"]', 'user@example.com');
+    await page.fill('[data-testid="password"]', 'password123');
     await page.click('[data-testid="login-button"]');
 
-    await expect(page).toHaveURL("/dashboard");
-    await expect(page.locator('[data-testid="user-name"]')).toContainText(
-      "John Doe"
-    );
+    await expect(page).toHaveURL('/dashboard');
+    await expect(page.locator('[data-testid="user-name"]')).toContainText('John Doe');
   });
 });
 ```
@@ -153,27 +151,27 @@ test.describe("Authentication", () => {
 
 ```typescript
 // playwright.config.ts
-import { PlaywrightTestConfig } from "@playwright/test";
+import { PlaywrightTestConfig } from '@playwright/test';
 
 const config: PlaywrightTestConfig = {
-  testDir: "./e2e",
+  testDir: './e2e',
   use: {
-    baseURL: "http://localhost:3000",
-    screenshot: "only-on-failure",
-    video: "retain-on-failure",
+    baseURL: 'http://localhost:3000',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
   },
   projects: [
     {
-      name: "Chrome",
-      use: { browserName: "chromium" },
+      name: 'Chrome',
+      use: { browserName: 'chromium' },
     },
     {
-      name: "Firefox",
-      use: { browserName: "firefox" },
+      name: 'Firefox',
+      use: { browserName: 'firefox' },
     },
     {
-      name: "Safari",
-      use: { browserName: "webkit" },
+      name: 'Safari',
+      use: { browserName: 'webkit' },
     },
   ],
 };
@@ -190,19 +188,19 @@ export default config;
 module.exports = {
   ci: {
     collect: {
-      startServerCommand: "npm run start",
-      url: ["http://localhost:3000"],
+      startServerCommand: 'npm run start',
+      url: ['http://localhost:3000'],
     },
     assert: {
       assertions: {
-        "categories:performance": ["error", { minScore: 0.9 }],
-        "categories:accessibility": ["error", { minScore: 0.9 }],
-        "categories:best-practices": ["error", { minScore: 0.9 }],
-        "categories:seo": ["error", { minScore: 0.9 }],
+        'categories:performance': ['error', { minScore: 0.9 }],
+        'categories:accessibility': ['error', { minScore: 0.9 }],
+        'categories:best-practices': ['error', { minScore: 0.9 }],
+        'categories:seo': ['error', { minScore: 0.9 }],
       },
     },
     upload: {
-      target: "temporary-public-storage",
+      target: 'temporary-public-storage',
     },
   },
 };
@@ -216,8 +214,8 @@ module.exports = {
 // Mock API response
 const mockApiResponse = {
   data: {
-    id: "123",
-    name: "Test User",
+    id: '123',
+    name: 'Test User',
   },
 };
 
@@ -247,18 +245,18 @@ jest.mock("./ChildComponent", () => {
 
 ```typescript
 // User factory
-import { Factory } from "fishery";
+import { Factory } from 'fishery';
 
 const userFactory = Factory.define<User>(({ sequence }) => ({
   id: sequence.toString(),
   name: `User ${sequence}`,
   email: `user${sequence}@example.com`,
-  role: "student",
+  role: 'student',
 }));
 
 // Usage
 const user = userFactory.build();
-const admin = userFactory.build({ role: "admin" });
+const admin = userFactory.build({ role: 'admin' });
 ```
 
 ### Fixtures
@@ -290,8 +288,8 @@ module.exports = {
       statements: 80,
     },
   },
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
-  testEnvironment: "jsdom",
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  testEnvironment: 'jsdom',
 };
 ```
 
@@ -313,7 +311,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "18"
+          node-version: '18'
 
       - name: Install dependencies
         run: npm ci

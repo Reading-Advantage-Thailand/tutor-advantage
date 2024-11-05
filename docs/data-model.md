@@ -13,7 +13,7 @@ interface User {
   id: string;
   name: string;
   email: string;
-  role: "student" | "tutor" | "admin";
+  role: 'student' | 'tutor' | 'admin';
   joinDate: Date;
   // Additional common fields as needed
 }
@@ -36,7 +36,7 @@ interface Tutor extends User {
 
 ```typescript
 interface Student extends User {
-  cefrLevel: "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+  cefrLevel: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
   assignedTutorId: string;
   progress: StudentProgress[];
 }
@@ -53,8 +53,8 @@ interface Lesson {
   scheduledDate: Date;
   startTime: Date;
   endTime: Date;
-  status: "scheduled" | "in_progress" | "completed" | "canceled";
-  currentStage?: LessonStage["name"];
+  status: 'scheduled' | 'in_progress' | 'completed' | 'canceled';
+  currentStage?: LessonStage['name'];
 }
 ```
 
@@ -67,7 +67,7 @@ interface Article {
   id: string;
   title: string;
   passage: string;
-  cefrLevel: "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+  cefrLevel: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
   wordCount: number;
   targetVocabulary: string[];
   sentences: Sentence[];
@@ -94,7 +94,7 @@ interface RevenueTransaction {
   tutorId: string;
   amount: number;
   date: Date;
-  type: "DIRECT_SALE" | "NETWORK_COMMISSION";
+  type: 'DIRECT_SALE' | 'NETWORK_COMMISSION';
   relatedTutorId?: string; // For network commissions
 }
 ```
@@ -139,9 +139,7 @@ function calculateCommission(totalRevenue: number): number {
 
   if (totalRevenue >= 15000) {
     commissionRate =
-      (0.5 *
-        (1 - Math.pow(0.3, 1 + Math.log(totalRevenue / 15000) / Math.log(5)))) /
-      0.7;
+      (0.5 * (1 - Math.pow(0.3, 1 + Math.log(totalRevenue / 15000) / Math.log(5)))) / 0.7;
   } else {
     commissionRate = 0.4 + totalRevenue / 150000;
   }
@@ -176,10 +174,7 @@ async function calculateTutorRevenue(
   const directRevenue = await calculateDirectRevenue(tutorId, endDate);
 
   // Calculate network (downline) revenue
-  const { networkRevenue, networkCommission } = await calculateNetworkRevenue(
-    tutorId,
-    endDate
-  );
+  const { networkRevenue, networkCommission } = await calculateNetworkRevenue(tutorId, endDate);
 
   const totalRevenue = directRevenue + networkRevenue;
   const commission = calculateCommission(totalRevenue);
@@ -200,14 +195,11 @@ async function calculateTutorRevenue(
 ### 2.3 Direct Revenue Calculation
 
 ```typescript
-async function calculateDirectRevenue(
-  tutorId: string,
-  endDate: Date
-): Promise<number> {
+async function calculateDirectRevenue(tutorId: string, endDate: Date): Promise<number> {
   const transactions = await getRevenueTransactions({
     tutorId,
     endDate,
-    type: "DIRECT_SALE",
+    type: 'DIRECT_SALE',
   });
 
   return transactions.reduce((sum, txn) => sum + txn.amount, 0);
@@ -230,8 +222,10 @@ async function calculateNetworkRevenue(
   let networkCommission = 0;
 
   for (const downlineTutor of downlineTutors) {
-    const { totalRevenue, commission, netCommission } =
-      await calculateTutorRevenue(downlineTutor.id, endDate);
+    const { totalRevenue, commission, netCommission } = await calculateTutorRevenue(
+      downlineTutor.id,
+      endDate
+    );
     networkRevenue += totalRevenue;
     networkCommission += netCommission; // The net commission of the downline tutor is the amount paid out to them
   }
@@ -400,7 +394,7 @@ POST /api/revenue-transactions
 interface StudentProgress {
   studentId: string;
   lessonId: string;
-  completionStatus: "not_started" | "in_progress" | "completed";
+  completionStatus: 'not_started' | 'in_progress' | 'completed';
   scores?: {
     [activityId: string]: number;
   };
@@ -415,7 +409,7 @@ interface StudentProgress {
 interface LessonPlan {
   id: string;
   title: string;
-  cefrLevel: "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+  cefrLevel: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
   stages: LessonStage[];
 }
 ```
@@ -427,13 +421,7 @@ interface LessonStage {
   name: string;
   duration: number; // In minutes
   contentId: string;
-  activityType:
-    | "warmUp"
-    | "reading"
-    | "vocabulary"
-    | "writing"
-    | "speaking"
-    | "wrapUp";
+  activityType: 'warmUp' | 'reading' | 'vocabulary' | 'writing' | 'speaking' | 'wrapUp';
 }
 ```
 
@@ -446,7 +434,7 @@ interface LessonStage {
 ```typescript
 interface InteractiveArticleReaderProps {
   article: Article;
-  mode: "read" | "listen";
+  mode: 'read' | 'listen';
   onComplete: () => void;
   userId: string;
   duration: number;

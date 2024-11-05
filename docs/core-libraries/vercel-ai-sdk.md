@@ -16,8 +16,8 @@ npm install ai
 
 ```typescript
 // app/api/chat/route.ts
-import { OpenAIStream, StreamingTextResponse } from "ai";
-import OpenAI from "openai";
+import { OpenAIStream, StreamingTextResponse } from 'ai';
+import OpenAI from 'openai';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4",
+    model: 'gpt-4',
     stream: true,
     messages,
   });
@@ -136,9 +136,9 @@ export function ChatInterface() {
 
 ```typescript
 // app/api/tutor/route.ts
-import { OpenAIStream, StreamingTextResponse } from "ai";
-import OpenAI from "openai";
-import { languageLearningPrompt } from "@/lib/prompts";
+import { OpenAIStream, StreamingTextResponse } from 'ai';
+import OpenAI from 'openai';
+import { languageLearningPrompt } from '@/lib/prompts';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -148,11 +148,11 @@ export async function POST(req: Request) {
   const { messages, level, focusArea } = await req.json();
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4",
+    model: 'gpt-4',
     stream: true,
     messages: [
       {
-        role: "system",
+        role: 'system',
         content: languageLearningPrompt(level, focusArea),
       },
       ...messages,
@@ -170,26 +170,26 @@ export async function POST(req: Request) {
 
 ```typescript
 // lib/ai-error-handling.ts
-import { OpenAIError } from "openai";
+import { OpenAIError } from 'openai';
 
 export async function handleAIError(error: unknown) {
   if (error instanceof OpenAIError) {
     switch (error.code) {
-      case "rate_limit_exceeded":
-        return new Response("Rate limit exceeded. Please try again later.", {
+      case 'rate_limit_exceeded':
+        return new Response('Rate limit exceeded. Please try again later.', {
           status: 429,
         });
-      case "invalid_api_key":
-        console.error("Invalid API key");
-        return new Response("Internal server error", { status: 500 });
+      case 'invalid_api_key':
+        console.error('Invalid API key');
+        return new Response('Internal server error', { status: 500 });
       default:
-        console.error("OpenAI API error:", error);
-        return new Response("AI service unavailable", { status: 503 });
+        console.error('OpenAI API error:', error);
+        return new Response('AI service unavailable', { status: 503 });
     }
   }
 
-  console.error("Unexpected error:", error);
-  return new Response("Internal server error", { status: 500 });
+  console.error('Unexpected error:', error);
+  return new Response('Internal server error', { status: 500 });
 }
 ```
 
@@ -219,8 +219,8 @@ export class ContextManager {
   getPrompt(): string {
     return `
       Current level: ${this.context.level}
-      Topics covered: ${this.context.lessonTopics.join(", ")}
-      Previous corrections: ${this.context.corrections.join(", ")}
+      Topics covered: ${this.context.lessonTopics.join(', ')}
+      Previous corrections: ${this.context.corrections.join(', ')}
     `;
   }
 }
@@ -233,14 +233,14 @@ export class ContextManager {
 export class ResponseProcessor {
   static async processGrammarCorrection(text: string) {
     const corrections = [];
-    const segments = text.split("\n");
+    const segments = text.split('\n');
 
     for (const segment of segments) {
-      if (segment.includes("CORRECTION:")) {
+      if (segment.includes('CORRECTION:')) {
         corrections.push({
-          original: segment.split("CORRECTION:")[0].trim(),
-          corrected: segment.split("CORRECTION:")[1].trim(),
-          explanation: segment.split("EXPLANATION:")[1]?.trim(),
+          original: segment.split('CORRECTION:')[0].trim(),
+          corrected: segment.split('CORRECTION:')[1].trim(),
+          explanation: segment.split('EXPLANATION:')[1]?.trim(),
         });
       }
     }
@@ -256,7 +256,7 @@ export class ResponseProcessor {
 
 ```typescript
 // hooks/useMessageBatching.ts
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react';
 
 export function useMessageBatching(threshold = 5) {
   const [messageQueue, setMessageQueue] = useState<string[]>([]);
@@ -268,7 +268,7 @@ export function useMessageBatching(threshold = 5) {
   const processQueue = useCallback(async () => {
     if (messageQueue.length >= threshold) {
       // Process messages in batch
-      const batch = messageQueue.join("\n");
+      const batch = messageQueue.join('\n');
       setMessageQueue([]);
       return batch;
     }
@@ -315,12 +315,12 @@ export const mockUseChat = () => {
   return {
     messages: [
       {
-        id: "1",
-        role: "assistant",
-        content: "Hello! How can I help you?",
+        id: '1',
+        role: 'assistant',
+        content: 'Hello! How can I help you?',
       },
     ],
-    input: "",
+    input: '',
     handleInputChange: jest.fn(),
     handleSubmit: jest.fn(),
     isLoading: false,
@@ -358,10 +358,10 @@ describe("Chat Component", () => {
 // lib/sanitize.ts
 export function sanitizeUserInput(input: string): string {
   // Remove potential XSS
-  input = input.replace(/<[^>]*>/g, "");
+  input = input.replace(/<[^>]*>/g, '');
 
   // Remove potential SQL injection
-  input = input.replace(/['";]/g, "");
+  input = input.replace(/['";]/g, '');
 
   return input.trim();
 }
@@ -371,20 +371,20 @@ export function sanitizeUserInput(input: string): string {
 
 ```typescript
 // middleware.ts
-import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(5, "1 m"),
+  limiter: Ratelimit.slidingWindow(5, '1 m'),
 });
 
 export async function middleware(request: Request) {
-  const ip = request.headers.get("x-forwarded-for");
-  const { success } = await ratelimit.limit(ip ?? "");
+  const ip = request.headers.get('x-forwarded-for');
+  const { success } = await ratelimit.limit(ip ?? '');
 
   if (!success) {
-    return new Response("Too Many Requests", { status: 429 });
+    return new Response('Too Many Requests', { status: 429 });
   }
 }
 ```
@@ -404,8 +404,8 @@ interface AIMetrics {
 
 export class AIAnalytics {
   static async trackUsage(metrics: AIMetrics) {
-    await fetch("/api/analytics", {
-      method: "POST",
+    await fetch('/api/analytics', {
+      method: 'POST',
       body: JSON.stringify(metrics),
     });
   }
@@ -418,15 +418,15 @@ export class AIAnalytics {
 // lib/ai-monitoring.ts
 export class AIMonitoring {
   static async logError(error: Error, context: any) {
-    console.error("AI Error:", {
+    console.error('AI Error:', {
       error: error.message,
       stack: error.stack,
       context,
     });
 
     // Send to error tracking service
-    await fetch("/api/error-tracking", {
-      method: "POST",
+    await fetch('/api/error-tracking', {
+      method: 'POST',
       body: JSON.stringify({
         error: error.message,
         context,

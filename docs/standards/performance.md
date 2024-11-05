@@ -60,13 +60,10 @@ const DynamicComponent = dynamic(() => import("../components/HeavyComponent"), {
 
 ```typescript
 // API route with caching
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  res.setHeader("Cache-Control", "s-maxage=10, stale-while-revalidate");
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate');
 
   const data = await fetchData();
   res.json(data);
@@ -77,10 +74,10 @@ export default async function handler(
 
 ```typescript
 // Optimized React Query usage
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery, useQueryClient } from 'react-query';
 
 const useTutorData = (tutorId: string) => {
-  return useQuery(["tutor", tutorId], () => fetchTutorData(tutorId), {
+  return useQuery(['tutor', tutorId], () => fetchTutorData(tutorId), {
     staleTime: 5 * 60 * 1000, // 5 minutes
     cacheTime: 30 * 60 * 1000, // 30 minutes
     refetchOnWindowFocus: false,
@@ -96,9 +93,9 @@ const useTutorData = (tutorId: string) => {
 // Performance monitoring setup
 const reportWebVitals = ({ id, name, value }: Metric) => {
   // Send to analytics
-  analytics.track("Web Vitals", {
+  analytics.track('Web Vitals', {
     metric: name,
-    value: Math.round(name === "CLS" ? value * 1000 : value),
+    value: Math.round(name === 'CLS' ? value * 1000 : value),
     id,
   });
 };
@@ -159,13 +156,7 @@ module.exports = {
 ```html
 <!-- Resource hints -->
 <link rel="preconnect" href="https://api.tutoradvatage.com" />
-<link
-  rel="preload"
-  href="/fonts/inter.woff2"
-  as="font"
-  type="font/woff2"
-  crossorigin
-/>
+<link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="prefetch" href="/dashboard" />
 ```
 
@@ -186,7 +177,7 @@ const getStudentData = async (studentId: string) => {
         },
         take: 5,
         orderBy: {
-          date: "desc",
+          date: 'desc',
         },
       },
     },
@@ -218,26 +209,26 @@ describe("Performance", () => {
 
 ```typescript
 // k6 load test script
-import http from "k6/http";
-import { check, sleep } from "k6";
+import http from 'k6/http';
+import { check, sleep } from 'k6';
 
 export const options = {
   stages: [
-    { duration: "1m", target: 50 },
-    { duration: "3m", target: 50 },
-    { duration: "1m", target: 0 },
+    { duration: '1m', target: 50 },
+    { duration: '3m', target: 50 },
+    { duration: '1m', target: 0 },
   ],
   thresholds: {
-    http_req_duration: ["p(95)<500"],
+    http_req_duration: ['p(95)<500'],
   },
 };
 
 export default function () {
-  const res = http.get("https://api.tutoradvantage.com/lessons");
+  const res = http.get('https://api.tutoradvantage.com/lessons');
 
   check(res, {
-    "status is 200": (r) => r.status === 200,
-    "response time < 500ms": (r) => r.timings.duration < 500,
+    'status is 200': (r) => r.status === 200,
+    'response time < 500ms': (r) => r.timings.duration < 500,
   });
 
   sleep(1);
@@ -279,7 +270,7 @@ const EventHandler = () => {
 
 ```typescript
 // API route with rate limiting
-import rateLimit from "express-rate-limit";
+import rateLimit from 'express-rate-limit';
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -304,25 +295,25 @@ const monitorPerformance = () => {
   new PerformanceObserver((entryList) => {
     for (const entry of entryList.getEntries()) {
       const metric = {
-        name: "LCP",
+        name: 'LCP',
         value: entry.startTime,
-        rating: entry.startTime < 2500 ? "good" : "poor",
+        rating: entry.startTime < 2500 ? 'good' : 'poor',
       };
       reportMetric(metric);
     }
-  }).observe({ entryTypes: ["largest-contentful-paint"] });
+  }).observe({ entryTypes: ['largest-contentful-paint'] });
 
   // Monitor FID
   new PerformanceObserver((entryList) => {
     for (const entry of entryList.getEntries()) {
       const metric = {
-        name: "FID",
+        name: 'FID',
         value: entry.processingStart - entry.startTime,
-        rating: entry.duration < 100 ? "good" : "poor",
+        rating: entry.duration < 100 ? 'good' : 'poor',
       };
       reportMetric(metric);
     }
-  }).observe({ entryTypes: ["first-input"] });
+  }).observe({ entryTypes: ['first-input'] });
 };
 ```
 
@@ -336,7 +327,7 @@ class PerformanceErrorBoundary extends React.Component {
       error,
       errorInfo,
       performance: {
-        navigationTiming: performance.getEntriesByType("navigation")[0],
+        navigationTiming: performance.getEntriesByType('navigation')[0],
         memory: (performance as any).memory,
       },
     });
