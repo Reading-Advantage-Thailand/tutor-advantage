@@ -16,24 +16,24 @@ npm install next-intl
 
 ```typescript
 // middleware.ts
-import createMiddleware from "next-intl/middleware";
+import createMiddleware from 'next-intl/middleware';
 
 export default createMiddleware({
   // A list of all locales that are supported
-  locales: ["en", "th"],
+  locales: ['en', 'th'],
 
   // Default locale when no locale matches
-  defaultLocale: "en",
+  defaultLocale: 'en',
 
   // Domains can be used for language-specific domains
   domains: [
     {
-      domain: "tutoradvantage.com",
-      defaultLocale: "en",
+      domain: 'tutoradvantage.com',
+      defaultLocale: 'en',
     },
     {
-      domain: "tutoradvantage.co.th",
-      defaultLocale: "th",
+      domain: 'tutoradvantage.co.th',
+      defaultLocale: 'th',
     },
   ],
 });
@@ -43,7 +43,7 @@ export const config = {
   // - API routes
   // - Static files
   // - _next
-  matcher: ["/((?!api|_next|.*\\..*).*)"],
+  matcher: ['/((?!api|_next|.*\\..*).*)'],
 };
 ```
 
@@ -277,7 +277,7 @@ export function LessonCount({ count }: { count: number }) {
 
 ```typescript
 // lib/createNamespacedTranslations.ts
-import { useTranslations } from "next-intl";
+import { useTranslations } from 'next-intl';
 
 export function createNamespacedTranslations(namespace: string) {
   return function useNamespacedTranslations() {
@@ -286,8 +286,8 @@ export function createNamespacedTranslations(namespace: string) {
 }
 
 // Usage
-const useAuthTranslations = createNamespacedTranslations("auth");
-const useProfileTranslations = createNamespacedTranslations("profile");
+const useAuthTranslations = createNamespacedTranslations('auth');
+const useProfileTranslations = createNamespacedTranslations('profile');
 ```
 
 ## Best Practices
@@ -296,7 +296,7 @@ const useProfileTranslations = createNamespacedTranslations("profile");
 
 ```typescript
 // types/messages.ts
-import { Messages } from "next-intl";
+import { Messages } from 'next-intl';
 
 declare interface TranslationMessages extends Messages {
   common: {
@@ -312,7 +312,7 @@ declare interface TranslationMessages extends Messages {
 
 // Usage with type checking
 const t = useTranslations<TranslationMessages>();
-const welcome = t("common.welcome"); // Type safe
+const welcome = t('common.welcome'); // Type safe
 ```
 
 ### 2. Message Organization
@@ -389,10 +389,10 @@ describe("Welcome", () => {
 
 ```typescript
 // scripts/check-translation-coverage.ts
-import en from "../messages/en.json";
-import th from "../messages/th.json";
+import en from '../messages/en.json';
+import th from '../messages/th.json';
 
-function checkCoverage(source: any, target: any, path = ""): string[] {
+function checkCoverage(source: any, target: any, path = ''): string[] {
   const missing: string[] = [];
 
   Object.keys(source).forEach((key) => {
@@ -400,10 +400,7 @@ function checkCoverage(source: any, target: any, path = ""): string[] {
 
     if (!(key in target)) {
       missing.push(currentPath);
-    } else if (
-      typeof source[key] === "object" &&
-      typeof target[key] === "object"
-    ) {
+    } else if (typeof source[key] === 'object' && typeof target[key] === 'object') {
       missing.push(...checkCoverage(source[key], target[key], currentPath));
     }
   });
@@ -412,7 +409,7 @@ function checkCoverage(source: any, target: any, path = ""): string[] {
 }
 
 const missingTranslations = checkCoverage(en, th);
-console.log("Missing translations:", missingTranslations);
+console.log('Missing translations:', missingTranslations);
 ```
 
 ## Performance Considerations
@@ -421,18 +418,14 @@ console.log("Missing translations:", missingTranslations);
 
 ```typescript
 // app/[locale]/layout.tsx
-import { getTranslations } from "next-intl/server";
+import { getTranslations } from 'next-intl/server';
 
-export async function generateMetadata({
-  params: { locale },
-}: {
-  params: { locale: string };
-}) {
-  const t = await getTranslations({ locale, namespace: "metadata" });
+export async function generateMetadata({ params: { locale } }: { params: { locale: string } }) {
+  const t = await getTranslations({ locale, namespace: 'metadata' });
 
   return {
-    title: t("title"),
-    description: t("description"),
+    title: t('title'),
+    description: t('description'),
   };
 }
 ```

@@ -161,13 +161,13 @@ export class BaseRepository<T> {
     });
   }
 
-  async create(data: Prisma.ArgType<T, "create">): Promise<T> {
+  async create(data: Prisma.ArgType<T, 'create'>): Promise<T> {
     return this.prisma[this.model].create({
       data,
     });
   }
 
-  async update(id: string, data: Prisma.ArgType<T, "update">): Promise<T> {
+  async update(id: string, data: Prisma.ArgType<T, 'update'>): Promise<T> {
     return this.prisma[this.model].update({
       where: { id },
       data,
@@ -183,7 +183,7 @@ export class BaseRepository<T> {
 
 // lib/repositories/user.repository.ts
 export class UserRepository extends BaseRepository<User> {
-  protected model = "user";
+  protected model = 'user';
 
   async findByEmail(email: string): Promise<User | null> {
     return this.prisma.user.findUnique({
@@ -226,16 +226,16 @@ export class EnrollmentService {
       const user = await tx.user.findUnique({
         where: { id: userId },
       });
-      if (!user) throw new Error("User not found");
+      if (!user) throw new Error('User not found');
 
       // Check if course exists and has available slots
       const course = await tx.course.findUnique({
         where: { id: courseId },
         include: { enrollments: true },
       });
-      if (!course) throw new Error("Course not found");
+      if (!course) throw new Error('Course not found');
       if (course.enrollments.length >= course.maxStudents) {
-        throw new Error("Course is full");
+        throw new Error('Course is full');
       }
 
       // Create enrollment
@@ -243,7 +243,7 @@ export class EnrollmentService {
         data: {
           userId,
           courseId,
-          status: "ACTIVE",
+          status: 'ACTIVE',
         },
         include: {
           user: true,
@@ -259,14 +259,12 @@ export class EnrollmentService {
 
 ```typescript
 // lib/queries/course.queries.ts
-export const getCourseWithDetails = async (
-  courseId: string
-): Promise<CourseDetails> => {
+export const getCourseWithDetails = async (courseId: string): Promise<CourseDetails> => {
   return prisma.course.findUnique({
     where: { id: courseId },
     include: {
       lessons: {
-        orderBy: { order: "asc" },
+        orderBy: { order: 'asc' },
         select: {
           id: true,
           title: true,
@@ -310,11 +308,11 @@ export class PrismaErrorHandler {
   static handle(error: Error): ApplicationError {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       switch (error.code) {
-        case "P2002":
+        case 'P2002':
           return new UniqueConstraintError(error.meta?.target as string[]);
-        case "P2025":
+        case 'P2025':
           return new RecordNotFoundError();
-        case "P2003":
+        case 'P2003':
           return new ForeignKeyError();
         default:
           return new DatabaseError(error.message);
@@ -343,20 +341,18 @@ export const setupPrismaMiddleware = (prisma: PrismaClient) => {
     const result = await next(params);
     const after = Date.now();
 
-    console.log(
-      `Query ${params.model}.${params.action} took ${after - before}ms`
-    );
+    console.log(`Query ${params.model}.${params.action} took ${after - before}ms`);
     return result;
   });
 
   // Soft delete middleware
   prisma.$use(async (params, next) => {
-    if (params.action === "delete") {
-      params.action = "update";
+    if (params.action === 'delete') {
+      params.action = 'update';
       params.args.data = { deleted: true };
     }
-    if (params.action === "deleteMany") {
-      params.action = "updateMany";
+    if (params.action === 'deleteMany') {
+      params.action = 'updateMany';
       if (params.args.data !== undefined) {
         params.args.data.deleted = true;
       } else {
@@ -372,19 +368,19 @@ export const setupPrismaMiddleware = (prisma: PrismaClient) => {
 
 ```typescript
 // lib/validators/schema.validator.ts
-import { z } from "zod";
+import { z } from 'zod';
 
 export const UserSchema = z.object({
   email: z.string().email(),
   name: z.string().min(2),
-  role: z.enum(["ADMIN", "TUTOR", "STUDENT"]),
+  role: z.enum(['ADMIN', 'TUTOR', 'STUDENT']),
   password: z.string().min(8),
 });
 
 export const CourseSchema = z.object({
   title: z.string().min(3),
   description: z.string().min(10),
-  level: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"]),
+  level: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED']),
   price: z.number().positive(),
 });
 
@@ -400,8 +396,8 @@ const validateUser = (data: unknown) => {
 
 ```typescript
 // tests/helpers/prisma-test-context.ts
-import { PrismaClient } from "@prisma/client";
-import { mockDeep, DeepMockProxy } from "jest-mock-extended";
+import { PrismaClient } from '@prisma/client';
+import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
 
 export type Context = {
   prisma: PrismaClient;
@@ -418,7 +414,7 @@ export const createMockContext = (): MockContext => {
 };
 
 // Usage in tests
-describe("UserService", () => {
+describe('UserService', () => {
   let mockContext: MockContext;
   let userService: UserService;
 
@@ -427,10 +423,10 @@ describe("UserService", () => {
     userService = new UserService(mockContext.prisma);
   });
 
-  it("creates a user", async () => {
+  it('creates a user', async () => {
     const user = {
-      email: "test@example.com",
-      name: "Test User",
+      email: 'test@example.com',
+      name: 'Test User',
     };
 
     mockContext.prisma.user.create.mockResolvedValue(user);
@@ -444,10 +440,10 @@ describe("UserService", () => {
 
 ```typescript
 // tests/integration/user.test.ts
-import { PrismaClient } from "@prisma/client";
-import { UserService } from "@/services/user.service";
+import { PrismaClient } from '@prisma/client';
+import { UserService } from '@/services/user.service';
 
-describe("UserService Integration", () => {
+describe('UserService Integration', () => {
   let prisma: PrismaClient;
   let userService: UserService;
 
@@ -464,11 +460,11 @@ describe("UserService Integration", () => {
     await prisma.user.deleteMany();
   });
 
-  it("creates and retrieves a user", async () => {
+  it('creates and retrieves a user', async () => {
     const userData = {
-      email: "test@example.com",
-      name: "Test User",
-      role: "STUDENT",
+      email: 'test@example.com',
+      name: 'Test User',
+      role: 'STUDENT',
     };
 
     const createdUser = await userService.createUser(userData);
@@ -504,7 +500,7 @@ export class QueryOptimizer {
     if (optimizedInclude.posts) {
       optimizedInclude.posts = {
         take: 5,
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
       };
     }
 
@@ -552,7 +548,7 @@ export class BatchOperations {
 ### 2. Migration Structure
 
 ```typescript
-import { Prisma } from "@prisma/client";
+import { Prisma } from '@prisma/client';
 
 export const up = async (prisma: Prisma.TransactionClient) => {
   // Add new changes

@@ -10,30 +10,30 @@ NextAuth.js is our authentication solution for the Tutor Advantage platform. Thi
 
 ```typescript
 // app/api/auth/[...nextauth]/route.ts
-import NextAuth from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "@/lib/prisma";
-import { authConfig } from "@/lib/auth-config";
+import NextAuth from 'next-auth';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import { prisma } from '@/lib/prisma';
+import { authConfig } from '@/lib/auth-config';
 
 const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   pages: {
-    signIn: "/auth/login",
-    signUp: "/auth/register",
-    error: "/auth/error",
-    verifyRequest: "/auth/verify",
+    signIn: '/auth/login',
+    signUp: '/auth/register',
+    error: '/auth/error',
+    verifyRequest: '/auth/verify',
   },
   providers: [
     // Credentials provider for email/password
     CredentialsProvider({
-      name: "credentials",
+      name: 'credentials',
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         // Implement user verification
@@ -84,7 +84,7 @@ GOOGLE_CLIENT_SECRET=your-google-client-secret
 
 ```typescript
 // middleware.ts
-import { withAuth } from "next-auth/middleware";
+import { withAuth } from 'next-auth/middleware';
 
 export default withAuth({
   callbacks: {
@@ -92,12 +92,12 @@ export default withAuth({
       // Protect routes based on path and user role
       const path = req.nextUrl.pathname;
 
-      if (path.startsWith("/admin")) {
-        return token?.role === "ADMIN";
+      if (path.startsWith('/admin')) {
+        return token?.role === 'ADMIN';
       }
 
-      if (path.startsWith("/tutor")) {
-        return token?.role === "TUTOR";
+      if (path.startsWith('/tutor')) {
+        return token?.role === 'TUTOR';
       }
 
       return !!token;
@@ -106,7 +106,7 @@ export default withAuth({
 });
 
 export const config = {
-  matcher: ["/admin/:path*", "/tutor/:path*", "/dashboard/:path*"],
+  matcher: ['/admin/:path*', '/tutor/:path*', '/dashboard/:path*'],
 };
 ```
 
@@ -252,14 +252,14 @@ async authorize(credentials) {
 
 ```typescript
 // middleware.ts
-import { csrf } from "@/lib/csrf";
+import { csrf } from '@/lib/csrf';
 
 export async function middleware(request: NextRequest) {
   // Verify CSRF token for mutation requests
-  if (["POST", "PUT", "DELETE"].includes(request.method)) {
-    const token = request.headers.get("x-csrf-token");
+  if (['POST', 'PUT', 'DELETE'].includes(request.method)) {
+    const token = request.headers.get('x-csrf-token');
     if (!token || !(await csrf.verify(token))) {
-      return new Response("Invalid CSRF token", { status: 403 });
+      return new Response('Invalid CSRF token', { status: 403 });
     }
   }
 }
@@ -271,25 +271,25 @@ export async function middleware(request: NextRequest) {
 
 ```typescript
 // lib/auth/guards.ts
-import { getSession } from "next-auth/react";
+import { getSession } from 'next-auth/react';
 
 export const withRole = (role: string | string[]) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getSession({ req });
 
     if (!session) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
     const roles = Array.isArray(role) ? role : [role];
     if (!roles.includes(session.user.role)) {
-      return res.status(403).json({ error: "Forbidden" });
+      return res.status(403).json({ error: 'Forbidden' });
     }
   };
 };
 
 // Usage in API route
-export default withRole(["ADMIN", "TUTOR"])(async function handler(
+export default withRole(['ADMIN', 'TUTOR'])(async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -377,14 +377,14 @@ describe("LoginForm", () => {
 
 ```typescript
 // __tests__/middleware.test.ts
-import { createMocks } from "node-mocks-http";
-import middleware from "@/middleware";
+import { createMocks } from 'node-mocks-http';
+import middleware from '@/middleware';
 
-describe("Auth Middleware", () => {
-  it("protects admin routes", async () => {
+describe('Auth Middleware', () => {
+  it('protects admin routes', async () => {
     const { req, res } = createMocks({
-      method: "GET",
-      url: "/admin/dashboard",
+      method: 'GET',
+      url: '/admin/dashboard',
     });
 
     await middleware(req, res);
@@ -407,17 +407,14 @@ export class AuthError extends Error {
     public status: number = 401
   ) {
     super(message);
-    this.name = "AuthError";
+    this.name = 'AuthError';
   }
 }
 
 export const authErrors = {
-  invalidCredentials: new AuthError(
-    "Invalid email or password",
-    "INVALID_CREDENTIALS"
-  ),
-  accountLocked: new AuthError("Account is locked", "ACCOUNT_LOCKED", 403),
-  sessionExpired: new AuthError("Session has expired", "SESSION_EXPIRED"),
+  invalidCredentials: new AuthError('Invalid email or password', 'INVALID_CREDENTIALS'),
+  accountLocked: new AuthError('Account is locked', 'ACCOUNT_LOCKED', 403),
+  sessionExpired: new AuthError('Session has expired', 'SESSION_EXPIRED'),
 };
 ```
 
@@ -462,7 +459,7 @@ export const authEvents = {
     await prisma.authEvent.create({
       data: {
         userId,
-        type: "LOGIN",
+        type: 'LOGIN',
         success,
         metadata,
         timestamp: new Date(),
@@ -474,7 +471,7 @@ export const authEvents = {
     await prisma.authEvent.create({
       data: {
         userId,
-        type: "PASSWORD_RESET",
+        type: 'PASSWORD_RESET',
         success,
         timestamp: new Date(),
       },

@@ -21,7 +21,7 @@ interface User {
 }
 
 // Use type for unions, intersections, and simple types
-type UserRole = "admin" | "tutor" | "student";
+type UserRole = 'admin' | 'tutor' | 'student';
 ```
 
 ### Naming Conventions
@@ -146,20 +146,20 @@ src/
 
 ```typescript
 // External imports
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 
 // Internal modules
-import { api } from "@/lib/api";
+import { api } from '@/lib/api';
 
 // Components
-import { Button } from "@/components/ui";
+import { Button } from '@/components/ui';
 
 // Types
-import type { User } from "@/types";
+import type { User } from '@/types';
 
 // Styles
-import "@/styles/component.css";
+import '@/styles/component.css';
 ```
 
 ## Testing Guidelines
