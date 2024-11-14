@@ -1,0 +1,12 @@
+{
+  "HomePage": {
+    "metadata": {
+      "title": "Home",
+      "siteName": "Next-Tutorial"
+    },
+    "welcome": "Welcome",
+    "welcomeMessage": "Signed In As",
+    "notSigned": "Not Signed In",
+    "info": "Please navigate to the login page and login to show Github profile information!"
+  }
+}
