@@ -1,0 +1,62 @@
+{
+  "LocaleLayout": {
+    "siteName": "Next-Tutorial",
+    "description": "This is a simple example of a multi-language website. We are using the next-intl library to manage the translations in union with authjs for authentication.",
+    "openGraph": {
+      "title": "Integration tutorial",
+      "description": "This is a simple example of a multi-language website. We are using the next-intl library to manage the translations in union with authjs for authentication."
+    }
+  },
+  "Navbar": {
+    "switcherLocale": {
+      "label": "Change language",
+      "locale": "{locale, select, es {🇪🇸 Spain} en {🇺🇸 English} other {Unknown}}"
+    },
+
+    "links": {
+      "brand": "Nextjs with Next-Intl and Authjs",
+      "home": "Home",
+      "about": "About",
+      "login": "Login"
+    }
+  },
+  "HomePage": {
+    "metadata": {
+      "title": "Home",
+      "siteName": "Next-Tutorial"
+    },
+    "welcome": "Welcome",
+    "welcomeMessage": "Signed In As",
+    "notSigned": "Not Signed In",
+    "info": "Please navigate to the login page and login to show Github profile information!"
+  },
+  "AboutPage": {
+    "metadata": {
+      "title": "About"
+    },
+    "tags": {
+      "1": "This is a simple way to integrate next-intl and auhtjs (formerly known as next-auth) into Nextjs.",
+      "2": "Please note that the current next-intl documentation and examples are for next-auth version 4, hence the need to have this tutorial at hand.",
+      "3": "Be sure to consult the official documentation of both libraries.",
+      "4": "Good luck 🦾 !"
+    }
+  },
+  "LoginPage": {
+    "metadata": {
+      "title": "Login"
+    }
+  },
+  "Error": {
+    "description": "<p>We've unfortunately encountered an error.</p><p>You can try to <retry>reload the page</retry> you were visiting.</p>",
+    "title": "Something went wrong!"
+  },
+  "NotFound": {
+    "title": "Not Found",
+    "description": "Sorry, the page you are looking for does not exist."
+  },
+  "Session": {
+    "login": "Sign in with Github",
+    "logout": "Logout",
+    "profile": "Profile"
+  }
+}

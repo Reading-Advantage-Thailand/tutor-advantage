@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { hash } from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -13,12 +14,14 @@ async function main() {
   await prisma.tutor.deleteMany();
   await prisma.user.deleteMany();
 
-  // Create admin user
+  // Create admin user with password
+  const hashedPassword = await hash('password123', 12);
   await prisma.user.create({
     data: {
       email: 'admin@tutoradv.com',
       name: 'System Admin',
       role: 'ADMIN',
+      password: hashedPassword,
     },
   });
 
