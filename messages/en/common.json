@@ -1,6 +1,6 @@
 {
   "LocaleLayout": {
-    "siteName": "Next-Tutorial",
+    "siteName": "Tutor Advantage",
     "description": "This is a simple example of a multi-language website. We are using the next-intl library to manage the translations in union with authjs for authentication.",
     "openGraph": {
       "title": "Integration tutorial",

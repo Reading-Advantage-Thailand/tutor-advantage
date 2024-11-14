@@ -1,6 +1,6 @@
 {
   "LocaleLayout": {
-    "siteName": "Next-Tutorial",
+    "siteName": "Tutor Advantage",
     "description": "这是一个多语言网站的简单示例。我们使用 next-intl 库来管理翻译，并与 authjs 结合进行身份验证。",
     "openGraph": {
       "title": "集成教程",

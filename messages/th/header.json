@@ -2,7 +2,7 @@
   "Navbar": {
     "switcherLocale": {
       "label": "เปลี่ยนภาษา",
-      "locale": "{locale, select, en {🇺🇸 อังกฤษ} th {🇹🇭 ไทย} zh {🇨🇳 จีน} other {ไม่ทราบ}}"
+      "locale": "{locale, select, en {🇺🇸 English} th {🇹🇭 ไทย} zh {🇨🇳 中文} other {ไม่ทราบ}}"
     },
     "links": {
       "brand": "Nextjs กับ Next-Intl และ Authjs",
