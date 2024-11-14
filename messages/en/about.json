@@ -4,10 +4,10 @@
       "title": "About"
     },
     "tags": {
-      "1": "This is a simple way to integrate next-intl and auhtjs (formerly known as next-auth) into Nextjs.",
-      "2": "Please note that the current next-intl documentation and examples are for next-auth version 4, hence the need to have this tutorial at hand.",
-      "3": "Be sure to consult the official documentation of both libraries.",
-      "4": "Good luck 🦾 !"
+      "about1": "This is a simple way to integrate next-intl and authjs (formerly known as next-auth) into Nextjs.",
+      "about2": "Please note that the current next-intl documentation and examples are for next-auth version 4.",
+      "about3": "Be sure to consult the official documentation of both libraries.",
+      "about4": "Good luck 🦾 !"
     }
   }
 }
