@@ -1,0 +1,14 @@
+{
+  "Navbar": {
+    "switcherLocale": {
+      "label": "Change language",
+      "locale": "{locale, select, en {🇺🇸 English} th {🇹🇭 Thai} zh {🇨🇳 Chinese} other {Unknown}}"
+    },
+    "links": {
+      "brand": "Nextjs with Next-Intl and Authjs",
+      "home": "Home",
+      "about": "About",
+      "login": "Login"
+    }
+  }
+}

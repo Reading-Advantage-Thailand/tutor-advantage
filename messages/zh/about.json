@@ -1,0 +1,13 @@
+{
+  "AboutPage": {
+    "metadata": {
+      "title": "关于"
+    },
+    "tags": {
+      "1": "这是一个将 next-intl 和 authjs（前身为 next-auth）集成到 Nextjs 的简单方法。",
+      "2": "请注意，当前的 next-intl 文档和示例适用于 next-auth 版本 4，因此需要这个教程作为参考。",
+      "3": "请务必查阅两个库的官方文档。",
+      "4": "祝你好运 🦾 ！"
+    }
+  }
+}
