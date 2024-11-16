@@ -7,6 +7,8 @@ src/
 ├── app/                    # Next.js 15 app directory
 │   ├── [locale]/          # Internationalized routes
 │   │   ├── about/         # About page
+│   │   ├── legal/         # Legal pages
+│   │   │   └── privacy/   # Privacy policy pages
 │   │   ├── login/         # Authentication pages
 │   │   └── layout.tsx     # Root layout with providers
 │   └── api/               # API routes
@@ -42,6 +44,14 @@ src/
   - Language selection interface
   - Supports EN, TH, ZH locales
   - Maintains language preferences
+
+### Legal Pages
+
+- **Privacy Policy** (`app/[locale]/legal/privacy/page.tsx`)
+  - Internationalized privacy policy content
+  - GDPR and PDPA compliant
+  - Available in EN, TH, ZH
+  - Responsive layout implementation
 
 ### Authentication Components
 
@@ -131,6 +141,13 @@ For detailed workflow information, see [git-workflow.md](./git-workflow.md)
 
 ## Recent Significant Changes
 
+### Legal Pages Implementation
+
+- Added privacy policy pages for all locales
+- Created legal routes structure
+- Implemented internationalized legal content
+- Set up GDPR and PDPA compliant content
+
 ### Version Control
 
 - Implemented GitHub Flow workflow
@@ -168,9 +185,13 @@ For detailed workflow information, see [git-workflow.md](./git-workflow.md)
 - UI component integration
 - Git workflow documentation
 - Conventional commits setup
+- Privacy policy pages (all locales)
 
 ### In Progress
 
+- Privacy acceptance flow
+- Cookie consent system
+- Terms of service pages
 - Enhanced session management
 - Translation management workflow
 - Additional authentication providers
@@ -197,6 +218,13 @@ For detailed workflow information, see [git-workflow.md](./git-workflow.md)
 - Some untranslated strings remain
 - Route mapping needs expansion
 
+### Legal Compliance
+
+- Cookie consent system needed
+- Privacy acceptance flow pending
+- Terms of service pages required
+- Data deletion mechanism needed
+
 ### Performance
 
 - Font loading optimization needed
@@ -207,7 +235,7 @@ For detailed workflow information, see [git-workflow.md](./git-workflow.md)
 
 ### Short-term
 
-- Complete branch protection setup
+- Complete legal requirements implementation
 - Finish translation coverage
 - Implement remaining UI components
 
@@ -227,7 +255,7 @@ For detailed workflow information, see [git-workflow.md](./git-workflow.md)
 
 Last Updated: November 16, 2024
 
-- Added Git workflow documentation and status
-- Updated development workflow section
-- Added version control to recent changes
+- Added legal pages section and implementation details
+- Updated project structure with legal routes
+- Added legal compliance to known issues
 - Updated current development status

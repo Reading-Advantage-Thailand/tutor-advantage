@@ -133,6 +133,10 @@
   - GDPR compliance tools
   - PDPA (Thai) compliance measures
   - Data anonymization utilities
+  - Cookie consent management system
+  - Privacy policy version control
+  - User consent tracking
+  - Data deletion request handling
 
 ### Access Control
 
@@ -198,6 +202,7 @@ Last Updated: November 16, 2024
 - Selected Next.js 15 for core framework
 - Chose GCP as cloud platform
 - Implemented shadcn/ui component system
+- Added legal compliance tools and features
 
 ## Future Considerations
 
@@ -208,3 +213,5 @@ Last Updated: November 16, 2024
 - WebRTC integration for video lessons
 - Blockchain for certificate verification
 - Progressive Web App (PWA) features
+- Automated legal compliance monitoring
+- Multi-jurisdiction compliance tools

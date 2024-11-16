@@ -6,13 +6,52 @@ This project follows the GitHub Flow branching strategy, which is a lightweight,
 
 ### 1. Create an Issue
 
+#### Manual Method
+
 - Navigate to the project's Issues tab
 - Use appropriate issue template
 - Fill in all required information
 - Add relevant labels and assignees
 - Link to related issues/PRs if applicable
 
+#### Automated Method (Recommended)
+
+```bash
+npm run task "Task Title" "Task Description"
+```
+
+This command:
+
+- Creates a GitHub issue using GitHub CLI
+- Creates and switches to a task-specific branch
+- Updates currentTask.md with task details
+
+Prerequisites:
+
+- GitHub CLI installed (`sudo apt install gh` or `brew install gh`)
+- Authenticated with GitHub (`gh auth login`)
+
+Example:
+
+```bash
+npm run task "Add Login Page" "Implement user authentication with:
+- GitHub OAuth provider
+- Protected routes
+- Session management
+- User profile page"
+```
+
 ### 2. Create a Branch
+
+#### Automated (via npm run task)
+
+The branch is automatically created following our naming convention:
+
+```
+task/{issue-number}-{sanitized-title}
+```
+
+#### Manual Method
 
 - Branch naming convention: `type/issue-number-brief-description`
   - Types: feature/, bugfix/, hotfix/, docs/, refactor/
@@ -145,16 +184,39 @@ For urgent production fixes:
 4. Deploy immediately after merge
 5. Document incident and resolution
 
+## Troubleshooting
+
+### Task Creation Issues
+
+1. **GitHub CLI Authentication**:
+
+   ```bash
+   gh auth status
+   gh auth login
+   ```
+
+2. **Branch Creation Fails**:
+
+   - Ensure you have no uncommitted changes
+   - Verify GitHub CLI is properly authenticated
+   - Check repository permissions
+
+3. **Documentation Updates**:
+   - Verify write permissions to cline_docs directory
+   - Check for file lock issues
+
 ## Additional Resources
 
 - [GitHub Flow Guide](https://guides.github.com/introduction/flow/)
 - [Conventional Commits](https://www.conventionalcommits.org/)
 - [Git Documentation](https://git-scm.com/doc)
+- [GitHub CLI Documentation](https://cli.github.com/manual/)
 
 ## Updates and Revisions
 
 Last Updated: November 16, 2024
 
-- Moved from /docs to /cline_docs for better organization
-- Updated links and references
-- Added Updates and Revisions section
+- Added automated task creation workflow using GitHub CLI
+- Added troubleshooting section for task creation
+- Updated Additional Resources with GitHub CLI documentation
+- Added Prerequisites section for automated workflow

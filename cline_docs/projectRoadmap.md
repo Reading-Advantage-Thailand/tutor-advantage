@@ -43,16 +43,16 @@ This documentation-first approach ensures consistency, reduces errors, and maint
 
 ### Database Setup
 
-- [ ] Set up a local SQLite database for development
-- [ ] Set up PostgreSQL on Google Cloud SQL
-- [ ] Install and configure Prisma ORM
-- [ ] Design initial schema
-  - [ ] Users and roles
-  - [ ] MLM network structure
-  - [ ] Lessons and progress
-  - [ ] Revenue tracking
+- [x] Set up a local SQLite database for development
+- [ ] Set up PostgreSQL on Google Cloud SQL (Delay until deploying MVP)
+- [x] Install and configure Prisma ORM
+- [x] Design initial schema
+  - [x] Users and roles
+  - [x] MLM network structure
+  - [x] Lessons and progress
+  - [x] Revenue tracking
 - [ ] Set up database migrations workflow
-- [ ] Create seed data scripts
+- [x] Create seed data scripts
 - [ ] Configure connection pooling
 
 ### Authentication System
@@ -74,7 +74,7 @@ This documentation-first approach ensures consistency, reduces errors, and maint
 
 ### Legal Requirements
 
-- [ ] Create privacy policy pages (EN, TH, ZH)
+- [x] Create privacy policy pages (EN, TH, ZH)
 - [ ] Implement privacy acceptance flow
 - [ ] Set up cookie consent system
 - [ ] Create terms of service pages
@@ -116,7 +116,7 @@ This documentation-first approach ensures consistency, reduces errors, and maint
 
 ### Tutor Tools
 
-- [ ] Build lesson planning interface
+- [ ] Build lesson plan interface
 - [ ] Create scheduling system
 - [ ] Implement resource management
 - [ ] Build tutor analytics dashboard
@@ -264,9 +264,13 @@ This documentation-first approach ensures consistency, reduces errors, and maint
 - [x] Language detection implementation
 - [x] Translation files creation (EN, TH, ZH)
 - [x] Language switcher implementation
+- [x] Privacy policy pages creation (EN, TH, ZH)
 
 ### Currently In Progress
 
+- [ ] Privacy acceptance flow implementation
+- [ ] Cookie consent system setup
+- [ ] Terms of service pages creation
 - [ ] Git branch protection rules
 - [ ] Database setup and configuration
 - [ ] User session management enhancement
