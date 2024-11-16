@@ -150,3 +150,11 @@ For urgent production fixes:
 - [GitHub Flow Guide](https://guides.github.com/introduction/flow/)
 - [Conventional Commits](https://www.conventionalcommits.org/)
 - [Git Documentation](https://git-scm.com/doc)
+
+## Updates and Revisions
+
+Last Updated: November 16, 2024
+
+- Moved from /docs to /cline_docs for better organization
+- Updated links and references
+- Added Updates and Revisions section

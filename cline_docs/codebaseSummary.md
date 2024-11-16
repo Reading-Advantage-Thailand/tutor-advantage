@@ -57,6 +57,39 @@ src/
   - Customized theme implementation
   - Accessible and responsive components
 
+## Development Workflow
+
+### Git Workflow
+
+We follow GitHub Flow with the following key aspects:
+
+1. **Branch Management**
+
+   - Protected main branch
+   - Feature branches follow `type/issue-number-brief-description` format
+   - Types: feature/, bugfix/, hotfix/, docs/, refactor/
+
+2. **Commit Convention**
+
+   - Following Conventional Commits specification
+   - Format: `type(scope): description`
+   - Types: feat, fix, docs, style, refactor, test, chore
+
+3. **Pull Request Process**
+
+   - Required reviews before merging
+   - Automated checks must pass
+   - Squash and merge strategy
+   - Branch cleanup post-merge
+
+4. **Quality Controls**
+   - Automated linting and testing
+   - Code review requirements
+   - Branch protection rules
+   - Conventional commit enforcement
+
+For detailed workflow information, see [git-workflow.md](./git-workflow.md)
+
 ## Data Flow
 
 ### Authentication Flow
@@ -98,6 +131,13 @@ src/
 
 ## Recent Significant Changes
 
+### Version Control
+
+- Implemented GitHub Flow workflow
+- Added conventional commits configuration
+- Set up commit message validation
+- Created comprehensive Git workflow documentation
+
 ### Authentication
 
 - Implemented NextAuth.js with GitHub provider
@@ -126,6 +166,8 @@ src/
 - Internationalization setup
 - Core navigation structure
 - UI component integration
+- Git workflow documentation
+- Conventional commits setup
 
 ### In Progress
 
@@ -133,8 +175,15 @@ src/
 - Translation management workflow
 - Additional authentication providers
 - Route protection refinement
+- Branch protection rules setup
 
 ## Known Issues and Considerations
+
+### Version Control
+
+- Branch protection rules pending implementation
+- Team training materials needed
+- Automated PR checks configuration needed
 
 ### Authentication
 
@@ -158,7 +207,7 @@ src/
 
 ### Short-term
 
-- Complete authentication enhancements
+- Complete branch protection setup
 - Finish translation coverage
 - Implement remaining UI components
 
@@ -178,7 +227,7 @@ src/
 
 Last Updated: November 16, 2024
 
-- Initial codebase documentation
-- Added authentication flow details
-- Documented internationalization structure
-- Listed known issues and considerations
+- Added Git workflow documentation and status
+- Updated development workflow section
+- Added version control to recent changes
+- Updated current development status

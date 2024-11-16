@@ -1,0 +1,320 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User Management
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  name              String
+  role              String    @default("STUDENT") // ADMIN, TUTOR, STUDENT
+  password          String?   // Hashed password
+  image             String?   // Profile image URL
+  locale            String    @default("en") // Preferred language
+  joinDate          DateTime  @default(now())
+  lastActive        DateTime  @default(now())
+  isActive          Boolean   @default(true)
+
+  // Profile fields
+  timezone          String?
+  bio               String?
+  phoneNumber       String?
+  
+  // MLM Network relationships
+  upline            User?     @relation("MLMNetwork", fields: [uplineId], references: [id])
+  uplineId          String?
+  downlines         User[]    @relation("MLMNetwork")
+  
+  // Role-specific relations
+  tutorProfile      TutorProfile?
+  studentProfile    StudentProfile?
+  
+  // Common relations
+  notifications     Notification[]
+  sessions          Session[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([email])
+  @@index([role])
+}
+
+// Tutor-specific profile
+model TutorProfile {
+  id                String    @id @default(cuid())
+  user              User      @relation(fields: [userId], references: [id])
+  userId            String    @unique
+  
+  // Revenue tracking
+  directRevenue     Float     @default(0)
+  networkRevenue    Float     @default(0)
+  totalCommission   Float     @default(0)
+  netCommission     Float     @default(0)
+  lastCalculation   DateTime  @default(now())
+  
+  // Teaching details
+  specializations   String    // Comma-separated values
+  availability      String    // Stringified JSON of weekly schedule
+  hourlyRate        Float
+  rating            Float     @default(0)
+  totalRatings      Int       @default(0)
+  
+  // Relations
+  lessons           Lesson[]
+  revenueTransactions RevenueTransaction[]
+  commissionTransactions CommissionTransaction[]
+
+  @@index([userId])
+}
+
+// Student-specific profile
+model StudentProfile {
+  id                String    @id @default(cuid())
+  user              User      @relation(fields: [userId], references: [id])
+  userId            String    @unique
+  
+  // Learning progress
+  cefrLevel         String    @default("A1") // A1, A2, B1, B2, C1, C2
+  xpPoints          Int       @default(0)
+  streak            Int       @default(0)
+  lastStreak        DateTime?
+  
+  // Relations
+  enrollments       Enrollment[]
+  progress          Progress[]
+  achievements      Achievement[]
+
+  @@index([userId])
+  @@index([cefrLevel])
+}
+
+// Content Management
+model Course {
+  id                String    @id @default(cuid())
+  title             String
+  description       String
+  cefrLevel         String    // A1, A2, B1, B2, C1, C2
+  thumbnail         String?
+  duration          Int       // Total duration in minutes
+  price             Float
+  isPublished       Boolean   @default(false)
+  
+  // Relations
+  lessons           Lesson[]
+  enrollments       Enrollment[]
+  articles          Article[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([cefrLevel])
+  @@index([isPublished])
+}
+
+model Lesson {
+  id                String    @id @default(cuid())
+  title             String
+  description       String
+  duration          Int       // Duration in minutes
+  order             Int
+  
+  // Relations
+  course            Course    @relation(fields: [courseId], references: [id])
+  courseId          String
+  tutor             TutorProfile? @relation(fields: [tutorId], references: [id])
+  tutorId           String?
+  stages            LessonStage[]
+  progress          Progress[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([courseId])
+  @@index([tutorId])
+}
+
+model LessonStage {
+  id                String    @id @default(cuid())
+  name              String
+  type              String    // WARM_UP, READING, VOCABULARY, WRITING, SPEAKING, WRAP_UP
+  duration          Int       // Duration in minutes
+  content           String    // Stringified JSON of stage-specific content
+  order             Int
+  
+  // Relations
+  lesson            Lesson    @relation(fields: [lessonId], references: [id])
+  lessonId          String
+
+  @@index([lessonId])
+}
+
+model Article {
+  id                String    @id @default(cuid())
+  title             String
+  content           String    // Main article content
+  cefrLevel         String    // A1, A2, B1, B2, C1, C2
+  wordCount         Int
+  
+  // Learning content
+  targetVocabulary  String    // Comma-separated vocabulary words
+  comprehensionQuestions String // Stringified JSON of questions
+  
+  // Relations
+  course            Course    @relation(fields: [courseId], references: [id])
+  courseId          String
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([courseId])
+  @@index([cefrLevel])
+}
+
+// Progress Tracking
+model Progress {
+  id                String    @id @default(cuid())
+  status            String    // NOT_STARTED, IN_PROGRESS, COMPLETED
+  score             Float?
+  timeSpent         Int       // Time spent in minutes
+  
+  // Relations
+  student           StudentProfile @relation(fields: [studentId], references: [id])
+  studentId         String
+  lesson            Lesson    @relation(fields: [lessonId], references: [id])
+  lessonId          String
+  
+  completedAt       DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([studentId])
+  @@index([lessonId])
+}
+
+model Enrollment {
+  id                String    @id @default(cuid())
+  status            String    // ACTIVE, COMPLETED, PAUSED, CANCELLED
+  
+  // Relations
+  student           StudentProfile @relation(fields: [studentId], references: [id])
+  studentId         String
+  course            Course    @relation(fields: [courseId], references: [id])
+  courseId          String
+  
+  startDate         DateTime  @default(now())
+  completedAt       DateTime?
+  
+  @@index([studentId])
+  @@index([courseId])
+}
+
+// Revenue Management
+model RevenueTransaction {
+  id                String    @id @default(cuid())
+  amount            Float
+  type              String    // LESSON_PAYMENT, COURSE_PURCHASE, SUBSCRIPTION, COMMISSION
+  status            String    // PENDING, COMPLETED, FAILED, REFUNDED
+  
+  // Relations
+  tutor             TutorProfile @relation(fields: [tutorId], references: [id])
+  tutorId           String
+  
+  createdAt         DateTime  @default(now())
+  processedAt       DateTime?
+
+  @@index([tutorId])
+  @@index([type])
+  @@index([status])
+}
+
+model CommissionTransaction {
+  id                String    @id @default(cuid())
+  amount            Float
+  level             Int       // MLM level
+  status            String    // PENDING, COMPLETED, FAILED, REFUNDED
+  
+  // Relations
+  tutor             TutorProfile @relation(fields: [tutorId], references: [id])
+  tutorId           String
+  
+  createdAt         DateTime  @default(now())
+  processedAt       DateTime?
+
+  @@index([tutorId])
+  @@index([status])
+}
+
+// Gamification
+model Achievement {
+  id                String    @id @default(cuid())
+  type              String
+  title             String
+  description       String
+  xpReward          Int
+  
+  // Relations
+  student           StudentProfile @relation(fields: [studentId], references: [id])
+  studentId         String
+  
+  unlockedAt        DateTime  @default(now())
+
+  @@index([studentId])
+}
+
+// Session Management
+model Session {
+  id                String    @id @default(cuid())
+  token             String    @unique
+  expiresAt         DateTime
+  
+  // Relations
+  user              User      @relation(fields: [userId], references: [id])
+  userId            String
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([token])
+}
+
+// Notifications
+model Notification {
+  id                String    @id @default(cuid())
+  type              String
+  title             String
+  message           String
+  isRead            Boolean   @default(false)
+  
+  // Relations
+  user              User      @relation(fields: [userId], references: [id])
+  userId            String
+  
+  createdAt         DateTime  @default(now())
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+// Internationalization
+model Translation {
+  id                String    @id @default(cuid())
+  key               String
+  locale            String
+  value             String
+  context           String?
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([key, locale])
+  @@index([locale])
+}
