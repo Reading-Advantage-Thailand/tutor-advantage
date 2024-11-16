@@ -38,8 +38,8 @@ This documentation-first approach ensures consistency, reduces errors, and maint
   - [x] Create comprehensive .env.example
 - [x] Initialize Git repository
   - [ ] Set up branch protection rules
-  - [ ] Configure conventional commits
-  - [ ] Document Git workflow
+  - [x] Configure conventional commits
+  - [x] Document Git workflow
 
 ### Database Setup
 
