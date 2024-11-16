@@ -1,12 +1,11 @@
 {
   "HomePage": {
-    "metadata": {
-      "title": "Home",
-      "siteName": "Next-Tutorial"
+    "meta": {
+      "title": "Home | Tutor Advantage",
+      "description": "Welcome to Tutor Advantage - Your Path to Educational Success"
     },
-    "welcome": "Welcome",
-    "welcomeMessage": "Signed In As",
-    "notSigned": "Not Signed In",
-    "info": "Please navigate to the login page and login to show Github profile information!"
+    "title": "Welcome to Tutor Advantage",
+    "subtitle": "Your Path to Educational Success",
+    "description": "Join our community of dedicated tutors and eager learners. Experience personalized education with the power of AI and human expertise."
   }
 }
