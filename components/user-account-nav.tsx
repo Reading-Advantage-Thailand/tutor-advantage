@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import { User } from "next-auth"
 import { signOut } from "next-auth/react"
 
@@ -39,13 +38,6 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
           </div>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/billing">Billing</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/settings">Settings</Link>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
         <DropdownMenuItem
           className="cursor-pointer"
           onSelect={(event) => {
@@ -55,7 +47,7 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
             })
           }}
         >
-          Sign out
+          ออกจากระบบ
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,4 +1,3 @@
-import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
@@ -44,10 +43,7 @@ export default async function MarketingPage() {
               variant="secondary"
               className="w-5/6 font-bold md:w-1/4"
             >
-              <Link
-                href="https://github.com/nobruf/shadcn-landing-page.git"
-                target="_blank"
-              >
+              <Link href="" target="_blank">
                 ดูข้อมูลเพิ่มเติม
               </Link>
             </Button>
@@ -56,11 +52,11 @@ export default async function MarketingPage() {
 
         <div className="group relative mt-14">
           <div className="bg-primary/50 absolute left-1/2 top-2 mx-auto h-24 w-[90%] -translate-x-1/2 rounded-full blur-3xl lg:-top-8 lg:h-80"></div>
-          <Image
+          <img
             width={1200}
             height={1200}
             className="rouded-lg border-secondary border-t-primary/30 relative mx-auto flex w-full items-center rounded-lg border border-t-2 leading-none md:w-[1200px]"
-            src={"https://picsum.photos/1200/1200"}
+            src="https://app.reading-advantage.com/_next/image?url=https%3A%2F%2Fstorage.googleapis.com%2Fartifacts.reading-advantage.appspot.com%2Fimages%2FFE4u3v5SwuSK2LsymEWQ.png&w=1920&q=75"
             alt="dashboard"
           />
           <div className="from-background/0 via-background/50 to-background absolute bottom-0 left-0 h-20 w-full rounded-lg bg-gradient-to-b md:h-28"></div>

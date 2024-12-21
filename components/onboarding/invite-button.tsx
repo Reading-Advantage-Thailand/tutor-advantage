@@ -19,7 +19,7 @@ export default function InviteButton({ code }: InviteButtonProps) {
 
   async function onAccept() {
     setIsLoading(true)
-    const response = await fetch(`/api/v1/tutor/code/${code}`, {
+    const response = await fetch(`/api/v1/invites/${code}`, {
       method: "POST",
     })
 

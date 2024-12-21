@@ -2,9 +2,10 @@ import React from "react"
 import { headers } from "next/headers"
 import { notFound } from "next/navigation"
 
-import { env } from "@/env.mjs"
 import InviteButton from "@/components/onboarding/invite-button"
 import { UserAvatar } from "@/components/user-avatar"
+
+import { env } from "../../../env.mjs"
 
 type SearchParams = { [key: string]: string | string[] | undefined }
 type InviteInfoResponse = {
@@ -16,7 +17,7 @@ type InviteInfoResponse = {
 }
 async function getInviteInfo(code: string): Promise<InviteInfoResponse> {
   const response = await fetch(
-    `${env.NEXT_PUBLIC_APP_URL}/api/v1/tutor/code/${code}`,
+    `${env.NEXT_PUBLIC_APP_URL}/api/v1/invites/${code}`,
     { headers: await headers() }
   )
   if (!response.ok) notFound()

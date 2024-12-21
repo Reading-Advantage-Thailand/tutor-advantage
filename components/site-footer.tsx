@@ -4,7 +4,7 @@ import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
 
 import { Icons } from "./icons"
-import { ThemeSwitcher } from "./switchers/theme-swithcer"
+import { ThemeSwitcher } from "./switchers/theme-switcher"
 
 export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
   return (

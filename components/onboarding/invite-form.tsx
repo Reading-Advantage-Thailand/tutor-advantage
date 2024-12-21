@@ -22,7 +22,7 @@ import {
 
 const FormSchema = z.object({
   code: z.string().min(6, {
-    message: "Your one-time password must be 6 characters.",
+    message: "รหัสต้องมี 6 ตัวอักษร",
   }),
 })
 
@@ -40,13 +40,14 @@ export function InviteForm() {
     const codeLength = form.watch("code")?.length
 
     if (codeLength === 6) {
-      router.push(`/invite/join?id=${form.getValues("code")}`)
+      router.push(`/code?id=${form.getValues("code")}`)
       toast({
-        title: "You entered the following code:",
-        description: `${form.getValues("code")}`,
+        title: "คุณได้กรอกรหัสเรียบร้อยแล้ว",
+        description: `รหัสคือ ${form.getValues("code")}`,
       })
     }
-  }, [form, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.watch("code")])
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     toast({

@@ -26,7 +26,7 @@ export default async function MarketingLayout({
               )}
               href="/login"
             >
-              Login
+              เข้าสู่ระบบ
             </Link>
           </nav>
         </div>

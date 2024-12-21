@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ["avatars.githubusercontent.com", "picsum.photos"],
+    domains: ["avatars.githubusercontent.com", "picsum.photos", "app.reading-advantage"],
   },
   experimental: {
     serverComponentsExternalPackages: ["@prisma/client"],
