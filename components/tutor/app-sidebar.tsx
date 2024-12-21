@@ -1,15 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-  BookOpen,
-  Bot,
-  Frame,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react"
+import { Frame, Map, PieChart } from "lucide-react"
 
 import { siteConfig } from "@/config/site"
 import {
@@ -36,113 +28,58 @@ const data = {
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
-  navMain: [
-    {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
   projects: [
     {
-      name: "Design Engineering",
+      name: "การตั้งค่า",
       url: "#",
       icon: Frame,
     },
     {
-      name: "Sales & Marketing",
+      name: "สมาชิก",
       url: "#",
       icon: PieChart,
     },
     {
-      name: "Travel",
+      name: "การชำระเงิน",
       url: "#",
       icon: Map,
     },
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+// const classes = [
+//   {
+//     title: "ห้องเรียนฟิสิกส์",
+//     url: "#",
+//     icon: BookOpen,
+//     isActive: true,
+//     items: [
+//       {
+//         title: "ข้อมูลทั่วไป",
+//         url: "#",
+//       },
+//       {
+//         title: "เนื้อหา",
+//         url: "#",
+//       },
+//     ],
+//   },
+// ];
+interface AppSidebarProps {
+  children?: React.ReactNode
+  navMain: {
+    title: string
+    url: string
+    icon?: string
+    isActive?: boolean
+    items?: {
+      title: string
+      url: string
+    }[]
+  }[]
+}
+
+export function AppSidebar({ ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -159,9 +96,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <span className="truncate font-semibold">
                   {siteConfig.name}
                 </span>
-                <span className="truncate text-xs text-green-400">
-                  enterprise
-                </span>
+                <span className="truncate text-xs text-green-400">อาจารย์</span>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -169,7 +104,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarSeparator className="mx-0" />
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={props.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>
       <SidebarSeparator className="mx-0" />

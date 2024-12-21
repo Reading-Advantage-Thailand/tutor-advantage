@@ -44,6 +44,10 @@ const data = [
       label: "การแจ้งเตือน",
       icon: Bell,
     },
+    {
+      label: "สร้างห้องเรียนใหม่",
+      icon: GalleryVerticalEnd,
+    },
   ],
   [
     {
@@ -87,7 +91,7 @@ export function NavActions() {
                     <SidebarMenu>
                       {group.map((item, index) => (
                         <SidebarMenuItem key={index}>
-                          <SidebarMenuButton>
+                          <SidebarMenuButton onClick={() => setIsOpen(false)}>
                             <item.icon /> <span>{item.label}</span>
                           </SidebarMenuButton>
                         </SidebarMenuItem>
