@@ -4,7 +4,7 @@ import localFont from "next/font/local"
 import { cn } from "@/lib/utils"
 import { Toaster } from "@/components/ui/toaster"
 
-import "@/styles/globals.css"
+import "../styles/globals.css"
 
 import { siteConfig } from "@/config/site"
 import { TailwindIndicator } from "@/components/helpers/tailwind-indicatior"

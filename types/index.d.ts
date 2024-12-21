@@ -36,6 +36,10 @@ export type SiteConfig = {
   }
 }
 
+export type OnBoardingConfig = {
+  mainNav: MainNavItem[]
+}
+
 export type DocsConfig = {
   mainNav: MainNavItem[]
   sidebarNav: SidebarNavItem[]
