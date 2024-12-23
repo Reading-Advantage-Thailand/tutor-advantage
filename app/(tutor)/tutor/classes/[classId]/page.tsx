@@ -17,7 +17,7 @@ const data: CardMessageProps["data"] = {
   ],
 }
 
-export default function TutorClassPage() {
+export default function TutorClassesPage() {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pb-[10rem]">
       <CardMessage data={data} />

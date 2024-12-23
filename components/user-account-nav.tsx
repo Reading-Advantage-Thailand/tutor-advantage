@@ -1,5 +1,7 @@
 "use client"
 
+import React from "react"
+import { LogOut } from "lucide-react"
 import { User } from "next-auth"
 import { signOut } from "next-auth/react"
 
@@ -15,6 +17,7 @@ import { UserAvatar } from "./user-avatar"
 
 interface UserAccountNavProps extends React.HTMLAttributes<HTMLDivElement> {
   user: Pick<User, "name" | "image" | "email">
+  role?: string
 }
 
 export function UserAccountNav({ user }: UserAccountNavProps) {
@@ -47,6 +50,7 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
             })
           }}
         >
+          <LogOut />
           ออกจากระบบ
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -86,13 +86,28 @@ model VerificationToken {
   @@map(name: "verification_tokens")
 }
 
+model Channel {
+  id        String   @id @default(cuid())
+  name      String
+  classId   String
+  class     Class    @relation(fields: [classId], references: [id])
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  @@unique([classId, name])
+}
+
 model Class {
-  id       String        @id @default(cuid())
-  name     String
-  code     String        @unique @db.VarChar(7)
-  tutorId  String
-  tutor    User          @relation("TutorClasses", fields: [tutorId], references: [id])
-  students ClassMember[]
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  icon        String?
+  description String
+  code        String        @unique @db.VarChar(7)
+  tutorId     String
+  tutor       User          @relation("TutorClasses", fields: [tutorId], references: [id])
+  students    ClassMember[]
+  channels    Channel[]
 
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @default(now()) @map(name: "updated_at")

@@ -3,8 +3,11 @@
 
 import React from "react"
 import { useRouter } from "next/navigation"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
-import { cn } from "@/lib/utils"
+import { classCreateSchema } from "@/lib/validations/class"
 import { toast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,103 +23,114 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 import { Icons } from "../icons"
-import { ButtonProps, buttonVariants } from "../ui/button"
+import { ButtonProps } from "../ui/button"
 
 interface ClassCreateButtonProps extends ButtonProps {}
+
+type FormData = z.infer<typeof classCreateSchema>
 
 export default function ClassCreateButton({
   className,
   variant,
+  size,
   ...props
 }: ClassCreateButtonProps) {
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(classCreateSchema),
+  })
   const router = useRouter()
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
-  async function onClick() {
+  async function onSubmit(data: FormData) {
     setIsLoading(true)
-
-    const response = await fetch("/api/posts", {
+    const response = await fetch(`/api/v1/classes`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({
-        title: "Untitled Post",
+        name: data.name,
+        description: data.description,
       }),
     })
 
     setIsLoading(false)
 
     if (!response?.ok) {
-      if (response.status === 402) {
-        return toast({
-          title: "Limit of 3 posts reached.",
-          description: "Please upgrade to the PRO plan.",
-          variant: "destructive",
-        })
-      }
-
       return toast({
-        title: "Something went wrong.",
-        description: "Your post was not created. Please try again.",
+        title: "เกิดข้อผิดพลาด",
+        description: "ไม่สามารถสร้างห้องเรียนใหม่ได้",
         variant: "destructive",
       })
     }
 
-    const post = await response.json()
+    toast({
+      description: "สร้างห้องเรียนใหม่สำเร็จ",
+    })
 
-    // This forces a cache invalidation.
-    router.refresh()
-
-    router.push(`/editor/${post.id}`)
+    const { slug } = await response.json()
+    router.push(`/tutor/class/${slug}`)
   }
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button
-          className={cn(
-            buttonVariants({ variant }),
-            {
-              "cursor-not-allowed opacity-60": isLoading,
-            },
-            className
-          )}
-          {...props}
-        >
+        <Button className={className} size={size} variant={variant} {...props}>
+          <Icons.add className="size-4" />
           สร้างห้องเรียนใหม่
-        </button>
+        </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle>สร้างห้องเรียนใหม่</DialogTitle>
-          <DialogDescription>
-            สร้างห้องเรียนใหม่เพื่อเริ่มต้นการสร้างเนื้อหา หรือเรียนรู้
-            กับผู้เรียน ในห้องเรียนของคุณ
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              ชื่อห้องเรียน
-            </Label>
-            <Input id="name" value="Pedro Duarte" className="col-span-3" />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogHeader>
+            <DialogTitle>สร้างห้องเรียนใหม่</DialogTitle>
+            <DialogDescription>
+              สร้างห้องเรียนใหม่เพื่อเริ่มต้นการสร้างเนื้อหา หรือเรียนรู้
+              กับผู้เรียน ในห้องเรียนของคุณ
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                ชื่อห้องเรียน
+              </Label>
+              <Input
+                id="name"
+                required
+                className="col-span-3"
+                {...register("name")}
+              />
+              {errors?.name && (
+                <p className="col-span-3 col-start-2 px-1 text-xs text-red-600">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="desc" className="text-right">
+                คำอธิบายเพิ่มเติม
+              </Label>
+              <Input
+                id="description"
+                required
+                className="col-span-3"
+                {...register("description")}
+              />
+              {errors?.description && (
+                <p className="col-span-3 col-start-2 px-1 text-xs text-red-600">
+                  {errors.description.message}
+                </p>
+              )}
+            </div>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="desc" className="text-right">
-              คำอธิบายเพิ่มเติม
-            </Label>
-            <Input id="desc" value="@peduarte" className="col-span-3" />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button type="submit" onClick={onClick} disabled={isLoading}>
-            {isLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            สร้างห้องเรียน
-          </Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading && <Icons.spinner className="size-4 animate-spin" />}
+              สร้างห้องเรียน
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   )

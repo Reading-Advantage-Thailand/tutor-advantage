@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { Frame, Map, PieChart } from "lucide-react"
 
 import { siteConfig } from "@/config/site"
 import {
@@ -15,67 +14,27 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar"
+import { Class } from "@/app/api/v1/classes/route"
 
 import { Icons } from "../icons"
 import { NavMain } from "./nav-main"
 import { NavProjects } from "./nav-project"
 import { NavUser } from "./nav-user"
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  projects: [
-    {
-      name: "การตั้งค่า",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "สมาชิก",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "การชำระเงิน",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
-
-// const classes = [
-//   {
-//     title: "ห้องเรียนฟิสิกส์",
-//     url: "#",
-//     icon: BookOpen,
-//     isActive: true,
-//     items: [
-//       {
-//         title: "ข้อมูลทั่วไป",
-//         url: "#",
-//       },
-//       {
-//         title: "เนื้อหา",
-//         url: "#",
-//       },
-//     ],
-//   },
-// ];
 interface AppSidebarProps {
   children?: React.ReactNode
-  navMain: {
-    title: string
+  role?: string
+  title: string
+  navmain: Class[]
+  user: {
+    name: string
+    email: string
+    avatar: string
+  }
+  navprojects: {
+    name: string
     url: string
-    icon?: string
-    isActive?: boolean
-    items?: {
-      title: string
-      url: string
-    }[]
+    icon: string
   }[]
 }
 
@@ -96,7 +55,9 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
                 <span className="truncate font-semibold">
                   {siteConfig.name}
                 </span>
-                <span className="truncate text-xs text-green-400">อาจารย์</span>
+                <span className="truncate text-xs text-green-400">
+                  {props.role}
+                </span>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -104,13 +65,13 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarSeparator className="mx-0" />
       <SidebarContent>
-        <NavMain items={props.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavMain items={props.navmain} title={props.title} />
+        <NavProjects projects={props.navprojects} />
       </SidebarContent>
       <SidebarSeparator className="mx-0" />
       <SidebarFooter>
         <div className="p-1">
-          <NavUser user={data.user} />
+          <NavUser user={props.user} />
         </div>
       </SidebarFooter>
       <SidebarRail />
