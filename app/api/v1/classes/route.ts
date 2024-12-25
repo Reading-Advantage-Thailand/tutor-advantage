@@ -109,8 +109,10 @@ export async function GET(): Promise<NextResponse<TutorClassesResponse | { messa
         items: classChannels || [],
       };
     });
+    // return index 0 of tutorClasses
+    return NextResponse.json({ classes: [tutorClasses[0]] });
 
-    return NextResponse.json({ classes: tutorClasses });
+    // return NextResponse.json({ classes: tutorClasses });
   } catch (error) {
     console.error("Error getting classes:", error);
     return NextResponse.json({ message: "Internal server error" }, { status: 500 });

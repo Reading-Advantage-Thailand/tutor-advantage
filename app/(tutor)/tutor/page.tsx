@@ -4,7 +4,6 @@ import { getCurrentUser } from "@/lib/session"
 import CardNews from "@/components/tutor/card-news"
 import CardTutorial from "@/components/tutor/card-tutorial"
 import CardWelcome from "@/components/tutor/card-welcome"
-import FloatingInputMessage from "@/components/tutor/floating-input-message"
 
 export default async function TutorGeneralPage() {
   const user = await getCurrentUser()
@@ -22,7 +21,6 @@ export default async function TutorGeneralPage() {
       <div className="max-w-3xl mx-auto w-full">
         <CardNews />
       </div>
-      <FloatingInputMessage />
     </div>
   )
 }

@@ -40,7 +40,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".contentlayer/generated"
-, "components/system/tree-utils.js", "app/(system)/system/connections/page.jsx"  ],
+, "components/system/tree-utils.js", "app/(system)/system/connections/page.jsx", "tailwind.config.js"  ],
   "exclude": [
     "node_modules"
   ]

@@ -56,6 +56,8 @@ model User {
   parent   User?   @relation("UserParent", fields: [parentId], references: [id])
   children User[]  @relation("UserParent")
 
+  Post Post[]
+
   stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
   stripePriceId          String?   @map(name: "stripe_price_id")
@@ -91,6 +93,7 @@ model Channel {
   name      String
   classId   String
   class     Class    @relation(fields: [classId], references: [id])
+  post      Post[]
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @default(now()) @map(name: "updated_at")
 
@@ -144,4 +147,20 @@ enum InvitationStatus {
   PENDING
   ACCEPTED
   REJECTED
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  content   Json?
+  published Boolean  @default(false)
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @default(now()) @map(name: "updated_at")
+  authorId  String
+  channelId String
+
+  author  User    @relation(fields: [authorId], references: [id])
+  channel Channel @relation(fields: [channelId], references: [id])
+
+  @@map(name: "posts")
 }

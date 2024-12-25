@@ -1,0 +1,82 @@
+"use client"
+
+import * as React from "react"
+import { useRouter } from "next/navigation"
+import { SquarePen } from "lucide-react"
+
+import { cn } from "@/lib/utils"
+import { toast } from "@/hooks/use-toast"
+import { ButtonProps, buttonVariants } from "@/components/ui/button"
+import { Icons } from "@/components/icons"
+
+type PostCreateButtonProps = ButtonProps
+
+export function PostCreateButton({
+  className,
+  variant,
+  ...props
+}: PostCreateButtonProps) {
+  const router = useRouter()
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+
+  async function onClick() {
+    setIsLoading(true)
+
+    const response = await fetch("/api/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: "ยังไม่มีชื่อ",
+      }),
+    })
+
+    setIsLoading(false)
+
+    if (!response?.ok) {
+      if (response.status === 402) {
+        return toast({
+          title: "Limit of 3 posts reached.",
+          description: "Please upgrade to the PRO plan.",
+          variant: "destructive",
+        })
+      }
+
+      return toast({
+        title: "เกิดข้อผิดพลาด",
+        description: "ไม่สามารถสร้างโพสต์ได้ในขณะนี้",
+        variant: "destructive",
+      })
+    }
+
+    const post = await response.json()
+
+    // This forces a cache invalidation.
+    router.refresh()
+
+    router.push(`${window.location.pathname}/editor/${post.id}`)
+  }
+
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        buttonVariants({ variant }),
+        {
+          "cursor-not-allowed opacity-60": isLoading,
+        },
+        className
+      )}
+      disabled={isLoading}
+      {...props}
+    >
+      {isLoading ? (
+        <Icons.spinner className="size-4 animate-spin" />
+      ) : (
+        <SquarePen className="size-4" />
+      )}
+      สร้างโพสต์
+    </button>
+  )
+}

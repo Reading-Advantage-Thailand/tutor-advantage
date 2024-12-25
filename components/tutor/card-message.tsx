@@ -30,7 +30,7 @@ export default function CardMessage({ data }: CardMessageProps) {
         <div className="flex items-center space-x-4">
           <Avatar>
             <AvatarImage src="/avatars/01.png" alt="Image" />
-            <AvatarFallback>{data.from.name}</AvatarFallback>
+            <AvatarFallback>{data.from.name.charAt(0)}</AvatarFallback>
           </Avatar>
           <div>
             <p className="text-sm font-medium leading-none">{data.from.name}</p>
