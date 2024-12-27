@@ -14,14 +14,14 @@ export function PostItem({ post }: PostItemProps) {
     <div className="flex items-center justify-between p-4">
       <div className="grid gap-1">
         <Link
-          href={`/editor/${post.id}`}
+          href={`${window.location.pathname}/editor/${post.id}`}
           className="font-semibold hover:underline"
         >
           {post.title}
         </Link>
         <div>
           <p className="text-sm text-muted-foreground">
-            {formatDate(post.createdAt?.toDateString())}
+            {formatDate(new Date(post.createdAt).toDateString())}
           </p>
         </div>
       </div>

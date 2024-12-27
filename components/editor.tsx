@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import EditorJS from "@editorjs/editorjs"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Post } from "@prisma/client"
+import { MoreHorizontal } from "lucide-react"
 import { useForm } from "react-hook-form"
 import TextareaAutosize from "react-textarea-autosize"
 import * as z from "zod"
@@ -12,25 +13,30 @@ import * as z from "zod"
 import { cn, formatDate } from "@/lib/utils"
 import { postPatchSchema } from "@/lib/validations/post"
 import { toast } from "@/hooks/use-toast"
-import { buttonVariants } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
 
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
-import { Card, CardContent, CardFooter } from "./ui/card"
+import { Badge } from "./ui/badge"
+import { Card, CardContent, CardFooter, CardHeader } from "./ui/card"
 
 interface EditorProps {
   post: Pick<Post, "id" | "title" | "content" | "published">
+  classId: string
+  channelId: string
 }
 
 type FormData = z.infer<typeof postPatchSchema>
 
-export function Editor({ post }: EditorProps) {
+export function Editor({ post, classId, channelId }: EditorProps) {
   const { register, handleSubmit } = useForm<FormData>({
     resolver: zodResolver(postPatchSchema),
   })
   const ref = React.useRef<EditorJS | null>(null)
   const router = useRouter()
+  // const { channel } = useChannel("status-updates")
   const [isSaving, setIsSaving] = React.useState<boolean>(false)
+  const [isPublished, setIsPublished] = React.useState<boolean>(post.published)
   const [isMounted, setIsMounted] = React.useState<boolean>(false)
 
   const initializeEditor = React.useCallback(async () => {
@@ -89,16 +95,20 @@ export function Editor({ post }: EditorProps) {
 
     const blocks = await ref.current?.save()
 
-    const response = await fetch(`/api/posts/${post.id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title: data.title,
-        content: blocks,
-      }),
-    })
+    const response = await fetch(
+      `/api/v1/classes/${classId}/channels/${channelId}/posts/${post.id}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          title: data.title,
+          content: blocks,
+          isPublished: isPublished,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
 
     setIsSaving(false)
 
@@ -127,13 +137,26 @@ export function Editor({ post }: EditorProps) {
       className="max-w-3xl mx-auto w-full"
     >
       <Card>
+        <CardHeader className="flex flex-row items-center justify-between py-4">
+          <Badge variant="secondary">
+            {isPublished ? "โพสต์" : "ฉบับร่าง"}
+          </Badge>
+          <Button
+            disabled
+            variant="ghost"
+            size="icon"
+            className="data-[state=open]:bg-accent size-7"
+          >
+            <MoreHorizontal />
+          </Button>
+        </CardHeader>
         <CardContent>
           <TextareaAutosize
             autoFocus
             id="title"
             defaultValue={post.title}
             placeholder="หัวข้อโพสต์"
-            className="pt-10 w-full resize-none appearance-none overflow-hidden bg-transparent text-5xl font-bold focus:outline-none"
+            className="w-full resize-none appearance-none overflow-hidden bg-transparent text-5xl font-bold focus:outline-none"
             {...register("title")}
           />
           <div id="editor" className="min-h-[200px]" />
@@ -172,58 +195,17 @@ export function Editor({ post }: EditorProps) {
             {isSaving && <Icons.spinner className="h-4 w-4 animate-spin" />}
             <span>บันทึกฉบับร่าง</span>
           </button>
-          <button className={cn(buttonVariants({ size: "sm" }))}>
+          <button
+            className={cn(buttonVariants({ size: "sm" }))}
+            onClick={() => setIsPublished(true)}
+            type="submit"
+            disabled={isSaving}
+          >
+            {isSaving && <Icons.spinner className="h-4 w-4 animate-spin" />}
             <span>โพสต์</span>
           </button>
         </div>
       </div>
     </form>
   )
-
-  // return (
-  //   <form onSubmit={handleSubmit(onSubmit)}>
-  //     <div className="grid w-full gap-10">
-  //       <div className="flex w-full items-center justify-between">
-  //         <div className="flex items-center space-x-10">
-  //           <Link
-  //             href="/dashboard"
-  //             className={cn(buttonVariants({ variant: "ghost" }))}
-  //           >
-  //             <>
-  //               <Icons.chevronLeft className="mr-2 h-4 w-4" />
-  //               Back
-  //             </>
-  //           </Link>
-  //           <p className="text-sm text-muted-foreground">
-  //             {post.published ? "Published" : "Draft"}
-  //           </p>
-  //         </div>
-  //         <button type="submit" className={cn(buttonVariants())}>
-  //           {isSaving && (
-  //             <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-  //           )}
-  //           <span>Save</span>
-  //         </button>
-  //       </div>
-  //       <div className="prose prose-stone mx-auto w-[800px] dark:prose-invert">
-  //         <TextareaAutosize
-  //           autoFocus
-  //           id="title"
-  //           defaultValue={post.title}
-  //           placeholder="Post title"
-  //           className="w-full resize-none appearance-none overflow-hidden bg-transparent text-5xl font-bold focus:outline-none"
-  //           {...register("title")}
-  //         />
-  //         <div id="editor" className="min-h-[500px]" />
-  //         <p className="text-sm text-gray-500">
-  //           Use{" "}
-  //           <kbd className="rounded-md border bg-muted px-1 text-xs uppercase">
-  //             Tab
-  //           </kbd>{" "}
-  //           to open the command menu.
-  //         </p>
-  //       </div>
-  //     </div>
-  //   </form>
-  // )
 }

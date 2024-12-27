@@ -4,7 +4,9 @@ import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Post } from "@prisma/client"
+import { MoreHorizontal } from "lucide-react"
 
+import { toast } from "@/hooks/use-toast"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,7 +25,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Icons } from "@/components/icons"
-import { toast } from "@/hooks/use-toast"
 
 async function deletePost(postId: string) {
   const response = await fetch(`/api/posts/${postId}`, {
@@ -54,13 +55,16 @@ export function PostOperations({ post }: PostOperationsProps) {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-md border transition-colors hover:bg-muted">
-          <Icons.ellipsis className="h-4 w-4" />
-          <span className="sr-only">Open</span>
+          <MoreHorizontal className="size-4" />
+          <span className="sr-only">เปิด</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem>
-            <Link href={`/editor/${post.id}`} className="flex w-full">
-              Edit
+            <Link
+              href={`${window.location.pathname}/editor/${post.id}`}
+              className="flex w-full"
+            >
+              แก้ไขโพสต์
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -68,7 +72,7 @@ export function PostOperations({ post }: PostOperationsProps) {
             className="flex cursor-pointer items-center text-destructive focus:text-destructive"
             onSelect={() => setShowDeleteAlert(true)}
           >
-            Delete
+            ลบ
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -76,14 +80,14 @@ export function PostOperations({ post }: PostOperationsProps) {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Are you sure you want to delete this post?
+              แน่ใจหรือไม่ว่าต้องการลบโพสต์นี้?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone.
+              โพสต์ที่ลบแล้วจะไม่สามารถกู้คืนได้อีก
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>ยกเลิก</AlertDialogCancel>
             <AlertDialogAction
               onClick={async (event) => {
                 event.preventDefault()
@@ -104,7 +108,7 @@ export function PostOperations({ post }: PostOperationsProps) {
               ) : (
                 <Icons.trash className="mr-2 h-4 w-4" />
               )}
-              <span>Delete</span>
+              <span>ลบโพสต์</span>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

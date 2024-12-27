@@ -1,10 +1,13 @@
 "use client"
 
-import React, { useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
+import { useParams } from "next/navigation"
 import * as Ably from "ably"
 import { AblyProvider, ChannelProvider, useChannel } from "ably/react"
+import { Eye } from "lucide-react"
 import { useSession } from "next-auth/react"
 
+import { Badge } from "@/components/ui/badge"
 import {
   Card,
   CardContent,
@@ -13,33 +16,71 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { PostCreateButton } from "@/components/post-create-button"
-import CardMessage from "@/components/tutor/card-message"
+import { PostItem } from "@/components/post-item"
+import CardPost, { CardPostProps } from "@/components/tutor/card-post"
 import FloatingInputMessage from "@/components/tutor/floating-input-message"
 
 export default function ClassesProvider() {
   const { data } = useSession()
+  const params = useParams()
+  const { classId, channelId } = params
   const client = new Ably.Realtime({
     authUrl: "/api/v1/token",
     authMethod: "POST",
   })
+  const [unPublishedPosts, setUnPublishedPosts] = useState<CardPostProps[]>([])
+
+  useEffect(() => {
+    async function fetchUnpublishedPosts() {
+      const response = await fetch(
+        `/api/v1/classes/${classId}/channels/${channelId}/posts?published=false`
+      )
+      const data = await response.json()
+      setUnPublishedPosts(
+        data.map((post) => ({
+          post: {
+            id: post.id,
+            title: post.title,
+            content: post.content,
+            createdAt: post.createdAt,
+          },
+        }))
+      )
+    }
+    fetchUnpublishedPosts()
+  }, [classId, channelId])
 
   return (
     <AblyProvider client={client}>
       <ChannelProvider channelName="status-updates">
-        <div className="flex flex-col gap-6">
-          <Card className="max-w-3xl mx-auto w-full">
+        <div className="flex flex-1 flex-col gap-4 p-4 pb-[10rem]">
+          <Card className="max-w-3xl mx-auto w-full bg-background">
             <CardHeader>
-              <CardTitle>ดูเหมือนว่าจะยังไม่มีโพสต์ใดๆในช่องนี้</CardTitle>
+              <Badge variant="secondary" className="mb-2 w-[fit-content]">
+                <Eye className="size-4 mr-2" />
+                เห็นเฉพาะคุณ
+              </Badge>
+              <CardTitle>จัดการช่องสื่อสาร</CardTitle>
               <CardDescription>
-                เริ่มสนทนาด้วยการสร้างโพสต์แรกของคุณ
-                และเริ่มสนทนากับผู้เรียนของคุณ ในช่องนี้
+                สร้างหรือลบช่องสื่อสารของคุณ และเริ่มสนทนากับนักเรียน
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <PostCreateButton />
+              <div className="divide-y divide-border rounded-md border mb-8 ">
+                {unPublishedPosts.map((item, index) => (
+                  <PostItem key={index} post={item.post} />
+                ))}
+              </div>
+              <PostCreateButton
+                classId={classId as string}
+                channelId={channelId as string}
+              />
             </CardContent>
           </Card>
-          <Messages />
+          <Messages
+            classId={classId as string}
+            channelId={channelId as string}
+          />
           <FloatingInputMessageClasses
             user={{
               name: data?.user?.name || "S",
@@ -52,59 +93,78 @@ export default function ClassesProvider() {
   )
 }
 
-interface Log {
-  name: string | undefined
-  user: {
-    name: string
-    avatar: string
-  }
-  text: any // eslint-disable-line @typescript-eslint/no-explicit-any
-  time: string
-}
-
-function Messages() {
-  const [logs, setLogs] = useState<Log[]>([])
+function Messages({
+  classId,
+  channelId,
+}: {
+  classId: string
+  channelId: string
+}) {
+  const [logs, setLogs] = useState<CardPostProps[]>([])
   const notificationSound = useRef(
     new Audio(
       "https://audio-previews.elements.envatousercontent.com/files/472198703/preview.mp3"
     )
-  ) 
+  )
+
+  useEffect(() => {
+    const fetchPreviousMessages = async () => {
+      try {
+        const response = await fetch(
+          `/api/v1/classes/${classId}/channels/${channelId}/posts`
+        )
+        const data = await response.json()
+        const formattedLogs = data.map((post) => ({
+          post: {
+            id: post.id,
+            title: post.title,
+            content: post.content,
+            createdAt: post.createdAt,
+          },
+          author: {
+            id: post.author.id,
+            name: post.author.name,
+            avatar: post.author.image,
+          },
+        }))
+        console.log("formattedLogs", formattedLogs)
+        setLogs(formattedLogs)
+      } catch (error) {
+        console.error("Failed to fetch messages:", error)
+      }
+    }
+
+    fetchPreviousMessages()
+  }, [classId, channelId])
 
   useChannel("status-updates", (message) => {
-    setLogs((prev) => [
-      ...prev,
-      {
-        user: {
-          avatar: message.data.from.avatar,
-          name: message.data.from.name,
-        },
-        name: message.name,
-        text: message.data.text,
-        time: new Date().toISOString(),
-      },
-    ])
-
-    // Play the notification sound
     notificationSound.current.play().catch((err) => {
       console.error("Failed to play notification sound:", err)
     })
+    setLogs((prev) => [
+      ...prev,
+      {
+        post: {
+          id: message.data.id,
+          title: message.data.title,
+          content: message.data.content,
+          channelId: channelId,
+          published: true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          authorId: "unknown-author",
+        },
+        author: {
+          name: message.data.author.name || "Unknown",
+          avatar: message.data.author.image || "/avatars/default.jpg",
+        },
+      },
+    ])
   })
 
-  return (
-    <div className="flex flex-col gap-4">
-      {logs.map((log, index) => (
-        <CardMessage
-          key={index}
-          data={{
-            from: { name: log.user.name, avatar: log.user.avatar },
-            createdAt: log.time,
-            message: log.text,
-            reactions: [],
-          }}
-        />
-      ))}
-    </div>
-  )
+  return logs.map((log, index) => (
+    <CardPost key={index} post={log.post} author={log.author} />
+  ))
 }
 
 function FloatingInputMessageClasses({
@@ -132,6 +192,7 @@ function FloatingInputMessageClasses({
       value={messageText}
       onChange={(e) => setMessageText(e.target.value)}
       onSend={sendMessage}
+      isRightSidebarOpen={true}
     />
   )
 }

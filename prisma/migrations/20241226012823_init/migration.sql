@@ -2,6 +2,9 @@
 CREATE TYPE "Role" AS ENUM ('STUDENT', 'TUTOR', 'SYSTEM', 'GUEST');
 
 -- CreateEnum
+CREATE TYPE "ClassMemberRole" AS ENUM ('OWNER', 'CO_OWNER', 'MEMBER');
+
+-- CreateEnum
 CREATE TYPE "InvitationStatus" AS ENUM ('PENDING', 'ACCEPTED', 'REJECTED');
 
 -- CreateTable
@@ -91,7 +94,7 @@ CREATE TABLE "ClassMember" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "classId" TEXT NOT NULL,
-    "role" "Role" NOT NULL DEFAULT 'STUDENT',
+    "role" "ClassMemberRole" NOT NULL DEFAULT 'MEMBER',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { classCreateSchema } from "@/lib/validations/class";
 import { requireAuth } from "@/middleware/auth";
 import { HttpError } from "@/middleware/http-error";
-import { Role } from "@prisma/client";
+import { ClassMemberRole, Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -27,6 +27,14 @@ export async function POST(req: NextRequest) {
         slug: slug,
         tutorId: session.user?.id as string,
         code: Math.random().toString(36).substring(2, 9).toUpperCase(),
+      },
+    });
+    // create owner
+    await db.classMember.create({
+      data: {
+        userId: session.user?.id as string,
+        classId: classRoom.id,
+        role: ClassMemberRole.OWNER,
       },
     });
     // create general channel by default

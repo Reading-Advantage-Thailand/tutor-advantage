@@ -9,11 +9,18 @@ import { toast } from "@/hooks/use-toast"
 import { ButtonProps, buttonVariants } from "@/components/ui/button"
 import { Icons } from "@/components/icons"
 
-type PostCreateButtonProps = ButtonProps
+type PostCreateButtonProps = {
+  className?: string
+  variant?: ButtonProps["variant"]
+  classId: string
+  channelId: string
+} & React.ComponentProps<"button">
 
 export function PostCreateButton({
   className,
   variant,
+  classId,
+  channelId,
   ...props
 }: PostCreateButtonProps) {
   const router = useRouter()
@@ -22,15 +29,18 @@ export function PostCreateButton({
   async function onClick() {
     setIsLoading(true)
 
-    const response = await fetch("/api/posts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title: "ยังไม่มีชื่อ",
-      }),
-    })
+    const response = await fetch(
+      `/api/v1/classes/${classId}/channels/${channelId}/posts`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: "ยังไม่มีชื่อ",
+        }),
+      }
+    )
 
     setIsLoading(false)
 
@@ -51,6 +61,7 @@ export function PostCreateButton({
     }
 
     const post = await response.json()
+    console.log(post)
 
     // This forces a cache invalidation.
     router.refresh()

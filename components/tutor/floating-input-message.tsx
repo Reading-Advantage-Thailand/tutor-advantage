@@ -1,10 +1,24 @@
 import React from "react"
 import { SendHorizonal } from "lucide-react"
 
+import { cn } from "@/lib/utils"
+
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 
-export default function FloatingInputMessage({ value, onChange, onSend }) {
+interface FloatingInputMessageProps {
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onSend: () => void
+  isRightSidebarOpen?: boolean
+}
+
+export default function FloatingInputMessage({
+  value,
+  onChange,
+  onSend,
+  isRightSidebarOpen = false,
+}: FloatingInputMessageProps) {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault()
@@ -13,7 +27,12 @@ export default function FloatingInputMessage({ value, onChange, onSend }) {
   }
 
   return (
-    <div className="fixed bottom-4 left-0 right-0 px-4 md:ml-[16rem]">
+    <div
+      className={cn(
+        "fixed bottom-4 left-0 right-0 px-4 md:ml-[16rem]",
+        isRightSidebarOpen && "md:mr-[16rem]"
+      )}
+    >
       <div className="max-w-4xl mx-auto w-full">
         <div className="border bg-background shadow-lg rounded-xl flex items-center space-x-2 p-3">
           <Input

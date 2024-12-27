@@ -16,12 +16,16 @@ async function getPostForUser(postId: Post["id"], userId: User["id"]) {
 }
 
 interface EditorPageProps {
-  params: { postId: string }
+  params: {
+    postId: string
+    classId: string
+    channelId: string
+  }
 }
 
 export default async function TutorPostEditorPage({ params }: EditorPageProps) {
   const session = await getCurrentUser()
-  const { postId } = await params
+  const { postId, classId, channelId } = await params
 
   if (!session) {
     redirect("/login")
@@ -32,9 +36,12 @@ export default async function TutorPostEditorPage({ params }: EditorPageProps) {
   if (!post) {
     notFound()
   }
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 pb-[10rem]">
       <Editor
+        classId={classId}
+        channelId={channelId}
         post={{
           id: post.id,
           title: post.title,
