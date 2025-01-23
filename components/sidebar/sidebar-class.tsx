@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/sidebar"
 
 import { UserAvatar } from "../user-avatar"
-import { ClassInviteButton } from "./class-invite-button"
 
 export interface ClassMember {
   tutors: {
@@ -36,14 +35,9 @@ export interface ClassMember {
 
 interface SidebarClassProps extends React.ComponentProps<typeof Sidebar> {
   classMembers: ClassMember
-  code?: string
 }
 
-export function SidebarClass({
-  classMembers,
-  code,
-  ...props
-}: SidebarClassProps) {
+export function SidebarClass({ classMembers, ...props }: SidebarClassProps) {
   return (
     <Sidebar
       collapsible="none"
@@ -51,26 +45,14 @@ export function SidebarClass({
       {...props}
     >
       <SidebarContent>
-        {code && (
-          <SidebarGroup>
-            <SidebarGroupLabel>คำเชิญห้องเรียน</SidebarGroupLabel>
-            <ClassInviteButton
-              code={code}
-              className="justify-start w-full"
-              size="sm"
-              variant="secondary"
-            />
-          </SidebarGroup>
-        )}
-        <SidebarSeparator className="mx-0" />
         <SidebarGroup>
           <SidebarGroupLabel>
             คุณครู - ({classMembers.tutors.length})
           </SidebarGroupLabel>
           <SidebarMenu>
-            {classMembers.tutors.map((tutor) => (
+            {classMembers.tutors.map((tutor, index) => (
               <SidebarProfile
-                key={tutor.userId}
+                key={tutor.userId + index}
                 name={tutor.user.name}
                 Image={tutor.user.image}
               />

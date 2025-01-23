@@ -3,7 +3,6 @@ import type { NextConfig } from "next";
 import "./env.mjs"
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactStrictMode: true,
   swcMinify: true,
   images: {
@@ -11,6 +10,10 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverComponentsExternalPackages: ["@prisma/client"],
+  },
+  fetchBase: {
+    development: 'http:localhost:3000/api',
+    production: 'https:example.com/api',
   },
 };
 

@@ -17,18 +17,25 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from "@/components/ui/sidebar"
-import { Class } from "@/app/api/v1/classes/route"
 
 import { Icons } from "../icons"
 import { NavMain } from "./nav-main"
 import { NavSecondary } from "./nav-secondary"
 import { NavUser } from "./nav-user"
 
-interface AppSidebarProps {
-  user: Pick<User, "name" | "email" | "image" | "role">
+export interface AppSidebarProps {
+  user?: Pick<User, "name" | "email" | "image" | "role">
   navmain: {
     title: string
-    items: Class[]
+    items?: {
+      title: string
+      url: string
+      icon?: string
+      items?: {
+        title: string
+        url: string
+      }[]
+    }[]
   }
   navsecondary?: {
     title: string
@@ -43,7 +50,9 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Link href={props.user.role === Role.TUTOR ? "/tutor" : "/student"}>
+            <Link
+              href={props?.user?.role === Role.TUTOR ? "/tutor" : "/student"}
+            >
               <SidebarMenuButton
                 size="lg"
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
@@ -56,7 +65,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
                     {siteConfig.name}
                   </span>
                   <span className="truncate text-xs text-green-400">
-                    {props.user.role === Role.TUTOR ? "ผู้สอน" : "ผู้เรียน"}
+                    {props?.user?.role === Role.TUTOR ? "ผู้สอน" : "ผู้เรียน"}
                   </span>
                 </div>
               </SidebarMenuButton>
@@ -72,11 +81,13 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
         )}
       </SidebarContent>
       <SidebarSeparator className="mx-0" />
-      <SidebarFooter>
-        <div className="p-1">
-          <NavUser user={props.user} />
-        </div>
-      </SidebarFooter>
+      {props.user && (
+        <SidebarFooter>
+          <div className="p-1">
+            <NavUser user={props.user} />
+          </div>
+        </SidebarFooter>
+      )}
       <SidebarRail />
     </Sidebar>
   )

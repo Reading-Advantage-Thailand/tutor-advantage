@@ -2,6 +2,7 @@ import React from "react"
 import { headers } from "next/headers"
 
 import { env } from "@/env.mjs"
+import { getClassInviteCode } from "@/lib/fetchers/get-class-invite-code"
 import { Separator } from "@/components/ui/separator"
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { NavActions } from "@/components/tutor/nav-actions"
@@ -34,6 +35,7 @@ export default async function TutorClassesLayout({
 }: TutorClassProps) {
   const { classId } = await params
   const members = await fetchMembers({ classId })
+  const inviteCode = await getClassInviteCode({ classId })
   return (
     <>
       <SidebarInset>
@@ -49,7 +51,7 @@ export default async function TutorClassesLayout({
         </header>
         {children}
       </SidebarInset>
-      <SidebarClass classMembers={members} />
+      <SidebarClass classMembers={members} code={inviteCode?.code} />
     </>
   )
 }

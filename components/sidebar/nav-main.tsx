@@ -24,7 +24,7 @@ export function NavMain({
   title,
 }: {
   title: string
-  items: {
+  items?: {
     title: string
     url: string
     icon?: string
@@ -39,8 +39,8 @@ export function NavMain({
     <SidebarGroup>
       <SidebarGroupLabel>{title}</SidebarGroupLabel>
       <SidebarMenu>
-        {items.length > 0 ? (
-          items.map((item) => (
+        {(items ?? []).length > 0 ? (
+          (items ?? []).map((item) => (
             <Collapsible
               key={item.title}
               asChild

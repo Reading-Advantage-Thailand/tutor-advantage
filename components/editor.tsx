@@ -34,7 +34,6 @@ export function Editor({ post, classId, channelId }: EditorProps) {
   })
   const ref = React.useRef<EditorJS | null>(null)
   const router = useRouter()
-  // const { channel } = useChannel("status-updates")
   const [isSaving, setIsSaving] = React.useState<boolean>(false)
   const [isPublished, setIsPublished] = React.useState<boolean>(post.published)
   const [isMounted, setIsMounted] = React.useState<boolean>(false)
@@ -120,7 +119,7 @@ export function Editor({ post, classId, channelId }: EditorProps) {
       })
     }
 
-    router.refresh()
+    router.back()
 
     return toast({
       description: "Your post has been saved.",
@@ -193,17 +192,19 @@ export function Editor({ post, classId, channelId }: EditorProps) {
             className={cn(buttonVariants({ size: "sm", variant: "secondary" }))}
           >
             {isSaving && <Icons.spinner className="h-4 w-4 animate-spin" />}
-            <span>บันทึกฉบับร่าง</span>
+            {isPublished ? "บันทึกการแก้ไข" : "บันทึกเป็นฉบับร่าง"}
           </button>
-          <button
-            className={cn(buttonVariants({ size: "sm" }))}
-            onClick={() => setIsPublished(true)}
-            type="submit"
-            disabled={isSaving}
-          >
-            {isSaving && <Icons.spinner className="h-4 w-4 animate-spin" />}
-            <span>โพสต์</span>
-          </button>
+          {!isPublished && (
+            <button
+              className={cn(buttonVariants({ size: "sm" }))}
+              onClick={() => setIsPublished(true)}
+              type="submit"
+              disabled={isSaving}
+            >
+              {isSaving && <Icons.spinner className="h-4 w-4 animate-spin" />}
+              <span>โพสต์</span>
+            </button>
+          )}
         </div>
       </div>
     </form>

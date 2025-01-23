@@ -66,11 +66,13 @@ export default function ClassesProvider() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="divide-y divide-border rounded-md border mb-8 ">
-                {unPublishedPosts.map((item, index) => (
-                  <PostItem key={index} post={item.post} />
-                ))}
-              </div>
+              {unPublishedPosts.length > 0 && (
+                <div className="divide-y divide-border rounded-md border mb-8 ">
+                  {unPublishedPosts.map((item, index) => (
+                    <PostItem key={index} post={item.post} />
+                  ))}
+                </div>
+              )}
               <PostCreateButton
                 classId={classId as string}
                 channelId={channelId as string}
@@ -81,12 +83,12 @@ export default function ClassesProvider() {
             classId={classId as string}
             channelId={channelId as string}
           />
-          <FloatingInputMessageClasses
+          {/* <FloatingInputMessageClasses
             user={{
               name: data?.user?.name || "S",
               avatar: data?.user?.image || "/avatars/system.jpg",
             }}
-          />
+          /> */}
         </div>
       </ChannelProvider>
     </AblyProvider>
@@ -123,7 +125,7 @@ function Messages({
           },
           author: {
             id: post.author.id,
-            name: post.author.name,
+            name: post.author.name ?? "",
             avatar: post.author.image,
           },
         }))

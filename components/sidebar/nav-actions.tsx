@@ -1,15 +1,10 @@
 "use client"
 
 import * as React from "react"
-import {
-  Bell,
-  GalleryVerticalEnd,
-  Link,
-  MoreHorizontal,
-  Settings2,
-  Trash,
-} from "lucide-react"
+import { useRouter } from "next/navigation"
+import { MoreHorizontal, Trash } from "lucide-react"
 
+import { toast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import {
   Popover,
@@ -29,46 +24,49 @@ import {
 const data = [
   [
     {
-      label: "ตั้งค่าห้องเรียน",
-      icon: Settings2,
-    },
-    {
-      label: "สมาชิก",
-      icon: GalleryVerticalEnd,
-    },
-    {
-      label: "คัดลอกรหัสคำเชิญ",
-      icon: Link,
-    },
-    {
-      label: "การแจ้งเตือน",
-      icon: Bell,
-    },
-    {
-      label: "สร้างห้องเรียนใหม่",
-      icon: GalleryVerticalEnd,
-    },
-  ],
-  [
-    {
-      label: "ลบห้องเรียน",
+      label: "ออกจากห้องเรียน",
       icon: Trash,
     },
   ],
 ]
 
-export function NavActions() {
+type NavActionsProps = {
+  classId: string
+}
+
+export function NavActions({ classId }: NavActionsProps) {
   const [isOpen, setIsOpen] = React.useState(false)
+  const router = useRouter()
 
   React.useEffect(() => {
     setIsOpen(false)
   }, [])
 
+  async function handleLeaveClass() {
+    console.log("classId", classId)
+    const data = await fetch("/api/v1/classes/leave", {
+      method: "POST",
+      body: JSON.stringify({
+        classId: classId,
+      }),
+    })
+    if (!data.ok) {
+      toast({
+        title: "เกิดข้อผิดพลาด",
+        description: "ไม่สามารถออกจากห้องเรียนได้",
+        variant: "destructive",
+      })
+    } else {
+      toast({
+        title: "ออกจากห้องเรียนสำเร็จ",
+        description: "คุณได้ออกจากห้องเรียนแล้ว",
+      })
+      router.refresh()
+    }
+  }
+
   return (
     <div className="flex items-center gap-2 text-sm">
-      {/* <div className="text-muted-foreground hidden font-medium md:inline-block">
-        Edit Oct 08
-      </div> */}
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -92,8 +90,11 @@ export function NavActions() {
                       {group.map((item, index) => (
                         <SidebarMenuItem key={index}>
                           <SidebarMenuButton
-                            onClick={() => setIsOpen(false)}
-                            disabled
+                            onClick={
+                              item.label === "ออกจากห้องเรียน"
+                                ? handleLeaveClass
+                                : () => setIsOpen(false)
+                            }
                           >
                             <item.icon /> <span>{item.label}</span>
                           </SidebarMenuButton>

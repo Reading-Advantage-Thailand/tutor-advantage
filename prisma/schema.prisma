@@ -127,6 +127,8 @@ model ClassMember {
 
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @default(now()) @map(name: "updated_at")
+
+  @@unique([userId, classId])
 }
 
 enum ClassMemberRole {

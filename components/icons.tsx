@@ -26,6 +26,7 @@ import {
   UserRoundPlus,
   Waypoints,
   X,
+  UserRoundPlusIcon,
   type Icon as LucideIcon,
 } from "lucide-react"
 
@@ -56,6 +57,7 @@ export const Icons = {
   classes: AlbumIcon,
   laptop: Laptop,
   connect: Waypoints,
+  invite: UserRoundPlusIcon,
   google: ({ ...props }: LucideProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"

@@ -1,5 +1,6 @@
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
+import { Role } from "@prisma/client"
 
 import { env } from "@/env.mjs"
 import { getCurrentUser } from "@/lib/session"
@@ -19,31 +20,25 @@ async function fetchTutorClasses(): Promise<TutorClassesResponse> {
   return await response.json()
 }
 
-const navprojects = [
-  {
-    name: "การเชิญ",
-    url: "/tutor/invites",
-    icon: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS11c2Vycy1yb3VuZCI+PHBhdGggZD0iTTE4IDIxYTggOCAwIDAgMC0xNiAwIi8+PGNpcmNsZSBjeD0iMTAiIGN5PSI4IiByPSI1Ii8+PHBhdGggZD0iTTIyIDIwYzAtMy4zNy0yLTYuNS00LThhNSA1IDAgMCAwLS40NS04LjMiLz48L3N2Zz4=",
-  },
-]
-
 export default async function TutorLayout({ children }: TutorLayoutProps) {
   const user = await getCurrentUser()
   if (!user) return redirect("/login")
+  if (user.role !== Role.TUTOR) return redirect("/role")
   const data = await fetchTutorClasses()
 
   return (
     <SidebarProvider>
       <AppSidebar
-        role={user.role}
-        navmain={data.classes}
-        title={"ห้องเรียน"}
+        navmain={{
+          title: "ห้องเรียน",
+          items: data.classes,
+        }}
         user={{
           name: user.name ?? "",
           email: user.email ?? "",
-          avatar: user.image ?? "",
+          image: user.image ?? "",
+          role: user.role ?? Role.GUEST,
         }}
-        navprojects={navprojects}
       />
       {children}
     </SidebarProvider>

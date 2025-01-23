@@ -3,6 +3,7 @@
 import React from "react"
 import { usePathname } from "next/navigation"
 
+import { cn } from "@/lib/utils"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -23,17 +24,28 @@ export default function NavPath() {
       <BreadcrumbList>
         {segments.map((segment, index) => {
           const isLast = index === segments.length - 1
+          const isChannelOrClass = index === 1 || index === 3 || index === 5
+          const isId = index === 2 || index === 4 || index === 6
           const href = `/${segments.slice(0, index + 1).join("/")}`
 
           return (
             <React.Fragment key={segment}>
               <BreadcrumbItem>
-                {isLast ? (
-                  <BreadcrumbPage className="capitalize">
+                {isLast || isChannelOrClass ? (
+                  <BreadcrumbPage
+                    className={cn(
+                      "capitalize",
+                      isChannelOrClass && "text-muted-foreground",
+                      isId && "truncate w-10"
+                    )}
+                  >
                     {segment}
                   </BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink href={href} className="capitalize">
+                  <BreadcrumbLink
+                    href={href}
+                    className={cn("capitalize", isId && "truncate w-10")}
+                  >
                     {segment}
                   </BreadcrumbLink>
                 )}

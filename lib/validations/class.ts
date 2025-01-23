@@ -9,3 +9,7 @@ export const classPatchSchema = z.object({
   name: z.string().min(3).max(32).optional(),
   description: z.string().min(3).max(256).optional(),
 })
+
+export const classJoinSchema = z.object({
+  code: z.string().min(6),
+})
