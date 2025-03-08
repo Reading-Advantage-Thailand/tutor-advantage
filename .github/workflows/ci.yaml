@@ -13,7 +13,9 @@ jobs:
       - name: Checkout Repository 📂
         uses: actions/checkout@v3
       - name: Install Bun 🏎️
-        run: curl -fsSL https://bun.sh/install | bash
+        run: |
+          curl -fsSL https://bun.sh/install | bash
+          source ~/.bashrc # Reload .bashrc to update PATH
       - name: Install Dependencies with Bun 📦
         run: bun install
       - name: Execute Linting Check ✔️
@@ -27,7 +29,9 @@ jobs:
       - name: Checkout Repository 📂
         uses: actions/checkout@v3
       - name: Install Bun 🏎️
-        run: curl -fsSL https://bun.sh/install | bash
+        run: |
+          curl -fsSL https://bun.sh/install | bash
+          source ~/.bashrc # Reload .bashrc to update PATH
       - name: Install and Build Project ⚙️
         env:
           NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
