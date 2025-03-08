@@ -4,28 +4,30 @@ on:
   pull_request: 
     branches: 
       - "*"
-      
+
 jobs:
   linting:
     name: Code Linting 🔍
     runs-on: ubuntu-latest
-    container: node:lts
     steps:
       - name: Checkout Repository 📂
-        uses: actions/checkout@v2
-      - name: Install Dependencies 📦
-        run: npm install --legacy-peer-deps
+        uses: actions/checkout@v3
+      - name: Install Bun 🏎️
+        run: curl -fsSL https://bun.sh/install | bash
+      - name: Install Dependencies with Bun 📦
+        run: bun install
       - name: Execute Linting Check ✔️
-        run: npm run lint
+        run: bun run lint
 
   build:
     name: Build Verification 🛠️
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    container: node:lts
     steps:
       - name: Checkout Repository 📂
         uses: actions/checkout@v3
+      - name: Install Bun 🏎️
+        run: curl -fsSL https://bun.sh/install | bash
       - name: Install and Build Project ⚙️
         env:
           NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
@@ -37,7 +39,7 @@ jobs:
           STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
           NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
         run: |
-          npm install --legacy-peer-deps
-          npm run build
+          bun install
+          bun run build
       - name: Completion Notification 🎉
         run: echo "Build process complete"
