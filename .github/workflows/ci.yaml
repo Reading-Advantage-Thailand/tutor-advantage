@@ -38,6 +38,6 @@ jobs:
           NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
         run: |
           npm install --legacy-peer-deps
-          npm run build
+          next build --skip-warnings
       - name: Completion Notification 🎉
         run: echo "Build process complete"
