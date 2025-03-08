@@ -22,7 +22,7 @@ jobs:
     name: Build Verification 🛠️
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    container: node:16
+    container: node:20
     steps:
       - name: Checkout Repository 📂
         uses: actions/checkout@v3
