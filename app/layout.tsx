@@ -42,21 +42,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head />
-      <body
-        className={cn(
-          "bg-background min-h-screen font-sans antialiased",
-          fontSans.variable
-        )}
-      >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
-          <Toaster />
-          <GlobalError />
-          <TailwindIndicator />
-        </ThemeProvider>
-      </body>
-    </html>
+    <body
+      className={cn(
+        "bg-background min-h-screen font-sans antialiased",
+        fontSans.variable
+      )}
+    >
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        {children}
+        <Toaster />
+        <GlobalError />
+        <TailwindIndicator />
+      </ThemeProvider>
+    </body>
   )
 }
