@@ -14,10 +14,10 @@ jobs:
       - name: Checkout Repository 📂
         uses: actions/checkout@v2
       - name: Install Dependencies 📦
-        run: npm install
+        run: npm install --legacy-peer-deps
       - name: Execute Linting Check ✔️
         run: npm run lint
-        
+
   build:
     name: Build Verification 🛠️
     runs-on: ubuntu-latest
@@ -37,7 +37,7 @@ jobs:
           STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
           NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
         run: |
-          npm install
+          npm install --legacy-peer-deps
           npm run build
       - name: Completion Notification 🎉
         run: echo "Build process complete"
