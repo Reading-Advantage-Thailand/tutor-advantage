@@ -1,27 +1,31 @@
-import { AppSidebar } from "@/components/app-sidebar"
-import AppSidebarPath from "@/components/app-sidebar-path"
+import { notFound } from "next/navigation"
+import { getClasses, getClassNameById } from "@/db/queries/class"
+import { Role } from "@prisma/client"
+
+import { auth } from "@/lib/auth"
 import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { getClasses, getClassNameById } from "@/db/queries/class"
-import { auth } from "@/lib/auth"
-import { Role } from "@prisma/client"
-import { notFound } from "next/navigation"
+import { AppSidebar } from "@/components/app-sidebar"
+import AppSidebarPath from "@/components/app-sidebar-path"
 
 interface StudentLayoutProps {
   params: Promise<{ id: string }>
   children: React.ReactNode
 }
 
-export default async function StudentLayout({ children, params }: StudentLayoutProps) {
-  const { id: classId } = await params;
-  const session = await auth();
-  if (!session || session.user.role !== Role.STUDENT) return notFound();
-  const classes = await getClasses(session);
-  const className = getClassNameById(classes, classId);
+export default async function StudentLayout({
+  children,
+  params,
+}: StudentLayoutProps) {
+  const { id: classId } = await params
+  const session = await auth()
+  if (!session || session.user.role !== Role.STUDENT) return notFound()
+  const classes = await getClasses(session)
+  const className = getClassNameById(classes, classId)
   return (
     <SidebarProvider>
       <AppSidebar user={session.user} data={classes} role={session.user.role} />
@@ -33,7 +37,7 @@ export default async function StudentLayout({ children, params }: StudentLayoutP
               orientation="vertical"
               className="mr-2 data-[orientation=vertical]:h-4"
             />
-            <AppSidebarPath className={className} id={classId} role={session.user.role} />
+            <AppSidebarPath className={className} role={session.user.role} />
           </div>
         </header>
         {children}

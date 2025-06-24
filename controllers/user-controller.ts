@@ -1,4 +1,4 @@
-import { withAuth } from "@/lib/route-handlers";
+import { withAuthAndId } from "@/lib/route-handlers";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -19,12 +19,8 @@ const userRoleSchema = z.object({
 })
 
 // update role
-export const updateUserRole = withAuth(async (
-  req: NextRequest,
-  user: User,
-  context?: z.infer<typeof routeContextSchema>
-) => {
-  const params = await context?.params;
+export const updateUserRole = withAuthAndId(async (req: NextRequest, user: User, context) => {
+  const params = await context.params;
   const validatedContext = routeContextSchema.parse({ params });
 
   if (validatedContext.params.id !== user.id) {

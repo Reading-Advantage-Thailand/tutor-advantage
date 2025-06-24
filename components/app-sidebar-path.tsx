@@ -1,31 +1,41 @@
 "use client"
 
-import React from 'react'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './ui/breadcrumb'
-import { usePathname } from 'next/navigation'
-import { Role } from '@prisma/client'
+import React from "react"
+import { usePathname } from "next/navigation"
+import { Role } from "@prisma/client"
+
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "./ui/breadcrumb"
 
 interface AppSidebarPathProps {
   className: string
-  id: string
   role: Role
 }
-export default function AppSidebarPath({ className, id, role }: AppSidebarPathProps) {
+export default function AppSidebarPath({
+  className,
+  role,
+}: AppSidebarPathProps) {
   const pathname = usePathname()
-  const last = pathname.split('/').pop()
-  let path;
+  const last = pathname.split("/").pop()
+  let path
   switch (last) {
-    case 'members':
-      path = 'สมาชิก';
-      break;
-    case 'settings':
-      path = 'การตั้งค่าห้องเรียน';
-      break;
+    case "members":
+      path = "สมาชิก"
+      break
+    case "settings":
+      path = "การตั้งค่าห้องเรียน"
+      break
     default:
-      path = '';
-      break;
+      path = ""
+      break
   }
-  if (!path) return null;
+  if (!path) return null
   return (
     <Breadcrumb>
       <BreadcrumbList>
@@ -36,12 +46,9 @@ export default function AppSidebarPath({ className, id, role }: AppSidebarPathPr
         </BreadcrumbItem>
         <BreadcrumbSeparator className="hidden md:block" />
         <BreadcrumbItem>
-          <BreadcrumbPage>
-            {path}
-          </BreadcrumbPage>
+          <BreadcrumbPage>{path}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
-
   )
 }
