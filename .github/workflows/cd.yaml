@@ -41,7 +41,7 @@ jobs:
           STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
         run: |
           gcloud auth configure-docker asia-southeast1-docker.pkg.dev --quiet
-          docker build -t asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/cloud-run-source-deploy/app:latest \
+          docker build -t asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/tutor-advantage-staging-repository/app:latest \
             --build-arg NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL \
             --build-arg NEXTAUTH_URL=$NEXTAUTH_URL \
             --build-arg NEXTAUTH_SECRET=$NEXTAUTH_SECRET \
@@ -50,14 +50,14 @@ jobs:
             --build-arg DATABASE_URL=$DATABASE_URL \
             --build-arg STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY \
             --build-arg STRIPE_WEBHOOK_SECRET=$STRIPE_WEBHOOK_SECRET .
-          docker push asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/cloud-run-source-deploy/app:latest
+          docker push asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/tutor-advantage-staging-repository/app:latest
 
       - name: Deploy to Cloud Run ☁️
         env:
           GOOGLE_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
         run: |
           gcloud run deploy tutor-advantage \
-            --image asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/cloud-run-source-deploy/app:latest \
+            --image asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/tutor-advantage-staging-repository/app:latest \
             --platform managed \
             --region asia-southeast1 \
             --allow-unauthenticated \
