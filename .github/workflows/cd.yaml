@@ -49,7 +49,7 @@ jobs:
             --build-arg GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
             --build-arg DATABASE_URL=$DATABASE_URL \
             --build-arg STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY \
-            --build-arg STRIPE_WEBHOOK_SECRET=$STRIPE_WEBHOOK_SECRET \ .
+            --build-arg STRIPE_WEBHOOK_SECRET=$STRIPE_WEBHOOK_SECRET .
           docker push asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/cloud-run-source-deploy/app:latest
 
       - name: Deploy to Cloud Run ☁️
