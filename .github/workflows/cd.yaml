@@ -1,0 +1,69 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - feature/cicd
+
+jobs:
+  deployment:
+    name: Application Deployment 🚀
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Checkout Repository 📂
+        uses: actions/checkout@v3
+
+      - id: "auth"
+        name: Authenticate with Google Cloud 🔑
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: "${{ secrets.GCP_SERVICE_ACCOUNT }}"
+
+      - name: Set Up Google Cloud SDK ☁️
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Verify gcloud CLI Configuration 🛠️
+        run: gcloud info
+
+      - name: Build and Push Docker Image 🐳
+        env:
+          GOOGLE_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+        run: |
+          gcloud auth configure-docker asia-southeast1-docker.pkg.dev --quiet
+          docker build -t asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/cloud-run-source-deploy/app:latest \
+            --build-arg NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL \
+            --build-arg NEXTAUTH_URL=$NEXTAUTH_URL \
+            --build-arg NEXTAUTH_SECRET=$NEXTAUTH_SECRET \
+            --build-arg GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
+            --build-arg GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
+            --build-arg DATABASE_URL=$DATABASE_URL \
+            --build-arg STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY \
+            --build-arg STRIPE_WEBHOOK_SECRET=$STRIPE_WEBHOOK_SECRET \ .
+          docker push asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/cloud-run-source-deploy/app:latest
+
+      - name: Deploy to Cloud Run ☁️
+        env:
+          GOOGLE_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+        run: |
+          gcloud run deploy tutor-advantage \
+            --image asia-southeast1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/cloud-run-source-deploy/app:latest \
+            --platform managed \
+            --region asia-southeast1 \
+            --allow-unauthenticated \
+            --quiet
+
+      - name: Display Deployment URL 📋
+        run: |
+          echo "Application successfully deployed to Cloud Run"
+          gcloud run services describe tutor-advantage --platform managed --region asia-southeast1 --format='value(status.url)'

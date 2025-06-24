@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  linting:
+    name: Code Linting 🔍
+    runs-on: ubuntu-latest
+    container: node:lts
+    steps:
+      - name: Checkout Repository 📂
+        uses: actions/checkout@v2
+      - name: Install Dependencies 📦
+        run: npm install
+      - name: Execute Linting Check ✔️
+        run: npm run lint
+
+  build:
+    name: Build Verification 🛠️
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: staging
+    container: node:lts
+    steps:
+      - name: Checkout Repository 📂
+        uses: actions/checkout@v3
+      - name: Install and Build Project ⚙️
+        env:
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+        run: |
+          npm install
+          npm run build
+      - name: Completion Notification 🎉
+        run: echo "Build process complete"
