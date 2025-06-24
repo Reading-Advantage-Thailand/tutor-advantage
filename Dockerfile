@@ -21,7 +21,7 @@ WORKDIR /usr/src/app
 
 COPY . /usr/src/app/
 
-RUN npm install
-RUN npm run build --legacy-peer-deps
+RUN npm install --legacy-peer-deps
+RUN npm run build
 
 CMD ["npm", "start"]
