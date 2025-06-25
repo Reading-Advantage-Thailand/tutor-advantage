@@ -91,10 +91,23 @@ export default {
 					from: { height: "var(--radix-accordion-content-height)" },
 					to: { height: "0" },
 				},
+				radialFlow: {
+					'0%, 100%': { backgroundPosition: '50% 50%' },
+					'25%': { backgroundPosition: '0% 100%' },
+					'50%': { backgroundPosition: '100% 50%' },
+					'75%': { backgroundPosition: '0% 0%' },
+				},
 			},
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
 				"accordion-up": "accordion-up 0.2s ease-out",
+				'radial-flow': 'radialFlow 12s ease infinite',
+			},
+			backgroundImage: {
+				'emerald-radial': 'radial-gradient(circle at center, #6ee7b7, #10b981, #065f46)',
+			},
+			backgroundSize: {
+				'200': '200% 200%',
 			},
 		}
 	},

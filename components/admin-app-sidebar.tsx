@@ -37,7 +37,7 @@ export function AdminAppSidebar({ user, ...props }: AdminAppSidebarProps) {
           size="lg"
           className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
         >
-          <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+          <div className="bg-[#6ee7b7] text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
             <Icons.logo className="size-4" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">

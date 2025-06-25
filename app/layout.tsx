@@ -1,13 +1,17 @@
-import type { Metadata } from "next";
-import "../styles/globals.css";
+import type { Metadata } from "next"
+
+import "../styles/globals.css"
+
 import { Inter as FontSans } from "next/font/google"
 import localFont from "next/font/local"
-import { cn } from "@/lib/utils";
-import { ThemeProvider } from "@/components/providers/theme-provider";
-import { TailwindIndicator } from "@/components/helpers/tailwind-indicator";
-import { Toaster } from "@/components/ui/sonner";
-import { SessionProvider } from "next-auth/react";
-import { auth } from "@/lib/auth";
+import { SessionProvider } from "next-auth/react"
+
+import { auth } from "@/lib/auth"
+import { cn } from "@/lib/utils"
+import { Toaster } from "@/components/ui/sonner"
+import { TailwindIndicator } from "@/components/helpers/tailwind-indicator"
+import { Analytics } from "@/components/providers/analytics"
+import { ThemeProvider } from "@/components/providers/theme-provider"
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -26,14 +30,16 @@ interface RootLayoutProps {
 export const metadata: Metadata = {
   title: "Tutor Advantage",
   description: "Tutor Advantage",
-};
+}
 
 export default async function RootLayout({ children }: RootLayoutProps) {
   const session = await auth()
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <head />
+      <head>
+        <link rel="icon" href="/tutor-advantage-rounded.png" type="image/png" />
+      </head>
       <body
         className={cn(
           "bg-background min-h-screen font-sans antialiased",
@@ -44,6 +50,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
         <SessionProvider session={session}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             {children}
+            <Analytics />
             <Toaster />
             <TailwindIndicator />
           </ThemeProvider>
