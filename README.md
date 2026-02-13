@@ -1,110 +1,161 @@
-# Next.js 15 / Auth.js / Next-intl / Shadcn (all)
-
 # Tutor Advantage
 
-Tutor Advantage is an innovative educational technology platform designed to revolutionize in-person, after-school English tutoring in Thailand. By combining AI-powered learning tools with an ethical multi-level marketing (MLM) structure, we aim to expand access to high-quality English education beyond urban and upper-middle-class areas.
+An ethical, AI-enhanced English language tutoring platform for Thai students, combining technology-powered learning with personalized in-person instruction.
 
-## Vision and Mission
+## Project Overview
 
-**Vision**: To make high-quality education available to as many Thai children as possible.
+Tutor Advantage provides comprehensive English language education aligned with CEFR levels and Thai Ministry of Education benchmarks:
 
-**Mission**: Expand access to quality English education in Thailand through a combination of technology-enhanced learning and in-person tutoring.
+- **Grade 6**: CEFR A1
+- **Grade 9**: CEFR A2
+- **Grade 12**: CEFR B1
 
-## Key Features
+## Curriculum Structure
 
-### Learning and Teaching Tools
+Students progress through 45 courses across 5 CEFR levels. Each course comprises 20 lessons.
 
-1. **AI-powered Extensive Reading System**
+### Course Breakdown
 
-   - Generates articles across CEFR levels A1 to C2
-   - Creates comprehension questions and practice activities
-   - Adapts content difficulty based on student performance
+| CEFR Level | Levels | Courses per Level | Total Courses |
+|------------|--------|-------------------|---------------|
+| Pre-A1     | 3      | 1                 | 3             |
+| A1         | 3      | 2                 | 6             |
+| A2         | 3      | 3                 | 9             |
+| B1         | 3      | 4                 | 12            |
+| B2         | 3      | 5                 | 15            |
+| **Total**  | **15** | **15**            | **45**        |
 
-2. **Interactive Lesson Components**
+## Core Features
 
-   - Audio playback for listening exercises
-   - Sentence translation feature
-   - Vocabulary games and SRS (Spaced Repetition System) flashcards
-   - Speaking exercise recording and playback
+### For Students
+- Adaptive learning paths based on CEFR assessment
+- AI-powered extensive reading system with auto-generated content
+- Interactive lesson components (audio playback, vocabulary games, sentence translation)
+- Progress tracking and achievement system
+- Integrated workbooks for supplementary practice
 
-3. **Comprehensive Student Progress Tracking**
+### For Tutors
+- Lesson planning and scheduling tools
+- Student progress analytics
+- Professional development resources
+- Transparent compensation structure
+- Mentorship and network building
 
-   - Initial placement test
-   - Continuous assessment system
-   - Performance analytics dashboard
-
-4. **Digital and Printable Materials**
-   - Monthly printable workbooks (20 lessons each)
-   - Integrated with digital content
-
-### Tutor Development and Networking
-
-5. **Comprehensive Onboarding Program**
-
-   - Video tutorials on app features and teaching methodologies
-   - Training modules on curriculum and ethical business practices
-
-6. **Professional Development System**
-
-   - Ongoing training modules
-   - Peer learning communities and forums
-   - Mock lesson scheduling and feedback system
-
-7. **Ethical Networking Tools**
-
-   - Single-use referral code generation
-   - Ethical recruitment practice guides
-
-8. **Network Management Dashboard**
-   - Network structure visualization
-   - Performance metrics (financial and quality) for referrals
-
-### Quality Control Measures
-
-9. **Standardized Curriculum**
-
-   - Scripted lesson plans
-   - Regular content updates based on educational best practices
-
-10. **Performance Evaluation System**
-    - Student feedback collection
-    - Peer review scheduling
-    - Mystery shopping session management
+### For Administrators
+- Content management system
+- Performance monitoring and reporting
+- Quality assurance tools
+- User and tutor management
 
 ## Technology Stack
 
-- Frontend: Next.js 14 with app router
-- Backend: Google Cloud Platform
-- Database: Suapbase Postgresql
-- Authentication: Supabase Authentication
-- AI Integration: Custom models for content generation and personalization
-
-## Business Model
-
-Tutor Advantage employs a multi-level marketing (MLM) inspired structure with significant ethical safeguards:
-
-- Focus on educational outcomes rather than recruitment
-- Transparent compensation structure with maximum 20% rate difference between entry-level and top-tier tutors
-- Continuous payment structure to mitigate typical MLM issues
-- Emphasis on quality control and ongoing professional development
+- **Framework**: Next.js 16 with TypeScript
+- **Database**: Google Cloud SQL (PostgreSQL)
+- **ORM**: Prisma
+- **UI Components**: shadcn/ui
+- **Styling**: Tailwind CSS
+- **Payments**: Stripe
+- **Cloud Platform**: Google Cloud Platform
+- **Internationalization**: next-intl (English, Thai)
 
 ## Educational Framework
 
-- Aligned with CEFR levels from A1 to C2
-- Structured grammar progression across levels
-- Focus on reading, writing, speaking, and listening skills
-- Adaptive learning paths based on individual student progress
+### 55-Minute Lesson Structure
 
-## Target Users
+Each lesson follows a proven methodology:
 
-1. **Students**: Thai children and young adults looking to improve their English skills
-2. **Tutors**: English language teachers seeking flexible work opportunities and professional development
-3. **Parents**: Those seeking high-quality, affordable English education for their children
+1. Warm-up and Activate Prior Knowledge (3 min)
+2. Listen to Others Read (5 min)
+3. Read to Self (7 min)
+4. Word Work (10 min)
+5. Listen to Others Read (5 min)
+6. Read to Others (8 min)
+7. Work on Writing/Speaking (12 min)
+8. Extensive Reading (4 min)
+9. Wrap-up (1 min)
 
-## Future Development
+### Content Generation
 
-- Expansion to other academic subjects beyond English
-- Enhanced AI features for more personalized learning experiences
-- Potential adaptation of the model for other regions or countries
+AI-powered system generates content aligned with CEFR grammar structures and vocabulary requirements for each level, ensuring consistency and variety across the platform.
 
-Tutor Advantage aims to create a sustainable, ethical, and effective educational ecosystem that benefits students, tutors, and communities across Thailand.
+## Ethical MLM Framework
+
+The platform uses a transparent, education-focused multi-level marketing structure:
+
+- Tutors earn directly from teaching their own students
+- Network commissions based on downline performance with diminishing returns
+- Quality control through performance evaluations
+- No recruitment quotas or pressure
+- Focus on educational outcomes over network expansion
+
+## Development
+
+### Repository Structure
+```
+├── src/
+│   ├── app/           # Next.js 16 app router
+│   ├── components/    # React components (shadcn/ui based)
+│   ├── lib/           # Utilities and helpers
+│   ├── types/         # TypeScript type definitions
+│   └── styles/        # Global styles and Tailwind config
+├── prisma/            # Database schema and migrations
+├── public/            # Static assets
+└── docs/              # Project documentation
+```
+
+### Git Workflow
+
+All development follows a feature branch workflow:
+
+```bash
+git checkout -b feature/your-feature-name
+# Make changes and commit
+git add .
+git commit -m "Descriptive commit message"
+git push -u origin feature/your-feature-name
+# Create pull request for review
+# After approval, merge to main
+git checkout main
+git pull
+git merge feature/your-feature-name
+git push
+```
+
+## Database
+
+### Schema Overview
+
+Key entities:
+- **Users**: Students, tutors, and administrators
+- **Courses**: 45 total courses organized by CEFR level
+- **Lessons**: 20 lessons per course
+- **Content**: Articles, exercises, assessments
+- **Progress**: Student lesson completion and assessment results
+- **Transactions**: Payment and commission tracking
+- **Network**: MLM structure and tutor relationships
+
+Managed with Prisma ORM and PostgreSQL on Google Cloud SQL.
+
+## Internationalization
+
+The platform supports:
+- **English** (en)
+- **Thai** (th)
+
+Language switching and dynamic content translation via next-intl.
+
+## Related Documentation
+
+- [55-Minute EFL Lesson Plan](./docs/55-minute-efl-lesson-plan.md)
+- [CEFR System Prompts](./docs/cefr-system-prompts.json)
+- [Data Model Specifications](./docs/data-model-specifications.md)
+- [Development Todo List](./docs/development-todo.md)
+- [Git Workflow Instructions](./docs/git-workflow.md)
+
+## License
+
+Proprietary - Tutor Advantage
+
+## Contact
+
+For inquiries about the Tutor Advantage project, contact the development team.
