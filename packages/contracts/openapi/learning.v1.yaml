@@ -1,0 +1,156 @@
+openapi: 3.1.0
+info:
+  title: Tutor Advantage Learning Service API
+  version: "1.0.0"
+  description: API for managing classes, referrals, and enrollment.
+servers:
+  - url: http://localhost:3002
+    description: Local development server
+paths:
+  /health:
+    get:
+      summary: Health Check
+      responses:
+        "200":
+          description: OK
+  /version:
+    get:
+      summary: Get Service Version
+      responses:
+        "200":
+          description: Version metadata
+  /v1/classes:
+    post:
+      summary: Create Class
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, maxStudents]
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                maxStudents:
+                  type: integer
+      responses:
+        "201":
+          description: Class created
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+  /v1/classes/{classId}/close:
+    post:
+      summary: Close Class
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: classId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Class closed
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+  /v1/referrals/generate:
+    post:
+      summary: Generate Referral Link/QR Payload
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [classId]
+              properties:
+                classId:
+                  type: string
+      responses:
+        "200":
+          description: Referral token generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                  qrPayload:
+                    type: string
+  /v1/enroll/{referralToken}:
+    post:
+      summary: Enroll via Referral Token
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: referralToken
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Enrollment successful (Primary or Fallback)
+        "400":
+          description: Invalid token or full class without fallback
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          required: [code, message, requestId]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            requestId:
+              type: string
+            details:
+              type: object
+  responses:
+    BadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
+    UnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
+    ForbiddenError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"

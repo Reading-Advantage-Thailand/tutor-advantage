@@ -1,0 +1,273 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["identity", "learning", "finance_mlm"]
+}
+
+// ----------------------------------------------------------------------
+// IDENTITY SCHEMA
+// ----------------------------------------------------------------------
+
+model User {
+  userId           String            @id @default(dbgenerated("gen_random_uuid()")) @map("user_id") @db.Uuid
+  role             String
+  displayName      String?           @map("display_name")
+  email            String?           @unique
+  phoneNumber      String?           @map("phone_number")
+  dateOfBirth      DateTime?         @map("date_of_birth") @db.Date
+  isActive         Boolean           @default(true) @map("is_active")
+  sponsorTutorId   String?           @map("sponsor_tutor_id") @db.Uuid
+  sponsorLockedAt  DateTime?         @map("sponsor_locked_at") @db.Timestamptz
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime          @default(now()) @map("updated_at") @db.Timestamptz
+
+  oauthIdentities  OAuthIdentity[]
+  studentConsents  GuardianConsent[] @relation("StudentConsents")
+  guardianConsents GuardianConsent[] @relation("GuardianConsents")
+  userConsents     UserConsent[]
+
+  @@map("users")
+  @@schema("identity")
+}
+
+model OAuthIdentity {
+  identityId      String   @id @default(dbgenerated("gen_random_uuid()")) @map("identity_id") @db.Uuid
+  userId          String   @map("user_id") @db.Uuid
+  provider        String
+  providerSubject String   @map("provider_subject")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user            User     @relation(fields: [userId], references: [userId])
+
+  @@unique([provider, providerSubject])
+  @@map("oauth_identities")
+  @@schema("identity")
+}
+
+model GuardianConsent {
+  consentId      String   @id @default(dbgenerated("gen_random_uuid()")) @map("consent_id") @db.Uuid
+  studentUserId  String   @map("student_user_id") @db.Uuid
+  guardianUserId String?  @map("guardian_user_id") @db.Uuid
+  guardianName   String   @map("guardian_name")
+  relation       String
+  consentedAt    DateTime @map("consented_at") @db.Timestamptz
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  student        User     @relation("StudentConsents", fields: [studentUserId], references: [userId])
+  guardian       User?    @relation("GuardianConsents", fields: [guardianUserId], references: [userId])
+
+  @@map("guardian_consents")
+  @@schema("identity")
+}
+
+model UserConsent {
+  userConsentId  String   @id @default(dbgenerated("gen_random_uuid()")) @map("user_consent_id") @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  consentType    String   @map("consent_type")
+  status         String
+  effectiveAt    DateTime @map("effective_at") @db.Timestamptz
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user           User     @relation(fields: [userId], references: [userId])
+
+  @@map("user_consents")
+  @@schema("identity")
+}
+
+// ----------------------------------------------------------------------
+// LEARNING SCHEMA
+// ----------------------------------------------------------------------
+
+model Series {
+  seriesId    String   @id @default(dbgenerated("gen_random_uuid()")) @map("series_id") @db.Uuid
+  code        String   @unique
+  name        String
+  cefrLevel   String   @map("cefr_level")
+  raLevelStart Int     @map("ra_level_start")
+  raLevelEnd   Int     @map("ra_level_end")
+  tagline     String?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  books       Book[]
+
+  @@map("series")
+  @@schema("learning")
+}
+
+model Book {
+  bookId           String   @id @default(dbgenerated("gen_random_uuid()")) @map("book_id") @db.Uuid
+  seriesId         String   @map("series_id") @db.Uuid
+  levelNumber      Int      @map("level_number")
+  bookCode         String   @unique @map("book_code")
+  title            String
+  articleCount     Int      @map("article_count")
+  classHours       Int?     @map("class_hours")
+  independentHours Int?     @map("independent_hours")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  series           Series   @relation(fields: [seriesId], references: [seriesId])
+  classes          Class[]
+
+  @@map("books")
+  @@schema("learning")
+}
+
+model Class {
+  classId       String   @id @default(dbgenerated("gen_random_uuid()")) @map("class_id") @db.Uuid
+  tutorUserId   String   @map("tutor_user_id") @db.Uuid
+  bookId        String   @map("book_id") @db.Uuid
+  title         String
+  capacity      Int
+  enrolledCount Int      @default(0) @map("enrolled_count")
+  status        String
+  startsAt      DateTime? @map("starts_at") @db.Timestamptz
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz
+
+  book          Book        @relation(fields: [bookId], references: [bookId])
+  referrals     Referral[]
+  enrollments   Enrollment[]
+
+  @@index([tutorUserId, status])
+  @@map("classes")
+  @@schema("learning")
+}
+
+model Referral {
+  referralId    String   @id @default(dbgenerated("gen_random_uuid()")) @map("referral_id") @db.Uuid
+  token         String   @unique
+  classId       String   @map("class_id") @db.Uuid
+  tutorUserId   String   @map("tutor_user_id") @db.Uuid
+  campaignLabel String?  @map("campaign_label")
+  status        String
+  expiresAt     DateTime? @map("expires_at") @db.Timestamptz
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  class         Class    @relation(fields: [classId], references: [classId])
+
+  @@map("referrals")
+  @@schema("learning")
+}
+
+model Enrollment {
+  enrollmentId         String   @id @default(dbgenerated("gen_random_uuid()")) @map("enrollment_id") @db.Uuid
+  classId              String   @map("class_id") @db.Uuid
+  studentUserId        String   @map("student_user_id") @db.Uuid
+  referralToken        String?  @map("referral_token")
+  status               String
+  paymentTransactionId String?  @map("payment_transaction_id")
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt            DateTime @default(now()) @map("updated_at") @db.Timestamptz
+
+  class                Class    @relation(fields: [classId], references: [classId])
+
+  @@index([studentUserId, status])
+  @@map("enrollments")
+  @@schema("learning")
+}
+
+// ----------------------------------------------------------------------
+// FINANCE & MLM SCHEMA
+// ----------------------------------------------------------------------
+
+model PaymentIntent {
+  paymentIntentId String   @id @default(dbgenerated("gen_random_uuid()")) @map("payment_intent_id") @db.Uuid
+  enrollmentId    String   @map("enrollment_id") @db.Uuid
+  studentUserId   String   @map("student_user_id") @db.Uuid
+  amountMinor     BigInt   @map("amount_minor")
+  currency        String
+  method          String
+  status          String
+  idempotencyKey  String?  @unique @map("idempotency_key")
+  providerRef     String?  @map("provider_ref")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime @default(now()) @map("updated_at") @db.Timestamptz
+
+  events          PaymentEvent[]
+
+  @@map("payment_intents")
+  @@schema("finance_mlm")
+}
+
+model PaymentEvent {
+  paymentEventId  String   @id @default(dbgenerated("gen_random_uuid()")) @map("payment_event_id") @db.Uuid
+  paymentIntentId String?  @map("payment_intent_id") @db.Uuid
+  eventType       String   @map("event_type")
+  rawPayload      Json     @map("raw_payload")
+  occurredAt      DateTime @map("occurred_at") @db.Timestamptz
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  paymentIntent   PaymentIntent? @relation(fields: [paymentIntentId], references: [paymentIntentId])
+
+  @@map("payment_events")
+  @@schema("finance_mlm")
+}
+
+model SettlementRun {
+  settlementRunId String   @id @default(dbgenerated("gen_random_uuid()")) @map("settlement_run_id") @db.Uuid
+  periodMonth     String   @map("period_month")
+  timezone        String   @default("Asia/Bangkok")
+  status          String
+  previewPayload  Json     @map("preview_payload")
+  createdBy       String?  @map("created_by")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+  approvedBy      String?  @map("approved_by")
+  approvedAt      DateTime? @map("approved_at") @db.Timestamptz
+
+  payoutLines     PayoutLine[]
+  adjustments     Adjustment[]
+
+  @@index([periodMonth, status])
+  @@map("settlement_runs")
+  @@schema("finance_mlm")
+}
+
+model PayoutLine {
+  payoutLineId      String   @id @default(dbgenerated("gen_random_uuid()")) @map("payout_line_id") @db.Uuid
+  settlementRunId   String   @map("settlement_run_id") @db.Uuid
+  tutorUserId       String   @map("tutor_user_id") @db.Uuid
+  grossVolumeMinor  BigInt   @map("gross_volume_minor")
+  payoutRate        Decimal  @map("payout_rate") @db.Decimal(12, 8)
+  payoutAmountMinor BigInt   @map("payout_amount_minor")
+  eligibilityStatus String   @map("eligibility_status")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  settlementRun     SettlementRun @relation(fields: [settlementRunId], references: [settlementRunId])
+
+  @@map("payout_lines")
+  @@schema("finance_mlm")
+}
+
+model Adjustment {
+  adjustmentId    String   @id @default(dbgenerated("gen_random_uuid()")) @map("adjustment_id") @db.Uuid
+  settlementRunId String   @map("settlement_run_id") @db.Uuid
+  tutorUserId     String   @map("tutor_user_id") @db.Uuid
+  amountMinor     BigInt   @map("amount_minor")
+  reason          String
+  createdBy       String   @map("created_by")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  settlementRun   SettlementRun @relation(fields: [settlementRunId], references: [settlementRunId])
+
+  @@map("adjustments")
+  @@schema("finance_mlm")
+}
+
+model AuditEvent {
+  auditEventId String   @id @default(dbgenerated("gen_random_uuid()")) @map("audit_event_id") @db.Uuid
+  actorId      String   @map("actor_id")
+  action       String
+  entityType   String   @map("entity_type")
+  entityId     String   @map("entity_id")
+  payload      Json?
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([entityType, entityId, createdAt(sort: Desc)])
+  @@map("audit_events")
+  @@schema("finance_mlm")
+}

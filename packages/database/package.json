@@ -1,0 +1,19 @@
+{
+  "name": "@tutor-advantage/database",
+  "version": "1.0.0",
+  "description": "Centralized Prisma ORM for Tutor Advantage",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "generate": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "prisma": "^5.22.0",
+    "typescript": "^5.7.2"
+  }
+}

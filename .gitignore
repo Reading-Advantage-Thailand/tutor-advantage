@@ -1,1 +1,9 @@
+# Node.js
 node_modules
+
+# Cloud SQL Proxy
+cloud-sql-proxy.exe
+start-proxy.ps1
+
+# Environment variables
+.env

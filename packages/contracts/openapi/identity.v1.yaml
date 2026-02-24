@@ -1,0 +1,145 @@
+openapi: 3.1.0
+info:
+  title: Tutor Advantage Identity Service API
+  version: "1.0.0"
+  description: API for managing user identity, authentication, and guardian consent.
+servers:
+  - url: http://localhost:3001
+    description: Local development server
+paths:
+  /health:
+    get:
+      summary: Health Check
+      responses:
+        "200":
+          description: OK
+  /version:
+    get:
+      summary: Get Service Version
+      responses:
+        "200":
+          description: Version metadata
+  /v1/auth/callback:
+    post:
+      summary: OAuth Callback
+      description: Handles OAuth callback from Facebook, Google, or LINE.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [provider, code]
+              properties:
+                provider:
+                  type: string
+                  enum: [facebook, google, line]
+                code:
+                  type: string
+      responses:
+        "200":
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionToken:
+                    type: string
+                  user:
+                    $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+  /v1/session:
+    get:
+      summary: Get Current Session
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current user session details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+  /v1/guardian/consent:
+    post:
+      summary: Submit Guardian Consent
+      description: Required flow for underage students before payment or contact.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [guardianName, guardianContact, consentGiven]
+              properties:
+                guardianName:
+                  type: string
+                guardianContact:
+                  type: string
+                consentGiven:
+                  type: boolean
+      responses:
+        "200":
+          description: Consent recorded
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [STUDENT, TUTOR, ADMIN]
+        requiresGuardian:
+          type: boolean
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          required: [code, message, requestId]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            requestId:
+              type: string
+            details:
+              type: object
+  responses:
+    BadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
+    UnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
