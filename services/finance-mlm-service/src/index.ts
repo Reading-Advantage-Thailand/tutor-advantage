@@ -4,42 +4,41 @@ import {
   requestLoggerMiddleware,
   requestIdMiddleware,
   errorHandlerMiddleware,
-  logger,
 } from "@tutor-advantage/shared-config";
+import { authMiddleware } from "./middlewares/authMiddleware";
+import {
+  createPaymentIntent,
+  handleWebhook,
+} from "./controllers/paymentController";
 
 const app = express();
+const port = process.env.PORT || 3003;
+
 app.use(cors());
 app.use(express.json());
 
-// Shared Middlewares
+// Apply shared middleware
 app.use(requestIdMiddleware);
 app.use(requestLoggerMiddleware);
 
-// Health Check Endpoint
+// Base endpoints
 app.get("/health", (req: Request, res: Response) => {
-  res
-    .status(200)
-    .json({
-      status: "ok",
-      service: "finance-mlm-service",
-      timestamp: new Date().toISOString(),
-    });
+  res.status(200).json({ status: "ok", service: "finance-mlm-service" });
 });
 
-// Version Endpoint
 app.get("/version", (req: Request, res: Response) => {
   res.status(200).json({ version: "1.0.0", service: "finance-mlm-service" });
 });
 
-// Root API
-app.get("/", (req: Request, res: Response) => {
-  res.send("Finance MLM Service API");
-});
+// Protected Payment Routes
+app.post("/v1/payments/intent", authMiddleware, createPaymentIntent);
 
-// Error handling middleware (Must be last)
+// Public Webhook Routes
+app.post("/v1/payments/webhook", handleWebhook);
+
+// Apply error handler last
 app.use(errorHandlerMiddleware);
 
-const port = process.env.PORT || 3003;
 app.listen(port, () => {
-  logger.info(`Finance MLM Service running on port ${port}`);
+  console.log(`Finance & MLM Service running on port ${port}`);
 });
