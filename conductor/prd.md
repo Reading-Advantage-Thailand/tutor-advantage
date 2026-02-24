@@ -16,10 +16,10 @@ The first release objective is not a consumer mobile launch. It is a production 
 - student payments (PromptPay + cards),
 - and automated monthly MLM settlement with finance approval workflow.
 
-Mobile sequence after backend completion:
+Web/LIFF sequence after backend completion:
 
-1. Tutor app
-2. Student app
+1. Tutor PWA
+2. Student LINE LIFF portal
 
 ## 2. Business Context
 
@@ -31,9 +31,10 @@ Mobile sequence after backend completion:
 
 ### 2.2 Core Commercial Model
 
-- Tutor creates class packages (one class package = one book in V1).
+- Tutor creates class packages (one class package = one book in V1, approx. 25 hours for ~2500 THB).
+- Value proposition: Tutors project a 15-step scripted lesson plan, providing them a low-prep system and fair pay, while students receive quality instruction with additional time in the student app.
 - Tutor shares class-bound referral links/QR codes via their own channels (Facebook/LINE).
-- Student or guardian creates account/signs in, pays company directly, then enrollment activates.
+- Student or guardian creates account/signs in, pays company directly on the company website, then enrollment activates.
 - MLM commissions are calculated from current transaction volume in the network with continuous-rate logic.
 
 ## 3. Goals and Non-Goals
@@ -51,7 +52,7 @@ Mobile sequence after backend completion:
 1. Full campaign analytics dashboards.
 2. Multi-currency support.
 3. Generic public influencer campaign tooling.
-4. Full tutor/student app UX scope in this track.
+4. Full tutor PWA/student LIFF UX scope in this track.
 
 ## 4. Personas and Jobs-to-be-Done
 
@@ -109,7 +110,7 @@ Acceptance:
 
 ### FR-002 Authentication and Access
 
-- Providers: Facebook + Google.
+- Providers: Tutors use Facebook + Google (PWA). Students exclusively use LINE Login (LIFF).
 - Role-aware sessions for tutor/student/guardian/admin.
 - Guardian-required flow for underage users before payment/contact consent.
 
@@ -119,12 +120,15 @@ Acceptance:
 ### FR-003 Tutor Class Lifecycle
 
 - Tutor-only class creation and ownership.
+- Tutor schedules the class hours in the system calendar based on client availability.
 - Class status supports open/full/closed.
 - Referral links expire when class is full or closed.
+- **Class Reassignment / Auction:** If a tutor abandons a class, the system supports an "auction page" where local, long-term tutors can take over the remaining enrollments, potentially accepting a discount to gain residual network income and student retention.
 
 Acceptance:
 - Non-tutor class creation rejected.
 - Expired links cannot enroll into closed/full class.
+- Abandoned classes can be reassigned to active tutors.
 
 ### FR-004 Referral Placement
 
@@ -137,7 +141,7 @@ Acceptance:
 
 ### FR-005 Payment and Enrollment Activation
 
-- Student-pay flow in THB.
+- Student-pay flow in THB, processed entirely within the student's LINE LIFF portal (bypassing mobile app store billing).
 - 100% upfront payment required before active enrollment.
 - Payment success creates commissionable event.
 
@@ -155,9 +159,10 @@ Acceptance:
 
 - Monthly settlement in ICT (UTC+7) calendar month.
 - Continuous differential payout algorithm on network volume.
-- Eligibility requires at least one successful paid enrollment in period.
+- Eligibility requires at least one individual course sale per month.
 - Inactive nodes are compressed.
 - Upline reassignment blocked after activation.
+- **Volume Metric:** The exact actual paid THB amount (post-discount) is the strict and only input for the MLM volume calculations. No artificial multipliers.
 - **Math Standard:** All internal ledger and commission math must use **Satang (Value * 100)** stored as Integers to prevent rounding errors.
 
 Acceptance:
@@ -191,18 +196,20 @@ Acceptance:
 
 - Versioned consent logs for all users, particularly for minor/guardian relationships.
 - Support for "Right to be Forgotten" and data portability requests.
+- **Soft Delete / Anonymization Strategy:** To balance PDPA with immutable financial ledgers, deletion requests result in PII (name, email, phone) being overwritten with cryptographic hashes or placeholders in the `identity-service`, while UUIDs and transactional history remain intact in the `finance-mlm-service`.
 - Immutable audit trail of consent events (Privacy Sources to Privacy Sinks).
 
-### FR-011 LINE Official Account Integration
+### FR-011 LINE Official Account Integration (LIFF)
 
+- The entire student experience is built as a LINE LIFF app, providing zero-friction access.
 - Push notifications for payment success, class reminders, and benchmark results.
-- Deep-linking from LINE messages directly into specific app views (e.g., a specific article or class).
-- Maintain in-app chat as the "System of Record" for legal/audit purposes.
+- Deep-linking from LINE messages directly into specific LIFF views (e.g., a specific article or class).
+- Maintain in-app chat within the LIFF portal as the "System of Record" for legal/audit purposes.
 
-### FR-012 Offline-First Student Experience
+### FR-012 Aggressive Caching (PWA/LIFF)
 
-- Asynchronous caching of the current course's assets and articles.
-- Progress tracking must work offline and sync when connectivity is restored.
+- Service Workers for both the Tutor PWA and Student LIFF portal to aggressively pre-cache the current active content (e.g., current book's assets).
+- Replaces the need for a fully offline-first native app due to reliable 4G coverage.
 
 ### FR-013 Tutor Training and Quality Benchmarks
 
@@ -237,7 +244,7 @@ Use bottom-up payout:
 
 - **THB-only ledger using Satang (Integers).**
 - High precision internal calculations; round only at final tutor-period output.
-- No reserve/holdback in V1.
+- No reserve/holdback in V1 (company accepts chargeback risk to ensure immediate tutor profitability).
 - Refund/chargeback clawback next period.
 - **10% Re-up Discount:** Modeled as a price override where the tutor absorbs 7% of the discount and the company absorbs 3%.
 - Finance approval gate with Makers-Checkers validation required before payout release.
@@ -342,12 +349,12 @@ Operational artifacts:
 - Automated monthly settlement engine
 - Finance approval console with audit and exports
 
-### Milestone 2 (Tutor App)
+### Milestone 2 (Tutor PWA)
 
 - Tutor class creation and referral operations
 - Basic enrollment and communication workflows
 
-### Milestone 3 (Student App)
+### Milestone 3 (Student LINE LIFF Portal)
 
 - Referral onboarding/payment/enrollment access
 - In-app communication and progression access

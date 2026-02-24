@@ -9,7 +9,7 @@ Tutor Advantage is pivoting to a backend-first tutoring ecosystem with a Thai-lo
 - MLM-based tutor network compensation
 - Student-pay class enrollment
 - Tutor-led classes tied to workbook books
-- Mobile-first delivery (tutor app first release after backend, then student app)
+- Web/LIFF-first delivery (Tutor PWA first release after backend, then Student LINE LIFF portal)
 
 ## Primary Goals
 
@@ -30,10 +30,10 @@ Tutor Advantage is pivoting to a backend-first tutoring ecosystem with a Thai-lo
 ## Platform and Sequence
 
 - Backend-first build order
-- Then tutor mobile app
-- Then student mobile app
-- Separate tutor and student mobile apps from day 1
-- Capacitor-based offline-first strategy: asynchronous caching for the current book's assets
+- Then Tutor PWA (Progressive Web App)
+- Then Student LINE LIFF (LINE Front-end Framework) portal
+- Separate tutor and student web experiences from day 1
+- Aggressive caching strategy: Service Workers for PWA and LIFF to pre-cache the current active content, replacing the need for a native offline-first app.
 
 ## Backend Architecture
 
@@ -46,7 +46,7 @@ Tutor Advantage is pivoting to a backend-first tutoring ecosystem with a Thai-lo
 
 ## Auth and Communication
 
-- Launch auth providers: Facebook + Google
+- Launch auth providers: Tutors use Facebook + Google (PWA). Students exclusively use LINE Login (LIFF).
 - Official communication policy: in-app chat as system of record
 - Messaging Integration: **LINE Official Account (OA)** for push notifications (payments, class reminders, benchmarks) with deep-linking to the app.
 - Underage and Privacy Policy: **PDPA-compliant** guardian-required flow; versioned consent logs in `identity-service` for auditing.
@@ -56,8 +56,10 @@ Tutor Advantage is pivoting to a backend-first tutoring ecosystem with a Thai-lo
 - Student-pay model
 - Tutors create class-bound referral links/QR codes
 - Referral link purpose: place student into specific class flow
-- Billing unit: class package tied to exactly one book
+- Billing unit: class package tied to exactly one book (approximately 25 hours of instruction for ~2500 THB)
+- Tutor schedules the class hours in the system calendar based on client availability; no changes until the next course.
 - Collection schedule: 100% upfront before enrollment activation
+- **Checkout Location:** All payments are processed seamlessly within the student's LINE LIFF portal. There is no native student app, entirely avoiding App Store/Play Store billing mandates.
 - Payment rails target: Omise for PromptPay + cards (local-first configuration)
 - **10% Re-up Discount:** 7% deducted from tutor volume, 3% from company margin; modeled as a price override event.
 
@@ -73,8 +75,9 @@ Tutor Advantage is pivoting to a backend-first tutoring ecosystem with a Thai-lo
 - Payout release: finance approval required with **Makers-Checkers workflow** for all manual adjustments.
 - Rounding: high-precision internal math, round only at final tutor-period payout
 - Upline changes: not allowed after activation
-- Activity eligibility: at least 1 successful paid enrollment in settlement month; inactive nodes compressed
-- No reserve/holdback in V1
+- Activity eligibility: at least 1 individual course sale per month; inactive nodes compressed
+- No reserve/holdback in V1 (company accepts the chargeback risk to get tutors profitable ASAP)
+- **Volume Metric:** The exact actual paid THB amount (post-discount) is the strict and only input for the MLM volume calculations. No artificial multipliers.
 - **Fraud Prevention:** Volume velocity checks and manual review flags for abnormal enrollment spikes.
 
 ## Commission Function Inputs

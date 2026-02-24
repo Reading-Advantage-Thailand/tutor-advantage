@@ -1,0 +1,435 @@
+openapi: 3.0.3
+info:
+  title: Finance MLM Service API
+  version: 1.0.0-draft
+  description: Draft V1 contract for payments, monthly ICT settlement, payout approval, and audit.
+servers:
+  - url: https://api.tutoradvantage.com/finance-mlm
+paths:
+  /v1/health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: Service healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /v1/version:
+    get:
+      summary: Contract and build version
+      responses:
+        '200':
+          description: Version information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionResponse'
+  /v1/payments/intents:
+    post:
+      summary: Create payment intent for class package purchase
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentIntentRequest'
+      responses:
+        '201':
+          description: Payment intent created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIntentResponse'
+        '409':
+          description: Duplicate idempotency key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/payments/webhooks/opn:
+    post:
+      summary: Ingest payment outcome webhook from gateway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '202':
+          description: Webhook accepted
+        '400':
+          description: Invalid signature or payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/settlements/preview:
+    post:
+      summary: Generate settlement preview for period
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettlementPreviewRequest'
+      responses:
+        '200':
+          description: Settlement preview created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettlementPreviewResponse'
+  /v1/settlements/runs:
+    post:
+      summary: Persist settlement run snapshot
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSettlementRunRequest'
+      responses:
+        '201':
+          description: Settlement run stored
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettlementRunResponse'
+  /v1/payout-batches/{batchId}/approve:
+    post:
+      summary: Approve payout batch for release
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: batchId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayoutApprovalRequest'
+      responses:
+        '200':
+          description: Batch approved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayoutBatchResponse'
+  /v1/payout-batches/{batchId}/reject:
+    post:
+      summary: Reject payout batch
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: batchId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayoutRejectRequest'
+      responses:
+        '200':
+          description: Batch rejected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PayoutBatchResponse'
+  /v1/payout-batches/{batchId}/adjustments:
+    post:
+      summary: Add manual adjustment to payout batch
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: batchId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAdjustmentRequest'
+      responses:
+        '201':
+          description: Adjustment recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdjustmentResponse'
+  /v1/payout-batches/{batchId}/export:
+    get:
+      summary: Export payout batch CSV
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: batchId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: CSV content
+          content:
+            text/csv:
+              schema:
+                type: string
+  /v1/audit/events:
+    get:
+      summary: Query audit events
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: entityType
+          schema:
+            type: string
+        - in: query
+          name: entityId
+          schema:
+            type: string
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Audit event list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditEventListResponse'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    HealthResponse:
+      type: object
+      required: [status, service]
+      properties:
+        status:
+          type: string
+        service:
+          type: string
+    VersionResponse:
+      type: object
+      required: [service, apiVersion, build]
+      properties:
+        service:
+          type: string
+        apiVersion:
+          type: string
+        build:
+          type: string
+    CreatePaymentIntentRequest:
+      type: object
+      required: [enrollmentId, studentUserId, amountMinor, currency, method]
+      properties:
+        enrollmentId:
+          type: string
+        studentUserId:
+          type: string
+        amountMinor:
+          type: integer
+          minimum: 1
+        currency:
+          type: string
+          enum: [THB]
+        method:
+          type: string
+          enum: [promptpay, card]
+    PaymentIntentResponse:
+      type: object
+      required: [paymentIntentId, status, amountMinor, currency]
+      properties:
+        paymentIntentId:
+          type: string
+        status:
+          type: string
+          enum: [requires_action, pending, succeeded, failed]
+        amountMinor:
+          type: integer
+        currency:
+          type: string
+        checkoutPayload:
+          type: object
+          additionalProperties: true
+    SettlementPreviewRequest:
+      type: object
+      required: [periodMonth, timezone]
+      properties:
+        periodMonth:
+          type: string
+          description: YYYY-MM
+          example: '2026-02'
+        timezone:
+          type: string
+          enum: [Asia/Bangkok]
+    SettlementPreviewResponse:
+      type: object
+      required: [previewId, periodMonth, tutorCount, grossAmountMinor, payoutAmountMinor]
+      properties:
+        previewId:
+          type: string
+        periodMonth:
+          type: string
+        tutorCount:
+          type: integer
+        grossAmountMinor:
+          type: integer
+        payoutAmountMinor:
+          type: integer
+    CreateSettlementRunRequest:
+      type: object
+      required: [previewId]
+      properties:
+        previewId:
+          type: string
+    SettlementRunResponse:
+      type: object
+      required: [runId, periodMonth, status, createdAt]
+      properties:
+        runId:
+          type: string
+        periodMonth:
+          type: string
+        status:
+          type: string
+          enum: [draft, approved, rejected]
+        createdAt:
+          type: string
+          format: date-time
+    PayoutApprovalRequest:
+      type: object
+      required: [approvedBy, note]
+      properties:
+        approvedBy:
+          type: string
+        note:
+          type: string
+    PayoutRejectRequest:
+      type: object
+      required: [rejectedBy, reason]
+      properties:
+        rejectedBy:
+          type: string
+        reason:
+          type: string
+    PayoutBatchResponse:
+      type: object
+      required: [batchId, status, updatedAt]
+      properties:
+        batchId:
+          type: string
+        status:
+          type: string
+          enum: [draft, approved, rejected, exported]
+        updatedAt:
+          type: string
+          format: date-time
+    CreateAdjustmentRequest:
+      type: object
+      required: [tutorId, amountMinor, reason]
+      properties:
+        tutorId:
+          type: string
+        amountMinor:
+          type: integer
+          description: Positive or negative adjustment in THB satang.
+        reason:
+          type: string
+    AdjustmentResponse:
+      type: object
+      required: [adjustmentId, batchId, tutorId, amountMinor, createdAt]
+      properties:
+        adjustmentId:
+          type: string
+        batchId:
+          type: string
+        tutorId:
+          type: string
+        amountMinor:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+    AuditEventListResponse:
+      type: object
+      required: [events]
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditEvent'
+    AuditEvent:
+      type: object
+      required: [eventId, actorId, action, entityType, entityId, createdAt]
+      properties:
+        eventId:
+          type: string
+        actorId:
+          type: string
+        action:
+          type: string
+        entityType:
+          type: string
+        entityId:
+          type: string
+        payload:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        requestId:
+          type: string

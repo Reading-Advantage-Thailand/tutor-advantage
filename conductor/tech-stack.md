@@ -7,7 +7,7 @@ Date: 2026-02-23
 - Backend domains are separated from day 1.
 - One Cloud SQL Postgres cluster at launch, separate schemas per domain.
 - REST APIs are the service contract.
-- Mobile apps are separate tutor and student apps.
+- Web interfaces are separated into Tutor PWA and Student LIFF portal.
 
 ## Backend
 
@@ -27,9 +27,9 @@ Date: 2026-02-23
 ## Web and Mobile
 
 - Admin finance console: Next.js (App Router)
-- Tutor app: Capacitor-based native app
-- Student app: Capacitor-based native app
-- **Offline Strategy:** Asynchronous asset caching for the active workbook; persistent local storage for progress syncing.
+- Tutor app: PWA (Progressive Web App)
+- Student app: LINE LIFF (LINE Front-end Framework) web app
+- **Offline/Caching Strategy:** Aggressive pre-caching via Service Workers for both PWA and LIFF to ensure fast loads of the active workbook, relying on 4G coverage rather than a fully native offline architecture.
 - Next.js server functions/actions may be used as BFF helpers, but core business logic stays in backend services.
 
 ## Payments
@@ -58,7 +58,7 @@ Date: 2026-02-23
 
 ## Security Baseline
 
-- OAuth login with Facebook + Google
+- OAuth login: Tutors use Facebook + Google (PWA); Students exclusively use LINE Login (LIFF)
 - Role-based authorization in backend services
 - **PDPA Compliance:** Versioned consent tracking in `identity-service`.
 - Guardian-required flow for underage students

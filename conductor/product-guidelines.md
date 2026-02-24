@@ -10,10 +10,11 @@ Date: 2026-02-23
 
 ## UX Guidelines
 
-- Mobile-first workflows for tutors and students.
-- Keep enrollment flow short: class link -> account/login -> payment -> enrolled.
+- Web-first (PWA and LINE LIFF) workflows for tutors and students to eliminate app store friction.
+- Keep enrollment flow zero-friction: class link -> LINE Login -> LINE Pay/PromptPay -> enrolled.
 - Finance and payout views prioritize traceability over visual complexity.
 - Show exact statuses for every critical event: payment, enrollment, settlement, payout.
+- Translate MLM continuous rate functions into simple gamified "Progress Bars" for tutors (e.g., "Sell 1 more course to unlock the 45% tier!").
 
 ## Policy Communication
 
@@ -26,7 +27,7 @@ Date: 2026-02-23
 - Emphasize student growth via program-wide benchmark assessments.
 - Align tutor incentives with educational outcomes through badges and growth-based bonuses.
 - Foster the "10% Training Time" culture by providing Uplines with visibility into Trainee performance and student growth metrics.
-- Keep training and checklists integrated into the app to set expectations and professionalize the network.
+- Keep training and checklists integrated into the PWA/LIFF portal to set expectations and professionalize the network.
 
 ## Content Guidelines
 

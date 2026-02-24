@@ -1,0 +1,273 @@
+openapi: 3.0.3
+info:
+  title: Identity Service API
+  version: 1.0.0-draft
+  description: Draft V1 contract for authentication, profile, guardian consent, and sponsor integrity controls.
+servers:
+  - url: https://api.tutoradvantage.com/identity
+paths:
+  /v1/health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: Service healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /v1/version:
+    get:
+      summary: Contract and build version
+      responses:
+        '200':
+          description: Version information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionResponse'
+  /v1/auth/oauth/exchange:
+    post:
+      summary: Exchange OAuth authorization code for identity session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAuthExchangeRequest'
+      responses:
+        '200':
+          description: Session created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAuthExchangeResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/me:
+    get:
+      summary: Get current user profile and policy state
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/guardian/consents:
+    post:
+      summary: Record guardian consent for underage account
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GuardianConsentRequest'
+      responses:
+        '201':
+          description: Consent recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GuardianConsentResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /v1/tutors/{tutorId}/sponsor:
+    patch:
+      summary: Assign or update tutor sponsor before activation only
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tutorId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SponsorUpdateRequest'
+      responses:
+        '200':
+          description: Sponsor updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SponsorUpdateResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          description: Sponsor immutable after activation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    HealthResponse:
+      type: object
+      required: [status, service]
+      properties:
+        status:
+          type: string
+          example: ok
+        service:
+          type: string
+          example: identity
+    VersionResponse:
+      type: object
+      required: [service, apiVersion, build]
+      properties:
+        service:
+          type: string
+        apiVersion:
+          type: string
+        build:
+          type: string
+    OAuthExchangeRequest:
+      type: object
+      required: [provider, authorizationCode, redirectUri, codeVerifier]
+      properties:
+        provider:
+          type: string
+          enum: [facebook, google]
+        authorizationCode:
+          type: string
+        redirectUri:
+          type: string
+        codeVerifier:
+          type: string
+    OAuthExchangeResponse:
+      type: object
+      required: [accessToken, refreshToken, expiresInSeconds, user]
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresInSeconds:
+          type: integer
+        user:
+          $ref: '#/components/schemas/UserProfile'
+    ProfileResponse:
+      type: object
+      required: [user, policy]
+      properties:
+        user:
+          $ref: '#/components/schemas/UserProfile'
+        policy:
+          type: object
+          required: [requiresGuardianConsent, canPay, canUseExternalContact]
+          properties:
+            requiresGuardianConsent:
+              type: boolean
+            canPay:
+              type: boolean
+            canUseExternalContact:
+              type: boolean
+    UserProfile:
+      type: object
+      required: [userId, role]
+      properties:
+        userId:
+          type: string
+        role:
+          type: string
+          enum: [student, tutor, guardian, admin, finance]
+        displayName:
+          type: string
+        email:
+          type: string
+          nullable: true
+        phoneNumber:
+          type: string
+          nullable: true
+    GuardianConsentRequest:
+      type: object
+      required: [studentUserId, guardianName, relation, consentedAt]
+      properties:
+        studentUserId:
+          type: string
+        guardianName:
+          type: string
+        relation:
+          type: string
+        consentedAt:
+          type: string
+          format: date-time
+    GuardianConsentResponse:
+      type: object
+      required: [consentId, studentUserId, status]
+      properties:
+        consentId:
+          type: string
+        studentUserId:
+          type: string
+        status:
+          type: string
+          enum: [recorded]
+    SponsorUpdateRequest:
+      type: object
+      required: [sponsorTutorId]
+      properties:
+        sponsorTutorId:
+          type: string
+    SponsorUpdateResponse:
+      type: object
+      required: [tutorId, sponsorTutorId, updatedAt]
+      properties:
+        tutorId:
+          type: string
+        sponsorTutorId:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        requestId:
+          type: string

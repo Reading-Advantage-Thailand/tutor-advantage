@@ -1,0 +1,346 @@
+openapi: 3.0.3
+info:
+  title: Learning Service API
+  version: 1.0.0-draft
+  description: Draft V1 contract for tutor class ownership, class-bound referrals, and enrollment activation.
+servers:
+  - url: https://api.tutoradvantage.com/learning
+paths:
+  /v1/health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: Service healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /v1/version:
+    get:
+      summary: Contract and build version
+      responses:
+        '200':
+          description: Version information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionResponse'
+  /v1/classes:
+    post:
+      summary: Create class package (tutor only)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateClassRequest'
+      responses:
+        '201':
+          description: Class created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /v1/classes/{classId}:
+    get:
+      summary: Get class details
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: classId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Class details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/classes/{classId}/status:
+    patch:
+      summary: Update class status (open/full/closed)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: classId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateClassStatusRequest'
+      responses:
+        '200':
+          description: Status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /v1/classes/{classId}/referrals:
+    post:
+      summary: Create class-bound referral link token
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: classId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReferralRequest'
+      responses:
+        '201':
+          description: Referral created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferralResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /v1/referrals/{token}/resolve:
+    get:
+      summary: Resolve referral and return target class or same-tutor fallback classes
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Referral resolution result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferralResolutionResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /v1/enrollments:
+    post:
+      summary: Create enrollment record in pending-payment state
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEnrollmentRequest'
+      responses:
+        '201':
+          description: Enrollment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrollmentResponse'
+        '409':
+          description: Enrollment conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/enrollments/{enrollmentId}/activate:
+    post:
+      summary: Activate enrollment after verified payment
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: enrollmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivateEnrollmentRequest'
+      responses:
+        '200':
+          description: Enrollment activated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrollmentResponse'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    HealthResponse:
+      type: object
+      required: [status, service]
+      properties:
+        status:
+          type: string
+          example: ok
+        service:
+          type: string
+          example: learning
+    VersionResponse:
+      type: object
+      required: [service, apiVersion, build]
+      properties:
+        service:
+          type: string
+        apiVersion:
+          type: string
+        build:
+          type: string
+    CreateClassRequest:
+      type: object
+      required: [bookId, title, capacity]
+      properties:
+        bookId:
+          type: string
+        title:
+          type: string
+        capacity:
+          type: integer
+          minimum: 1
+        startsAt:
+          type: string
+          format: date-time
+          nullable: true
+    UpdateClassStatusRequest:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [open, full, closed]
+    CreateReferralRequest:
+      type: object
+      properties:
+        campaignLabel:
+          type: string
+          nullable: true
+    ClassResponse:
+      type: object
+      required: [classId, tutorId, bookId, title, capacity, status]
+      properties:
+        classId:
+          type: string
+        tutorId:
+          type: string
+        bookId:
+          type: string
+        title:
+          type: string
+        capacity:
+          type: integer
+        enrolledCount:
+          type: integer
+          default: 0
+        status:
+          type: string
+          enum: [open, full, closed]
+    ReferralResponse:
+      type: object
+      required: [token, classId, tutorId, status, expiresAt]
+      properties:
+        token:
+          type: string
+        classId:
+          type: string
+        tutorId:
+          type: string
+        status:
+          type: string
+          enum: [active, expired]
+        expiresAt:
+          type: string
+          format: date-time
+    ReferralResolutionResponse:
+      type: object
+      required: [token, outcome]
+      properties:
+        token:
+          type: string
+        outcome:
+          type: string
+          enum: [target_class_open, target_class_unavailable]
+        targetClass:
+          $ref: '#/components/schemas/ClassResponse'
+          nullable: true
+        fallbackClasses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClassResponse'
+    CreateEnrollmentRequest:
+      type: object
+      required: [classId, studentUserId]
+      properties:
+        classId:
+          type: string
+        studentUserId:
+          type: string
+        referralToken:
+          type: string
+          nullable: true
+    ActivateEnrollmentRequest:
+      type: object
+      required: [paymentTransactionId]
+      properties:
+        paymentTransactionId:
+          type: string
+    EnrollmentResponse:
+      type: object
+      required: [enrollmentId, classId, studentUserId, status]
+      properties:
+        enrollmentId:
+          type: string
+        classId:
+          type: string
+        studentUserId:
+          type: string
+        status:
+          type: string
+          enum: [pending_payment, active, cancelled]
+    ErrorResponse:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        requestId:
+          type: string

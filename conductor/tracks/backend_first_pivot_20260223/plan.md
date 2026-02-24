@@ -17,7 +17,7 @@ Track ID: `backend_first_pivot_20260223`
 
 ## Phase 2: Identity and Access
 
-- [ ] Task: Implement Facebook + Google OAuth account linkage in `identity-service`
+- [ ] Task: Implement Facebook + Google OAuth (Tutors) and LINE Login (Students) account linkage in `identity-service`
   - [ ] Write tests for new user creation, provider linking, duplicate prevention, and login replay
   - [ ] Implement provider handlers and identity mapping tables
 - [ ] Task: Implement role and guardian-required eligibility checks
@@ -39,7 +39,7 @@ Track ID: `backend_first_pivot_20260223`
 - [ ] Task: Implement enrollment placement behavior
   - [ ] Write tests for primary class enrollment and full/closed fallback to same tutor open classes
   - [ ] Implement class placement orchestration and enrollment activation gating
-  - [ ] **Optimize learning content APIs to support client-side asynchronous caching (manifests/asset-lists).**
+  - [ ] **Optimize learning content APIs to support aggressive Service Worker pre-caching for PWA/LIFF (manifests/asset-lists).**
 
 ## Phase 4: Payments and Financial Events
 
