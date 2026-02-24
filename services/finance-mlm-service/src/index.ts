@@ -10,6 +10,11 @@ import {
   createPaymentIntent,
   handleWebhook,
 } from "./controllers/paymentController";
+import {
+  previewSettlement,
+  approveSettlement,
+} from "./controllers/settlementController";
+import { auditTrailMiddleware } from "./middlewares/auditMiddleware";
 
 const app = express();
 const port = process.env.PORT || 3003;
@@ -35,6 +40,20 @@ app.post("/v1/payments/intent", authMiddleware, createPaymentIntent);
 
 // Public Webhook Routes
 app.post("/v1/payments/webhook", handleWebhook);
+
+// Admin Finance Console Routes
+app.post(
+  "/v1/settlements/preview",
+  authMiddleware,
+  auditTrailMiddleware("PREVIEW_SETTLEMENT"),
+  previewSettlement,
+);
+app.post(
+  "/v1/settlements/:snapshotId/approve",
+  authMiddleware,
+  auditTrailMiddleware("APPROVE_SETTLEMENT"),
+  approveSettlement,
+);
 
 // Apply error handler last
 app.use(errorHandlerMiddleware);

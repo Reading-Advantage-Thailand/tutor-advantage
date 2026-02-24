@@ -8,6 +8,8 @@ const cors_1 = __importDefault(require("cors"));
 const shared_config_1 = require("@tutor-advantage/shared-config");
 const authMiddleware_1 = require("./middlewares/authMiddleware");
 const paymentController_1 = require("./controllers/paymentController");
+const settlementController_1 = require("./controllers/settlementController");
+const auditMiddleware_1 = require("./middlewares/auditMiddleware");
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3003;
 app.use((0, cors_1.default)());
@@ -26,6 +28,9 @@ app.get("/version", (req, res) => {
 app.post("/v1/payments/intent", authMiddleware_1.authMiddleware, paymentController_1.createPaymentIntent);
 // Public Webhook Routes
 app.post("/v1/payments/webhook", paymentController_1.handleWebhook);
+// Admin Finance Console Routes
+app.post("/v1/settlements/preview", authMiddleware_1.authMiddleware, (0, auditMiddleware_1.auditTrailMiddleware)("PREVIEW_SETTLEMENT"), settlementController_1.previewSettlement);
+app.post("/v1/settlements/:snapshotId/approve", authMiddleware_1.authMiddleware, (0, auditMiddleware_1.auditTrailMiddleware)("APPROVE_SETTLEMENT"), settlementController_1.approveSettlement);
 // Apply error handler last
 app.use(shared_config_1.errorHandlerMiddleware);
 app.listen(port, () => {
