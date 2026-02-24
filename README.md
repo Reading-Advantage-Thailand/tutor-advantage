@@ -1,161 +1,98 @@
 # Tutor Advantage
 
-An ethical, AI-enhanced English language tutoring platform for Thai students, combining technology-powered learning with personalized in-person instruction.
+Backend-first tutoring platform pivot for Thailand, with:
 
-## Project Overview
+- student-pay class enrollment,
+- tutor-led workbook classes,
+- and automated monthly MLM settlement.
 
-Tutor Advantage provides comprehensive English language education aligned with CEFR levels and Thai Ministry of Education benchmarks:
+## Current Status
 
-- **Grade 6**: CEFR A1
-- **Grade 9**: CEFR A2
-- **Grade 12**: CEFR B1
+This repository is in transition.
 
-## Curriculum Structure
+- Legacy Next.js scaffold code is still present.
+- New product direction and execution artifacts are tracked in `conductor/`.
+- Implementation target is backend services first, then tutor mobile app, then student mobile app.
 
-Students progress through 45 courses across 5 CEFR levels. Each course comprises 20 lessons.
+## Product Direction (Locked)
 
-### Course Breakdown
+- Auth: Facebook + Google
+- Payment model: student pays company (100% upfront)
+- Payment rails: PromptPay + cards (Thai-local first)
+- Referral model: tutor-generated class-bound links/QR codes
+- Class ownership: tutor-only ownership in V1
+- Communication: in-app chat is system of record; external channels only after consent
+- MLM settlement: automated monthly run in ICT timezone, THB-only, finance approval before payout
 
-| CEFR Level | Levels | Courses per Level | Total Courses |
-|------------|--------|-------------------|---------------|
-| Pre-A1     | 3      | 1                 | 3             |
-| A1         | 3      | 2                 | 6             |
-| A2         | 3      | 3                 | 9             |
-| B1         | 3      | 4                 | 12            |
-| B2         | 3      | 5                 | 15            |
-| **Total**  | **15** | **15**            | **45**        |
+## Target Architecture
 
-## Core Features
+Service-oriented backend from day 1:
 
-### For Students
-- Adaptive learning paths based on CEFR assessment
-- AI-powered extensive reading system with auto-generated content
-- Interactive lesson components (audio playback, vocabulary games, sentence translation)
-- Progress tracking and achievement system
-- Integrated workbooks for supplementary practice
+- `identity-service`
+- `learning-service`
+- `finance-mlm-service`
 
-### For Tutors
-- Lesson planning and scheduling tools
-- Student progress analytics
-- Professional development resources
-- Transparent compensation structure
-- Mentorship and network building
+Launch data strategy:
 
-### For Administrators
-- Content management system
-- Performance monitoring and reporting
-- Quality assurance tools
-- User and tutor management
+- One GCP Cloud SQL PostgreSQL cluster
+- Separate schemas per service
+- Strict service access boundaries
 
-## Technology Stack
+Client apps:
 
-- **Framework**: Next.js 16 with TypeScript
-- **Database**: Google Cloud SQL (PostgreSQL)
-- **ORM**: Prisma
-- **UI Components**: shadcn/ui
-- **Styling**: Tailwind CSS
-- **Payments**: Stripe
-- **Cloud Platform**: Google Cloud Platform
-- **Internationalization**: next-intl (English, Thai)
+- Tutor app: native (Capacitor)
+- Student app: native (Capacitor)
+- Admin finance console: web (Next.js)
 
-## Educational Framework
+## Curriculum Program (Current Plan)
 
-### 55-Minute Lesson Structure
+Series map:
 
-Each lesson follows a proven methodology:
+| Series | CEFR | RA Levels | Tagline |
+|---|---|---|---|
+| Origins | A1 | 1-3 | Your journey starts here |
+| Quest | A2 | 4-6 | Your quest awaits |
+| Adventure | B1 | 7-9 | Your adventure's in sight |
+| Hero | B2 | 10-12 | You're the hero in the story |
+| Legend | C1 | 13-15 | Legendary stories |
 
-1. Warm-up and Activate Prior Knowledge (3 min)
-2. Listen to Others Read (5 min)
-3. Read to Self (7 min)
-4. Word Work (10 min)
-5. Listen to Others Read (5 min)
-6. Read to Others (8 min)
-7. Work on Writing/Speaking (12 min)
-8. Extensive Reading (4 min)
-9. Wrap-up (1 min)
+Totals:
 
-### Content Generation
+- 32 books
+- 448 articles
+- V1 release scope: Levels 1-6 (Origins + Quest)
 
-AI-powered system generates content aligned with CEFR grammar structures and vocabulary requirements for each level, ensuring consistency and variety across the platform.
+## Legacy URL Compatibility
 
-## Ethical MLM Framework
+Printed workbook QR links must keep full URLs unchanged.
+For unresolved legacy URLs, the system must render a graceful recovery/support page.
 
-The platform uses a transparent, education-focused multi-level marketing structure:
+## Conductor Docs (Source of Truth)
 
-- Tutors earn directly from teaching their own students
-- Network commissions based on downline performance with diminishing returns
-- Quality control through performance evaluations
-- No recruitment quotas or pressure
-- Focus on educational outcomes over network expansion
+- Index: `conductor/index.md`
+- Product definition: `conductor/product.md`
+- PRD: `conductor/prd.md`
+- Market research: `conductor/market-research.md`
+- Tech stack: `conductor/tech-stack.md`
+- Workflow: `conductor/workflow.md`
+- Active track: `conductor/tracks/backend_first_pivot_20260223/`
 
-## Development
+## Repository Layout
 
-### Repository Structure
-```
-├── src/
-│   ├── app/           # Next.js 16 app router
-│   ├── components/    # React components (shadcn/ui based)
-│   ├── lib/           # Utilities and helpers
-│   ├── types/         # TypeScript type definitions
-│   └── styles/        # Global styles and Tailwind config
-├── prisma/            # Database schema and migrations
-├── public/            # Static assets
-└── docs/              # Project documentation
+```text
+.
+├── conductor/              # Product and execution docs (authoritative)
+├── src/                    # Legacy app scaffold (being replaced incrementally)
+├── prisma/                 # Legacy schema and migrations
+└── messages/               # Legacy localization files
 ```
 
-### Git Workflow
+## Development Notes
 
-All development follows a feature branch workflow:
-
-```bash
-git checkout -b feature/your-feature-name
-# Make changes and commit
-git add .
-git commit -m "Descriptive commit message"
-git push -u origin feature/your-feature-name
-# Create pull request for review
-# After approval, merge to main
-git checkout main
-git pull
-git merge feature/your-feature-name
-git push
-```
-
-## Database
-
-### Schema Overview
-
-Key entities:
-- **Users**: Students, tutors, and administrators
-- **Courses**: 45 total courses organized by CEFR level
-- **Lessons**: 20 lessons per course
-- **Content**: Articles, exercises, assessments
-- **Progress**: Student lesson completion and assessment results
-- **Transactions**: Payment and commission tracking
-- **Network**: MLM structure and tutor relationships
-
-Managed with Prisma ORM and PostgreSQL on Google Cloud SQL.
-
-## Internationalization
-
-The platform supports:
-- **English** (en)
-- **Thai** (th)
-
-Language switching and dynamic content translation via next-intl.
-
-## Related Documentation
-
-- [55-Minute EFL Lesson Plan](./docs/55-minute-efl-lesson-plan.md)
-- [CEFR System Prompts](./docs/cefr-system-prompts.json)
-- [Data Model Specifications](./docs/data-model-specifications.md)
-- [Development Todo List](./docs/development-todo.md)
-- [Git Workflow Instructions](./docs/git-workflow.md)
+- Treat `conductor/` artifacts as canonical requirements/planning.
+- Avoid adding new business logic to the legacy monolith unless required for transition safety.
+- New implementation work should align to the active Conductor track plan.
 
 ## License
 
 Proprietary - Tutor Advantage
-
-## Contact
-
-For inquiries about the Tutor Advantage project, contact the development team.
