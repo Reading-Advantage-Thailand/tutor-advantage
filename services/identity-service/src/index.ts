@@ -7,22 +7,21 @@ import {
   logger,
 } from "@tutor-advantage/shared-config";
 import { handleOAuthCallback } from "./controllers/authController";
+import { getSession } from "./controllers/sessionController";
+import { submitGuardianConsent } from "./controllers/consentController";
+import { authMiddleware } from "./middlewares/authMiddleware";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Shared Middlewares
+// Apply shared middleware
 app.use(requestIdMiddleware);
 app.use(requestLoggerMiddleware);
 
 // Health Check Endpoint
 app.get("/health", (req: Request, res: Response) => {
-  res.status(200).json({
-    status: "ok",
-    service: "identity-service",
-    timestamp: new Date().toISOString(),
-  });
+  res.status(200).json({ status: "ok", service: "identity-service" });
 });
 
 // Version Endpoint
@@ -32,6 +31,10 @@ app.get("/version", (req: Request, res: Response) => {
 
 // OAuth Callback Endpoint
 app.post("/v1/auth/callback", handleOAuthCallback);
+
+// Protected Auth Routes
+app.get("/v1/session", authMiddleware, getSession);
+app.post("/v1/guardian/consent", authMiddleware, submitGuardianConsent);
 
 // Root API
 app.get("/", (req: Request, res: Response) => {
