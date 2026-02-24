@@ -2,6 +2,28 @@
 
 import { useState } from "react";
 import { fetchWithAuth } from "../../lib/api";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  AlertCircle,
+  CheckCircle2,
+  ClockIcon,
+  PlayCircle,
+  ShieldCheck,
+  ReceiptText,
+} from "lucide-react";
 
 export interface SettlementPreview {
   snapshotId: string;
@@ -10,8 +32,30 @@ export interface SettlementPreview {
   status: string;
 }
 
+const STATUS_CONFIG: Record<
+  string,
+  {
+    label: string;
+    variant: "default" | "secondary" | "destructive" | "outline";
+    className: string;
+  }
+> = {
+  DRAFT: {
+    label: "Draft — Pending Approval",
+    variant: "outline",
+    className:
+      "border-amber-500/40 text-amber-600 dark:text-amber-400 bg-amber-500/10",
+  },
+  APPROVED: {
+    label: "Approved",
+    variant: "outline",
+    className:
+      "border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10",
+  },
+};
+
 export default function SettlementsPage() {
-  const [period, setPeriod] = useState(new Date().toISOString().slice(0, 7)); // default to YYYY-MM
+  const [period, setPeriod] = useState(new Date().toISOString().slice(0, 7));
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SettlementPreview | null>(null);
   const [error, setError] = useState("");
@@ -22,7 +66,6 @@ export default function SettlementsPage() {
     setError("");
     setSuccess("");
     setResult(null);
-
     try {
       const data = await fetchWithAuth("/v1/settlements/preview", {
         method: "POST",
@@ -39,15 +82,13 @@ export default function SettlementsPage() {
 
   const handleApprove = async () => {
     if (!result?.snapshotId) return;
-
     setLoading(true);
     setError("");
-
     try {
       await fetchWithAuth(`/v1/settlements/${result.snapshotId}/approve`, {
         method: "POST",
       });
-      setSuccess("Settlement approved successfully!");
+      setSuccess("Settlement approved and payout batch released.");
       setResult({ ...result, status: "APPROVED" });
     } catch (error) {
       const err = error as Error;
@@ -57,103 +98,148 @@ export default function SettlementsPage() {
     }
   };
 
+  const statusConfig = result
+    ? (STATUS_CONFIG[result.status] ?? STATUS_CONFIG.DRAFT)
+    : null;
+
   return (
-    <div className="space-y-6 max-w-5xl">
-      <div className="flex justify-between items-center bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-        <div>
-          <h3 className="text-lg font-medium text-gray-900">
+    <div className="space-y-6 w-full">
+      {/* Run Preview Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <PlayCircle className="h-4 w-4 text-primary" />
             Run Monthly Settlement
-          </h3>
-          <p className="text-sm text-gray-500">
+          </CardTitle>
+          <CardDescription>
             Preview and approve payouts for tutors based on their MLM tree
-          </p>
-        </div>
+            volume. Requires Makers-Checkers approval before release.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
+            <div className="space-y-1.5 w-full sm:w-auto">
+              <Label htmlFor="period">Settlement Period</Label>
+              <Input
+                id="period"
+                type="month"
+                value={period}
+                onChange={(e) => setPeriod(e.target.value)}
+                className="w-full sm:w-48"
+              />
+            </div>
+            <Button
+              onClick={handlePreview}
+              disabled={loading}
+              className="w-full sm:w-auto"
+            >
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                  Processing…
+                </span>
+              ) : (
+                <>
+                  <ReceiptText className="h-4 w-4 mr-2" />
+                  Generate Preview
+                </>
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
-        <div className="flex items-center space-x-4">
-          <input
-            type="month"
-            value={period}
-            onChange={(e) => setPeriod(e.target.value)}
-            className="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border px-3 py-2"
-          />
-          <button
-            onClick={handlePreview}
-            disabled={loading}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
-          >
-            {loading ? "Processing..." : "Generate Preview"}
-          </button>
-        </div>
-      </div>
-
+      {/* Error */}
       {error && (
-        <div className="bg-red-50 border-l-4 border-red-400 p-4">
-          <div className="flex">
-            <div className="ml-3">
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
-          </div>
-        </div>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
 
+      {/* Success */}
       {success && (
-        <div className="bg-green-50 border-l-4 border-green-400 p-4">
-          <div className="flex">
-            <div className="ml-3">
-              <p className="text-sm text-green-700">{success}</p>
-            </div>
-          </div>
-        </div>
+        <Alert className="border-emerald-500/30 bg-emerald-500/5">
+          <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+          <AlertTitle className="text-emerald-700 dark:text-emerald-300">
+            Success
+          </AlertTitle>
+          <AlertDescription className="text-emerald-700/80 dark:text-emerald-400/80">
+            {success}
+          </AlertDescription>
+        </Alert>
       )}
 
+      {/* Settlement Preview Result */}
       {result && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          <div className="px-4 py-5 sm:px-6 border-b border-gray-200 flex justify-between items-center">
+        <Card>
+          <CardHeader className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div>
-              <h3 className="text-lg leading-6 font-medium text-gray-900">
-                Snapshot: {result.snapshotId}
-              </h3>
-              <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                Period: {result.periodMonth}
-              </p>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <ShieldCheck className="h-4 w-4 text-primary" />
+                Settlement Snapshot
+              </CardTitle>
+              <CardDescription className="mt-1 font-mono text-xs">
+                {result.snapshotId}
+              </CardDescription>
             </div>
-            <div>
-              <span
-                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                  result.status === "APPROVED"
-                    ? "bg-green-100 text-green-800"
-                    : "bg-yellow-100 text-yellow-800"
-                }`}
+            {statusConfig && (
+              <Badge
+                variant={statusConfig.variant}
+                className={statusConfig.className}
               >
-                {result.status}
-              </span>
-            </div>
-          </div>
+                {result.status === "APPROVED" ? (
+                  <CheckCircle2 className="h-3 w-3 mr-1" />
+                ) : (
+                  <ClockIcon className="h-3 w-3 mr-1" />
+                )}
+                {statusConfig.label}
+              </Badge>
+            )}
+          </CardHeader>
 
-          <div className="px-4 py-5 sm:p-6 flex flex-col items-center justify-center my-8">
-            <div className="text-center">
-              <dt className="text-sm font-medium text-gray-500 truncate">
+          <CardContent>
+            <Separator className="mb-6" />
+            <div className="flex flex-col items-center justify-center py-6 gap-1">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                 Total Payout Volume
-              </dt>
-              <dd className="mt-1 text-5xl font-semibold text-gray-900 border-b-4 border-indigo-500 pb-2">
+              </p>
+              <p className="text-5xl font-bold text-foreground tabular-nums">
                 {(result.totalPayoutSatang / 100).toLocaleString("th-TH", {
                   style: "currency",
                   currency: "THB",
                 })}
-              </dd>
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Period:{" "}
+                <span className="font-medium text-foreground">
+                  {result.periodMonth}
+                </span>
+              </p>
             </div>
-          </div>
+            <Separator className="mt-6" />
+          </CardContent>
 
-          <div className="bg-gray-50 px-4 py-4 sm:px-6 flex justify-end">
-            <button
+          <CardFooter className="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between pt-4">
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-sm">
+              Approval requires a second authorised admin (Makers-Checkers).
+              Once approved, the payout lineage is immutable and cannot be
+              rewritten.
+            </p>
+            <Button
               onClick={handleApprove}
               disabled={loading || result.status !== "DRAFT"}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 disabled:opacity-50"
+              variant={result.status === "APPROVED" ? "outline" : "default"}
+              className="w-full sm:w-auto shrink-0"
             >
-              Approve & Execute Settlement
-            </button>
-          </div>
-        </div>
+              <CheckCircle2 className="h-4 w-4 mr-2" />
+              {result.status === "APPROVED"
+                ? "Already Approved"
+                : "Approve & Release"}
+            </Button>
+          </CardFooter>
+        </Card>
       )}
     </div>
   );
