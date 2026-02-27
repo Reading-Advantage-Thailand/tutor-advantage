@@ -97,8 +97,8 @@ export default function AdjustmentsPage() {
       try {
         const payload = JSON.parse(atob(token.split(".")[1]));
         setUserRole(payload.role);
-      } catch (e) {
-        // ignore
+      } catch (error) {
+        console.error("Failed to parse token:", error);
       }
     }
   }, []);

@@ -22,6 +22,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ token, role });
   } catch (error) {
+    console.error("Dev login error:", error);
     return NextResponse.json(
       { error: "Failed to generate dev token" },
       { status: 500 },

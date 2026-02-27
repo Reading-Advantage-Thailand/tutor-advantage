@@ -120,8 +120,8 @@ export default function SettlementsPage() {
       try {
         const payload = JSON.parse(atob(token.split(".")[1]));
         setUserRole(payload.role);
-      } catch (e) {
-        // ignore
+      } catch (error) {
+        console.error("Failed to parse token:", error);
       }
     }
   }, []);
@@ -198,7 +198,7 @@ export default function SettlementsPage() {
   };
 
   const handleListAction = async (id: string, action: "approve" | "reject") => {
-    setLoading(true);
+    setActionLoadingId(id);
     try {
       await fetchWithAuth(`/v1/settlements/${id}/${action}`, {
         method: "POST",
@@ -217,7 +217,7 @@ export default function SettlementsPage() {
       const err = error as Error;
       setError(err.message);
     } finally {
-      setLoading(false);
+      setActionLoadingId(null);
     }
   };
 

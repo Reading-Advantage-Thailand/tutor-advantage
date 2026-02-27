@@ -68,8 +68,8 @@ function AppSidebar({
       const data = await fetchWithAuth("/v1/settlements/summary");
       setPendingSettlements(data.pendingApprovals ?? 0);
       setPendingAdjustments(data.pendingAdjustments ?? 0);
-    } catch (e) {
-      // ignore
+    } catch (error) {
+      console.error("Failed to fetch summary:", error);
     }
   }, []);
 

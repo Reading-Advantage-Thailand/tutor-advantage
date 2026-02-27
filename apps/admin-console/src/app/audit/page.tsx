@@ -178,10 +178,11 @@ export default function AuditPage() {
     loadLogs();
   }, [loadLogs]);
 
-  const handleFilterChange = (setter: any) => (val: any) => {
-    setter(val);
-    setPage(1);
-  };
+  const handleFilterChange =
+    (setter: (val: string) => void) => (val: string) => {
+      setter(val);
+      setPage(1);
+    };
 
   const formatDate = (iso: string) =>
     new Date(iso).toLocaleString("th-TH", {
