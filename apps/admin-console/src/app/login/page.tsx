@@ -28,22 +28,22 @@ const ROLE_DESCRIPTIONS: Record<
   { label: string; description: string; access: string[] }
 > = {
   ADMIN: {
-    label: "Super Admin",
-    description: "Full system access with audit capabilities.",
+    label: "ผู้ดูแลระบบสูงสุด (Super Admin)",
+    description: "เข้าถึงได้ทุกส่วนของระบบ พร้อมอำนาจในการตรวจสอบทั้งหมด",
     access: [
-      "Dashboard Overview",
-      "Settlement Management",
-      "User & Tutor Management",
-      "Finance Audit Log",
+      "ดูภาพรวมแผงควบคุม (Dashboard Overview)",
+      "จัดการและอนุมัติรอบบิล (Settlement Management)",
+      "จัดการบัญชีผู้ใช้งาน (User & Tutor Management)",
+      "ตรวจสอบประวัติการทำรายการ (Finance Audit Log)",
     ],
   },
   FINANCE_CHECKER: {
-    label: "Finance Checker",
-    description: "View-only access to settlement and payout records.",
+    label: "ผู้ตรวจสอบการเงิน (Finance Checker)",
+    description: "มีสิทธิ์อ่านข้อมูลเพื่อตรวจสอบรอบบิลและดูประวัติเท่านั้น",
     access: [
-      "Settlement Review",
-      "Payout Audit Trail",
-      "Commission Traceability",
+      "ตรวจสอบรอบบิล (Settlement Review)",
+      "ดูประวัติการจ่ายเงิน (Payout Audit Trail)",
+      "ตรวจสอบที่มาของค่าคอมมิชชัน (Commission Traceability)",
     ],
   },
 };
@@ -119,7 +119,7 @@ export default function LoginPage() {
             variant="outline"
             className="border-amber-500/40 text-amber-600 dark:text-amber-400 bg-amber-500/10 text-xs font-medium px-3 py-1"
           >
-            Development / Audit Mode
+            โหมดนักพัฒนา / ตรวจสอบ (Dev/Audit Mode)
           </Badge>
         </div>
 
@@ -128,21 +128,21 @@ export default function LoginPage() {
           <CardHeader className="pb-4">
             <CardTitle className="text-base sm:text-lg flex items-center gap-2">
               <Lock className="w-4 h-4 text-primary" />
-              Sign In
+              เข้าสู่ระบบ (Sign In)
             </CardTitle>
             <CardDescription>
-              Select your admin role to generate a scoped JWT token for this
-              session.
+              เลือกบทบาทแอดมินของคุณเพื่อสร้าง JWT Token
+              จำกัดสิทธิ์สำหรับการทดสอบในเซสชันนี้
             </CardDescription>
           </CardHeader>
 
           <form onSubmit={handleLogin}>
             <CardContent className="space-y-4 sm:space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="role">Admin Role</Label>
+                <Label htmlFor="role">บทบาทของแอดมิน</Label>
                 <Select value={role} onValueChange={setRole}>
                   <SelectTrigger id="role" className="w-full">
-                    <SelectValue placeholder="Select role" />
+                    <SelectValue placeholder="เลือกบทบาท" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="ADMIN">Super Admin (ADMIN)</SelectItem>
@@ -196,19 +196,19 @@ export default function LoginPage() {
                 {loading ? (
                   <span className="flex items-center gap-2">
                     <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                    Signing in…
+                    กำลังเข้าสู่ระบบ…
                   </span>
                 ) : (
-                  "Sign in with Mock JWT"
+                  "เข้าสู่ระบบด้วย Mock JWT"
                 )}
               </Button>
               <p className="text-xs text-muted-foreground text-center leading-relaxed">
-                Token is scoped to the selected role. Every monetary action is
-                reconstructable from immutable records.
+                Token จะถูกจำกัดสิทธิ์ตามบทบาทที่เลือก
+                ทุกการทำรายการทางการเงินจะถูกบันทึกและสามารถตรวจสอบย้อนหลังได้เสมอ
               </p>
               <p className="text-xs text-muted-foreground/60 text-center leading-relaxed border-t border-border pt-3">
-                By signing in, you acknowledge that all actions taken in this
-                console are logged and auditable.
+                การกดเข้าสู่ระบบถือเป็นการรับทราบว่าทุกการกระทำในแผงควบคุมนี้จะถูกเก็บ
+                Log เพื่อนำไป Audit อย่างถาวร
               </p>
             </CardFooter>
           </form>

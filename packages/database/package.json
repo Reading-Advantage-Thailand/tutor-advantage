@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "generate": "prisma generate"
+    "generate": "prisma generate",
+    "seed": "npx tsx seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0"

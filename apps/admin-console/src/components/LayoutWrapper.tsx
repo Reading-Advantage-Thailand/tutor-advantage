@@ -2,13 +2,15 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { fetchWithAuth } from "../lib/api";
 import {
   LayoutDashboard,
   ReceiptText,
   LogOut,
   ChevronsUpDown,
   ShieldCheck,
+  FilePenLine,
 } from "lucide-react";
 
 import {
@@ -42,6 +44,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 const NAV_ITEMS = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/settlements", label: "Settlements", icon: ReceiptText },
+  { href: "/adjustments", label: "Adjustments", icon: FilePenLine },
+  { href: "/audit", label: "Audit", icon: ShieldCheck },
 ];
 
 function AppSidebar({
@@ -53,6 +57,27 @@ function AppSidebar({
 }) {
   const pathname = usePathname();
   const initial = role ? role[0].toUpperCase() : "A";
+
+  const [pendingSettlements, setPendingSettlements] = useState(0);
+  const [pendingAdjustments, setPendingAdjustments] = useState(0);
+
+  const fetchSummary = useCallback(async () => {
+    try {
+      if (typeof window === "undefined" || !localStorage.getItem("admin_token"))
+        return;
+      const data = await fetchWithAuth("/v1/settlements/summary");
+      setPendingSettlements(data.pendingApprovals ?? 0);
+      setPendingAdjustments(data.pendingAdjustments ?? 0);
+    } catch (e) {
+      // ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchSummary();
+    const interval = setInterval(fetchSummary, 30000); // Poll every 30s
+    return () => clearInterval(interval);
+  }, [fetchSummary]);
 
   return (
     <Sidebar collapsible="icon">
@@ -86,6 +111,13 @@ function AppSidebar({
               {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
                 const active =
                   href === "/" ? pathname === "/" : pathname.startsWith(href);
+                const badgeCount =
+                  href === "/settlements"
+                    ? pendingSettlements
+                    : href === "/adjustments"
+                      ? pendingAdjustments
+                      : 0;
+
                 return (
                   <SidebarMenuItem key={href}>
                     <SidebarMenuButton
@@ -93,9 +125,24 @@ function AppSidebar({
                       isActive={active}
                       tooltip={label}
                     >
-                      <Link href={href}>
-                        <Icon />
-                        <span>{label}</span>
+                      <Link
+                        href={href}
+                        className="flex justify-between items-center w-full"
+                      >
+                        <div className="flex items-center gap-2 overflow-hidden">
+                          <Icon className="h-4 w-4 shrink-0" />
+                          <span className="truncate group-data-[collapsible=icon]:hidden">
+                            {label}
+                          </span>
+                        </div>
+                        {badgeCount > 0 && (
+                          <Badge
+                            variant="destructive"
+                            className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden"
+                          >
+                            {badgeCount}
+                          </Badge>
+                        )}
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

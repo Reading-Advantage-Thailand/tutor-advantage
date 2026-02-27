@@ -249,6 +249,7 @@ model Adjustment {
   tutorUserId     String   @map("tutor_user_id") @db.Uuid
   amountMinor     BigInt   @map("amount_minor")
   reason          String
+  status          String   @default("PENDING")
   createdBy       String   @map("created_by")
   createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
 

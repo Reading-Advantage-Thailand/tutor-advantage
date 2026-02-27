@@ -24,6 +24,15 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     headers,
   });
 
+  // Token หมดอายุหรือไม่มีสิทธิ์ → redirect กลับ login
+  if (response.status === 401) {
+    if (typeof window !== "undefined") {
+      localStorage.clear();
+      window.location.href = "/login";
+    }
+    throw new Error("Session หมดอายุ กรุณา login ใหม่");
+  }
+
   const isJson = response.headers
     .get("content-type")
     ?.includes("application/json");
