@@ -26,6 +26,23 @@ import {
   approveAdjustment,
   rejectAdjustment,
 } from "./controllers/adjustmentController";
+import {
+  getExceptions,
+  resolveException,
+  getUnresolvedLinks,
+  getMappings,
+  createMapping,
+  deleteMapping,
+} from "./controllers/operationsController";
+import {
+  getUsers,
+  getUserDetails,
+  anonymizeUser,
+} from "./controllers/userController";
+import {
+  getFraudFlags,
+  triggerFraudAction,
+} from "./controllers/fraudController";
 
 const app = express();
 const port = process.env.PORT || 3003;
@@ -95,8 +112,37 @@ app.post(
   rejectAdjustment,
 );
 
-// ── Audit Routes ───────────────────────────────────────────────────────────
 app.get("/v1/audit-logs", authMiddleware, getAuditLogs);
+
+// ── Operations Routes ──────────────────────────────────────────────────────
+app.get("/v1/operations/exceptions", authMiddleware, getExceptions);
+app.post(
+  "/v1/operations/exceptions/:id/:action",
+  authMiddleware,
+  resolveException,
+);
+
+app.get(
+  "/v1/operations/legacy-links/unresolved",
+  authMiddleware,
+  getUnresolvedLinks,
+);
+app.get("/v1/operations/legacy-links/mappings", authMiddleware, getMappings);
+app.post("/v1/operations/legacy-links/mappings", authMiddleware, createMapping);
+app.delete(
+  "/v1/operations/legacy-links/mappings/:id",
+  authMiddleware,
+  deleteMapping,
+);
+
+// ── Users Routes ───────────────────────────────────────────────────────────
+app.get("/v1/users", authMiddleware, getUsers);
+app.get("/v1/users/:id", authMiddleware, getUserDetails);
+app.post("/v1/users/:id/anonymize", authMiddleware, anonymizeUser);
+
+// ── Fraud Routes ───────────────────────────────────────────────────────────
+app.get("/v1/fraud-flags", authMiddleware, getFraudFlags);
+app.post("/v1/fraud-flags/:id/action", authMiddleware, triggerFraudAction);
 
 // Apply error handler last
 app.use(errorHandlerMiddleware);

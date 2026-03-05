@@ -172,6 +172,29 @@ model Enrollment {
 }
 
 // ----------------------------------------------------------------------
+// LEARNING SCHEMA
+// ----------------------------------------------------------------------
+
+model UnresolvedLegacyLink {
+  url       String   @id
+  hits      Int      @default(1)
+  lastSeen  DateTime @default(now()) @map("last_seen") @db.Timestamptz
+
+  @@map("unresolved_legacy_links")
+  @@schema("learning")
+}
+
+model LegacyLinkMapping {
+  mappingId  String   @id @default(dbgenerated("gen_random_uuid()")) @map("mapping_id") @db.Uuid
+  sourceUrl  String   @unique @map("source_url")
+  targetPath String   @map("target_path")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("legacy_link_mappings")
+  @@schema("learning")
+}
+
+// ----------------------------------------------------------------------
 // FINANCE & MLM SCHEMA
 // ----------------------------------------------------------------------
 
@@ -270,5 +293,37 @@ model AuditEvent {
 
   @@index([entityType, entityId, createdAt(sort: Desc)])
   @@map("audit_events")
+  @@schema("finance_mlm")
+}
+
+model Exception {
+  exceptionId   String   @id @default(dbgenerated("gen_random_uuid()")) @map("exception_id") @db.Uuid
+  type          String
+  studentUserId String?  @map("student_user_id") @db.Uuid
+  studentName   String?  @map("student_name")
+  classId       String?  @map("class_id")
+  provider      String?
+  amountMinor   BigInt?  @map("amount_minor")
+  status        String   @default("UNRESOLVED")
+  errorDetail   String?  @map("error_detail")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz
+
+  @@map("exceptions")
+  @@schema("finance_mlm")
+}
+
+model FraudFlag {
+  flagId       String   @id @default(dbgenerated("gen_random_uuid()")) @map("flag_id") @db.Uuid
+  type         String
+  severity     String
+  targetId     String   @map("target_id")
+  targetName   String?  @map("target_name")
+  description  String?
+  status       String   @default("INVESTIGATING")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz
+
+  @@map("fraud_flags")
   @@schema("finance_mlm")
 }

@@ -129,6 +129,44 @@ async function main() {
   });
   console.log("✅ Users created");
 
+  // ── 1.5. Consents & PDPA ──────────────────────────────────────────────────
+  await prisma.userConsent.upsert({
+    where: { userConsentId: "11111111-1111-4000-8000-000000000001" } as any,
+    update: {},
+    create: {
+      userConsentId: "11111111-1111-4000-8000-000000000001",
+      userId: TUTOR_1,
+      consentType: "TERMS_OF_SERVICE",
+      status: "ACCEPTED",
+      effectiveAt: new Date(now.getTime() - 60 * 24 * 3600000), // 60 days ago
+    } as any,
+  });
+
+  await prisma.userConsent.upsert({
+    where: { userConsentId: "11111111-1111-4000-8000-000000000002" } as any,
+    update: {},
+    create: {
+      userConsentId: "11111111-1111-4000-8000-000000000002",
+      userId: TUTOR_1,
+      consentType: "PRIVACY_POLICY",
+      status: "ACCEPTED",
+      effectiveAt: new Date(now.getTime() - 60 * 24 * 3600000), // 60 days ago
+    } as any,
+  });
+
+  await prisma.guardianConsent.upsert({
+    where: { consentId: "22222222-1111-4000-8000-000000000001" } as any,
+    update: {},
+    create: {
+      consentId: "22222222-1111-4000-8000-000000000001",
+      studentUserId: STUDENT_1,
+      guardianName: "ผู้ปกครอง นักเรียน1",
+      relation: "MOTHER",
+      consentedAt: new Date(now.getTime() - 5 * 24 * 3600000),
+    } as any,
+  });
+  console.log("✅ Consents created");
+
   // ── 2. Series & Book ────────────────────────────────────────────────────
   await prisma.series.upsert({
     where: { code: "RA-S1" },
@@ -434,12 +472,126 @@ async function main() {
   }
   console.log("✅ AuditEvents created (8 events)");
 
+  // ── 10. Operations Data (Exceptions, Links, Fraud) ──────────────────────
+  await prisma.exception.upsert({
+    where: { exceptionId: "00000000-0000-9000-8000-000000000001" },
+    update: {},
+    create: {
+      exceptionId: "00000000-0000-9000-8000-000000000001",
+      type: "WEBHOOK_FAILED",
+      studentName: "Somchai J.",
+      classId: "cls_abc123",
+      provider: "OMISE / PROMPTPAY",
+      amountMinor: BigInt(250000),
+      status: "UNRESOLVED",
+      createdAt: new Date("2026-03-04T10:15:00Z"),
+      errorDetail:
+        "Timeout waiting for learning-service to activate enrollment",
+    } as any,
+  });
+
+  await prisma.exception.upsert({
+    where: { exceptionId: "00000000-0000-9000-8000-000000000002" },
+    update: {},
+    create: {
+      exceptionId: "00000000-0000-9000-8000-000000000002",
+      type: "ENROLLMENT_MISMATCH",
+      studentName: "Nong M.",
+      classId: "cls_xyz987",
+      provider: "OMISE / CARD",
+      amountMinor: BigInt(250000),
+      status: "UNRESOLVED",
+      createdAt: new Date("2026-03-04T08:30:22Z"),
+      errorDetail: "Payment succeeded but class was full. Payment held.",
+    } as any,
+  });
+
+  const unresolvedLinks = [
+    {
+      url: "domain.com/student/read/origin-v1-bonus",
+      hits: 1240,
+      lastSeen: new Date("2026-03-04T09:30:00Z"),
+    },
+    {
+      url: "domain.com/student/read/quest-special-evt",
+      hits: 856,
+      lastSeen: new Date("2026-03-03T18:15:00Z"),
+    },
+    {
+      url: "domain.com/student/read/legacy-test-1",
+      hits: 42,
+      lastSeen: new Date("2026-03-01T10:00:00Z"),
+    },
+  ];
+  for (const link of unresolvedLinks) {
+    await prisma.unresolvedLegacyLink.upsert({
+      where: { url: link.url },
+      update: {},
+      create: link,
+    });
+  }
+
+  const legacyMappings = [
+    {
+      mappingId: "11110000-0000-9000-8000-000000000001",
+      sourceUrl: "domain.com/student/read/origins-book-1-intro",
+      targetPath: "/articles/lvl1-intro",
+      createdAt: new Date("2026-02-28T00:00:00Z"),
+    },
+    {
+      mappingId: "11110000-0000-9000-8000-000000000002",
+      sourceUrl: "domain.com/student/read/quest-4-chapter1",
+      targetPath: "/articles/lvl4-ch1",
+      createdAt: new Date("2026-02-28T00:00:00Z"),
+    },
+  ];
+  for (const map of legacyMappings) {
+    await prisma.legacyLinkMapping.upsert({
+      where: { sourceUrl: map.sourceUrl },
+      update: {},
+      create: map,
+    });
+  }
+
+  const fraudFlags = [
+    {
+      flagId: "22220000-0000-9000-8000-000000000001",
+      type: "VELOCITY_SPIKE",
+      severity: "HIGH",
+      targetId: "usr_tutor99x",
+      targetName: "Ajarn A",
+      description: "Abnormal enrollment spikes: 25 new enrollments in 1 hour.",
+      status: "INVESTIGATING",
+      createdAt: new Date("2026-03-04T12:00:00Z"),
+    },
+    {
+      flagId: "22220000-0000-9000-8000-000000000002",
+      type: "PAYMENT_ANOMALY",
+      severity: "MEDIUM",
+      targetId: "cls_abc88",
+      targetName: "Origins Book 2",
+      description:
+        "Multiple failed payment attempts from identical IP before success.",
+      status: "OPEN",
+      createdAt: new Date("2026-03-04T09:15:00Z"),
+    },
+  ];
+  for (const fraud of fraudFlags) {
+    await prisma.fraudFlag.upsert({
+      where: { flagId: fraud.flagId },
+      update: {},
+      create: fraud,
+    });
+  }
+  console.log("✅ Operations & Support Data created");
+
   console.log("\n🎉 Seed complete!");
   console.log(`   Tutors: 3, Student: 1`);
   console.log(`   Settlement Runs: 3 (2 APPROVED + 1 DRAFT)`);
   console.log(`   Payout Lines: ${payoutLines.length}`);
   console.log(`   Adjustments: ${adjustments.length}`);
   console.log(`   Audit Events: ${auditEvents.length}`);
+  console.log(`   Fraud Flags: ${fraudFlags.length}, Exceptions: 2`);
 }
 
 main()

@@ -11,6 +11,10 @@ import {
   ChevronsUpDown,
   ShieldCheck,
   FilePenLine,
+  AlertTriangle,
+  Link as LinkIcon,
+  Users,
+  ShieldAlert,
 } from "lucide-react";
 
 import {
@@ -41,11 +45,29 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-const NAV_ITEMS = [
+const FINANCE_ITEMS = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/settlements", label: "Settlements", icon: ReceiptText },
   { href: "/adjustments", label: "Adjustments", icon: FilePenLine },
-  { href: "/audit", label: "Audit", icon: ShieldCheck },
+  { href: "/audit", label: "Audit Log", icon: ShieldCheck },
+];
+
+const OPS_ITEMS = [
+  {
+    href: "/operations/exceptions",
+    label: "Exceptions",
+    icon: AlertTriangle,
+  },
+  {
+    href: "/operations/legacy-links",
+    label: "Legacy Links",
+    icon: LinkIcon,
+  },
+];
+
+const USER_RISK_ITEMS = [
+  { href: "/users", label: "Users & Consent", icon: Users },
+  { href: "/fraud", label: "Fraud Flags", icon: ShieldAlert },
 ];
 
 function AppSidebar({
@@ -105,10 +127,10 @@ function AppSidebar({
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>Finance</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+              {FINANCE_ITEMS.map(({ href, label, icon: Icon }) => {
                 const active =
                   href === "/" ? pathname === "/" : pathname.startsWith(href);
                 const badgeCount =
@@ -143,6 +165,70 @@ function AppSidebar({
                             {badgeCount}
                           </Badge>
                         )}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Operations</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {OPS_ITEMS.map(({ href, label, icon: Icon }) => {
+                const active = pathname.startsWith(href);
+                return (
+                  <SidebarMenuItem key={href}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={active}
+                      tooltip={label}
+                    >
+                      <Link
+                        href={href}
+                        className="flex justify-between items-center w-full"
+                      >
+                        <div className="flex items-center gap-2 overflow-hidden">
+                          <Icon className="h-4 w-4 shrink-0" />
+                          <span className="truncate group-data-[collapsible=icon]:hidden">
+                            {label}
+                          </span>
+                        </div>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Users & Risk</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {USER_RISK_ITEMS.map(({ href, label, icon: Icon }) => {
+                const active = pathname.startsWith(href);
+                return (
+                  <SidebarMenuItem key={href}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={active}
+                      tooltip={label}
+                    >
+                      <Link
+                        href={href}
+                        className="flex justify-between items-center w-full"
+                      >
+                        <div className="flex items-center gap-2 overflow-hidden">
+                          <Icon className="h-4 w-4 shrink-0" />
+                          <span className="truncate group-data-[collapsible=icon]:hidden">
+                            {label}
+                          </span>
+                        </div>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
