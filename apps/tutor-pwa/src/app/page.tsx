@@ -9,43 +9,49 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-background lg:grid lg:grid-cols-2">
-      {/* Left panel — brand hero, desktop only */}
-      <div className="relative hidden lg:flex flex-col bg-sidebar text-sidebar-foreground p-10">
+    <div className="min-h-screen bg-background flex flex-col lg:grid lg:grid-cols-2">
+      {/* Brand Hero Panel */}
+      <div className="relative flex flex-col bg-sidebar text-sidebar-foreground p-6 lg:p-10 shrink-0">
         {/* Decorative gradient circle */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-primary/20 blur-3xl" />
           <div className="absolute bottom-20 right-10 w-64 h-64 rounded-full bg-primary/10 blur-2xl" />
         </div>
-        {/* Logo */}
-        <div className="relative flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center font-bold text-sm text-primary-foreground">
-            TA
+
+        {/* Top Bar with Logo & Theme Toggle (Mobile + Desktop) */}
+        <div className="relative flex items-center justify-between mb-8 lg:mb-auto">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center font-bold text-sm text-primary-foreground">
+              TA
+            </div>
+            <div>
+              <p className="font-bold text-base text-sidebar-foreground">
+                Tutor Advantage
+              </p>
+              <p className="text-xs text-sidebar-foreground/50">
+                ระบบจัดการครูผู้สอน
+              </p>
+            </div>
           </div>
-          <div>
-            <p className="font-bold text-base text-sidebar-foreground">
-              Tutor Advantage
-            </p>
-            <p className="text-xs text-sidebar-foreground/50">
-              ระบบจัดการครูผู้สอน
-            </p>
-          </div>
+          {/* Theme toggle directly in the hero for both mobile and desktop */}
+          <ThemeToggle className="text-sidebar-foreground hover:bg-sidebar-accent" />
         </div>
+
         {/* Main copy */}
-        <div className="relative flex-1 flex flex-col justify-center max-w-sm">
-          <h2 className="text-3xl font-bold text-sidebar-foreground leading-snug mb-4">
+        <div className="relative flex-1 flex flex-col justify-center max-w-sm mt-4 lg:mt-0">
+          <h2 className="text-2xl lg:text-3xl font-bold text-sidebar-foreground leading-snug mb-3 lg:mb-4">
             สอนอย่างมืออาชีพ
             <br />
             <span className="text-primary">รายได้มั่นคงและโปร่งใส</span>
           </h2>
-          <ul className="space-y-3 text-sm text-sidebar-foreground/70">
+          <ul className="space-y-2 lg:space-y-3 text-sm text-sidebar-foreground/70 hidden sm:block">
             <li className="flex items-start gap-2">
               <span className="mt-0.5 text-primary">✓</span>
               แผนการสอน 15 ขั้นตอนพร้อมใช้ทันที
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-0.5 text-primary">✓</span>
-              ระบบคำนวณรายได้และโบนัสเครือข่ายชัดเจน ตรวจสอบได้ทุกบาท
+              ระบบคำนวณรายได้และโบนัสเครือข่ายชัดเจน คุยสอบได้ทุกบาท
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-0.5 text-primary">✓</span>
@@ -53,39 +59,33 @@ export default function LoginPage() {
             </li>
           </ul>
         </div>
-        {/* Footer quote */}
-        <p className="relative text-xs text-sidebar-foreground/40 mt-auto">
+
+        {/* Footer quote - hidden on smaller than sm to save space */}
+        <p className="relative hidden sm:block text-xs text-sidebar-foreground/40 mt-8 lg:mt-auto">
           &ldquo;ราคา การลงทะเบียน และคอมมิชชั่น — โปร่งใสทุกขั้นตอน&rdquo;
         </p>
       </div>
 
-      {/* Right panel — login form */}
-      <div className="flex flex-col min-h-screen lg:min-h-0">
-        {/* Top bar — mobile only */}
-        <div className="lg:hidden flex items-center justify-between px-4 py-4 border-b border-border">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center font-bold text-xs text-primary-foreground">
-              TA
-            </div>
-            <span className="font-semibold text-sm">Tutor Advantage</span>
-          </div>
-          <ThemeToggle className="text-foreground hover:bg-muted" />
-        </div>
+      {/* Login Form Panel */}
+      <div className="flex-1 flex flex-col bg-background relative rounded-t-3xl -mt-6 lg:mt-0 lg:rounded-none overflow-hidden shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] lg:shadow-none">
+        {/* Helper spacing for desktop since top bar was moved */}
+        <div className="hidden lg:block py-6"></div>
+        
         {/* Form area */}
-        <div className="flex-1 flex items-center justify-center p-8">
+        <div className="flex-1 flex items-center justify-center p-6 lg:p-8 pt-10 lg:pt-8 relative z-10 bg-background">
           <div className="w-full max-w-sm space-y-6">
-            <div className="space-y-1 text-center">
+            <div className="space-y-1 text-center lg:text-left">
               <h1 className="text-2xl font-bold text-foreground">
-                ยินดีต้อนรับกลับ
+                เข้าสู่ระบบ
               </h1>
               <p className="text-sm text-muted-foreground">
-                เข้าสู่ระบบบัญชีครูผู้สอนเพื่อจัดการคลาสเรียน
+                ยินดีต้อนรับกลับเพื่อจัดการคลาสเรียนของคุณ
               </p>
             </div>
 
             <LoginForm />
 
-            <p className="text-center text-xs text-muted-foreground">
+            <p className="text-center text-xs text-muted-foreground mt-8">
               การเข้าสู่ระบบหมายความว่าคุณยอมรับ{" "}
               <a
                 href="/terms"

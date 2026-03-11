@@ -1,0 +1,171 @@
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { 
+  User, 
+  MapPin, 
+  BookOpen, 
+  ShieldCheck, 
+  LogOut, 
+  ChevronRight, 
+  Bell, 
+  Wallet,
+  FileText
+} from "lucide-react";
+import Link from "next/link";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
+
+export default function SettingsPage() {
+  return (
+    <div className="max-w-2xl mx-auto space-y-6 lg:space-y-8 pb-24 sm:pb-0">
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">ตั้งค่าบัญชี</h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          จัดการข้อมูลส่วนตัว ความเป็นส่วนตัว และบัญชีรับเงิน
+        </p>
+      </div>
+
+      {/* Profile Summary Card */}
+      <Card className="border-border/60 overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+        <CardContent className="p-6 relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
+          <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center border-4 border-background shadow-sm shrink-0">
+            <User className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <div className="flex-1 text-center sm:text-left">
+            <h2 className="text-xl font-bold text-foreground">ครูพี่นัท (ณัฐวุฒิ)</h2>
+            <p className="text-sm text-muted-foreground mb-3">Tutor ID: TA-88219</p>
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+              <Badge variant="secondary" className="font-normal text-xs bg-primary/10 text-primary hover:bg-primary/20">
+                <ShieldCheck className="w-3 h-3 mr-1" /> ยืนยันตัวตนแล้ว
+              </Badge>
+              <Badge variant="outline" className="font-normal text-xs">
+                ระดับ: Senior Tutor
+              </Badge>
+            </div>
+          </div>
+          <Button variant="outline" size="sm" className="w-full sm:w-auto mt-2 sm:mt-0">
+            แก้ไขโปรไฟล์
+          </Button>
+        </CardContent>
+      </Card>
+
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1">
+          ระบบและการแจ้งเตือน
+        </h3>
+        
+        <Card className="border-border/60">
+          <div className="divide-y divide-border/50">
+            {/* Theme Toggle mapped into settings for mobile users especially */}
+            <div className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0">
+                  <div className="text-indigo-500">
+                    <ThemeToggle className="hover:bg-transparent" />
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">ลักษณะที่ปรากฏ (Theme)</p>
+                  <p className="text-xs text-muted-foreground">สลับโหมดสว่าง/มืด</p>
+                </div>
+              </div>
+            </div>
+
+            <Link href="#" className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors group">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
+                  <Bell className="h-5 w-5 text-orange-500" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">การแจ้งเตือนบน LINE</p>
+                  <p className="text-xs text-muted-foreground">รับข้อความเมื่อมีนักเรียนชำระเงิน</p>
+                </div>
+              </div>
+              <ChevronRight className="h-5 w-5 text-muted-foreground/40 group-hover:text-foreground transition-colors" />
+            </Link>
+          </div>
+        </Card>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1">
+          ข้อมูลบัญชีและการเงิน
+        </h3>
+        
+        <Card className="border-border/60">
+          <div className="divide-y divide-border/50">
+            <Link href="#" className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors group">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
+                  <Wallet className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">บัญชีรับเงิน (PromptPay)</p>
+                  <p className="text-xs text-muted-foreground">ลงท้ายด้วย ****8921</p>
+                </div>
+              </div>
+              <ChevronRight className="h-5 w-5 text-muted-foreground/40 group-hover:text-foreground transition-colors" />
+            </Link>
+            
+            <Link href="#" className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors group">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
+                  <MapPin className="h-5 w-5 text-blue-500" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">ที่อยู่สำหรับส่งเอกสาร (ภ.ง.ด.3)</p>
+                  <p className="text-xs text-muted-foreground">พญาไท, กรุงเทพมหานคร</p>
+                </div>
+              </div>
+              <ChevronRight className="h-5 w-5 text-muted-foreground/40 group-hover:text-foreground transition-colors" />
+            </Link>
+          </div>
+        </Card>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1">
+          นโยบายและข้อตกลง (PDPA)
+        </h3>
+        
+        <Card className="border-border/60">
+          <div className="divide-y divide-border/50">
+            <Link href="/terms" className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors group">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-slate-500/10 flex items-center justify-center shrink-0">
+                  <FileText className="h-5 w-5 text-slate-500" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">ข้อตกลงการให้บริการ</p>
+                  <p className="text-xs text-muted-foreground">อ่านข้อควรปฏิบัติของ Tutor Advantage</p>
+                </div>
+              </div>
+              <ChevronRight className="h-5 w-5 text-muted-foreground/40 group-hover:text-foreground transition-colors" />
+            </Link>
+            
+            <Link href="/privacy" className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors group">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-slate-500/10 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="h-5 w-5 text-slate-500" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">นโยบายความเป็นส่วนตัว</p>
+                  <p className="text-xs text-muted-foreground">เรียนรู้การจัดการข้อมูลส่วนบุคคลของคุณ</p>
+                </div>
+              </div>
+              <ChevronRight className="h-5 w-5 text-muted-foreground/40 group-hover:text-foreground transition-colors" />
+            </Link>
+          </div>
+        </Card>
+      </div>
+
+      <div className="pt-4 pb-8 flex justify-center">
+        <Button variant="ghost" className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-2 w-full sm:w-auto">
+          <LogOut className="w-4 h-4" />
+          ออกจากระบบ
+        </Button>
+      </div>
+    </div>
+  );
+}
