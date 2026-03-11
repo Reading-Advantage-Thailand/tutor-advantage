@@ -41,30 +41,30 @@ export default function NewClassPage() {
   };
 
   return (
-    <div className="max-w-lg">
+    <div className="w-full max-w-4xl pb-24 lg:pb-0">
       <div className="flex items-center gap-3 mb-6">
         <Link href="/dashboard/classes">
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-muted">
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-xl font-bold text-slate-900">
+          <h1 className="text-xl font-bold text-foreground">
             สร้างคลาสเรียนใหม่
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-muted-foreground">
             กรอกรายละเอียดคลาสเพื่อเริ่มรับสมัครนักเรียน
           </p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit}>
-        <div className="space-y-4">
+      <form onSubmit={handleSubmit} className="flex flex-col h-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 flex-1">
           {/* Class name */}
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <BookOpen className="h-4 w-4 text-indigo-600" />
+                <BookOpen className="h-4 w-4 text-primary" />
                 ข้อมูลคลาส
               </CardTitle>
             </CardHeader>
@@ -103,7 +103,7 @@ export default function NewClassPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-indigo-600" />
+                <Calendar className="h-4 w-4 text-primary" />
                 ตารางเรียน
               </CardTitle>
             </CardHeader>
@@ -119,7 +119,7 @@ export default function NewClassPage() {
                   }
                   required
                 />
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-muted-foreground">
                   ตารางนี้จะแสดงให้นักเรียนเห็นก่อนสมัคร
                 </p>
               </div>
@@ -130,7 +130,7 @@ export default function NewClassPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Link2 className="h-4 w-4 text-indigo-600" />
+                <Link2 className="h-4 w-4 text-primary" />
                 ลิงก์ห้องเรียนออนไลน์
               </CardTitle>
             </CardHeader>
@@ -146,17 +146,21 @@ export default function NewClassPage() {
                     setForm({ ...form, meetingUrl: e.target.value })
                   }
                 />
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-muted-foreground">
                   ลิงก์นี้จะแสดงให้นักเรียนกดเข้าเรียนได้เฉพาะนักเรียนที่ชำระเงินแล้วเท่านั้น
                 </p>
               </div>
             </CardContent>
           </Card>
+        </div>
 
+        {/* Submit Button - Sticky on Mobile, Natural on Desktop */}
+        <div className="fixed bottom-16 lg:bottom-0 left-0 right-0 p-4 lg:p-0 bg-background/80 backdrop-blur-md border-t border-border lg:border-none lg:static lg:bg-transparent lg:mt-8 z-40">
           <Button
             id="btn-submit-create-class"
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700"
+            size="lg"
+            className="w-full lg:w-auto lg:px-8 font-semibold shadow-md"
             disabled={loading}
           >
             {loading ? "กำลังสร้างคลาส..." : "สร้างคลาสและรับ Referral Link"}

@@ -1,6 +1,7 @@
 import { Sidebar } from "@/components/layout/sidebar";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import Image from "next/image";
 
 export default function DashboardLayout({
   children,
@@ -19,8 +20,14 @@ export default function DashboardLayout({
         {/* Mobile top bar (just branding and theme toggle now) */}
         <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-background border-b border-border z-10">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center text-xs font-bold text-primary-foreground">
-              TA
+            <div className="w-7 h-7 shrink-0 flex items-center justify-center">
+              <Image 
+                src="/icons/icon-192.png" 
+                alt="Tutor Advantage" 
+                width={28} 
+                height={28} 
+                className="rounded-lg shadow-sm"
+              />
             </div>
             <span className="font-semibold text-sm">Tutor Advantage</span>
           </div>

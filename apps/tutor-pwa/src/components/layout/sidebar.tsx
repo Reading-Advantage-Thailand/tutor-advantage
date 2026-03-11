@@ -11,6 +11,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import { ThemeToggle } from "./theme-toggle";
 
 const navItems = [
@@ -27,8 +28,14 @@ export function Sidebar() {
     <aside className="flex flex-col h-full w-64 bg-sidebar text-sidebar-foreground">
       {/* Logo */}
       <div className="flex items-center gap-3 px-5 py-5 border-b border-sidebar-border">
-        <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-bold text-xs text-primary-foreground shrink-0">
-          TA
+        <div className="w-9 h-9 shrink-0 flex items-center justify-center">
+          <Image 
+            src="/icons/icon-192.png" 
+            alt="Tutor Advantage" 
+            width={36} 
+            height={36} 
+            className="rounded-lg shadow-sm"
+          />
         </div>
         <div className="min-w-0">
           <p className="font-semibold text-sm text-sidebar-foreground leading-none">

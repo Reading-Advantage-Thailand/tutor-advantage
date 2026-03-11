@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Image from "next/image";
 import { LoginForm } from "@/components/auth/login-form";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 
@@ -21,8 +22,14 @@ export default function LoginPage() {
         {/* Top Bar with Logo & Theme Toggle (Mobile + Desktop) */}
         <div className="relative flex items-center justify-between mb-8 lg:mb-auto">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center font-bold text-sm text-primary-foreground">
-              TA
+            <div className="w-10 h-10 shrink-0 flex items-center justify-center">
+              <Image 
+                src="/icons/icon-192.png" 
+                alt="Tutor Advantage" 
+                width={40} 
+                height={40} 
+                className="rounded-xl shadow-sm"
+              />
             </div>
             <div>
               <p className="font-bold text-base text-sidebar-foreground">
@@ -33,8 +40,10 @@ export default function LoginPage() {
               </p>
             </div>
           </div>
-          {/* Theme toggle directly in the hero for both mobile and desktop */}
-          <ThemeToggle className="text-sidebar-foreground hover:bg-sidebar-accent" />
+          {/* Theme toggle directly in the hero for mobile */}
+          <div className="lg:hidden">
+            <ThemeToggle className="text-sidebar-foreground hover:bg-sidebar-accent" />
+          </div>
         </div>
 
         {/* Main copy */}
@@ -68,6 +77,12 @@ export default function LoginPage() {
 
       {/* Login Form Panel */}
       <div className="flex-1 flex flex-col bg-background relative rounded-t-3xl -mt-6 lg:mt-0 lg:rounded-none overflow-hidden shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] lg:shadow-none">
+        
+        {/* Desktop Theme Toggle positioned at top right */}
+        <div className="absolute top-6 right-6 lg:top-8 lg:right-8 hidden lg:block z-50">
+          <ThemeToggle className="text-muted-foreground hover:bg-muted" />
+        </div>
+
         {/* Helper spacing for desktop since top bar was moved */}
         <div className="hidden lg:block py-6"></div>
         

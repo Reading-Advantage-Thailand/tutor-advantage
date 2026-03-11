@@ -69,7 +69,7 @@ export default function ClassDetailPage() {
   const progress = Math.round((checkedSteps.length / lessonPlan.length) * 100);
 
   return (
-    <div className="max-w-2xl space-y-5">
+    <div className="w-full max-w-5xl space-y-5 pb-24 lg:pb-0">
       {/* Breadcrumb + header */}
       <div>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
@@ -103,41 +103,46 @@ export default function ClassDetailPage() {
         </div>
       </div>
 
-      {/* Join Meeting */}
-      {mockClass.meetingUrl && (
-        <Card className="border-primary/20 bg-primary/5">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
-                  <Video className="h-4 w-4 text-primary" />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+        
+        {/* Left Column (Info, Meeting, Link, Students) */}
+        <div className="lg:col-span-5 space-y-4 lg:space-y-6">
+          {/* Join Meeting */}
+          {mockClass.meetingUrl && (
+            <Card className="border-primary/20 bg-primary/5">
+              <CardContent className="p-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
+                      <Video className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-foreground">
+                        ห้องเรียนออนไลน์
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {mockClass.meetingUrl}
+                      </p>
+                    </div>
+                  </div>
+                  <a
+                    href={mockClass.meetingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto"
+                  >
+                    <Button
+                      id="btn-join-meeting"
+                      size="sm"
+                      className="w-full sm:w-auto gap-2 shrink-0"
+                    >
+                      เข้าห้องเรียน <ExternalLink className="h-3.5 w-3.5" />
+                    </Button>
+                  </a>
                 </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground">
-                    ห้องเรียนออนไลน์
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {mockClass.meetingUrl}
-                  </p>
-                </div>
-              </div>
-              <a
-                href={mockClass.meetingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button
-                  id="btn-join-meeting"
-                  size="sm"
-                  className="gap-2 shrink-0"
-                >
-                  เข้าห้องเรียน <ExternalLink className="h-3.5 w-3.5" />
-                </Button>
-              </a>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+              </CardContent>
+            </Card>
+          )}
 
       {/* Referral link */}
       <Card className="border-border/60">
@@ -172,94 +177,99 @@ export default function ClassDetailPage() {
         </CardContent>
       </Card>
 
-      {/* Students */}
-      <Card className="border-border/60">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <Users className="h-4 w-4 text-primary" />
-            นักเรียน ({mockClass.students}/{mockClass.maxStudents} คน)
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="divide-y divide-border/50">
-          {mockClass.enrolledStudents.map((s) => (
-            <div
-              key={s.name}
-              className="flex items-center justify-between py-2.5"
-            >
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                  {s.name[1]}
-                </div>
-                <p className="text-sm font-medium text-foreground">{s.name}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">
-                  สมัคร {s.enrolled}
-                </span>
-                {s.paid && (
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-medium">
-                    ชำระแล้ว
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      {/* 15-Step Lesson Plan */}
-      <Card className="border-border/60">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-semibold flex items-center gap-2">
-              <BookOpen className="h-4 w-4 text-primary" />
-              แผนการสอน 15 ขั้นตอน
-            </CardTitle>
-            <span className="text-xs text-muted-foreground">
-              {checkedSteps.length}/{lessonPlan.length} เสร็จแล้ว
-            </span>
-          </div>
-          {/* Progress bar */}
-          <div className="w-full bg-muted rounded-full h-1.5 mt-3">
-            <div
-              className="bg-primary h-1.5 rounded-full transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <ol className="space-y-1">
-            {lessonPlan.map((step, i) => {
-              const done = checkedSteps.includes(i);
-              return (
-                <li
-                  key={i}
-                  id={`lesson-step-${i + 1}`}
-                  onClick={() => toggleStep(i)}
-                  className={`flex items-start gap-3 rounded-lg p-2.5 cursor-pointer transition-all ${
-                    done ? "opacity-60" : "hover:bg-muted/60"
-                  }`}
+          {/* Students */}
+          <Card className="border-border/60">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                <Users className="h-4 w-4 text-primary" />
+                นักเรียน ({mockClass.students}/{mockClass.maxStudents} คน)
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="divide-y divide-border/50">
+              {mockClass.enrolledStudents.map((s) => (
+                <div
+                  key={s.name}
+                  className="flex items-center justify-between py-2.5"
                 >
-                  <div
-                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 transition-all ${
-                      done
-                        ? "bg-primary text-primary-foreground"
-                        : "border-2 border-border text-muted-foreground"
-                    }`}
-                  >
-                    {done ? "✓" : i + 1}
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                      {s.name[1]}
+                    </div>
+                    <p className="text-sm font-medium text-foreground">{s.name}</p>
                   </div>
-                  <span
-                    className={`text-sm ${done ? "line-through text-muted-foreground" : "text-foreground"}`}
-                  >
-                    {step}
-                  </span>
-                </li>
-              );
-            })}
-          </ol>
-        </CardContent>
-      </Card>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground hidden sm:inline-block">
+                      {s.enrolled}
+                    </span>
+                    {s.paid && (
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-medium whitespace-nowrap">
+                        ชำระแล้ว
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Column (Lesson Plan) */}
+        <div className="lg:col-span-7">
+          {/* 15-Step Lesson Plan */}
+          <Card className="border-border/60 h-full">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                  <BookOpen className="h-4 w-4 text-primary" />
+                  แผนการสอน 15 ขั้นตอน
+                </CardTitle>
+                <span className="text-xs text-muted-foreground">
+                  {checkedSteps.length}/{lessonPlan.length} เสร็จแล้ว
+                </span>
+              </div>
+              {/* Progress bar */}
+              <div className="w-full bg-muted rounded-full h-1.5 mt-3">
+                <div
+                  className="bg-primary h-1.5 rounded-full transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <ol className="space-y-1">
+                {lessonPlan.map((step, i) => {
+                  const done = checkedSteps.includes(i);
+                  return (
+                    <li
+                      key={i}
+                      id={`lesson-step-${i + 1}`}
+                      onClick={() => toggleStep(i)}
+                      className={`flex items-start gap-3 rounded-lg p-2.5 cursor-pointer transition-all ${
+                        done ? "opacity-60" : "hover:bg-muted/60"
+                      }`}
+                    >
+                      <div
+                        className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 transition-all ${
+                          done
+                            ? "bg-primary text-primary-foreground"
+                            : "border-2 border-border text-muted-foreground"
+                        }`}
+                      >
+                        {done ? "✓" : i + 1}
+                      </div>
+                      <span
+                        className={`text-sm ${done ? "line-through text-muted-foreground" : "text-foreground"}`}
+                      >
+                        {step}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ol>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

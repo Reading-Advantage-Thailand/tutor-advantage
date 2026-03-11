@@ -46,122 +46,126 @@
 }
 
 /* ═══════════════════════════════════════════════════
-   LIGHT MODE — Trust-first, clean indigo brand
+   LIGHT MODE — Clean Neutral Backgrounds, Vibrant Green Accents
    ═══════════════════════════════════════════════════ */
 :root {
-  --background: oklch(0.98 0.004 265);
-  --foreground: oklch(0.15 0.02 265);
+  /* Crisp, clean white/gray background. No green tint. */
+  --background: oklch(0.99 0.002 240);
+  --foreground: oklch(0.15 0.02 240);
 
+  /* Clean white cards */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.02 265);
+  --card-foreground: oklch(0.15 0.02 240);
 
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.02 265);
+  --popover-foreground: oklch(0.15 0.02 240);
 
-  /* Brand: indigo-600 */
-  --primary: oklch(0.46 0.22 265);
+  /* Brand Primary: Exact Hex codes provided by user */
+  --primary: #126343;
   --primary-foreground: oklch(0.98 0 0);
 
-  --secondary: oklch(0.94 0.01 265);
-  --secondary-foreground: oklch(0.25 0.02 265);
+  /* Subtle neutral grays for secondary/muted elements */
+  --secondary: oklch(0.96 0.01 240);
+  --secondary-foreground: oklch(0.2 0.02 240);
 
-  --muted: oklch(0.94 0.008 265);
-  --muted-foreground: oklch(0.48 0.018 265);
+  --muted: oklch(0.96 0.01 240);
+  --muted-foreground: oklch(0.45 0.01 240);
 
-  --accent: oklch(0.93 0.03 265);
-  --accent-foreground: oklch(0.3 0.08 265);
+  --accent: oklch(0.96 0.01 240);
+  --accent-foreground: oklch(0.2 0.02 240);
 
-  --destructive: oklch(0.58 0.22 27);
+  --destructive: oklch(0.6 0.2 25);
   --destructive-foreground: oklch(0.98 0 0);
 
-  --border: oklch(0.9 0.01 265);
-  --input: oklch(0.9 0.01 265);
-  --ring: oklch(0.46 0.22 265);
+  --border: oklch(0.92 0.01 240);
+  --input: oklch(0.92 0.01 240);
+  --ring: #126343;
 
   /* Semantic helpers for finance */
-  --success: oklch(0.52 0.18 145);
-  --success-foreground: oklch(0.98 0 0);
-  --warning: oklch(0.72 0.15 75);
-  --warning-foreground: oklch(0.15 0 0);
-
-  --radius: 0.625rem;
-
-  /* Charts — indigo palette */
-  --chart-1: oklch(0.6 0.22 265);
-  --chart-2: oklch(0.52 0.18 145);
-  --chart-3: oklch(0.72 0.15 75);
-  --chart-4: oklch(0.62 0.2 300);
-  --chart-5: oklch(0.58 0.22 27);
-
-  /* Sidebar — dark even in light mode for contrast */
-  --sidebar: oklch(0.13 0.025 265);
-  --sidebar-foreground: oklch(0.92 0.008 265);
-  --sidebar-primary: oklch(0.56 0.22 265);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.22 0.03 265);
-  --sidebar-accent-foreground: oklch(0.92 0.008 265);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.56 0.22 265);
-}
-
-/* ═══════════════════════════════════════════════════
-   DARK MODE — Rich deep-blue, premium feel
-   ═══════════════════════════════════════════════════ */
-.dark {
-  /* Deeper bg so cards pop clearly */
-  --background: oklch(0.1 0.02 265);
-  --foreground: oklch(0.95 0.008 265);
-
-  /* Card clearly above background */
-  --card: oklch(0.21 0.03 265);
-  --card-foreground: oklch(0.95 0.008 265);
-
-  --popover: oklch(0.18 0.025 265);
-  --popover-foreground: oklch(0.95 0.008 265);
-
-  /* Brand: slightly lighter indigo for dark bg */
-  --primary: oklch(0.6 0.22 265);
-  --primary-foreground: oklch(0.98 0 0);
-
-  --secondary: oklch(0.24 0.03 265);
-  --secondary-foreground: oklch(0.9 0.008 265);
-
-  --muted: oklch(0.25 0.03 265);
-  --muted-foreground: oklch(0.6 0.018 265);
-
-  --accent: oklch(0.28 0.04 265);
-  --accent-foreground: oklch(0.92 0.008 265);
-
-  --destructive: oklch(0.65 0.22 27);
-  --destructive-foreground: oklch(0.98 0 0);
-
-  /* More visible borders in dark mode */
-  --border: oklch(1 0 0 / 16%);
-  --input: oklch(1 0 0 / 16%);
-  --ring: oklch(0.62 0.22 265);
-
-  /* Semantic */
-  --success: oklch(0.58 0.18 145);
+  --success: oklch(0.6 0.15 145);
   --success-foreground: oklch(0.98 0 0);
   --warning: oklch(0.75 0.15 75);
   --warning-foreground: oklch(0.15 0 0);
 
-  /* Charts */
-  --chart-1: oklch(0.65 0.22 265);
-  --chart-2: oklch(0.58 0.18 145);
-  --chart-3: oklch(0.75 0.15 75);
-  --chart-4: oklch(0.65 0.2 300);
-  --chart-5: oklch(0.65 0.22 27);
+  --radius: 0.625rem;
 
-  /* Sidebar — clearly between bg and card */
-  --sidebar: oklch(0.14 0.025 265);
-  --sidebar-foreground: oklch(0.9 0.01 265);
-  --sidebar-primary: oklch(0.62 0.22 265);
+  /* Charts */
+  --chart-1: #126343;
+  --chart-2: oklch(0.7 0.12 180);
+  --chart-3: oklch(0.75 0.15 75);
+  --chart-4: oklch(0.5 0.15 260);
+  --chart-5: oklch(0.6 0.2 25);
+
+  /* Sidebar — Clean slate, very subtle tint */
+  --sidebar: oklch(0.98 0.01 240);
+  --sidebar-foreground: oklch(0.2 0.02 240);
+  --sidebar-primary: #126343;
   --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.22 0.03 265);
-  --sidebar-accent-foreground: oklch(0.9 0.01 265);
-  --sidebar-border: oklch(1 0 0 / 14%);
-  --sidebar-ring: oklch(0.62 0.22 265);
+  --sidebar-accent: oklch(0.94 0.01 240);
+  --sidebar-accent-foreground: oklch(0.15 0.02 240);
+  --sidebar-border: oklch(0.92 0.01 240);
+  --sidebar-ring: #126343;
+}
+
+/* ═══════════════════════════════════════════════════
+   DARK MODE — Sleek Black/Slate, Neon Green Accents
+   ═══════════════════════════════════════════════════ */
+.dark {
+  /* True dark sleek background (almost black with slight cool slate tint) */
+  --background: oklch(0.15 0.01 240);
+  --foreground: oklch(0.98 0.005 240);
+
+  /* Cards slightly lighter than bg, maintaining neutral slate */
+  --card: oklch(0.18 0.01 240);
+  --card-foreground: oklch(0.98 0.005 240);
+
+  --popover: oklch(0.18 0.01 240);
+  --popover-foreground: oklch(0.98 0.005 240);
+
+  /* Brand Primary: High energy exact light green from user */
+  --primary: #7DE8B5;
+  --primary-foreground: #126343;
+
+  /* Neutral tones for hierarchy */
+  --secondary: oklch(0.22 0.01 240);
+  --secondary-foreground: oklch(0.98 0.005 240);
+
+  --muted: oklch(0.2 0.01 240);
+  --muted-foreground: oklch(0.65 0.01 240);
+
+  --accent: oklch(0.22 0.01 240);
+  --accent-foreground: oklch(0.98 0.005 240);
+
+  --destructive: oklch(0.65 0.2 25);
+  --destructive-foreground: oklch(0.98 0 0);
+
+  /* Distinct but subtle borders */
+  --border: oklch(0.25 0.01 240);
+  --input: oklch(0.25 0.01 240);
+  --ring: #7DE8B5;
+
+  /* Semantic */
+  --success: oklch(0.65 0.15 145);
+  --success-foreground: oklch(0.15 0 0); /* dark text for high contrast on success badges */
+  --warning: oklch(0.8 0.15 75);
+  --warning-foreground: oklch(0.15 0 0);
+
+  /* Charts */
+  --chart-1: #7DE8B5;
+  --chart-2: oklch(0.75 0.12 180);
+  --chart-3: oklch(0.8 0.15 75);
+  --chart-4: oklch(0.6 0.15 260);
+  --chart-5: oklch(0.65 0.2 25);
+
+  /* Sidebar */
+  --sidebar: oklch(0.15 0.01 240);
+  --sidebar-foreground: oklch(0.98 0.005 240);
+  --sidebar-primary: #7DE8B5;
+  --sidebar-primary-foreground: #126343;
+  --sidebar-accent: oklch(0.2 0.01 240);
+  --sidebar-accent-foreground: oklch(0.98 0.005 240);
+  --sidebar-border: oklch(0.25 0.01 240);
+  --sidebar-ring: #7DE8B5;
 }
 
 @layer base {
