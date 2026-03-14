@@ -3,36 +3,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Plus, ChevronRight, BookOpen, Users, Calendar } from "lucide-react";
+import { cookies } from "next/headers";
 
-const mockClasses = [
-  {
-    id: "cls-1",
-    name: "Origins 1 - กลุ่ม A",
-    book: "Origins 1",
-    status: "open",
-    students: 3,
-    maxStudents: 5,
-    nextSession: "จ. 10 มี.ค. 19:00",
-  },
-  {
-    id: "cls-2",
-    name: "Quest 4 - กลุ่ม B",
-    book: "Quest 4",
-    status: "full",
-    students: 5,
-    maxStudents: 5,
-    nextSession: "อ. 11 มี.ค. 17:00",
-  },
-  {
-    id: "cls-3",
-    name: "Origins 2 - กลุ่ม C",
-    book: "Origins 2",
-    status: "open",
-    students: 2,
-    maxStudents: 5,
-    nextSession: "พ. 12 มี.ค. 18:00",
-  },
-];
+async function getClassesData(token: string) {
+  const res = await fetch("http://localhost:3002/v1/classes", {
+    headers: { Authorization: `Bearer ${token}` },
+    next: { revalidate: 30 },
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
 
 const statusLabel: Record<
   string,
@@ -59,7 +39,13 @@ const statusLabel: Record<
   },
 };
 
-export default function ClassesPage() {
+export default async function ClassesPage() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("tutor_session")?.value || "";
+
+  const response = await getClassesData(token);
+  const classesList = response?.classes || [];
+
   return (
     <div className="space-y-6 lg:space-y-8 max-w-4xl mx-auto pb-24 sm:pb-0">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -81,8 +67,13 @@ export default function ClassesPage() {
       </div>
 
       <div className="grid gap-4">
-        {mockClasses.map((cls) => {
-          const s = statusLabel[cls.status];
+        {classesList.length === 0 && (
+          <div className="py-12 text-center border rounded-xl border-dashed">
+            <p className="text-muted-foreground">ยังไม่มีคลาสเรียน</p>
+          </div>
+        )}
+        {classesList.map((cls: any) => {
+          const s = statusLabel[cls.status] || statusLabel["closed"];
           return (
             <Link key={cls.id} href={`/dashboard/classes/${cls.id}`} className="group block focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent rounded-xl">
               <Card className="hover:shadow-md hover:border-primary/30 transition-all cursor-pointer overflow-hidden bg-card/50 backdrop-blur-sm sm:bg-card">

@@ -2,49 +2,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, Download, AlertCircle, Wallet, Star } from "lucide-react";
 import Link from "next/link";
+import { cookies } from "next/headers";
 
-const mockEarnings = {
-  directSales: 8400,
-  networkBonus: 1200,
-  clawback: -500,
-  total: 9100,
-};
-
-const mockHistory = [
-  {
-    date: "มี.ค. 2026",
-    direct: 8400,
-    network: 1200,
-    clawback: -500,
-    status: "pending",
-  },
-  {
-    date: "ก.พ. 2026",
-    direct: 7500,
-    network: 900,
-    clawback: 0,
-    status: "approved",
-  },
-  {
-    date: "ม.ค. 2026",
-    direct: 6000,
-    network: 500,
-    clawback: 0,
-    status: "approved",
-  },
-];
-
-const clawbacks = [
-  {
-    date: "ก.พ. 2026",
-    amount: -500,
-    reason: "นักเรียน Refund — น้องโอ (Origins 1 กลุ่ม A)",
-  },
-];
+async function getEarningsHistoryData(token: string) {
+  const res = await fetch("http://localhost:3003/v1/tutors/earnings/history", {
+    headers: { Authorization: `Bearer ${token}` },
+    next: { revalidate: 60 },
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
 
 const statusMap: Record<string, { label: string; className: string }> = {
+  draft: {
+    label: "ร่างรายการ",
+    className: "bg-muted text-muted-foreground border-border",
+  },
   pending: {
-    label: "รอการสรุป",
+    label: "รอการพิจารณา",
     className:
       "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
   },
@@ -53,9 +28,29 @@ const statusMap: Record<string, { label: string; className: string }> = {
     className:
       "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
   },
+  rejected: {
+    label: "ถูกปฏิเสธ",
+    className: "bg-destructive/10 text-destructive border-destructive/20",
+  },
 };
 
-export default function EarningsPage() {
+export default async function EarningsPage() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("tutor_session")?.value || "";
+
+  const response = await getEarningsHistoryData(token);
+  
+  const mockEarnings = response?.currentProjection || { directSales: 0, networkBonus: 0, clawback: 0, total: 0 };
+  const mockHistory = response?.history || [];
+  const clawbacks = response?.clawbacks || [];
+  const rateInfo = response?.rateInfo || { rate: 0.35, volume: 0, nextTarget: 20000 };
+
+  const progressPercent = Math.min(
+    100,
+    rateInfo.nextTarget > 0 
+      ? Math.round((rateInfo.volume / rateInfo.nextTarget) * 100) 
+      : 100
+  );
   return (
     <div className="max-w-3xl mx-auto space-y-6 lg:space-y-8 pb-20 sm:pb-0">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -86,7 +81,7 @@ export default function EarningsPage() {
                   <Wallet className="h-5 w-5 text-primary" />
                 </div>
                 <h2 className="text-sm font-semibold text-foreground">
-                  รายได้ประมาณการเดือนนี้ (มี.ค. 2026)
+                  รายได้ประมาณการเดือนนี้ ({response?.periodMonth || "N/A"})
                 </h2>
               </div>
               <div className="flex items-baseline gap-2 mb-6">
@@ -140,13 +135,13 @@ export default function EarningsPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-xs text-muted-foreground">
-                  <span className="font-medium text-foreground">฿8,400</span>
-                  <span>เป้าหมาย ฿20,000 (เพื่อเรท 45%)</span>
+                  <span className="font-medium text-foreground">฿{rateInfo.volume.toLocaleString()}</span>
+                  <span>เป้าหมาย ฿{rateInfo.nextTarget.toLocaleString()} (เพื่อปรับเรท)</span>
                 </div>
                 <div className="w-full bg-primary/10 rounded-full h-2.5 overflow-hidden">
                   <div
                     className="bg-primary h-2.5 rounded-full transition-all duration-1000 ease-out relative"
-                    style={{ width: "42%" }}
+                    style={{ width: `${progressPercent}%` }}
                   >
                     <div className="absolute inset-0 bg-white/20 w-full animate-pulse" />
                   </div>
@@ -174,9 +169,12 @@ export default function EarningsPage() {
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y divide-border/50">
-                {mockHistory.map((h, i) => {
+                {mockHistory.length === 0 && (
+                  <div className="p-6 text-center text-sm text-muted-foreground">ยังไม่มีประวัติการจ่ายเงิน</div>
+                )}
+                {mockHistory.map((h: any, i: number) => {
                   const total = h.direct + h.network + h.clawback;
-                  const s = statusMap[h.status];
+                  const s = statusMap[h.status] || { label: h.status, className: "bg-muted" };
                   return (
                     <div key={h.date} className="p-4 sm:p-5 hover:bg-muted/30 transition-colors">
                       <div className="flex items-center justify-between mb-2">
@@ -234,7 +232,7 @@ export default function EarningsPage() {
           </CardHeader>
           <CardContent>
             <div className="divide-y divide-border/40 -mx-6 px-6 sm:mx-0 sm:px-0">
-              {clawbacks.map((c, i) => (
+              {clawbacks.map((c: any, i: number) => (
                 <div
                   key={i}
                   className="flex items-start justify-between py-3 gap-3"

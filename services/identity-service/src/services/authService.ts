@@ -18,6 +18,7 @@ export async function processOAuthLogin(
   providerSubject: string,
   email: string | undefined,
   name: string,
+  picture: string = ""
 ): Promise<AuthResult> {
   let user;
 
@@ -36,6 +37,14 @@ export async function processOAuthLogin(
 
   if (existingIdentity) {
     user = existingIdentity.user;
+
+    // If the identity already exists, optionally update the profile picture if missing
+    if (picture && !user.profilePictureUrl) {
+       user = await prisma.user.update({
+         where: { userId: user.userId },
+         data: { profilePictureUrl: picture },
+       });
+    }
   } else {
     // 2. If no identity, check if user exists by email (if email is provided by OAuth)
     if (email) {
@@ -52,6 +61,7 @@ export async function processOAuthLogin(
           role: "TUTOR",
           displayName: name,
           email: email,
+          profilePictureUrl: picture || null,
           oauthIdentities: {
             create: {
               provider,
@@ -62,6 +72,14 @@ export async function processOAuthLogin(
       });
     } else {
       // User exists by email, but new provider linkage
+      // Optionally update picture if they don't have one
+      if (picture && !user.profilePictureUrl) {
+        user = await prisma.user.update({
+          where: { userId: user.userId },
+          data: { profilePictureUrl: picture },
+        });
+      }
+
       await prisma.oAuthIdentity.create({
         data: {
           userId: user.userId,

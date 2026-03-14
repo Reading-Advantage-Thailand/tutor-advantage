@@ -9,9 +9,7 @@ export function LoginForm() {
 
   const handleOAuth = async (provider: "google" | "facebook") => {
     setLoading(provider);
-    // TODO: Redirect to identity-service OAuth endpoint
-    // window.location.href = `/api/auth/${provider}`;
-    setTimeout(() => setLoading(null), 2000); // Mock delay
+    window.location.href = `/api/auth/${provider}`;
   };
 
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   BookOpen,
@@ -23,17 +23,23 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    // Redirect to the server-side logout route which will clear the httpOnly cookie
+    window.location.href = "/api/auth/logout";
+  };
 
   return (
     <aside className="flex flex-col h-full w-64 bg-sidebar text-sidebar-foreground">
       {/* Logo */}
       <div className="flex items-center gap-3 px-5 py-5 border-b border-sidebar-border">
         <div className="w-9 h-9 shrink-0 flex items-center justify-center">
-          <Image 
-            src="/icons/icon-192.png" 
-            alt="Tutor Advantage" 
-            width={36} 
-            height={36} 
+          <Image
+            src="/icons/icon-192.png"
+            alt="Tutor Advantage"
+            width={36}
+            height={36}
             className="rounded-lg shadow-sm"
           />
         </div>
@@ -92,6 +98,7 @@ export function Sidebar() {
         <div className="flex items-center gap-1">
           <button
             id="btn-logout"
+            onClick={handleLogout}
             className="flex-1 flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
           >
             <LogOut className="h-4 w-4 shrink-0" />

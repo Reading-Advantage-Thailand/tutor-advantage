@@ -4,6 +4,7 @@ export interface GoogleProfile {
   id: string;
   email: string;
   name: string;
+  picture?: string;
 }
 
 export async function verifyGoogleToken(
@@ -47,5 +48,6 @@ export async function verifyGoogleToken(
     id: profile.id,
     email: profile.email,
     name: profile.name,
+    picture: profile.picture,
   };
 }

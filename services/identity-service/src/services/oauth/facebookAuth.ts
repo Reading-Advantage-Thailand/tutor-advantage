@@ -4,6 +4,7 @@ export interface FacebookProfile {
   id: string;
   email: string;
   name: string;
+  picture?: string;
 }
 
 export async function verifyFacebookToken(
@@ -35,7 +36,7 @@ export async function verifyFacebookToken(
   // 2. Fetch user profile
   const profileResponse = await axios.get("https://graph.facebook.com/me", {
     params: {
-      fields: "id,name,email",
+      fields: "id,name,email,picture.type(large)",
       access_token,
     },
   });
@@ -46,5 +47,6 @@ export async function verifyFacebookToken(
     id: profile.id,
     email: profile.email,
     name: profile.name,
+    picture: profile.picture?.data?.url,
   };
 }

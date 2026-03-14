@@ -19,6 +19,7 @@ model User {
   displayName      String?           @map("display_name")
   email            String?           @unique
   phoneNumber      String?           @map("phone_number")
+  profilePictureUrl String?          @map("profile_picture_url")
   dateOfBirth      DateTime?         @map("date_of_birth") @db.Date
   isActive         Boolean           @default(true) @map("is_active")
   sponsorTutorId   String?           @map("sponsor_tutor_id") @db.Uuid

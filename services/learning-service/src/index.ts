@@ -6,9 +6,10 @@ import {
   errorHandlerMiddleware,
 } from "@tutor-advantage/shared-config";
 import { authMiddleware } from "./middlewares/authMiddleware";
-import { createClass, closeClass } from "./controllers/classController";
+import { createClass, closeClass, getClasses, getClassById } from "./controllers/classController";
 import { generateReferral } from "./controllers/referralController";
 import { enrollStudent } from "./controllers/enrollmentController";
+import { getDashboardSummary } from "./controllers/dashboardController";
 
 const app = express();
 const port = process.env.PORT || 3002;
@@ -32,12 +33,17 @@ app.get("/version", (req: Request, res: Response) => {
 // Protected Class Routes
 app.post("/v1/classes", authMiddleware, createClass);
 app.post("/v1/classes/:classId/close", authMiddleware, closeClass);
+app.get("/v1/classes", authMiddleware, getClasses);
+app.get("/v1/classes/:classId", authMiddleware, getClassById);
 
 // Protected Referral Routes
 app.post("/v1/referrals/generate", authMiddleware, generateReferral);
 
 // Protected Enrollment Route
 app.post("/v1/enroll/:referralToken", authMiddleware, enrollStudent);
+
+// Protected Dashboard API
+app.get("/v1/dashboard/summary", authMiddleware, getDashboardSummary);
 
 // Apply error handler last
 app.use(errorHandlerMiddleware);

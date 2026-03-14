@@ -8,9 +8,9 @@ export async function handleOAuthCallback(req: Request, res: Response) {
     // The request body matches the OpenAPI definition: { provider, code }
     const { provider, code } = req.body;
 
-    // Hardcoded redirect URI for local dev for now
-    const redirectUri =
-      process.env.OAUTH_REDIRECT_URI || "http://localhost:3000/auth/callback";
+    // Allow frontend to explicitly pass the exact redirectUri used, or fallback
+    const baseUrl = process.env.OAUTH_REDIRECT_URI || "http://localhost:3000/api/auth/callback";
+    const redirectUri = req.body.redirectUri || `${baseUrl}/${provider}`;
 
     if (!provider || !code) {
       return res.status(400).json({
@@ -25,6 +25,7 @@ export async function handleOAuthCallback(req: Request, res: Response) {
     let providerSubject = "";
     let email = "";
     let name = "";
+    let picture = "";
 
     // Route to appropriate OAuth handler
     if (provider === "google") {
@@ -32,11 +33,13 @@ export async function handleOAuthCallback(req: Request, res: Response) {
       providerSubject = profile.id;
       email = profile.email;
       name = profile.name;
+      picture = profile.picture || "";
     } else if (provider === "facebook") {
       const profile = await verifyFacebookToken(code, redirectUri);
       providerSubject = profile.id;
       email = profile.email;
       name = profile.name;
+      picture = profile.picture || "";
     } else {
       // LINE provider not yet implemented, return 400
       return res.status(400).json({
@@ -53,6 +56,7 @@ export async function handleOAuthCallback(req: Request, res: Response) {
       providerSubject,
       email,
       name,
+      picture
     );
 
     return res.status(200).json(authResult);

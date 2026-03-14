@@ -43,6 +43,7 @@ import {
   getFraudFlags,
   triggerFraudAction,
 } from "./controllers/fraudController";
+import { getEarningsSummary, getEarningsHistory } from "./controllers/tutorEarningsController";
 
 const app = express();
 const port = process.env.PORT || 3003;
@@ -66,6 +67,10 @@ app.get("/version", (req: Request, res: Response) => {
 // ── Payment Routes ─────────────────────────────────────────────────────────
 app.post("/v1/payments/intent", authMiddleware, createPaymentIntent);
 app.post("/v1/payments/webhook", handleWebhook);
+
+// ── Tutor Dashboard Routes ─────────────────────────────────────────────────
+app.get("/v1/tutors/earnings/summary", authMiddleware, getEarningsSummary);
+app.get("/v1/tutors/earnings/history", authMiddleware, getEarningsHistory);
 
 // ── Settlement Routes ──────────────────────────────────────────────────────
 // NOTE: /summary ต้องอยู่ก่อน /:snapshotId เพื่อไม่ให้ express match "summary" เป็น param

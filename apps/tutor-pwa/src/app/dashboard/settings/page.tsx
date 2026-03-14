@@ -1,21 +1,35 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
   User, 
   MapPin, 
-  BookOpen, 
   ShieldCheck, 
-  LogOut, 
   ChevronRight, 
   Bell, 
   Wallet,
   FileText
 } from "lucide-react";
 import Link from "next/link";
-import { ThemeToggle } from "@/components/layout/theme-toggle";
+import Image from "next/image";
+import { cookies } from "next/headers";
+import { SettingsInteractiveElements } from "./client-components";
 
-export default function SettingsPage() {
+async function getUserProfile(token: string) {
+  const res = await fetch("http://localhost:3001/v1/users/me", {
+    headers: { Authorization: `Bearer ${token}` },
+    next: { revalidate: 60 },
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
+
+export default async function SettingsPage() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("tutor_session")?.value || "";
+
+  const response = await getUserProfile(token);
+  const user = response?.user || { displayName: "Tutor User", userId: "TA-99999", role: "TUTOR" };
+
   return (
     <div className="max-w-2xl mx-auto space-y-6 lg:space-y-8 pb-24 sm:pb-0">
       <div>
@@ -29,24 +43,33 @@ export default function SettingsPage() {
       <Card className="border-border/60 overflow-hidden relative">
         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
         <CardContent className="p-6 relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
-          <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center border-4 border-background shadow-sm shrink-0">
-            <User className="h-8 w-8 text-muted-foreground" />
+          <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center border-4 border-background shadow-sm shrink-0 overflow-hidden relative">
+            {user.profilePictureUrl ? (
+              <Image 
+                src={user.profilePictureUrl} 
+                alt={user.displayName || "Profile"} 
+                fill
+                className="object-cover"
+                unoptimized
+              />
+            ) : (
+              <User className="h-8 w-8 text-muted-foreground" />
+            )}
           </div>
           <div className="flex-1 text-center sm:text-left">
-            <h2 className="text-xl font-bold text-foreground">ครูพี่นัท (ณัฐวุฒิ)</h2>
-            <p className="text-sm text-muted-foreground mb-3">Tutor ID: TA-88219</p>
+            <h2 className="text-xl font-bold text-foreground">{user.displayName || "Unknown User"}</h2>
+            <p className="text-sm text-muted-foreground mb-3 truncate max-w-xs">{user.userId}</p>
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
               <Badge variant="secondary" className="font-normal text-xs bg-primary/10 text-primary hover:bg-primary/20">
                 <ShieldCheck className="w-3 h-3 mr-1" /> ยืนยันตัวตนแล้ว
               </Badge>
-              <Badge variant="outline" className="font-normal text-xs">
-                ระดับ: Senior Tutor
+              <Badge variant="outline" className="font-normal text-xs uppercase">
+                ระดับ: {user.role?.replace("ROLE_", "") || "TUTOR"}
               </Badge>
             </div>
           </div>
-          <Button variant="outline" size="sm" className="w-full sm:w-auto mt-2 sm:mt-0">
-            แก้ไขโปรไฟล์
-          </Button>
+          {/* Action buttons embedded in SettingsInteractiveElements */}
+          <SettingsInteractiveElements type="editProfileButton" />
         </CardContent>
       </Card>
 
@@ -57,20 +80,7 @@ export default function SettingsPage() {
         
         <Card className="border-border/60">
           <div className="divide-y divide-border/50">
-            {/* Theme Toggle mapped into settings for mobile users especially */}
-            <div className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0">
-                  <div className="text-indigo-500">
-                    <ThemeToggle className="hover:bg-transparent" />
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-foreground">ลักษณะที่ปรากฏ (Theme)</p>
-                  <p className="text-xs text-muted-foreground">สลับโหมดสว่าง/มืด</p>
-                </div>
-              </div>
-            </div>
+            <SettingsInteractiveElements type="themeToggleRow" />
 
             <Link href="#" className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors group">
               <div className="flex items-center gap-3">
@@ -160,12 +170,7 @@ export default function SettingsPage() {
         </Card>
       </div>
 
-      <div className="pt-4 pb-8 flex justify-center">
-        <Button variant="ghost" className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-2 w-full sm:w-auto">
-          <LogOut className="w-4 h-4" />
-          ออกจากระบบ
-        </Button>
-      </div>
+      <SettingsInteractiveElements type="logoutSection" />
     </div>
   );
 }

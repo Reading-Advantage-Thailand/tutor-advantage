@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Menu,
   X,
@@ -23,6 +24,14 @@ const navItems = [
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
+
+  const handleLogout = () => {
+    document.cookie =
+      "tutor_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    setOpen(false);
+    router.push("/");
+  };
 
   return (
     <>
@@ -82,7 +91,10 @@ export function MobileNav() {
                 <HelpCircle className="h-4 w-4" />
                 ช่วยเหลือ / LINE OA
               </a>
-              <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors">
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
+              >
                 <LogOut className="h-4 w-4" />
                 ออกจากระบบ
               </button>
