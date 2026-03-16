@@ -230,7 +230,7 @@ export default async function DashboardPage() {
                   ไม่มีคลาสเรียนในขณะนี้
                 </div>
               )}
-              {recentClasses.map((cls: any) => {
+              {recentClasses.map((cls: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
                 const s = statusMap[cls.status] || statusMap["closed"];
                 return (
                   <Link

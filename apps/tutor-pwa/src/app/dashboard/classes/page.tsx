@@ -72,7 +72,7 @@ export default async function ClassesPage() {
             <p className="text-muted-foreground">ยังไม่มีคลาสเรียน</p>
           </div>
         )}
-        {classesList.map((cls: any) => {
+        {classesList.map((cls: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
           const s = statusLabel[cls.status] || statusLabel["closed"];
           return (
             <Link key={cls.id} href={`/dashboard/classes/${cls.id}`} className="group block focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent rounded-xl">

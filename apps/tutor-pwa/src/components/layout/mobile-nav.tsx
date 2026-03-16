@@ -8,7 +8,9 @@ import {
   X,
   LayoutDashboard,
   BookOpen,
+  MessageSquare,
   BarChart2,
+  Award,
   Settings,
   HelpCircle,
   LogOut,
@@ -18,7 +20,9 @@ import { ThemeToggle } from "./theme-toggle";
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "ภาพรวม" },
   { href: "/dashboard/classes", icon: BookOpen, label: "คลาสเรียน" },
+  { href: "/dashboard/chat", icon: MessageSquare, label: "ข้อความ" },
   { href: "/dashboard/earnings", icon: BarChart2, label: "รายได้" },
+  { href: "/dashboard/performance", icon: Award, label: "ผลงาน" },
   { href: "/dashboard/settings", icon: Settings, label: "ตั้งค่า" },
 ];
 

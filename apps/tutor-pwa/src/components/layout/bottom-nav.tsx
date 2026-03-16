@@ -5,7 +5,9 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   BookOpen,
+  MessageSquare,
   BarChart2,
+  Award,
   Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -13,11 +15,20 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "ภาพรวม" },
   { href: "/dashboard/classes", icon: BookOpen, label: "คลาสเรียน" },
+  { href: "/dashboard/chat", icon: MessageSquare, label: "ข้อความ" },
   { href: "/dashboard/earnings", icon: BarChart2, label: "รายได้" },
+  { href: "/dashboard/performance", icon: Award, label: "ผลงาน" },
   { href: "/dashboard/settings", icon: Settings, label: "ตั้งค่า" },
 ];
 
-export function BottomNav() {
+interface BottomNavProps {
+  notifications?: {
+    unreadChat?: number;
+    availableAuctions?: number;
+  };
+}
+
+export function BottomNav({ notifications }: BottomNavProps) {
   const pathname = usePathname();
 
   return (
@@ -40,13 +51,27 @@ export function BottomNav() {
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
-            <div
-              className={cn(
-                "mb-1 p-1 rounded-full transition-colors",
-                active ? "bg-primary/10" : "bg-transparent"
-              )}
-            >
-              <Icon className="h-5 w-5" />
+            <div className="relative mb-1">
+              <div
+                className={cn(
+                  "p-1 rounded-full transition-colors",
+                  active ? "bg-primary/10" : "bg-transparent"
+                )}
+              >
+                <Icon className="h-5 w-5" />
+              </div>
+              
+              {/* Badges for Notifications */}
+              {item.href === "/dashboard/chat" && notifications?.unreadChat ? (
+                <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[9px] font-bold px-1 rounded-full border-2 border-background min-w-[16px] flex items-center justify-center">
+                  {notifications.unreadChat}
+                </span>
+              ) : null}
+              {item.href === "/dashboard/classes" && notifications?.availableAuctions ? (
+                <span className="absolute -top-1 -right-1 bg-amber-500 text-white text-[9px] font-bold px-1 rounded-full border-2 border-background min-w-[16px] flex items-center justify-center">
+                  {notifications.availableAuctions}
+                </span>
+              ) : null}
             </div>
             <span className="scale-90 origin-bottom">{item.label}</span>
           </Link>

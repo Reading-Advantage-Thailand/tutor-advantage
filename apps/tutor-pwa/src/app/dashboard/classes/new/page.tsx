@@ -20,9 +20,12 @@ const BOOKS = [
   { value: "quest-6-2", label: "Quest 6.2 (Level 6)" },
 ];
 
+import { createClass } from "../actions";
+
 export default function NewClassPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [errorText, setErrorText] = useState("");
   const [form, setForm] = useState({
     name: "",
     book: "",
@@ -33,11 +36,16 @@ export default function NewClassPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // TODO: POST /api/learning/classes
-    setTimeout(() => {
-      setLoading(false);
+    setErrorText("");
+    
+    try {
+      await createClass(form);
       router.push("/dashboard/classes");
-    }, 1500);
+      router.refresh();
+    } catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+      setErrorText(error.message || "เกิดข้อผิดพลาดในการสร้างคลาส");
+      setLoading(false);
+    }
   };
 
   return (
@@ -156,6 +164,11 @@ export default function NewClassPage() {
 
         {/* Submit Button - Sticky on Mobile, Natural on Desktop */}
         <div className="fixed bottom-16 lg:bottom-0 left-0 right-0 p-4 lg:p-0 bg-background/80 backdrop-blur-md border-t border-border lg:border-none lg:static lg:bg-transparent lg:mt-8 z-40">
+          {errorText && (
+            <p className="text-destructive text-sm font-medium mb-3 text-center lg:text-left">
+              {errorText}
+            </p>
+          )}
           <Button
             id="btn-submit-create-class"
             type="submit"

@@ -41,7 +41,7 @@ export default function PrivacyPage() {
           <div className="prose prose-slate dark:prose-invert max-w-none">
             <p className="lead">
               บริษัทของเราตระหนักถึงความสำคัญของการปกป้องข้อมูลส่วนบุคคลของคุณ
-              แพลตฟอร์ม Tutor Advantage ("เรา", "พวกเรา" หรือ "ของเรา")
+              แพลตฟอร์ม Tutor Advantage (&quot;เรา&quot;, &quot;พวกเรา&quot; หรือ &quot;ของเรา&quot;)
               ได้จัดทำนโยบายความเป็นส่วนตัวนี้ เพื่ออธิบายวิธีการเก็บรวบรวม ใช้
               เปิดเผย และปกป้องข้อมูลส่วนบุคคลของคุณ
             </p>

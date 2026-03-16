@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { ReferralLink, LessonPlan } from "./client-components";
+import { ReferralLink, LessonPlan, ClassStatusToggle } from "./client-components";
 import { notFound } from "next/navigation";
 
 const lessonPlan = [
@@ -75,15 +75,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
               {cls.book} · {cls.schedule}
             </p>
           </div>
-          <span
-            className={`shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold border ${
-              cls.status === "open"
-                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
-                : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
-            }`}
-          >
-            {cls.status === "open" ? "รับสมัครอยู่" : "เต็มแล้ว"}
-          </span>
+          <ClassStatusToggle classId={classId} initialStatus={cls.status} />
         </div>
       </div>
 
@@ -144,7 +136,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
                   ยังไม่มีนักเรียนสมัคร
                 </div>
               )}
-              {cls.enrolledStudents.map((s: any, idx: number) => (
+              {cls.enrolledStudents.map((s: any, idx: number) => ( // eslint-disable-line @typescript-eslint/no-explicit-any
                 <div
                   key={idx}
                   className="flex items-center justify-between py-2.5"

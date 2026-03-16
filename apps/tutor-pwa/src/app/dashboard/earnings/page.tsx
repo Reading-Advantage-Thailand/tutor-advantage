@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Download, AlertCircle, Wallet, Star } from "lucide-react";
-import Link from "next/link";
+import { Download, AlertCircle, Wallet, Star } from "lucide-react";
 import { cookies } from "next/headers";
 
 async function getEarningsHistoryData(token: string) {
@@ -172,7 +171,7 @@ export default async function EarningsPage() {
                 {mockHistory.length === 0 && (
                   <div className="p-6 text-center text-sm text-muted-foreground">ยังไม่มีประวัติการจ่ายเงิน</div>
                 )}
-                {mockHistory.map((h: any, i: number) => {
+                {mockHistory.map((h: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
                   const total = h.direct + h.network + h.clawback;
                   const s = statusMap[h.status] || { label: h.status, className: "bg-muted" };
                   return (
@@ -232,7 +231,7 @@ export default async function EarningsPage() {
           </CardHeader>
           <CardContent>
             <div className="divide-y divide-border/40 -mx-6 px-6 sm:mx-0 sm:px-0">
-              {clawbacks.map((c: any, i: number) => (
+              {clawbacks.map((c: any, i: number) => ( // eslint-disable-line @typescript-eslint/no-explicit-any
                 <div
                   key={i}
                   className="flex items-start justify-between py-3 gap-3"

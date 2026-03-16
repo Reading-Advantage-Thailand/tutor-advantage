@@ -37,9 +37,9 @@ export default function TermsPage() {
 
           <div className="prose prose-slate dark:prose-invert max-w-none">
             <p className="lead">
-              ยินดีต้อนรับสู่ Tutor Advantage ข้อตกลงการให้บริการนี้ ("ข้อตกลง") 
-              เป็นสัญญาระหว่างคุณ ("ครูผู้สอน" หรือ "ผู้ใช้งาน") และระบบจัดการครูผู้สอน 
-              Tutor Advantage ("เรา" หรือ "แพลตฟอร์ม")
+              ยินดีต้อนรับสู่ Tutor Advantage ข้อตกลงการให้บริการนี้ (&quot;ข้อตกลง&quot;) 
+              เป็นสัญญาระหว่างคุณ (&quot;ครูผู้สอน&quot; หรือ &quot;ผู้ใช้งาน&quot;) และระบบจัดการครูผู้สอน 
+              Tutor Advantage (&quot;เรา&quot; หรือ &quot;แพลตฟอร์ม&quot;)
             </p>
 
             <h2>1. การยอมรับข้อตกลง</h2>
@@ -90,7 +90,7 @@ export default function TermsPage() {
               </li>
               <li>
                 การคำนวณและประมวลผลการจ่ายเงินจะกระทำเป็นรายเดือน 
-                หรือตามรอบบิลที่ระบุไว้ในหน้า "รายได้" ของคุณ
+                หรือตามรอบบิลที่ระบุไว้ในหน้า &quot;รายได้&quot; ของคุณ
               </li>
             </ul>
 

@@ -10,6 +10,11 @@ const authMiddleware_1 = require("./middlewares/authMiddleware");
 const classController_1 = require("./controllers/classController");
 const referralController_1 = require("./controllers/referralController");
 const enrollmentController_1 = require("./controllers/enrollmentController");
+const dashboardController_1 = require("./controllers/dashboardController");
+const chatController_1 = require("./controllers/chatController");
+const auctionController_1 = require("./controllers/auctionController");
+const performanceController_1 = require("./controllers/performanceController");
+const notificationsController_1 = require("./controllers/notificationsController");
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3002;
 app.use((0, cors_1.default)());
@@ -27,10 +32,25 @@ app.get("/version", (req, res) => {
 // Protected Class Routes
 app.post("/v1/classes", authMiddleware_1.authMiddleware, classController_1.createClass);
 app.post("/v1/classes/:classId/close", authMiddleware_1.authMiddleware, classController_1.closeClass);
+app.get("/v1/classes", authMiddleware_1.authMiddleware, classController_1.getClasses);
+app.get("/v1/classes/:classId", authMiddleware_1.authMiddleware, classController_1.getClassById);
 // Protected Referral Routes
 app.post("/v1/referrals/generate", authMiddleware_1.authMiddleware, referralController_1.generateReferral);
 // Protected Enrollment Route
 app.post("/v1/enroll/:referralToken", authMiddleware_1.authMiddleware, enrollmentController_1.enrollStudent);
+// Protected Dashboard API
+app.get("/v1/dashboard/summary", authMiddleware_1.authMiddleware, dashboardController_1.getDashboardSummary);
+// Protected Chat Routes
+app.get("/v1/chat/conversations", authMiddleware_1.authMiddleware, chatController_1.getConversations);
+app.get("/v1/chat/conversations/:conversationId/messages", authMiddleware_1.authMiddleware, chatController_1.getMessages);
+app.post("/v1/chat/conversations/:conversationId/messages", authMiddleware_1.authMiddleware, chatController_1.sendMessage);
+// Protected Auction Routes
+app.get("/v1/classes/auction", authMiddleware_1.authMiddleware, auctionController_1.getAuctionClasses);
+app.post("/v1/classes/auction/:transferId/claim", authMiddleware_1.authMiddleware, auctionController_1.claimAuctionClass);
+// Protected Performance Route
+app.get("/v1/tutors/performance", authMiddleware_1.authMiddleware, performanceController_1.getPerformanceSummary);
+// Protected Notifications Summary
+app.get("/v1/notifications/summary", authMiddleware_1.authMiddleware, notificationsController_1.getNotificationSummary);
 // Apply error handler last
 app.use(shared_config_1.errorHandlerMiddleware);
 app.listen(port, () => {

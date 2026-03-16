@@ -2,17 +2,20 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import Image from "next/image";
+import { getNotificationsSummary } from "./actions";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const notifications = await getNotificationsSummary();
+
   return (
     <div className="flex h-screen bg-background text-foreground">
       {/* Sidebar — hidden on mobile */}
       <div className="hidden lg:flex lg:flex-shrink-0">
-        <Sidebar />
+        <Sidebar notifications={notifications} />
       </div>
 
       {/* Main Container */}
@@ -42,7 +45,7 @@ export default function DashboardLayout({
         </main>
 
         {/* Mobile Bottom Navigation */}
-        <BottomNav />
+        <BottomNav notifications={notifications} />
       </div>
     </div>
   );

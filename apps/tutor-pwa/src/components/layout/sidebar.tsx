@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   BookOpen,
+  MessageSquare,
   BarChart2,
+  Award,
   Settings,
   HelpCircle,
   LogOut,
@@ -17,13 +19,21 @@ import { ThemeToggle } from "./theme-toggle";
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "ภาพรวม" },
   { href: "/dashboard/classes", icon: BookOpen, label: "คลาสเรียน" },
+  { href: "/dashboard/chat", icon: MessageSquare, label: "ข้อความ" },
   { href: "/dashboard/earnings", icon: BarChart2, label: "รายได้" },
+  { href: "/dashboard/performance", icon: Award, label: "ผลงาน" },
   { href: "/dashboard/settings", icon: Settings, label: "ตั้งค่า" },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  notifications?: {
+    unreadChat?: number;
+    availableAuctions?: number;
+  };
+}
+
+export function Sidebar({ notifications }: SidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
 
   const handleLogout = () => {
     // Redirect to the server-side logout route which will clear the httpOnly cookie
@@ -70,14 +80,26 @@ export function Sidebar() {
               href={item.href}
               id={`nav-${item.href.split("/").pop()}`}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150",
+                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 relative",
                 active
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground",
               )}
             >
               <Icon className="h-4 w-4 shrink-0" />
-              {item.label}
+              <span className="flex-1">{item.label}</span>
+              
+              {/* Badges for Notifications */}
+              {item.href === "/dashboard/chat" && notifications?.unreadChat ? (
+                <span className="bg-destructive text-destructive-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full inline-flex items-center justify-center min-w-[20px]">
+                  {notifications.unreadChat}
+                </span>
+              ) : null}
+              {item.href === "/dashboard/classes" && notifications?.availableAuctions ? (
+                <span className="bg-amber-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full inline-flex items-center justify-center min-w-[20px]">
+                  {notifications.availableAuctions}
+                </span>
+              ) : null}
             </Link>
           );
         })}

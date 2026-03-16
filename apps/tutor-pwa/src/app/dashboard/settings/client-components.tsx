@@ -3,11 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 export function SettingsInteractiveElements({ type }: { type: string }) {
-  const router = useRouter();
-
   if (type === "editProfileButton") {
     return (
       <Button

@@ -10,6 +10,10 @@ import { createClass, closeClass, getClasses, getClassById } from "./controllers
 import { generateReferral } from "./controllers/referralController";
 import { enrollStudent } from "./controllers/enrollmentController";
 import { getDashboardSummary } from "./controllers/dashboardController";
+import { getConversations, getMessages, sendMessage } from "./controllers/chatController";
+import { getAuctionClasses, claimAuctionClass } from "./controllers/auctionController";
+import { getPerformanceSummary } from "./controllers/performanceController";
+import { getNotificationSummary } from "./controllers/notificationsController";
 
 const app = express();
 const port = process.env.PORT || 3002;
@@ -44,6 +48,21 @@ app.post("/v1/enroll/:referralToken", authMiddleware, enrollStudent);
 
 // Protected Dashboard API
 app.get("/v1/dashboard/summary", authMiddleware, getDashboardSummary);
+
+// Protected Chat Routes
+app.get("/v1/chat/conversations", authMiddleware, getConversations);
+app.get("/v1/chat/conversations/:conversationId/messages", authMiddleware, getMessages);
+app.post("/v1/chat/conversations/:conversationId/messages", authMiddleware, sendMessage);
+
+// Protected Auction Routes
+app.get("/v1/classes/auction", authMiddleware, getAuctionClasses);
+app.post("/v1/classes/auction/:transferId/claim", authMiddleware, claimAuctionClass);
+
+// Protected Performance Route
+app.get("/v1/tutors/performance", authMiddleware, getPerformanceSummary);
+
+// Protected Notifications Summary
+app.get("/v1/notifications/summary", authMiddleware, getNotificationSummary);
 
 // Apply error handler last
 app.use(errorHandlerMiddleware);
