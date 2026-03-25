@@ -5,6 +5,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QrCode, Copy, CheckCircle2, BookOpen, ChevronDown } from "lucide-react";
 import { updateClassStatus } from "./../actions";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { QRCodeSVG } from "qrcode.react";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -67,9 +77,38 @@ export function ReferralLink({ referralLink }: { referralLink: string }) {
   return (
     <Card className="border-border/60">
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold flex items-center gap-2">
-          <QrCode className="h-4 w-4 text-primary" />
-          ลิงก์เชิญนักเรียน (Referral Link)
+        <CardTitle className="text-sm font-semibold flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <QrCode className="h-4 w-4 text-primary" />
+            ลิงก์เชิญนักเรียน (Referral)
+          </div>
+          
+          <Dialog>
+            <DialogTrigger render={<Button size="sm" variant="ghost" className="h-7 px-2 text-xs gap-1.5 text-primary hover:text-primary hover:bg-primary/10" />}>
+              <QrCode className="h-3.5 w-3.5" />
+              โชว์ QR Code
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-sm">
+              <DialogHeader>
+                <DialogTitle>QR Code สำหรับโอนเงินสมัคร</DialogTitle>
+                <DialogDescription>
+                  สแกนเพื่อเข้าสู่หน้าชำระเงินของคลาสนี้โดยตรง
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col items-center justify-center p-4 space-y-6">
+                <div className="bg-white p-4 rounded-xl shadow-sm border border-border/50">
+                  <QRCodeSVG value={referralLink} size={220} level="M" includeMargin={true} />
+                </div>
+                <div className="w-full flex">
+                  <Button variant="outline" className="w-full gap-2" onClick={handleCopy}>
+                    {copied ? <CheckCircle2 className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+                    {copied ? "คัดลอกลิงก์แล้ว" : "คัดลอกลิงก์"}
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">

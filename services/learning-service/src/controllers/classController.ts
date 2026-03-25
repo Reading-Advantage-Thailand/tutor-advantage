@@ -6,7 +6,7 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
   try {
     const userId = req.user?.userId;
     const role = req.user?.role;
-    const { bookId, title, capacity } = req.body;
+    const { bookId, title, capacity, scheduleDescription } = req.body;
 
     if (!userId || role !== "TUTOR") {
       return res.status(401).json({
@@ -28,12 +28,48 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
       });
     }
 
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(bookId);
+    let book = await prisma.book.findFirst({
+      where: isUuid ? { bookId: bookId } : { bookCode: bookId }
+    });
+
+    if (!book && !isUuid) {
+      // Create a mock book since it crosses from another app but doesn't exist here yet
+      let mockSeries = await prisma.series.findFirst({ where: { code: "MOCK-X" } });
+      if (!mockSeries) {
+        mockSeries = await prisma.series.create({
+          data: { code: "MOCK-X", name: "Mock Series (Cross App)", cefrLevel: "A1", raLevelStart: 1, raLevelEnd: 6 }
+        });
+      }
+      book = await prisma.book.create({
+        data: {
+          bookCode: bookId,
+          title: `Book: ${bookId}`,
+          levelNumber: 1,
+          seriesId: mockSeries.seriesId,
+          articleCount: 10,
+          classHours: 10
+        }
+      });
+    }
+
+    if (!book) {
+      return res.status(404).json({
+        error: {
+          code: "NOT_FOUND",
+          message: "Book not found",
+          requestId: req.id,
+        },
+      });
+    }
+
     const newClass = await prisma.class.create({
       data: {
         tutorUserId: userId,
-        bookId,
+        bookId: book.bookId,
         title,
         capacity,
+        scheduleDescription,
         status: "OPEN",
       },
     });
@@ -138,7 +174,7 @@ export async function getClasses(req: AuthenticatedRequest, res: Response) {
       status: c.status.toLowerCase(),
       students: c._count.enrollments,
       maxStudents: c.capacity,
-      nextSession: "จ. 10 มี.ค. 19:00", // Hardcoded mock for UI presentation
+      nextSession: c.scheduleDescription || "ยังไม่ได้กำหนด", // Use actual schedule
     }));
 
     return res.status(200).json({ classes: mappedClasses });
@@ -189,7 +225,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
       status: cls.status.toLowerCase(),
       students: cls.enrollments.length,
       maxStudents: cls.capacity,
-      schedule: "ทุกวันจันทร์ 19:00–21:00", // Mock
+      schedule: cls.scheduleDescription || "ยังไม่ได้กำหนด", // Removed mock
       meetingUrl: "https://meet.google.com/abc-defg-hij", // Mock
       referralLink: `https://liff.line.me/9999999-XXXXXXXX?classId=${cls.classId}`,
       enrolledStudents: cls.enrollments.map((e) => ({

@@ -10,6 +10,7 @@ import { handleOAuthCallback } from "./controllers/authController";
 import { getSession } from "./controllers/sessionController";
 import { submitGuardianConsent } from "./controllers/consentController";
 import { getCurrentUser } from "./controllers/userController";
+import { getSettings, updateSettings } from "./controllers/settingController";
 import { authMiddleware } from "./middlewares/authMiddleware";
 
 const app = express();
@@ -36,6 +37,8 @@ app.post("/v1/auth/callback", handleOAuthCallback);
 // Protected Auth Routes
 app.get("/v1/session", authMiddleware, getSession);
 app.get("/v1/users/me", authMiddleware, getCurrentUser);
+app.get("/v1/users/me/settings", authMiddleware, getSettings);
+app.patch("/v1/users/me/settings", authMiddleware, updateSettings);
 app.post("/v1/guardian/consent", authMiddleware, submitGuardianConsent);
 
 // Root API

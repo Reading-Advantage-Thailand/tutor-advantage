@@ -6,5 +6,11 @@
     "apps/*",
     "packages/*",
     "services/*"
-  ]
+  ],
+  "scripts": {
+    "dev:services": "concurrently \"npm run dev -w identity-service\" \"npm run dev -w learning-service\" \"npm run dev -w finance-mlm-service\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
 }

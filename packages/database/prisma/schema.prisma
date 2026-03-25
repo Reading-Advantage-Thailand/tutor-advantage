@@ -24,6 +24,7 @@ model User {
   isActive          Boolean                   @default(true) @map("is_active")
   sponsorTutorId    String?                   @map("sponsor_tutor_id") @db.Uuid
   sponsorLockedAt   DateTime?                 @map("sponsor_locked_at") @db.Timestamptz
+  settings          Json?                     @default("{}")
   createdAt         DateTime                  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt         DateTime                  @default(now()) @map("updated_at") @db.Timestamptz
   oauthIdentities   OAuthIdentity[]
@@ -128,8 +129,9 @@ model Class {
   title         String
   capacity      Int
   enrolledCount Int                    @default(0) @map("enrolled_count")
-  status        String
-  startsAt      DateTime?              @map("starts_at") @db.Timestamptz
+  status              String
+  scheduleDescription String?                @map("schedule_description")
+  startsAt            DateTime?              @map("starts_at") @db.Timestamptz
   createdAt     DateTime               @default(now()) @map("created_at") @db.Timestamptz
   updatedAt     DateTime               @default(now()) @map("updated_at") @db.Timestamptz
   book          Book                   @relation(fields: [bookId], references: [bookId])

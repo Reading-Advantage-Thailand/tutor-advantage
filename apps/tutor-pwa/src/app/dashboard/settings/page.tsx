@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { cookies } from "next/headers";
-import { SettingsInteractiveElements } from "./client-components";
+import { SettingsInteractiveElements, EditableSettingToggle, EditableSettingText } from "./client-components";
 
 async function getUserProfile(token: string) {
   const res = await fetch("http://localhost:3001/v1/users/me", {
@@ -68,8 +68,8 @@ export default async function SettingsPage() {
               </Badge>
             </div>
           </div>
-          {/* Action buttons embedded in SettingsInteractiveElements */}
-          <SettingsInteractiveElements type="editProfileButton" />
+          {/* Action buttons embedded in SettingsInteractiveElements (Not Implemented Yet) */}
+          {/*<SettingsInteractiveElements type="editProfileButton" />*/}
         </CardContent>
       </Card>
 
@@ -82,18 +82,15 @@ export default async function SettingsPage() {
           <div className="divide-y divide-border/50">
             <SettingsInteractiveElements type="themeToggleRow" />
 
-            <Link href="#" className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors group">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
-                  <Bell className="h-5 w-5 text-orange-500" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-foreground">การแจ้งเตือนบน LINE</p>
-                  <p className="text-xs text-muted-foreground">รับข้อความเมื่อมีนักเรียนชำระเงิน</p>
-                </div>
-              </div>
-              <ChevronRight className="h-5 w-5 text-muted-foreground/40 group-hover:text-foreground transition-colors" />
-            </Link>
+            <EditableSettingToggle 
+              title="การแจ้งเตือนบน LINE"
+              description="รับข้อความเมื่อมีนักเรียนชำระเงิน"
+              iconName="Bell"
+              value={user.settings?.lineNotification}
+              settingKey="lineNotification"
+              iconBgClass="bg-orange-500/10"
+              iconColorClass="text-orange-500"
+            />
           </div>
         </Card>
       </div>
@@ -105,31 +102,38 @@ export default async function SettingsPage() {
         
         <Card className="border-border/60">
           <div className="divide-y divide-border/50">
-            <Link href="#" className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors group">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
-                  <Wallet className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-foreground">บัญชีรับเงิน (PromptPay)</p>
-                  <p className="text-xs text-muted-foreground">ลงท้ายด้วย ****8921</p>
-                </div>
-              </div>
-              <ChevronRight className="h-5 w-5 text-muted-foreground/40 group-hover:text-foreground transition-colors" />
-            </Link>
+            <EditableSettingText 
+              title="เป้าหมายคอมมิชชั่น (THB)"
+              description="ระบุเพื่อปรับหลอดเป้าหมายในหน้า Dashboard"
+              placeholder="เช่น 50000"
+              iconName="TrendingUp"
+              value={user.settings?.commissionGoal}
+              settingKey="commissionGoal"
+              iconBgClass="bg-amber-500/10"
+              iconColorClass="text-amber-500"
+            />
             
-            <Link href="#" className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors group">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
-                  <MapPin className="h-5 w-5 text-blue-500" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-foreground">ที่อยู่สำหรับส่งเอกสาร (ภ.ง.ด.3)</p>
-                  <p className="text-xs text-muted-foreground">พญาไท, กรุงเทพมหานคร</p>
-                </div>
-              </div>
-              <ChevronRight className="h-5 w-5 text-muted-foreground/40 group-hover:text-foreground transition-colors" />
-            </Link>
+            <EditableSettingText 
+              title="บัญชีรับเงิน (PromptPay)"
+              description="ยังไม่ได้ระบุ"
+              placeholder="ระบุหมายเลขพร้อมเพย์ของคุณ"
+              iconName="Wallet"
+              value={user.settings?.promptPay}
+              settingKey="promptPay"
+              iconBgClass="bg-emerald-500/10"
+              iconColorClass="text-emerald-600 dark:text-emerald-400"
+            />
+            
+            <EditableSettingText 
+              title="ที่อยู่สำหรับส่งเอกสาร (ภ.ง.ด.3)"
+              description="ยังไม่ได้ระบุ"
+              placeholder="ระบุที่อยู่พร้อมรหัสไปรษณีย์"
+              iconName="MapPin"
+              value={user.settings?.address}
+              settingKey="address"
+              iconBgClass="bg-blue-500/10"
+              iconColorClass="text-blue-500"
+            />
           </div>
         </Card>
       </div>

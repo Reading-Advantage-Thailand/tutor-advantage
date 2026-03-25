@@ -21,6 +21,7 @@ export async function getCurrentUser(req: AuthenticatedRequest, res: Response) {
         profilePictureUrl: true,
         role: true,
         isActive: true,
+        settings: true,
         createdAt: true,
       },
     });

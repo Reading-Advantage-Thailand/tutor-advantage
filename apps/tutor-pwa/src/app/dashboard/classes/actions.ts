@@ -11,13 +11,21 @@ export async function createClass(data: { name: string; book: string; schedule: 
     throw new Error("Unauthorized");
   }
 
+  const requestBody = {
+    title: data.name,
+    bookId: data.book,
+    capacity: 30, // Default for now
+    scheduleDescription: data.schedule,
+    meetingUrl: data.meetingUrl,
+  };
+
   const res = await fetch("http://localhost:3002/v1/classes", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(requestBody)
   });
   
   if (!res.ok) {
