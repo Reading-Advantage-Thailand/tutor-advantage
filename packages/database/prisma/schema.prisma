@@ -117,8 +117,25 @@ model Book {
 
   series  Series  @relation(fields: [seriesId], references: [seriesId])
   classes Class[]
+  articles Article[]
 
   @@map("books")
+  @@schema("learning")
+}
+
+model Article {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @map("article_id_uuid") @db.Uuid
+  articleId String   @map("article_id")
+  bookId    String   @map("book_id") @db.Uuid
+  title     String
+  type      String?
+  genre     String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  book Book @relation(fields: [bookId], references: [bookId])
+
+  @@unique([articleId, bookId])
+  @@map("articles")
   @@schema("learning")
 }
 
