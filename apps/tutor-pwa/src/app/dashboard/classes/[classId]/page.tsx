@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { ReferralLink, LessonPlan, ClassStatusToggle } from "./client-components";
+import { ReferralLink, LessonPlan, ClassStatusToggle, MeetingUrlEditor } from "./client-components";
 import { notFound } from "next/navigation";
 
 const lessonPlan = [
@@ -83,42 +83,8 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
         
         {/* Left Column (Info, Meeting, Link, Students) */}
         <div className="lg:col-span-5 space-y-4 lg:space-y-6">
-          {/* Join Meeting */}
-          {cls.meetingUrl && (
-            <Card className="border-primary/20 bg-primary/5">
-              <CardContent className="p-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-lg bg-primary/15 flex items-center justify-center shrink-0">
-                      <Video className="h-4 w-4 text-primary" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-foreground">
-                        ห้องเรียนออนไลน์
-                      </p>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {cls.meetingUrl}
-                      </p>
-                    </div>
-                  </div>
-                  <a
-                    href={cls.meetingUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full sm:w-auto"
-                  >
-                    <Button
-                      id="btn-join-meeting"
-                      size="sm"
-                      className="w-full sm:w-auto gap-2 shrink-0"
-                    >
-                      เข้าห้องเรียน <ExternalLink className="h-3.5 w-3.5" />
-                    </Button>
-                  </a>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          {/* Meeting URL Editor */}
+          <MeetingUrlEditor classId={classId} initialUrl={cls.meetingUrl} />
 
           <ReferralLink referralLink={cls.referralLink} />
 

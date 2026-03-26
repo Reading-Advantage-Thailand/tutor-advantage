@@ -148,6 +148,7 @@ model Class {
   enrolledCount Int                    @default(0) @map("enrolled_count")
   status              String
   scheduleDescription String?                @map("schedule_description")
+  meetingUrl          String?                @map("meeting_url")
   startsAt            DateTime?              @map("starts_at") @db.Timestamptz
   createdAt     DateTime               @default(now()) @map("created_at") @db.Timestamptz
   updatedAt     DateTime               @default(now()) @map("updated_at") @db.Timestamptz

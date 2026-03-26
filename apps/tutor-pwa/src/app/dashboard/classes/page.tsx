@@ -2,8 +2,9 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, ChevronRight, BookOpen, Users, Calendar } from "lucide-react";
+import { Plus, ChevronRight, BookOpen, Users, Calendar, Trash2 } from "lucide-react";
 import { cookies } from "next/headers";
+import { DeleteClassButton } from "./[classId]/client-components";
 
 async function getClassesData(token: string) {
   const res = await fetch("http://localhost:3002/v1/classes", {
@@ -107,10 +108,13 @@ export default async function ClassesPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t border-border/50 sm:border-0">
-                      <Badge variant={s.variant} className={`text-xs px-2.5 py-0.5 sm:hidden ${s.className || ''}`}>
-                        {s.label}
-                      </Badge>
+                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t border-border/50 sm:border-0 gap-2">
+                      <div className="flex items-center gap-2">
+                        <Badge variant={s.variant} className={`text-xs px-2.5 py-0.5 sm:hidden ${s.className || ''}`}>
+                          {s.label}
+                        </Badge>
+                        <DeleteClassButton classId={cls.id} />
+                      </div>
                       <div className="flex items-center gap-1 text-xs font-medium text-primary ml-auto sm:ml-0 group-hover:underline">
                         จัดการคลาส
                         <ChevronRight className="h-4 w-4" />

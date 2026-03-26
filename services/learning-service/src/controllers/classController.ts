@@ -70,6 +70,7 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
         title,
         capacity,
         scheduleDescription,
+        meetingUrl: req.body.meetingUrl,
         status: "OPEN",
       },
     });
@@ -225,8 +226,8 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
       status: cls.status.toLowerCase(),
       students: cls.enrollments.length,
       maxStudents: cls.capacity,
-      schedule: cls.scheduleDescription || "ยังไม่ได้กำหนด", // Removed mock
-      meetingUrl: "https://meet.google.com/abc-defg-hij", // Mock
+      schedule: cls.scheduleDescription || "ยังไม่ได้กำหนด", 
+      meetingUrl: cls.meetingUrl || "", 
       referralLink: `https://liff.line.me/9999999-XXXXXXXX?classId=${cls.classId}`,
       enrolledStudents: cls.enrollments.map((e) => ({
         name: userMap.get(e.studentUserId) || "Unknown Student",
@@ -248,3 +249,128 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
   }
 }
 
+export async function getBooks(req: AuthenticatedRequest, res: Response) {
+  try {
+    const books = await prisma.book.findMany({
+      include: { series: true },
+      orderBy: [
+        { series: { raLevelStart: "asc" } },
+        { levelNumber: "asc" },
+        { bookCode: "asc" }
+      ]
+    });
+
+    return res.status(200).json({ books });
+  } catch (error: any) {
+    console.error("Get Books Error:", error);
+    return res.status(500).json({
+      error: { code: "INTERNAL_SERVER_ERROR", message: "Could not fetch books" },
+    });
+  }
+}
+export async function deleteClass(req: AuthenticatedRequest, res: Response) {
+  try {
+    const userId = req.user?.userId;
+    const { classId } = req.params;
+
+    if (!userId) {
+      return res.status(401).json({ error: { code: "UNAUTHORIZED", message: "User ID missing" } });
+    }
+
+    const cls = await prisma.class.findUnique({
+      where: { classId },
+      include: {
+        enrollments: true,
+        conversations: true
+      }
+    });
+
+    if (!cls || cls.tutorUserId !== userId) {
+      return res.status(404).json({ error: { code: "NOT_FOUND", message: "Class not found" } });
+    }
+
+    const enrollmentIds = cls.enrollments.map(e => e.enrollmentId);
+    const conversationIds = cls.conversations.map(c => c.conversationId);
+
+    console.log(`[DELETE_CLASS] Starting deletion for class: ${classId}`);
+
+    // Break down into smaller steps for better error visibility
+    try {
+      if (enrollmentIds.length > 0) {
+        console.log(`[DELETE_CLASS] Step 1: Cleaning up Finance records for ${enrollmentIds.length} enrollments...`);
+        // PaymentEvents reference PaymentIntents
+        const eventsDeleted = await prisma.paymentEvent.deleteMany({
+          where: { paymentIntent: { enrollmentId: { in: enrollmentIds } } }
+        });
+        console.log(`[DELETE_CLASS] Deleted ${eventsDeleted.count} payment events`);
+
+        // PaymentIntents reference Enrollments
+        const intentsDeleted = await prisma.paymentIntent.deleteMany({
+          where: { enrollmentId: { in: enrollmentIds } }
+        });
+        console.log(`[DELETE_CLASS] Deleted ${intentsDeleted.count} payment intents`);
+      }
+
+      console.log(`[DELETE_CLASS] Step 2: Cleaning up Chat records...`);
+      if (conversationIds.length > 0) {
+        await prisma.message.deleteMany({ where: { conversationId: { in: conversationIds } } });
+        await prisma.conversationParticipant.deleteMany({ where: { conversationId: { in: conversationIds } } });
+        await prisma.conversation.deleteMany({ where: { conversationId: { in: conversationIds } } });
+      }
+      
+      console.log(`[DELETE_CLASS] Step 3: Cleaning up Learning relations...`);
+      await prisma.enrollment.deleteMany({ where: { classId } });
+      await prisma.referral.deleteMany({ where: { classId } });
+      await prisma.classTransferRequest.deleteMany({ where: { classId } });
+
+      console.log(`[DELETE_CLASS] Step 4: Deleting the Class record itself...`);
+      await prisma.class.delete({
+        where: { classId },
+      });
+
+      console.log(`[DELETE_CLASS] ✅ Successfully deleted class ${classId}`);
+      return res.status(200).json({ message: "Class deleted successfully" });
+
+    } catch (stepError: any) {
+      console.error("[DELETE_CLASS] Step Error:", stepError);
+      throw stepError; // Re-throw to be caught by main catch
+    }
+
+  } catch (error: any) {
+    console.error("[DELETE_CLASS] ❌ FINAL ERROR:", error);
+    return res.status(500).json({
+      error: { 
+        code: "INTERNAL_SERVER_ERROR", 
+        message: "Could not delete class", 
+        details: error.message,
+        prismaCode: error.code
+      },
+    });
+  }
+}
+export async function updateMeetingUrl(req: AuthenticatedRequest, res: Response) {
+  try {
+    const userId = req.user?.userId;
+    const { classId } = req.params;
+    const { meetingUrl } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({ error: { code: "UNAUTHORIZED", message: "User ID missing" } });
+    }
+
+    const cls = await prisma.class.findUnique({ where: { classId } });
+    if (!cls || cls.tutorUserId !== userId) {
+      return res.status(404).json({ error: { code: "NOT_FOUND", message: "Class not found or unauthorized" } });
+    }
+
+    const updated = await prisma.class.update({
+      where: { classId },
+      data: { meetingUrl }
+    });
+
+    return res.status(200).json({ message: "Meeting URL updated", meetingUrl: updated.meetingUrl });
+  } catch (error: any) {
+    console.error("Update Meeting URL error:", error);
+    return res.status(500).json({ error: { code: "INTERNAL_SERVER_ERROR", message: "Update failed" } });
+  }
+}

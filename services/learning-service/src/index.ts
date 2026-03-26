@@ -6,7 +6,7 @@ import {
   errorHandlerMiddleware,
 } from "@tutor-advantage/shared-config";
 import { authMiddleware } from "./middlewares/authMiddleware";
-import { createClass, closeClass, getClasses, getClassById } from "./controllers/classController";
+import { createClass, closeClass, getClasses, getClassById, getBooks, deleteClass, updateMeetingUrl } from "./controllers/classController";
 import { generateReferral } from "./controllers/referralController";
 import { enrollStudent } from "./controllers/enrollmentController";
 import { getDashboardSummary } from "./controllers/dashboardController";
@@ -35,10 +35,13 @@ app.get("/version", (req: Request, res: Response) => {
 });
 
 // Protected Class Routes
+app.get("/v1/books", authMiddleware, getBooks);
 app.post("/v1/classes", authMiddleware, createClass);
 app.post("/v1/classes/:classId/close", authMiddleware, closeClass);
 app.get("/v1/classes", authMiddleware, getClasses);
 app.get("/v1/classes/:classId", authMiddleware, getClassById);
+app.delete("/v1/classes/:classId", authMiddleware, deleteClass);
+app.patch("/v1/classes/:classId/meeting-url", authMiddleware, updateMeetingUrl);
 
 // Protected Referral Routes
 app.post("/v1/referrals/generate", authMiddleware, generateReferral);
