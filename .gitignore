@@ -7,3 +7,6 @@ start-proxy.ps1
 
 # Environment variables
 .env
+
+# Services account keys
+service-account.json
