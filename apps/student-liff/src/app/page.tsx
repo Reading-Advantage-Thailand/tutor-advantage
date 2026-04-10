@@ -1,103 +1,372 @@
-import Image from "next/image";
+import Link from "next/link";
+import { LineIcon } from "@/components/icons/LineIcon";
 
-export default function Home() {
+export default function LandingPage() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <main className="page-shell" style={{ background: "var(--surface-bg)" }}>
+      {/* ── Hero ── */}
+      <section
+        style={{
+          background: "linear-gradient(160deg, #06c755 0%, #047d36 55%, #0f172a 100%)",
+          padding: "56px 24px 48px",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {/* Decorative circles */}
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            top: -60,
+            right: -60,
+            width: 220,
+            height: 220,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.06)",
+          }}
         />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            bottom: -40,
+            left: -40,
+            width: 160,
+            height: 160,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.04)",
+          }}
+        />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        {/* Brand mark */}
+        <div
+          className="animate-fade-in"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            marginBottom: 32,
+          }}
+        >
+          <div
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: "50%",
+              background: "rgba(255,255,255,0.15)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "1.5px solid rgba(255,255,255,0.3)",
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <LineIcon size={22} />
+          </div>
+          <span
+            style={{ color: "#fff", fontWeight: 700, fontSize: "1rem", letterSpacing: "0.02em" }}
           >
-            Read our docs
-          </a>
+            Tutor Advantage
+          </span>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+
+        {/* Headline */}
+        <div className="animate-slide-up stagger">
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              background: "rgba(255,255,255,0.15)",
+              borderRadius: "var(--radius-full)",
+              padding: "5px 14px",
+              marginBottom: 18,
+            }}
+          >
+            <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.9)", fontWeight: 600 }}>
+              ✨ โปรแกรมภาษาอังกฤษ Origins &amp; Quest
+            </span>
+          </div>
+
+          <h1
+            style={{
+              color: "#fff",
+              fontSize: "2rem",
+              fontWeight: 800,
+              lineHeight: 1.2,
+              marginBottom: 12,
+            }}
+          >
+            เรียนภาษาอังกฤษ<br />
+            <span style={{ color: "#a7f3c0" }}>กับติวเตอร์ที่คุณ</span><br />
+            ไว้วางใจ
+          </h1>
+
+          <p
+            style={{
+              color: "rgba(255,255,255,0.8)",
+              fontSize: "0.9375rem",
+              lineHeight: 1.7,
+              marginBottom: 28,
+            }}
+          >
+            ระบบเรียนรู้ 15 ขั้นตอน รองรับทุกระดับ A1–C1<br />
+            สมัครง่าย จ่ายสะดวก ผ่าน LINE โดยตรง
+          </p>
+
+          {/* CTA buttons */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <Link
+              href="/login"
+              className="btn-line"
+              id="cta-line-login"
+              style={{ fontSize: "1rem", fontWeight: 700 }}
+            >
+              <LineIcon size={20} />
+              เข้าสู่ระบบด้วย LINE
+            </Link>
+
+            <Link
+              href="/classes"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                padding: "15px 24px",
+                borderRadius: "var(--radius-full)",
+                border: "1.5px solid rgba(255,255,255,0.4)",
+                color: "#fff",
+                fontWeight: 600,
+                fontSize: "0.9375rem",
+                textDecoration: "none",
+                textAlign: "center",
+              }}
+            >
+              ดูคลาสเรียนทั้งหมด
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Stats strip ── */}
+      <section
+        style={{
+          background: "#fff",
+          padding: "20px 24px",
+          borderBottom: "1px solid var(--neutral-200)",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          {[
+            { value: "32", label: "หนังสือเรียน", suffix: "เล่ม" },
+            { value: "448", label: "บทความ", suffix: "บท" },
+            { value: "1,150", label: "ชั่วโมง", suffix: "เรียน" },
+          ].map((stat) => (
+            <div key={stat.label} style={{ textAlign: "center" }}>
+              <div
+                style={{
+                  fontSize: "1.5rem",
+                  fontWeight: 800,
+                  color: "var(--brand-600)",
+                  lineHeight: 1,
+                }}
+              >
+                {stat.value}
+                <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--brand-500)", marginLeft: 2 }}>
+                  {stat.suffix}
+                </span>
+              </div>
+              <div style={{ fontSize: "0.75rem", color: "var(--neutral-500)", marginTop: 3, fontWeight: 500 }}>
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── How it works ── */}
+      <section style={{ padding: "28px 24px" }}>
+        <h2
+          style={{
+            fontSize: "1.125rem",
+            fontWeight: 700,
+            color: "var(--neutral-900)",
+            marginBottom: 20,
+          }}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          เริ่มเรียนง่ายๆ 3 ขั้นตอน
+        </h2>
+
+        <div className="stagger" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {[
+            {
+              step: "01",
+              title: "รับลิงก์จากติวเตอร์",
+              desc: "ติวเตอร์แชร์ลิงก์สมัครเรียนผ่าน LINE หรือ Facebook",
+              color: "var(--brand-500)",
+              bg: "var(--brand-50)",
+            },
+            {
+              step: "02",
+              title: "เข้าสู่ระบบและชำระเงิน",
+              desc: "ล็อกอินด้วย LINE จ่ายด้วย PromptPay หรือบัตรเครดิต",
+              color: "var(--accent-blue)",
+              bg: "var(--accent-blue-light)",
+            },
+            {
+              step: "03",
+              title: "เริ่มเรียนได้ทันที",
+              desc: "เข้าถึงบทเรียนและติดต่อติวเตอร์ผ่านแอปนี้",
+              color: "var(--accent-purple)",
+              bg: "var(--accent-purple-light)",
+            },
+          ].map((item) => (
+            <div
+              key={item.step}
+              className="animate-slide-up"
+              style={{
+                display: "flex",
+                gap: 16,
+                alignItems: "flex-start",
+                background: "#fff",
+                borderRadius: "var(--radius-xl)",
+                padding: "16px 18px",
+                boxShadow: "var(--shadow-sm)",
+              }}
+            >
+              <div
+                style={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: "var(--radius-md)",
+                  background: item.bg,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                  fontSize: "0.875rem",
+                  fontWeight: 800,
+                  color: item.color,
+                }}
+              >
+                {item.step}
+              </div>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--neutral-900)", marginBottom: 3 }}>
+                  {item.title}
+                </div>
+                <div style={{ fontSize: "0.8125rem", color: "var(--neutral-500)", lineHeight: 1.6 }}>
+                  {item.desc}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Series overview ── */}
+      <section style={{ padding: "0 24px 28px" }}>
+        <h2
+          style={{
+            fontSize: "1.125rem",
+            fontWeight: 700,
+            color: "var(--neutral-900)",
+            marginBottom: 16,
+          }}
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          หลักสูตรที่เปิดสอน
+        </h2>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {[
+            { name: "Origins", cefr: "A1", levels: "1–3", tag: "Your journey starts here", color: "#06c755", textColor: "#fff" },
+            { name: "Quest", cefr: "A2", levels: "4–6", tag: "Your quest awaits", color: "#3b82f6", textColor: "#fff" },
+            { name: "Adventure", cefr: "B1", levels: "7–9", tag: "Your adventure's in sight", color: "#8b5cf6", textColor: "#fff" },
+            { name: "Hero", cefr: "B2", levels: "10–12", tag: "You're the hero", color: "#f59e0b", textColor: "#fff" },
+            { name: "Legend", cefr: "C1", levels: "13–15", tag: "Legendary stories", color: "#ef4444", textColor: "#fff" },
+          ].map((series) => (
+            <div
+              key={series.name}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 14,
+                padding: "14px 16px",
+                background: "#fff",
+                borderRadius: "var(--radius-lg)",
+                boxShadow: "var(--shadow-xs)",
+              }}
+            >
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: "var(--radius-md)",
+                  background: series.color,
+                  color: series.textColor,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: 800,
+                  fontSize: "0.8125rem",
+                  flexShrink: 0,
+                  letterSpacing: "0.02em",
+                }}
+              >
+                {series.cefr}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--neutral-900)" }}>
+                  {series.name}
+                </div>
+                <div style={{ fontSize: "0.75rem", color: "var(--neutral-500)", marginTop: 1 }}>
+                  {series.tag}
+                </div>
+              </div>
+              <div
+                style={{
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                  color: "var(--neutral-400)",
+                  flexShrink: 0,
+                  textAlign: "right",
+                }}
+              >
+                Level {series.levels}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Bottom CTA ── */}
+      <section
+        style={{
+          padding: "24px 24px 40px",
+          textAlign: "center",
+          background: "var(--brand-50)",
+          borderTop: "1px solid var(--brand-100)",
+        }}
+      >
+        <p style={{ fontSize: "0.875rem", color: "var(--neutral-600)", marginBottom: 16, lineHeight: 1.7 }}>
+          มีลิงก์สมัครเรียนจากติวเตอร์แล้ว?<br />
+          เข้าสู่ระบบเพื่อดำเนินการต่อได้เลย
+        </p>
+        <Link
+          href="/login"
+          className="btn-line"
+          id="cta-line-login-bottom"
+          style={{ maxWidth: 280, margin: "0 auto" }}
         >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          <LineIcon size={20} />
+          เข้าสู่ระบบด้วย LINE
+        </Link>
+        <p style={{ fontSize: "0.75rem", color: "var(--neutral-400)", marginTop: 14, lineHeight: 1.6 }}>
+          ชำระเงินผ่าน PromptPay หรือบัตรเครดิต<br />
+          ปลอดภัย 100% โดย Omise
+        </p>
+      </section>
+    </main>
   );
 }
