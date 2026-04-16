@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_Thai, Inter } from "next/font/google";
+import { LiffProvider } from "@/components/providers/LiffProvider";
 import "./globals.css";
 
 const notoSansThai = Noto_Sans_Thai({
@@ -50,7 +51,9 @@ export default function RootLayout({
   return (
     <html lang="th">
       <body className={`${notoSansThai.variable} ${inter.variable}`}>
-        <div className="liff-root">{children}</div>
+        <LiffProvider>
+          <div className="liff-root">{children}</div>
+        </LiffProvider>
       </body>
     </html>
   );

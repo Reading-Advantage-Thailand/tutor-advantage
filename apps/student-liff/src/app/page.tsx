@@ -1,7 +1,13 @@
+"use client";
+
 import Link from "next/link";
+import { useLiff } from "@/components/providers/LiffProvider";
 import { LineIcon } from "@/components/icons/LineIcon";
 
 export default function LandingPage() {
+  const { liff, isReady } = useLiff();
+  const isLoggedIn = isReady && liff?.isLoggedIn();
+
   return (
     <main className="page-shell" style={{ background: "var(--surface-bg)" }}>
       {/* ── Hero ── */}
@@ -117,13 +123,13 @@ export default function LandingPage() {
           {/* CTA buttons */}
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <Link
-              href="/login"
+              href={isLoggedIn ? "/dashboard" : "/login"}
               className="btn-line"
               id="cta-line-login"
               style={{ fontSize: "1rem", fontWeight: 700 }}
             >
               <LineIcon size={20} />
-              เข้าสู่ระบบด้วย LINE
+              {isLoggedIn ? "ไปที่หน้า Dashboard" : "เข้าสู่ระบบด้วย LINE"}
             </Link>
 
             <Link
@@ -204,7 +210,7 @@ export default function LandingPage() {
               step: "01",
               title: "รับลิงก์จากติวเตอร์",
               desc: "ติวเตอร์แชร์ลิงก์สมัครเรียนผ่าน LINE หรือ Facebook",
-              color: "var(--brand-500)",
+              color: "var(--brand-50)",
               bg: "var(--brand-50)",
             },
             {
@@ -354,13 +360,13 @@ export default function LandingPage() {
           เข้าสู่ระบบเพื่อดำเนินการต่อได้เลย
         </p>
         <Link
-          href="/login"
+          href={isLoggedIn ? "/dashboard" : "/login"}
           className="btn-line"
           id="cta-line-login-bottom"
           style={{ maxWidth: 280, margin: "0 auto" }}
         >
           <LineIcon size={20} />
-          เข้าสู่ระบบด้วย LINE
+          {isLoggedIn ? "ไปที่หน้า Dashboard" : "เข้าสู่ระบบด้วย LINE"}
         </Link>
         <p style={{ fontSize: "0.75rem", color: "var(--neutral-400)", marginTop: 14, lineHeight: 1.6 }}>
           ชำระเงินผ่าน PromptPay หรือบัตรเครดิต<br />

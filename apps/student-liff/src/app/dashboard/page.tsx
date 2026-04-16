@@ -1,9 +1,15 @@
+"use client";
+
+import { useLiff } from "@/components/providers/LiffProvider";
+
 export default function DashboardPage() {
-  // Mock data – replace with real API calls
+  const { profile, isReady } = useLiff();
+
+  // Mock data for Enrollment – replace with real API calls later
   const student = {
-    name: "สมชาย ใจดี",
-    avatar: null as string | null,
-    initials: "สช",
+    name: profile?.displayName || "กำลังโหลด...",
+    avatar: profile?.pictureUrl || null,
+    initials: profile?.displayName?.charAt(0) || "TA",
     level: "Origins 2",
     cefr: "A1",
     seriesColor: "#06c755",
@@ -28,6 +34,14 @@ export default function DashboardPage() {
   const progressPct = Math.round(
     (enrollment.articlesRead / enrollment.totalArticles) * 100
   );
+
+  if (!isReady) {
+    return (
+      <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--surface-bg)" }}>
+        <div className="animate-spin" style={{ width: 32, height: 32, border: "3px solid var(--neutral-200)", borderTopColor: "var(--brand-500)", borderRadius: "50%" }} />
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -67,7 +81,7 @@ export default function DashboardPage() {
           {/* Avatar */}
           {student.avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={student.avatar} alt={student.name} className="avatar avatar-lg" style={{ border: "2.5px solid rgba(255,255,255,0.5)" }} />
+            <img src={student.avatar} alt={student.name} className="avatar avatar-lg" style={{ border: "2.5px solid rgba(255,255,255,0.5)", objectFit: "cover" }} />
           ) : (
             <div
               className="avatar-initials avatar-lg"

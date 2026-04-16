@@ -236,7 +236,7 @@ function PaymentFlow() {
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {[
                 "เปิดแอป Mobile Banking ของคุณ",
-                "เลือก "สแกน PromptPay"",
+                "เลือก สแกน PromptPay",
                 "สแกน QR code ด้านบน",
                 "ยืนยันยอดและชำระเงิน",
               ].map((step, i) => (

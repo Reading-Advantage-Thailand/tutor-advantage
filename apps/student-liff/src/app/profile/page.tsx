@@ -1,14 +1,29 @@
+"use client";
+
 import Link from "next/link";
+import { useLiff } from "@/components/providers/LiffProvider";
+import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
+  const { liff, profile, isReady } = useLiff();
+  const router = useRouter();
+
   const student = {
-    name: "สมชาย ใจดี",
-    initials: "สช",
-    lineId: "somchai.jaidee",
+    name: profile?.displayName || "กำลังโหลด...",
+    avatar: profile?.pictureUrl || null,
+    initials: profile?.displayName?.charAt(0) || "TA",
+    userId: profile?.userId || "...",
     joinedAt: "มีนาคม 2026",
     level: "Origins 2",
     cefr: "A1",
     isMinor: false,
+  };
+
+  const handleLogout = () => {
+    if (liff && liff.isLoggedIn()) {
+      liff.logout();
+      router.push("/");
+    }
   };
 
   const menuGroups = [
@@ -38,6 +53,14 @@ export default function ProfilePage() {
     },
   ];
 
+  if (!isReady) {
+    return (
+      <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--surface-bg)" }}>
+        <div className="animate-spin" style={{ width: 32, height: 32, border: "3px solid var(--neutral-200)", borderTopColor: "var(--brand-500)", borderRadius: "50%" }} />
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* Header */}
@@ -61,16 +84,26 @@ export default function ProfilePage() {
           className="card card-padded"
           style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}
         >
-          <div
-            className="avatar-initials avatar-xl"
-            style={{
-              background: "linear-gradient(135deg, #06c755, #047d36)",
-              fontSize: "1.25rem",
-              boxShadow: "var(--shadow-green)",
-            }}
-          >
-            {student.initials}
-          </div>
+          {student.avatar ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img 
+              src={student.avatar} 
+              alt={student.name} 
+              className="avatar avatar-xl" 
+              style={{ objectFit: "cover", boxShadow: "var(--shadow-green)", border: "2px solid #fff" }} 
+            />
+          ) : (
+            <div
+              className="avatar-initials avatar-xl"
+              style={{
+                background: "linear-gradient(135deg, #06c755, #047d36)",
+                fontSize: "1.25rem",
+                boxShadow: "var(--shadow-green)",
+              }}
+            >
+              {student.initials}
+            </div>
+          )}
 
           <div style={{ flex: 1, minWidth: 0 }}>
             <h2 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--neutral-900)", marginBottom: 3 }}>
@@ -82,8 +115,8 @@ export default function ProfilePage() {
                 <span className="badge badge-warning">ผู้เยาว์</span>
               )}
             </div>
-            <div style={{ fontSize: "0.75rem", color: "var(--neutral-400)", marginTop: 5 }}>
-              LINE: {student.lineId} · เข้าร่วม {student.joinedAt}
+            <div style={{ fontSize: "0.75rem", color: "var(--neutral-400)", marginTop: 5 }} className="text-ellipsis">
+              UID: {student.userId}
             </div>
           </div>
         </div>
@@ -154,6 +187,7 @@ export default function ProfilePage() {
         <div className="card" style={{ overflow: "hidden" }}>
           <button
             id="btn-logout"
+            onClick={handleLogout}
             style={{
               display: "flex",
               alignItems: "center",
@@ -179,7 +213,7 @@ export default function ProfilePage() {
                 flexShrink: 0,
               }}
             >
-              🚪
+              門
             </div>
             <span style={{ flex: 1, fontSize: "0.9375rem", fontWeight: 500, color: "var(--accent-red)", textAlign: "left" }}>
               ออกจากระบบ

@@ -1,16 +1,42 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useLiff } from "@/components/providers/LiffProvider";
 import { LineIcon } from "@/components/icons/LineIcon";
 
 export default function LoginPage() {
+  const { liff, isReady, error } = useLiff();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isReady && liff?.isLoggedIn()) {
+      router.push("/dashboard");
+    }
+  }, [isReady, liff, router]);
+
+  const handleLogin = () => {
+    if (liff && !liff.isLoggedIn()) {
+      try {
+        liff.login({ redirectUri: window.location.origin + "/dashboard" });
+      } catch (err) {
+        console.error("LoginPage: liff.login() failed:", err);
+      }
+    }
+  };
+
   return (
     <main
       className="page-shell"
       style={{
         minHeight: "100dvh",
-        background: "linear-gradient(160deg, #06c755 0%, #047d36 40%, #0f172a 100%)",
+        background:
+          "linear-gradient(160deg, #06c755 0%, #047d36 40%, #0f172a 100%)",
         display: "flex",
         flexDirection: "column",
       }}
     >
+      <style>{`#liff-mock-root { z-index: 999999 !important; position: relative; }`}</style>
       {/* Decorative blobs */}
       <div
         aria-hidden
@@ -138,17 +164,42 @@ export default function LoginPage() {
           ใช้บัญชี LINE เพื่อเข้าถึงคลาสเรียนของคุณ
         </p>
 
+        {/* Error Message */}
+        {error && (
+          <div
+            style={{
+              color: "#ef4444",
+              fontSize: "0.75rem",
+              textAlign: "center",
+              marginBottom: 12,
+              padding: "8px",
+              background: "#fef2f2",
+              borderRadius: "var(--radius-md)",
+              border: "1px solid #fee2e2",
+            }}
+          >
+            ⚠️ {error}
+          </div>
+        )}
+
         {/* LINE Login button */}
-        <a
-          href="/api/auth/line"
+        <button
+          onClick={handleLogin}
           id="btn-line-login"
           className="btn-line"
-          style={{ marginBottom: 16, fontSize: "1.0625rem" }}
+          style={{
+            marginBottom: 16,
+            fontSize: "1.0625rem",
+            width: "100%",
+            border: "none",
+            cursor: "pointer",
+          }}
           aria-label="เข้าสู่ระบบด้วย LINE"
+          disabled={!isReady}
         >
           <LineIcon size={22} />
-          เข้าสู่ระบบด้วย LINE
-        </a>
+          {isReady ? "เข้าสู่ระบบด้วย LINE" : "กำลังโหลด..."}
+        </button>
 
         {/* PDPA notice */}
         <div
@@ -170,14 +221,22 @@ export default function LoginPage() {
             การเข้าสู่ระบบถือว่าคุณยอมรับ{" "}
             <a
               href="/terms"
-              style={{ color: "var(--brand-600)", fontWeight: 600, textDecoration: "none" }}
+              style={{
+                color: "var(--brand-600)",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
             >
               เงื่อนไขการใช้งาน
             </a>{" "}
             และ{" "}
             <a
               href="/privacy"
-              style={{ color: "var(--brand-600)", fontWeight: 600, textDecoration: "none" }}
+              style={{
+                color: "var(--brand-600)",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
             >
               นโยบายความเป็นส่วนตัว
             </a>
@@ -198,8 +257,11 @@ export default function LoginPage() {
           }}
         >
           <span style={{ fontSize: "1rem", flexShrink: 0 }}>👪</span>
-          <p style={{ fontSize: "0.75rem", color: "#92400e", lineHeight: 1.65 }}>
-            <strong>นักเรียนอายุต่ำกว่า 18 ปี</strong> ต้องได้รับความยินยอมจากผู้ปกครองก่อนชำระเงินและใช้งานช่องทางติดต่อ
+          <p
+            style={{ fontSize: "0.75rem", color: "#92400e", lineHeight: 1.65 }}
+          >
+            <strong>นักเรียนอายุต่ำกว่า 18 ปี</strong>{" "}
+            ต้องได้รับความยินยอมจากผู้ปกครองก่อนชำระเงินและใช้งานช่องทางติดต่อ
           </p>
         </div>
       </div>
@@ -211,8 +273,15 @@ export default function LoginPage() {
           padding: "0 24px 32px",
         }}
       >
-        <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.5)", lineHeight: 1.6 }}>
-          © 2026 Tutor Advantage Thailand<br />
+        <p
+          style={{
+            fontSize: "0.75rem",
+            color: "rgba(255,255,255,0.5)",
+            lineHeight: 1.6,
+          }}
+        >
+          © 2026 Tutor Advantage Thailand
+          <br />
           ชำระเงินปลอดภัยโดย Omise · PromptPay &amp; บัตรเครดิต
         </p>
       </div>
