@@ -1,6 +1,7 @@
 "use client";
 
 import { useLiff } from "@/components/providers/LiffProvider";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const { profile, isReady } = useLiff();
@@ -260,7 +261,7 @@ export default function DashboardPage() {
                 border: "#fde68a",
               },
             ].map((item) => (
-              <a
+              <Link
                 key={item.id}
                 id={item.id}
                 href={item.href}
@@ -280,7 +281,7 @@ export default function DashboardPage() {
                 <div style={{ fontSize: "0.75rem", color: "var(--neutral-500)", marginTop: 2 }}>
                   {item.sub}
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </section>
@@ -289,12 +290,12 @@ export default function DashboardPage() {
         <section>
           <div className="section-header">
             <h2 className="section-title">บทความล่าสุด</h2>
-            <a href="/classes" className="section-action">ดูทั้งหมด</a>
+            <Link href="/classes" className="section-action">ดูทั้งหมด</Link>
           </div>
 
           <div className="card stagger" style={{ overflow: "hidden" }}>
             {recentArticles.map((article, idx) => (
-              <a
+              <Link
                 key={article.id}
                 href={`/student/read/${article.id}`}
                 style={{
@@ -340,7 +341,7 @@ export default function DashboardPage() {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--neutral-300)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="9 18 15 12 9 6" />
                 </svg>
-              </a>
+              </Link>
             ))}
           </div>
         </section>

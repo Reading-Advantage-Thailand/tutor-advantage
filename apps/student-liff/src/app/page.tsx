@@ -288,8 +288,8 @@ export default function LandingPage() {
           {[
             { name: "Origins", cefr: "A1", levels: "1–3", tag: "Your journey starts here", color: "#06c755", textColor: "#fff" },
             { name: "Quest", cefr: "A2", levels: "4–6", tag: "Your quest awaits", color: "#3b82f6", textColor: "#fff" },
-            { name: "Adventure", cefr: "B1", levels: "7–9", tag: "Your adventure's in sight", color: "#8b5cf6", textColor: "#fff" },
-            { name: "Hero", cefr: "B2", levels: "10–12", tag: "You're the hero", color: "#f59e0b", textColor: "#fff" },
+            { name: "Adventure", cefr: "B1", levels: "7–9", tag: "Your adventure&apos;s in sight", color: "#8b5cf6", textColor: "#fff" },
+            { name: "Hero", cefr: "B2", levels: "10–12", tag: "You&apos;re the hero", color: "#f59e0b", textColor: "#fff" },
             { name: "Legend", cefr: "C1", levels: "13–15", tag: "Legendary stories", color: "#ef4444", textColor: "#fff" },
           ].map((series) => (
             <div

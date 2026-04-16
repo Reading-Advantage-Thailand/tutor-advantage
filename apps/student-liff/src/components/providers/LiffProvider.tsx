@@ -13,6 +13,7 @@ interface LiffContextType {
   profile: {
     displayName: string;
     userId: string;
+    pictureUrl?: string;
     statusMessage?: string;
   } | null;
   logout: () => void;
@@ -57,7 +58,7 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
 
         await liff.init({
           liffId,
-          // @ts-ignore
+          // @ts-expect-error: mock is a custom property from the @line/liff-mock plugin
           mock: useMock,
         });
 
@@ -73,8 +74,9 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
         }
 
         setIsReady(true);
-      } catch (err: any) {
-        const errorMessage = err.message || "Failed to initialize LIFF";
+      } catch (err) {
+        const errorObject = err instanceof Error ? err : new Error(String(err));
+        const errorMessage = errorObject.message || "Failed to initialize LIFF";
         console.error("LIFF Provider: Init failed:", err);
         setError(errorMessage);
         setIsReady(true); // Still set ready to allow UI to show the error

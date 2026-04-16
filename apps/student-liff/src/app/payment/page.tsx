@@ -266,7 +266,7 @@ function PaymentFlow() {
 
           <div style={{ background: "var(--accent-amber-light)", borderRadius: "var(--radius-md)", padding: "12px 14px", width: "100%", border: "1px solid #fde68a" }}>
             <p style={{ fontSize: "0.8125rem", color: "#92400e", lineHeight: 1.65 }}>
-              ⏱️ QR Code หมดอายุใน <strong>15 นาที</strong> หากหมดให้กด "ขอ QR ใหม่"
+              ⏱️ QR Code หมดอายุใน <strong>15 นาที</strong> หากหมดให้กด &quot;ขอ QR ใหม่&quot;
             </p>
           </div>
 
