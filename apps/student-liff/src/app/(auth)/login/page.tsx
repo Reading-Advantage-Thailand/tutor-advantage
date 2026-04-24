@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { LineIcon } from "@/components/icons/LineIcon";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const { liff, isReady, error } = useLiff();
@@ -11,9 +12,33 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isReady && liff?.isLoggedIn()) {
-      router.push("/dashboard");
+      router.replace("/dashboard");
     }
   }, [isReady, liff, router]);
+
+  if (!isReady || (isReady && liff?.isLoggedIn())) {
+    return (
+      <main
+        className="page-shell"
+        style={{
+          minHeight: "100dvh",
+          background:
+            "linear-gradient(160deg, #06c755 0%, #047d36 40%, #0f172a 100%)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          className="animate-pulse"
+          style={{ color: "#fff", fontWeight: 600, fontSize: "1.125rem" }}
+        >
+          กำลังเตรียมเข้าสู่ระบบ...
+        </div>
+      </main>
+    );
+  }
 
   const handleLogin = () => {
     if (liff && !liff.isLoggedIn()) {
@@ -183,23 +208,16 @@ export default function LoginPage() {
         )}
 
         {/* LINE Login button */}
-        <button
+        <Button
           onClick={handleLogin}
           id="btn-line-login"
-          className="btn-line"
-          style={{
-            marginBottom: 16,
-            fontSize: "1.0625rem",
-            width: "100%",
-            border: "none",
-            cursor: "pointer",
-          }}
+          className="w-full h-14 rounded-xl text-base font-bold bg-[#06c755] hover:bg-[#047d36] text-white shadow-md mb-4"
           aria-label="เข้าสู่ระบบด้วย LINE"
           disabled={!isReady}
         >
           <LineIcon size={22} />
           {isReady ? "เข้าสู่ระบบด้วย LINE" : "กำลังโหลด..."}
-        </button>
+        </Button>
 
         {/* PDPA notice */}
         <div

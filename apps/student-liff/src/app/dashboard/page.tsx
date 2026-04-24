@@ -2,6 +2,12 @@
 
 import { useLiff } from "@/components/providers/LiffProvider";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 export default function DashboardPage() {
   const { profile, isReady } = useLiff();
@@ -80,62 +86,23 @@ export default function DashboardPage() {
           </div>
 
           {/* Avatar */}
-          {student.avatar ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={student.avatar} alt={student.name} className="avatar avatar-lg" style={{ border: "2.5px solid rgba(255,255,255,0.5)", objectFit: "cover" }} />
-          ) : (
-            <div
-              className="avatar-initials avatar-lg"
-              style={{ border: "2.5px solid rgba(255,255,255,0.5)", fontSize: "1.125rem" }}
-            >
+          <Avatar className="w-14 h-14 border-2 border-white/50">
+            {student.avatar && <AvatarImage src={student.avatar} alt={student.name} className="object-cover" />}
+            <AvatarFallback className="bg-white/20 text-white text-lg font-bold">
               {student.initials}
-            </div>
-          )}
+            </AvatarFallback>
+          </Avatar>
         </div>
 
         {/* Level chip */}
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-              background: "rgba(255,255,255,0.2)",
-              borderRadius: "var(--radius-full)",
-              padding: "5px 12px",
-              border: "1px solid rgba(255,255,255,0.3)",
-            }}
-          >
-            <span
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: "50%",
-                background: "#fff",
-                flexShrink: 0,
-                display: "inline-block",
-              }}
-            />
-            <span style={{ color: "#fff", fontSize: "0.8125rem", fontWeight: 600 }}>
-              {student.level} · {student.cefr}
-            </span>
-          </div>
-
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 4,
-              background: "rgba(255,255,255,0.15)",
-              borderRadius: "var(--radius-full)",
-              padding: "5px 12px",
-            }}
-          >
-            <span style={{ fontSize: "0.875rem" }}>🔥</span>
-            <span style={{ color: "#fff", fontSize: "0.8125rem", fontWeight: 600 }}>
-              {enrollment.weekStreak} สัปดาห์ติด
-            </span>
-          </div>
+          <Badge variant="outline" className="text-white border-white/30 bg-white/20 px-3 py-1 font-semibold rounded-full border">
+            <span className="w-2 h-2 rounded-full bg-white mr-2" />
+            {student.level} · {student.cefr}
+          </Badge>
+          <Badge variant="secondary" className="bg-white/15 text-white hover:bg-white/20 px-3 py-1 font-semibold rounded-full">
+            🔥 {enrollment.weekStreak} สัปดาห์ติด
+          </Badge>
         </div>
       </header>
 
@@ -151,72 +118,50 @@ export default function DashboardPage() {
             </span>
           </div>
 
-          <div
-            className="card card-padded"
-            style={{ background: "linear-gradient(135deg, #fff 0%, #f0fdf6 100%)", border: "1.5px solid var(--brand-100)" }}
-          >
-            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 14 }}>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <h3
-                  style={{
-                    fontSize: "0.9375rem",
-                    fontWeight: 700,
-                    color: "var(--neutral-900)",
-                    marginBottom: 4,
-                  }}
-                  className="line-clamp-2"
-                >
-                  {enrollment.className}
-                </h3>
-                <div style={{ fontSize: "0.8125rem", color: "var(--neutral-500)", display: "flex", alignItems: "center", gap: 5 }}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  {enrollment.tutorName}
+          <Card className="bg-gradient-to-br from-white to-green-50 border-green-100 shadow-sm mt-3">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-[15px] font-bold text-slate-900 mb-1 line-clamp-2">
+                    {enrollment.className}
+                  </h3>
+                  <div className="text-[13px] text-slate-500 flex items-center gap-1.5">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    {enrollment.tutorName}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Next session */}
-            <div
-              style={{
-                background: "var(--brand-50)",
-                borderRadius: "var(--radius-md)",
-                padding: "10px 12px",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                marginBottom: 14,
-                border: "1px solid var(--brand-100)",
-              }}
-            >
-              <span style={{ fontSize: "1rem" }}>📅</span>
+              {/* Next session */}
+              <div className="bg-green-50 rounded-md p-3 flex items-center gap-2.5 mb-4 border border-green-100">
+                <span className="text-base">📅</span>
+                <div>
+                  <div className="text-[11px] text-green-700 font-bold uppercase tracking-wider">
+                    คาบถัดไป
+                  </div>
+                  <div className="text-[13px] text-slate-700 font-medium mt-0.5">
+                    {enrollment.nextSession}
+                  </div>
+                </div>
+              </div>
+
+              {/* Progress */}
               <div>
-                <div style={{ fontSize: "0.6875rem", color: "var(--brand-700)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                  คาบถัดไป
+                <div className="flex justify-between mb-1.5">
+                  <span className="text-[13px] text-slate-600 font-medium">
+                    ความก้าวหน้า
+                  </span>
+                  <span className="text-[13px] font-bold text-green-700">
+                    {enrollment.articlesRead}/{enrollment.totalArticles} บท
+                  </span>
                 </div>
-                <div style={{ fontSize: "0.8125rem", color: "var(--neutral-700)", fontWeight: 500, marginTop: 1 }}>
-                  {enrollment.nextSession}
+                <Progress value={progressPct} className="h-2 bg-green-100" />
+                <div className="text-[12px] text-slate-400 mt-1.5 text-right">
+                  {progressPct}% สำเร็จ
                 </div>
               </div>
-            </div>
-
-            {/* Progress */}
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{ fontSize: "0.8125rem", color: "var(--neutral-600)", fontWeight: 500 }}>
-                  ความก้าวหน้า
-                </span>
-                <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--brand-700)" }}>
-                  {enrollment.articlesRead}/{enrollment.totalArticles} บท
-                </span>
-              </div>
-              <div className="progress-bar">
-                <div className="progress-bar-fill" style={{ width: `${progressPct}%` }} />
-              </div>
-              <div style={{ fontSize: "0.75rem", color: "var(--neutral-400)", marginTop: 5, textAlign: "right" }}>
-                {progressPct}% สำเร็จ
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </section>
 
         {/* Quick actions */}
@@ -261,27 +206,18 @@ export default function DashboardPage() {
                 border: "#fde68a",
               },
             ].map((item) => (
-              <Link
-                key={item.id}
-                id={item.id}
-                href={item.href}
-                className="card card-hover"
-                style={{
-                  padding: "16px 14px",
-                  background: item.color,
-                  border: `1.5px solid ${item.border}`,
-                  textDecoration: "none",
-                  display: "block",
-                }}
-              >
-                <div style={{ fontSize: "1.5rem", marginBottom: 8 }}>{item.icon}</div>
-                <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--neutral-900)" }}>
-                  {item.label}
-                </div>
-                <div style={{ fontSize: "0.75rem", color: "var(--neutral-500)", marginTop: 2 }}>
-                  {item.sub}
-                </div>
-              </Link>
+              <Card key={item.id} className="overflow-hidden border-none shadow-sm transition-transform active:scale-[0.98]">
+                <Link
+                  id={item.id}
+                  href={item.href}
+                  className="block p-4"
+                  style={{ background: item.color, border: `1.5px solid ${item.border}`, borderRadius: "var(--radius-xl)" }}
+                >
+                  <div className="text-2xl mb-2">{item.icon}</div>
+                  <div className="text-[14px] font-bold text-slate-900">{item.label}</div>
+                  <div className="text-[12px] text-slate-500 mt-0.5">{item.sub}</div>
+                </Link>
+              </Card>
             ))}
           </div>
         </section>
@@ -293,93 +229,56 @@ export default function DashboardPage() {
             <Link href="/classes" className="section-action">ดูทั้งหมด</Link>
           </div>
 
-          <div className="card stagger" style={{ overflow: "hidden" }}>
+          <Card className="overflow-hidden shadow-sm mt-3 border-none">
             {recentArticles.map((article, idx) => (
-              <Link
-                key={article.id}
-                href={`/student/read/${article.id}`}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                  padding: "14px 16px",
-                  textDecoration: "none",
-                  borderTop: idx > 0 ? "1px solid var(--neutral-100)" : "none",
-                  transition: "background var(--duration-fast)",
-                }}
-              >
-                <div
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: "var(--radius-md)",
-                    background: "var(--brand-50)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                    fontSize: "1.125rem",
-                  }}
+              <div key={article.id}>
+                {idx > 0 && <Separator />}
+                <Link
+                  href={`/student/read/${article.id}`}
+                  className="flex items-center gap-3 p-4 hover:bg-muted/50 transition-colors"
                 >
-                  📄
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div
-                    style={{
-                      fontSize: "0.875rem",
-                      fontWeight: 600,
-                      color: "var(--neutral-900)",
-                    }}
-                    className="text-ellipsis"
-                  >
-                    {article.title}
+                  <div className="w-10 h-10 rounded-md bg-green-50 flex items-center justify-center shrink-0 text-lg">
+                    📄
                   </div>
-                  <div style={{ fontSize: "0.75rem", color: "var(--neutral-400)", marginTop: 2 }}>
-                    {article.level} · {article.readAt}
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[14px] font-semibold text-slate-900 truncate">
+                      {article.title}
+                    </div>
+                    <div className="text-[12px] text-slate-400 mt-0.5">
+                      {article.level} · {article.readAt}
+                    </div>
                   </div>
-                </div>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--neutral-300)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </Link>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-300">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </Link>
+              </div>
             ))}
-          </div>
+          </Card>
         </section>
 
         {/* Referral link */}
         <section>
-          <div
-            style={{
-              background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
-              borderRadius: "var(--radius-xl)",
-              padding: "20px",
-              color: "#fff",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-              <span style={{ fontSize: "1.25rem" }}>🔗</span>
-              <div>
-                <div style={{ fontWeight: 700, fontSize: "0.9375rem" }}>แชร์ให้เพื่อน</div>
-                <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.55)", marginTop: 1 }}>
-                  เพื่อนสมัครผ่านลิงก์ของคุณ
+          <Card className="bg-slate-900 text-white border-none shadow-md overflow-hidden">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-2.5 mb-3">
+                <span className="text-xl">🔗</span>
+                <div>
+                  <div className="font-bold text-[15px]">แชร์ให้เพื่อน</div>
+                  <div className="text-[12px] text-slate-400 mt-0.5">
+                    เพื่อนสมัครผ่านลิงก์ของคุณ
+                  </div>
                 </div>
               </div>
-            </div>
-            <button
-              id="btn-copy-referral"
-              className="btn btn-sm"
-              style={{
-                background: "rgba(255,255,255,0.12)",
-                color: "#fff",
-                borderRadius: "var(--radius-md)",
-                border: "1px solid rgba(255,255,255,0.2)",
-                width: "100%",
-                fontSize: "0.8125rem",
-              }}
-            >
-              คัดลอกลิงก์สมัครเรียน
-            </button>
-          </div>
+              <Button
+                id="btn-copy-referral"
+                variant="outline"
+                className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white h-10 text-[13px] border"
+              >
+                คัดลอกลิงก์สมัครเรียน
+              </Button>
+            </CardContent>
+          </Card>
         </section>
 
       </div>

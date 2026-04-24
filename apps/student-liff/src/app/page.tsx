@@ -1,19 +1,58 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { LineIcon } from "@/components/icons/LineIcon";
+import { Button } from "@/components/ui/button";
 
 export default function LandingPage() {
   const { liff, isReady } = useLiff();
   const isLoggedIn = isReady && liff?.isLoggedIn();
+  const [isLiffRedirecting, setIsLiffRedirecting] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.has("liff.state")) {
+        setIsLiffRedirecting(true);
+      }
+    }
+  }, []);
+
+  if (isLiffRedirecting) {
+    return (
+      <main
+        className="page-shell"
+        style={{
+          minHeight: "100dvh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "var(--surface-bg)",
+        }}
+      >
+        <div
+          className="animate-pulse"
+          style={{
+            color: "var(--brand-600)",
+            fontWeight: 600,
+            fontSize: "1.125rem",
+          }}
+        >
+          กำลังดำเนินการเข้าสู่ระบบ...
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="page-shell" style={{ background: "var(--surface-bg)" }}>
       {/* ── Hero ── */}
       <section
         style={{
-          background: "linear-gradient(160deg, #06c755 0%, #047d36 55%, #0f172a 100%)",
+          background:
+            "linear-gradient(160deg, #06c755 0%, #047d36 55%, #0f172a 100%)",
           padding: "56px 24px 48px",
           position: "relative",
           overflow: "hidden",
@@ -65,12 +104,18 @@ export default function LandingPage() {
               alignItems: "center",
               justifyContent: "center",
               border: "1.5px solid rgba(255,255,255,0.3)",
+              color: "#fff",
             }}
           >
             <LineIcon size={22} />
           </div>
           <span
-            style={{ color: "#fff", fontWeight: 700, fontSize: "1rem", letterSpacing: "0.02em" }}
+            style={{
+              color: "#fff",
+              fontWeight: 700,
+              fontSize: "1rem",
+              letterSpacing: "0.02em",
+            }}
           >
             Tutor Advantage
           </span>
@@ -89,7 +134,13 @@ export default function LandingPage() {
               marginBottom: 18,
             }}
           >
-            <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.9)", fontWeight: 600 }}>
+            <span
+              style={{
+                fontSize: "0.75rem",
+                color: "rgba(255,255,255,0.9)",
+                fontWeight: 600,
+              }}
+            >
               ✨ โปรแกรมภาษาอังกฤษ Origins &amp; Quest
             </span>
           </div>
@@ -103,8 +154,10 @@ export default function LandingPage() {
               marginBottom: 12,
             }}
           >
-            เรียนภาษาอังกฤษ<br />
-            <span style={{ color: "#a7f3c0" }}>กับติวเตอร์ที่คุณ</span><br />
+            เรียนภาษาอังกฤษ
+            <br />
+            <span style={{ color: "#a7f3c0" }}>กับติวเตอร์ที่คุณ</span>
+            <br />
             ไว้วางใจ
           </h1>
 
@@ -116,41 +169,31 @@ export default function LandingPage() {
               marginBottom: 28,
             }}
           >
-            ระบบเรียนรู้ 15 ขั้นตอน รองรับทุกระดับ A1–C1<br />
+            ระบบเรียนรู้ 15 ขั้นตอน รองรับทุกระดับ A1–C1
+            <br />
             สมัครง่าย จ่ายสะดวก ผ่าน LINE โดยตรง
           </p>
 
           {/* CTA buttons */}
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <Link
-              href={isLoggedIn ? "/dashboard" : "/login"}
-              className="btn-line"
+            <Button
+              render={<Link href={isLoggedIn ? "/dashboard" : "/login"} />}
+              nativeButton={false}
+              className="w-full h-14 rounded-full text-base font-bold bg-[#06c755] hover:bg-[#047d36] text-white border-none shadow-[0_4px_14px_rgba(6,199,85,0.4)]"
               id="cta-line-login"
-              style={{ fontSize: "1rem", fontWeight: 700 }}
             >
               <LineIcon size={20} />
               {isLoggedIn ? "ไปที่หน้า Dashboard" : "เข้าสู่ระบบด้วย LINE"}
-            </Link>
+            </Button>
 
-            <Link
-              href="/classes"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
-                padding: "15px 24px",
-                borderRadius: "var(--radius-full)",
-                border: "1.5px solid rgba(255,255,255,0.4)",
-                color: "#fff",
-                fontWeight: 600,
-                fontSize: "0.9375rem",
-                textDecoration: "none",
-                textAlign: "center",
-              }}
+            <Button
+              render={<Link href="/classes" />}
+              nativeButton={false}
+              variant="outline"
+              className="w-full h-14 rounded-full text-base font-semibold border-2 border-white/40 bg-transparent text-white hover:bg-white/10 hover:text-white"
             >
               ดูคลาสเรียนทั้งหมด
-            </Link>
+            </Button>
           </div>
         </div>
       </section>
@@ -179,11 +222,25 @@ export default function LandingPage() {
                 }}
               >
                 {stat.value}
-                <span style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--brand-500)", marginLeft: 2 }}>
+                <span
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    color: "var(--brand-500)",
+                    marginLeft: 2,
+                  }}
+                >
                   {stat.suffix}
                 </span>
               </div>
-              <div style={{ fontSize: "0.75rem", color: "var(--neutral-500)", marginTop: 3, fontWeight: 500 }}>
+              <div
+                style={{
+                  fontSize: "0.75rem",
+                  color: "var(--neutral-500)",
+                  marginTop: 3,
+                  fontWeight: 500,
+                }}
+              >
                 {stat.label}
               </div>
             </div>
@@ -204,13 +261,16 @@ export default function LandingPage() {
           เริ่มเรียนง่ายๆ 3 ขั้นตอน
         </h2>
 
-        <div className="stagger" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div
+          className="stagger"
+          style={{ display: "flex", flexDirection: "column", gap: 14 }}
+        >
           {[
             {
               step: "01",
               title: "รับลิงก์จากติวเตอร์",
               desc: "ติวเตอร์แชร์ลิงก์สมัครเรียนผ่าน LINE หรือ Facebook",
-              color: "var(--brand-50)",
+              color: "var(--brand-600)",
               bg: "var(--brand-50)",
             },
             {
@@ -259,10 +319,23 @@ export default function LandingPage() {
                 {item.step}
               </div>
               <div>
-                <div style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--neutral-900)", marginBottom: 3 }}>
+                <div
+                  style={{
+                    fontWeight: 700,
+                    fontSize: "0.9375rem",
+                    color: "var(--neutral-900)",
+                    marginBottom: 3,
+                  }}
+                >
                   {item.title}
                 </div>
-                <div style={{ fontSize: "0.8125rem", color: "var(--neutral-500)", lineHeight: 1.6 }}>
+                <div
+                  style={{
+                    fontSize: "0.8125rem",
+                    color: "var(--neutral-500)",
+                    lineHeight: 1.6,
+                  }}
+                >
                   {item.desc}
                 </div>
               </div>
@@ -286,11 +359,46 @@ export default function LandingPage() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {[
-            { name: "Origins", cefr: "A1", levels: "1–3", tag: "Your journey starts here", color: "#06c755", textColor: "#fff" },
-            { name: "Quest", cefr: "A2", levels: "4–6", tag: "Your quest awaits", color: "#3b82f6", textColor: "#fff" },
-            { name: "Adventure", cefr: "B1", levels: "7–9", tag: "Your adventure&apos;s in sight", color: "#8b5cf6", textColor: "#fff" },
-            { name: "Hero", cefr: "B2", levels: "10–12", tag: "You&apos;re the hero", color: "#f59e0b", textColor: "#fff" },
-            { name: "Legend", cefr: "C1", levels: "13–15", tag: "Legendary stories", color: "#ef4444", textColor: "#fff" },
+            {
+              name: "Origins",
+              cefr: "A1",
+              levels: "1–3",
+              tag: "Your journey starts here",
+              color: "#06c755",
+              textColor: "#fff",
+            },
+            {
+              name: "Quest",
+              cefr: "A2",
+              levels: "4–6",
+              tag: "Your quest awaits",
+              color: "#3b82f6",
+              textColor: "#fff",
+            },
+            {
+              name: "Adventure",
+              cefr: "B1",
+              levels: "7–9",
+              tag: "Your adventure&apos;s in sight",
+              color: "#8b5cf6",
+              textColor: "#fff",
+            },
+            {
+              name: "Hero",
+              cefr: "B2",
+              levels: "10–12",
+              tag: "You&apos;re the hero",
+              color: "#f59e0b",
+              textColor: "#fff",
+            },
+            {
+              name: "Legend",
+              cefr: "C1",
+              levels: "13–15",
+              tag: "Legendary stories",
+              color: "#ef4444",
+              textColor: "#fff",
+            },
           ].map((series) => (
             <div
               key={series.name}
@@ -323,10 +431,22 @@ export default function LandingPage() {
                 {series.cefr}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--neutral-900)" }}>
+                <div
+                  style={{
+                    fontWeight: 700,
+                    fontSize: "0.9375rem",
+                    color: "var(--neutral-900)",
+                  }}
+                >
                   {series.name}
                 </div>
-                <div style={{ fontSize: "0.75rem", color: "var(--neutral-500)", marginTop: 1 }}>
+                <div
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "var(--neutral-500)",
+                    marginTop: 1,
+                  }}
+                >
                   {series.tag}
                 </div>
               </div>
@@ -355,21 +475,37 @@ export default function LandingPage() {
           borderTop: "1px solid var(--brand-100)",
         }}
       >
-        <p style={{ fontSize: "0.875rem", color: "var(--neutral-600)", marginBottom: 16, lineHeight: 1.7 }}>
-          มีลิงก์สมัครเรียนจากติวเตอร์แล้ว?<br />
+        <p
+          style={{
+            fontSize: "0.875rem",
+            color: "var(--neutral-600)",
+            marginBottom: 16,
+            lineHeight: 1.7,
+          }}
+        >
+          มีลิงก์สมัครเรียนจากติวเตอร์แล้ว?
+          <br />
           เข้าสู่ระบบเพื่อดำเนินการต่อได้เลย
         </p>
-        <Link
-          href={isLoggedIn ? "/dashboard" : "/login"}
-          className="btn-line"
+        <Button
+          render={<Link href={isLoggedIn ? "/dashboard" : "/login"} />}
+          nativeButton={false}
+          className="w-full max-w-[280px] h-12 rounded-full text-base font-bold bg-[#06c755] hover:bg-[#047d36] text-white shadow-md mx-auto"
           id="cta-line-login-bottom"
-          style={{ maxWidth: 280, margin: "0 auto" }}
         >
           <LineIcon size={20} />
           {isLoggedIn ? "ไปที่หน้า Dashboard" : "เข้าสู่ระบบด้วย LINE"}
-        </Link>
-        <p style={{ fontSize: "0.75rem", color: "var(--neutral-400)", marginTop: 14, lineHeight: 1.6 }}>
-          ชำระเงินผ่าน PromptPay หรือบัตรเครดิต<br />
+        </Button>
+        <p
+          style={{
+            fontSize: "0.75rem",
+            color: "var(--neutral-400)",
+            marginTop: 14,
+            lineHeight: 1.6,
+          }}
+        >
+          ชำระเงินผ่าน PromptPay หรือบัตรเครดิต
+          <br />
           ปลอดภัย 100% โดย Omise
         </p>
       </section>
