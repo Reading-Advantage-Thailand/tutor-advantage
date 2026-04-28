@@ -8,18 +8,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { BookOpen, MessageCircle, Calendar, CreditCard, ChevronRight, Copy, Flame } from "lucide-react";
 
 export default function DashboardPage() {
   const { profile, isReady } = useLiff();
 
-  // Mock data for Enrollment – replace with real API calls later
   const student = {
     name: profile?.displayName || "กำลังโหลด...",
     avatar: profile?.pictureUrl || null,
     initials: profile?.displayName?.charAt(0) || "TA",
     level: "Origins 2",
     cefr: "A1",
-    seriesColor: "#06c755",
   };
 
   const enrollment = {
@@ -38,9 +37,14 @@ export default function DashboardPage() {
     { id: "art-3", title: "Animals in the Zoo", level: "A1", readAt: "4 วันที่แล้ว" },
   ];
 
-  const progressPct = Math.round(
-    (enrollment.articlesRead / enrollment.totalArticles) * 100
-  );
+  const progressPct = Math.round((enrollment.articlesRead / enrollment.totalArticles) * 100);
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "สวัสดีตอนเช้า ☀️";
+    if (hour < 17) return "สวัสดีตอนบ่าย 🌤️";
+    return "สวัสดีตอนเย็น 🌙";
+  };
 
   if (!isReady) {
     return (
@@ -51,42 +55,31 @@ export default function DashboardPage() {
   }
 
   return (
-    <div>
-      {/* ── Header ── */}
+    <div style={{ background: "var(--surface-bg)", minHeight: "100dvh" }}>
+
+      {/* ── Header with curved bottom ── */}
       <header
+        className="curved-bottom"
         style={{
-          background: "linear-gradient(135deg, #06c755 0%, #047d36 100%)",
-          padding: "20px 20px 24px",
+          background: "linear-gradient(135deg, #06c755 0%, #049a42 50%, #037d36 100%)",
+          padding: "20px 20px 28px",
           position: "relative",
           overflow: "hidden",
         }}
       >
-        <div
-          aria-hidden
-          style={{
-            position: "absolute",
-            top: -30,
-            right: -30,
-            width: 120,
-            height: 120,
-            borderRadius: "50%",
-            background: "rgba(255,255,255,0.08)",
-          }}
-        />
+        <div aria-hidden style={{ position: "absolute", top: -40, right: -40, width: 140, height: 140, borderRadius: "50%", background: "rgba(255,255,255,0.06)" }} />
+        <div aria-hidden style={{ position: "absolute", bottom: 10, left: -20, width: 80, height: 80, borderRadius: "50%", background: "rgba(255,255,255,0.04)" }} />
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
-          {/* Greeting */}
           <div>
-            <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.8125rem", fontWeight: 500 }}>
-              สวัสดีตอนเช้า 👋
+            <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.8125rem", fontWeight: 500 }}>
+              {getGreeting()}
             </p>
-            <h1 style={{ color: "#fff", fontSize: "1.25rem", fontWeight: 700, marginTop: 2 }}>
+            <h1 style={{ color: "#fff", fontSize: "1.375rem", fontWeight: 800, marginTop: 2, letterSpacing: "-0.01em" }}>
               {student.name}
             </h1>
           </div>
-
-          {/* Avatar */}
-          <Avatar className="w-14 h-14 border-2 border-white/50">
+          <Avatar className="w-14 h-14 border-[3px] border-white/40 shadow-lg">
             {student.avatar && <AvatarImage src={student.avatar} alt={student.name} className="object-cover" />}
             <AvatarFallback className="bg-white/20 text-white text-lg font-bold">
               {student.initials}
@@ -94,20 +87,20 @@ export default function DashboardPage() {
           </Avatar>
         </div>
 
-        {/* Level chip */}
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <Badge variant="outline" className="text-white border-white/30 bg-white/20 px-3 py-1 font-semibold rounded-full border">
-            <span className="w-2 h-2 rounded-full bg-white mr-2" />
+          <div style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)", color: "#fff", padding: "4px 12px", borderRadius: 14, fontSize: "0.75rem", fontWeight: 600, display: "flex", alignItems: "center", backdropFilter: "blur(4px)" }}>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", marginRight: 6 }} />
             {student.level} · {student.cefr}
-          </Badge>
-          <Badge variant="secondary" className="bg-white/15 text-white hover:bg-white/20 px-3 py-1 font-semibold rounded-full">
-            🔥 {enrollment.weekStreak} สัปดาห์ติด
-          </Badge>
+          </div>
+          <div style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.15)", color: "#fff", padding: "4px 12px", borderRadius: 14, fontSize: "0.75rem", fontWeight: 600, display: "flex", alignItems: "center" }}>
+            <Flame size={14} style={{ marginRight: 6, color: "#fbbf24" }} />
+            {enrollment.weekStreak} สัปดาห์ต่อเนื่อง
+          </div>
         </div>
       </header>
 
       {/* ── Content ── */}
-      <div style={{ padding: "20px 16px", display: "flex", flexDirection: "column", gap: 20 }}>
+      <div className="page-content" style={{ padding: "20px 16px", display: "flex", flexDirection: "column", gap: 20, marginTop: -8 }}>
 
         {/* Enrollment card */}
         <section>
@@ -118,48 +111,56 @@ export default function DashboardPage() {
             </span>
           </div>
 
-          <Card className="bg-gradient-to-br from-white to-green-50 border-green-100 shadow-sm mt-3">
-            <CardContent className="p-5">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-[15px] font-bold text-slate-900 mb-1 line-clamp-2">
-                    {enrollment.className}
-                  </h3>
-                  <div className="text-[13px] text-slate-500 flex items-center gap-1.5">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    {enrollment.tutorName}
-                  </div>
-                </div>
+          <Card className="glass-card overflow-hidden" style={{ border: "1px solid var(--surface-border)", marginTop: 8 }}>
+            <CardContent style={{ padding: "20px" }}>
+              <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 4 }} className="line-clamp-2">
+                {enrollment.className}
+              </h3>
+              <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 6, marginBottom: 16 }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                {enrollment.tutorName}
               </div>
 
               {/* Next session */}
-              <div className="bg-green-50 rounded-md p-3 flex items-center gap-2.5 mb-4 border border-green-100">
-                <span className="text-base">📅</span>
+              <div style={{ background: "var(--brand-50)", borderRadius: 14, padding: "12px 14px", display: "flex", alignItems: "center", gap: 10, marginBottom: 16, border: "1px solid var(--brand-100)" }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--brand-100)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Calendar size={18} style={{ color: "var(--brand-600)" }} />
+                </div>
                 <div>
-                  <div className="text-[11px] text-green-700 font-bold uppercase tracking-wider">
-                    คาบถัดไป
-                  </div>
-                  <div className="text-[13px] text-slate-700 font-medium mt-0.5">
-                    {enrollment.nextSession}
-                  </div>
+                  <div style={{ fontSize: "0.6875rem", color: "var(--brand-600)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>คาบถัดไป</div>
+                  <div style={{ fontSize: "0.8125rem", color: "var(--text-primary)", fontWeight: 500, marginTop: 1 }}>{enrollment.nextSession}</div>
                 </div>
               </div>
 
               {/* Progress */}
               <div>
-                <div className="flex justify-between mb-1.5">
-                  <span className="text-[13px] text-slate-600 font-medium">
-                    ความก้าวหน้า
-                  </span>
-                  <span className="text-[13px] font-bold text-green-700">
-                    {enrollment.articlesRead}/{enrollment.totalArticles} บท
-                  </span>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                  <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", fontWeight: 500 }}>ความก้าวหน้า</span>
+                  <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--brand-700)" }}>{enrollment.articlesRead}/{enrollment.totalArticles} บท</span>
                 </div>
                 <Progress value={progressPct} className="h-2 bg-green-100" />
-                <div className="text-[12px] text-slate-400 mt-1.5 text-right">
-                  {progressPct}% สำเร็จ
+                <div style={{ fontSize: "0.6875rem", color: "var(--text-tertiary)", marginTop: 6, textAlign: "right" }}>{progressPct}% สำเร็จ</div>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Referral card */}
+        <section>
+          <Card className="glass-card overflow-hidden" style={{ borderRadius: 20 }}>
+            <CardContent style={{ padding: "20px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--brand-50)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid var(--brand-100)" }}>
+                  <Copy size={16} style={{ color: "var(--brand-600)" }} />
+                </div>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--text-primary)" }}>แชร์ให้เพื่อน</div>
+                  <div style={{ fontSize: "0.6875rem", color: "var(--text-secondary)", marginTop: 1 }}>เพื่อนสมัครผ่านลิงก์ของคุณ</div>
                 </div>
               </div>
+              <Button id="btn-copy-referral" variant="outline" className="w-full h-10 text-[13px] border rounded-xl" style={{ borderColor: "var(--surface-border)", color: "var(--text-primary)", background: "var(--surface-bg)" }}>
+                คัดลอกลิงก์สมัครเรียน
+              </Button>
             </CardContent>
           </Card>
         </section>
@@ -169,55 +170,24 @@ export default function DashboardPage() {
           <h2 className="section-title" style={{ marginBottom: 12 }}>เมนูด่วน</h2>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
             {[
-              {
-                id: "quick-read",
-                href: "/classes",
-                icon: "📖",
-                label: "อ่านบทความ",
-                sub: "เริ่มบทเรียนวันนี้",
-                color: "var(--brand-50)",
-                border: "var(--brand-200)",
-              },
-              {
-                id: "quick-chat",
-                href: "#",
-                icon: "💬",
-                label: "แชทติวเตอร์",
-                sub: "ถาม-ตอบตรงๆ",
-                color: "var(--accent-blue-light)",
-                border: "#bfdbfe",
-              },
-              {
-                id: "quick-schedule",
-                href: "#",
-                icon: "🗓️",
-                label: "ตารางเรียน",
-                sub: "ดูคาบทั้งหมด",
-                color: "var(--accent-purple-light)",
-                border: "#ddd6fe",
-              },
-              {
-                id: "quick-payment",
-                href: "/payment",
-                icon: "💳",
-                label: "ชำระเงิน",
-                sub: "PromptPay / บัตร",
-                color: "var(--accent-amber-light)",
-                border: "#fde68a",
-              },
+              { id: "quick-read", href: "/classes", Icon: BookOpen, label: "อ่านบทความ", sub: "เริ่มบทเรียนวันนี้", bgColor: "var(--brand-50)", iconBg: "var(--brand-100)", iconColor: "var(--brand-600)" },
+              { id: "quick-chat", href: "#", Icon: MessageCircle, label: "แชทติวเตอร์", sub: "ถาม-ตอบตรงๆ", bgColor: "var(--accent-blue-light)", iconBg: "rgba(59, 130, 246, 0.15)", iconColor: "var(--accent-blue)" },
+              { id: "quick-schedule", href: "#", Icon: Calendar, label: "ตารางเรียน", sub: "ดูคาบทั้งหมด", bgColor: "var(--accent-purple-light)", iconBg: "rgba(139, 92, 246, 0.15)", iconColor: "var(--accent-purple)" },
+              { id: "quick-payment", href: "/payment", Icon: CreditCard, label: "ชำระเงิน", sub: "PromptPay / บัตร", bgColor: "var(--accent-amber-light)", iconBg: "rgba(245, 158, 11, 0.15)", iconColor: "var(--accent-amber)" },
             ].map((item) => (
-              <Card key={item.id} className="overflow-hidden border-none shadow-sm transition-transform active:scale-[0.98]">
-                <Link
-                  id={item.id}
-                  href={item.href}
-                  className="block p-4"
-                  style={{ background: item.color, border: `1.5px solid ${item.border}`, borderRadius: "var(--radius-xl)" }}
-                >
-                  <div className="text-2xl mb-2">{item.icon}</div>
-                  <div className="text-[14px] font-bold text-slate-900">{item.label}</div>
-                  <div className="text-[12px] text-slate-500 mt-0.5">{item.sub}</div>
-                </Link>
-              </Card>
+              <Link
+                key={item.id}
+                id={item.id}
+                href={item.href}
+                className="block active:scale-[0.97]"
+                style={{ background: item.bgColor, border: "1px solid var(--surface-border)", borderRadius: 18, padding: "16px 14px", textDecoration: "none", transition: "all 0.2s ease", minHeight: 100, position: "relative", overflow: "hidden", boxShadow: "var(--shadow-sm)" }}
+              >
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: item.iconBg, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 10 }}>
+                  <item.Icon size={18} style={{ color: item.iconColor }} />
+                </div>
+                <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text-primary)" }}>{item.label}</div>
+                <div style={{ fontSize: "0.6875rem", color: "var(--text-secondary)", marginTop: 2 }}>{item.sub}</div>
+              </Link>
             ))}
           </div>
         </section>
@@ -226,58 +196,30 @@ export default function DashboardPage() {
         <section>
           <div className="section-header">
             <h2 className="section-title">บทความล่าสุด</h2>
-            <Link href="/classes" className="section-action">ดูทั้งหมด</Link>
+            <Link href="/classes" className="section-action" style={{ display: "flex", alignItems: "center", gap: 2 }}>
+              ดูทั้งหมด <ChevronRight size={14} />
+            </Link>
           </div>
 
-          <Card className="overflow-hidden shadow-sm mt-3 border-none">
+          <Card className="glass-card overflow-hidden" style={{ marginTop: 8 }}>
             {recentArticles.map((article, idx) => (
               <div key={article.id}>
-                {idx > 0 && <Separator />}
+                {idx > 0 && <Separator style={{ background: "var(--surface-border)" }} />}
                 <Link
                   href={`/student/read/${article.id}`}
-                  className="flex items-center gap-3 p-4 hover:bg-muted/50 transition-colors"
+                  style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", textDecoration: "none" }}
                 >
-                  <div className="w-10 h-10 rounded-md bg-green-50 flex items-center justify-center shrink-0 text-lg">
-                    📄
+                  <div style={{ width: 40, height: 40, borderRadius: 12, background: "var(--brand-50)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <BookOpen size={18} style={{ color: "var(--brand-500)" }} />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[14px] font-semibold text-slate-900 truncate">
-                      {article.title}
-                    </div>
-                    <div className="text-[12px] text-slate-400 mt-0.5">
-                      {article.level} · {article.readAt}
-                    </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)" }} className="text-ellipsis">{article.title}</div>
+                    <div style={{ fontSize: "0.6875rem", color: "var(--text-tertiary)", marginTop: 2 }}>{article.level} · {article.readAt}</div>
                   </div>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-300">
-                    <polyline points="9 18 15 12 9 6" />
-                  </svg>
+                  <ChevronRight size={16} style={{ color: "var(--neutral-400)", flexShrink: 0 }} />
                 </Link>
               </div>
             ))}
-          </Card>
-        </section>
-
-        {/* Referral link */}
-        <section>
-          <Card className="bg-slate-900 text-white border-none shadow-md overflow-hidden">
-            <CardContent className="p-5">
-              <div className="flex items-center gap-2.5 mb-3">
-                <span className="text-xl">🔗</span>
-                <div>
-                  <div className="font-bold text-[15px]">แชร์ให้เพื่อน</div>
-                  <div className="text-[12px] text-slate-400 mt-0.5">
-                    เพื่อนสมัครผ่านลิงก์ของคุณ
-                  </div>
-                </div>
-              </div>
-              <Button
-                id="btn-copy-referral"
-                variant="outline"
-                className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20 hover:text-white h-10 text-[13px] border"
-              >
-                คัดลอกลิงก์สมัครเรียน
-              </Button>
-            </CardContent>
           </Card>
         </section>
 

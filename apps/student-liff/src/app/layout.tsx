@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_Thai, Inter, Geist } from "next/font/google";
 import { LiffProvider } from "@/components/providers/LiffProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const notoSansThai = Noto_Sans_Thai({
   variable: "--font-thai",
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
   description:
     "ระบบสมัครเรียนและเรียนภาษาอังกฤษผ่าน LINE สำหรับนักเรียน — Tutor Advantage Student LIFF Portal",
   keywords: ["tutor advantage", "เรียนภาษาอังกฤษ", "LIFF", "LINE", "ติวเตอร์"],
-  robots: "noindex, nofollow", // Private LIFF app
+  robots: "noindex, nofollow",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -52,11 +53,17 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="th" className={cn("font-sans", geist.variable)}>
+    <html
+      lang="th"
+      className={cn("font-sans", geist.variable)}
+      suppressHydrationWarning
+    >
       <body className={`${notoSansThai.variable} ${inter.variable}`}>
-        <LiffProvider>
-          <div className="liff-root">{children}</div>
-        </LiffProvider>
+        <ThemeProvider>
+          <LiffProvider>
+            <div className="liff-root">{children}</div>
+          </LiffProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

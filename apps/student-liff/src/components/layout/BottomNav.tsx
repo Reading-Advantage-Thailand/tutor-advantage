@@ -2,65 +2,82 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Home, BookOpen, Activity, User } from "lucide-react";
 
 const NAV_ITEMS = [
-  {
-    href: "/dashboard",
-    label: "หน้าหลัก",
-    icon: (active: boolean) => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round">
-        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-        <polyline points="9 22 9 12 15 12 15 22" />
-      </svg>
-    ),
-  },
-  {
-    href: "/classes",
-    label: "คลาสเรียน",
-    icon: (active: boolean) => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-      </svg>
-    ),
-  },
-  {
-    href: "/progress",
-    label: "ความก้าวหน้า",
-    icon: (active: boolean) => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-      </svg>
-    ),
-  },
-  {
-    href: "/profile",
-    label: "โปรไฟล์",
-    icon: (active: boolean) => (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-        <circle cx="12" cy="7" r="4" />
-      </svg>
-    ),
-  },
+  { href: "/dashboard", label: "หน้าหลัก", Icon: Home },
+  { href: "/classes", label: "คลาสเรียน", Icon: BookOpen },
+  { href: "/progress", label: "ก้าวหน้า", Icon: Activity },
+  { href: "/profile", label: "โปรไฟล์", Icon: User },
 ];
 
 export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="bottom-nav" aria-label="Navigation หลัก">
+    <nav
+      aria-label="Navigation หลัก"
+      style={{
+        position: "fixed",
+        bottom: 12,
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: "calc(100% - 32px)",
+        maxWidth: "calc(var(--max-mobile) - 32px)",
+        zIndex: 100,
+        background: "var(--nav-glass-bg, rgba(255,255,255,0.82))",
+        backdropFilter: "blur(20px) saturate(180%)",
+        WebkitBackdropFilter: "blur(20px) saturate(180%)",
+        borderRadius: 22,
+        border: "1px solid var(--nav-glass-border, rgba(255,255,255,0.5))",
+        boxShadow: "0 4px 30px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06)",
+        display: "flex",
+        padding: "6px 4px",
+        paddingBottom: "calc(6px + var(--safe-bottom))",
+      }}
+    >
       {NAV_ITEMS.map((item) => {
         const active = pathname.startsWith(item.href);
         return (
           <Link
             key={item.href}
             href={item.href}
-            className={`bottom-nav-item${active ? " active" : ""}`}
             aria-current={active ? "page" : undefined}
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 2,
+              padding: "8px 0",
+              textDecoration: "none",
+              color: active ? "var(--brand-600)" : "var(--neutral-400)",
+              borderRadius: 16,
+              background: active ? "var(--nav-active-bg, rgba(6,199,85,0.1))" : "transparent",
+              transition: "all 0.25s cubic-bezier(0.34,1.56,0.64,1)",
+              WebkitTapHighlightColor: "transparent",
+              position: "relative",
+            }}
           >
-            {item.icon(active)}
-            <span>{item.label}</span>
+            <item.Icon
+              size={22}
+              strokeWidth={active ? 2.5 : 1.8}
+              style={{
+                transition: "transform 0.25s cubic-bezier(0.34,1.56,0.64,1)",
+                transform: active ? "scale(1.1)" : "scale(1)",
+              }}
+            />
+            <span
+              style={{
+                fontSize: "0.625rem",
+                fontWeight: active ? 700 : 500,
+                letterSpacing: "0.01em",
+                transition: "all 0.2s ease",
+              }}
+            >
+              {item.label}
+            </span>
           </Link>
         );
       })}

@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { BookOpen, CreditCard, Calendar, Bell, Shield, Users, MessageCircle, FileText, ChevronRight, LogOut, Palette } from "lucide-react";
 
 export default function ProfilePage() {
   const { liff, profile, isReady } = useLiff();
@@ -35,25 +37,25 @@ export default function ProfilePage() {
     {
       title: "การเรียน",
       items: [
-        { id: "menu-my-classes", icon: "📚", label: "คลาสของฉัน", href: "/classes" },
-        { id: "menu-payment-history", icon: "💳", label: "ประวัติการชำระเงิน", href: "/payment/history" },
-        { id: "menu-schedule", icon: "🗓️", label: "ตารางเรียน", href: "/schedule" },
+        { id: "menu-my-classes", Icon: BookOpen, label: "คลาสของฉัน", href: "/classes", iconBg: "var(--brand-50)", iconColor: "var(--brand-600)" },
+        { id: "menu-payment-history", Icon: CreditCard, label: "ประวัติการชำระเงิน", href: "/payment/history", iconBg: "var(--accent-amber-light)", iconColor: "var(--accent-amber)" },
+        { id: "menu-schedule", Icon: Calendar, label: "ตารางเรียน", href: "/schedule", iconBg: "var(--accent-purple-light)", iconColor: "var(--accent-purple)" },
       ],
     },
     {
       title: "บัญชี",
       items: [
-        { id: "menu-notifications", icon: "🔔", label: "การแจ้งเตือน", href: "/notifications" },
-        { id: "menu-consent", icon: "🔏", label: "การยินยอมข้อมูล (PDPA)", href: "/consent" },
-        { id: "menu-guardian", icon: "👪", label: "ข้อมูลผู้ปกครอง", href: "/guardian" },
+        { id: "menu-notifications", Icon: Bell, label: "การแจ้งเตือน", href: "/notifications", iconBg: "var(--accent-blue-light)", iconColor: "var(--accent-blue)" },
+        { id: "menu-consent", Icon: Shield, label: "การยินยอมข้อมูล (PDPA)", href: "/consent", iconBg: "rgba(16, 185, 129, 0.15)", iconColor: "rgb(16, 185, 129)" },
+        { id: "menu-guardian", Icon: Users, label: "ข้อมูลผู้ปกครอง", href: "/guardian", iconBg: "rgba(236, 72, 153, 0.15)", iconColor: "rgb(236, 72, 153)" },
       ],
     },
     {
       title: "ช่วยเหลือ",
       items: [
-        { id: "menu-contact", icon: "💬", label: "ติดต่อทีมงาน", href: "#" },
-        { id: "menu-terms", icon: "📄", label: "เงื่อนไขการใช้งาน", href: "/terms" },
-        { id: "menu-privacy", icon: "🛡️", label: "นโยบายความเป็นส่วนตัว", href: "/privacy" },
+        { id: "menu-contact", Icon: MessageCircle, label: "ติดต่อทีมงาน", href: "#", iconBg: "rgba(99, 102, 241, 0.15)", iconColor: "rgb(99, 102, 241)" },
+        { id: "menu-terms", Icon: FileText, label: "เงื่อนไขการใช้งาน", href: "/terms", iconBg: "var(--neutral-100)", iconColor: "var(--neutral-500)" },
+        { id: "menu-privacy", Icon: Shield, label: "นโยบายความเป็นส่วนตัว", href: "/privacy", iconBg: "var(--neutral-100)", iconColor: "var(--neutral-500)" },
       ],
     },
   ];
@@ -67,12 +69,13 @@ export default function ProfilePage() {
   }
 
   return (
-    <div style={{ paddingBottom: "120px" }}>
+    <div style={{ paddingBottom: 120 }}>
       {/* Header */}
       <div
+        className="curved-bottom"
         style={{
-          background: "linear-gradient(160deg, #06c755 0%, #047d36 100%)",
-          padding: "64px 20px 40px",
+          background: "linear-gradient(160deg, #06c755 0%, #049a42 40%, #037d36 100%)",
+          padding: "48px 20px 40px",
           position: "relative",
           overflow: "hidden",
           display: "flex",
@@ -81,77 +84,75 @@ export default function ProfilePage() {
           textAlign: "center",
         }}
       >
-        <div aria-hidden style={{ position: "absolute", top: -40, right: -40, width: 140, height: 140, borderRadius: "50%", background: "rgba(255,255,255,0.07)" }} />
-        <div aria-hidden style={{ position: "absolute", bottom: -20, left: -20, width: 100, height: 100, borderRadius: "50%", background: "rgba(255,255,255,0.05)" }} />
-        
-        <h1 style={{ color: "#fff", fontSize: "1.125rem", fontWeight: 700, position: "absolute", top: 24, left: 20 }}>
-          โปรไฟล์
-        </h1>
+        <div aria-hidden style={{ position: "absolute", top: -40, right: -40, width: 140, height: 140, borderRadius: "50%", background: "rgba(255,255,255,0.06)" }} />
 
-        <Avatar className="w-24 h-24 border-4 border-white shadow-lg mb-4">
-          {student.avatar && <AvatarImage src={student.avatar} alt={student.name} className="object-cover" />}
-          <AvatarFallback className="bg-white/20 text-white text-2xl font-bold">
-            {student.initials}
-          </AvatarFallback>
-        </Avatar>
+        <h1 style={{ color: "#fff", fontSize: "1rem", fontWeight: 700, position: "absolute", top: 20, left: 20, opacity: 0.9 }}>โปรไฟล์</h1>
 
-        <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#fff", marginBottom: 8, letterSpacing: "-0.01em" }}>
+        {/* Avatar with gradient ring */}
+        <div style={{ position: "relative", marginBottom: 16 }}>
+          <div style={{ position: "absolute", inset: -4, borderRadius: "50%", background: "linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1))", filter: "blur(1px)" }} />
+          <Avatar className="w-24 h-24 border-4 border-white/30 shadow-xl relative">
+            {student.avatar && <AvatarImage src={student.avatar} alt={student.name} className="object-cover" />}
+            <AvatarFallback className="bg-white/20 text-white text-2xl font-bold">{student.initials}</AvatarFallback>
+          </Avatar>
+        </div>
+
+        <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#fff", marginBottom: 8, letterSpacing: "-0.01em" }}>
           {student.name}
         </h2>
-        
-        <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginBottom: 12 }}>
-          <Badge variant="outline" className="text-white border-white/30 bg-white/20 px-3 py-1 text-xs">
+
+        <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginBottom: 10 }}>
+          <div style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)", color: "#fff", padding: "4px 12px", borderRadius: 14, fontSize: "0.75rem", fontWeight: 600, backdropFilter: "blur(4px)" }}>
             {student.level} · {student.cefr}
-          </Badge>
+          </div>
           {student.isMinor && (
-            <Badge className="bg-yellow-200 text-yellow-900 hover:bg-yellow-300 px-3 py-1 text-xs border-none">
+            <div style={{ background: "var(--accent-amber-light)", color: "#92400e", padding: "4px 12px", borderRadius: 14, fontSize: "0.75rem", fontWeight: 600 }}>
               ผู้เยาว์
-            </Badge>
+            </div>
           )}
         </div>
-        
-        <div style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.7)", fontFamily: "monospace" }}>
+
+        <div style={{ fontSize: "0.6875rem", color: "rgba(255,255,255,0.55)", fontFamily: "monospace" }}>
           UID: {student.userId.substring(0, 15)}...
         </div>
       </div>
 
+      {/* Theme toggle section */}
+      <div style={{ padding: "20px 16px 0" }}>
+        <Card className="glass-card overflow-hidden" style={{ marginBottom: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px" }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--accent-amber-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Palette size={18} style={{ color: "var(--accent-amber)" }} />
+            </div>
+            <span style={{ flex: 1, fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)" }}>ธีม</span>
+            <ThemeToggle size={16} />
+          </div>
+        </Card>
+      </div>
+
       {/* Menu groups */}
-      <div style={{ padding: "24px 16px", display: "flex", flexDirection: "column", gap: 24 }}>
+      <div style={{ padding: "12px 16px", display: "flex", flexDirection: "column", gap: 20 }}>
         {menuGroups.map((group) => (
           <div key={group.title}>
-            <h3
-              style={{
-                fontSize: "0.75rem",
-                fontWeight: 700,
-                color: "var(--neutral-400)",
-                textTransform: "uppercase",
-                letterSpacing: "0.06em",
-                marginBottom: 8,
-                paddingLeft: 4,
-              }}
-            >
+            <h3 style={{ fontSize: "0.6875rem", fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8, paddingLeft: 4 }}>
               {group.title}
             </h3>
 
-            <Card className="overflow-hidden border-none shadow-sm">
-              <div className="flex flex-col">
+            <Card className="glass-card overflow-hidden">
+              <div style={{ display: "flex", flexDirection: "column" }}>
                 {group.items.map((item, idx) => (
                   <div key={item.id}>
-                    {idx > 0 && <Separator />}
+                    {idx > 0 && <Separator style={{ background: "var(--surface-border)" }} />}
                     <Link
                       id={item.id}
                       href={item.href}
-                      className="flex items-center gap-3 p-4 hover:bg-muted/50 transition-colors"
+                      style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", textDecoration: "none", transition: "background 0.15s ease" }}
                     >
-                      <div className="w-9 h-9 rounded-md bg-muted flex items-center justify-center text-base shrink-0">
-                        {item.icon}
+                      <div style={{ width: 36, height: 36, borderRadius: 10, background: item.iconBg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <item.Icon size={18} style={{ color: item.iconColor }} />
                       </div>
-                      <span className="flex-1 text-[15px] font-medium text-foreground">
-                        {item.label}
-                      </span>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground">
-                        <polyline points="9 18 15 12 9 6"/>
-                      </svg>
+                      <span style={{ flex: 1, fontSize: "0.9375rem", fontWeight: 500, color: "var(--text-primary)" }}>{item.label}</span>
+                      <ChevronRight size={16} style={{ color: "var(--text-tertiary)" }} />
                     </Link>
                   </div>
                 ))}
@@ -160,25 +161,23 @@ export default function ProfilePage() {
           </div>
         ))}
 
-        <Card className="overflow-hidden border-none shadow-sm">
+        {/* Logout */}
+        <Card className="glass-card overflow-hidden">
           <Button
             variant="ghost"
             id="btn-logout"
             onClick={handleLogout}
-            className="w-full justify-start h-auto p-4 rounded-none hover:bg-red-50 text-red-600 hover:text-red-700 focus-visible:ring-red-500"
+            className="w-full justify-start h-auto rounded-none hover:bg-red-50/10 text-red-600 hover:text-red-700 focus-visible:ring-red-500"
+            style={{ padding: "18px 20px" }}
           >
-            <div className="w-9 h-9 rounded-md bg-red-100 flex items-center justify-center shrink-0 mr-3">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                <polyline points="16 17 21 12 16 7"></polyline>
-                <line x1="21" y1="12" x2="9" y2="12"></line>
-              </svg>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--accent-red-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginRight: 12 }}>
+              <LogOut size={18} style={{ color: "var(--accent-red)" }} />
             </div>
-            <span className="text-[15px] font-medium">ออกจากระบบ</span>
+            <span style={{ fontSize: "0.9375rem", fontWeight: 500 }}>ออกจากระบบ</span>
           </Button>
         </Card>
 
-        <p style={{ textAlign: "center", fontSize: "0.75rem", color: "var(--neutral-400)", lineHeight: 1.6 }}>
+        <p style={{ textAlign: "center", fontSize: "0.6875rem", color: "var(--text-tertiary)", lineHeight: 1.6, paddingBottom: 8 }}>
           Tutor Advantage Thailand · v0.1.0<br />
           Protected by Omise · PDPA Compliant
         </p>
