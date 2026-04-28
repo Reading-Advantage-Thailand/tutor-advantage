@@ -1,5 +1,13 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
+import dotenv from "dotenv";
+import path from "path";
+
+// Load root .env file
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
+
+import { createServer } from "http";
+import { Server } from "socket.io";
 import {
   requestLoggerMiddleware,
   requestIdMiddleware,
@@ -70,6 +78,18 @@ app.get("/v1/notifications/summary", authMiddleware, getNotificationSummary);
 // Apply error handler last
 app.use(errorHandlerMiddleware);
 
-app.listen(port, () => {
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*", // Allow all origins for now
+    methods: ["GET", "POST"]
+  }
+});
+
+// We will create this file in the next step
+import { setupLessonSocket } from "./websockets/lessonHandler";
+setupLessonSocket(io);
+
+httpServer.listen(port, () => {
   console.log(`Learning Service running on port ${port}`);
 });

@@ -1,5 +1,10 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
+import dotenv from "dotenv";
+import path from "path";
+
+// Load root .env file
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 import {
   requestLoggerMiddleware,
   requestIdMiddleware,

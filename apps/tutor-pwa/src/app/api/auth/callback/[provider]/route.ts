@@ -24,7 +24,7 @@ export async function GET(
       body: JSON.stringify({
         provider,
         code,
-        redirectUri: `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}/api/auth/callback/${provider}`
+        redirectUri: `${url.protocol}//${url.host}/api/auth/callback/${provider}`
       }),
     });
 

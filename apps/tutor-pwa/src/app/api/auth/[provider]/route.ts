@@ -5,7 +5,8 @@ export async function GET(
   { params }: { params: Promise<{ provider: string }> }
 ) {
   const { provider } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+  const reqUrl = new URL(request.url);
+  const baseUrl = `${reqUrl.protocol}//${reqUrl.host}`;
   const redirectUri = `${baseUrl}/api/auth/callback/${provider}`;
 
   if (provider === "google") {

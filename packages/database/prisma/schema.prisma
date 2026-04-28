@@ -35,6 +35,9 @@ model User {
   messages          Message[]
   performances      TutorPerformance[]
   badges            TutorBadge[]
+  interactiveSessions InteractiveSession[]
+  sessionParticipants SessionParticipant[]
+  sessionAnswers      SessionAnswer[]
 
   @@map("users")
   @@schema("identity")
@@ -195,11 +198,65 @@ model Enrollment {
   @@map("enrollments")
   @@schema("learning")
 }
+// ----------------------------------------------------------------------
+// INTERACTIVE SESSION SCHEMA (LEARNING)
+// ----------------------------------------------------------------------
+
+model InteractiveSession {
+  sessionId   String   @id @default(dbgenerated("gen_random_uuid()")) @map("session_id") @db.Uuid
+  classId     String?  @map("class_id") @db.Uuid
+  tutorUserId String   @map("tutor_user_id") @db.Uuid
+  articleId   String   @map("article_id")
+  pin         String
+  status      String   
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz
+
+  tutor        User     @relation(fields: [tutorUserId], references: [userId])
+  participants SessionParticipant[]
+  answers      SessionAnswer[]
+
+  @@map("interactive_sessions")
+  @@schema("learning")
+}
+
+model SessionParticipant {
+  participantId String   @id @default(dbgenerated("gen_random_uuid()")) @map("participant_id") @db.Uuid
+  sessionId     String   @map("session_id") @db.Uuid
+  studentUserId String   @map("student_user_id") @db.Uuid
+  score         Int      @default(0)
+  joinedAt      DateTime @default(now()) @map("joined_at") @db.Timestamptz
+
+  session InteractiveSession @relation(fields: [sessionId], references: [sessionId])
+  student User               @relation(fields: [studentUserId], references: [userId])
+
+  @@unique([sessionId, studentUserId])
+  @@map("session_participants")
+  @@schema("learning")
+}
+
+model SessionAnswer {
+  answerId      String   @id @default(dbgenerated("gen_random_uuid()")) @map("answer_id") @db.Uuid
+  sessionId     String   @map("session_id") @db.Uuid
+  studentUserId String   @map("student_user_id") @db.Uuid
+  phase         Int
+  questionId    String?  @map("question_id")
+  answerText    String?  @map("answer_text")
+  isCorrect     Boolean? @map("is_correct")
+  score         Int      @default(0)
+  aiFeedback    String?  @map("ai_feedback")
+  answeredAt    DateTime @default(now()) @map("answered_at") @db.Timestamptz
+
+  session InteractiveSession @relation(fields: [sessionId], references: [sessionId])
+  student User               @relation(fields: [studentUserId], references: [userId])
+
+  @@map("session_answers")
+  @@schema("learning")
+}
 
 // ----------------------------------------------------------------------
 // LEARNING SCHEMA
 // ----------------------------------------------------------------------
-
 model UnresolvedLegacyLink {
   url      String   @id
   hits     Int      @default(1)
