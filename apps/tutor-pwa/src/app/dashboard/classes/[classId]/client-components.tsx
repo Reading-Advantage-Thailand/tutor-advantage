@@ -9,8 +9,12 @@ import {
   CheckCircle2,
   BookOpen,
   ChevronDown,
+  Sparkles,
+  ChevronRight,
+  Video,
+  ExternalLink,
 } from "lucide-react";
-import { updateClassStatus, deleteClass } from "./../actions";
+import { updateClassStatus, deleteClass, updateMeetingUrl } from "./../actions";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -31,8 +35,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Video, ExternalLink } from "lucide-react";
-import { updateMeetingUrl } from "./../actions";
 
 export function ClassStatusToggle({
   classId,
@@ -127,12 +129,12 @@ export function ReferralLink({ referralLink }: { referralLink: string }) {
                   size="sm"
                   variant="ghost"
                   className="h-7 px-2 text-xs gap-1.5 text-primary hover:text-primary hover:bg-primary/10"
-                />
+                >
+                  <QrCode className="h-3.5 w-3.5" />
+                  โชว์ QR Code
+                </Button>
               }
-            >
-              <QrCode className="h-3.5 w-3.5" />
-              โชว์ QR Code
-            </DialogTrigger>
+            />
             <DialogContent className="sm:max-w-sm">
               <DialogHeader>
                 <DialogTitle>QR Code สำหรับโอนเงินสมัคร</DialogTitle>
@@ -195,8 +197,9 @@ export function ReferralLink({ referralLink }: { referralLink: string }) {
   );
 }
 
-export function LessonPlan({ lessonPlan }: { lessonPlan: string[] }) {
+export function LessonPlan({ lessonPlan, classId }: { lessonPlan: string[], classId: string }) {
   const [checkedSteps, setCheckedSteps] = useState<number[]>([]);
+  const router = useRouter();
 
   const toggleStep = (i: number) =>
     setCheckedSteps((prev) =>
@@ -211,13 +214,12 @@ export function LessonPlan({ lessonPlan }: { lessonPlan: string[] }) {
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-semibold flex items-center gap-2">
             <BookOpen className="h-4 w-4 text-primary" />
-            แผนการสอน 15 ขั้นตอน
+            แผนการสอน {lessonPlan.length} ขั้นตอน
           </CardTitle>
           <span className="text-xs text-muted-foreground">
             {checkedSteps.length}/{lessonPlan.length} เสร็จแล้ว
           </span>
         </div>
-        {/* Progress bar */}
         <div className="w-full bg-muted rounded-full h-1.5 mt-3">
           <div
             className="bg-primary h-1.5 rounded-full transition-all duration-300"
@@ -248,7 +250,7 @@ export function LessonPlan({ lessonPlan }: { lessonPlan: string[] }) {
                   {done ? "✓" : i + 1}
                 </div>
                 <span
-                  className={`text-sm ${
+                  className={`text-sm flex-1 ${
                     done
                       ? "line-through text-muted-foreground"
                       : "text-foreground"
@@ -256,6 +258,19 @@ export function LessonPlan({ lessonPlan }: { lessonPlan: string[] }) {
                 >
                   {step}
                 </span>
+                {i === 26 && (
+                  <Button
+                    size="xs"
+                    className="h-7 text-[10px] px-2 gap-1"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/lesson/${classId}/interactive?articleId=article-default-123`);
+                    }}
+                  >
+                    <Sparkles className="h-3 w-3" />
+                    Launch
+                  </Button>
+                )}
               </li>
             );
           })}
@@ -264,6 +279,7 @@ export function LessonPlan({ lessonPlan }: { lessonPlan: string[] }) {
     </Card>
   );
 }
+
 export function DeleteClassButton({ classId }: { classId: string }) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -308,9 +324,7 @@ export function DeleteClassButton({ classId }: { classId: string }) {
         <DialogHeader>
           <DialogTitle>ยืนยันการลบคลาส?</DialogTitle>
           <DialogDescription>
-            การดำเนินการนี้จะลบข้อมูลคลาส นักเรียน
-            และรายการชำระเงินทั้งหมดที่เกี่ยวข้องถาวรคลาสนี้ (เฉพาะโหมด DEV
-            เท่านั้น)
+            การดำเนินการนี้จะลบข้อมูลคลาส นักเรียน และรายการชำระเงินทั้งหมดที่เกี่ยวข้องถาวรคลาสนี้ (เฉพาะโหมด DEV เท่านั้น)
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4">
@@ -368,9 +382,7 @@ export function MeetingUrlEditor({
               <Video className="h-5 w-5 text-primary" />
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-bold text-foreground">
-                ห้องเรียนออนไลน์
-              </p>
+              <p className="text-sm font-bold text-foreground">ห้องเรียนออนไลน์</p>
               <p className="text-xs text-muted-foreground truncate">
                 {initialUrl || "ยังไม่ได้ระบุลิงก์"}
               </p>
@@ -380,13 +392,13 @@ export function MeetingUrlEditor({
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger
                 render={
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1 h-10 px-3 text-xs bg-background font-medium"
-                >
-                  แก้ไขลิงก์
-                </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 h-10 px-3 text-xs bg-background font-medium"
+                  >
+                    แก้ไขลิงก์
+                  </Button>
                 }
               />
               <DialogContent>
@@ -405,38 +417,6 @@ export function MeetingUrlEditor({
                       value={url}
                       onChange={(e) => setUrl(e.target.value)}
                     />
-                  </div>
-                  <div className="p-3 rounded-lg border border-dashed border-primary/30 bg-primary/5 flex flex-col gap-2">
-                    <p className="text-xs font-medium text-foreground">
-                      สร้างห้องเรียนใหม่:
-                    </p>
-                    <div className="flex gap-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="h-8 text-[11px] gap-1 bg-background"
-                        onClick={() =>
-                          window.open("https://meet.google.com/new", "_blank")
-                        }
-                      >
-                        Google Meet
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="h-8 text-[11px] gap-1 bg-background"
-                        onClick={() =>
-                          window.open(
-                            "https://zoom.us/start/videoconference",
-                            "_blank",
-                          )
-                        }
-                      >
-                        Zoom
-                      </Button>
-                    </div>
                   </div>
                 </div>
                 <DialogFooter>
@@ -472,6 +452,39 @@ export function MeetingUrlEditor({
             )}
           </div>
         </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function FeatureLessonButton({
+  classId,
+  articleId,
+}: {
+  classId: string;
+  articleId: string;
+}) {
+  const router = useRouter();
+
+  return (
+    <Card className="border-primary/20 bg-primary/5 shadow-md hover:shadow-lg transition-shadow">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-sm font-bold flex items-center gap-2 text-primary">
+          <Sparkles className="h-4 w-4" />
+          Interactive Feature Lesson
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <p className="text-xs text-muted-foreground">
+          เริ่มกิจกรรมแบบ Kahoot! ให้นักเรียนมีส่วนร่วมผ่านมือถือแบบ Real-time
+        </p>
+        <Button 
+          className="w-full gap-2 font-bold" 
+          onClick={() => router.push(`/lesson/${classId}/interactive?articleId=${articleId}`)}
+        >
+          เริ่มสอนตอนนี้เลย
+          <ChevronRight className="h-4 w-4" />
+        </Button>
       </CardContent>
     </Card>
   );

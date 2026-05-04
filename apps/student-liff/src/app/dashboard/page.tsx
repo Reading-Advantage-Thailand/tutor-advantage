@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import { useLiff } from "@/components/providers/LiffProvider";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -8,36 +9,69 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { BookOpen, MessageCircle, Calendar, CreditCard, ChevronRight, Copy, Flame } from "lucide-react";
+import { BookOpen, MessageCircle, Calendar, CreditCard, ChevronRight, Copy, Flame, AlertCircle } from "lucide-react";
+import { studentApi } from "@/lib/api";
 
 export default function DashboardPage() {
   const { profile, isReady } = useLiff();
+
+  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isReady && profile) {
+      const fetchData = async () => {
+        try {
+          // Wait up to 5 seconds for session token to appear
+          let token = localStorage.getItem('student_session_token');
+          let retries = 0;
+          while (!token && retries < 10) {
+            console.log("[Dashboard] Waiting for backend session token...");
+            await new Promise(resolve => setTimeout(resolve, 500));
+            token = localStorage.getItem('student_session_token');
+            retries++;
+          }
+
+          if (!token) {
+            throw new Error("ไม่สามารถสร้างเซสชันกับเซิร์ฟเวอร์ได้ กรุณาลองเข้าสู่ระบบใหม่อีกครั้ง");
+          }
+
+          const data = await studentApi.getDashboard();
+          setDashboardData(data);
+          setLoading(false);
+        } catch (err: any) {
+          console.error("Failed to fetch dashboard:", err);
+          setError(err.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล");
+          setLoading(false);
+        }
+      };
+
+      fetchData();
+    }
+  }, [isReady, profile]);
 
   const student = {
     name: profile?.displayName || "กำลังโหลด...",
     avatar: profile?.pictureUrl || null,
     initials: profile?.displayName?.charAt(0) || "TA",
-    level: "Origins 2",
+    level: "Origins 2", // Still placeholder, could be from user profile
     cefr: "A1",
   };
 
-  const enrollment = {
-    className: "Origins 2 — กลุ่มวันเสาร์",
-    tutorName: "อ.นภา สุขใส",
-    status: "active" as const,
-    nextSession: "เสาร์ที่ 12 เม.ย. 2026 · 10:00–11:30",
-    articlesRead: 7,
-    totalArticles: 14,
-    weekStreak: 3,
+  const enrollment = dashboardData?.recentClasses?.[0] || {
+    name: "ยังไม่มีคลาสเรียน",
+    tutorName: "-",
+    status: "none",
+    nextSession: "-",
+    progress: 0,
   };
 
   const recentArticles = [
     { id: "art-1", title: "The Magic Garden", level: "A1", readAt: "เมื่อวาน" },
-    { id: "art-2", title: "My First Day of School", level: "A1", readAt: "2 วันที่แล้ว" },
-    { id: "art-3", title: "Animals in the Zoo", level: "A1", readAt: "4 วันที่แล้ว" },
   ];
 
-  const progressPct = Math.round((enrollment.articlesRead / enrollment.totalArticles) * 100);
+  const progressPct = enrollment.progress || 0;
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -46,10 +80,21 @@ export default function DashboardPage() {
     return "สวัสดีตอนเย็น 🌙";
   };
 
-  if (!isReady) {
+  if (!isReady || loading) {
     return (
       <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--surface-bg)" }}>
         <div className="animate-spin" style={{ width: 32, height: 32, border: "3px solid var(--neutral-200)", borderTopColor: "var(--brand-500)", borderRadius: "50%" }} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center gap-4">
+        <AlertCircle className="text-red-500 w-12 h-12" />
+        <h2 className="text-xl font-bold text-slate-800">เกิดข้อผิดพลาดในการโหลดข้อมูล</h2>
+        <p className="text-slate-500">{error}</p>
+        <Button onClick={() => window.location.reload()}>ลองอีกครั้ง</Button>
       </div>
     );
   }
@@ -94,7 +139,7 @@ export default function DashboardPage() {
           </div>
           <div style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.15)", color: "#fff", padding: "4px 12px", borderRadius: 14, fontSize: "0.75rem", fontWeight: 600, display: "flex", alignItems: "center" }}>
             <Flame size={14} style={{ marginRight: 6, color: "#fbbf24" }} />
-            {enrollment.weekStreak} สัปดาห์ต่อเนื่อง
+            {dashboardData?.weekStreak || 0} สัปดาห์ต่อเนื่อง
           </div>
         </div>
       </header>
@@ -106,43 +151,60 @@ export default function DashboardPage() {
         <section>
           <div className="section-header">
             <h2 className="section-title">คลาสของฉัน</h2>
-            <span className={`status-chip status-${enrollment.status}`}>
-              {enrollment.status === "active" ? "กำลังเรียน" : "รอดำเนินการ"}
-            </span>
+            {dashboardData?.activeEnrollments > 0 && (
+              <span className={`status-chip status-active`}>
+                กำลังเรียน {dashboardData.activeEnrollments} คลาส
+              </span>
+            )}
           </div>
 
-          <Card className="glass-card overflow-hidden" style={{ border: "1px solid var(--surface-border)", marginTop: 8 }}>
-            <CardContent style={{ padding: "20px" }}>
-              <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 4 }} className="line-clamp-2">
-                {enrollment.className}
-              </h3>
-              <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 6, marginBottom: 16 }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                {enrollment.tutorName}
-              </div>
-
-              {/* Next session */}
-              <div style={{ background: "var(--brand-50)", borderRadius: 14, padding: "12px 14px", display: "flex", alignItems: "center", gap: 10, marginBottom: 16, border: "1px solid var(--brand-100)" }}>
-                <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--brand-100)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Calendar size={18} style={{ color: "var(--brand-600)" }} />
+          <Link 
+            href={enrollment.id ? `/lesson/${enrollment.id}` : "/classes"}
+            className="block no-underline active:scale-[0.98] transition-transform"
+          >
+            <Card className="glass-card overflow-hidden" style={{ border: enrollment.isLive ? "2px solid var(--brand-500)" : "1px solid var(--surface-border)", marginTop: 8 }}>
+              <CardContent style={{ padding: "20px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                  <div style={{ flex: 1 }}>
+                    {enrollment.isLive && (
+                      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(239,68,68,0.1)", color: "#ef4444", padding: "4px 8px", borderRadius: 6, fontSize: "0.625rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6, border: "1px solid rgba(239,68,68,0.2)" }}>
+                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#ef4444", animation: "pulse 1.5s infinite" }} />
+                        Live Now
+                      </div>
+                    )}
+                    <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 4 }} className="line-clamp-2">
+                      {enrollment.name}
+                    </h3>
+                  </div>
+                  <ChevronRight size={18} style={{ color: "var(--neutral-400)", marginLeft: 8 }} />
                 </div>
+                <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 6, marginBottom: 16 }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  {enrollment.tutorName}
+                </div>
+
+                {/* Next session */}
+                <div style={{ background: "var(--brand-50)", borderRadius: 14, padding: "12px 14px", display: "flex", alignItems: "center", gap: 10, marginBottom: 16, border: "1px solid var(--brand-100)" }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--brand-100)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Calendar size={18} style={{ color: "var(--brand-600)" }} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: "0.6875rem", color: "var(--brand-600)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>คาบถัดไป</div>
+                    <div style={{ fontSize: "0.8125rem", color: "var(--text-primary)", fontWeight: 500, marginTop: 1 }}>{enrollment.nextSession}</div>
+                  </div>
+                </div>
+
+                {/* Progress */}
                 <div>
-                  <div style={{ fontSize: "0.6875rem", color: "var(--brand-600)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>คาบถัดไป</div>
-                  <div style={{ fontSize: "0.8125rem", color: "var(--text-primary)", fontWeight: 500, marginTop: 1 }}>{enrollment.nextSession}</div>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                    <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", fontWeight: 500 }}>ความก้าวหน้า</span>
+                    <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--brand-700)" }}>{progressPct}%</span>
+                  </div>
+                  <Progress value={progressPct} className="h-2 bg-green-100" />
                 </div>
-              </div>
-
-              {/* Progress */}
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                  <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", fontWeight: 500 }}>ความก้าวหน้า</span>
-                  <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--brand-700)" }}>{enrollment.articlesRead}/{enrollment.totalArticles} บท</span>
-                </div>
-                <Progress value={progressPct} className="h-2 bg-green-100" />
-                <div style={{ fontSize: "0.6875rem", color: "var(--text-tertiary)", marginTop: 6, textAlign: "right" }}>{progressPct}% สำเร็จ</div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Link>
         </section>
 
         {/* Referral card */}
@@ -202,24 +264,25 @@ export default function DashboardPage() {
           </div>
 
           <Card className="glass-card overflow-hidden" style={{ marginTop: 8 }}>
-            {recentArticles.map((article, idx) => (
-              <div key={article.id}>
-                {idx > 0 && <Separator style={{ background: "var(--surface-border)" }} />}
-                <Link
-                  href={`/student/read/${article.id}`}
-                  style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", textDecoration: "none" }}
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, padding: "8px" }}>
+              {dashboardData?.recentClasses?.map((cls: any) => (
+                <Link 
+                  key={cls.id} 
+                  href={`/classes/${cls.id}`}
+                  className="glass-card clickable-effect" 
+                  style={{ padding: "14px 16px", display: "flex", alignItems: "center", gap: 14, textDecoration: "none" }}
                 >
-                  <div style={{ width: 40, height: 40, borderRadius: 12, background: "var(--brand-50)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <BookOpen size={18} style={{ color: "var(--brand-500)" }} />
+                  <div style={{ width: 44, height: 44, borderRadius: 12, background: "var(--brand-50)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "1px solid var(--brand-100)" }}>
+                    <BookOpen size={20} style={{ color: "var(--brand-600)" }} />
                   </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)" }} className="text-ellipsis">{article.title}</div>
-                    <div style={{ fontSize: "0.6875rem", color: "var(--text-tertiary)", marginTop: 2 }}>{article.level} · {article.readAt}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text-primary)" }}>{cls.name}</div>
+                    <div style={{ fontSize: "0.75rem", color: "var(--text-tertiary)", marginTop: 2 }}>{cls.book} · {cls.progress}% สำเร็จ</div>
                   </div>
-                  <ChevronRight size={16} style={{ color: "var(--neutral-400)", flexShrink: 0 }} />
+                  <ChevronRight size={18} style={{ color: "var(--neutral-300)" }} />
                 </Link>
-              </div>
-            ))}
+              ))}
+            </div>
           </Card>
         </section>
 

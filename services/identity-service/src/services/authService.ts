@@ -53,12 +53,15 @@ export async function processOAuthLogin(
       });
     }
 
-    // 3. If still no user, create a new one. Default role for Google/Facebook is TUTOR
+    // 3. If still no user, create a new one.
     if (!user) {
+      // Default role based on provider
+      const role = provider === "line" ? "STUDENT" : "TUTOR";
+
       // Create user and link identity in one transaction
       user = await prisma.user.create({
         data: {
-          role: "TUTOR",
+          role,
           displayName: name,
           email: email,
           profilePictureUrl: picture || null,

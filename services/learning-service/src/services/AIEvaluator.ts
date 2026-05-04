@@ -24,18 +24,18 @@ export const evaluateShortAnswer = async (
     `;
 
     const result = await generateObject({
-      model: google('gemini-1.5-flash'),
+      model: google('gemini-2.5-flash'),
       schema: EvaluationSchema as any,
       prompt: prompt,
     });
 
     return result.object as { score: number; feedback: string };
   } catch (error) {
-    console.error("Error evaluating with AI:", error);
-    // Fallback if AI fails
+    console.error("AI Evaluation failed, using fallback:", error);
+    // Fallback: Give full score to allow student to proceed, but with a note
     return {
-      score: 0,
-      feedback: "ระบบตรวจคำตอบขัดข้อง กรุณารอคุณครูตรวจคำตอบอีกครั้ง"
+      score: 5,
+      feedback: "ส่งคำตอบสำเร็จ! (ระบบตรวจอัตโนมัติขัดข้องชั่วคราว คุณครูจะตรวจซ้ำอีกครั้ง)"
     };
   }
 };

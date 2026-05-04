@@ -162,20 +162,46 @@ export async function getClasses(req: AuthenticatedRequest, res: Response) {
       });
     }
 
-    const classes = await prisma.class.findMany({
-      where: { tutorUserId: userId },
-      include: { book: true, _count: { select: { enrollments: true } } },
-      orderBy: { createdAt: "desc" },
+    const role = req.user?.role;
+    let classes;
+
+    if (role === "TUTOR") {
+      classes = await prisma.class.findMany({
+        where: { tutorUserId: userId },
+        include: { book: true, _count: { select: { enrollments: true } } },
+        orderBy: { createdAt: "desc" },
+      });
+    } else {
+      // Student: Fetch enrolled classes
+      const enrollments = await prisma.enrollment.findMany({
+        where: { studentUserId: userId },
+        include: { 
+          class: { 
+            include: { book: true, _count: { select: { enrollments: true } } } 
+          } 
+        } as any,
+        orderBy: { createdAt: "desc" },
+      });
+      classes = enrollments.map((e: any) => e.class);
+    }
+
+    // Fetch tutors for these classes
+    const tutorIds = [...new Set(classes.map(c => c.tutorUserId))];
+    const tutors = await prisma.user.findMany({
+      where: { userId: { in: tutorIds } },
+      select: { userId: true, displayName: true }
     });
+    const tutorMap = new Map(tutors.map(t => [t.userId, t.displayName]));
 
     const mappedClasses = classes.map((c) => ({
       id: c.classId,
-      name: c.title,
-      book: c.book?.title || "Unknown Book",
+      name: c.title || (c as any).book?.title || "Untitled Class",
+      book: (c as any).book?.title || "Unknown Book",
       status: c.status.toLowerCase(),
-      students: c._count.enrollments,
+      students: (c as any)._count?.enrollments || 0,
       maxStudents: c.capacity,
-      nextSession: c.scheduleDescription || "ยังไม่ได้กำหนด", // Use actual schedule
+      tutorName: tutorMap.get(c.tutorUserId) || "Unknown Tutor",
+      nextSession: c.scheduleDescription || "ยังไม่ได้กำหนด",
     }));
 
     return res.status(200).json({ classes: mappedClasses });
@@ -200,17 +226,35 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
 
     const cls = await prisma.class.findUnique({
       where: { classId },
-      include: { book: true, enrollments: true },
-    });
+      include: { book: true, enrollments: true } as any,
+    }) as any;
 
-    if (!cls || cls.tutorUserId !== userId) {
+    if (!cls) {
       return res.status(404).json({
         error: { code: "NOT_FOUND", message: "Class not found" },
       });
     }
 
+    // Fetch tutor manually
+    const tutor = await prisma.user.findUnique({
+      where: { userId: cls.tutorUserId },
+      select: { displayName: true }
+    });
+
+    const role = req.user?.role;
+    const isEnrolled = cls.enrollments?.some((e: any) => e.studentUserId === userId);
+    
+    if (cls.tutorUserId !== userId && !isEnrolled && role !== "ADMIN") {
+      // If student is not enrolled, they can still view if the class is OPEN (for preview)
+      if (cls.status !== "OPEN") {
+        return res.status(403).json({
+          error: { code: "FORBIDDEN", message: "You don't have access to this class" },
+        });
+      }
+    }
+
     // Fetch user details for the students
-    const studentIds = cls.enrollments.map((e) => e.studentUserId);
+    const studentIds = cls.enrollments?.map((e: any) => e.studentUserId) || [];
     const users = await prisma.user.findMany({
       where: { userId: { in: studentIds } },
       select: { userId: true, displayName: true },
@@ -221,15 +265,21 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
 
     const mapped = {
       id: cls.classId,
-      name: cls.title,
+      name: cls.title || cls.book?.title || "Untitled Class",
       book: cls.book?.title || "Unknown Book",
       status: cls.status.toLowerCase(),
-      students: cls.enrollments.length,
+      students: cls.enrollments?.length || 0,
       maxStudents: cls.capacity,
       schedule: cls.scheduleDescription || "ยังไม่ได้กำหนด", 
-      meetingUrl: cls.meetingUrl || "", 
-      referralLink: `https://liff.line.me/9999999-XXXXXXXX?classId=${cls.classId}`,
-      enrolledStudents: cls.enrollments.map((e) => ({
+      meetingUrl: (cls.tutorUserId === userId || isEnrolled) ? (cls.meetingUrl || "") : "", 
+      tutor: {
+        name: tutor?.displayName || "Unknown Tutor",
+        initials: tutor?.displayName?.substring(0, 2) || "TA",
+      },
+      articleId: cls.book?.bookCode ? (await prisma.article.findFirst({ where: { bookId: cls.bookId } }))?.articleId : "article-default-123",
+      referralLink: `https://liff.line.me/${process.env.NEXT_PUBLIC_LIFF_ID}?classId=${cls.classId}`,
+      isEnrolled: isEnrolled, // Added this field
+      enrolledStudents: (cls.tutorUserId === userId) ? cls.enrollments?.map((e: any) => ({
         name: userMap.get(e.studentUserId) || "Unknown Student",
         enrolled: e.createdAt.toLocaleDateString("th-TH", {
           day: "numeric",
@@ -237,7 +287,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
           year: "numeric",
         }),
         paid: e.status === "ACTIVE",
-      })),
+      })) : [],
     };
 
     return res.status(200).json({ class: mapped });
@@ -245,6 +295,50 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
     console.error("Get Class By ID Error:", error);
     return res.status(500).json({
       error: { code: "INTERNAL_SERVER_ERROR", message: "Could not fetch class" },
+    });
+  }
+}
+
+export async function getAvailableClasses(req: AuthenticatedRequest, res: Response) {
+  try {
+    const classes = await prisma.class.findMany({
+      where: { status: "OPEN" },
+      include: { 
+        book: true, 
+        _count: { select: { enrollments: true } }
+      } as any,
+      orderBy: { createdAt: "desc" },
+    });
+
+    // Fetch tutors manually
+    const tutorIds = [...new Set(classes.map(c => c.tutorUserId))];
+    const tutors = await prisma.user.findMany({
+      where: { userId: { in: tutorIds } },
+      select: { userId: true, displayName: true }
+    });
+    const tutorMap = new Map(tutors.map(t => [t.userId, t.displayName]));
+
+    const mappedClasses = classes.map((c) => {
+      const tutorName = tutorMap.get(c.tutorUserId) || "Unknown Tutor";
+      return {
+        id: c.classId,
+        name: c.title || (c as any).book?.title || "Untitled Class",
+        tutor: tutorName,
+        tutorInitials: tutorName.substring(0, 2),
+        book: (c as any).book?.title || "Unknown Book",
+        status: "open",
+        enrolled: (c as any)._count?.enrollments || 0,
+        capacity: c.capacity,
+        price: 2800, // Placeholder price
+        nextSession: c.scheduleDescription || "TBA",
+      };
+    });
+
+    return res.status(200).json({ classes: mappedClasses });
+  } catch (error: any) {
+    console.error("Get Available Classes Error:", error);
+    return res.status(500).json({
+      error: { code: "INTERNAL_SERVER_ERROR", message: "Could not fetch available classes" },
     });
   }
 }

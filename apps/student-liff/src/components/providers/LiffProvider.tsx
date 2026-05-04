@@ -5,6 +5,7 @@ import liff from "@line/liff";
 import { LiffMockPlugin } from "@line/liff-mock";
 import type { Liff } from "@line/liff";
 import { Cookies } from "@/lib/cookieUtils";
+import { studentApi } from "@/lib/api";
 
 interface LiffContextType {
   liff: Liff | null;
@@ -66,6 +67,22 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
           const userProfile = await liff.getProfile();
           setProfile(userProfile);
 
+          // Exchange LINE ID Token for Backend JWT
+          const idToken = liff.getIDToken();
+          console.log("[LIFF] ID Token available:", !!idToken);
+          
+          if (idToken) {
+            try {
+              console.log("[LIFF] Attempting backend login exchange...");
+              const authData = await studentApi.loginWithLine(idToken);
+              console.log("[LIFF] Backend session established successfully:", authData.user?.role);
+            } catch (authErr) {
+              console.error("[LIFF] Backend login failed:", authErr);
+            }
+          } else {
+            console.warn("[LIFF] No ID Token found even though logged in");
+          }
+
           // Sync session cookie for server-side middleware
           Cookies.set("liff-session", "active", { expires: 7 });
         } else {
@@ -90,6 +107,7 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
     if (liff?.isLoggedIn()) {
       liff.logout();
       setProfile(null);
+      localStorage.removeItem('student_session_token');
       Cookies.remove("liff-session");
       window.location.href = "/login";
     }

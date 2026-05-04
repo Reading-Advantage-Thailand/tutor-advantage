@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { LineIcon } from "@/components/icons/LineIcon";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,8 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Sparkles, ChevronRight, BookOpen, Users, Clock, Shield } from "lucide-react";
 
 export default function LandingPage() {
-  const { liff, isReady } = useLiff();
+  const router = useRouter();
+  const { liff, isReady, profile } = useLiff();
   const isLoggedIn = isReady && liff?.isLoggedIn();
   const [isLiffRedirecting, setIsLiffRedirecting] = useState(false);
 
@@ -21,6 +23,13 @@ export default function LandingPage() {
       }
     }
   }, []);
+
+  // Redirect to dashboard if user is already logged in
+  useEffect(() => {
+    if (isReady && isLoggedIn && profile) {
+      router.push("/dashboard");
+    }
+  }, [isReady, isLoggedIn, profile, router]);
 
   if (isLiffRedirecting) {
     return (

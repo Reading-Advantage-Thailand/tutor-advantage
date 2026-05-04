@@ -36,9 +36,9 @@ export function middleware(request: NextRequest) {
     default-src 'self';
     script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.line-scdn.net;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    img-src 'self' blob: data: https://profile.line-scdn.net https://*.line-scdn.net;
+    img-src 'self' blob: data: https://profile.line-scdn.net https://*.line-scdn.net https://api.dicebear.com;
     font-src 'self' data: https://fonts.gstatic.com;
-    connect-src 'self' https://*.line.me https://*.line-scdn.net;
+    connect-src 'self' https://*.line.me https://*.line-scdn.net http://localhost:3001 http://localhost:3002 ws://localhost:3001 ws://localhost:3002 https://*.ngrok-free.app wss://*.ngrok-free.app;
     frame-src 'self' https://*.line.me;
     object-src 'none';
     base-uri 'self';

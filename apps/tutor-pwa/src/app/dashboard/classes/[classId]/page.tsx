@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { ReferralLink, LessonPlan, ClassStatusToggle, MeetingUrlEditor } from "./client-components";
+import { ReferralLink, LessonPlan, ClassStatusToggle, MeetingUrlEditor, FeatureLessonButton } from "./client-components";
 import { notFound } from "next/navigation";
 
 const lessonPlan = [
@@ -88,6 +88,9 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
 
           <ReferralLink referralLink={cls.referralLink} />
 
+          {/* Feature Lesson Entry Point */}
+          <FeatureLessonButton classId={classId} articleId={cls.articleId || "article-default-123"} />
+
           {/* Students */}
           <Card className="border-border/60">
             <CardHeader className="pb-3">
@@ -131,7 +134,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
 
         {/* Right Column (Lesson Plan) */}
         <div className="lg:col-span-7">
-          <LessonPlan lessonPlan={lessonPlan} />
+          <LessonPlan lessonPlan={lessonPlan} classId={classId} />
         </div>
       </div>
     </div>

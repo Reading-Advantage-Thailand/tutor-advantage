@@ -8,10 +8,11 @@ export const setupLessonSocket = (io: Server) => {
     console.log(`Socket connected: ${socket.id}`);
 
     // Tutor creates a new session
-    socket.on("create_session", async ({ tutorId, articleId }) => {
+    socket.on("create_session", async ({ tutorId, articleId, classId }) => {
+      console.log(`[Socket] Tutor ${tutorId} creating session for class: ${classId}`);
       try {
         const articleData = await getArticleDetails(articleId);
-        const session = lessonSessionService.createSession(tutorId, socket.id, articleId, articleData);
+        const session = lessonSessionService.createSession(tutorId, socket.id, articleId, articleData, classId);
         socket.join(session.sessionId);
         socket.emit("session_created", {
           sessionId: session.sessionId,
@@ -19,30 +20,61 @@ export const setupLessonSocket = (io: Server) => {
           currentPhase: session.currentPhase,
           articleData: session.articleData
         });
-        console.log(`Session created: ${session.sessionId} with PIN: ${session.pin}`);
-      } catch (error) {
-        console.error("Error creating session:", error);
-        socket.emit("error", { message: "Failed to fetch article details" });
+        console.log(`[Socket] Session created: ${session.sessionId} (PIN: ${session.pin}) for class ${classId}`);
+      } catch (error: any) {
+        console.error("[Socket] Error creating session:", error);
+        socket.emit("error", { message: "Failed to create session. Please check database connection." });
       }
     });
 
-    // Student joins a session using PIN
-    socket.on("join_session", ({ pin, studentId, name }) => {
-      const session = lessonSessionService.joinSession(pin, studentId, name, socket.id);
+    // Student joins a session using classId (No PIN needed)
+    socket.on("join_class", ({ classId, studentId, name, pictureUrl }) => {
+      console.log(`[Socket] Student ${name} (${studentId}) attempting to join class: ${classId}`);
+      const session = lessonSessionService.joinSessionByClassId(classId, studentId, name, socket.id, pictureUrl);
       if (session) {
         socket.join(session.sessionId);
-        // Send success to student
         socket.emit("join_success", {
           sessionId: session.sessionId,
           currentPhase: session.currentPhase,
           articleData: session.articleData
         });
         
-        // Notify tutor (and others) that someone joined
-        io.to(session.sessionId).emit("participant_joined", {
+        io.to(session.sessionId).emit("participants_updated", {
           participants: Array.from(session.participants.values())
         });
-        console.log(`Student ${name} (${studentId}) joined session ${session.sessionId}`);
+        console.log(`[Socket] Student ${name} joined class ${classId} successfully (Pic: ${!!pictureUrl})`);
+      } else {
+        console.warn(`[Socket] Join failed: No active session for class ${classId}`);
+        socket.emit("error", { message: "ยังไม่มีคลาสที่เปิดสอนในขณะนี้ หรือคุณครูยังไม่ได้เริ่มเซสชัน" });
+      }
+    });
+
+    // Toggle Ready status
+    socket.on("toggle_ready", ({ sessionId, studentId }) => {
+      console.log(`[Socket] Student ${studentId} toggled ready for session ${sessionId}`);
+      const session = lessonSessionService.toggleReady(sessionId, studentId);
+      if (session) {
+        io.to(session.sessionId).emit("participants_updated", {
+          participants: Array.from(session.participants.values())
+        });
+      }
+    });
+
+    // Student joins a session using PIN (Keep as fallback)
+    socket.on("join_session", ({ pin, studentId, name, pictureUrl }) => {
+      const session = lessonSessionService.joinSession(pin, studentId, name, socket.id, pictureUrl);
+      if (session) {
+        socket.join(session.sessionId);
+        socket.emit("join_success", {
+          sessionId: session.sessionId,
+          currentPhase: session.currentPhase,
+          articleData: session.articleData
+        });
+        
+        io.to(session.sessionId).emit("participants_updated", {
+          participants: Array.from(session.participants.values())
+        });
+        console.log(`Student ${name} joined session ${session.sessionId} (Pic: ${!!pictureUrl})`);
       } else {
         socket.emit("error", { message: "Invalid PIN or session not found" });
       }
@@ -81,7 +113,6 @@ export const setupLessonSocket = (io: Server) => {
         socket.emit("answer_received", { success: true });
 
         // Update Tutor with the answer
-        // E.g. Tutor PWA updates the answered counter
         const tutorSocketId = result.session.tutorSocketId;
         io.to(tutorSocketId).emit("participant_answered", {
           studentId,
@@ -91,14 +122,48 @@ export const setupLessonSocket = (io: Server) => {
 
         // Check if all answered
         if (result.allAnswered) {
-          // Tell Tutor PWA that all students have answered
-          io.to(tutorSocketId).emit("all_answered", {
-            answers: Array.from(result.session.participants.values()).map(p => ({
-              studentId: p.studentId,
-              answer: p.latestAnswer
-            }))
+          const answers = Array.from(result.session.participants.values()).map(p => ({
+            studentId: p.studentId,
+            answer: p.latestAnswer
+          }));
+
+          // Notify Tutor with details
+          io.to(tutorSocketId).emit("all_answered", { answers });
+
+          // Notify Everyone that "All Answered"
+          io.to(sessionId).emit("all_answered_broadcast", { 
+            totalParticipants: result.session.participants.size 
           });
-          console.log(`All participants answered in session ${sessionId} phase ${result.session.currentPhase}`);
+
+          console.log(`[Socket] All participants answered in session ${sessionId} phase ${result.session.currentPhase}`);
+        }
+      }
+    });
+
+    // Tutor nudges a student to get ready
+    socket.on("nudge_student", ({ sessionId, studentId }) => {
+      const session = lessonSessionService.getSession(sessionId);
+      if (session) {
+        const participant = session.participants.get(studentId);
+        if (participant) {
+          io.to(participant.socketId).emit("nudge_received", { message: "คุณครูกำลังรอคุณอยู่... กด Ready หน่อยครับ!" });
+          console.log(`Tutor nudged student ${studentId}`);
+        }
+      }
+    });
+
+    // Tutor kicks a student
+    socket.on("kick_student", ({ sessionId, studentId }) => {
+      const session = lessonSessionService.getSession(sessionId);
+      if (session) {
+        const participant = session.participants.get(studentId);
+        if (participant) {
+          io.to(participant.socketId).emit("kicked", { message: "คุณถูกเชิญออกจากห้องเรียนโดยติวเตอร์" });
+          session.participants.delete(studentId);
+          io.to(sessionId).emit("participants_updated", {
+            participants: Array.from(session.participants.values())
+          });
+          console.log(`Tutor kicked student ${studentId}`);
         }
       }
     });
@@ -109,8 +174,7 @@ export const setupLessonSocket = (io: Server) => {
       if (left) {
         const session = lessonSessionService.getSession(left.sessionId);
         if (session) {
-          io.to(left.sessionId).emit("participant_left", {
-            studentId: left.studentId,
+          io.to(left.sessionId).emit("participants_updated", {
             participants: Array.from(session.participants.values())
           });
         }

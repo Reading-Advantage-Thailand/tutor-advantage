@@ -1,11 +1,31 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { studentApi } from "@/lib/api";
+import { useLiff } from "@/components/providers/LiffProvider";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 export default function ClassesPage() {
-  const classes = [
-    { id: "cls-001", name: "Origins 2 — กลุ่มวันเสาร์", tutor: "อ.นภา สุขใส", tutorInitials: "นภ", series: "Origins", cefr: "A1", level: 2, seriesColor: "#06c755", status: "open" as const, enrolled: 4, capacity: 6, price: 2800, nextSession: "เสาร์ 12 เม.ย. · 10:00", articles: 14 },
-    { id: "cls-002", name: "Quest 4 — กลุ่มวันอาทิตย์บ่าย", tutor: "อ.ธีรพล มั่นคง", tutorInitials: "ธพ", series: "Quest", cefr: "A2", level: 4, seriesColor: "#3b82f6", status: "open" as const, enrolled: 3, capacity: 6, price: 2900, nextSession: "อา. 13 เม.ย. · 13:00", articles: 14 },
-    { id: "cls-003", name: "Origins 1 — กลุ่มวันจันทร์", tutor: "อ.นภา สุขใส", tutorInitials: "นภ", series: "Origins", cefr: "A1", level: 1, seriesColor: "#06c755", status: "full" as const, enrolled: 6, capacity: 6, price: 2800, nextSession: "จ. 14 เม.ย. · 17:00", articles: 14 },
-  ];
+  const { isReady } = useLiff();
+  const [classes, setClasses] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isReady) {
+      studentApi.getAvailableClasses()
+        .then(data => {
+          setClasses(data.classes);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error("Failed to fetch classes:", err);
+          setError(err.message);
+          setLoading(false);
+        });
+    }
+  }, [isReady]);
 
   const statusMap = {
     open: { label: "รับสมัคร", className: "status-active" },
@@ -15,7 +35,6 @@ export default function ClassesPage() {
 
   return (
     <div>
-      {/* Header */}
       <div className="top-bar" style={{ background: "var(--surface-card)", backdropFilter: "blur(12px)" }}>
         <h1 style={{ fontSize: "1.0625rem", fontWeight: 700, color: "var(--text-primary)", flex: 1 }}>
           คลาสเรียน
@@ -28,6 +47,27 @@ export default function ClassesPage() {
           กรอง
         </button>
       </div>
+
+      {loading && (
+        <div className="flex flex-col items-center justify-center p-12 gap-2">
+          <Loader2 className="animate-spin text-brand-500" />
+          <p className="text-slate-400 text-sm">กำลังหาคลาสที่เหมาะกับคุณ...</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="p-6 m-4 bg-red-50 rounded-2xl flex flex-col items-center gap-3 text-center">
+          <AlertCircle className="text-red-500" />
+          <p className="text-red-700 font-medium">{error}</p>
+          <button onClick={() => window.location.reload()} className="text-sm font-bold text-red-600 underline">ลองอีกครั้ง</button>
+        </div>
+      )}
+
+      {!loading && !error && classes.length === 0 && (
+        <div className="p-12 text-center">
+          <p className="text-slate-500 font-medium">ไม่พบคลาสที่เปิดรับสมัครในขณะนี้</p>
+        </div>
+      )}
 
       <div style={{ padding: "16px 16px", display: "flex", flexDirection: "column", gap: 14 }}>
 
@@ -79,7 +119,8 @@ export default function ClassesPage() {
         {/* Class cards */}
         <div className="stagger" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {classes.map((cls) => {
-            const status = statusMap[cls.status];
+            const status = statusMap[cls.status as keyof typeof statusMap] || statusMap.open;
+            const seriesColor = cls.seriesColor || "#06c755";
             const seatsLeft = cls.capacity - cls.enrolled;
             return (
               <Link
@@ -91,7 +132,7 @@ export default function ClassesPage() {
               >
                 {/* Left accent border */}
                 <div style={{ display: "flex" }}>
-                  <div style={{ width: 4, background: cls.seriesColor, borderRadius: "4px 0 0 4px", opacity: cls.status === "full" ? 0.4 : 1 }} />
+                  <div style={{ width: 4, background: seriesColor, borderRadius: "4px 0 0 4px", opacity: cls.status === "full" ? 0.4 : 1 }} />
 
                   <div style={{ padding: "16px", flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10, marginBottom: 10 }}>
@@ -100,7 +141,7 @@ export default function ClassesPage() {
                           {cls.name}
                         </h2>
                         <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 5 }}>
-                          <div style={{ width: 20, height: 20, borderRadius: "50%", background: cls.seriesColor + "18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.5625rem", fontWeight: 800, color: cls.seriesColor }}>
+                          <div style={{ width: 20, height: 20, borderRadius: "50%", background: seriesColor + "18", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.5625rem", fontWeight: 800, color: seriesColor }}>
                             {cls.tutorInitials}
                           </div>
                           <span style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>{cls.tutor}</span>
@@ -113,8 +154,8 @@ export default function ClassesPage() {
 
                     {/* Meta */}
                     <div style={{ display: "flex", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
-                      <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.75rem", fontWeight: 600, color: cls.seriesColor, background: cls.seriesColor + "12", padding: "3px 8px", borderRadius: 8 }}>
-                        {cls.cefr} · Lv.{cls.level}
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.75rem", fontWeight: 600, color: seriesColor, background: seriesColor + "12", padding: "3px 8px", borderRadius: 8 }}>
+                        {cls.cefr || "A1"} · Lv.{cls.level || 1}
                       </span>
                       <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: "0.75rem", color: "var(--text-tertiary)" }}>
                         📅 {cls.nextSession}
@@ -124,7 +165,7 @@ export default function ClassesPage() {
                     {/* Seats */}
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
                       <div style={{ flex: 1, height: 5, background: "var(--neutral-200)", borderRadius: 10, overflow: "hidden" }}>
-                        <div style={{ height: "100%", width: `${(cls.enrolled / cls.capacity) * 100}%`, background: cls.status === "full" ? "var(--accent-red)" : cls.seriesColor, borderRadius: 10, transition: "width 0.4s ease" }} />
+                        <div style={{ height: "100%", width: `${(cls.enrolled / cls.capacity) * 100}%`, background: cls.status === "full" ? "var(--accent-red)" : seriesColor, borderRadius: 10, transition: "width 0.4s ease" }} />
                       </div>
                       <span style={{ fontSize: "0.6875rem", fontWeight: 600, color: cls.status === "full" ? "var(--accent-red)" : "var(--text-tertiary)", flexShrink: 0 }}>
                         {seatsLeft > 0 ? `${seatsLeft} ว่าง` : "เต็ม"}
@@ -142,7 +183,7 @@ export default function ClassesPage() {
                         </span>
                       </div>
                       <div style={{
-                        background: cls.status === "open" ? cls.seriesColor : "var(--neutral-200)",
+                        background: cls.status === "open" ? seriesColor : "var(--neutral-200)",
                         color: cls.status === "open" ? "#fff" : "var(--neutral-400)",
                         borderRadius: "var(--radius-full)",
                         padding: "8px 18px",

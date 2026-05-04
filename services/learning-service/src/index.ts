@@ -14,12 +14,31 @@ import {
   errorHandlerMiddleware,
 } from "@tutor-advantage/shared-config";
 import { authMiddleware } from "./middlewares/authMiddleware";
-import { createClass, closeClass, getClasses, getClassById, getBooks, deleteClass, updateMeetingUrl } from "./controllers/classController";
+import {
+  createClass,
+  closeClass,
+  getClasses,
+  getClassById,
+  getBooks,
+  deleteClass,
+  updateMeetingUrl,
+  getAvailableClasses,
+} from "./controllers/classController";
 import { generateReferral } from "./controllers/referralController";
-import { enrollStudent } from "./controllers/enrollmentController";
+import {
+  enrollStudent,
+  directEnroll,
+} from "./controllers/enrollmentController";
 import { getDashboardSummary } from "./controllers/dashboardController";
-import { getConversations, getMessages, sendMessage } from "./controllers/chatController";
-import { getAuctionClasses, claimAuctionClass } from "./controllers/auctionController";
+import {
+  getConversations,
+  getMessages,
+  sendMessage,
+} from "./controllers/chatController";
+import {
+  getAuctionClasses,
+  claimAuctionClass,
+} from "./controllers/auctionController";
 import { getPerformanceSummary } from "./controllers/performanceController";
 import { getNotificationSummary } from "./controllers/notificationsController";
 
@@ -47,6 +66,7 @@ app.get("/v1/books", authMiddleware, getBooks);
 app.post("/v1/classes", authMiddleware, createClass);
 app.post("/v1/classes/:classId/close", authMiddleware, closeClass);
 app.get("/v1/classes", authMiddleware, getClasses);
+app.get("/v1/classes/available", authMiddleware, getAvailableClasses);
 app.get("/v1/classes/:classId", authMiddleware, getClassById);
 app.delete("/v1/classes/:classId", authMiddleware, deleteClass);
 app.patch("/v1/classes/:classId/meeting-url", authMiddleware, updateMeetingUrl);
@@ -55,6 +75,7 @@ app.patch("/v1/classes/:classId/meeting-url", authMiddleware, updateMeetingUrl);
 app.post("/v1/referrals/generate", authMiddleware, generateReferral);
 
 // Protected Enrollment Route
+app.post("/v1/enroll/direct", authMiddleware, directEnroll);
 app.post("/v1/enroll/:referralToken", authMiddleware, enrollStudent);
 
 // Protected Dashboard API
@@ -62,12 +83,24 @@ app.get("/v1/dashboard/summary", authMiddleware, getDashboardSummary);
 
 // Protected Chat Routes
 app.get("/v1/chat/conversations", authMiddleware, getConversations);
-app.get("/v1/chat/conversations/:conversationId/messages", authMiddleware, getMessages);
-app.post("/v1/chat/conversations/:conversationId/messages", authMiddleware, sendMessage);
+app.get(
+  "/v1/chat/conversations/:conversationId/messages",
+  authMiddleware,
+  getMessages,
+);
+app.post(
+  "/v1/chat/conversations/:conversationId/messages",
+  authMiddleware,
+  sendMessage,
+);
 
 // Protected Auction Routes
 app.get("/v1/classes/auction", authMiddleware, getAuctionClasses);
-app.post("/v1/classes/auction/:transferId/claim", authMiddleware, claimAuctionClass);
+app.post(
+  "/v1/classes/auction/:transferId/claim",
+  authMiddleware,
+  claimAuctionClass,
+);
 
 // Protected Performance Route
 app.get("/v1/tutors/performance", authMiddleware, getPerformanceSummary);
@@ -82,8 +115,8 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: "*", // Allow all origins for now
-    methods: ["GET", "POST"]
-  }
+    methods: ["GET", "POST"],
+  },
 });
 
 // We will create this file in the next step

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { ChevronLeft, Shield, CheckCircle2, CreditCard, QrCode, Clock, ChevronRight } from "lucide-react";
+import { studentApi } from "@/lib/api";
 
 type PaymentMethod = "promptpay" | "card";
 type Step = "select" | "qr" | "card-form" | "success";
@@ -24,7 +25,25 @@ function PaymentFlow() {
   const cls = { id: classId, name: "Origins 2 — กลุ่มวันเสาร์", price: 2800, tutor: "อ.นภา สุขใส", cefr: "A1" };
 
   const handleProceed = () => { setStep(method === "promptpay" ? "qr" : "card-form"); };
-  const handleConfirmPayment = async () => { setLoading(true); await new Promise((r) => setTimeout(r, 2000)); setLoading(false); setStep("success"); };
+  
+  const handleConfirmPayment = async () => { 
+    setLoading(true); 
+    try {
+      // 1. Call Enrollment API
+      await studentApi.enrollClass(classId);
+      
+      // 2. Simulate payment processing delay
+      await new Promise((r) => setTimeout(r, 1500)); 
+      
+      setStep("success"); 
+    } catch (err: any) {
+      console.error("Payment/Enrollment failed:", err);
+      alert(err.message || "การลงทะเบียนล้มเหลว กรุณาลองใหม่อีกครั้ง");
+    } finally {
+      setLoading(false); 
+    }
+  };
+
   const formatCardNumber = (val: string) => val.replace(/\D/g, "").slice(0, 16).replace(/(.{4})/g, "$1 ").trim();
   const formatExpiry = (val: string) => val.replace(/\D/g, "").slice(0, 4).replace(/(.{2})/, "$1/");
 

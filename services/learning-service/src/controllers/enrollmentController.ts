@@ -135,3 +135,72 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
     });
   }
 }
+
+export async function directEnroll(req: AuthenticatedRequest, res: Response) {
+  try {
+    const userId = req.user?.userId;
+    const { classId } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({
+        error: { code: "UNAUTHORIZED", message: "User ID missing", requestId: req.id }
+      });
+    }
+
+    if (!classId) {
+      return res.status(400).json({
+        error: { code: "BAD_REQUEST", message: "classId is required", requestId: req.id }
+      });
+    }
+
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Check if class exists and has capacity
+      const targetClass = await tx.class.findUnique({
+        where: { classId }
+      });
+
+      if (!targetClass) throw new Error("CLASS_NOT_FOUND");
+      if (targetClass.status !== "OPEN") throw new Error("CLASS_CLOSED");
+      if (targetClass.enrolledCount >= targetClass.capacity) throw new Error("CLASS_FULL");
+
+      // 2. Check if already enrolled
+      const existing = await tx.enrollment.findFirst({
+        where: { classId, studentUserId: userId }
+      });
+      if (existing) throw new Error("ALREADY_ENROLLED");
+
+      // 3. Create enrollment
+      const enrollment = await tx.enrollment.create({
+        data: {
+          classId,
+          studentUserId: userId,
+          status: "PENDING_PAYMENT"
+        }
+      });
+
+      // 4. Update count
+      await tx.class.update({
+        where: { classId },
+        data: { enrolledCount: { increment: 1 } }
+      });
+
+      return enrollment;
+    });
+
+    return res.status(200).json({
+      message: "Direct enrollment successful. Pending payment.",
+      enrollmentId: result.enrollmentId,
+      classId: result.classId
+    });
+  } catch (error: any) {
+    console.error("Direct Enrollment Error:", error);
+    const code = error.message.includes("CLASS") || error.message === "ALREADY_ENROLLED" ? "BAD_REQUEST" : "INTERNAL_SERVER_ERROR";
+    return res.status(code === "BAD_REQUEST" ? 400 : 500).json({
+      error: {
+        code,
+        message: error.message,
+        requestId: req.id
+      }
+    });
+  }
+}

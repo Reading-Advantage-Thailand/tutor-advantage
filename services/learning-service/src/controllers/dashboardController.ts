@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+import { lessonSessionService } from "../services/LessonSessionService";
 
 export async function getDashboardSummary(
   req: AuthenticatedRequest,
@@ -15,7 +16,47 @@ export async function getDashboardSummary(
       });
     }
 
-    // 1. Fetch all classes owned by the tutor
+    const role = req.user?.role;
+
+    if (role === "STUDENT") {
+      // Fetch student enrollments
+      const enrollments = await prisma.enrollment.findMany({
+        where: { studentUserId: userId },
+        include: {
+          class: {
+            include: {
+              book: true,
+              tutor: {
+                select: { displayName: true }
+              }
+            }
+          }
+        },
+        orderBy: { createdAt: "desc" }
+      });
+
+      const recentClasses = enrollments.slice(0, 3).map((e) => {
+        const session = lessonSessionService.getSessionByClassId(e.class.classId);
+        return {
+          id: e.class.classId,
+          name: e.class.title || e.class.book?.title || "Untitled Class",
+          status: e.class.status.toLowerCase(),
+          tutorName: e.class.tutor?.displayName || "Tutor",
+          nextSession: e.class.scheduleDescription || "ตามนัดหมาย",
+          progress: 0,
+          isLive: !!session // Added isLive status
+        };
+      });
+
+      return res.status(200).json({
+        activeEnrollments: enrollments.length,
+        totalArticlesRead: 0, // Mock
+        weekStreak: 0, // Mock
+        recentClasses,
+      });
+    }
+
+    // 1. Fetch all classes owned by the tutor (Existing logic for TUTOR)
     const classes = await prisma.class.findMany({
       where: { tutorUserId: userId },
       include: {

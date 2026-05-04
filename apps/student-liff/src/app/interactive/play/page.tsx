@@ -3,24 +3,31 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useLessonSocket } from '@/hooks/useLessonSocket';
+import { useLiff } from '@/components/providers/LiffProvider';
 
 export default function PlayLessonPage() {
   const searchParams = useSearchParams();
-  const pin = searchParams.get('pin');
+  const classId = searchParams.get('classId');
+  const { profile, isReady: liffReady } = useLiff();
   
-  // In a real app, student ID and name come from LIFF profile
-  const studentId = "std-123";
-  const name = "Poom";
+  const studentId = profile?.userId || "anonymous";
+  const name = profile?.displayName || "Student";
 
   const {
     sessionData,
+    articleData,
     error,
     hasAnswered,
+    isEveryoneReady,
     aiFeedback,
     submitAnswer
-  } = useLessonSocket(pin || '', studentId, name);
+  } = useLessonSocket(null, studentId, name, classId || undefined);
 
   const [typedAnswer, setTypedAnswer] = useState('');
+
+  if (!liffReady) {
+    return <div className="min-h-screen flex items-center justify-center bg-blue-600 text-white font-bold text-xl">Loading LIFF...</div>;
+  }
 
   if (error) {
     return <div className="min-h-screen flex items-center justify-center bg-red-50 text-red-600 font-bold text-xl">{error}</div>;
@@ -31,12 +38,14 @@ export default function PlayLessonPage() {
   }
 
   const handleMcqClick = (answer: string) => {
-    submitAnswer(answer);
+    const mcqQuestion = articleData?.multipleChoiceQuestions?.[0];
+    submitAnswer(answer, mcqQuestion?.question, mcqQuestion?.answer);
   };
 
   const handleTextSubmit = () => {
     if (typedAnswer.trim()) {
-      submitAnswer(typedAnswer, "What are the main causes of climate change?", "Deforestation, fossil fuels, industrial emissions.");
+      const saqQuestion = articleData?.shortAnswerQuestions?.[0];
+      submitAnswer(typedAnswer, saqQuestion?.question, saqQuestion?.answer);
       setTypedAnswer('');
     }
   };
@@ -49,7 +58,7 @@ export default function PlayLessonPage() {
   return (
     <div className="min-h-[100dvh] bg-slate-100 flex flex-col">
       <header className="bg-white p-4 shadow-sm text-center font-bold text-lg text-slate-700">
-        PIN: {pin}
+        บทเรียน Interactive
       </header>
 
       <main className="flex-1 flex flex-col p-4 items-center justify-center relative">
@@ -65,16 +74,32 @@ export default function PlayLessonPage() {
         {currentPhase === 7 && (
           <div className="w-full max-w-md flex-1 flex flex-col">
             {hasAnswered ? (
-              <div className="flex-1 flex flex-col items-center justify-center text-center">
-                <div className="text-5xl mb-6">⏳</div>
-                <h2 className="text-2xl font-bold">รอเพื่อนตอบให้ครบ...</h2>
+              <div className="flex-1 flex flex-col items-center justify-center text-center animate-in zoom-in">
+                {isEveryoneReady ? (
+                  <>
+                    <div className="text-6xl mb-6">✅</div>
+                    <h2 className="text-3xl font-bold text-emerald-600">ตอบครบทุกคนแล้ว!</h2>
+                    <p className="text-slate-500 mt-2">โปรดดูเฉลยที่หน้าจอคุณครู</p>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-5xl mb-6 animate-bounce">⏳</div>
+                    <h2 className="text-2xl font-bold">ส่งคำตอบแล้ว!</h2>
+                    <p className="text-slate-500 mt-2">รอเพื่อนตอบให้ครบ...</p>
+                  </>
+                )}
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-4 flex-1">
-                <button onClick={() => handleMcqClick('A')} className="bg-red-500 active:bg-red-600 rounded-2xl shadow-[0_8px_0_rgb(185,28,28)] active:shadow-[0_0px_0_rgb(185,28,28)] active:translate-y-2 transition-all"></button>
-                <button onClick={() => handleMcqClick('B')} className="bg-blue-500 active:bg-blue-600 rounded-2xl shadow-[0_8px_0_rgb(29,78,216)] active:shadow-[0_0px_0_rgb(29,78,216)] active:translate-y-2 transition-all"></button>
-                <button onClick={() => handleMcqClick('C')} className="bg-yellow-500 active:bg-yellow-600 rounded-2xl shadow-[0_8px_0_rgb(161,98,7)] active:shadow-[0_0px_0_rgb(161,98,7)] active:translate-y-2 transition-all"></button>
-                <button onClick={() => handleMcqClick('D')} className="bg-green-500 active:bg-green-600 rounded-2xl shadow-[0_8px_0_rgb(21,128,61)] active:shadow-[0_0px_0_rgb(21,128,61)] active:translate-y-2 transition-all"></button>
+              <div className="flex-1 flex flex-col w-full gap-4">
+                <div className="bg-white p-4 rounded-xl shadow-sm mb-4 text-center font-bold">
+                  {articleData?.multipleChoiceQuestions?.[0]?.question || "เลือกคำตอบที่ถูกต้อง"}
+                </div>
+                <div className="grid grid-cols-2 gap-4 flex-1">
+                  <button onClick={() => handleMcqClick('A')} className="bg-red-500 active:bg-red-600 rounded-2xl shadow-[0_8px_0_rgb(185,28,28)] active:shadow-[0_0px_0_rgb(185,28,28)] active:translate-y-2 transition-all flex items-center justify-center text-white text-3xl font-bold">A</button>
+                  <button onClick={() => handleMcqClick('B')} className="bg-blue-500 active:bg-blue-600 rounded-2xl shadow-[0_8px_0_rgb(29,78,216)] active:shadow-[0_0px_0_rgb(29,78,216)] active:translate-y-2 transition-all flex items-center justify-center text-white text-3xl font-bold">B</button>
+                  <button onClick={() => handleMcqClick('C')} className="bg-yellow-500 active:bg-yellow-600 rounded-2xl shadow-[0_8px_0_rgb(161,98,7)] active:shadow-[0_0px_0_rgb(161,98,7)] active:translate-y-2 transition-all flex items-center justify-center text-white text-3xl font-bold">C</button>
+                  <button onClick={() => handleMcqClick('D')} className="bg-green-500 active:bg-green-600 rounded-2xl shadow-[0_8px_0_rgb(21,128,61)] active:shadow-[0_0px_0_rgb(21,128,61)] active:translate-y-2 transition-all flex items-center justify-center text-white text-3xl font-bold">D</button>
+                </div>
               </div>
             )}
           </div>
@@ -92,13 +117,26 @@ export default function PlayLessonPage() {
                 <p className="text-sm text-slate-400 mt-6">รอคุณครูไปยังหน้าถัดไป...</p>
               </div>
             ) : hasAnswered ? (
-              <div className="flex-1 flex flex-col items-center justify-center text-center">
-                <div className="text-5xl mb-6">🤖</div>
-                <h2 className="text-2xl font-bold">กำลังให้ AI ตรวจคำตอบ...</h2>
+              <div className="flex-1 flex flex-col items-center justify-center text-center animate-in zoom-in">
+                {isEveryoneReady ? (
+                  <>
+                    <div className="text-6xl mb-6">✅</div>
+                    <h2 className="text-3xl font-bold text-emerald-600">ตอบครบทุกคนแล้ว!</h2>
+                    <p className="text-slate-500 mt-2">รอคุณครูไปยังหน้าถัดไป...</p>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-5xl mb-6 animate-bounce">🤖</div>
+                    <h2 className="text-2xl font-bold">ส่งคำตอบแล้ว!</h2>
+                    <p className="text-slate-500 mt-2">กำลังให้ AI ตรวจคำตอบ...</p>
+                  </>
+                )}
               </div>
             ) : (
               <div className="bg-white rounded-2xl p-6 shadow-lg">
-                <h2 className="text-xl font-bold mb-4">พิมพ์คำตอบของคุณ</h2>
+                <h2 className="text-xl font-bold mb-4">
+                  {articleData?.shortAnswerQuestions?.[0]?.question || "พิมพ์คำตอบของคุณ"}
+                </h2>
                 <textarea
                   value={typedAnswer}
                   onChange={(e) => setTypedAnswer(e.target.value)}

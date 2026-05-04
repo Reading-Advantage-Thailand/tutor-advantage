@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { verifyGoogleToken } from "../services/oauth/googleAuth";
 import { verifyFacebookToken } from "../services/oauth/facebookAuth";
+import { verifyLineToken } from "../services/oauth/lineAuth";
 import { processOAuthLogin } from "../services/authService";
 
 export async function handleOAuthCallback(req: Request, res: Response) {
@@ -40,8 +41,15 @@ export async function handleOAuthCallback(req: Request, res: Response) {
       email = profile.email;
       name = profile.name;
       picture = profile.picture || "";
+      picture = profile.picture || "";
+    } else if (provider === "line") {
+      const profile = await verifyLineToken(code); // For LINE, code is the ID token
+      providerSubject = profile.id;
+      email = profile.email || "";
+      name = profile.name;
+      picture = profile.picture || "";
     } else {
-      // LINE provider not yet implemented, return 400
+      // Unsupported provider
       return res.status(400).json({
         error: {
           code: "UNSUPPORTED_PROVIDER",
