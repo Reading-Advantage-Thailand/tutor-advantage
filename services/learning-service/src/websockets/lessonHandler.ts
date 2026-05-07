@@ -303,6 +303,17 @@ export const setupLessonSocket = (io: Server) => {
 
     socket.on("disconnect", () => {
       console.log(`Socket disconnected: ${socket.id}`);
+      
+      // 1. Check if the disconnected socket is a Tutor
+      const tutorSession = lessonSessionService.getSessionByTutorSocketId(socket.id);
+      if (tutorSession) {
+        console.log(`[Socket] Tutor disconnected. Deleting session: ${tutorSession.sessionId}`);
+        io.to(tutorSession.sessionId).emit("session_deleted", { message: "คุณครูได้ออกจากหน้าห้องเรียน คลาสเรียนถูกปิดแล้ว" });
+        lessonSessionService.deleteSession(tutorSession.sessionId);
+        return;
+      }
+
+      // 2. Otherwise, check if it is a student
       const left = lessonSessionService.removeParticipantBySocketId(socket.id);
       if (left) {
         const session = lessonSessionService.getSession(left.sessionId);

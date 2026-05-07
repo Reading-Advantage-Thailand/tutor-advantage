@@ -13,10 +13,8 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  experimental: {
-    // @ts-ignore
-    allowedDevOrigins: ["*.ngrok-free.app", "localhost:3000"],
-  },
+  // @ts-ignore
+  allowedDevOrigins: ["*.ngrok-free.app", "localhost:3000", "localhost:3004"],
 };
 
 export default nextConfig;

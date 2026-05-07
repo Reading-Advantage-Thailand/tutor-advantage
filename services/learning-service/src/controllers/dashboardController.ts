@@ -26,22 +26,27 @@ export async function getDashboardSummary(
           class: {
             include: {
               book: true,
-              tutor: {
-                select: { displayName: true }
-              }
             }
           }
         },
         orderBy: { createdAt: "desc" }
       });
 
-      const recentClasses = enrollments.slice(0, 3).map((e) => {
+      const tutorIds = enrollments.map((e: any) => e.class.tutorUserId).filter(Boolean);
+      const tutors = await prisma.user.findMany({
+        where: { userId: { in: tutorIds } },
+        select: { userId: true, displayName: true }
+      });
+      const tutorMap = new Map(tutors.map((t: any) => [t.userId, t.displayName]));
+
+      const recentClasses = enrollments.slice(0, 3).map((e: any) => {
         const session = lessonSessionService.getSessionByClassId(e.class.classId);
+        const tutorName = tutorMap.get(e.class.tutorUserId) || "Tutor";
         return {
           id: e.class.classId,
           name: e.class.title || e.class.book?.title || "Untitled Class",
           status: e.class.status.toLowerCase(),
-          tutorName: e.class.tutor?.displayName || "Tutor",
+          tutorName,
           nextSession: e.class.scheduleDescription || "ตามนัดหมาย",
           progress: 0,
           isLive: !!session // Added isLive status

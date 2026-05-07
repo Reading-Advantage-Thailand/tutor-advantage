@@ -53,6 +53,11 @@ export const useLessonSocket = (pin: string | null, studentId: string, name: str
       newSocket.disconnect();
     });
 
+    newSocket.on('session_deleted', (data) => {
+      setKicked(data.message);
+      newSocket.disconnect();
+    });
+
     newSocket.on('all_answered_broadcast', () => {
       setIsEveryoneReady(true);
     });

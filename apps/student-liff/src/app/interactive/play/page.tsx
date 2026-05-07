@@ -22,7 +22,8 @@ export default function PlayLessonPage() {
     hasAnswered,
     isEveryoneReady,
     aiFeedback,
-    submitAnswer
+    submitAnswer,
+    kicked
   } = useLessonSocket(null, studentId, name, classId || undefined);
 
   const [typedAnswer, setTypedAnswer] = useState('');
@@ -54,6 +55,19 @@ export default function PlayLessonPage() {
 
   if (!liffReady) {
     return <div className="min-h-screen flex items-center justify-center bg-blue-600 text-white font-bold text-xl">Loading LIFF...</div>;
+  }
+
+  if (kicked) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-6 text-center">
+        <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-6">
+          <svg className="w-10 h-10 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+        <h2 className="text-2xl font-bold text-slate-800 mb-2">{kicked}</h2>
+        <p className="text-slate-500 mb-8">บทเรียนสิ้นสุดลงแล้วเนื่องจากคุณครูยกเลิกเซสชัน</p>
+        <button onClick={() => router.push('/dashboard')} className="w-full max-w-xs h-12 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold transition-all shadow-md shadow-emerald-500/20">กลับหน้าหลัก</button>
+      </div>
+    );
   }
 
   if (error) {

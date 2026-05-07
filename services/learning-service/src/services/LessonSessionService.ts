@@ -145,6 +145,15 @@ class LessonSessionService {
     return this.sessions.get(sessionId);
   }
 
+  getSessionByTutorSocketId(socketId: string): LessonSession | undefined {
+    for (const session of this.sessions.values()) {
+      if (session.tutorSocketId === socketId) {
+        return session;
+      }
+    }
+    return undefined;
+  }
+
   joinSession(pin: string, studentId: string, name: string, socketId: string, pictureUrl?: string): LessonSession | undefined {
     const session = this.getSessionByPin(pin);
     if (!session) return undefined;
