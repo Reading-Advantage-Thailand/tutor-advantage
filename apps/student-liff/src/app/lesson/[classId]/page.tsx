@@ -51,7 +51,7 @@ export default function LessonLobbyPage({ params }: PageProps) {
 
   // Handle auto-redirect when phase changes (Lesson Starts)
   useEffect(() => {
-    if (sessionData && sessionData.currentPhase > 1) {
+    if (sessionData && sessionData.currentPhase > 0) {
       router.push(`/interactive/play?classId=${classId}&pin=${sessionData.pin}&studentName=${studentName}`);
     }
   }, [sessionData?.currentPhase, router, classId, studentName, sessionData?.pin, sessionData?.sessionId]);

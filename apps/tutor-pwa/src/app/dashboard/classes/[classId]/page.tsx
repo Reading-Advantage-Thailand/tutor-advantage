@@ -12,24 +12,6 @@ import { cookies } from "next/headers";
 import { ReferralLink, LessonPlan, ClassStatusToggle, MeetingUrlEditor, FeatureLessonButton } from "./client-components";
 import { notFound } from "next/navigation";
 
-const lessonPlan = [
-  "สวัสดีนักเรียน และเช็คชื่อ (Roll call)",
-  "ทบทวนคำศัพท์จากบทก่อนหน้า (5 นาที)",
-  "แนะนำหัวข้อบทเรียนวันนี้",
-  "อ่านบทความด้วยกัน (Read-aloud)",
-  "อธิบายคำศัพท์ใหม่ในบทความ",
-  "ตอบคำถามความเข้าใจ (Comprehension Questions)",
-  "ฝึกออกเสียงคำศัพท์สำคัญ",
-  "แบ่งกลุ่มอภิปราย (Pair/Group Discussion)",
-  "นำเสนอความคิดเห็นต่อกลุ่มใหญ่",
-  "ทำแบบฝึกหัด Grammar ในแอป",
-  "ตรวจคำตอบและอธิบายข้อผิดพลาด",
-  "เกม/กิจกรรมสนุก (Gamified Activity)",
-  "สรุปสิ่งที่เรียนรู้วันนี้",
-  "มอบหมายการบ้าน (Homework)",
-  "ถามคำถามและปิดคลาส",
-];
-
 async function getClassData(classId: string, token: string) {
   const res = await fetch(`http://localhost:3002/v1/classes/${classId}`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -134,7 +116,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
 
         {/* Right Column (Lesson Plan) */}
         <div className="lg:col-span-7">
-          <LessonPlan lessonPlan={lessonPlan} classId={classId} />
+          <LessonPlan classId={classId} articleId={cls.articleId || "article-default-123"} meetingUrl={cls.meetingUrl} />
         </div>
       </div>
     </div>

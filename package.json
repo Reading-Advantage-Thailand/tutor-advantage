@@ -8,7 +8,8 @@
     "services/*"
   ],
   "scripts": {
-    "dev:services": "concurrently \"npm run dev -w identity-service\" \"npm run dev -w learning-service\" \"npm run dev -w finance-mlm-service\""
+    "dev:services": "concurrently \"npm run dev -w identity-service\" \"npm run dev -w learning-service\" \"npm run dev -w finance-mlm-service\"",
+    "dev": "concurrently -n \"proxy,services,student-liff,ngrok,tutor-pwa\" -c \"magenta,green,blue,cyan,yellow\" \"cloud-sql-proxy.exe reading-advantage:asia-southeast1:cloud-sql --credentials-file=service-account.json\" \"npm run dev:services\" \"npm run dev -w student-liff\" \"ngrok http 3000\" \"npm run dev -w tutor-pwa\""
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

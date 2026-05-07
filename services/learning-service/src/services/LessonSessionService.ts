@@ -22,6 +22,7 @@ export interface LessonSession {
   currentPhase: number;
   participants: Map<string, SessionParticipant>;
   status: 'LOBBY' | 'ACTIVE' | 'FINISHED';
+  phaseSelectedIndices?: Record<number, number>;
 }
 
 class LessonSessionService {
@@ -30,6 +31,64 @@ class LessonSessionService {
   private classToSessionId: Map<string, string> = new Map(); // Map classId to active session
 
   createSession(tutorId: string, tutorSocketId: string, articleId: string, articleData: any, classId?: string): LessonSession {
+    if (articleData) {
+      if (!articleData.multipleChoiceQuestions) {
+        articleData.multipleChoiceQuestions = [];
+      }
+      if (articleData.multipleChoiceQuestions.length <= 1) {
+        articleData.multipleChoiceQuestions.push(
+          {
+            id: "mcq-fb-1",
+            question: "What is he doing in the library?",
+            options: { option1: "Reading a book", option2: "Sleeping", option3: "Playing games", option4: "Singing" },
+            answer: "Reading a book"
+          },
+          {
+            id: "mcq-fb-2",
+            question: "Where is he?",
+            options: { option1: "In the library", option2: "In the park", option3: "At school", option4: "At home" },
+            answer: "In the library"
+          },
+          {
+            id: "mcq-fb-3",
+            question: "Is the library big or small?",
+            options: { option1: "It is big", option2: "It is small", option3: "It is empty", option4: "It is dark" },
+            answer: "It is big"
+          }
+        );
+      }
+
+      if (!articleData.shortAnswerQuestions) {
+        articleData.shortAnswerQuestions = [];
+      }
+      if (articleData.shortAnswerQuestions.length <= 1) {
+        articleData.shortAnswerQuestions.push(
+          { id: "saq-fb-1", question: "Describe the library from the article.", answer: "The library is big." },
+          { id: "saq-fb-2", question: "What are the benefits of reading in a library?", answer: "It is quiet and has many books." },
+          { id: "saq-fb-3", question: "Why do you think he goes to the library?", answer: "To study and read in silence." }
+        );
+      }
+    }
+
+    const phaseSelectedIndices: Record<number, number> = {};
+    if (articleData?.multipleChoiceQuestions?.length) {
+      phaseSelectedIndices[7] = Math.floor(Math.random() * articleData.multipleChoiceQuestions.length);
+    }
+    if (articleData?.shortAnswerQuestions?.length) {
+      phaseSelectedIndices[8] = Math.floor(Math.random() * articleData.shortAnswerQuestions.length);
+      phaseSelectedIndices[13] = Math.floor(Math.random() * articleData.shortAnswerQuestions.length);
+    }
+    if (articleData?.words?.length) {
+      phaseSelectedIndices[10] = Math.floor(Math.random() * articleData.words.length);
+    }
+    if (articleData?.sentences?.length) {
+      phaseSelectedIndices[11] = Math.floor(Math.random() * articleData.sentences.length);
+      phaseSelectedIndices[12] = Math.floor(Math.random() * articleData.sentences.length);
+    }
+
+    console.log(`[Service] Available MCQ questions (Phase 7):`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
+    console.log(`[Service] Available Short Answer questions (Phase 8/13):`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
+
     // If a session for this class already exists, reuse it and update tutor's socket
     if (classId) {
       const existingSession = this.getSessionByClassId(classId);
@@ -38,6 +97,7 @@ class LessonSessionService {
         existingSession.tutorSocketId = tutorSocketId;
         existingSession.articleId = articleId;
         existingSession.articleData = articleData;
+        existingSession.phaseSelectedIndices = phaseSelectedIndices;
         return existingSession;
       }
     }
@@ -53,9 +113,10 @@ class LessonSessionService {
       tutorSocketId,
       articleId,
       articleData,
-      currentPhase: 1,
+      currentPhase: 0,
       participants: new Map(),
-      status: 'LOBBY'
+      status: 'LOBBY',
+      phaseSelectedIndices
     };
 
     this.sessions.set(sessionId, session);
@@ -149,10 +210,38 @@ class LessonSessionService {
     for (const participant of session.participants.values()) {
       participant.hasAnsweredCurrentPhase = false;
       participant.latestAnswer = undefined;
+      if (phase === 1) {
+        participant.score = 0;
+      }
     }
 
-    if (phase > 1) {
+    if (!session.phaseSelectedIndices) {
+      session.phaseSelectedIndices = {};
+    }
+
+    // Force re-randomize every time we enter the phase
+    if (phase === 7) {
+      const count = session.articleData?.multipleChoiceQuestions?.length || 1;
+      session.phaseSelectedIndices[7] = Math.floor(Math.random() * count);
+    } else if (phase === 8 || phase === 13) {
+      const count = session.articleData?.shortAnswerQuestions?.length || 1;
+      session.phaseSelectedIndices[phase] = Math.floor(Math.random() * count);
+    } else if (phase === 10) {
+      const count = session.articleData?.words?.length || 1;
+      session.phaseSelectedIndices[10] = Math.floor(Math.random() * count);
+    } else if (phase === 11 || phase === 12) {
+      const count = session.articleData?.sentences?.length || 1;
+      session.phaseSelectedIndices[phase] = Math.floor(Math.random() * count);
+    }
+
+    if (phase > 0) {
       session.status = 'ACTIVE';
+    }
+
+    console.log(`[Service] Session phase changed to: ${phase}`);
+    if ([7, 8, 10, 11, 12, 13].includes(phase)) {
+       const idx = session.phaseSelectedIndices?.[phase] || 0;
+       console.log(`[Service] Selected Question Index for Phase ${phase}:`, idx);
     }
 
     return session;
@@ -184,6 +273,18 @@ class LessonSessionService {
     }
 
     return { session, allAnswered };
+  }
+
+  deleteSession(sessionId: string): boolean {
+    const session = this.sessions.get(sessionId);
+    if (!session) return false;
+    
+    this.sessions.delete(sessionId);
+    this.pinToSessionId.delete(session.pin);
+    if (session.classId) {
+      this.classToSessionId.delete(session.classId);
+    }
+    return true;
   }
 }
 

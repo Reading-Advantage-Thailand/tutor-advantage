@@ -1,0 +1,70 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run All Dev",
+      "dependsOn": [
+        "1. Cloud SQL Proxy",
+        "2. Dev Services",
+        "3. Student LIFF",
+        "4. ngrok",
+        "5. Tutor PWA"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "1. Cloud SQL Proxy",
+      "type": "shell",
+      "command": ".\\cloud-sql-proxy.exe reading-advantage:asia-southeast1:cloud-sql --credentials-file=service-account.json",
+      "presentation": {
+        "group": "dev",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "2. Dev Services",
+      "type": "shell",
+      "command": "npm run dev:services",
+      "presentation": {
+        "group": "dev",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "3. Student LIFF",
+      "type": "shell",
+      "command": "npm run dev -w student-liff",
+      "presentation": {
+        "group": "dev",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "4. ngrok",
+      "type": "shell",
+      "command": "ngrok http 3000",
+      "presentation": {
+        "group": "dev",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "5. Tutor PWA",
+      "type": "shell",
+      "command": "npm run dev -w tutor-pwa",
+      "presentation": {
+        "group": "dev",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

@@ -50,7 +50,7 @@ export const useLessonSocket = (tutorId: string, articleId: string, classId?: st
 
     newSocket.on('phase_changed', (data) => {
       console.log(`[Socket] Phase changed to: ${data.phase}`);
-      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase } : null);
+      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices } : null);
       setTotalAnswered(0);
       setAllAnsweredData([]);
     });
@@ -67,6 +67,12 @@ export const useLessonSocket = (tutorId: string, articleId: string, classId?: st
 
     newSocket.on('error', (data) => {
       setError(data.message);
+    });
+
+    newSocket.on('session_deleted', (data) => {
+      console.log(`[Socket] Session deleted: ${data.message}`);
+      setSessionData(null);
+      setError("เซสชันถูกยกเลิกแล้ว");
     });
 
     return () => {
@@ -92,6 +98,12 @@ export const useLessonSocket = (tutorId: string, articleId: string, classId?: st
     }
   };
 
+  const deleteSession = () => {
+    if (socketRef.current && sessionData) {
+      socketRef.current.emit('delete_session', { sessionId: sessionData.sessionId });
+    }
+  };
+
   return {
     socket,
     sessionData,
@@ -102,6 +114,7 @@ export const useLessonSocket = (tutorId: string, articleId: string, classId?: st
     error,
     changePhase,
     nudgeStudent,
-    kickStudent
+    kickStudent,
+    deleteSession
   };
 };

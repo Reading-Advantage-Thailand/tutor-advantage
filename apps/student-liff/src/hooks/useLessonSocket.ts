@@ -5,7 +5,7 @@ const SOCKET_URL = process.env.NEXT_PUBLIC_LEARNING_SERVICE_URL || 'http://local
 
 export const useLessonSocket = (pin: string | null, studentId: string, name: string, classId?: string, pictureUrl?: string) => {
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [sessionData, setSessionData] = useState<{ sessionId: string; currentPhase: number } | null>(null);
+  const [sessionData, setSessionData] = useState<{ sessionId: string; currentPhase: number; pin?: string; phaseSelectedIndices?: Record<number, number> } | null>(null);
   const [articleData, setArticleData] = useState<any>(null);
   const [participants, setParticipants] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +62,7 @@ export const useLessonSocket = (pin: string | null, studentId: string, name: str
     });
 
     newSocket.on('phase_changed', (data) => {
-      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase } : null);
+      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices } : null);
       setHasAnswered(false);
       setIsEveryoneReady(false);
       setAiFeedback(null);

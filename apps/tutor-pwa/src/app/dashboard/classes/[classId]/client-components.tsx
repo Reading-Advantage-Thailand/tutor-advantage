@@ -197,84 +197,216 @@ export function ReferralLink({ referralLink }: { referralLink: string }) {
   );
 }
 
-export function LessonPlan({ lessonPlan, classId }: { lessonPlan: string[], classId: string }) {
-  const [checkedSteps, setCheckedSteps] = useState<number[]>([]);
+export function LessonPlan({ classId, articleId, meetingUrl }: { classId: string; articleId?: string; meetingUrl?: string }) {
+  const [activePhase, setActivePhase] = useState<number | null>(null);
+  const [completedPhases, setCompletedPhases] = useState<number[]>([]);
   const router = useRouter();
 
-  const toggleStep = (i: number) =>
-    setCheckedSteps((prev) =>
-      prev.includes(i) ? prev.filter((s) => s !== i) : [...prev, i],
-    );
+  const phases = [
+    {
+      id: 1,
+      title: "Phase 1: Warm-up & Prep",
+      description: "ต้อนรับนักเรียน เช็คชื่อ และทบทวนคำศัพท์สำคัญ",
+      time: "5-10 นาที",
+      actions: [
+        "เช็คชื่อและเตรียมความพร้อมนักเรียน (Roll Call)",
+        "ทบทวนคำศัพท์และบทเรียนจากสัปดาห์ที่แล้ว",
+        "เกริ่นหัวข้อและเป้าหมายการเรียนรู้วันนี้"
+      ],
+      link: meetingUrl ? { label: "เข้าห้องเรียน (Meeting Room)", url: meetingUrl } : null
+    },
+    {
+      id: 2,
+      title: "Phase 2: Engage & Read",
+      description: "เจาะลึกบทความ และอภิปรายคำศัพท์ใหม่ร่วมกัน",
+      time: "15-20 นาที",
+      actions: [
+        "อ่านบทความร่วมกันแบบออกเสียง (Read-Aloud)",
+        "วิเคราะห์คำศัพท์และความหมายของบทความ",
+        "ตอบคำถามวัดความเข้าใจ (Comprehension Questions)"
+      ]
+    },
+    {
+      id: 3,
+      title: "Phase 3: Interactive Lesson",
+      description: "เริ่มคลาสเรียนอัจฉริยะแบบ Interactive Real-time",
+      time: "15-20 นาที",
+      actions: [
+        "สแกนเข้าห้องเรียนอัจฉริยะ (Kahoot-style)",
+        "ฝึกฝนทักษะการตอบคำถามแบบ Real-time",
+        "สะสมคะแนนจากกิจกรรมสนุกๆ ร่วมกัน"
+      ],
+      link: {
+        label: "เปิดห้องเรียน Interactive",
+        url: `/lesson/${classId}/interactive?articleId=${articleId || "article-default-123"}`
+      }
+    },
+    {
+      id: 4,
+      title: "Phase 4: Wrap-up & Practice",
+      description: "สรุปผลการเรียนรู้ ฝึกฝนไวยากรณ์ และมอบหมายการบ้าน",
+      time: "10 นาที",
+      actions: [
+        "สรุปประเด็นหลักและข้อผิดพลาดที่พบบ่อย",
+        "ฝึกฝนแบบฝึกหัด Grammar ในแอป",
+        "มอบหมายการบ้านและตอบข้อสงสัยเพิ่มเติม"
+      ]
+    }
+  ];
 
-  const progress = Math.round((checkedSteps.length / lessonPlan.length) * 100);
+  const togglePhaseComplete = (id: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCompletedPhases((prev) =>
+      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
+    );
+  };
+
+  const isCompleted = (id: number) => completedPhases.includes(id);
 
   return (
-    <Card className="border-border/60 h-full">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <BookOpen className="h-4 w-4 text-primary" />
-            แผนการสอน {lessonPlan.length} ขั้นตอน
-          </CardTitle>
-          <span className="text-xs text-muted-foreground">
-            {checkedSteps.length}/{lessonPlan.length} เสร็จแล้ว
-          </span>
-        </div>
-        <div className="w-full bg-muted rounded-full h-1.5 mt-3">
-          <div
-            className="bg-primary h-1.5 rounded-full transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          />
+    <Card className="border-border/60 bg-gradient-to-br from-background via-background to-primary/5 h-full overflow-hidden shadow-sm">
+      <CardHeader className="pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <CardTitle className="text-base font-bold flex items-center gap-2.5 text-foreground">
+              <span className="p-1.5 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                <BookOpen className="h-4.5 w-4.5" />
+              </span>
+              แผนการจัดการเรียนรู้ (Lesson Flow Dashboard)
+            </CardTitle>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+              สเต็ปการสอน 4 เฟส ช่วยให้คุณครูจัดกิจกรรมได้ไหลลื่นและมีประสิทธิภาพ
+            </p>
+          </div>
+          <div className="flex items-center gap-2 bg-muted/60 p-1.5 rounded-xl border border-border/50 shrink-0 self-start sm:self-center">
+            <span className="text-xs font-semibold text-muted-foreground px-1.5">
+              เสร็จสิ้น {completedPhases.length}/{phases.length}
+            </span>
+            <div className="w-24 bg-background border rounded-full h-2 overflow-hidden shrink-0">
+              <div
+                className="bg-primary h-full rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${(completedPhases.length / phases.length) * 100}%` }}
+              />
+            </div>
+          </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <ol className="space-y-1">
-          {lessonPlan.map((step, i) => {
-            const done = checkedSteps.includes(i);
-            return (
-              <li
-                key={i}
-                id={`lesson-step-${i + 1}`}
-                onClick={() => toggleStep(i)}
-                className={`flex items-start gap-3 rounded-lg p-2.5 cursor-pointer transition-all ${
-                  done ? "opacity-60" : "hover:bg-muted/60"
+
+      <CardContent className="space-y-3 pb-6">
+        {phases.map((phase) => {
+          const done = isCompleted(phase.id);
+          const active = activePhase === phase.id;
+
+          return (
+            <div
+              key={phase.id}
+              onClick={() => setActivePhase(active ? null : phase.id)}
+              className={`group border rounded-xl p-4 transition-all duration-300 relative overflow-hidden cursor-pointer ${
+                active
+                  ? "border-primary/40 bg-primary/[0.03] shadow-md ring-1 ring-primary/20"
+                  : done
+                  ? "border-emerald-500/30 bg-emerald-500/[0.02] opacity-85 hover:opacity-100"
+                  : "border-border/50 bg-background hover:bg-muted/30 hover:border-border"
+              }`}
+            >
+              {/* Background accent */}
+              <div
+                className={`absolute top-0 bottom-0 left-0 w-1.5 transition-all duration-300 ${
+                  active ? "bg-primary" : done ? "bg-emerald-500" : "bg-transparent group-hover:bg-muted"
                 }`}
-              >
-                <div
-                  className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 transition-all ${
-                    done
-                      ? "bg-primary text-primary-foreground"
-                      : "border-2 border-border text-muted-foreground"
-                  }`}
-                >
-                  {done ? "✓" : i + 1}
+              />
+
+              <div className="pl-3 flex flex-col sm:flex-row items-start justify-between gap-3">
+                <div className="flex-1 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground px-2 py-0.5 rounded-md border border-border/40">
+                      {phase.time}
+                    </span>
+                    {done && (
+                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 flex items-center gap-0.5 animate-pulse">
+                        <CheckCircle2 className="h-3 w-3" /> COMPLETED
+                      </span>
+                    )}
+                  </div>
+
+                  <h3 className={`text-sm font-bold mt-1.5 transition-colors ${active ? "text-primary" : done ? "text-muted-foreground line-through" : "text-foreground"}`}>
+                    {phase.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground font-normal">
+                    {phase.description}
+                  </p>
                 </div>
-                <span
-                  className={`text-sm flex-1 ${
-                    done
-                      ? "line-through text-muted-foreground"
-                      : "text-foreground"
-                  }`}
-                >
-                  {step}
-                </span>
-                {i === 26 && (
-                  <Button
-                    size="xs"
-                    className="h-7 text-[10px] px-2 gap-1"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/lesson/${classId}/interactive?articleId=article-default-123`);
-                    }}
+
+                <div className="flex items-center gap-2 shrink-0 self-end sm:self-start">
+                  <button
+                    onClick={(e) => togglePhaseComplete(phase.id, e)}
+                    className={`w-7 h-7 rounded-lg border flex items-center justify-center transition-all ${
+                      done
+                        ? "bg-emerald-500 border-emerald-600 text-white shadow-sm"
+                        : "bg-background border-border text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5"
+                    }`}
+                    title={done ? "Mark as Incomplete" : "Mark as Complete"}
                   >
-                    <Sparkles className="h-3 w-3" />
-                    Launch
-                  </Button>
-                )}
-              </li>
-            );
-          })}
-        </ol>
+                    {done ? (
+                      <CheckCircle2 className="h-4.5 w-4.5 stroke-[2.5]" />
+                    ) : (
+                      <span className="text-xs font-bold font-mono">{phase.id}</span>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Collapsible Action details */}
+              {active && (
+                <div className="mt-4 pt-3.5 border-t border-border/40 pl-3 space-y-3 animate-in slide-in-from-top-1 duration-200">
+                  <ul className="space-y-1.5">
+                    {phase.actions.map((act, idx) => (
+                      <li key={idx} className="text-xs text-muted-foreground flex items-start gap-2 leading-relaxed">
+                        <span className="text-primary mt-1">•</span>
+                        <span>{act}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {phase.link && (
+                    <div className="pt-2">
+                      {phase.id === 3 ? (
+                        <Button
+                          size="sm"
+                          className="w-full sm:w-auto h-9 text-xs gap-2 font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-all duration-300"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(phase.link!.url);
+                          }}
+                        >
+                          <Sparkles className="h-4 w-4 fill-current" />
+                          {phase.link.label}
+                        </Button>
+                      ) : (
+                        <a
+                          href={phase.link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="inline-block"
+                        >
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-9 text-xs gap-2 font-medium bg-background border-border hover:bg-primary/5 hover:border-primary/30 transition-all"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" />
+                            {phase.link.label}
+                          </Button>
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </CardContent>
     </Card>
   );

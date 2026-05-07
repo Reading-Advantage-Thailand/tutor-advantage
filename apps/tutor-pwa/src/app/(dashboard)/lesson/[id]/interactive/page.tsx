@@ -32,15 +32,16 @@ export default function TutorLobbyPage() {
     error,
     changePhase,
     nudgeStudent,
-    kickStudent
+    kickStudent,
+    deleteSession
   } = useLessonSocket(tutorId, articleId, classId);
 
   const readyCount = participants.filter(p => p.isReady).length;
   const totalCount = participants.length;
   const isEveryoneReady = totalCount > 0 && readyCount === totalCount;
 
-  // If lesson has started (phase > 1), show PhaseManager
-  if (sessionData && sessionData.currentPhase > 1) {
+  // If lesson has started (phase > 0), show PhaseManager
+  if (sessionData && sessionData.currentPhase > 0) {
     return (
       <div className="min-h-screen bg-slate-50 p-6">
         <div className="max-w-7xl mx-auto space-y-6">
@@ -63,6 +64,7 @@ export default function TutorLobbyPage() {
 
            <div className="bg-white rounded-2xl shadow-xl p-8 min-h-[70vh]">
               <PhaseManager
+                sessionData={sessionData}
                 currentPhase={sessionData.currentPhase}
                 participants={participants}
                 totalAnswered={totalAnswered}
@@ -127,9 +129,21 @@ export default function TutorLobbyPage() {
                 <p className="text-xs text-muted-foreground">Session PIN</p>
                 <p className="text-xl font-black text-primary font-mono">{sessionData.pin}</p>
              </div>
-             <Button variant="destructive" size="sm" className="rounded-xl">
-               ปิดห้องเรียน
-             </Button>
+             <div className="flex items-center gap-2">
+               {process.env.NODE_ENV === 'development' && (
+                 <Button 
+                   variant="outline" 
+                   size="sm" 
+                   className="rounded-xl border-orange-500 text-orange-600 hover:bg-orange-50 hover:text-orange-700 font-bold"
+                   onClick={() => deleteSession()}
+                 >
+                   [DEV] Delete Session
+                 </Button>
+               )}
+               <Button variant="destructive" size="sm" className="rounded-xl">
+                 ปิดห้องเรียน
+               </Button>
+             </div>
           </div>
         </div>
       </header>
@@ -268,7 +282,7 @@ export default function TutorLobbyPage() {
                   : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                 }`}
                 disabled={!isEveryoneReady}
-                onClick={() => changePhase(2)} // Jump to the first actual phase
+                onClick={() => changePhase(1)} // Start at Phase 1
               >
                  <Play fill="currentColor" />
                  {isEveryoneReady ? 'เริ่มการสอนเลย!' : `รอนักเรียนพร้อม (${readyCount}/${totalCount})`}

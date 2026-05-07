@@ -12,6 +12,10 @@ export const setupLessonSocket = (io: Server) => {
       console.log(`[Socket] Tutor ${tutorId} creating session for class: ${classId}`);
       try {
         const articleData = await getArticleDetails(articleId);
+        console.log(`================= QUESTIONS LIST =================`);
+        console.log(`Available MCQ questions:`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
+        console.log(`Available SAQ questions:`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
+        console.log(`==================================================`);
         const session = lessonSessionService.createSession(tutorId, socket.id, articleId, articleData, classId);
         socket.join(session.sessionId);
         socket.emit("session_created", {
@@ -85,7 +89,10 @@ export const setupLessonSocket = (io: Server) => {
       const session = lessonSessionService.setPhase(sessionId, phase);
       if (session) {
         // Broadcast new phase to everyone in the room
-        io.to(sessionId).emit("phase_changed", { phase });
+        io.to(sessionId).emit("phase_changed", { phase, phaseSelectedIndices: session.phaseSelectedIndices });
+        io.to(sessionId).emit("participants_updated", {
+          participants: Array.from(session.participants.values())
+        });
         console.log(`Session ${sessionId} changed to phase ${phase}`);
       }
     });
@@ -109,8 +116,124 @@ export const setupLessonSocket = (io: Server) => {
 
       const result = lessonSessionService.submitAnswer(sessionId, studentId, evaluatedAnswer);
       if (result) {
+        // Update participant's total score
+        const participant = result.session.participants.get(studentId);
+        if (participant) {
+          if (result.session.currentPhase === 8 || result.session.currentPhase === 13) {
+            participant.score = (participant.score || 0) + (evaluatedAnswer.aiScore || 0);
+          } else {
+            let correctLabel = "B"; // fallback
+            if (result.session.currentPhase === 7) {
+              const idx = result.session.phaseSelectedIndices?.[7] || 0;
+              const mcqQuestion = result.session.articleData?.multipleChoiceQuestions?.[idx];
+              if (mcqQuestion) {
+                const rawAnswer = mcqQuestion.answer;
+                const optionKeys = ['option1', 'option2', 'option3', 'option4'];
+                const answerIdx = optionKeys.findIndex(k => mcqQuestion[k] === rawAnswer);
+                if (answerIdx !== -1) {
+                  correctLabel = String.fromCharCode(65 + answerIdx);
+                } else if (['A','B','C','D'].includes(String(rawAnswer).toUpperCase())) {
+                  correctLabel = String(rawAnswer).toUpperCase();
+                }
+              }
+            } else if (result.session.currentPhase === 10) {
+              const words = result.session.articleData?.words || [];
+              const idx = result.session.phaseSelectedIndices?.[10] || 0;
+              const targetWord = words[idx] || words[0];
+              if (targetWord) {
+                const correctTranslation = targetWord.definition?.th || targetWord.translation || "ความหมายที่ถูกต้อง";
+                const distractorWords = words.filter((w: any, i: number) => i !== idx);
+
+                const usedTranslations = new Set<string>([correctTranslation]);
+                const optionsArray: string[] = [correctTranslation];
+
+                distractorWords.forEach((w: any) => {
+                  const trans = w?.definition?.th || w?.translation;
+                  if (trans && !usedTranslations.has(trans) && optionsArray.length < 4) {
+                    usedTranslations.add(trans);
+                    optionsArray.push(trans);
+                  }
+                });
+
+                let fillCounter = 1;
+                while (optionsArray.length < 4) {
+                  const fb = `ความหมายอื่น ${String.fromCharCode(65 + fillCounter)}`;
+                  if (!usedTranslations.has(fb)) {
+                    usedTranslations.add(fb);
+                    optionsArray.push(fb);
+                  }
+                  fillCounter++;
+                }
+
+                const shuffledOptions = [...optionsArray];
+                for (let i = shuffledOptions.length - 1; i > 0; i--) {
+                  const j = Math.floor((i + 1) * 0.47) % (i + 1);
+                  [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+                }
+
+                const newCorrectIdx = shuffledOptions.indexOf(correctTranslation);
+                if (newCorrectIdx !== -1) {
+                  correctLabel = String.fromCharCode(65 + newCorrectIdx);
+                }
+              }
+            } else if (result.session.currentPhase === 11) {
+              const sentences = result.session.articleData?.sentences || [];
+              const idx = result.session.phaseSelectedIndices?.[11] || 0;
+              const targetSentence = typeof sentences[idx] === 'object' ? sentences[idx].sentences : sentences[idx];
+              if (targetSentence) {
+                const words = String(targetSentence).split(' ');
+                const correctWord = words[words.length - 1].replace(/[.,!?]/g, '');
+                const vocabWords = result.session.articleData?.words?.map((w: any) => w.vocabulary || w.word || w.text) || ["Apple", "Banana", "Cat"];
+                const distractors = vocabWords.filter((w: string) => w.toLowerCase() !== correctWord.toLowerCase());
+                
+                const optionsArray = [correctWord, distractors[0] || "Word A", distractors[1] || "Word B", distractors[2] || "Word C"];
+                const shuffledOptions = [...optionsArray];
+                for (let i = shuffledOptions.length - 1; i > 0; i--) {
+                  const j = Math.floor((i + 1) * 0.47) % (i + 1);
+                  [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+                }
+                const newCorrectIdx = shuffledOptions.indexOf(correctWord);
+                if (newCorrectIdx !== -1) {
+                  correctLabel = String.fromCharCode(65 + newCorrectIdx);
+                }
+              }
+            } else if (result.session.currentPhase === 12) {
+              const sentences = result.session.articleData?.sentences || [];
+              const idx = result.session.phaseSelectedIndices?.[12] || 0;
+              const targetSentence = typeof sentences[idx] === 'object' ? sentences[idx].sentences : sentences[idx];
+              if (targetSentence) {
+                const words = String(targetSentence).split(' ').filter((w: any) => String(w).trim().length > 0);
+                const optA = [...words]; optA.push(optA.shift()!);
+                const optB = [...words]; optB.unshift(optB.pop()!);
+                const optC = [...words].reverse();
+                
+                const optionsArray = [targetSentence, optA.join(' '), optB.join(' '), optC.join(' ')];
+                const shuffledOptions = [...optionsArray];
+                for (let i = shuffledOptions.length - 1; i > 0; i--) {
+                  const j = Math.floor((i + 1) * 0.47) % (i + 1);
+                  [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+                }
+                const newCorrectIdx = shuffledOptions.indexOf(targetSentence);
+                if (newCorrectIdx !== -1) {
+                  correctLabel = String.fromCharCode(65 + newCorrectIdx);
+                }
+              }
+            }
+
+            const isCorrect = String(answer).trim().toUpperCase() === correctLabel.trim().toUpperCase();
+            if (isCorrect) {
+              participant.score = (participant.score || 0) + 1;
+            }
+          }
+        }
+
         // Confirm submission to the student
         socket.emit("answer_received", { success: true });
+
+        // Broadcast the participants' updated scores to everyone instantly
+        io.to(result.session.sessionId).emit("participants_updated", {
+          participants: Array.from(result.session.participants.values())
+        });
 
         // Update Tutor with the answer
         const tutorSocketId = result.session.tutorSocketId;
@@ -165,6 +288,16 @@ export const setupLessonSocket = (io: Server) => {
           });
           console.log(`Tutor kicked student ${studentId}`);
         }
+      }
+    });
+
+    // Tutor deletes session
+    socket.on("delete_session", ({ sessionId }) => {
+      const session = lessonSessionService.getSession(sessionId);
+      if (session) {
+        io.to(sessionId).emit("session_deleted", { message: "เซสชันถูกยกเลิกโดยคุณครู" });
+        lessonSessionService.deleteSession(sessionId);
+        console.log(`[Socket] Session ${sessionId} deleted by tutor`);
       }
     });
 
