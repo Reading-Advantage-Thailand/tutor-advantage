@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Trash2,
@@ -14,7 +14,12 @@ import {
   Video,
   ExternalLink,
 } from "lucide-react";
-import { updateClassStatus, deleteClass, updateMeetingUrl } from "./../actions";
+import {
+  updateClassStatus,
+  deleteClass,
+  updateMeetingUrl,
+  getClassArticles,
+} from "./../actions";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -35,6 +40,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { log } from "console";
 
 export function ClassStatusToggle({
   classId,
@@ -197,216 +203,127 @@ export function ReferralLink({ referralLink }: { referralLink: string }) {
   );
 }
 
-export function LessonPlan({ classId, articleId, meetingUrl }: { classId: string; articleId?: string; meetingUrl?: string }) {
-  const [activePhase, setActivePhase] = useState<number | null>(null);
-  const [completedPhases, setCompletedPhases] = useState<number[]>([]);
+export function ArticleSelector({ classId }: { classId: string }) {
   const router = useRouter();
+  const [selectedArticle, setSelectedArticle] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [articles, setArticles] = useState<any[]>([]);
+  const [fetching, setFetching] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const phases = [
-    {
-      id: 1,
-      title: "Phase 1: Warm-up & Prep",
-      description: "ต้อนรับนักเรียน เช็คชื่อ และทบทวนคำศัพท์สำคัญ",
-      time: "5-10 นาที",
-      actions: [
-        "เช็คชื่อและเตรียมความพร้อมนักเรียน (Roll Call)",
-        "ทบทวนคำศัพท์และบทเรียนจากสัปดาห์ที่แล้ว",
-        "เกริ่นหัวข้อและเป้าหมายการเรียนรู้วันนี้"
-      ],
-      link: meetingUrl ? { label: "เข้าห้องเรียน (Meeting Room)", url: meetingUrl } : null
-    },
-    {
-      id: 2,
-      title: "Phase 2: Engage & Read",
-      description: "เจาะลึกบทความ และอภิปรายคำศัพท์ใหม่ร่วมกัน",
-      time: "15-20 นาที",
-      actions: [
-        "อ่านบทความร่วมกันแบบออกเสียง (Read-Aloud)",
-        "วิเคราะห์คำศัพท์และความหมายของบทความ",
-        "ตอบคำถามวัดความเข้าใจ (Comprehension Questions)"
-      ]
-    },
-    {
-      id: 3,
-      title: "Phase 3: Interactive Lesson",
-      description: "เริ่มคลาสเรียนอัจฉริยะแบบ Interactive Real-time",
-      time: "15-20 นาที",
-      actions: [
-        "สแกนเข้าห้องเรียนอัจฉริยะ (Kahoot-style)",
-        "ฝึกฝนทักษะการตอบคำถามแบบ Real-time",
-        "สะสมคะแนนจากกิจกรรมสนุกๆ ร่วมกัน"
-      ],
-      link: {
-        label: "เปิดห้องเรียน Interactive",
-        url: `/lesson/${classId}/interactive?articleId=${articleId || "article-default-123"}`
+  useEffect(() => {
+    async function loadArticles() {
+      try {
+        setFetching(true);
+        const data = await getClassArticles(classId);
+        setArticles(data.articles || []);
+        if (data.articles && data.articles.length > 0) {
+          setSelectedArticle(data.articles[0].id);
+        }
+      } catch (err: any) {
+        console.error(err);
+        setError("ไม่สามารถโหลดรายชื่อบทความได้");
+      } finally {
+        setFetching(false);
       }
-    },
-    {
-      id: 4,
-      title: "Phase 4: Wrap-up & Practice",
-      description: "สรุปผลการเรียนรู้ ฝึกฝนไวยากรณ์ และมอบหมายการบ้าน",
-      time: "10 นาที",
-      actions: [
-        "สรุปประเด็นหลักและข้อผิดพลาดที่พบบ่อย",
-        "ฝึกฝนแบบฝึกหัด Grammar ในแอป",
-        "มอบหมายการบ้านและตอบข้อสงสัยเพิ่มเติม"
-      ]
     }
-  ];
+    loadArticles();
+  }, [classId]);
 
-  const togglePhaseComplete = (id: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCompletedPhases((prev) =>
-      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
-    );
+  const handleStartLesson = () => {
+    if (!selectedArticle) return;
+    setLoading(true);
+    router.push(`/lesson/${classId}/interactive?articleId=${selectedArticle}`);
   };
 
-  const isCompleted = (id: number) => completedPhases.includes(id);
-
   return (
-    <Card className="border-border/60 bg-gradient-to-br from-background via-background to-primary/5 h-full overflow-hidden shadow-sm">
-      <CardHeader className="pb-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <CardTitle className="text-base font-bold flex items-center gap-2.5 text-foreground">
-              <span className="p-1.5 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                <BookOpen className="h-4.5 w-4.5" />
-              </span>
-              แผนการจัดการเรียนรู้ (Lesson Flow Dashboard)
-            </CardTitle>
-            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-              สเต็ปการสอน 4 เฟส ช่วยให้คุณครูจัดกิจกรรมได้ไหลลื่นและมีประสิทธิภาพ
-            </p>
-          </div>
-          <div className="flex items-center gap-2 bg-muted/60 p-1.5 rounded-xl border border-border/50 shrink-0 self-start sm:self-center">
-            <span className="text-xs font-semibold text-muted-foreground px-1.5">
-              เสร็จสิ้น {completedPhases.length}/{phases.length}
-            </span>
-            <div className="w-24 bg-background border rounded-full h-2 overflow-hidden shrink-0">
-              <div
-                className="bg-primary h-full rounded-full transition-all duration-500 ease-out"
-                style={{ width: `${(completedPhases.length / phases.length) * 100}%` }}
-              />
-            </div>
-          </div>
-        </div>
+    <Card className="border-border/60 bg-gradient-to-br from-background via-background to-primary/5 h-[650px] overflow-hidden shadow-sm flex flex-col">
+      <CardHeader className="pb-4 shrink-0">
+        <CardTitle className="text-base font-bold flex items-center gap-2.5 text-foreground">
+          <span className="p-1.5 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+            <BookOpen className="h-4.5 w-4.5" />
+          </span>
+          เลือกบทความ (Select Article)
+        </CardTitle>
+        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+          เลือกบทความที่จะใช้สร้างห้องเรียน Interactive ในวันนี้
+        </p>
       </CardHeader>
 
-      <CardContent className="space-y-3 pb-6">
-        {phases.map((phase) => {
-          const done = isCompleted(phase.id);
-          const active = activePhase === phase.id;
-
-          return (
-            <div
-              key={phase.id}
-              onClick={() => setActivePhase(active ? null : phase.id)}
-              className={`group border rounded-xl p-4 transition-all duration-300 relative overflow-hidden cursor-pointer ${
-                active
-                  ? "border-primary/40 bg-primary/[0.03] shadow-md ring-1 ring-primary/20"
-                  : done
-                  ? "border-emerald-500/30 bg-emerald-500/[0.02] opacity-85 hover:opacity-100"
-                  : "border-border/50 bg-background hover:bg-muted/30 hover:border-border"
-              }`}
-            >
-              {/* Background accent */}
+      <CardContent className="pb-6 flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto space-y-3 pr-1 min-h-0 scrollbar-thin">
+          {fetching ? (
+            <div className="py-24 flex flex-col items-center justify-center text-center gap-2">
+              <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
+              <p className="text-xs text-muted-foreground font-medium">
+                กำลังโหลดรายการบทความ...
+              </p>
+            </div>
+          ) : error ? (
+            <div className="py-24 flex flex-col items-center justify-center text-center gap-2">
+              <p className="text-xs text-destructive font-medium">{error}</p>
+            </div>
+          ) : articles.length === 0 ? (
+            <div className="py-24 flex flex-col items-center justify-center text-center gap-2">
+              <p className="text-xs text-muted-foreground font-medium">
+                ไม่พบบทความสำหรับหนังสือเล่มนี้
+              </p>
+            </div>
+          ) : (
+            articles.map((article, idx) => (
               <div
-                className={`absolute top-0 bottom-0 left-0 w-1.5 transition-all duration-300 ${
-                  active ? "bg-primary" : done ? "bg-emerald-500" : "bg-transparent group-hover:bg-muted"
+                key={article.id}
+                onClick={() => setSelectedArticle(article.id)}
+                className={`group border rounded-xl p-3.5 transition-all duration-300 relative overflow-hidden cursor-pointer ${
+                  selectedArticle === article.id
+                    ? "border-primary/40 bg-primary/[0.03] shadow-md ring-1 ring-primary/20"
+                    : "border-border/50 bg-background hover:bg-muted/30 hover:border-border"
                 }`}
-              />
-
-              <div className="pl-3 flex flex-col sm:flex-row items-start justify-between gap-3">
-                <div className="flex-1 space-y-1">
-                  <div className="flex items-center gap-2">
+              >
+                <div
+                  className={`absolute top-0 bottom-0 left-0 w-1.5 transition-all duration-300 ${
+                    selectedArticle === article.id
+                      ? "bg-primary"
+                      : "bg-transparent group-hover:bg-muted"
+                  }`}
+                />
+                <div className="pl-2.5">
+                  <div className="flex items-center gap-2 mb-1.5">
                     <span className="text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground px-2 py-0.5 rounded-md border border-border/40">
-                      {phase.time}
+                      บทที่ {idx + 1}
                     </span>
-                    {done && (
-                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 flex items-center gap-0.5 animate-pulse">
-                        <CheckCircle2 className="h-3 w-3" /> COMPLETED
+                    {article.cefrLevel && (
+                      <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20">
+                        CEFR {article.cefrLevel}
                       </span>
                     )}
                   </div>
-
-                  <h3 className={`text-sm font-bold mt-1.5 transition-colors ${active ? "text-primary" : done ? "text-muted-foreground line-through" : "text-foreground"}`}>
-                    {phase.title}
-                  </h3>
-                  <p className="text-xs text-muted-foreground font-normal">
-                    {phase.description}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2 shrink-0 self-end sm:self-start">
-                  <button
-                    onClick={(e) => togglePhaseComplete(phase.id, e)}
-                    className={`w-7 h-7 rounded-lg border flex items-center justify-center transition-all ${
-                      done
-                        ? "bg-emerald-500 border-emerald-600 text-white shadow-sm"
-                        : "bg-background border-border text-muted-foreground hover:border-primary/40 hover:text-primary hover:bg-primary/5"
-                    }`}
-                    title={done ? "Mark as Incomplete" : "Mark as Complete"}
+                  <h3
+                    className={`text-sm font-bold mt-1 transition-colors ${selectedArticle === article.id ? "text-primary" : "text-foreground"}`}
                   >
-                    {done ? (
-                      <CheckCircle2 className="h-4.5 w-4.5 stroke-[2.5]" />
-                    ) : (
-                      <span className="text-xs font-bold font-mono">{phase.id}</span>
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* Collapsible Action details */}
-              {active && (
-                <div className="mt-4 pt-3.5 border-t border-border/40 pl-3 space-y-3 animate-in slide-in-from-top-1 duration-200">
-                  <ul className="space-y-1.5">
-                    {phase.actions.map((act, idx) => (
-                      <li key={idx} className="text-xs text-muted-foreground flex items-start gap-2 leading-relaxed">
-                        <span className="text-primary mt-1">•</span>
-                        <span>{act}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {phase.link && (
-                    <div className="pt-2">
-                      {phase.id === 3 ? (
-                        <Button
-                          size="sm"
-                          className="w-full sm:w-auto h-9 text-xs gap-2 font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-all duration-300"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            router.push(phase.link!.url);
-                          }}
-                        >
-                          <Sparkles className="h-4 w-4 fill-current" />
-                          {phase.link.label}
-                        </Button>
-                      ) : (
-                        <a
-                          href={phase.link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="inline-block"
-                        >
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-9 text-xs gap-2 font-medium bg-background border-border hover:bg-primary/5 hover:border-primary/30 transition-all"
-                          >
-                            <ExternalLink className="h-3.5 w-3.5" />
-                            {phase.link.label}
-                          </Button>
-                        </a>
-                      )}
-                    </div>
+                    {article.title}
+                  </h3>
+                  {article.summary && (
+                    <p className="text-xs text-muted-foreground font-normal line-clamp-2 mt-1.5 leading-relaxed">
+                      {article.summary}
+                    </p>
                   )}
                 </div>
-              )}
-            </div>
-          );
-        })}
+              </div>
+            ))
+          )}
+        </div>
+
+        <div className="pt-4 shrink-0">
+          <Button
+            className="w-full gap-2 font-bold shadow-md transition-all duration-300 py-5"
+            disabled={!selectedArticle || loading || fetching}
+            onClick={handleStartLesson}
+          >
+            {loading ? "กำลังสร้างห้องเรียน..." : "สร้างห้องเรียน & เริ่มสอน"}
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
@@ -456,7 +373,9 @@ export function DeleteClassButton({ classId }: { classId: string }) {
         <DialogHeader>
           <DialogTitle>ยืนยันการลบคลาส?</DialogTitle>
           <DialogDescription>
-            การดำเนินการนี้จะลบข้อมูลคลาส นักเรียน และรายการชำระเงินทั้งหมดที่เกี่ยวข้องถาวรคลาสนี้ (เฉพาะโหมด DEV เท่านั้น)
+            การดำเนินการนี้จะลบข้อมูลคลาส นักเรียน
+            และรายการชำระเงินทั้งหมดที่เกี่ยวข้องถาวรคลาสนี้ (เฉพาะโหมด DEV
+            เท่านั้น)
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4">
@@ -514,7 +433,9 @@ export function MeetingUrlEditor({
               <Video className="h-5 w-5 text-primary" />
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-bold text-foreground">ห้องเรียนออนไลน์</p>
+              <p className="text-sm font-bold text-foreground">
+                ห้องเรียนออนไลน์
+              </p>
               <p className="text-xs text-muted-foreground truncate">
                 {initialUrl || "ยังไม่ได้ระบุลิงก์"}
               </p>
@@ -610,14 +531,80 @@ export function FeatureLessonButton({
         <p className="text-xs text-muted-foreground">
           เริ่มกิจกรรมแบบ Kahoot! ให้นักเรียนมีส่วนร่วมผ่านมือถือแบบ Real-time
         </p>
-        <Button 
-          className="w-full gap-2 font-bold" 
-          onClick={() => router.push(`/lesson/${classId}/interactive?articleId=${articleId}`)}
+        <Button
+          className="w-full gap-2 font-bold"
+          onClick={() =>
+            router.push(`/lesson/${classId}/interactive?articleId=${articleId}`)
+          }
         >
           เริ่มสอนตอนนี้เลย
           <ChevronRight className="h-4 w-4" />
         </Button>
       </CardContent>
     </Card>
+  );
+}
+
+export function StudentAvatars({
+  enrolledStudents,
+}: {
+  enrolledStudents: any[];
+}) {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+  return (
+    <div className="flex flex-wrap gap-3">
+      {enrolledStudents.map((s: any, idx: number) => (
+        <div
+          key={idx}
+          className="relative flex flex-col items-center"
+          onMouseEnter={() => setHoveredIdx(idx)}
+          onMouseLeave={() => setHoveredIdx(null)}
+        >
+          {/* Avatar with paid checkmark */}
+          <div className="w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/15 flex items-center justify-center text-sm font-bold text-primary uppercase border-2 border-border/50 hover:border-primary/50 transition-all duration-300 relative cursor-pointer shadow-sm">
+            {s.name[0] || "?"}
+            {s.paid && (
+              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full border border-background flex items-center justify-center shadow-sm">
+                <svg
+                  className="w-2.5 h-2.5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth="4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+            )}
+          </div>
+
+          {/* Premium Hover Tooltip using React state */}
+          {hoveredIdx === idx && (
+            <div className="absolute bottom-full mb-2.5 flex flex-col items-center z-50 pointer-events-none animate-in fade-in zoom-in duration-150">
+              <div className="bg-popover border border-border rounded-xl px-3 py-2 shadow-xl text-center text-xs w-44 backdrop-blur-md">
+                <p className="font-bold text-popover-foreground text-sm truncate">
+                  {s.name}
+                </p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">
+                  สมัครเมื่อ: {s.enrolled}
+                </p>
+                <p
+                  className={`text-[10px] font-bold uppercase tracking-wider mt-1.5 flex items-center justify-center gap-1 ${s.paid ? "text-emerald-500" : "text-orange-500"}`}
+                >
+                  {s.paid ? "✓ ชำระเงินแล้ว" : "ยังไม่ชำระเงิน"}
+                </p>
+              </div>
+              {/* Small Tooltip Triangle */}
+              <div className="w-2 h-2 bg-popover border-r border-b border-border rotate-45 -mt-1 shadow-sm" />
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
   );
 }

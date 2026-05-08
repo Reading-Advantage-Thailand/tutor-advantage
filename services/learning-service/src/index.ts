@@ -23,6 +23,7 @@ import {
   deleteClass,
   updateMeetingUrl,
   getAvailableClasses,
+  getClassArticles,
 } from "./controllers/classController";
 import { generateReferral } from "./controllers/referralController";
 import {
@@ -70,6 +71,7 @@ app.get("/v1/classes/available", authMiddleware, getAvailableClasses);
 app.get("/v1/classes/:classId", authMiddleware, getClassById);
 app.delete("/v1/classes/:classId", authMiddleware, deleteClass);
 app.patch("/v1/classes/:classId/meeting-url", authMiddleware, updateMeetingUrl);
+app.get("/v1/classes/:classId/articles", authMiddleware, getClassArticles);
 
 // Protected Referral Routes
 app.post("/v1/referrals/generate", authMiddleware, generateReferral);

@@ -224,16 +224,37 @@ export default function PlayLessonPage() {
             {/* Subtle particle background effect */}
             <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at center, currentColor 2px, transparent 2px)', backgroundSize: '24px 24px' }} />
             
-            <div className="relative z-10 flex flex-col items-center text-center max-w-sm w-full">
-              <div className="text-8xl mb-8 float-emoji drop-shadow-2xl">👀</div>
-              <h2 className="text-3xl font-black text-foreground tracking-tight mb-3">โปรดดูที่หน้าจอ</h2>
-              <p className="text-muted-foreground font-medium text-lg mb-8">Please look at the screen</p>
+            <div className="relative z-10 flex flex-col items-center text-center max-w-sm w-full shrink-0">
+              <div className="text-6xl mb-4 float-emoji drop-shadow-2xl shrink-0">👀</div>
+              <h2 className="text-2xl font-black text-foreground tracking-tight mb-1 shrink-0">โปรดดูที่หน้าจอ</h2>
+              <p className="text-sm text-muted-foreground font-medium mb-5 shrink-0">Please look at the screen</p>
               
-              <div className="bg-card border border-border shadow-lg p-5 rounded-3xl w-full flex flex-col items-center">
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">สถานะปัจจุบัน</p>
-                <div className="flex items-center gap-3 w-full bg-primary/10 p-3 rounded-2xl border border-primary/20">
+              <div 
+                className="bg-card border border-border shadow-lg rounded-3xl w-full shrink-0"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  marginTop: "40px",
+                  alignItems: "center",
+                  padding: "0px",
+                  paddingBottom: "5px",
+                  boxSizing: "border-box"
+                }}
+              >
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3 shrink-0">สถานะปัจจุบัน</p>
+                <div 
+                  className="bg-primary/10 rounded-2xl border border-primary/20 shrink-0"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    width: "100%",
+                    padding: "16px",
+                    boxSizing: "border-box"
+                  }}
+                >
                   <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-xl shrink-0">📖</div>
-                  <div className="text-left">
+                  <div className="text-left shrink-0">
                     <p className="text-xs text-primary font-bold">คุณครูกำลังสอน</p>
                     <p className="text-sm font-black text-foreground">{phaseNames[currentPhase] || `Phase ${currentPhase}`}</p>
                   </div>

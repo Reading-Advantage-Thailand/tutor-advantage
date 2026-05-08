@@ -200,7 +200,11 @@ export default function TutorLobbyPage() {
                    {articleData?.title || 'บทเรียนกำลังโหลด...'}
                  </h2>
                  <p className="text-sm opacity-90 line-clamp-2">
-                    {articleData?.description || 'ไม่มีคำอธิบายสำหรับบทเรียนนี้'}
+                    {articleData?.translated_summary?.th?.[0] || 
+                     articleData?.summary?.th?.[0] || 
+                     (typeof articleData?.summary === "string" ? articleData.summary : "") || 
+                     articleData?.description || 
+                     "ไม่มีคำอธิบายสำหรับบทเรียนนี้"}
                  </p>
               </div>
               <CardContent className="p-5 bg-card">

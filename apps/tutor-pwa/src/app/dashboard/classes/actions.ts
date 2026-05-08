@@ -133,3 +133,26 @@ export async function updateMeetingUrl(classId: string, meetingUrl: string) {
   revalidatePath(`/dashboard/classes/${classId}`);
   return res.json();
 }
+
+export async function getClassArticles(classId: string) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("tutor_session")?.value;
+  
+  if (!token) {
+    throw new Error("Unauthorized");
+  }
+
+  const res = await fetch(`http://localhost:3002/v1/classes/${classId}/articles`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+  
+  if (!res.ok) {
+    const errText = await res.text().catch(() => "");
+    console.error(`[getClassArticles Error] status: ${res.status}, body: ${errText}`);
+    throw new Error(`Failed to fetch class articles: ${errText || res.statusText}`);
+  }
+ 
+  return res.json();
+}

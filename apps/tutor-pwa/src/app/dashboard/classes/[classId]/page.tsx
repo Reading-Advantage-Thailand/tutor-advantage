@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { ReferralLink, LessonPlan, ClassStatusToggle, MeetingUrlEditor, FeatureLessonButton } from "./client-components";
+import { ReferralLink, ArticleSelector, ClassStatusToggle, MeetingUrlEditor, StudentAvatars } from "./client-components";
 import { notFound } from "next/navigation";
 
 async function getClassData(classId: string, token: string) {
@@ -70,8 +70,6 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
 
           <ReferralLink referralLink={cls.referralLink} />
 
-          {/* Feature Lesson Entry Point */}
-          <FeatureLessonButton classId={classId} articleId={cls.articleId || "article-default-123"} />
 
           {/* Students */}
           <Card className="border-border/60">
@@ -81,42 +79,15 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
                 นักเรียน ({cls.students}/{cls.maxStudents} คน)
               </CardTitle>
             </CardHeader>
-            <CardContent className="divide-y divide-border/50">
-              {cls.enrolledStudents.length === 0 && (
-                <div className="py-4 text-center text-sm text-muted-foreground">
-                  ยังไม่มีนักเรียนสมัคร
-                </div>
-              )}
-              {cls.enrolledStudents.map((s: any, idx: number) => ( // eslint-disable-line @typescript-eslint/no-explicit-any
-                <div
-                  key={idx}
-                  className="flex items-center justify-between py-2.5"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary uppercase">
-                      {s.name[0] || "?"}
-                    </div>
-                    <p className="text-sm font-medium text-foreground">{s.name}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground hidden sm:inline-block">
-                      {s.enrolled}
-                    </span>
-                    {s.paid && (
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-medium whitespace-nowrap">
-                        ชำระแล้ว
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
+            <CardContent className="p-4">
+              <StudentAvatars enrolledStudents={cls.enrolledStudents} />
             </CardContent>
           </Card>
         </div>
 
-        {/* Right Column (Lesson Plan) */}
+        {/* Right Column (Article Selector) */}
         <div className="lg:col-span-7">
-          <LessonPlan classId={classId} articleId={cls.articleId || "article-default-123"} meetingUrl={cls.meetingUrl} />
+          <ArticleSelector classId={classId} />
         </div>
       </div>
     </div>
