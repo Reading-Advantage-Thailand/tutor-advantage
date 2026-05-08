@@ -965,3 +965,78 @@ body { background-color: var(--surface-bg); color: var(--text-primary); }
   .hero-section { padding: 72px 40px 56px !important; }
   .page-content { padding-inline: 24px !important; }
 }
+
+/* ═══════════════════════════════════════════════════
+   INTERACTIVE LESSON GAME STYLES
+   ═══════════════════════════════════════════════════ */
+
+/* 3D Button press effect for MCQ */
+.btn-3d {
+  transition: transform 80ms ease-in, box-shadow 80ms ease-in;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.btn-3d:active {
+  transform: translateY(4px);
+}
+
+/* Score ring animation */
+@keyframes score-ring-fill {
+  from { stroke-dashoffset: 283; }
+}
+
+/* Phase transition */
+@keyframes phase-slide-up {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.phase-enter {
+  animation: phase-slide-up 400ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Floating dots animation for waiting state */
+@keyframes float-dot {
+  0%, 80%, 100% { transform: scale(0); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+.loading-dots span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  margin: 0 3px;
+  animation: float-dot 1.4s infinite ease-in-out both;
+}
+.loading-dots span:nth-child(1) { animation-delay: 0s; }
+.loading-dots span:nth-child(2) { animation-delay: 0.16s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.32s; }
+
+/* Gentle float for "look at screen" emoji */
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.float-emoji {
+  animation: gentle-float 3s ease-in-out infinite;
+}
+
+/* Celebration confetti particles */
+@keyframes confetti-drift {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(80px) rotate(720deg); opacity: 0; }
+}
+
+/* Pulse ring for ready status */
+@keyframes ready-pulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+.ready-ring::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  border: 2px solid currentColor;
+  animation: ready-pulse 1.5s ease-out infinite;
+}

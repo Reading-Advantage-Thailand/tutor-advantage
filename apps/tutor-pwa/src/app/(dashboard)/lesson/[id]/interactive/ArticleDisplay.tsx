@@ -11,7 +11,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 }) => {
   if (!articleData) {
     return (
-      <div className="flex-1 flex items-center justify-center text-gray-400">
+      <div className="flex-1 flex items-center justify-center text-muted-foreground">
         Loading article content...
       </div>
     );
@@ -189,30 +189,26 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       <div className="flex-1 flex flex-col items-center justify-center py-8 px-6 w-full animate-in fade-in duration-500">
         {/* Hero Banner */}
         <div
-          className="w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl mb-8"
-          style={{
-            background:
-              "linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #A855F7 100%)",
-          }}
+          className="w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl mb-8 bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 dark:from-indigo-950 dark:via-purple-900 dark:to-fuchsia-950"
         >
           <div className="p-10 text-white text-center">
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-bold mb-6">
+            <div className="inline-flex items-center gap-2 bg-black/20 dark:bg-black/40 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-bold mb-6">
               {articleData.genre && <span>{articleData.genre}</span>}
               {articleData.genre && articleData.cefr_level && <span className="opacity-50">·</span>}
               {articleData.cefr_level && <span>CEFR: {articleData.cefr_level}</span>}
               {articleData.cefr_level && articleData.ra_level && <span className="opacity-50">·</span>}
               {articleData.ra_level && <span>RA Level: {articleData.ra_level}</span>}
             </div>
-            <h1 className="text-5xl font-black mb-4 leading-tight animate-in zoom-in duration-700">
+            <h1 className="text-5xl font-black mb-4 leading-tight animate-in zoom-in duration-700 text-white">
               {articleData.title}
             </h1>
-            <p className="text-white/80 text-xl max-w-2xl mx-auto leading-relaxed">
+            <p className="text-white/90 dark:text-white/80 text-xl max-w-2xl mx-auto leading-relaxed">
               {articleData.translated_summary?.th?.[0] ||
                 articleData.summary ||
                 "ในบทเรียนนี้ เราจะมาฝึกทักษะการอ่านและเรียนรู้คำศัพท์ใหม่ๆ ไปด้วยกัน"}
             </p>
           </div>
-          <div className="flex items-center justify-center gap-6 bg-black/20 py-4 px-8">
+          <div className="flex items-center justify-center gap-6 bg-black/20 dark:bg-black/40 py-4 px-8">
             <div className="text-center">
               <p className="text-white/60 text-xs uppercase tracking-widest">
                 คำศัพท์
@@ -259,13 +255,13 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           ].map((item, i) => (
             <div
               key={i}
-              className="bg-indigo-50 border-2 border-indigo-100 rounded-2xl p-5 text-center hover:border-indigo-300 hover:shadow-md transition-all"
+              className="bg-card border-2 border-border rounded-2xl p-5 text-center hover:border-indigo-300 hover:shadow-md transition-all"
             >
               <div className="text-3xl mb-2">{item.icon}</div>
-              <p className="font-bold text-indigo-900 text-sm mb-1">
+              <p className="font-bold text-foreground text-sm mb-1">
                 {item.title}
               </p>
-              <p className="text-indigo-600 text-xs">{item.desc}</p>
+              <p className="text-primary text-xs">{item.desc}</p>
             </div>
           ))}
         </div>
@@ -278,39 +274,39 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     const cardColors = [
       {
         bg: "bg-purple-500",
-        light: "bg-purple-50",
-        border: "border-purple-200",
-        text: "text-purple-700",
+        light: "bg-purple-500/10",
+        border: "border-purple-500/30",
+        text: "text-purple-700 dark:text-purple-300",
       },
       {
         bg: "bg-fuchsia-500",
-        light: "bg-fuchsia-50",
-        border: "border-fuchsia-200",
-        text: "text-fuchsia-700",
+        light: "bg-fuchsia-500/10",
+        border: "border-fuchsia-500/30",
+        text: "text-fuchsia-700 dark:text-fuchsia-300",
       },
       {
         bg: "bg-violet-500",
-        light: "bg-violet-50",
-        border: "border-violet-200",
-        text: "text-violet-700",
+        light: "bg-violet-500/10",
+        border: "border-violet-500/30",
+        text: "text-violet-700 dark:text-violet-300",
       },
       {
         bg: "bg-pink-500",
-        light: "bg-pink-50",
-        border: "border-pink-200",
-        text: "text-pink-700",
+        light: "bg-pink-500/10",
+        border: "border-pink-500/30",
+        text: "text-pink-700 dark:text-pink-300",
       },
       {
         bg: "bg-indigo-500",
-        light: "bg-indigo-50",
-        border: "border-indigo-200",
-        text: "text-indigo-700",
+        light: "bg-indigo-500/10",
+        border: "border-indigo-500/30",
+        text: "text-indigo-700 dark:text-indigo-300",
       },
       {
         bg: "bg-rose-500",
-        light: "bg-rose-50",
-        border: "border-rose-200",
-        text: "text-rose-700",
+        light: "bg-rose-500/10",
+        border: "border-rose-500/30",
+        text: "text-rose-700 dark:text-rose-300",
       },
     ];
 
@@ -318,10 +314,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       <div className="flex-1 flex flex-col items-center py-8 px-6 w-full animate-in fade-in duration-500">
         <div className="flex items-center gap-4 mb-8 w-full max-w-5xl">
           <div className="flex-1">
-            <h2 className="text-3xl font-black text-purple-900">
+            <h2 className="text-3xl font-black text-purple-900 dark:text-purple-100">
               Vocabulary Preview
             </h2>
-            <p className="text-purple-500 text-sm mt-1">
+            <p className="text-purple-500 dark:text-purple-400 text-sm mt-1">
               Phase 2 · ปูพื้นคำศัพท์ก่อนอ่าน
             </p>
           </div>
@@ -389,7 +385,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
                   {/* Thai translation — always visible */}
                   {defTh && (
-                    <p className="text-slate-700 font-semibold text-sm leading-snug">
+                    <p className="text-foreground font-semibold text-sm leading-snug">
                       {defTh}
                     </p>
                   )}
@@ -397,11 +393,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                   {/* English definition + Thai explanation translation */}
                   {defEn && (
                     <div className="mt-auto space-y-1">
-                      <p className="text-slate-400 text-xs italic leading-snug">
+                      <p className="text-muted-foreground text-xs italic leading-snug">
                         {defEn}
                       </p>
                       {autoVocabEnTh[index] && (
-                        <p className="text-purple-600 font-semibold text-xs leading-snug border-t border-purple-100/50 pt-1">
+                        <p className="text-purple-600 dark:text-purple-400 font-semibold text-xs leading-snug border-t border-purple-500/20 pt-1">
                           💡 {autoVocabEnTh[index]}
                         </p>
                       )}
@@ -416,7 +412,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           })}
         </div>
 
-        <div className="mt-6 bg-purple-50 border border-purple-100 rounded-xl px-6 py-3 text-purple-700 text-sm font-medium">
+        <div className="mt-6 bg-muted border border-border rounded-xl px-6 py-3 text-purple-700 dark:text-purple-400 text-sm font-medium">
           🔊 กดปุ่มลำโพงเพื่อฟังการออกเสียง · แนะนำให้นักเรียนอ่านตามทีละคำ
         </div>
       </div>
@@ -439,29 +435,29 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                 Phase 3
               </span>
-              <span className="bg-blue-50 text-blue-600 text-xs font-bold px-3 py-1 rounded-full border border-blue-100">
+              <span className="bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-bold px-3 py-1 rounded-full border border-blue-500/20">
                 First Reading
               </span>
               {articleData.cefr_level && (
-                <span className="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1 rounded-full">
+                <span className="bg-muted text-muted-foreground text-xs font-bold px-3 py-1 rounded-full">
                   CEFR {articleData.cefr_level}
                 </span>
               )}
             </div>
-            <h2 className="text-3xl font-black text-slate-800">
+            <h2 className="text-3xl font-black text-foreground">
               {articleData.title}
             </h2>
           </div>
           <div className="flex gap-3">
-            <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 text-center">
-              <p className="text-blue-700 font-black text-xl">{wordCount}</p>
-              <p className="text-blue-400 text-xs">words</p>
+            <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl px-4 py-3 text-center">
+              <p className="text-blue-700 dark:text-blue-300 font-black text-xl">{wordCount}</p>
+              <p className="text-blue-500 dark:text-blue-400 text-xs">words</p>
             </div>
-            <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 text-center">
-              <p className="text-blue-700 font-black text-xl">
+            <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl px-4 py-3 text-center">
+              <p className="text-blue-700 dark:text-blue-300 font-black text-xl">
                 ~{readingTime}m
               </p>
-              <p className="text-blue-400 text-xs">reading</p>
+              <p className="text-blue-500 dark:text-blue-400 text-xs">reading</p>
             </div>
           </div>
         </div>
@@ -469,9 +465,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         {/* Article body */}
         <div className="w-full max-w-5xl grid grid-cols-12 gap-6">
           <div className="col-span-12 md:col-span-8">
-            <div className="bg-white rounded-2xl shadow-xl border-t-4 border-blue-500 p-10">
+            <div className="bg-card rounded-2xl shadow-xl border-t-4 border-blue-500 p-10">
               <p
-                className="text-slate-800 text-xl leading-[2.2] font-medium"
+                className="text-foreground text-xl leading-[2.2] font-medium"
                 style={{ fontFamily: "Georgia, serif" }}
               >
                 {articleData.passage}
@@ -479,11 +475,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             </div>
           </div>
           <div className="col-span-12 md:col-span-4 space-y-4">
-            <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5">
-              <h4 className="font-bold text-blue-900 text-sm mb-3 flex items-center gap-2">
+            <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-5">
+              <h4 className="font-bold text-blue-900 dark:text-blue-200 text-sm mb-3 flex items-center gap-2">
                 <span>📖</span> Tutor Guide
               </h4>
-              <ul className="text-blue-800 text-xs space-y-2">
+              <ul className="text-blue-800 dark:text-blue-300 text-xs space-y-2">
                 <li className="flex gap-2">
                   <span>1.</span> ให้นักเรียนอ่านในใจก่อน
                 </li>
@@ -498,11 +494,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 </li>
               </ul>
             </div>
-            <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5">
-              <h4 className="font-bold text-slate-700 text-sm mb-2">
+            <div className="bg-muted border border-border rounded-2xl p-5">
+              <h4 className="font-bold text-foreground text-sm mb-2">
                 Silent Reading Mode
               </h4>
-              <p className="text-slate-500 text-xs">
+              <p className="text-muted-foreground text-xs">
                 นักเรียนอ่านในใจพร้อมกัน · ครูสังเกต body language
               </p>
             </div>
@@ -530,7 +526,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           return (
             <mark
               key={i}
-              className="bg-amber-200 text-amber-900 font-bold rounded px-0.5 not-italic"
+              className="bg-[var(--highlight-bg)] text-[var(--highlight-text)] font-bold rounded px-0.5 not-italic"
             >
               {part}
             </mark>
@@ -546,12 +542,12 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           <span className="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
             Phase 4
           </span>
-          <span className="bg-amber-50 text-amber-700 text-xs font-bold px-3 py-1 rounded-full border border-amber-200">
+          <span className="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-xs font-bold px-3 py-1 rounded-full border border-amber-500/20">
             Vocabulary Focus
           </span>
-          <p className="text-slate-500 text-sm ml-2">
+          <p className="text-muted-foreground text-sm ml-2">
             คำที่{" "}
-            <mark className="bg-amber-200 text-amber-900 px-1 rounded not-italic">
+            <mark className="bg-[var(--highlight-bg)] text-[var(--highlight-text)] px-1 rounded not-italic">
               highlight
             </mark>{" "}
             คือ vocabulary ในบทเรียนนี้
@@ -561,12 +557,12 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         <div className="w-full max-w-5xl grid grid-cols-12 gap-6">
           {/* Passage with highlights */}
           <div className="col-span-12 md:col-span-7">
-            <div className="bg-white rounded-2xl shadow-xl border-t-4 border-amber-400 p-8">
+            <div className="bg-card rounded-2xl shadow-xl border-t-4 border-amber-400 p-8">
               <h3 className="text-sm font-bold text-amber-600 uppercase tracking-widest mb-4">
                 Reading Passage
               </h3>
               <p
-                className="text-slate-800 text-lg leading-[2.4] font-medium"
+                className="text-foreground text-lg leading-[2.4] font-medium"
                 style={{ fontFamily: "Georgia, serif" }}
               >
                 {highlightPassage(articleData.passage)}
@@ -576,8 +572,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
           {/* Vocab sidebar */}
           <div className="col-span-12 md:col-span-5">
-            <div className="bg-purple-50 border-2 border-purple-100 rounded-2xl p-5 sticky top-4">
-              <h3 className="text-sm font-bold text-purple-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+            <div className="bg-purple-500/10 border-2 border-purple-500/20 rounded-2xl p-5 sticky top-4">
+              <h3 className="text-sm font-bold text-purple-800 dark:text-purple-300 uppercase tracking-widest mb-4 flex items-center gap-2">
                 <span>📚</span> Vocabulary List
               </h3>
               <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
@@ -597,21 +593,21 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                   return (
                     <div
                       key={i}
-                      className="bg-white rounded-xl p-3 border border-purple-100 shadow-sm"
+                      className="bg-card rounded-xl p-3 border border-purple-500/20 shadow-sm"
                     >
-                      <p className="font-black text-purple-900 text-base">
+                      <p className="font-black text-purple-900 dark:text-purple-100 text-base">
                         {String(wordText)}
                       </p>
                       {defTh && (
-                        <p className="text-purple-700 text-sm font-medium mt-0.5">
+                        <p className="text-purple-700 dark:text-purple-300 text-sm font-medium mt-0.5">
                           {defTh}
                         </p>
                       )}
                       {defEn && (
                         <div className="mt-1 space-y-1">
-                          <p className="text-slate-400 text-xs italic">{defEn}</p>
+                          <p className="text-muted-foreground text-xs italic">{defEn}</p>
                           {autoVocabEnTh[i] && (
-                            <p className="text-purple-600 font-semibold text-xs border-t border-purple-100/50 pt-1">
+                            <p className="text-purple-600 dark:text-purple-400 font-semibold text-xs border-t border-purple-500/20 pt-1">
                               💡 {autoVocabEnTh[i]}
                             </p>
                           )}
@@ -639,10 +635,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           <span className="bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
             Phase 5
           </span>
-          <span className="bg-teal-50 text-teal-700 text-xs font-bold px-3 py-1 rounded-full border border-teal-200">
+          <span className="bg-teal-500/10 text-teal-700 dark:text-teal-400 text-xs font-bold px-3 py-1 rounded-full border border-teal-500/20">
             Deep Reading
           </span>
-          <span className="bg-slate-100 text-slate-500 text-xs font-medium px-3 py-1 rounded-full">
+          <span className="bg-muted text-muted-foreground text-xs font-medium px-3 py-1 rounded-full">
             Analytical Mode
           </span>
         </div>
@@ -665,11 +661,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
           {/* Comprehension Guide */}
           <div className="col-span-12 md:col-span-4 space-y-4">
-            <div className="bg-teal-50 border-2 border-teal-100 rounded-2xl p-5">
-              <h4 className="font-bold text-teal-900 text-sm mb-3 flex items-center gap-2">
-                🔍 Comprehension Guide
+            <div className="bg-muted border-2 border-border rounded-2xl p-5">
+              <h4 className="font-bold text-foreground text-sm mb-3 flex items-center gap-2">
+                <span>🔍</span> Comprehension Guide
               </h4>
-              <p className="text-teal-700 text-xs mb-4">
+              <p className="text-muted-foreground text-xs mb-4">
                 ช่วยนักเรียนหาคำตอบสำหรับคำถามต่อไปนี้:
               </p>
               {comprehensionQuestions.length > 0 ? (
@@ -677,26 +673,26 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                   {comprehensionQuestions.map((q: any, i: number) => (
                     <div
                       key={i}
-                      className="bg-white rounded-xl p-3 border border-teal-100"
+                      className="bg-card rounded-xl p-3 border border-border"
                     >
-                      <p className="text-teal-800 text-xs font-semibold">
+                      <p className="text-foreground text-xs font-semibold">
                         Q{i + 1}. {q.question}
                       </p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-teal-400 text-xs italic">
+                <p className="text-muted-foreground text-xs italic">
                   ให้นักเรียนจับประเด็นสำคัญของบทความ
                 </p>
               )}
             </div>
 
-            <div className="bg-slate-800 rounded-2xl p-5">
-              <h4 className="font-bold text-slate-200 text-sm mb-2">
+            <div className="bg-card border border-border rounded-2xl p-5">
+              <h4 className="font-bold text-foreground text-sm mb-2">
                 🎙 Tutor Actions
               </h4>
-              <ul className="text-slate-400 text-xs space-y-2">
+              <ul className="text-muted-foreground text-xs space-y-2">
                 <li>· อ่านออกเสียงพร้อมนักเรียน</li>
                 <li>· หยุดอธิบาย context ที่ยาก</li>
                 <li>· ให้นักเรียน underline ประโยคสำคัญ</li>
@@ -711,11 +707,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   /* ─── Phase 6: Key Sentences ─────────────────────────────── */
   if (phase === 6) {
     const sentenceColors = [
-      "border-green-400 bg-green-50",
-      "border-emerald-400 bg-emerald-50",
-      "border-teal-400 bg-teal-50",
-      "border-cyan-400 bg-cyan-50",
-      "border-lime-400 bg-lime-50",
+      "border-green-500/40 bg-green-500/10",
+      "border-emerald-500/40 bg-emerald-500/10",
+      "border-teal-500/40 bg-teal-500/10",
+      "border-cyan-500/40 bg-cyan-500/10",
+      "border-lime-500/40 bg-lime-500/10",
     ];
     const dotColors = [
       "bg-green-500",
@@ -751,7 +747,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           return (
             <mark
               key={i}
-              className="bg-amber-200 text-amber-900 font-bold rounded px-0.5 not-italic"
+              className="bg-[var(--highlight-bg)] text-[var(--highlight-text)] font-bold rounded px-0.5 not-italic"
             >
               {part}
             </mark>
@@ -767,10 +763,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           <span className="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
             Phase 6
           </span>
-          <span className="bg-green-50 text-green-700 text-xs font-bold px-3 py-1 rounded-full border border-green-200">
+          <span className="bg-green-500/10 text-green-700 dark:text-green-400 text-xs font-bold px-3 py-1 rounded-full border border-green-500/20">
             Key Sentences
           </span>
-          <p className="text-slate-400 text-xs ml-2">
+          <p className="text-muted-foreground text-xs ml-2">
             {keySentences.length} ประโยคที่มีคำศัพท์ประกอบ
           </p>
         </div>
@@ -778,11 +774,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         <div className="w-full max-w-5xl grid grid-cols-12 gap-6">
           {/* Timeline */}
           <div className="col-span-12 md:col-span-6">
-            <h3 className="text-sm font-bold text-green-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-green-800 dark:text-green-300 uppercase tracking-widest mb-4 flex items-center gap-2">
               <span>📝</span> Key Sentences Timeline
             </h3>
             <div className="relative">
-              <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-green-200" />
+              <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-green-500/30" />
               <div className="space-y-4">
                 {keySentences.map((item: any, index: number) => {
                   const sentenceText =
@@ -803,7 +799,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                       <div
                         className={`flex-1 border-l-4 rounded-xl p-4 shadow-sm ${c}`}
                       >
-                        <p className="text-slate-800 font-semibold text-base leading-relaxed">
+                        <p className="text-foreground font-semibold text-base leading-relaxed">
                           {highlightVocab(String(sentenceText))}
                         </p>
                       </div>
@@ -811,7 +807,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                   );
                 })}
                 {keySentences.length === 0 && (
-                  <p className="text-slate-400 text-sm pl-10">
+                  <p className="text-muted-foreground text-sm pl-10">
                     ไม่มีประโยคที่มีคำศัพท์ในบทเรียนนี้
                   </p>
                 )}
@@ -821,19 +817,19 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
           {/* Passage with context */}
           <div className="col-span-12 md:col-span-6">
-            <h3 className="text-sm font-bold text-green-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-green-800 dark:text-green-300 uppercase tracking-widest mb-4 flex items-center gap-2">
               <span>📖</span> Passage Reference
             </h3>
-            <div className="bg-white rounded-2xl shadow-xl border-t-4 border-green-400 p-6">
-              <p className="text-slate-700 text-base leading-[2.2]">
+            <div className="bg-card rounded-2xl shadow-xl border-t-4 border-green-400 p-6">
+              <p className="text-foreground text-base leading-[2.2]">
                 {articleData.passage}
               </p>
             </div>
-            <div className="mt-4 bg-green-50 border border-green-100 rounded-xl p-4">
-              <p className="text-green-800 text-xs font-bold mb-1">
+            <div className="mt-4 bg-green-500/10 border border-green-500/20 rounded-xl p-4">
+              <p className="text-green-800 dark:text-green-300 text-xs font-bold mb-1">
                 🎯 Tutor Tip
               </p>
-              <p className="text-green-700 text-xs">
+              <p className="text-green-700 dark:text-green-400 text-xs">
                 ให้นักเรียน identify ว่าแต่ละประโยคอยู่ส่วนไหนของ passage
                 และทำไมถึงสำคัญ
               </p>
@@ -886,7 +882,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       : null;
 
     return (
-      <div className="flex-1 flex flex-col w-full bg-slate-50 relative">
+      <div className="flex-1 flex flex-col w-full bg-muted relative">
         {/* Hidden audio */}
         {audioUrl && (
           <audio
@@ -907,19 +903,19 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               <span className="bg-orange-500 text-white text-sm font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow">
                 Phase 9
               </span>
-              <span className="bg-white text-orange-600 text-sm font-bold px-4 py-1.5 rounded-full border-2 border-orange-300">
+              <span className="bg-card text-orange-600 dark:text-orange-400 text-sm font-bold px-4 py-1.5 rounded-full border-2 border-orange-500/30">
                 Translation
               </span>
             </div>
-            <h2 className="text-3xl font-black text-slate-800 mb-1">{articleData.title}</h2>
+            <h2 className="text-3xl font-black text-foreground mb-1">{articleData.title}</h2>
             {articleData.genre && (
-              <p className="text-slate-400 text-sm">{articleData.genre} · CEFR {articleData.cefr_level}</p>
+              <p className="text-muted-foreground text-sm">{articleData.genre} · CEFR {articleData.cefr_level}</p>
             )}
           </div>
 
           {/* Article body — flowing paragraphs with inline highlights */}
           <div
-            className="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl border border-slate-100 p-10"
+            className="max-w-3xl mx-auto bg-card rounded-3xl shadow-xl border border-border p-10"
             style={{ fontFamily: "Georgia, serif" }}
           >
             {paragraphGroups.map((group, pIdx) => (
@@ -935,7 +931,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                           className={`cursor-pointer rounded-lg px-0.5 transition-all duration-200 ${
                             isActive
                               ? "bg-orange-400 text-white font-bold px-2 py-0.5 rounded-xl shadow-md"
-                              : "text-slate-800 hover:bg-orange-50 hover:text-orange-800"
+                              : "text-foreground hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400"
                           }`}
                         >
                           {text}{" "}
@@ -943,7 +939,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                       );
                     })
                   : // Fallback for unmatched paragraph text
-                    <span className="text-slate-800">{rawParagraphs[pIdx]} </span>
+                    <span className="text-foreground">{rawParagraphs[pIdx]} </span>
                 }
               </p>
             ))}
@@ -956,10 +952,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             {/* Translation tooltip above player */}
             {activeEnText && (
               <div
-                className="bg-white border border-orange-200 rounded-2xl shadow-xl px-4 py-3 max-w-xs animate-in slide-in-from-bottom duration-200"
+                className="bg-card border border-orange-200 rounded-2xl shadow-xl px-4 py-3 max-w-xs animate-in slide-in-from-bottom duration-200"
                 style={{ fontFamily: "Georgia, serif" }}
               >
-                <p className="text-slate-800 font-semibold text-sm leading-snug">{activeEnText}</p>
+                <p className="text-foreground font-semibold text-sm leading-snug">{activeEnText}</p>
                 {activeThText ? (
                   <p className="text-orange-600 text-xs mt-1 leading-snug">{activeThText}</p>
                 ) : (
@@ -968,15 +964,15 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               </div>
             )}
 
-            {/* Player pill */}
-            <div className="bg-white border-2 border-orange-300 rounded-2xl shadow-2xl px-5 py-4 flex items-center gap-4 w-[500px]">
+              {/* Player pill */}
+            <div className="bg-card border-2 border-orange-500/40 rounded-2xl shadow-2xl px-5 py-4 flex items-center gap-4 w-[500px]">
               {/* Skip prev */}
               <button
                 onClick={() => {
                   if (activeIdx > 0) seekToSentence(activeIdx - 1);
                 }}
                 disabled={activeIdx <= 0}
-                className="w-11 h-11 rounded-full bg-orange-100 text-orange-500 flex items-center justify-center hover:bg-orange-200 transition-all disabled:opacity-30 text-xl shrink-0"
+                className="w-11 h-11 rounded-full bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center hover:bg-orange-500/30 transition-all disabled:opacity-30 text-xl shrink-0"
               >
                 ⏮
               </button>
@@ -995,7 +991,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                   if (activeIdx < sentences.length - 1) seekToSentence(activeIdx + 1);
                 }}
                 disabled={activeIdx >= sentences.length - 1}
-                className="w-11 h-11 rounded-full bg-orange-100 text-orange-500 flex items-center justify-center hover:bg-orange-200 transition-all disabled:opacity-30 text-xl shrink-0"
+                className="w-11 h-11 rounded-full bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center hover:bg-orange-500/30 transition-all disabled:opacity-30 text-xl shrink-0"
               >
                 ⏭
               </button>
@@ -1003,7 +999,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               {/* Progress + time */}
               <div className="flex-1 min-w-0">
                 <div
-                  className="w-full bg-orange-100 rounded-full h-2.5 cursor-pointer mb-1.5"
+                  className="w-full bg-orange-500/20 rounded-full h-2.5 cursor-pointer mb-1.5"
                   onClick={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect();
                     const ratio = (e.clientX - rect.left) / rect.width;
@@ -1019,7 +1015,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     style={{ width: `${progressPct}%` }}
                   />
                 </div>
-                <div className="flex justify-between text-sm text-slate-400">
+                <div className="flex justify-between text-sm text-muted-foreground">
                   <span>{fmtTime(currentTime)}</span>
                   <span className="text-orange-500 font-bold truncate mx-1">
                     {activeIdx >= 0 ? `ประโยค ${activeIdx + 1} / ${sentences.length}` : "–"}
@@ -1040,8 +1036,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   return (
     <div className="flex-1 flex flex-col items-center py-8 px-6 w-full">
       {articleData.passage && (
-        <div className="bg-white rounded-2xl p-10 max-w-4xl w-full shadow-xl border-t-4 border-slate-300">
-          <p className="text-slate-800 leading-[2.4] text-xl font-medium">
+        <div className="bg-card rounded-2xl p-10 max-w-4xl w-full shadow-xl border-t-4 border-slate-300">
+          <p className="text-foreground leading-[2.4] text-xl font-medium">
             {articleData.passage}
           </p>
         </div>

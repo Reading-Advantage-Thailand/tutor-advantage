@@ -2,8 +2,8 @@
 
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, BookOpen, Play, Settings } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowLeft, BookOpen, Play, Settings, Sparkles, Users, Zap } from "lucide-react";
 import Link from "next/link";
 
 export default function LessonDetailPage() {
@@ -13,14 +13,14 @@ export default function LessonDetailPage() {
   return (
     <div className="w-full max-w-4xl pb-24 lg:pb-0">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-8">
         <Link href="/dashboard/classes">
-          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-muted">
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-muted transition-colors">
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-xl font-bold text-foreground">
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">
             จัดการบทเรียน
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -29,80 +29,107 @@ export default function LessonDetailPage() {
         </div>
       </div>
 
-      {/* Main Options */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        {/* Start Teaching Button */}
-        <Link href={`/dashboard/classes/${classId}/select`} className="block">
-          <Card className="cursor-pointer border-2 hover:border-primary hover:shadow-md transition-all h-full">
-            <CardContent className="p-6 flex flex-col items-center justify-center text-center min-h-[200px]">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                <Play className="h-8 w-8 text-primary" />
+      {/* Main Action Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+        {/* Start Teaching — Primary CTA */}
+        <Link href={`/lesson/${classId}/select`} className="block group">
+          <Card className="cursor-pointer border-2 border-primary/20 hover:border-primary hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 h-full overflow-hidden relative">
+            {/* Gradient accent bar */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-primary/80 to-primary/50" />
+            <CardContent className="p-7 flex flex-col items-center justify-center text-center min-h-[220px]">
+              <div className="w-18 h-18 rounded-2xl bg-primary/10 dark:bg-primary/15 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                <Play className="h-9 w-9 text-primary fill-primary/20" />
               </div>
-              <h3 className="text-lg font-bold text-foreground mb-2">
+              <h3 className="text-xl font-bold text-foreground mb-2">
                 เริ่มสอน
               </h3>
-              <p className="text-sm text-muted-foreground">
-                เลือกบทเรียนและเริ่มเซสชันการเรียน
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                เลือกบทเรียนและเริ่มเซสชันการเรียนแบบ Interactive
               </p>
+              <div className="mt-4 flex items-center gap-2 text-xs text-primary font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                <Zap className="h-3.5 w-3.5" />
+                <span>เปิดห้องเรียน Live</span>
+              </div>
             </CardContent>
           </Card>
         </Link>
 
-        {/* View Settings Button */}
-        <Link href={`/dashboard/classes/${classId}`} className="block">
-          <Card className="cursor-pointer border-2 hover:border-primary hover:shadow-md transition-all h-full">
-            <CardContent className="p-6 flex flex-col items-center justify-center text-center min-h-[200px]">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                <Settings className="h-8 w-8 text-primary" />
+        {/* Class Settings */}
+        <Link href={`/dashboard/classes/${classId}`} className="block group">
+          <Card className="cursor-pointer border-2 border-border/60 hover:border-primary/50 hover:shadow-lg transition-all duration-300 h-full overflow-hidden relative">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-muted-foreground/20 via-muted-foreground/10 to-transparent" />
+            <CardContent className="p-7 flex flex-col items-center justify-center text-center min-h-[220px]">
+              <div className="w-18 h-18 rounded-2xl bg-muted flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                <Settings className="h-9 w-9 text-muted-foreground group-hover:text-foreground transition-colors" />
               </div>
-              <h3 className="text-lg font-bold text-foreground mb-2">
+              <h3 className="text-xl font-bold text-foreground mb-2">
                 ตั้งค่าคลาส
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 ดูรายละเอียด ลิงค์เชิญ และจัดการนักเรียน
               </p>
+              <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                <Users className="h-3.5 w-3.5" />
+                <span>จัดการคลาสเรียน</span>
+              </div>
             </CardContent>
           </Card>
         </Link>
       </div>
 
-      {/* Info Card */}
-      <Card className="border-border/60">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <BookOpen className="h-4 w-4 text-primary" />
-            วิธีการใช้งาน
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm text-muted-foreground">
-          <div className="flex gap-3">
-            <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 font-semibold text-primary text-xs">
-              1
-            </div>
-            <div>
-              <p className="font-semibold text-foreground mb-1">เลือกบทเรียน</p>
-              <p>กดปุ่ม "เริ่มสอน" เพื่อเลือกบทความที่จะสอนในวันนี้</p>
-            </div>
+      {/* How it works — Step Guide */}
+      <Card className="border-border/40 bg-card/50 dark:bg-card/80 overflow-hidden">
+        <div className="px-6 pt-5 pb-3 flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-primary/15 flex items-center justify-center">
+            <Sparkles className="h-4 w-4 text-primary" />
           </div>
+          <h3 className="text-sm font-bold text-foreground">วิธีการใช้งาน</h3>
+        </div>
+        <CardContent className="px-6 pb-6 pt-0">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              {
+                step: 1,
+                icon: <BookOpen className="h-5 w-5" />,
+                title: "เลือกบทเรียน",
+                desc: "กดปุ่ม \"เริ่มสอน\" เพื่อเลือกบทความที่จะสอนในวันนี้",
+                color: "text-blue-600 dark:text-blue-400",
+                bg: "bg-blue-500/10 dark:bg-blue-500/15",
+                borderColor: "border-blue-500/20",
+              },
+              {
+                step: 2,
+                icon: <Zap className="h-5 w-5" />,
+                title: "แชร์ PIN",
+                desc: "ระบบจะสร้าง PIN 6 หลัก ให้นักเรียนป้อน PIN เพื่อเข้าร่วม",
+                color: "text-amber-600 dark:text-amber-400",
+                bg: "bg-amber-500/10 dark:bg-amber-500/15",
+                borderColor: "border-amber-500/20",
+              },
+              {
+                step: 3,
+                icon: <Play className="h-5 w-5" />,
+                title: "สอน",
+                desc: "ใช้ Phase Manager เพื่อควบคุมการไหลของบทเรียน 14 ขั้นตอน",
+                color: "text-emerald-600 dark:text-emerald-400",
+                bg: "bg-emerald-500/10 dark:bg-emerald-500/15",
+                borderColor: "border-emerald-500/20",
+              },
+            ].map((item) => (
+              <div
+                key={item.step}
+                className={`relative rounded-xl border ${item.borderColor} bg-card p-5 transition-all hover:shadow-md`}
+              >
+                {/* Step number */}
+                <div className={`w-7 h-7 rounded-lg ${item.bg} flex items-center justify-center mb-3`}>
+                  <span className={`text-xs font-black ${item.color}`}>{item.step}</span>
+                </div>
 
-          <div className="flex gap-3">
-            <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 font-semibold text-primary text-xs">
-              2
-            </div>
-            <div>
-              <p className="font-semibold text-foreground mb-1">แชร์ PIN</p>
-              <p>ระบบจะสร้าง PIN 6 หลัก ให้นักเรียนป้อน PIN เพื่อเข้าร่วม</p>
-            </div>
-          </div>
-
-          <div className="flex gap-3">
-            <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 font-semibold text-primary text-xs">
-              3
-            </div>
-            <div>
-              <p className="font-semibold text-foreground mb-1">สอน</p>
-              <p>ใช้ Phase Manager เพื่อควบคุมการไหลของบทเรียน 15 ขั้นตอน</p>
-            </div>
+                <div className={`mb-2 ${item.color}`}>{item.icon}</div>
+                <h4 className="font-bold text-foreground text-sm mb-1">{item.title}</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
