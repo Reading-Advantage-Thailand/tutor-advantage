@@ -77,4 +77,10 @@ export const studentApi = {
   // Lesson History
   getLessonHistory: () => fetchWithAuth('/lessons/history'),
   getLessonSessionDetails: (sessionId: string) => fetchWithAuth(`/lessons/history/${sessionId}`),
+
+  // Consent
+  submitGuardianConsent: (guardianName: string, relation: string) => fetchWithAuth('/guardian/consent', {
+    method: 'POST',
+    body: JSON.stringify({ guardianName, guardianContact: relation, consentGiven: true }),
+  }, IDENTITY_API_BASE),
 };

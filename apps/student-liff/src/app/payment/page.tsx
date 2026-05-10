@@ -8,7 +8,7 @@ import { ChevronLeft, Shield, CheckCircle2, CreditCard, QrCode, Clock, ChevronRi
 import { studentApi } from "@/lib/api";
 
 type PaymentMethod = "promptpay" | "card";
-type Step = "select" | "qr" | "card-form" | "success";
+type Step = "select" | "age-check" | "qr" | "card-form" | "success";
 
 function PaymentFlow() {
   const searchParams = useSearchParams();
@@ -24,7 +24,36 @@ function PaymentFlow() {
 
   const cls = { id: classId, name: "Origins 2 — กลุ่มวันเสาร์", price: 2800, tutor: "อ.นภา สุขใส", cefr: "A1" };
 
-  const handleProceed = () => { setStep(method === "promptpay" ? "qr" : "card-form"); };
+  // Age / Guardian states
+  const [isAdult, setIsAdult] = useState<boolean | null>(null);
+  const [guardianName, setGuardianName] = useState("");
+  const [guardianRelation, setGuardianRelation] = useState("");
+
+  const handleProceed = () => { 
+    setStep("age-check");
+  };
+
+  const handleAgeCheckSubmit = async () => {
+    if (isAdult === null) return;
+    
+    setLoading(true);
+    try {
+      if (isAdult === false) {
+        if (!guardianName.trim() || !guardianRelation.trim()) {
+          alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+          setLoading(false);
+          return;
+        }
+        await studentApi.submitGuardianConsent(guardianName, guardianRelation);
+      }
+      setStep(method === "promptpay" ? "qr" : "card-form");
+    } catch (error) {
+      console.error("Error saving consent:", error);
+      alert("เกิดข้อผิดพลาดในการยืนยันตัวตน");
+    } finally {
+      setLoading(false);
+    }
+  };
   
   const handleConfirmPayment = async () => { 
     setLoading(true); 
@@ -78,6 +107,115 @@ function PaymentFlow() {
           คุณจะได้รับการแจ้งเตือนผ่าน LINE<br />เมื่อการลงทะเบียนเปิดใช้งาน
         </p>
         <Link href="/dashboard" id="btn-go-dashboard" className="btn btn-primary btn-lg btn-full" style={{ maxWidth: 320, borderRadius: 18 }}>ไปหน้าหลัก</Link>
+      </div>
+    );
+  }
+
+  // ── Age Check ──
+  if (step === "age-check") {
+    return (
+      <div className="page-shell">
+        <div className="top-bar" style={{ background: "var(--surface-card)", backdropFilter: "blur(12px)" }}>
+          <button onClick={() => setStep("select")} style={{ background: "var(--neutral-100)", border: "none", borderRadius: 12, width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "var(--text-secondary)" }}>
+            <ChevronLeft size={18} />
+          </button>
+          <h1 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", flex: 1 }}>ยืนยันข้อมูลผู้เรียน</h1>
+        </div>
+
+        <div style={{ padding: "24px 20px", display: "flex", flexDirection: "column", gap: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 14, background: "rgba(16, 185, 129, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Shield size={20} style={{ color: "rgb(16, 185, 129)" }} />
+            </div>
+            <div>
+              <h2 style={{ fontSize: "1rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: 2 }}>ตรวจสอบสิทธิ์ตามกฎหมาย (PDPA)</h2>
+              <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>เพื่อความปลอดภัยในการชำระเงิน</p>
+            </div>
+          </div>
+
+          <div className="glass-card" style={{ padding: "20px", border: "1px solid var(--surface-border)" }}>
+            <p style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: 16 }}>
+              ขณะนี้คุณมีอายุครบ 18 ปีบริบูรณ์แล้วใช่หรือไม่?
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <button
+                onClick={() => setIsAdult(true)}
+                style={{
+                  padding: "14px",
+                  borderRadius: "12px",
+                  border: isAdult === true ? "2px solid var(--brand-500)" : "1px solid var(--surface-border)",
+                  background: isAdult === true ? "var(--brand-50)" : "var(--surface-card)",
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                  color: isAdult === true ? "var(--brand-700)" : "var(--text-secondary)",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                ใช่ เกิน 18 ปีแล้ว
+              </button>
+              <button
+                onClick={() => setIsAdult(false)}
+                style={{
+                  padding: "14px",
+                  borderRadius: "12px",
+                  border: isAdult === false ? "2px solid var(--brand-500)" : "1px solid var(--surface-border)",
+                  background: isAdult === false ? "var(--brand-50)" : "var(--surface-card)",
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                  color: isAdult === false ? "var(--brand-700)" : "var(--text-secondary)",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                ยังไม่ถึง 18 ปี
+              </button>
+            </div>
+
+            {isAdult === false && (
+              <div className="animate-slide-up" style={{ marginTop: "24px", paddingTop: "20px", borderTop: "1px solid var(--surface-border)", display: "flex", flexDirection: "column", gap: 16 }}>
+                <div style={{ background: "var(--accent-amber-light)", padding: "12px", borderRadius: "10px", marginBottom: 4, border: "1px solid #fde68a" }}>
+                  <p style={{ fontSize: "0.75rem", color: "#92400e", lineHeight: 1.5 }}>
+                    คุณจำเป็นต้องให้ผู้ปกครองรับทราบ กรุณากรอกข้อมูลผู้ปกครองเพื่อใช้ประกอบความยินยอมทางกฎหมาย
+                  </p>
+                </div>
+                <div>
+                  <label className="input-label">ชื่อ-นามสกุล ผู้ปกครอง</label>
+                  <input 
+                    type="text" 
+                    placeholder="เช่น สมชาย รักการเรียน" 
+                    className="input-field" 
+                    style={{ borderRadius: 12 }}
+                    value={guardianName}
+                    onChange={(e) => setGuardianName(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="input-label">ความสัมพันธ์</label>
+                  <input 
+                    type="text" 
+                    placeholder="เช่น บิดา, มารดา, ลุง, ป้า" 
+                    className="input-field" 
+                    style={{ borderRadius: 12 }}
+                    value={guardianRelation}
+                    onChange={(e) => setGuardianRelation(e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          <button 
+            id="btn-submit-age-check" 
+            className="btn btn-primary btn-full btn-lg" 
+            onClick={handleAgeCheckSubmit} 
+            disabled={loading || isAdult === null || (isAdult === false && (!guardianName.trim() || !guardianRelation.trim()))}
+            style={{ borderRadius: 18, marginTop: 8 }}
+          >
+            {loading ? (<span style={{ display: "flex", alignItems: "center", gap: 8 }}><span className="animate-spin" style={{ width: 18, height: 18, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", display: "inline-block" }} />กำลังบันทึก...</span>) : "ดำเนินการชำระเงินต่อ"}
+          </button>
+        </div>
       </div>
     );
   }
