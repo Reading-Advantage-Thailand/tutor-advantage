@@ -336,7 +336,12 @@ export default function DashboardPage() {
                     }}
                   >
                     <span style={{ fontSize: "8px", textTransform: "uppercase", letterSpacing: "0.05em", lineHeight: 1 }}>RANK</span>
-                    <span style={{ fontSize: "1.125rem", lineHeight: 1, marginTop: 2 }}>{hist.rank}</span>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 0.5, marginTop: 2 }}>
+                      <span style={{ fontSize: "1.125rem", lineHeight: 1 }}>{hist.rank}</span>
+                      {hist.totalParticipants > 0 && (
+                        <span style={{ fontSize: "0.625rem", opacity: 0.6 }}>/{hist.totalParticipants}</span>
+                      )}
+                    </div>
                   </div>
                   
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -350,9 +355,9 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <div style={{ textAlign: "right", flexShrink: 0, background: "rgba(5, 150, 105, 0.1)", border: "1px solid rgba(5, 150, 105, 0.15)", color: "#059669", padding: "4px 10px", borderRadius: 8 }}>
-                    <div style={{ fontSize: "0.8125rem", fontWeight: 800, lineHeight: 1 }}>{hist.score}</div>
-                    <div style={{ fontSize: "0.5625rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", opacity: 0.8, marginTop: 1 }}>pts</div>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flexShrink: 0, background: "rgba(5, 150, 105, 0.1)", border: "1px solid rgba(5, 150, 105, 0.15)", color: "#059669", padding: "6px 10px", borderRadius: 10, minWidth: 44 }}>
+                    <div style={{ fontSize: "0.875rem", fontWeight: 800, lineHeight: 1 }}>{hist.score}</div>
+                    <div style={{ fontSize: "0.5625rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", opacity: 0.9, marginTop: 3 }}>PTS</div>
                   </div>
                   
                   <ChevronRight size={16} style={{ color: "var(--neutral-300)" }} />

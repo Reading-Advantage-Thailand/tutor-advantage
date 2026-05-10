@@ -23,6 +23,21 @@ export interface LessonSession {
   participants: Map<string, SessionParticipant>;
   status: 'LOBBY' | 'ACTIVE' | 'FINISHED';
   phaseSelectedIndices?: Record<number, number>;
+  currentDbSessionId?: string; // Track active DB ID for dynamic restarting
+}
+
+function getRandomLongSentenceIndex(sentences: any[]): number {
+  if (!sentences?.length) return 0;
+  const validIndices = sentences
+    .map((s, i) => {
+      const txt = typeof s === 'object' ? s.sentences : s;
+      const wordCount = String(txt || "").trim().split(/\s+/).length;
+      return wordCount >= 4 ? i : -1;
+    })
+    .filter(idx => idx !== -1);
+  
+  const source = validIndices.length > 0 ? validIndices : sentences.map((_, i) => i);
+  return source[Math.floor(Math.random() * source.length)];
 }
 
 class LessonSessionService {
@@ -82,26 +97,14 @@ class LessonSessionService {
       phaseSelectedIndices[10] = Math.floor(Math.random() * articleData.words.length);
     }
     if (articleData?.sentences?.length) {
-      phaseSelectedIndices[11] = Math.floor(Math.random() * articleData.sentences.length);
-      phaseSelectedIndices[12] = Math.floor(Math.random() * articleData.sentences.length);
+      phaseSelectedIndices[11] = getRandomLongSentenceIndex(articleData.sentences);
+      phaseSelectedIndices[12] = getRandomLongSentenceIndex(articleData.sentences);
     }
 
     console.log(`[Service] Available MCQ questions (Phase 7):`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
     console.log(`[Service] Available Short Answer questions (Phase 8/13):`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
 
-    // If a session for this class already exists, reuse it and update tutor's socket
-    if (classId) {
-      const existingSession = this.getSessionByClassId(classId);
-      if (existingSession && existingSession.status !== 'FINISHED') {
-        console.log(`[Service] Reusing existing session ${existingSession.sessionId} for class ${classId}`);
-        existingSession.tutorSocketId = tutorSocketId;
-        existingSession.articleId = articleId;
-        existingSession.articleData = articleData;
-        existingSession.phaseSelectedIndices = phaseSelectedIndices;
-        return existingSession;
-      }
-    }
-
+    // Force fresh UUID session instantiation every time to ensure unique, separated histories
     const sessionId = uuidv4();
     const pin = Math.floor(100000 + Math.random() * 900000).toString();
     
@@ -239,8 +242,7 @@ class LessonSessionService {
       const count = session.articleData?.words?.length || 1;
       session.phaseSelectedIndices[10] = Math.floor(Math.random() * count);
     } else if (phase === 11 || phase === 12) {
-      const count = session.articleData?.sentences?.length || 1;
-      session.phaseSelectedIndices[phase] = Math.floor(Math.random() * count);
+      session.phaseSelectedIndices[phase] = getRandomLongSentenceIndex(session.articleData?.sentences || []);
     }
 
     if (phase > 0) {

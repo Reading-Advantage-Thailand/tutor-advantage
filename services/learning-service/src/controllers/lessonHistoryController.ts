@@ -67,13 +67,14 @@ export async function getLessonSessionDetails(req: AuthenticatedRequest, res: Re
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    // Fetch session data including user's specific answers
+    // Fetch session data including user's specific answers and peers for ranking
     const participant = await prisma.sessionParticipant.findUnique({
       where: { sessionId_studentUserId: { sessionId, studentUserId: userId } },
       include: {
         session: {
           include: {
-            tutor: { select: { displayName: true } }
+            tutor: { select: { displayName: true } },
+            participants: { select: { studentUserId: true, score: true } } // Include peers
           }
         }
       }
@@ -82,6 +83,10 @@ export async function getLessonSessionDetails(req: AuthenticatedRequest, res: Re
     if (!participant) {
       return res.status(404).json({ error: "ประวัติเซสชันนี้ไม่พบหรือไม่มีสิทธิ์เข้าถึง" });
     }
+
+    // Calculate ranking
+    const sortedPeers = participant.session.participants.sort((a, b) => (b.score || 0) - (a.score || 0));
+    const myRank = sortedPeers.findIndex(peer => peer.studentUserId === userId) + 1;
 
     const answers = await prisma.sessionAnswer.findMany({
       where: { sessionId, studentUserId: userId },
@@ -97,6 +102,8 @@ export async function getLessonSessionDetails(req: AuthenticatedRequest, res: Re
         tutorName: participant.session.tutor.displayName,
         date: participant.joinedAt,
         totalScore: participant.score,
+        rank: myRank,
+        totalParticipants: sortedPeers.length
       },
       answers: answers.map(a => ({
         phase: a.phase,

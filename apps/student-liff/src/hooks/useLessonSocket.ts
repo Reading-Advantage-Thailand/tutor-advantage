@@ -87,7 +87,7 @@ export const useLessonSocket = (pin: string | null, studentId: string, name: str
     return () => {
       newSocket.disconnect();
     };
-  }, [pin, studentId, name, classId]);
+  }, [pin, studentId, name, classId, pictureUrl]);
 
   const submitAnswer = (answer: string, question?: string, expectedAnswer?: string) => {
     if (socketRef.current && sessionData) {

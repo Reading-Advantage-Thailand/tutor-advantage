@@ -1,8 +1,27 @@
 import { Server, Socket } from "socket.io";
+import { v4 as uuidv4 } from "uuid";
 import { lessonSessionService } from "../services/LessonSessionService";
 import { evaluateShortAnswer } from "../services/AIEvaluator";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
 import * as dbWriter from "../services/SessionDBWriter";
+
+function seededShuffle<T>(array: T[], seedInput: string): T[] {
+  const result = [...array];
+  if (!seedInput) return result;
+  
+  let seed = 0;
+  for (let i = 0; i < seedInput.length; i++) {
+    seed += seedInput.charCodeAt(i);
+  }
+
+  for (let i = result.length - 1; i > 0; i--) {
+    const x = Math.sin(seed + i) * 10000;
+    const rand = x - Math.floor(x);
+    const j = Math.floor(rand * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
 
 export const setupLessonSocket = (io: Server) => {
   io.on("connection", (socket: Socket) => {
@@ -18,9 +37,10 @@ export const setupLessonSocket = (io: Server) => {
         console.log(`Available SAQ questions:`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
         console.log(`==================================================`);
         const session = lessonSessionService.createSession(tutorId, socket.id, articleId, articleData, classId);
+        // Keep currentDbSessionId undefined initially, so the first cycle defaults to the standard sessionId!
         socket.join(session.sessionId);
 
-        // PERSIST START OF SESSION TO DB
+        // PERSIST START OF SESSION TO DB (This creates initial Cycle 1 record)
         dbWriter.persistSessionStart(session.sessionId, tutorId, articleId, classId, session.pin);
 
         socket.emit("session_created", {
@@ -54,7 +74,7 @@ export const setupLessonSocket = (io: Server) => {
         console.log(`[Socket] Student ${name} joined class ${classId} successfully (Pic: ${!!pictureUrl})`);
         
         // PERSIST PARTICIPANT JOIN
-        dbWriter.persistSessionParticipant(session.sessionId, studentId);
+        dbWriter.persistSessionParticipant(session.currentDbSessionId || session.sessionId, studentId);
       } else {
         console.warn(`[Socket] Join failed: No active session for class ${classId}`);
         socket.emit("error", { message: "ยังไม่มีคลาสที่เปิดสอนในขณะนี้ หรือคุณครูยังไม่ได้เริ่มเซสชัน" });
@@ -89,7 +109,7 @@ export const setupLessonSocket = (io: Server) => {
         console.log(`Student ${name} joined session ${session.sessionId} (Pic: ${!!pictureUrl})`);
         
         // PERSIST PARTICIPANT JOIN
-        dbWriter.persistSessionParticipant(session.sessionId, studentId);
+        dbWriter.persistSessionParticipant(session.currentDbSessionId || session.sessionId, studentId);
       } else {
         socket.emit("error", { message: "Invalid PIN or session not found" });
       }
@@ -99,6 +119,32 @@ export const setupLessonSocket = (io: Server) => {
     socket.on("change_phase", ({ sessionId, phase }) => {
       const session = lessonSessionService.setPhase(sessionId, phase);
       if (session) {
+        // --- CRITICAL: DYNAMIC RESTART RECORDING ---
+        // If starting a new instructional cycle (Phase 0 -> Phase 1), determine if we need a FRESH DB identity.
+        if (phase === 1) {
+          if (!session.currentDbSessionId) {
+            // --- FIRST CYCLE ---
+            // Set explicit key to lock current cycle, but reuse original initialized DB record to avoid double logging!
+            session.currentDbSessionId = sessionId; 
+            console.log(`[Socket] CYCLE 1: Initializing first loop using original session ${sessionId}`);
+          } else {
+            // --- RESTART CYCLES (2, 3+) ---
+            // This generates a TOTALLY distinct row in student dashboard history while keeping same socket room!
+            const newDbId = uuidv4();
+            session.currentDbSessionId = newDbId; // Set explicit new key for this cycle
+            console.log(`[Socket] RECYCLE: Starting fresh learning loop for room ${sessionId}. New DB Session: ${newDbId}`);
+            
+            // 1. Create NEW DB header record
+            dbWriter.persistSessionStart(newDbId, session.tutorId, session.articleId, session.classId, session.pin);
+            
+            // 2. Automatically enroll all existing students in the NEW round immediately
+            const activePeers = Array.from(session.participants.keys());
+            for (const pId of activePeers) {
+               dbWriter.persistSessionParticipant(newDbId, pId);
+            }
+          }
+        }
+
         // Broadcast new phase to everyone in the room
         io.to(sessionId).emit("phase_changed", { phase, phaseSelectedIndices: session.phaseSelectedIndices });
         io.to(sessionId).emit("participants_updated", {
@@ -106,9 +152,9 @@ export const setupLessonSocket = (io: Server) => {
         });
         console.log(`Session ${sessionId} changed to phase ${phase}`);
 
-        // If changing to phase 14 (Finish/Leaderboard), mark as FINISHED in DB
+        // If changing to phase 14 (Finish/Leaderboard), mark ACTIVE DB ROUND as FINISHED
         if (phase === 14) {
-          dbWriter.updateSessionStatus(sessionId, "FINISHED");
+          dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
         }
       }
     });
@@ -137,19 +183,69 @@ export const setupLessonSocket = (io: Server) => {
         if (participant) {
           if (result.session.currentPhase === 8 || result.session.currentPhase === 13) {
             participant.score = (participant.score || 0) + (evaluatedAnswer.aiScore || 0);
+            
+            // --- PERSIST DB ANSWER (SHORT ANSWER WITH AI) ---
+            dbWriter.persistAnswer({
+              sessionId: result.session.currentDbSessionId || sessionId,
+              studentId,
+              phase: result.session.currentPhase,
+              answerText: String(answer),
+              isCorrect: true, // Considered valid submission
+              score: evaluatedAnswer.aiScore || 0,
+              aiFeedback: evaluatedAnswer.aiFeedback,
+              questionText: question,
+              correctAnswer: expectedAnswer
+            });
           } else {
-            let correctLabel = "B"; // fallback
+            let correctLabel = "";
+            let resolvedAnswerText = String(answer);
+            const choiceIdx = String(answer).trim().toUpperCase().charCodeAt(0) - 65; // A=0, B=1, C=2, D=3
+
             if (result.session.currentPhase === 7) {
               const idx = result.session.phaseSelectedIndices?.[7] || 0;
               const mcqQuestion = result.session.articleData?.multipleChoiceQuestions?.[idx];
               if (mcqQuestion) {
-                const rawAnswer = mcqQuestion.answer;
-                const optionKeys = ['option1', 'option2', 'option3', 'option4'];
-                const answerIdx = optionKeys.findIndex(k => mcqQuestion[k] === rawAnswer);
-                if (answerIdx !== -1) {
-                  correctLabel = String.fromCharCode(65 + answerIdx);
+                const rawAnswer = mcqQuestion.answer || '';
+                const optionsData = mcqQuestion.options || {};
+                const optionKeys = Object.keys(optionsData).sort();
+                
+                let answerIdx = -1;
+                // Match logic mirroring frontend precisely
+                optionKeys.forEach((k, i) => {
+                  if (String(optionsData[k]) === String(rawAnswer)) {
+                    answerIdx = i;
+                  }
+                });
+
+                // Fallback: match keys themselves or index strings
+                if (answerIdx === -1) {
+                  const i = optionKeys.indexOf(rawAnswer);
+                  if (i !== -1) {
+                    answerIdx = i;
+                  } else {
+                    const labelIdx = String(rawAnswer).charCodeAt(0) - 65;
+                    if (labelIdx >= 0 && labelIdx < optionKeys.length) {
+                      answerIdx = labelIdx;
+                    }
+                  }
+                }
+
+                const rawOptions = optionKeys.map(key => optionsData[key]);
+                const correctOptionText = answerIdx !== -1 ? rawOptions[answerIdx] : rawAnswer;
+
+                // Apply matching deterministic shuffle derived from session + question
+                const shuffledOptions = seededShuffle(rawOptions, sessionId + "_phase7_" + mcqQuestion.question);
+                
+                const newCorrectIdx = shuffledOptions.indexOf(correctOptionText);
+                if (newCorrectIdx !== -1) {
+                  correctLabel = String.fromCharCode(65 + newCorrectIdx);
                 } else if (['A','B','C','D'].includes(String(rawAnswer).toUpperCase())) {
-                  correctLabel = String(rawAnswer).toUpperCase();
+                  correctLabel = String(rawAnswer).toUpperCase(); // fallback
+                }
+                
+                // Resolve chosen text value based on user's submitted index
+                if (choiceIdx >= 0 && choiceIdx < shuffledOptions.length) {
+                  resolvedAnswerText = shuffledOptions[choiceIdx] || String(answer);
                 }
               }
             } else if (result.session.currentPhase === 10) {
@@ -181,15 +277,16 @@ export const setupLessonSocket = (io: Server) => {
                   fillCounter++;
                 }
 
-                const shuffledOptions = [...optionsArray];
-                for (let i = shuffledOptions.length - 1; i > 0; i--) {
-                  const j = Math.floor((i + 1) * 0.47) % (i + 1);
-                  [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
-                }
+                const shuffledOptions = seededShuffle(optionsArray, sessionId + "_phase10_" + (targetWord.vocabulary || targetWord.word));
 
                 const newCorrectIdx = shuffledOptions.indexOf(correctTranslation);
                 if (newCorrectIdx !== -1) {
                   correctLabel = String.fromCharCode(65 + newCorrectIdx);
+                }
+
+                // Resolve chosen text value
+                if (choiceIdx >= 0 && choiceIdx < shuffledOptions.length) {
+                  resolvedAnswerText = shuffledOptions[choiceIdx];
                 }
               }
             } else if (result.session.currentPhase === 11) {
@@ -203,14 +300,17 @@ export const setupLessonSocket = (io: Server) => {
                 const distractors = vocabWords.filter((w: string) => w.toLowerCase() !== correctWord.toLowerCase());
                 
                 const optionsArray = [correctWord, distractors[0] || "Word A", distractors[1] || "Word B", distractors[2] || "Word C"];
-                const shuffledOptions = [...optionsArray];
-                for (let i = shuffledOptions.length - 1; i > 0; i--) {
-                  const j = Math.floor((i + 1) * 0.47) % (i + 1);
-                  [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
-                }
+                
+                const shuffledOptions = seededShuffle(optionsArray, sessionId + "_phase11_" + targetSentence);
+                
                 const newCorrectIdx = shuffledOptions.indexOf(correctWord);
                 if (newCorrectIdx !== -1) {
                   correctLabel = String.fromCharCode(65 + newCorrectIdx);
+                }
+
+                // Resolve chosen text value
+                if (choiceIdx >= 0 && choiceIdx < shuffledOptions.length) {
+                  resolvedAnswerText = shuffledOptions[choiceIdx];
                 }
               }
             } else if (result.session.currentPhase === 12) {
@@ -224,14 +324,17 @@ export const setupLessonSocket = (io: Server) => {
                 const optC = [...words].reverse();
                 
                 const optionsArray = [targetSentence, optA.join(' '), optB.join(' '), optC.join(' ')];
-                const shuffledOptions = [...optionsArray];
-                for (let i = shuffledOptions.length - 1; i > 0; i--) {
-                  const j = Math.floor((i + 1) * 0.47) % (i + 1);
-                  [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
-                }
+                
+                const shuffledOptions = seededShuffle(optionsArray, sessionId + "_phase12b_" + targetSentence);
+                
                 const newCorrectIdx = shuffledOptions.indexOf(targetSentence);
                 if (newCorrectIdx !== -1) {
                   correctLabel = String.fromCharCode(65 + newCorrectIdx);
+                }
+
+                // Resolve chosen text value
+                if (choiceIdx >= 0 && choiceIdx < shuffledOptions.length) {
+                  resolvedAnswerText = shuffledOptions[choiceIdx];
                 }
               }
             }
@@ -241,31 +344,21 @@ export const setupLessonSocket = (io: Server) => {
               participant.score = (participant.score || 0) + 1;
             }
 
+            // Add visual prefix indicator
+            const finalStoredAnswer = `ตัวเลือก ${String(answer).toUpperCase()}: ${resolvedAnswerText}`;
+
             // --- PERSIST DB ANSWER (NON-SHORT ANSWER) ---
             dbWriter.persistAnswer({
-              sessionId,
+              sessionId: result.session.currentDbSessionId || sessionId,
               studentId,
               phase: result.session.currentPhase,
-              answerText: String(answer),
+              answerText: finalStoredAnswer,
               isCorrect: isCorrect,
               score: isCorrect ? 1 : 0,
               questionText: question,
               correctAnswer: expectedAnswer // Received in event params
             });
           }
-        } else if (participant && (result.session.currentPhase === 8 || result.session.currentPhase === 13)) {
-           // --- PERSIST DB ANSWER (SHORT ANSWER WITH AI) ---
-           dbWriter.persistAnswer({
-             sessionId,
-             studentId,
-             phase: result.session.currentPhase,
-             answerText: String(answer),
-             isCorrect: true, // Considered valid submission
-             score: evaluatedAnswer.aiScore || 0,
-             aiFeedback: evaluatedAnswer.aiFeedback,
-             questionText: question,
-             correctAnswer: expectedAnswer
-           });
         }
 
         // Confirm submission to the student

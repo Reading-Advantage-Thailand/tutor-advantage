@@ -12,11 +12,14 @@ export default function LoginPage() {
   const { liff, isReady, error } = useLiff();
   const router = useRouter();
 
+  const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+  const redirectPath = searchParams?.get("redirect") || "/dashboard";
+
   useEffect(() => {
     if (isReady && liff?.isLoggedIn()) {
-      router.replace("/dashboard");
+      router.replace(redirectPath);
     }
-  }, [isReady, liff, router]);
+  }, [isReady, liff, router, redirectPath]);
 
   if (!isReady || (isReady && liff?.isLoggedIn())) {
     return (
@@ -31,7 +34,9 @@ export default function LoginPage() {
   const handleLogin = () => {
     if (liff && !liff.isLoggedIn()) {
       try {
-        liff.login({ redirectUri: window.location.origin + "/dashboard" });
+        // Construct proper redirect destination
+        const target = redirectPath.startsWith("/") ? redirectPath : "/" + redirectPath;
+        liff.login({ redirectUri: window.location.origin + target });
       } catch (err) {
         console.error("LoginPage: liff.login() failed:", err);
       }

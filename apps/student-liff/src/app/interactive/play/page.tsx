@@ -25,7 +25,7 @@ export default function PlayLessonPage() {
     aiFeedback,
     submitAnswer,
     kicked
-  } = useLessonSocket(null, studentId, name, classId || undefined);
+  } = useLessonSocket(null, studentId, name, classId || undefined, profile?.pictureUrl);
 
   const [typedAnswer, setTypedAnswer] = useState('');
   const [showEveryoneReady, setShowEveryoneReady] = useState(false);

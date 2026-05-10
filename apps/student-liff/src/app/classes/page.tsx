@@ -4,10 +4,10 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { studentApi } from "@/lib/api";
 import { useLiff } from "@/components/providers/LiffProvider";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2, QrCode } from "lucide-react";
 
 export default function ClassesPage() {
-  const { isReady } = useLiff();
+  const { liff, isReady } = useLiff();
   const [classes, setClasses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +26,47 @@ export default function ClassesPage() {
         });
     }
   }, [isReady]);
+
+  const handleScanQr = async () => {
+    if (!isReady || !liff) return;
+
+    try {
+      if (!liff.isInClient()) {
+        alert("💡 การสแกน QR Code รองรับเฉพาะการใช้งานผ่านแอป LINE เท่านั้นครับ");
+        return;
+      }
+
+      let scannedText = "";
+      
+      // Try modern scanCodeV2 first
+      if (liff.scanCodeV2) {
+        const result = await liff.scanCodeV2();
+        scannedText = result.value || "";
+      } else if ((liff as any).scanCode) {
+        // Fallback to old method
+        const result = await (liff as any).scanCode();
+        scannedText = result.value || "";
+      } else {
+        alert("⚠️ อุปกรณ์หรือเวอร์ชันของ LINE ไม่รองรับการสแกนในหน้าแอปนี้");
+        return;
+      }
+
+      if (scannedText) {
+        // Check if contains classId param
+        const match = scannedText.match(/[?&]classId=([^&]+)/);
+        if (match && match[1]) {
+          const classId = match[1];
+          // Standard deep link behavior
+          window.location.href = `/enroll?classId=${classId}`;
+        } else {
+          alert("❌ รูปแบบ QR Code ไม่ถูกต้อง (ไม่พบข้อมูลคลาสเรียน)");
+        }
+      }
+    } catch (err: any) {
+      // Users might cancel scanning, usually safe to log
+      console.log("QR Scan stopped:", err.message || err);
+    }
+  };
 
   const statusMap = {
     open: { label: "รับสมัคร", className: "status-active" },
@@ -71,18 +112,42 @@ export default function ClassesPage() {
 
       <div style={{ padding: "16px 16px", display: "flex", flexDirection: "column", gap: 14 }}>
 
-        {/* Search bar */}
-        <div style={{ position: "relative" }}>
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--neutral-400)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", zIndex: 1 }}>
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-          </svg>
-          <input
-            id="input-search-classes"
-            type="search"
-            placeholder="ค้นหาคลาสหรือติวเตอร์..."
-            className="input-field"
-            style={{ paddingLeft: 42, borderRadius: 16, height: 48, background: "var(--surface-card)" }}
-          />
+        {/* Search row */}
+        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <div style={{ position: "relative", flex: 1 }}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--neutral-400)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", zIndex: 1 }}>
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input
+              id="input-search-classes"
+              type="search"
+              placeholder="ค้นหาคลาสหรือติวเตอร์..."
+              className="input-field"
+              style={{ paddingLeft: 42, borderRadius: 16, height: 48, background: "var(--surface-card)", width: "100%" }}
+            />
+          </div>
+
+          <button
+            id="btn-scan-qr"
+            onClick={handleScanQr}
+            title="สแกน QR Code"
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 16,
+              background: "var(--surface-card)",
+              border: "1.5px solid var(--surface-border)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "var(--brand-600)",
+              cursor: "pointer",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+              flexShrink: 0,
+            }}
+          >
+            <QrCode size={22} />
+          </button>
         </div>
 
         {/* Filter chips */}

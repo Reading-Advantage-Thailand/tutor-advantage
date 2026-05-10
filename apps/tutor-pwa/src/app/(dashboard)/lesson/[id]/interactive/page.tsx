@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { useLessonSocket } from '@/hooks/useLessonSocket';
 import { playSound } from '@/lib/sounds';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ import { ThemeToggle } from '@/components/layout/theme-toggle';
 export default function TutorLobbyPage() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const classId = params.id as string;
   const articleId = searchParams.get('articleId') as string;
   
@@ -88,6 +89,12 @@ export default function TutorLobbyPage() {
                 allAnsweredData={allAnsweredData}
                 articleData={articleData}
                 changePhase={changePhase}
+                onFinishSession={() => {
+                  // 1. Delete session to release resources and disconnect others
+                  deleteSession();
+                  // 2. Explicitly redirect user back to the class summary page 
+                  router.push(`/dashboard/classes/${classId}`);
+                }}
               />
            </div>
         </div>

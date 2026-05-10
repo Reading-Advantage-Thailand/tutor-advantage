@@ -302,7 +302,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
         ? (await prisma.article.findFirst({ where: { bookId: cls.bookId } }))
             ?.articleId
         : "article-default-123",
-      referralLink: `https://liff.line.me/${process.env.NEXT_PUBLIC_LIFF_ID}?classId=${cls.classId}`,
+      referralLink: `https://liff.line.me/${process.env.NEXT_PUBLIC_LIFF_ID}/enroll?classId=${cls.classId}`,
       isEnrolled: isEnrolled, // Added this field
       enrolledStudents:
         cls.tutorUserId === userId

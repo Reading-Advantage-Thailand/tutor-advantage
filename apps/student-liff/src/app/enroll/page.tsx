@@ -68,14 +68,21 @@ export default function EnrollPage() {
     );
   }
 
-  if (!profile) {
+  useEffect(() => {
+    if (isReady && !profile) {
+      const currentParams = searchParams.toString();
+      const redirectTarget = encodeURIComponent(`/enroll?${currentParams}`);
+      router.replace(`/login?redirect=${redirectTarget}`);
+    }
+  }, [isReady, profile, router, searchParams]);
+
+  if (!isReady || !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 px-4">
         <div className="text-center">
-          <p className="text-muted-foreground mb-4">คุณต้องเข้าสู่ระบบ LINE ก่อน</p>
-          <Link href="/" className="text-primary hover:underline">
-            กลับไปหน้าแรก
-          </Link>
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-muted-foreground mb-2 font-medium">กำลังพาคุณไปหน้าเข้าสู่ระบบ...</p>
+          <p className="text-xs text-slate-400">เพื่อดำเนินการสมัครเข้าคลาสเรียน</p>
         </div>
       </div>
     );

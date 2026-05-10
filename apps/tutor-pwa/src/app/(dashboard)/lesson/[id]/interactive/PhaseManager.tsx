@@ -1,9 +1,28 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { ArticleDisplay } from './ArticleDisplay';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Check } from 'lucide-react';
 import { playSound } from '@/lib/sounds';
 import confetti from 'canvas-confetti';
+
+function seededShuffle<T>(array: T[], seedInput: string): T[] {
+  const result = [...array];
+  if (!seedInput) return result;
+  
+  let seed = 0;
+  for (let i = 0; i < seedInput.length; i++) {
+    seed += seedInput.charCodeAt(i);
+  }
+
+  for (let i = result.length - 1; i > 0; i--) {
+    // Use a stable sine-based pseudo-random generator
+    const x = Math.sin(seed + i) * 10000;
+    const rand = x - Math.floor(x);
+    const j = Math.floor(rand * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
 
 interface PhaseManagerProps {
   currentPhase: number;
@@ -13,6 +32,7 @@ interface PhaseManagerProps {
   articleData?: any;
   changePhase: (phase: number) => void;
   sessionData?: any;
+  onFinishSession?: () => void;
 }
 
 export const PhaseManager: React.FC<PhaseManagerProps> = ({
@@ -23,6 +43,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   articleData,
   changePhase,
   sessionData,
+  onFinishSession,
 }) => {
   const [isChangingPhase, setIsChangingPhase] = React.useState(false);
   const [canProceedDelayed, setCanProceedDelayed] = React.useState(false);
@@ -59,6 +80,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       if (currentPhase < 14) {
         changePhase(currentPhase + 1);
       } else {
+        // Safely loop back to lobby (Phase 0). 
+        // The Backend is now smart enough to automatically cycle a fresh DB session 
+        // the moment instruction begins again, providing unbroken continuity!
         changePhase(0);
       }
     }
@@ -218,12 +242,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const rawOptions = optionKeys.map(key => optionsData[key]);
     const correctOptionText = answerIdx !== -1 ? rawOptions[answerIdx] : rawAnswer;
 
-    // Deterministic shuffle
-    const shuffledOptions = [...rawOptions];
-    for (let i = shuffledOptions.length - 1; i > 0; i--) {
-      const j = Math.floor((i + 1) * 0.47) % (i + 1);
-      [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
-    }
+    // Deterministic shuffle tied to session ID so frontend matches backend perfectly
+    const shuffledOptions = seededShuffle(rawOptions, (sessionData?.sessionId || 'fallback') + "_phase7_" + mcqQuestion?.question);
 
     // Now find the new index of correct text
     const newCorrectIdx = shuffledOptions.indexOf(correctOptionText);
@@ -271,11 +291,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       fillCounter++;
     }
 
-    const shuffledOptions = [...optionsArray];
-    for (let i = shuffledOptions.length - 1; i > 0; i--) {
-      const j = Math.floor((i + 1) * 0.47) % (i + 1);
-      [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
-    }
+    const shuffledOptions = seededShuffle(optionsArray, (sessionData?.sessionId || 'fallback') + "_phase10_" + targetWord?.vocabulary);
 
     const newCorrectIdx = shuffledOptions.indexOf(correctTranslation);
     const correctLabel = String.fromCharCode(65 + newCorrectIdx);
@@ -308,11 +324,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     
     const optionsArray = [correctWord, distractors[0] || "Word A", distractors[1] || "Word B", distractors[2] || "Word C"];
 
-    const shuffledOptions = [...optionsArray];
-    for (let i = shuffledOptions.length - 1; i > 0; i--) {
-      const j = Math.floor((i + 1) * 0.47) % (i + 1);
-      [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
-    }
+    const shuffledOptions = seededShuffle(optionsArray, (sessionData?.sessionId || 'fallback') + "_phase11_" + targetSentence);
 
     const newCorrectIdx = shuffledOptions.indexOf(correctWord);
     const correctLabel = String.fromCharCode(65 + newCorrectIdx);
@@ -333,20 +345,12 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
     const targetSentence = typeof sentences[idx] === 'object' ? sentences[idx].sentences : sentences[idx];
     const words = String(targetSentence).split(' ').filter((w: any) => String(w).trim().length > 0);
-    
-    // Shuffle the sentence words randomly
+    // Shuffle the sentence words deterministically based on session
     const shuffleWords = (array: string[]) => {
-      const arr = [...array];
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor((i + 1) * 0.47) % (i + 1);
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      if (arr.join(' ') === array.join(' ')) {
-        arr.reverse();
-      }
-      return arr;
+      const res = seededShuffle(array, (sessionData?.sessionId || 'fallback') + "_phase12_words_" + targetSentence);
+      if (res.join(' ') === array.join(' ')) res.reverse(); // Ensure it is actually different from the original
+      return res;
     };
-
     const scrambled = shuffleWords(words).join(' / ');
     const question = `เรียงประโยคให้ถูกต้อง: ${scrambled}`;
     
@@ -356,11 +360,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     
     const optionsArray = [targetSentence, optA.join(' '), optB.join(' '), optC.join(' ')];
 
-    const shuffledOptions = [...optionsArray];
-    for (let i = shuffledOptions.length - 1; i > 0; i--) {
-      const j = Math.floor((i + 1) * 0.47) % (i + 1);
-      [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
-    }
+    const shuffledOptions = seededShuffle(optionsArray, (sessionData?.sessionId || 'fallback') + "_phase12b_" + targetSentence);
 
     const newCorrectIdx = shuffledOptions.indexOf(targetSentence);
     const correctLabel = String.fromCharCode(65 + newCorrectIdx);
@@ -680,6 +680,17 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               </button>
             </div>
           )}
+
+          {/* Standard Controls: Exit Session */}
+          <div className="flex items-center gap-2 pl-2 border-l border-border">
+            <button 
+              onClick={onFinishSession}
+              className="px-3 py-1.5 bg-secondary/10 text-secondary-foreground text-xs font-bold rounded-lg hover:bg-secondary/20 transition-colors flex items-center gap-1"
+            >
+              <Check size={14} />
+              จบคาบเรียน (เสร็จสิ้น)
+            </button>
+          </div>
         </div>
         <button
           onClick={handleNextPhase}
@@ -699,7 +710,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             'Waiting for answers...'
           ) : currentPhase === 14 ? (
             <>
-              <span className="flex items-center gap-1">กลับไปหน้า Lobby <kbd className="hidden md:inline-flex bg-primary-foreground/20 text-primary-foreground text-xs px-2 py-0.5 rounded ml-2 shadow-sm font-mono">→</kbd></span>
+              <span className="flex items-center gap-1">เริ่มรอบใหม่ต่อเนื่อง <kbd className="hidden md:inline-flex bg-primary-foreground/20 text-primary-foreground text-xs px-2 py-0.5 rounded ml-2 shadow-sm font-mono">→</kbd></span>
               <ChevronRight size={20} />
             </>
           ) : (

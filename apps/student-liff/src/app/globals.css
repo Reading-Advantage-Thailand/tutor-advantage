@@ -145,13 +145,7 @@
 }
 
 /* ─── Reset & Base ────────────────────────────────────────────────────────── */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* Reset moved to @layer base below to prevent cascade override */
 
 html {
   -webkit-text-size-adjust: 100%;
@@ -917,6 +911,13 @@ p { line-height: 1.7; }
 }
 
 @layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
   * {
     @apply border-border outline-ring/50;
   }
