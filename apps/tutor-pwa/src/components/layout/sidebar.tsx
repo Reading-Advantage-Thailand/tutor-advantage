@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   BookOpen,
+  Calendar,
   MessageSquare,
   BarChart2,
   Award,
@@ -21,6 +22,7 @@ import { useState, useEffect, useRef } from "react";
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "ภาพรวม" },
   { href: "/dashboard/classes", icon: BookOpen, label: "คลาสเรียน" },
+  { href: "/dashboard/schedule", icon: Calendar, label: "ตารางสอน" },
   { href: "/dashboard/chat", icon: MessageSquare, label: "ข้อความ" },
   { href: "/dashboard/earnings", icon: BarChart2, label: "รายได้" },
   { href: "/dashboard/performance", icon: Award, label: "ผลงาน" },

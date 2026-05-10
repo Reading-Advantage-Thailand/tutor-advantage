@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, BookOpen, Play } from 'lucide-react';
-import Link from 'next/link';
+import React, { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, BookOpen, Play } from "lucide-react";
+import Link from "next/link";
 
-import { getClassArticles } from '../../../dashboard/classes/actions';
+import { getClassArticles } from "@/app/dashboard/classes/actions";
 
 interface Article {
   id: string;
@@ -23,7 +23,7 @@ export default function SelectLessonPage() {
   const params = useParams();
   const router = useRouter();
   const classId = params.id as string;
-  
+
   const [loading, setLoading] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]);
   const [selectedArticle, setSelectedArticle] = useState<string | null>(null);
@@ -48,12 +48,14 @@ export default function SelectLessonPage() {
       }
     }
     loadArticles();
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+    };
   }, [classId]);
 
   const handleStartLesson = async () => {
     if (!selectedArticle) {
-      setError('กรุณาเลือกบทเรียน');
+      setError("กรุณาเลือกบทเรียน");
       return;
     }
 
@@ -62,10 +64,12 @@ export default function SelectLessonPage() {
 
     try {
       // Navigate to interactive page with selected article ID
-      const article = articles.find(a => a.id === selectedArticle);
-      router.push(`/lesson/${classId}/interactive?articleId=${selectedArticle}`);
+      const article = articles.find((a) => a.id === selectedArticle);
+      router.push(
+        `/lesson/${classId}/interactive?articleId=${selectedArticle}`,
+      );
     } catch (err) {
-      setError('เกิดข้อผิดพลาดในการเริ่มบทเรียน');
+      setError("เกิดข้อผิดพลาดในการเริ่มบทเรียน");
       setLoading(false);
     }
   };
@@ -75,14 +79,16 @@ export default function SelectLessonPage() {
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <Link href={`/dashboard/classes/${classId}`}>
-          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-muted">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 hover:bg-muted"
+          >
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-xl font-bold text-foreground">
-            เลือกบทเรียน
-          </h1>
+          <h1 className="text-xl font-bold text-foreground">เลือกบทเรียน</h1>
           <p className="text-sm text-muted-foreground">
             เลือกบทความสำหรับเซสชันการเรียนในวันนี้
           </p>
@@ -110,8 +116,8 @@ export default function SelectLessonPage() {
               onClick={() => setSelectedArticle(article.id)}
               className={`cursor-pointer border-2 transition-all ${
                 selectedArticle === article.id
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border/60 hover:border-primary/50'
+                  ? "border-primary bg-primary/5"
+                  : "border-border/60 hover:border-primary/50"
               }`}
             >
               <CardContent className="p-4">
@@ -120,8 +126,8 @@ export default function SelectLessonPage() {
                   <div
                     className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 transition-all ${
                       selectedArticle === article.id
-                        ? 'border-primary bg-primary'
-                        : 'border-border'
+                        ? "border-primary bg-primary"
+                        : "border-border"
                     }`}
                   >
                     {selectedArticle === article.id && (
@@ -137,7 +143,7 @@ export default function SelectLessonPage() {
                         บท {article.articleNumber}: {article.title}
                       </h3>
                     </div>
-                    
+
                     <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                       {article.passage}
                     </p>
@@ -183,7 +189,7 @@ export default function SelectLessonPage() {
           className="flex-1 gap-2"
         >
           <Play className="h-4 w-4" />
-          {loading ? 'กำลังเริ่ม...' : 'เริ่มเรียน'}
+          {loading ? "กำลังเริ่ม..." : "เริ่มเรียน"}
         </Button>
       </div>
     </div>

@@ -57,6 +57,7 @@ export default function RootLayout({
       lang="th"
       className={cn("font-sans", geist.variable)}
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
     >
       <body className={`${notoSansThai.variable} ${inter.variable}`}>
         <ThemeProvider>

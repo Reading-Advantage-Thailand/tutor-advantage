@@ -7,13 +7,37 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, CheckCircle2, XCircle, MessageSquare, Award, Trophy } from "lucide-react";
 
+interface Answer {
+  phase: number;
+  score: number;
+  question: string;
+  answer: string;
+  isCorrect: boolean;
+  correctAnswer?: string;
+  aiFeedback?: string;
+}
+
+interface Session {
+  articleTitle: string;
+  tutorName: string;
+  date: string;
+  totalScore: number;
+  rank?: number;
+  totalParticipants?: number;
+}
+
+interface LessonDetail {
+  session: Session;
+  answers: Answer[];
+}
+
 export default function LessonHistoryDetailPage() {
   const params = useParams();
   const router = useRouter();
   const sessionId = params.sessionId as string;
 
   const [loading, setLoading] = useState(true);
-  const [detail, setDetail] = useState<any>(null);
+  const [detail, setDetail] = useState<LessonDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -22,8 +46,9 @@ export default function LessonHistoryDetailPage() {
         try {
           const data = await studentApi.getLessonSessionDetails(sessionId);
           setDetail(data);
-        } catch (err: any) {
-          setError(err.message || "ไม่สามารถโหลดข้อมูลประวัติได้");
+        } catch (err: unknown) {
+          const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
+          setError(errorMessage || "ไม่สามารถโหลดข้อมูลประวัติได้");
         } finally {
           setLoading(false);
         }
@@ -134,7 +159,7 @@ export default function LessonHistoryDetailPage() {
           </Card>
         ) : (
           /* Answers List */
-          answers.map((a: any, index: number) => (
+          answers.map((a: Answer, index: number) => (
             <Card key={index} className="overflow-hidden border-0 shadow-md dark:shadow-lg rounded-2xl bg-white dark:bg-slate-800 hover:shadow-lg dark:hover:shadow-emerald-900/30 transition-all duration-300 transform hover:scale-[1.01]">
               <CardContent className="p-0">
                 {/* Phase Header */}
