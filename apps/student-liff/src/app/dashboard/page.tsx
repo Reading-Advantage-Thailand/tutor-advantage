@@ -21,39 +21,67 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    let isMounted = true;
+
     if (isReady && profile) {
-      const fetchData = async () => {
+      const fetchData = async (showLoading = true) => {
         try {
+          if (showLoading) setLoading(true);
+          
           // Wait up to 5 seconds for session token to appear
           let token = localStorage.getItem('student_session_token');
           let retries = 0;
-          while (!token && retries < 10) {
+          while (!token && retries < 10 && isMounted) {
             console.log("[Dashboard] Waiting for backend session token...");
             await new Promise(resolve => setTimeout(resolve, 500));
             token = localStorage.getItem('student_session_token');
             retries++;
           }
 
-          if (!token) {
+          if (!token && isMounted) {
             throw new Error("ไม่สามารถสร้างเซสชันกับเซิร์ฟเวอร์ได้ กรุณาลองเข้าสู่ระบบใหม่อีกครั้ง");
           }
+
+          if (!isMounted) return;
 
           const [data, hist] = await Promise.all([
             studentApi.getDashboard(),
             studentApi.getLessonHistory().catch(() => ({ history: [] }))
           ]);
-          setDashboardData(data);
-          setHistoryData(hist.history || []);
-          setLoading(false);
+
+          if (isMounted) {
+            setDashboardData(data);
+            setHistoryData(hist.history || []);
+            setError(null); // clear any error on successful fetch
+          }
         } catch (err: any) {
-          console.error("Failed to fetch dashboard:", err);
-          setError(err.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล");
-          setLoading(false);
+          if (isMounted) {
+            console.error("Failed to fetch dashboard:", err);
+            // Only set error visible state if we haven't loaded data before
+            if (showLoading) {
+              setError(err.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล");
+            }
+          }
+        } finally {
+          if (isMounted && showLoading) {
+            setLoading(false);
+          }
         }
       };
 
-      fetchData();
+      fetchData(true);
+
+      // Start polling every 5 seconds for live updates
+      intervalId = setInterval(() => {
+        fetchData(false);
+      }, 5000);
     }
+
+    return () => {
+      isMounted = false;
+      if (intervalId) clearInterval(intervalId);
+    };
   }, [isReady, profile]);
 
   const student = {
@@ -64,7 +92,7 @@ export default function DashboardPage() {
     cefr: "A1",
   };
 
-  const enrollment = dashboardData?.recentClasses?.[0] || {
+  const enrollment = dashboardData?.recentClasses?.find((c: any) => c.isLive) || dashboardData?.recentClasses?.[0] || {
     name: "ยังไม่มีคลาสเรียน",
     tutorName: "-",
     status: "none",
@@ -275,13 +303,28 @@ export default function DashboardPage() {
                   key={cls.id} 
                   href={`/classes/${cls.id}`}
                   className="glass-card clickable-effect" 
-                  style={{ padding: "14px 16px", display: "flex", alignItems: "center", gap: 14, textDecoration: "none" }}
+                  style={{ 
+                    padding: "14px 16px", 
+                    display: "flex", 
+                    alignItems: "center", 
+                    gap: 14, 
+                    textDecoration: "none",
+                    border: cls.isLive ? "1px solid #ef4444" : "1px solid transparent" 
+                  }}
                 >
-                  <div style={{ width: 44, height: 44, borderRadius: 12, background: "var(--brand-50)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "1px solid var(--brand-100)" }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 12, background: "var(--brand-50)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "1px solid var(--brand-100)", position: 'relative' }}>
                     <BookOpen size={20} style={{ color: "var(--brand-600)" }} />
+                    {cls.isLive && (
+                      <span style={{ position: 'absolute', top: -4, right: -4, width: 12, height: 12, borderRadius: '50%', background: '#ef4444', border: '2px solid #fff', animation: 'pulse 1.5s infinite' }} />
+                    )}
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text-primary)" }}>{cls.name}</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text-primary)" }}>{cls.name}</div>
+                      {cls.isLive && (
+                        <span style={{ fontSize: '0.625rem', fontWeight: 800, color: '#ef4444', background: 'rgba(239,68,68,0.1)', padding: '2px 4px', borderRadius: 4 }}>LIVE</span>
+                      )}
+                    </div>
                     <div style={{ fontSize: "0.75rem", color: "var(--text-tertiary)", marginTop: 2 }}>{cls.book} · {cls.progress}% สำเร็จ</div>
                   </div>
                   <ChevronRight size={18} style={{ color: "var(--neutral-300)" }} />
