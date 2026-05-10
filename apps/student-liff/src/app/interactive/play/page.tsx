@@ -31,6 +31,7 @@ export default function PlayLessonPage() {
   const [showEveryoneReady, setShowEveryoneReady] = useState(false);
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [prevPhase, setPrevPhase] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (isEveryoneReady) {
@@ -47,7 +48,14 @@ export default function PlayLessonPage() {
       playSound('phaseChange');
     }
     if (sessionData) setPrevPhase(sessionData.currentPhase);
+    setIsSubmitting(false);
   }, [sessionData?.currentPhase]);
+
+  useEffect(() => {
+    if (hasAnswered) {
+      setIsSubmitting(false);
+    }
+  }, [hasAnswered]);
 
   useEffect(() => {
     if (sessionData && sessionData.currentPhase === 0 && classId) {
@@ -56,8 +64,8 @@ export default function PlayLessonPage() {
   }, [sessionData?.currentPhase, classId, router]);
 
   useEffect(() => {
-    if (!hasAnswered) setSelectedChoice(null);
-  }, [hasAnswered]);
+    if (!hasAnswered && !isSubmitting) setSelectedChoice(null);
+  }, [hasAnswered, isSubmitting]);
 
   // ─── Loading States ────────────────────────────────────────
   if (!liffReady) {
@@ -111,6 +119,7 @@ export default function PlayLessonPage() {
   // ─── Handlers ──────────────────────────────────────────────
   const handleMcqClick = (answer: string) => {
     playSound('select');
+    setIsSubmitting(true);
     setSelectedChoice(answer);
     const currentPhase = sessionData?.currentPhase;
     let questionText = "เลือกคำตอบที่ถูกต้อง";
@@ -147,6 +156,7 @@ export default function PlayLessonPage() {
   const handleTextSubmit = () => {
     if (typedAnswer.trim()) {
       playSound('submit');
+      setIsSubmitting(true);
       setSelectedChoice(typedAnswer);
       const currentPhase = sessionData?.currentPhase;
       const idx = sessionData?.phaseSelectedIndices?.[currentPhase] || 0;
@@ -385,55 +395,91 @@ export default function PlayLessonPage() {
         {(currentPhase === 8 || currentPhase === 13) && (
           <div className="phase-enter w-full max-w-md flex-1 flex flex-col justify-center">
             {aiFeedback ? (
-              <div className="bg-card rounded-3xl p-8 shadow-2xl border border-border text-center">
-                <div className="bg-primary/10 text-primary px-4 py-1.5 rounded-full inline-block font-bold text-xs mb-6 uppercase tracking-wider">
+              <div className="bg-card rounded-3xl p-6 shadow-2xl border border-border text-center w-full max-w-sm mx-auto flex flex-col items-center">
+                <div className="bg-primary/10 text-primary px-3.5 py-1 rounded-full font-bold text-xs mb-5 uppercase tracking-wider shrink-0">
                   ผลประเมินจาก AI
                 </div>
-                {/* Score Ring */}
-                <div className="relative w-32 h-32 mx-auto mb-6">
-                  <svg className="w-full h-full -rotate-90 drop-shadow-md" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" className="text-muted" strokeWidth="8" />
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" className="text-primary" strokeWidth="8" strokeLinecap="round"
-                      strokeDasharray="283" strokeDashoffset={283 - (283 * (aiFeedback.score || 0) / 5)}
-                      style={{ animation: 'score-ring-fill 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards' }}
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center flex-col">
-                    <span className="text-4xl font-black text-foreground">{aiFeedback.score}</span>
-                    <span className="text-xs font-bold text-muted-foreground mt-0.5">เต็ม 5</span>
+                
+                {/* Main Row */}
+                <div className="flex flex-row items-center gap-5 w-full text-left mb-5 shrink-0">
+                  {/* Score Ring */}
+                  <div className="relative w-24 h-24 shrink-0">
+                    <svg className="w-full h-full -rotate-90 drop-shadow-sm" viewBox="0 0 100 100">
+                      <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" className="text-muted/40" strokeWidth="8" />
+                      <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" className="text-primary" strokeWidth="8" strokeLinecap="round"
+                        strokeDasharray="283" strokeDashoffset={283 - (283 * (aiFeedback.score || 0) / 5)}
+                        style={{ animation: 'score-ring-fill 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards' }}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center flex-col">
+                      <span className="text-3xl font-black text-foreground">{aiFeedback.score}</span>
+                      <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">เต็ม 5</span>
+                    </div>
+                  </div>
+                  
+                  {/* Feedback Box */}
+                  <div className="flex-1 bg-muted/50 border border-border/60 p-4 rounded-2xl relative min-h-[96px] flex items-center">
+                    <p className="text-xs font-bold text-foreground leading-relaxed">
+                      {aiFeedback.feedback}
+                    </p>
                   </div>
                 </div>
-                <div className="bg-muted p-5 rounded-2xl text-left border border-border relative">
-                  <div className="absolute -top-3 left-6 text-2xl">💬</div>
-                  <p className="text-sm text-foreground font-medium leading-relaxed mt-2">
-                    {aiFeedback.feedback}
-                  </p>
-                </div>
-                <p className="text-xs font-bold text-muted-foreground mt-8 animate-pulse flex items-center justify-center gap-2">
-                  <div className="w-2 h-2 bg-primary rounded-full" />
+
+                <p className="text-xs font-bold text-muted-foreground mt-4 animate-pulse flex items-center justify-center gap-2 shrink-0">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                  </span>
                   รอคุณครูไปยังหน้าถัดไป...
                 </p>
               </div>
-            ) : hasAnswered ? (
-              <div className="flex-1 flex flex-col items-center justify-center text-center gap-4">
+            ) : (hasAnswered || isSubmitting) ? (
+              <div className="flex-1 flex flex-col items-center justify-center text-center gap-5 w-full max-w-sm mx-auto">
                 {selectedChoice && (
-                  <div className="bg-card px-6 py-4 rounded-xl border-2 border-border shadow-sm max-w-sm w-full">
+                  <div className="bg-card px-5 py-3.5 rounded-2xl border border-border shadow-md w-full shrink-0">
                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">คำตอบของคุณ</p>
-                    <p className="text-base font-semibold text-foreground break-words">{selectedChoice}</p>
+                    <p className="text-sm font-semibold text-foreground break-words leading-relaxed">{selectedChoice}</p>
                   </div>
                 )}
+                
                 {showEveryoneReady ? (
-                  <>
-                    <div className="text-6xl">✅</div>
-                    <h2 className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">ตอบครบทุกคนแล้ว!</h2>
-                    <p className="text-muted-foreground">รอคุณครูไปยังหน้าถัดไป...</p>
-                  </>
+                  <div className="bg-card rounded-3xl p-6 shadow-xl border border-border text-center w-full flex flex-col items-center shrink-0">
+                    <div className="text-5xl mb-3">✅</div>
+                    <h2 className="text-xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight mb-1">ส่งคำตอบเรียบร้อย!</h2>
+                    <p className="text-xs text-muted-foreground font-medium">รอระบบเปิดเผยคะแนนจาก AI...</p>
+                  </div>
                 ) : (
-                  <>
-                    <div className="text-5xl animate-bounce">🤖</div>
-                    <h2 className="text-xl font-bold text-foreground">ส่งคำตอบแล้ว!</h2>
-                    <p className="text-muted-foreground">กำลังให้ AI ตรวจคำตอบ...</p>
-                  </>
+                  <div className="bg-card rounded-3xl p-6 shadow-2xl border border-border text-center w-full flex flex-col items-center shrink-0">
+                    {/* Glowing Live AI Badge */}
+                    <div className="bg-primary/10 text-primary px-3.5 py-1 rounded-full font-bold text-xs mb-5 uppercase tracking-wider flex items-center gap-1.5 shrink-0">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                      </span>
+                      กำลังส่งตรวจด้วย AI...
+                    </div>
+                    
+                    {/* Skeleton Row */}
+                    <div className="flex flex-row items-center gap-5 w-full text-left mb-4 shrink-0">
+                      {/* Score Circle Skeleton with scanning effect */}
+                      <div className="relative w-20 h-20 shrink-0 rounded-full bg-muted border border-border/60 flex items-center justify-center overflow-hidden">
+                        {/* Shimmer sweep */}
+                        <div className="absolute inset-0 skeleton opacity-40" />
+                        <span className="text-2xl animate-bounce relative z-10">🤖</span>
+                      </div>
+                      
+                      {/* Text Paragraph Skeletons */}
+                      <div className="flex-1 flex flex-col gap-2">
+                        <div className="h-3 w-full rounded-md skeleton opacity-40" />
+                        <div className="h-3 w-5/6 rounded-md skeleton opacity-40" />
+                        <div className="h-3 w-2/3 rounded-md skeleton opacity-40" />
+                      </div>
+                    </div>
+
+                    <p className="text-[10px] font-bold text-muted-foreground mt-3 animate-pulse leading-relaxed shrink-0">
+                      AI กำลังวิเคราะห์และตรวจสอบความถูกต้อง...
+                    </p>
+                  </div>
                 )}
               </div>
             ) : (
