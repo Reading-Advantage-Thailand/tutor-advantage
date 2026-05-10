@@ -278,7 +278,7 @@ export function ArticleSelector({ classId }: { classId: string }) {
                   selectedArticle === article.id
                     ? "border-primary/40 bg-primary/[0.03] shadow-md ring-1 ring-primary/20"
                     : "border-border/50 bg-background hover:bg-muted/30 hover:border-border"
-                }`}
+                } ${article.isCompleted ? "opacity-80 saturate-[0.85]" : ""}`}
               >
                 <div
                   className={`absolute top-0 bottom-0 left-0 w-1.5 transition-all duration-300 ${
@@ -292,6 +292,12 @@ export function ArticleSelector({ classId }: { classId: string }) {
                     <span className="text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground px-2 py-0.5 rounded-md border border-border/40">
                       บทที่ {idx + 1}
                     </span>
+                    {article.isCompleted && (
+                      <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 flex items-center gap-1">
+                        <div className="w-1 h-1 rounded-full bg-emerald-500" />
+                        สอนแล้ว
+                      </span>
+                    )}
                     {article.cefrLevel && (
                       <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20">
                         CEFR {article.cefrLevel}
@@ -562,8 +568,12 @@ export function StudentAvatars({
           onMouseLeave={() => setHoveredIdx(null)}
         >
           {/* Avatar with paid checkmark */}
-          <div className="w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/15 flex items-center justify-center text-sm font-bold text-primary uppercase border-2 border-border/50 hover:border-primary/50 transition-all duration-300 relative cursor-pointer shadow-sm">
-            {s.name[0] || "?"}
+          <div className="w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/15 flex items-center justify-center text-sm font-bold text-primary uppercase border-2 border-border/50 hover:border-primary/50 transition-all duration-300 relative cursor-pointer shadow-sm overflow-hidden">
+            {s.avatarUrl ? (
+              <img src={s.avatarUrl} alt={s.name} className="w-full h-full object-cover" />
+            ) : (
+              s.name[0] || "?"
+            )}
             {s.paid && (
               <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full border border-background flex items-center justify-center shadow-sm">
                 <svg

@@ -84,20 +84,22 @@ export default function DashboardPage() {
     };
   }, [isReady, profile]);
 
-  const student = {
-    name: profile?.displayName || "กำลังโหลด...",
-    avatar: profile?.pictureUrl || null,
-    initials: profile?.displayName?.charAt(0) || "TA",
-    level: "Origins 2", // Still placeholder, could be from user profile
-    cefr: "A1",
-  };
-
   const enrollment = dashboardData?.recentClasses?.find((c: any) => c.isLive) || dashboardData?.recentClasses?.[0] || {
     name: "ยังไม่มีคลาสเรียน",
     tutorName: "-",
     status: "none",
     nextSession: "-",
     progress: 0,
+    bookName: null,
+    seriesCefr: null
+  };
+
+  const student = {
+    name: profile?.displayName || "กำลังโหลด...",
+    avatar: profile?.pictureUrl || null,
+    initials: profile?.displayName?.charAt(0) || "TA",
+    level: enrollment.bookName || "Origins 1", 
+    cefr: enrollment.seriesCefr || "A1",
   };
 
   const recentArticles = [

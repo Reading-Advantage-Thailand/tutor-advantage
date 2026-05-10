@@ -65,6 +65,7 @@ export const studentApi = {
 
   // Learning
   getDashboard: () => fetchWithAuth('/dashboard/summary'),
+  getStudentProgress: () => fetchWithAuth('/student/progress'),
   getEnrolledClasses: () => fetchWithAuth('/classes'),
   getAvailableClasses: () => fetchWithAuth('/classes/available'),
   getClassDetails: (classId: string) => fetchWithAuth(`/classes/${classId}`),

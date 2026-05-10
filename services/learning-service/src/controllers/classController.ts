@@ -278,11 +278,11 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
     const studentIds = cls.enrollments?.map((e: any) => e.studentUserId) || [];
     const users = await prisma.user.findMany({
       where: { userId: { in: studentIds } },
-      select: { userId: true, displayName: true },
+      select: { userId: true, displayName: true, profilePictureUrl: true },
     });
 
     const userMap = new Map();
-    users.forEach((u) => userMap.set(u.userId, u.displayName));
+    users.forEach((u: any) => userMap.set(u.userId, { name: u.displayName, avatar: u.profilePictureUrl }));
 
     const mapped = {
       id: cls.classId,
@@ -307,7 +307,8 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
       enrolledStudents:
         cls.tutorUserId === userId
           ? cls.enrollments?.map((e: any) => ({
-              name: userMap.get(e.studentUserId) || "Unknown Student",
+              name: userMap.get(e.studentUserId)?.name || "Unknown Student",
+              avatarUrl: userMap.get(e.studentUserId)?.avatar || null,
               enrolled: e.createdAt.toLocaleDateString("th-TH", {
                 day: "numeric",
                 month: "short",
@@ -568,6 +569,16 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
       where: { bookId: cls.bookId },
     });
 
+    // Fetch completed sessions for this class to mark completed articles
+    const completedSessions = await prisma.interactiveSession.findMany({
+      where: {
+        classId: classId,
+        status: "FINISHED"
+      },
+      select: { articleId: true }
+    });
+    const completedArticleIds = new Set(completedSessions.map(s => s.articleId));
+
     const articles = await Promise.all(
       dbArticles.map(async (art) => {
         const details = await getArticleDetails(art.articleId);
@@ -592,12 +603,21 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
           }
         }
 
+        let displayCefr = details?.cefr_level || "A1";
+        // Normalize non-standard CEFR strings:
+        // 1. If A0, convert to A1
+        if (displayCefr === "A0") displayCefr = "A1";
+        // 2. Strip non-alphanumeric characters (e.g. A1- to A1)
+        displayCefr = displayCefr.replace(/[^a-zA-Z0-9]/g, '');
+
         return {
           id: art.articleId,
           articleNumber: parseInt(art.articleId.replace(/\D/g, "")) || 1,
           title: details?.title || art.title || "Untitled Article",
           summary: thaiSummary || "ไม่มีสรุปเนื้อหาสำหรับบทความนี้",
-          cefrLevel: details?.cefr_level || "A1",
+          passage: details?.passage?.substring(0, 120) + "...", // Return a snippet for passage display
+          cefrLevel: displayCefr,
+          isCompleted: completedArticleIds.has(art.articleId)
         };
       }),
     );

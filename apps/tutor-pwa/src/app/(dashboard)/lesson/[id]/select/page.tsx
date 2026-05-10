@@ -7,14 +7,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, BookOpen, Play } from 'lucide-react';
 import Link from 'next/link';
 
+import { getClassArticles } from '../../../dashboard/classes/actions';
+
 interface Article {
   id: string;
   title: string;
   passage: string;
   summary?: string;
   cefrLevel?: string;
-  raLevel?: string;
   articleNumber: number;
+  isCompleted?: boolean;
 }
 
 export default function SelectLessonPage() {
@@ -28,38 +30,25 @@ export default function SelectLessonPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // TODO: Fetch articles from backend
-    // For now, use mock data
-    const mockArticles: Article[] = [
-      {
-        id: 'art-001',
-        title: 'The Amazing Octopus',
-        passage: 'Octopuses are intelligent creatures that can solve problems and hide from predators.',
-        summary: 'Learn about octopus behavior and intelligence',
-        cefrLevel: 'A1',
-        raLevel: 'Level 1',
-        articleNumber: 1,
-      },
-      {
-        id: 'art-002',
-        title: 'Recycling: Save the Planet',
-        passage: 'Recycling helps reduce waste and protects our environment for future generations.',
-        summary: 'Understanding the importance of recycling',
-        cefrLevel: 'A2',
-        raLevel: 'Level 2',
-        articleNumber: 2,
-      },
-      {
-        id: 'art-003',
-        title: 'The History of Coffee',
-        passage: 'Coffee originated in Ethiopia and has become the most popular beverage worldwide.',
-        summary: 'Fascinating facts about coffee history',
-        cefrLevel: 'B1',
-        raLevel: 'Level 3',
-        articleNumber: 3,
-      },
-    ];
-    setArticles(mockArticles);
+    let isMounted = true;
+    async function loadArticles() {
+      setLoading(true);
+      try {
+        const data = await getClassArticles(classId);
+        if (isMounted) {
+          setArticles(data.articles || []);
+        }
+      } catch (err) {
+        console.error("Failed to load articles:", err);
+        if (isMounted) {
+          setError("ไม่สามารถดึงข้อมูลบทเรียนได้ กรุณาลองใหม่อีกครั้ง");
+        }
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+    loadArticles();
+    return () => { isMounted = false; };
   }, [classId]);
 
   const handleStartLesson = async () => {
@@ -161,14 +150,15 @@ export default function SelectLessonPage() {
 
                     {/* Metadata */}
                     <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                      {article.isCompleted && (
+                        <span className="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center gap-1 border border-emerald-200">
+                          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                          เรียนแล้ว
+                        </span>
+                      )}
                       {article.cefrLevel && (
                         <span className="px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">
                           CEFR: {article.cefrLevel}
-                        </span>
-                      )}
-                      {article.raLevel && (
-                        <span className="px-2 py-1 rounded-full bg-green-100 text-green-700 font-medium">
-                          {article.raLevel}
                         </span>
                       )}
                     </div>

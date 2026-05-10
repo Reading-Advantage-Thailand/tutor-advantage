@@ -1,35 +1,77 @@
-import { Flame, Clock, BookOpen, Target, Lock, CheckCircle2 } from "lucide-react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useLiff } from "@/components/providers/LiffProvider";
+import { studentApi } from "@/lib/api";
+import { Flame, Clock, BookOpen, Target, Lock, CheckCircle2, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function ProgressPage() {
-  const stats = {
-    articlesRead: 7, totalArticles: 14, weekStreak: 3, totalMinutes: 210,
-    level: "Origins 2", cefr: "A1", seriesColor: "#06c755",
-    nextMilestone: { label: "Quest 4", at: 14, reward: "🏅 Origins Graduate" },
-  };
+  const { isReady, profile } = useLiff();
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const progressPct = Math.round((stats.articlesRead / stats.totalArticles) * 100);
+  useEffect(() => {
+    let isMounted = true;
 
-  const weeklyActivity = [
-    { day: "จ", minutes: 20, active: true }, { day: "อ", minutes: 0, active: false },
-    { day: "พ", minutes: 35, active: true }, { day: "พฤ", minutes: 15, active: true },
-    { day: "ศ", minutes: 0, active: false }, { day: "ส", minutes: 45, active: true },
-    { day: "อา", minutes: 0, active: false },
-  ];
+    async function fetchData() {
+      if (!isReady) return;
+      
+      try {
+        setLoading(true);
+        // Wait for session token
+        let token = localStorage.getItem('student_session_token');
+        let retries = 0;
+        while (!token && retries < 10 && isMounted) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+          token = localStorage.getItem('student_session_token');
+          retries++;
+        }
 
-  const maxMin = Math.max(...weeklyActivity.map((d) => d.minutes));
+        if (!token) {
+          throw new Error("Session unavailable");
+        }
 
-  const articles = [
-    { id: "art-1", no: 1, title: "Hello, World!", done: true, minutes: 18 },
-    { id: "art-2", no: 2, title: "My Family", done: true, minutes: 22 },
-    { id: "art-3", no: 3, title: "At the Market", done: true, minutes: 15 },
-    { id: "art-4", no: 4, title: "The Magic Garden", done: true, minutes: 30 },
-    { id: "art-5", no: 5, title: "School Days", done: true, minutes: 25 },
-    { id: "art-6", no: 6, title: "Rainy Season", done: true, minutes: 20 },
-    { id: "art-7", no: 7, title: "Thai Festivals", done: true, minutes: 40 },
-    { id: "art-8", no: 8, title: "Food Around Town", done: false, minutes: 0 },
-    { id: "art-9", no: 9, title: "At the Hospital", done: false, minutes: 0 },
-    { id: "art-10", no: 10, title: "The River City", done: false, minutes: 0 },
-  ];
+        const result = await studentApi.getStudentProgress();
+        if (isMounted) {
+          setData(result);
+        }
+      } catch (err) {
+        console.error(err);
+        if (isMounted) {
+          setError("เกิดข้อผิดพลาดในการโหลดข้อมูล");
+        }
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+
+    fetchData();
+    return () => { isMounted = false; };
+  }, [isReady]);
+
+  if (!isReady || loading) {
+    return (
+      <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--surface-bg)" }}>
+        <div className="animate-spin" style={{ width: 32, height: 32, border: "3px solid var(--neutral-200)", borderTopColor: "var(--brand-500)", borderRadius: "50%" }} />
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center gap-4">
+        <AlertCircle className="text-red-500 w-12 h-12" />
+        <p className="text-slate-500">{error || "ไม่มีข้อมูล"}</p>
+        <Button onClick={() => window.location.reload()}>ลองอีกครั้ง</Button>
+      </div>
+    );
+  }
+
+  const { stats, weeklyActivity, articles } = data;
+  const progressPct = stats.totalArticles > 0 ? Math.round((stats.articlesRead / stats.totalArticles) * 100) : 0;
+  const maxMin = Math.max(...(weeklyActivity.map((d: any) => d.minutes) || [0]), 1);
 
   return (
     <div>
@@ -88,7 +130,7 @@ export default function ProgressPage() {
         <div className="glass-card" style={{ padding: "20px" }}>
           <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 16 }}>กิจกรรมสัปดาห์นี้</h3>
           <div style={{ display: "flex", gap: 6, alignItems: "flex-end", height: 80 }}>
-            {weeklyActivity.map((d) => (
+            {weeklyActivity.map((d: any) => (
               <div key={d.day} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
                 <div style={{
                   width: "100%",
@@ -117,7 +159,7 @@ export default function ProgressPage() {
           </div>
 
           <div className="glass-card" style={{ overflow: "hidden" }}>
-            {articles.map((art, idx) => (
+            {articles.map((art: any, idx: number) => (
               <div
                 key={art.id}
                 style={{

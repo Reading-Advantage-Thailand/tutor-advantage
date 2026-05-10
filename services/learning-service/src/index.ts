@@ -30,7 +30,7 @@ import {
   enrollStudent,
   directEnroll,
 } from "./controllers/enrollmentController";
-import { getDashboardSummary } from "./controllers/dashboardController";
+import { getDashboardSummary, getStudentProgress } from "./controllers/dashboardController";
 import {
   getConversations,
   getMessages,
@@ -83,6 +83,7 @@ app.post("/v1/enroll/:referralToken", authMiddleware, enrollStudent);
 
 // Protected Dashboard API
 app.get("/v1/dashboard/summary", authMiddleware, getDashboardSummary);
+app.get("/v1/student/progress", authMiddleware, getStudentProgress);
 
 // Protected Lesson History Routes
 app.get("/v1/lessons/history", authMiddleware, getStudentLessonHistory);
