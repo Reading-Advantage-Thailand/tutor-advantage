@@ -39,3 +39,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+# PWA files
+public/sw.js
+public/sw.js.map
+public/workbox-*.js
+public/swe-worker-*.js
+public/worker-*.js
+public/swe-worker-*.js
+public/swe-worker-*.js.map
+apps/tutor-pwa/public/sw.js
+apps/tutor-pwa/public/swe-worker-*.js

@@ -23,7 +23,7 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {},
   }
 
   // 1. Try to get custom JWT from localStorage
-  let token = !isServer ? localStorage.getItem('student_session_token') : null;
+  const token = !isServer ? localStorage.getItem('student_session_token') : null;
 
   // 2. Fallback to LIFF ID Token for authentication exchange if needed
   // Note: learning-service ONLY accepts custom JWT

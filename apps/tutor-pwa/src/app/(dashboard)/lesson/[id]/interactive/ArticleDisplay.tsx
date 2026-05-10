@@ -490,7 +490,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                   <span>3.</span> จับเวลาและสังเกต engagement
                 </li>
                 <li className="flex gap-2">
-                  <span>4.</span> ถาม "เข้าใจเรื่องอะไรบ้าง?" หลังอ่านจบ
+                  <span>4.</span> ถาม &quot;เข้าใจเรื่องอะไรบ้าง?&quot; หลังอ่านจบ
                 </li>
               </ul>
             </div>

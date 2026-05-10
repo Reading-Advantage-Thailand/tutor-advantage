@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useLiff } from "@/components/providers/LiffProvider";
@@ -20,7 +21,7 @@ interface ClassDetails {
   schedule: string;
 }
 
-export default function EnrollPage() {
+function EnrollContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { profile, isReady } = useLiff();
@@ -75,6 +76,13 @@ export default function EnrollPage() {
       router.replace(`/login?redirect=${redirectTarget}`);
     }
   }, [isReady, profile, router, searchParams]);
+
+  // Handle payment redirect
+  useEffect(() => {
+    if (step === "payment" && classDetails) {
+      router.push(`/payment?classId=${classDetails.classId}`);
+    }
+  }, [step, classDetails, router]);
 
   if (!isReady || !profile) {
     return (
@@ -210,10 +218,6 @@ export default function EnrollPage() {
 
   // Step 2: Payment (redirect to existing payment page)
   if (step === "payment") {
-    useEffect(() => {
-      router.push(`/payment?classId=${classDetails.classId}`);
-    }, [classDetails.classId, router]);
-    
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="text-center">
@@ -267,5 +271,22 @@ export default function EnrollPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function EnrollPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+          <div className="text-center">
+            <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+            <p className="text-muted-foreground">กำลังเตรียมข้อมูล...</p>
+          </div>
+        </div>
+      }
+    >
+      <EnrollContent />
+    </Suspense>
   );
 }
