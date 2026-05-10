@@ -10,9 +10,14 @@ export async function getStudentLessonHistory(req: AuthenticatedRequest, res: Re
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    // 1. Fetch all session participations for this user
+    // 1. Fetch all session participations for this user that have completed
     const participations = await prisma.sessionParticipant.findMany({
-      where: { studentUserId: userId },
+      where: { 
+        studentUserId: userId,
+        session: {
+          status: "FINISHED"
+        }
+      },
       include: {
         session: {
           include: {

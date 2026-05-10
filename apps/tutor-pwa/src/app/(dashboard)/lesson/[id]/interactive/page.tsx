@@ -183,7 +183,17 @@ export default function TutorLobbyPage() {
                    [DEV] Delete
                  </Button>
                )}
-               <Button variant="destructive" size="sm" className="rounded-xl gap-1.5">
+               <Button 
+                 variant="destructive" 
+                 size="sm" 
+                 className="rounded-xl gap-1.5"
+                 onClick={() => {
+                   if (confirm("คุณแน่ใจหรือไม่ที่จะปิดห้องเรียนนี้? การดำเนินการนี้จะยกเลิกเซสชันปัจจุบัน")) {
+                     deleteSession();
+                     router.push(`/dashboard/classes/${classId}`);
+                   }
+                 }}
+               >
                  <X className="h-3.5 w-3.5" />
                  ปิดห้องเรียน
                </Button>

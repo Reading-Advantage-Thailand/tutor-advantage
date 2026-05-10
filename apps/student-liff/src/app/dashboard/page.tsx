@@ -287,127 +287,93 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* Recent articles */}
-        <section>
-          <div className="section-header">
-            <h2 className="section-title">บทความล่าสุด</h2>
-            <Link href="/classes" className="section-action" style={{ display: "flex", alignItems: "center", gap: 2 }}>
-              ดูทั้งหมด <ChevronRight size={14} />
-            </Link>
-          </div>
-
-          <Card className="glass-card overflow-hidden" style={{ marginTop: 8 }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, padding: "8px" }}>
-              {dashboardData?.recentClasses?.map((cls: any) => (
-                <Link 
-                  key={cls.id} 
-                  href={`/classes/${cls.id}`}
-                  className="glass-card clickable-effect" 
-                  style={{ 
-                    padding: "14px 16px", 
-                    display: "flex", 
-                    alignItems: "center", 
-                    gap: 14, 
-                    textDecoration: "none",
-                    border: cls.isLive ? "1px solid #ef4444" : "1px solid transparent" 
-                  }}
-                >
-                  <div style={{ width: 44, height: 44, borderRadius: 12, background: "var(--brand-50)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "1px solid var(--brand-100)", position: 'relative' }}>
-                    <BookOpen size={20} style={{ color: "var(--brand-600)" }} />
-                    {cls.isLive && (
-                      <span style={{ position: 'absolute', top: -4, right: -4, width: 12, height: 12, borderRadius: '50%', background: '#ef4444', border: '2px solid #fff', animation: 'pulse 1.5s infinite' }} />
-                    )}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text-primary)" }}>{cls.name}</div>
-                      {cls.isLive && (
-                        <span style={{ fontSize: '0.625rem', fontWeight: 800, color: '#ef4444', background: 'rgba(239,68,68,0.1)', padding: '2px 4px', borderRadius: 4 }}>LIVE</span>
-                      )}
-                    </div>
-                    <div style={{ fontSize: "0.75rem", color: "var(--text-tertiary)", marginTop: 2 }}>{cls.book} · {cls.progress}% สำเร็จ</div>
-                  </div>
-                  <ChevronRight size={18} style={{ color: "var(--neutral-300)" }} />
-                </Link>
-              ))}
-            </div>
-          </Card>
-        </section>
 
         {/* ── Lesson History Section ── */}
         <section>
-          <div className="section-header" style={{ marginBottom: 8 }}>
-            <h2 className="section-title">ประวัติการเข้าเรียน</h2>
-            {historyData.length > 0 && (
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>ล่าสุด {historyData.length} ครั้ง</span>
-            )}
+          <div className="section-header" style={{ marginBottom: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <h2 className="section-title">ประวัติการเรียน (วันนี้)</h2>
+            <Link 
+              href="/lesson/history" 
+              style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--brand-600)', display: 'flex', alignItems: 'center', gap: 2, padding: '4px 8px', background: 'var(--brand-50)', borderRadius: 8 }}
+            >
+              ดูประวัติย้อนหลัง <ChevronRight size={14} />
+            </Link>
           </div>
 
-          {historyData.length === 0 ? (
-            <Card className="glass-card overflow-hidden" style={{ marginTop: 4, padding: "32px 20px", textAlign: "center" }}>
-              <div style={{ fontSize: "2rem", marginBottom: 8 }}>📜</div>
-              <div style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>ยังไม่มีประวัติการเรียนในระบบ</div>
-            </Card>
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 4 }}>
-              {historyData.map((hist: any) => (
-                <Link 
-                  key={hist.sessionId}
-                  href={`/lesson/history/${hist.sessionId}`}
-                  className="glass-card clickable-effect"
-                  style={{ 
-                    textDecoration: "none", 
-                    padding: "14px 16px", 
-                    display: "flex", 
-                    alignItems: "center", 
-                    gap: 14 
-                  }}
-                >
-                  <div 
+          {(() => {
+            const todayStr = new Date().toDateString();
+            const todaysHistory = historyData.filter((hist: any) => new Date(hist.date).toDateString() === todayStr);
+
+            if (todaysHistory.length === 0) {
+              return (
+                <Card className="glass-card overflow-hidden" style={{ marginTop: 4, padding: "28px 20px", textAlign: "center", borderStyle: "dashed", borderColor: "var(--surface-border)", background: "rgba(var(--surface-card-rgb), 0.5)" }}>
+                  <div style={{ fontSize: "1.5rem", marginBottom: 6 }}>☀️</div>
+                  <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", fontWeight: 500 }}>ยังไม่มีประวัติการเรียนของวันนี้</div>
+                </Card>
+              );
+            }
+
+            return (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 4 }}>
+                {todaysHistory.map((hist: any) => (
+                  <Link 
+                    key={hist.sessionId}
+                    href={`/lesson/history/${hist.sessionId}`}
+                    className="glass-card clickable-effect"
                     style={{ 
-                      width: 46, 
-                      height: 46, 
-                      borderRadius: 12, 
+                      textDecoration: "none", 
+                      padding: "14px 16px", 
                       display: "flex", 
-                      flexDirection: "column", 
                       alignItems: "center", 
-                      justifyContent: "center", 
-                      flexShrink: 0, 
-                      fontWeight: 800,
-                      background: hist.rank === 1 ? 'rgba(245, 158, 11, 0.15)' : hist.rank === 2 ? 'rgba(148, 163, 184, 0.15)' : 'var(--neutral-100)',
-                      color: hist.rank === 1 ? '#d97706' : hist.rank === 2 ? '#475569' : 'var(--text-secondary)'
+                      gap: 14 
                     }}
                   >
-                    <span style={{ fontSize: "8px", textTransform: "uppercase", letterSpacing: "0.05em", lineHeight: 1 }}>RANK</span>
-                    <div style={{ display: "flex", alignItems: "baseline", gap: 0.5, marginTop: 2 }}>
-                      <span style={{ fontSize: "1.125rem", lineHeight: 1 }}>{hist.rank}</span>
-                      {hist.totalParticipants > 0 && (
-                        <span style={{ fontSize: "0.625rem", opacity: 0.6 }}>/{hist.totalParticipants}</span>
-                      )}
+                    <div 
+                      style={{ 
+                        width: 46, 
+                        height: 46, 
+                        borderRadius: 12, 
+                        display: "flex", 
+                        flexDirection: "column", 
+                        alignItems: "center", 
+                        justifyContent: "center", 
+                        flexShrink: 0, 
+                        fontWeight: 800,
+                        background: hist.rank === 1 ? 'rgba(245, 158, 11, 0.15)' : hist.rank === 2 ? 'rgba(148, 163, 184, 0.15)' : 'var(--neutral-100)',
+                        color: hist.rank === 1 ? '#d97706' : hist.rank === 2 ? '#475569' : 'var(--text-secondary)'
+                      }}
+                    >
+                      <span style={{ fontSize: "8px", textTransform: "uppercase", letterSpacing: "0.05em", lineHeight: 1 }}>RANK</span>
+                      <div style={{ display: "flex", alignItems: "baseline", gap: 0.5, marginTop: 2 }}>
+                        <span style={{ fontSize: "1.125rem", lineHeight: 1 }}>{hist.rank}</span>
+                        {hist.totalParticipants > 0 && (
+                          <span style={{ fontSize: "0.625rem", opacity: 0.6 }}>/{hist.totalParticipants}</span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      {hist.articleTitle}
+                    
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {hist.articleTitle}
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2, fontSize: "0.6875rem", color: "var(--text-tertiary)" }}>
+                        <span>ครู {hist.tutorName}</span>
+                        <span style={{ width: 3, height: 3, borderRadius: "50%", background: "currentColor", opacity: 0.5 }} />
+                        <span>{new Date(hist.date).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })} น.</span>
+                      </div>
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2, fontSize: "0.6875rem", color: "var(--text-tertiary)" }}>
-                      <span>ครู {hist.tutorName}</span>
-                      <span style={{ width: 3, height: 3, borderRadius: "50%", background: "currentColor", opacity: 0.5 }} />
-                      <span>{new Date(hist.date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}</span>
-                    </div>
-                  </div>
 
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flexShrink: 0, background: "rgba(5, 150, 105, 0.1)", border: "1px solid rgba(5, 150, 105, 0.15)", color: "#059669", padding: "6px 10px", borderRadius: 10, minWidth: 44 }}>
-                    <div style={{ fontSize: "0.875rem", fontWeight: 800, lineHeight: 1 }}>{hist.score}</div>
-                    <div style={{ fontSize: "0.5625rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", opacity: 0.9, marginTop: 3 }}>PTS</div>
-                  </div>
-                  
-                  <ChevronRight size={16} style={{ color: "var(--neutral-300)" }} />
-                </Link>
-              ))}
-            </div>
-          )}
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flexShrink: 0, background: "rgba(5, 150, 105, 0.1)", border: "1px solid rgba(5, 150, 105, 0.15)", color: "#059669", padding: "6px 10px", borderRadius: 10, minWidth: 44 }}>
+                      <div style={{ fontSize: "0.875rem", fontWeight: 800, lineHeight: 1 }}>{hist.score}</div>
+                      <div style={{ fontSize: "0.5625rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", opacity: 0.9, marginTop: 3 }}>PTS</div>
+                    </div>
+                    
+                    <ChevronRight size={16} style={{ color: "var(--neutral-300)" }} />
+                  </Link>
+                ))}
+              </div>
+            );
+          })()}
         </section>
 
       </div>

@@ -436,27 +436,11 @@ export const setupLessonSocket = (io: Server) => {
     });
 
     socket.on("disconnect", () => {
-      console.log(`Socket disconnected: ${socket.id}`);
+      console.log(`[Socket] Disconnect detected for: ${socket.id}. Session state is preserved for auto-recovery.`);
       
-      // 1. Check if the disconnected socket is a Tutor
-      const tutorSession = lessonSessionService.getSessionByTutorSocketId(socket.id);
-      if (tutorSession) {
-        console.log(`[Socket] Tutor disconnected. Deleting session: ${tutorSession.sessionId}`);
-        io.to(tutorSession.sessionId).emit("session_deleted", { message: "คุณครูได้ออกจากหน้าห้องเรียน คลาสเรียนถูกปิดแล้ว" });
-        lessonSessionService.deleteSession(tutorSession.sessionId);
-        return;
-      }
-
-      // 2. Otherwise, check if it is a student
-      const left = lessonSessionService.removeParticipantBySocketId(socket.id);
-      if (left) {
-        const session = lessonSessionService.getSession(left.sessionId);
-        if (session) {
-          io.to(left.sessionId).emit("participants_updated", {
-            participants: Array.from(session.participants.values())
-          });
-        }
-      }
+      // Inform other clients that a connection changed? Optional, but don't delete!
+      // We skip automatic garbage collection on raw disconnects to maximize UX resilience.
+      // Tutor can still manually 'Kick' a student if they are truly gone.
     });
   });
 };

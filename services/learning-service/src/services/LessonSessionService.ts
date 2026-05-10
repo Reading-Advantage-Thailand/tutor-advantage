@@ -46,6 +46,19 @@ class LessonSessionService {
   private classToSessionId: Map<string, string> = new Map(); // Map classId to active session
 
   createSession(tutorId: string, tutorSocketId: string, articleId: string, articleData: any, classId?: string): LessonSession {
+    // ATTEMPT RECOVERY: If an active session already exists for this class, REUSE it!
+    if (classId) {
+      const existingSessionId = this.classToSessionId.get(classId);
+      if (existingSessionId) {
+        const existing = this.sessions.get(existingSessionId);
+        if (existing && existing.status !== 'FINISHED') {
+          console.log(`[Service] Recovered existing session ${existingSessionId} for class ${classId}`);
+          existing.tutorSocketId = tutorSocketId;
+          return existing;
+        }
+      }
+    }
+
     if (articleData) {
       if (!articleData.multipleChoiceQuestions) {
         articleData.multipleChoiceQuestions = [];
@@ -161,14 +174,15 @@ class LessonSessionService {
     const session = this.getSessionByPin(pin);
     if (!session) return undefined;
 
+    const existing = session.participants.get(studentId);
     session.participants.set(studentId, {
       studentId,
       name,
       pictureUrl,
       socketId,
-      score: 0,
-      hasAnsweredCurrentPhase: false,
-      isReady: false
+      score: existing ? existing.score : 0,
+      hasAnsweredCurrentPhase: existing ? existing.hasAnsweredCurrentPhase : false,
+      isReady: existing ? existing.isReady : false
     });
 
     return session;
@@ -178,14 +192,15 @@ class LessonSessionService {
     const session = this.getSessionByClassId(classId);
     if (!session) return undefined;
 
+    const existing = session.participants.get(studentId);
     session.participants.set(studentId, {
       studentId,
       name,
       pictureUrl,
       socketId,
-      score: 0,
-      hasAnsweredCurrentPhase: false,
-      isReady: false
+      score: existing ? existing.score : 0,
+      hasAnsweredCurrentPhase: existing ? existing.hasAnsweredCurrentPhase : false,
+      isReady: existing ? existing.isReady : false
     });
 
     return session;
