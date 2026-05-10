@@ -3,12 +3,17 @@ import liff from "@line/liff";
 // Use relative paths to take advantage of Next.js rewrites (proxy)
 const LEARNING_API_BASE = '/api/learning';
 const IDENTITY_API_BASE = '/api/identity';
+const FINANCE_API_BASE = '/api/finance';
 
 export async function fetchWithAuth(endpoint: string, options: RequestInit = {}, apiBase: string = LEARNING_API_BASE) {
   const isServer = typeof window === 'undefined';
   
+  let defaultBaseUrl = 'http://localhost:3002/v1';
+  if (apiBase === IDENTITY_API_BASE) defaultBaseUrl = 'http://localhost:3001/v1';
+  if (apiBase === FINANCE_API_BASE) defaultBaseUrl = 'http://localhost:3003/v1';
+
   const baseUrl = isServer 
-    ? (apiBase === IDENTITY_API_BASE ? 'http://localhost:3001/v1' : 'http://localhost:3002/v1')
+    ? defaultBaseUrl
     : apiBase;
 
   const url = `${baseUrl}${endpoint}`;
@@ -22,7 +27,12 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {},
 
   // 2. Fallback to LIFF ID Token for authentication exchange if needed
   // Note: learning-service ONLY accepts custom JWT
-  const idToken = !isServer ? liff.getIDToken() : null;
+  let idToken = null;
+  try {
+    idToken = !isServer ? liff.getIDToken() : null;
+  } catch (e) {
+    // Ignore initialization race conditions
+  }
 
   try {
     const response = await fetch(url, {
@@ -82,5 +92,15 @@ export const studentApi = {
   submitGuardianConsent: (guardianName: string, relation: string) => fetchWithAuth('/guardian/consent', {
     method: 'POST',
     body: JSON.stringify({ guardianName, guardianContact: relation, consentGiven: true }),
+  }, IDENTITY_API_BASE),
+
+  // Finance
+  getPaymentHistory: () => fetchWithAuth('/payments/history', {}, FINANCE_API_BASE),
+
+  // Settings
+  getSettings: () => fetchWithAuth('/users/me/settings', {}, IDENTITY_API_BASE),
+  updateSettings: (settings: object) => fetchWithAuth('/users/me/settings', {
+    method: 'PATCH',
+    body: JSON.stringify(settings),
   }, IDENTITY_API_BASE),
 };

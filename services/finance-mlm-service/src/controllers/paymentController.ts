@@ -175,3 +175,94 @@ export async function handleWebhook(req: Request, res: Response) {
     return res.status(500).send("Webhook processing failed");
   }
 }
+
+export async function getPaymentHistory(req: AuthenticatedRequest, res: Response) {
+  try {
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        error: {
+          code: "UNAUTHORIZED",
+          message: "User ID missing from token",
+          requestId: req.id,
+        },
+      });
+    }
+
+    // 1. Fetch payments
+    const payments = await prisma.paymentIntent.findMany({
+      where: { studentUserId: userId },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (payments.length === 0) {
+      return res.status(200).json({ payments: [] });
+    }
+
+    // 2. Collect unique enrollment IDs
+    const enrollmentIds = [...new Set(payments.map(p => p.enrollmentId))];
+
+    // 3. Fetch related Enrollments and their Class/Book info
+    const enrollments = await prisma.enrollment.findMany({
+      where: { enrollmentId: { in: enrollmentIds } },
+      include: {
+        class: {
+          include: {
+            book: true,
+          },
+        },
+      },
+    });
+
+    // Map enrollments by ID for fast lookup
+    const enrollmentMap = enrollments.reduce((acc: any, curr) => {
+      acc[curr.enrollmentId] = curr;
+      return acc;
+    }, {});
+
+    // 4. Combine data and format BigInts
+    const result = payments.map(payment => {
+      const enrollment = enrollmentMap[payment.enrollmentId];
+      
+      return {
+        paymentIntentId: payment.paymentIntentId,
+        amountMinor: Number(payment.amountMinor),
+        currency: payment.currency,
+        method: payment.method,
+        status: payment.status,
+        providerRef: payment.providerRef,
+        createdAt: payment.createdAt,
+        updatedAt: payment.updatedAt,
+        enrollment: enrollment ? {
+          enrollmentId: enrollment.enrollmentId,
+          status: enrollment.status,
+          class: {
+            classId: enrollment.class.classId,
+            title: enrollment.class.title,
+            book: {
+              title: enrollment.class.book.title,
+              bookCode: enrollment.class.book.bookCode,
+            }
+          }
+        } : null
+      };
+    });
+
+    return res.status(200).json({
+      payments: result,
+    });
+
+  } catch (error: any) {
+    console.error("Get Payment History Error:", error);
+    return res.status(500).json({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not fetch payment history",
+        details: error.message,
+        requestId: req.id,
+      },
+    });
+  }
+}
+

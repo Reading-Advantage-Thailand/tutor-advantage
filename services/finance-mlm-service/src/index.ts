@@ -15,6 +15,7 @@ import { authMiddleware } from "./middlewares/authMiddleware";
 import {
   createPaymentIntent,
   handleWebhook,
+  getPaymentHistory,
 } from "./controllers/paymentController";
 import {
   previewSettlement,
@@ -72,6 +73,7 @@ app.get("/version", (req: Request, res: Response) => {
 
 // ── Payment Routes ─────────────────────────────────────────────────────────
 app.post("/v1/payments/intent", authMiddleware, createPaymentIntent);
+app.get("/v1/payments/history", authMiddleware, getPaymentHistory);
 app.post("/v1/payments/webhook", handleWebhook);
 
 // ── Tutor Dashboard Routes ─────────────────────────────────────────────────

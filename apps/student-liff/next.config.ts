@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
         source: "/api/identity/:path*",
         destination: "http://localhost:3001/v1/:path*",
       },
+      {
+        source: "/api/finance/:path*",
+        destination: "http://localhost:3003/v1/:path*",
+      },
     ];
   },
   // @ts-ignore
