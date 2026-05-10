@@ -2,6 +2,7 @@ import { Server, Socket } from "socket.io";
 import { lessonSessionService } from "../services/LessonSessionService";
 import { evaluateShortAnswer } from "../services/AIEvaluator";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
+import * as dbWriter from "../services/SessionDBWriter";
 
 export const setupLessonSocket = (io: Server) => {
   io.on("connection", (socket: Socket) => {
@@ -18,6 +19,10 @@ export const setupLessonSocket = (io: Server) => {
         console.log(`==================================================`);
         const session = lessonSessionService.createSession(tutorId, socket.id, articleId, articleData, classId);
         socket.join(session.sessionId);
+
+        // PERSIST START OF SESSION TO DB
+        dbWriter.persistSessionStart(session.sessionId, tutorId, articleId, classId, session.pin);
+
         socket.emit("session_created", {
           sessionId: session.sessionId,
           pin: session.pin,
@@ -47,6 +52,9 @@ export const setupLessonSocket = (io: Server) => {
           participants: Array.from(session.participants.values())
         });
         console.log(`[Socket] Student ${name} joined class ${classId} successfully (Pic: ${!!pictureUrl})`);
+        
+        // PERSIST PARTICIPANT JOIN
+        dbWriter.persistSessionParticipant(session.sessionId, studentId);
       } else {
         console.warn(`[Socket] Join failed: No active session for class ${classId}`);
         socket.emit("error", { message: "ยังไม่มีคลาสที่เปิดสอนในขณะนี้ หรือคุณครูยังไม่ได้เริ่มเซสชัน" });
@@ -79,6 +87,9 @@ export const setupLessonSocket = (io: Server) => {
           participants: Array.from(session.participants.values())
         });
         console.log(`Student ${name} joined session ${session.sessionId} (Pic: ${!!pictureUrl})`);
+        
+        // PERSIST PARTICIPANT JOIN
+        dbWriter.persistSessionParticipant(session.sessionId, studentId);
       } else {
         socket.emit("error", { message: "Invalid PIN or session not found" });
       }
@@ -94,6 +105,11 @@ export const setupLessonSocket = (io: Server) => {
           participants: Array.from(session.participants.values())
         });
         console.log(`Session ${sessionId} changed to phase ${phase}`);
+
+        // If changing to phase 14 (Finish/Leaderboard), mark as FINISHED in DB
+        if (phase === 14) {
+          dbWriter.updateSessionStatus(sessionId, "FINISHED");
+        }
       }
     });
 
@@ -224,7 +240,32 @@ export const setupLessonSocket = (io: Server) => {
             if (isCorrect) {
               participant.score = (participant.score || 0) + 1;
             }
+
+            // --- PERSIST DB ANSWER (NON-SHORT ANSWER) ---
+            dbWriter.persistAnswer({
+              sessionId,
+              studentId,
+              phase: result.session.currentPhase,
+              answerText: String(answer),
+              isCorrect: isCorrect,
+              score: isCorrect ? 1 : 0,
+              questionText: question,
+              correctAnswer: expectedAnswer // Received in event params
+            });
           }
+        } else if (participant && (result.session.currentPhase === 8 || result.session.currentPhase === 13)) {
+           // --- PERSIST DB ANSWER (SHORT ANSWER WITH AI) ---
+           dbWriter.persistAnswer({
+             sessionId,
+             studentId,
+             phase: result.session.currentPhase,
+             answerText: String(answer),
+             isCorrect: true, // Considered valid submission
+             score: evaluatedAnswer.aiScore || 0,
+             aiFeedback: evaluatedAnswer.aiFeedback,
+             questionText: question,
+             correctAnswer: expectedAnswer
+           });
         }
 
         // Confirm submission to the student

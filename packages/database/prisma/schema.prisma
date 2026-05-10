@@ -241,7 +241,10 @@ model SessionAnswer {
   studentUserId String   @map("student_user_id") @db.Uuid
   phase         Int
   questionId    String?  @map("question_id")
+  questionText  String?  @map("question_text")
   answerText    String?  @map("answer_text")
+  correctAnswer String?  @map("correct_answer")
+  options       Json?    @map("options")
   isCorrect     Boolean? @map("is_correct")
   score         Int      @default(0)
   aiFeedback    String?  @map("ai_feedback")

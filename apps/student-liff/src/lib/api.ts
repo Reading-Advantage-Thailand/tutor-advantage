@@ -72,4 +72,8 @@ export const studentApi = {
     method: 'POST',
     body: JSON.stringify({ classId }),
   }),
+
+  // Lesson History
+  getLessonHistory: () => fetchWithAuth('/lessons/history'),
+  getLessonSessionDetails: (sessionId: string) => fetchWithAuth(`/lessons/history/${sessionId}`),
 };

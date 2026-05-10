@@ -42,6 +42,7 @@ import {
 } from "./controllers/auctionController";
 import { getPerformanceSummary } from "./controllers/performanceController";
 import { getNotificationSummary } from "./controllers/notificationsController";
+import { getStudentLessonHistory, getLessonSessionDetails } from "./controllers/lessonHistoryController";
 
 const app = express();
 const port = process.env.PORT || 3002;
@@ -82,6 +83,10 @@ app.post("/v1/enroll/:referralToken", authMiddleware, enrollStudent);
 
 // Protected Dashboard API
 app.get("/v1/dashboard/summary", authMiddleware, getDashboardSummary);
+
+// Protected Lesson History Routes
+app.get("/v1/lessons/history", authMiddleware, getStudentLessonHistory);
+app.get("/v1/lessons/history/:sessionId", authMiddleware, getLessonSessionDetails);
 
 // Protected Chat Routes
 app.get("/v1/chat/conversations", authMiddleware, getConversations);

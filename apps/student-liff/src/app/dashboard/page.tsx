@@ -16,6 +16,7 @@ export default function DashboardPage() {
   const { profile, isReady } = useLiff();
 
   const [dashboardData, setDashboardData] = useState<any>(null);
+  const [historyData, setHistoryData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,8 +38,12 @@ export default function DashboardPage() {
             throw new Error("ไม่สามารถสร้างเซสชันกับเซิร์ฟเวอร์ได้ กรุณาลองเข้าสู่ระบบใหม่อีกครั้ง");
           }
 
-          const data = await studentApi.getDashboard();
+          const [data, hist] = await Promise.all([
+            studentApi.getDashboard(),
+            studentApi.getLessonHistory().catch(() => ({ history: [] }))
+          ]);
           setDashboardData(data);
+          setHistoryData(hist.history || []);
           setLoading(false);
         } catch (err: any) {
           console.error("Failed to fetch dashboard:", err);
@@ -284,6 +289,77 @@ export default function DashboardPage() {
               ))}
             </div>
           </Card>
+        </section>
+
+        {/* ── Lesson History Section ── */}
+        <section>
+          <div className="section-header" style={{ marginBottom: 8 }}>
+            <h2 className="section-title">ประวัติการเข้าเรียน</h2>
+            {historyData.length > 0 && (
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>ล่าสุด {historyData.length} ครั้ง</span>
+            )}
+          </div>
+
+          {historyData.length === 0 ? (
+            <Card className="glass-card overflow-hidden" style={{ marginTop: 4, padding: "32px 20px", textAlign: "center" }}>
+              <div style={{ fontSize: "2rem", marginBottom: 8 }}>📜</div>
+              <div style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>ยังไม่มีประวัติการเรียนในระบบ</div>
+            </Card>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 4 }}>
+              {historyData.map((hist: any) => (
+                <Link 
+                  key={hist.sessionId}
+                  href={`/lesson/history/${hist.sessionId}`}
+                  className="glass-card clickable-effect"
+                  style={{ 
+                    textDecoration: "none", 
+                    padding: "14px 16px", 
+                    display: "flex", 
+                    alignItems: "center", 
+                    gap: 14 
+                  }}
+                >
+                  <div 
+                    style={{ 
+                      width: 46, 
+                      height: 46, 
+                      borderRadius: 12, 
+                      display: "flex", 
+                      flexDirection: "column", 
+                      alignItems: "center", 
+                      justifyContent: "center", 
+                      flexShrink: 0, 
+                      fontWeight: 800,
+                      background: hist.rank === 1 ? 'rgba(245, 158, 11, 0.15)' : hist.rank === 2 ? 'rgba(148, 163, 184, 0.15)' : 'var(--neutral-100)',
+                      color: hist.rank === 1 ? '#d97706' : hist.rank === 2 ? '#475569' : 'var(--text-secondary)'
+                    }}
+                  >
+                    <span style={{ fontSize: "8px", textTransform: "uppercase", letterSpacing: "0.05em", lineHeight: 1 }}>RANK</span>
+                    <span style={{ fontSize: "1.125rem", lineHeight: 1, marginTop: 2 }}>{hist.rank}</span>
+                  </div>
+                  
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                      {hist.articleTitle}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2, fontSize: "0.6875rem", color: "var(--text-tertiary)" }}>
+                      <span>ครู {hist.tutorName}</span>
+                      <span style={{ width: 3, height: 3, borderRadius: "50%", background: "currentColor", opacity: 0.5 }} />
+                      <span>{new Date(hist.date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}</span>
+                    </div>
+                  </div>
+
+                  <div style={{ textAlign: "right", flexShrink: 0, background: "rgba(5, 150, 105, 0.1)", border: "1px solid rgba(5, 150, 105, 0.15)", color: "#059669", padding: "4px 10px", borderRadius: 8 }}>
+                    <div style={{ fontSize: "0.8125rem", fontWeight: 800, lineHeight: 1 }}>{hist.score}</div>
+                    <div style={{ fontSize: "0.5625rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", opacity: 0.8, marginTop: 1 }}>pts</div>
+                  </div>
+                  
+                  <ChevronRight size={16} style={{ color: "var(--neutral-300)" }} />
+                </Link>
+              ))}
+            </div>
+          )}
         </section>
 
       </div>
