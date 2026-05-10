@@ -63,7 +63,7 @@ export default async function ChatPage() {
                 <div className="relative">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg overflow-hidden">
                     {conv.image ? (
-                      <img src={conv.image} alt={conv.title} className="w-full h-full object-cover" />
+                      <img src={conv.image} alt={conv.title} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
                     ) : (
                       conv.title?.[0] || '?'
                     )}

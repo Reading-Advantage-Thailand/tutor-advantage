@@ -12,6 +12,47 @@ import { Separator } from "@/components/ui/separator";
 import { BookOpen, MessageCircle, Calendar, CreditCard, ChevronRight, Copy, Flame, AlertCircle } from "lucide-react";
 import { studentApi } from "@/lib/api";
 
+const playNotificationSound = () => {
+  try {
+    if (typeof window !== "undefined" && localStorage.getItem("app-notif-muted") === "true") return;
+    const win = window as any;
+    const ctx = win.__globalAudioCtx;
+    
+    if (!ctx) {
+      console.log("[Audio] No Global AudioContext created yet.");
+      return;
+    }
+    
+    if (ctx.state !== "running") {
+      console.log("[Audio] Global AudioContext state is:", ctx.state);
+      // Silently try to resume if we are here
+      ctx.resume().catch(() => {});
+      if (ctx.state !== "running") return;
+    }
+    
+    console.log("[Audio] PLAYING Notification Chime...");
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc1.type = "sine";
+    osc2.type = "sine";
+    osc1.frequency.setValueAtTime(880, ctx.currentTime);
+    osc2.frequency.setValueAtTime(1108.73, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.02); // Max clear volume
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(ctx.destination);
+    osc1.start(ctx.currentTime);
+    osc2.start(ctx.currentTime + 0.1);
+    osc1.stop(ctx.currentTime + 0.6);
+    osc2.stop(ctx.currentTime + 0.6);
+  } catch (err) {
+    console.error("[Audio] Error playing sound:", err);
+  }
+};
+
 export default function DashboardPage() {
   const { profile, isReady } = useLiff();
 
@@ -19,6 +60,22 @@ export default function DashboardPage() {
   const [historyData, setHistoryData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  const prevUnreadRef = React.useRef<number | undefined>(undefined);
+
+  // Effect to play sound when unread messages increase
+  useEffect(() => {
+    if (!dashboardData) return;
+    const currentUnread = dashboardData.unreadMessages ?? 0;
+    
+    console.log(`[Dashboard Polling] Check: Current=${currentUnread}, Prev=${prevUnreadRef.current}`);
+
+    if (prevUnreadRef.current !== undefined && currentUnread > prevUnreadRef.current) {
+      console.log("[Dashboard Polling] NEW MESSAGE DETECTED! Triggering sound...");
+      playNotificationSound();
+    }
+    prevUnreadRef.current = currentUnread;
+  }, [dashboardData?.unreadMessages]);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
@@ -268,7 +325,7 @@ export default function DashboardPage() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
             {[
               { id: "quick-read", href: "/classes", Icon: BookOpen, label: "อ่านบทความ", sub: "เริ่มบทเรียนวันนี้", bgColor: "var(--brand-50)", iconBg: "var(--brand-100)", iconColor: "var(--brand-600)" },
-              { id: "quick-chat", href: "#", Icon: MessageCircle, label: "แชทติวเตอร์", sub: "ถาม-ตอบตรงๆ", bgColor: "var(--accent-blue-light)", iconBg: "rgba(59, 130, 246, 0.15)", iconColor: "var(--accent-blue)" },
+              { id: "quick-chat", href: "/chat", Icon: MessageCircle, label: "แชทติวเตอร์", sub: "ถาม-ตอบตรงๆ", bgColor: "var(--accent-blue-light)", iconBg: "rgba(59, 130, 246, 0.15)", iconColor: "var(--accent-blue)" },
               { id: "quick-schedule", href: "#", Icon: Calendar, label: "ตารางเรียน", sub: "ดูคาบทั้งหมด", bgColor: "var(--accent-purple-light)", iconBg: "rgba(139, 92, 246, 0.15)", iconColor: "var(--accent-purple)" },
               { id: "quick-payment", href: "/payment", Icon: CreditCard, label: "ชำระเงิน", sub: "PromptPay / บัตร", bgColor: "var(--accent-amber-light)", iconBg: "rgba(245, 158, 11, 0.15)", iconColor: "var(--accent-amber)" },
             ].map((item) => (
@@ -279,6 +336,24 @@ export default function DashboardPage() {
                 className="block active:scale-[0.97]"
                 style={{ background: item.bgColor, border: "1px solid var(--surface-border)", borderRadius: 18, padding: "16px 14px", textDecoration: "none", transition: "all 0.2s ease", minHeight: 100, position: "relative", overflow: "hidden", boxShadow: "var(--shadow-sm)" }}
               >
+                {item.id === "quick-chat" && dashboardData?.unreadMessages > 0 && (
+                  <div style={{
+                    position: "absolute",
+                    top: 14,
+                    right: 14,
+                    background: "var(--accent-red)",
+                    color: "#fff",
+                    fontSize: "0.625rem",
+                    fontWeight: 800,
+                    padding: "2px 6px",
+                    borderRadius: 8,
+                    minWidth: 20,
+                    textAlign: "center",
+                    boxShadow: "0 2px 6px rgba(239, 68, 68, 0.3)"
+                  }}>
+                    {dashboardData.unreadMessages > 99 ? "99+" : dashboardData.unreadMessages}
+                  </div>
+                )}
                 <div style={{ width: 36, height: 36, borderRadius: 10, background: item.iconBg, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 10 }}>
                   <item.Icon size={18} style={{ color: item.iconColor }} />
                 </div>

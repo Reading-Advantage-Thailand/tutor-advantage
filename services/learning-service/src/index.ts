@@ -35,6 +35,7 @@ import {
   getConversations,
   getMessages,
   sendMessage,
+  initiateChat,
 } from "./controllers/chatController";
 import {
   getAuctionClasses,
@@ -100,6 +101,11 @@ app.post(
   "/v1/chat/conversations/:conversationId/messages",
   authMiddleware,
   sendMessage,
+);
+app.post(
+  "/v1/chat/initiate",
+  authMiddleware,
+  initiateChat,
 );
 
 // Protected Auction Routes

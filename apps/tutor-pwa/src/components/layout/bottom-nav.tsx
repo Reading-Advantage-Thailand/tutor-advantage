@@ -11,6 +11,8 @@ import {
   Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState, useEffect, useRef } from "react";
+import { getNotificationsSummary } from "@/app/dashboard/actions";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "ภาพรวม" },
@@ -28,8 +30,30 @@ interface BottomNavProps {
   };
 }
 
-export function BottomNav({ notifications }: BottomNavProps) {
+// End audio helper removal
+
+export function BottomNav({ notifications: initialNotifications }: BottomNavProps) {
   const pathname = usePathname();
+  const [notifications, setNotifications] = useState(initialNotifications);
+  const prevUnreadRef = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    setNotifications(initialNotifications);
+  }, [initialNotifications]);
+
+  useEffect(() => {
+    const pollNotifications = async () => {
+      try {
+        const data = await getNotificationsSummary();
+        setNotifications(data);
+      } catch (error) {
+        // Fail silently
+      }
+    };
+
+    const timer = setInterval(pollNotifications, 10000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around bg-background/80 backdrop-blur-md border-t border-border pb-safe pt-2 px-2 lg:hidden">

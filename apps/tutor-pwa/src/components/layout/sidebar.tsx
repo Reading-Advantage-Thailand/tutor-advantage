@@ -15,6 +15,8 @@ import {
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { ThemeToggle } from "./theme-toggle";
+import { getNotificationsSummary } from "@/app/dashboard/actions";
+import { useState, useEffect, useRef } from "react";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "ภาพรวม" },
@@ -32,8 +34,70 @@ interface SidebarProps {
   };
 }
 
-export function Sidebar({ notifications }: SidebarProps) {
+
+
+const playNotificationSound = () => {
+  try {
+    if (typeof window !== "undefined" && localStorage.getItem("app-notif-muted") === "true") return;
+    const win = window as any;
+    const ctx = win.__globalAudioCtx;
+    
+    if (!ctx || ctx.state !== "running") return;
+    
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc1.type = "sine";
+    osc2.type = "sine";
+    osc1.frequency.setValueAtTime(880, ctx.currentTime);
+    osc2.frequency.setValueAtTime(1108.73, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(ctx.destination);
+    osc1.start(ctx.currentTime);
+    osc2.start(ctx.currentTime + 0.1);
+    osc1.stop(ctx.currentTime + 0.6);
+    osc2.stop(ctx.currentTime + 0.6);
+  } catch (err) {
+    // Silently fail
+  }
+};
+
+export function Sidebar({ notifications: initialNotifications }: SidebarProps) {
   const pathname = usePathname();
+  const [notifications, setNotifications] = useState(initialNotifications);
+  const prevUnreadRef = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    setNotifications(initialNotifications);
+  }, [initialNotifications]);
+
+  // Play sound if unread chats increase
+  useEffect(() => {
+    const current = notifications?.unreadChat ?? 0;
+    if (prevUnreadRef.current !== undefined && current > prevUnreadRef.current) {
+      playNotificationSound();
+    }
+    prevUnreadRef.current = current;
+  }, [notifications?.unreadChat]);
+
+  useEffect(() => {
+    const pollNotifications = async () => {
+      try {
+        const data = await getNotificationsSummary();
+        setNotifications(data);
+      } catch (error) {
+        console.error("Sidebar notify fail", error);
+      }
+    };
+
+    // Refresh every 10 seconds
+    const intervalId = setInterval(pollNotifications, 10000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   const handleLogout = () => {
     // Redirect to the server-side logout route which will clear the httpOnly cookie

@@ -107,11 +107,30 @@ export async function getDashboardSummary(
         };
       }));
 
+      // 4. Calculate total unread messages
+      const conversationParticipants = await prisma.conversationParticipant.findMany({
+        where: { userId },
+        select: { conversationId: true, lastReadAt: true }
+      });
+
+      let totalUnreadMessages = 0;
+      for (const cp of conversationParticipants) {
+        const unread = await prisma.message.count({
+          where: {
+            conversationId: cp.conversationId,
+            senderId: { not: userId },
+            ...(cp.lastReadAt ? { createdAt: { gt: cp.lastReadAt } } : {})
+          }
+        });
+        totalUnreadMessages += unread;
+      }
+
       return res.status(200).json({
         activeEnrollments: enrollments.length,
         totalArticlesRead: distinctArticlesRead.size,
         weekStreak: streak,
         recentClasses,
+        unreadMessages: totalUnreadMessages,
       });
     }
 
@@ -138,7 +157,24 @@ export async function getDashboardSummary(
       nextSession: "ตามนัดหมาย", // Mock static text for now
     }));
 
-    // Calculate classes this week (placeholder logic)
+    // Calculate total unread messages for tutor
+    const conversationParticipants = await prisma.conversationParticipant.findMany({
+      where: { userId },
+      select: { conversationId: true, lastReadAt: true }
+    });
+
+    let unreadMessages = 0;
+    for (const cp of conversationParticipants) {
+      const unread = await prisma.message.count({
+        where: {
+          conversationId: cp.conversationId,
+          senderId: { not: userId },
+          ...(cp.lastReadAt ? { createdAt: { gt: cp.lastReadAt } } : {})
+        }
+      });
+      unreadMessages += unread;
+    }
+
     const classesThisWeek = classes.length > 0 ? Math.min(classes.length, 5) : 0;
 
     return res.status(200).json({
@@ -146,6 +182,7 @@ export async function getDashboardSummary(
       totalStudents,
       classesThisWeek,
       recentClasses,
+      unreadMessages,
     });
   } catch (error: any) {
     console.error("Dashboard Summary Error:", error);

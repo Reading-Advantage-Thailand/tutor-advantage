@@ -213,6 +213,7 @@ export async function getClasses(req: AuthenticatedRequest, res: Response) {
       status: c.status.toLowerCase(),
       students: (c as any)._count?.enrollments || 0,
       maxStudents: c.capacity,
+      tutorUserId: c.tutorUserId,
       tutorName: tutorMap.get(c.tutorUserId) || "Unknown Tutor",
       nextSession: c.scheduleDescription || "ยังไม่ได้กำหนด",
     }));

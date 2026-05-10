@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ChevronLeft, Bell, MessageSquare, BookOpen, Trophy, AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, Bell, MessageSquare, BookOpen, Trophy, AlertCircle, Loader2, CheckCircle2, Volume2, VolumeX } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -54,6 +54,8 @@ export default function NotificationsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle'|'success'|'error'>('idle');
+  const [isMuted, setIsMuted] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   // Notification Settings State
   const [settings, setSettings] = useState({
@@ -84,6 +86,19 @@ export default function NotificationsPage() {
     };
     fetchSettings();
   }, [isReady]);
+  
+  useEffect(() => {
+    setMounted(true);
+    if (typeof window !== "undefined") {
+      setIsMuted(localStorage.getItem("app-notif-muted") === "true");
+    }
+  }, []);
+
+  const handleToggleMute = (checked: boolean) => {
+    const muteStatus = !checked; // checked = true means not muted
+    setIsMuted(muteStatus);
+    localStorage.setItem("app-notif-muted", String(muteStatus));
+  };
 
   const updateSetting = (key: keyof typeof settings, value: boolean) => {
     setSettings(prev => ({ ...prev, [key]: value }));
@@ -191,6 +206,26 @@ export default function NotificationsPage() {
               </p>
             </div>
             <CheckCircle2 size={20} style={{ marginLeft: "auto", color: "#06C755" }} />
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <h3 style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.05em", paddingLeft: "4px" }}>
+              การตั้งค่าเสียง
+            </h3>
+            <Card className="glass-card overflow-hidden">
+              <div style={{ display: "flex", alignItems: "center", gap: "14px", padding: "16px" }}>
+                <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "rgba(99, 102, 241, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: "rgb(99, 102, 241)" }}>
+                  {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)" }}>เสียงแจ้งเตือนแอพ</p>
+                  <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "2px" }}>เล่นเสียงเมื่อได้รับข้อความใหม่</p>
+                </div>
+                {mounted && (
+                  <Toggle checked={!isMuted} onChange={handleToggleMute} />
+                )}
+              </div>
+            </Card>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>

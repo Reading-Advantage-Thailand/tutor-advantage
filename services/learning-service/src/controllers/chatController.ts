@@ -190,6 +190,7 @@ export const getMessages = async (req: AuthenticatedRequest, res: Response): Pro
         text: m.content,
         senderId: m.senderId,
         senderName: m.sender.displayName,
+        senderImage: m.sender.profilePictureUrl,
         time: typeof m.createdAt === 'string' ? m.createdAt : m.createdAt.toISOString(),
         isOwn: m.senderId === userId,
       }))
@@ -255,11 +256,118 @@ export const sendMessage = async (req: AuthenticatedRequest, res: Response): Pro
       text: newMessage.content,
       senderId: newMessage.senderId,
       senderName: newMessage.sender.displayName,
+      senderImage: newMessage.sender.profilePictureUrl,
       time: newMessage.createdAt.toISOString(),
       isOwn: true,
     });
   } catch (error) {
     console.error("Failed to send message", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+// Initiate or retrieve an existing conversation
+export const initiateChat = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const userId = req.user?.userId;
+    const { classId, type, targetUserId } = req.body;
+
+    if (!userId) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    if (!type || !['DIRECT', 'GROUP'].includes(type)) {
+      res.status(400).json({ error: "Invalid chat type" });
+      return;
+    }
+
+    // Group conversation linked to a class
+    if (type === 'GROUP') {
+      if (!classId) {
+        res.status(400).json({ error: "classId is required for group chats" });
+        return;
+      }
+
+      let conversation = await prisma.conversation.findFirst({
+        where: { classId, type: 'GROUP' }
+      });
+
+      if (!conversation) {
+        conversation = await prisma.conversation.create({
+          data: {
+            classId,
+            type: 'GROUP'
+          }
+        });
+      }
+
+      // Ensure requester is a participant
+      await prisma.conversationParticipant.upsert({
+        where: {
+          conversationId_userId: {
+            conversationId: conversation.conversationId,
+            userId: userId
+          }
+        },
+        update: {},
+        create: {
+          conversationId: conversation.conversationId,
+          userId: userId
+        }
+      });
+
+      res.status(200).json({ conversationId: conversation.conversationId });
+      return;
+    }
+
+    // Direct conversation between two users
+    if (type === 'DIRECT') {
+      if (!targetUserId) {
+        res.status(400).json({ error: "targetUserId is required for direct chats" });
+        return;
+      }
+
+      // Find a conversation that contains exactly these two participants
+      const existingConversations = await prisma.conversation.findMany({
+        where: {
+          type: 'DIRECT',
+          AND: [
+            { participants: { some: { userId: userId } } },
+            { participants: { some: { userId: targetUserId } } }
+          ]
+        },
+        include: { participants: true }
+      });
+
+      // Ensure strictly 2 participants to count as a clean direct chat
+      let existingConv = existingConversations.find(c => c.participants.length === 2);
+
+      if (existingConv) {
+        res.status(200).json({ conversationId: existingConv.conversationId });
+        return;
+      }
+
+      // Create new direct conversation
+      const newConv = await prisma.conversation.create({
+        data: {
+          type: 'DIRECT',
+          classId: classId || null,
+          participants: {
+            create: [
+              { userId: userId },
+              { userId: targetUserId }
+            ]
+          }
+        }
+      });
+
+      res.status(201).json({ conversationId: newConv.conversationId });
+      return;
+    }
+
+  } catch (error) {
+    console.error("Failed to initiate conversation:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

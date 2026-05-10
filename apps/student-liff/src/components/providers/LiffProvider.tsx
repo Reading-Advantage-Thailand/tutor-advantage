@@ -103,6 +103,36 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
     init();
   }, []);
 
+  // ── NEW: Persistent Global Audio Unlock Hook ──
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    
+    const initGlobalAudio = () => {
+      try {
+        const win = window as any;
+        if (!win.__globalAudioCtx) {
+          const AudioCtx = win.AudioContext || win.webkitAudioContext;
+          if (AudioCtx) win.__globalAudioCtx = new AudioCtx();
+        }
+        // Keep trying to resume whenever the user interacts
+        if (win.__globalAudioCtx && win.__globalAudioCtx.state === "suspended") {
+          win.__globalAudioCtx.resume().catch(() => {});
+        }
+      } catch (e) {}
+    };
+
+    // Add strong listeners to ABSOLUTE ROOT window to force initialization early
+    window.addEventListener("click", initGlobalAudio, { capture: true });
+    window.addEventListener("touchstart", initGlobalAudio, { capture: true });
+    window.addEventListener("mousedown", initGlobalAudio, { capture: true });
+
+    return () => {
+      window.removeEventListener("click", initGlobalAudio, { capture: true });
+      window.removeEventListener("touchstart", initGlobalAudio, { capture: true });
+      window.removeEventListener("mousedown", initGlobalAudio, { capture: true });
+    };
+  }, []);
+
   const logout = () => {
     if (liff?.isLoggedIn()) {
       liff.logout();

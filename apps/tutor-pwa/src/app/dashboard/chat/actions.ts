@@ -29,3 +29,25 @@ export async function sendMessage(conversationId: string, content: string) {
   revalidatePath(`/dashboard/chat/${conversationId}`);
   return res.json();
 }
+
+export async function getConversationMessages(conversationId: string) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("tutor_session")?.value;
+  
+  if (!token) {
+    throw new Error("Unauthorized");
+  }
+
+  const res = await fetch(`http://localhost:3002/v1/chat/conversations/${conversationId}/messages`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+    cache: 'no-store'
+  });
+  
+  if (!res.ok) {
+    return { messages: [] };
+  }
+  
+  return await res.json();
+}

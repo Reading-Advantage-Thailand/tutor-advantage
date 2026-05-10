@@ -103,4 +103,16 @@ export const studentApi = {
     method: 'PATCH',
     body: JSON.stringify(settings),
   }, IDENTITY_API_BASE),
+
+  // Chat
+  getConversations: () => fetchWithAuth('/chat/conversations'),
+  getConversationMessages: (conversationId: string) => fetchWithAuth(`/chat/conversations/${conversationId}/messages`),
+  sendMessage: (conversationId: string, content: string) => fetchWithAuth(`/chat/conversations/${conversationId}/messages`, {
+    method: 'POST',
+    body: JSON.stringify({ content }),
+  }),
+  initiateChat: (payload: { classId?: string, type: 'DIRECT' | 'GROUP', targetUserId?: string }) => fetchWithAuth('/chat/initiate', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  }),
 };

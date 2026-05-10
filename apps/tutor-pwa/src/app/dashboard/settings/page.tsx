@@ -81,6 +81,7 @@ export default async function SettingsPage() {
         <Card className="border-border/60">
           <div className="divide-y divide-border/50">
             <SettingsInteractiveElements type="themeToggleRow" />
+            <SettingsInteractiveElements type="soundToggleRow" />
 
             <EditableSettingToggle 
               title="การแจ้งเตือนบน LINE"

@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 
 import Link from "next/link";
 import { useLiff } from "@/components/providers/LiffProvider";
@@ -25,6 +26,7 @@ export default function ProfilePage() {
     cefr: "A1",
     isMinor: false,
   };
+
 
   const handleLogout = () => {
     if (liff && liff.isLoggedIn()) {

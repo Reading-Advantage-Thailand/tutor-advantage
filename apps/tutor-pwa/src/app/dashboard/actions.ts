@@ -14,7 +14,7 @@ export async function getNotificationsSummary() {
       headers: {
         Authorization: `Bearer ${token}`
       },
-      next: { tags: ['notifications'], revalidate: 60 } // Cache for 60 seconds
+      next: { revalidate: 0 } // Do not cache summary endpoint heavily
     });
     
     if (!res.ok) return { unreadChat: 0, availableAuctions: 0 };

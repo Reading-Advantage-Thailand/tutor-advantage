@@ -3,7 +3,7 @@
 
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { LogOut, Save, X, ChevronRight, Bell, Wallet, MapPin, Moon, Sun, TrendingUp } from "lucide-react";
+import { LogOut, Save, X, ChevronRight, Bell, Wallet, MapPin, Moon, Sun, TrendingUp, Volume2, VolumeX } from "lucide-react";
 import { useState, useEffect, useTransition } from "react";
 import { useTheme } from "next-themes";
 import { updateSettingsAction } from "../actions";
@@ -27,6 +27,10 @@ export function SettingsInteractiveElements({ type }: { type: string }) {
     return <ThemeToggleRow />;
   }
 
+  if (type === "soundToggleRow") {
+    return <SoundToggleRow />;
+  }
+
   if (type === "logoutSection") {
     const handleLogout = () => {
       window.location.href = "/api/auth/logout";
@@ -47,6 +51,48 @@ export function SettingsInteractiveElements({ type }: { type: string }) {
   }
 
   return null;
+}
+
+function SoundToggleRow() {
+  const [isMuted, setIsMuted] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    if (typeof window !== "undefined") {
+      setIsMuted(localStorage.getItem("app-notif-muted") === "true");
+    }
+  }, []);
+
+  const toggleMute = (checked: boolean) => {
+    const mute = !checked; // checked = true means NOT muted
+    setIsMuted(mute);
+    localStorage.setItem("app-notif-muted", String(mute));
+  };
+
+  return (
+    <div className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
+          {isMuted ? <VolumeX className="h-5 w-5 text-emerald-500" /> : <Volume2 className="h-5 w-5 text-emerald-500" />}
+        </div>
+        <div>
+          <p className="text-sm font-medium text-foreground">
+            เสียงแจ้งเตือนแอพ
+          </p>
+          <p className="text-xs text-muted-foreground">เปิด/ปิดเสียงเมื่อมีข้อความเข้า</p>
+        </div>
+      </div>
+      <div>
+        {mounted && (
+          <Switch 
+            checked={!isMuted} 
+            onCheckedChange={toggleMute} 
+          />
+        )}
+      </div>
+    </div>
+  );
 }
 
 function ThemeToggleRow() {
