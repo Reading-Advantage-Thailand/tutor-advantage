@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     // Set cookies for middleware
     response.cookies.set("admin_token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       sameSite: "lax",
       maxAge: 60 * 60 * 12, // 12 hours
       path: "/",
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     
     response.cookies.set("admin_role", role, {
       httpOnly: false, // Allow client to read role if needed
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       sameSite: "lax",
       maxAge: 60 * 60 * 12,
       path: "/",
