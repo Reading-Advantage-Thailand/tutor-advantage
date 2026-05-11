@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Users, Search, ShieldCheck, User, GraduationCap } from "lucide-react";
+import { Users, Search, ShieldCheck, User, GraduationCap, Bell, FileText } from "lucide-react";
 
 import { fetchWithAuth } from "@/lib/api";
 import { useEffect, useCallback } from "react";
@@ -26,6 +26,13 @@ interface UserInfo {
   status: string;
   joined: string;
   guardianSetup?: boolean;
+  verificationStatus?: string;
+  pendingVerificationCount?: number;
+  submittedVerificationFields?: {
+    field: string;
+    label: string;
+    updatedAt?: string;
+  }[];
 }
 
 export default function UsersPage() {
@@ -54,6 +61,13 @@ export default function UsersPage() {
       u.name.toLowerCase().includes(search.toLowerCase()) ||
       u.id.toLowerCase().includes(search.toLowerCase()),
   );
+  const pendingVerificationUsers = users.filter(
+    (user) => user.role === "TUTOR" && (user.pendingVerificationCount || 0) > 0,
+  );
+  const pendingVerificationItems = pendingVerificationUsers.reduce(
+    (sum, user) => sum + (user.pendingVerificationCount || 0),
+    0,
+  );
 
   return (
     <div className="space-y-6 w-full">
@@ -81,6 +95,46 @@ export default function UsersPage() {
           </div>
         </CardContent>
       </Card>
+
+      {pendingVerificationItems > 0 && (
+        <Card className="border-amber-500/40 bg-amber-500/5">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base text-amber-700 dark:text-amber-300">
+              <Bell className="h-4 w-4" />
+              เอกสารรอตรวจสอบ
+            </CardTitle>
+            <CardDescription>
+              มี tutor ส่งเอกสารหรือข้อมูลยืนยันตัวตนเข้ามา {pendingVerificationItems} รายการ
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-2 sm:grid-cols-2">
+            {pendingVerificationUsers.slice(0, 6).map((user) => (
+              <Link href={`/users/${user.id}`} key={`pending-${user.id}`}>
+                <div className="rounded-md border bg-background/80 p-3 transition-colors hover:border-amber-500/50">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="truncate text-sm font-medium">{user.name || user.id}</p>
+                    <Badge className="bg-amber-500 text-white hover:bg-amber-500">
+                      {user.pendingVerificationCount}
+                    </Badge>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {user.submittedVerificationFields?.map((item) => (
+                      <Badge
+                        key={item.field}
+                        variant="outline"
+                        className="border-amber-500/40 bg-amber-500/10 text-[10px] text-amber-700 dark:text-amber-300"
+                      >
+                        <FileText className="mr-1 h-3 w-3" />
+                        {item.label}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredUsers.map((user) => (
@@ -112,6 +166,11 @@ export default function UsersPage() {
                         Student
                       </Badge>
                     )}
+                    {user.role === "TUTOR" && (user.pendingVerificationCount || 0) > 0 && (
+                      <Badge className="bg-amber-500 text-white hover:bg-amber-500 text-[10px] px-1.5 h-4">
+                        รอตรวจ {user.pendingVerificationCount}
+                      </Badge>
+                    )}
                   </div>
                   <p className="text-xs font-mono text-muted-foreground truncate">
                     {user.id}
@@ -134,6 +193,12 @@ export default function UsersPage() {
                       )}
                       {user.activeClasses} Classes
                     </div>
+                    {user.role === "TUTOR" && (user.pendingVerificationCount || 0) > 0 && (
+                      <div className="flex items-center gap-1 text-amber-600">
+                        <Bell className="h-3 w-3" />
+                        {user.submittedVerificationFields?.map((item) => item.label).join(", ")}
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardContent>

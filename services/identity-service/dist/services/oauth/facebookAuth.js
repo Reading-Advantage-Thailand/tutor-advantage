@@ -24,7 +24,7 @@ async function verifyFacebookToken(code, redirectUri) {
     // 2. Fetch user profile
     const profileResponse = await axios_1.default.get("https://graph.facebook.com/me", {
         params: {
-            fields: "id,name,email",
+            fields: "id,name,email,picture.type(large)",
             access_token,
         },
     });
@@ -33,5 +33,6 @@ async function verifyFacebookToken(code, redirectUri) {
         id: profile.id,
         email: profile.email,
         name: profile.name,
+        picture: profile.picture?.data?.url,
     };
 }

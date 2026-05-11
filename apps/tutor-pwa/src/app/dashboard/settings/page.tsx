@@ -1,18 +1,24 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  User, 
-  MapPin, 
-  ShieldCheck, 
-  ChevronRight, 
-  Bell, 
+import {
+  User,
+  MapPin,
+  ShieldCheck,
+  ChevronRight,
+  Bell,
   Wallet,
-  FileText
+  FileText,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { cookies } from "next/headers";
-import { SettingsInteractiveElements, EditableSettingToggle, EditableSettingText } from "./client-components";
+import {
+  SettingsInteractiveElements,
+  EditableSettingToggle,
+  EditableSettingText,
+  VerificationRow,
+} from "./client-components";
+import VerificationBanner from "@/components/dashboard/verification-banner";
 
 async function getUserProfile(token: string) {
   const res = await fetch("http://localhost:3001/v1/users/me", {
@@ -28,7 +34,11 @@ export default async function SettingsPage() {
   const token = cookieStore.get("tutor_session")?.value || "";
 
   const response = await getUserProfile(token);
-  const user = response?.user || { displayName: "Tutor User", userId: "TA-99999", role: "TUTOR" };
+  const user = response?.user || {
+    displayName: "Tutor User",
+    userId: "TA-99999",
+    role: "TUTOR",
+  };
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 lg:space-y-8 pb-24 sm:pb-0">
@@ -45,9 +55,9 @@ export default async function SettingsPage() {
         <CardContent className="p-6 relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
           <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center border-4 border-background shadow-sm shrink-0 overflow-hidden relative">
             {user.profilePictureUrl ? (
-              <Image 
-                src={user.profilePictureUrl} 
-                alt={user.displayName || "Profile"} 
+              <Image
+                src={user.profilePictureUrl}
+                alt={user.displayName || "Profile"}
                 fill
                 className="object-cover"
                 unoptimized
@@ -57,19 +67,42 @@ export default async function SettingsPage() {
             )}
           </div>
           <div className="flex-1 text-center sm:text-left">
-            <h2 className="text-xl font-bold text-foreground">{user.displayName || "Unknown User"}</h2>
-            <p className="text-sm text-muted-foreground mb-3 truncate max-w-xs">{user.userId}</p>
+            <h2 className="text-xl font-bold text-foreground">
+              {user.displayName || "Unknown User"}
+            </h2>
+            <p className="text-sm text-muted-foreground mb-3 truncate max-w-xs">
+              {user.userId}
+            </p>
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
-              <Badge variant="secondary" className="font-normal text-xs bg-primary/10 text-primary hover:bg-primary/20">
-                <ShieldCheck className="w-3 h-3 mr-1" /> ยืนยันตัวตนแล้ว
+              <Badge
+                variant="secondary"
+                className={`font-normal text-xs ${
+                  user.verificationStatus === "VERIFIED"
+                    ? "bg-emerald-500/10 text-emerald-600"
+                    : user.verificationStatus === "PENDING"
+                      ? "bg-amber-500/10 text-amber-600"
+                      : user.verificationStatus === "REJECTED"
+                        ? "bg-red-500/10 text-red-600"
+                        : "bg-slate-500/10 text-slate-600"
+                }`}
+              >
+                <ShieldCheck className="w-3 h-3 mr-1" />
+                {user.verificationStatus === "VERIFIED"
+                  ? "ยืนยันตัวตนแล้ว"
+                  : user.verificationStatus === "PENDING"
+                    ? "กำลังตรวจสอบ"
+                    : user.verificationStatus === "REJECTED"
+                      ? "การตรวจสอบถูกปฏิเสธ"
+                      : "ยังไม่ได้ยืนยันตัวตน"}
               </Badge>
-              <Badge variant="outline" className="font-normal text-xs uppercase">
+              <Badge
+                variant="outline"
+                className="font-normal text-xs uppercase"
+              >
                 ระดับ: {user.role?.replace("ROLE_", "") || "TUTOR"}
               </Badge>
             </div>
           </div>
-          {/* Action buttons embedded in SettingsInteractiveElements (Not Implemented Yet) */}
-          {/*<SettingsInteractiveElements type="editProfileButton" />*/}
         </CardContent>
       </Card>
 
@@ -77,13 +110,13 @@ export default async function SettingsPage() {
         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1">
           ระบบและการแจ้งเตือน
         </h3>
-        
+
         <Card className="border-border/60">
           <div className="divide-y divide-border/50">
             <SettingsInteractiveElements type="themeToggleRow" />
             <SettingsInteractiveElements type="soundToggleRow" />
 
-            <EditableSettingToggle 
+            <EditableSettingToggle
               title="การแจ้งเตือนบน LINE"
               description="รับข้อความเมื่อมีนักเรียนชำระเงิน"
               iconName="Bell"
@@ -100,22 +133,26 @@ export default async function SettingsPage() {
         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1">
           ข้อมูลบัญชีและการเงิน
         </h3>
-        
+
         <Card className="border-border/60">
           <div className="divide-y divide-border/50">
-            <EditableSettingText 
-              title="บัญชีรับเงิน (PromptPay)"
-              description="ยังไม่ได้ระบุ"
-              placeholder="ระบุหมายเลขพร้อมเพย์ของคุณ"
-              iconName="Wallet"
-              value={user.settings?.promptPay}
-              settingKey="promptPay"
-              iconBgClass="bg-emerald-500/10"
-              iconColorClass="text-emerald-600 dark:text-emerald-400"
-            />
-            
-            <EditableSettingText 
-              title="ที่อยู่สำหรับส่งเอกสาร (ภ.ง.ด.3)"
+            {user.verificationStatus !== "VERIFIED" ? (
+              <VerificationRow user={user} />
+            ) : (
+              <EditableSettingText
+                title="เลขบัญชีธนาคาร"
+                description="ยังไม่ได้ระบุ"
+                placeholder="ระบุหมายเลขบัญชีธนาคารของคุณ"
+                iconName="Wallet"
+                value={user.settings?.promptPay}
+                settingKey="promptPay"
+                iconBgClass="bg-emerald-500/10"
+                iconColorClass="text-emerald-600 dark:text-emerald-400"
+              />
+            )}
+
+            <EditableSettingText
+              title="ที่อยู่สำหรับส่งเอกสาร (50 ทวิ)"
               description="ยังไม่ได้ระบุ"
               placeholder="ระบุที่อยู่พร้อมรหัสไปรษณีย์"
               iconName="MapPin"
@@ -132,30 +169,44 @@ export default async function SettingsPage() {
         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1">
           นโยบายและข้อตกลง (PDPA)
         </h3>
-        
+
         <Card className="border-border/60">
           <div className="divide-y divide-border/50">
-            <Link href="/terms" className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors group">
+            <Link
+              href="/terms"
+              className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors group"
+            >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-slate-500/10 flex items-center justify-center shrink-0">
                   <FileText className="h-5 w-5 text-slate-500" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-foreground">ข้อตกลงการให้บริการ</p>
-                  <p className="text-xs text-muted-foreground">อ่านข้อควรปฏิบัติของ Tutor Advantage</p>
+                  <p className="text-sm font-medium text-foreground">
+                    ข้อตกลงการให้บริการ
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    อ่านข้อควรปฏิบัติของ Tutor Advantage
+                  </p>
                 </div>
               </div>
               <ChevronRight className="h-5 w-5 text-muted-foreground/40 group-hover:text-foreground transition-colors" />
             </Link>
-            
-            <Link href="/privacy" className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors group">
+
+            <Link
+              href="/privacy"
+              className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors group"
+            >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-slate-500/10 flex items-center justify-center shrink-0">
                   <ShieldCheck className="h-5 w-5 text-slate-500" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-foreground">นโยบายความเป็นส่วนตัว</p>
-                  <p className="text-xs text-muted-foreground">เรียนรู้การจัดการข้อมูลส่วนบุคคลของคุณ</p>
+                  <p className="text-sm font-medium text-foreground">
+                    นโยบายความเป็นส่วนตัว
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    เรียนรู้การจัดการข้อมูลส่วนบุคคลของคุณ
+                  </p>
                 </div>
               </div>
               <ChevronRight className="h-5 w-5 text-muted-foreground/40 group-hover:text-foreground transition-colors" />

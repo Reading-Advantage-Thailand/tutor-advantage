@@ -16,9 +16,18 @@ import {
 import { handleOAuthCallback } from "./controllers/authController";
 import { getSession } from "./controllers/sessionController";
 import { submitGuardianConsent } from "./controllers/consentController";
-import { getCurrentUser } from "./controllers/userController";
+import { getCurrentUser, submitVerification } from "./controllers/userController";
 import { getSettings, updateSettings } from "./controllers/settingController";
+import { uploadFile } from "./controllers/uploadController";
 import { authMiddleware } from "./middlewares/authMiddleware";
+import multer from "multer";
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+});
 
 const app = express();
 app.use(cors());
@@ -46,6 +55,8 @@ app.get("/v1/session", authMiddleware, getSession);
 app.get("/v1/users/me", authMiddleware, getCurrentUser);
 app.get("/v1/users/me/settings", authMiddleware, getSettings);
 app.patch("/v1/users/me/settings", authMiddleware, updateSettings);
+app.post("/v1/users/me/verification", authMiddleware, submitVerification);
+app.post("/v1/upload", authMiddleware, upload.single("file"), uploadFile);
 app.post("/v1/guardian/consent", authMiddleware, submitGuardianConsent);
 
 // Root API

@@ -46,6 +46,7 @@ import {
 import {
   getUsers,
   getUserDetails,
+  verifyUser,
   anonymizeUser,
 } from "./controllers/userController";
 import {
@@ -162,6 +163,7 @@ app.delete(
 // ── Users Routes ───────────────────────────────────────────────────────────
 app.get("/v1/users", authMiddleware, getUsers);
 app.get("/v1/users/:id", authMiddleware, getUserDetails);
+app.post("/v1/users/:id/verify", authMiddleware, verifyUser);
 app.post("/v1/users/:id/anonymize", authMiddleware, anonymizeUser);
 
 // ── Fraud Routes ───────────────────────────────────────────────────────────

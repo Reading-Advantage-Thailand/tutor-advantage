@@ -12,6 +12,7 @@ import {
   Star,
 } from "lucide-react";
 import { cookies } from "next/headers";
+import VerificationBanner from "@/components/dashboard/verification-banner";
 
 async function getLearningData(token: string) {
   const res = await fetch("http://localhost:3002/v1/dashboard/summary", {
@@ -106,6 +107,8 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6 lg:space-y-8 max-w-4xl mx-auto">
+      <VerificationBanner />
+      
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -306,4 +309,3 @@ export default async function DashboardPage() {
     </div>
   );
 }
-

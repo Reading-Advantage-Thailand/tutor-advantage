@@ -82,6 +82,7 @@ function AppSidebar({
 
   const [pendingSettlements, setPendingSettlements] = useState(0);
   const [pendingAdjustments, setPendingAdjustments] = useState(0);
+  const [pendingVerifications, setPendingVerifications] = useState(0);
 
   const fetchSummary = useCallback(async () => {
     try {
@@ -90,8 +91,16 @@ function AppSidebar({
       const data = await fetchWithAuth("/v1/settlements/summary");
       setPendingSettlements(data.pendingApprovals ?? 0);
       setPendingAdjustments(data.pendingAdjustments ?? 0);
+
+      const userData = await fetchWithAuth("/v1/users");
+      const verificationCount = (userData.users || []).reduce(
+        (sum: number, user: { pendingVerificationCount?: number }) =>
+          sum + (user.pendingVerificationCount || 0),
+        0,
+      );
+      setPendingVerifications(verificationCount);
     } catch (error) {
-      console.error("Failed to fetch summary:", error);
+      console.warn("Failed to fetch admin sidebar summary:", error);
     }
   }, []);
 
@@ -212,6 +221,7 @@ function AppSidebar({
             <SidebarMenu>
               {USER_RISK_ITEMS.map(({ href, label, icon: Icon }) => {
                 const active = pathname.startsWith(href);
+                const badgeCount = href === "/users" ? pendingVerifications : 0;
                 return (
                   <SidebarMenuItem key={href}>
                     <SidebarMenuButton
@@ -229,6 +239,14 @@ function AppSidebar({
                             {label}
                           </span>
                         </div>
+                        {badgeCount > 0 && (
+                          <Badge
+                            variant="destructive"
+                            className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden"
+                          >
+                            {badgeCount}
+                          </Badge>
+                        )}
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

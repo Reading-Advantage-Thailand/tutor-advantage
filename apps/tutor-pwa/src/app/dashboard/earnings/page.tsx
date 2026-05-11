@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, AlertCircle, Wallet, Star } from "lucide-react";
 import { cookies } from "next/headers";
+import VerificationBanner from "@/components/dashboard/verification-banner";
 
 type EarningsHistoryItem = {
   date: string;
@@ -114,6 +115,7 @@ export default async function EarningsPage() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 lg:space-y-8 pb-20 sm:pb-0">
+      <VerificationBanner />
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground">รายได้ของฉัน</h1>

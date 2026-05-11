@@ -3,23 +3,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SettlementService = void 0;
 const database_1 = require("@tutor-advantage/database");
 const client_1 = require("@prisma/client");
+const commissionService_1 = require("./commissionService");
+const taxService_1 = require("./taxService");
 class SettlementService {
     /**
      * Generates a preview for a settlement period.
      * This calculation uses a Bottom-Up approach for a unilevel or differential tree.
      */
     static async previewSettlement(periodMonth, createdBy) {
-        // 1. Fetch all SUCCESSful PaymentIntents for the period
-        const startOfMonth = new Date(`${periodMonth}-01T00:00:00Z`);
-        // Calculate end of month
-        const year = parseInt(periodMonth.split("-")[0], 10);
-        const month = parseInt(periodMonth.split("-")[1], 10);
-        const endOfMonth = new Date(Date.UTC(year, month, 1));
-        endOfMonth.setMilliseconds(-1);
+        const { start: startOfMonth, end: endOfMonth } = (0, commissionService_1.getIctMonthWindow)(periodMonth);
         const payments = await database_1.prisma.paymentIntent.findMany({
             where: {
                 status: "SUCCESS",
-                createdAt: {
+                updatedAt: {
                     gte: startOfMonth,
                     lte: endOfMonth,
                 },
@@ -108,62 +104,38 @@ class SettlementService {
                 calculateGV(node.userId);
             }
         }
-        // 5. Differential Payout Calculation
-        // Payout logic:
-        // e.g. Tier 1 (GV 0 - 50k THB) = 10%
-        // Tier 2 (GV 50k - 150k THB) = 15%
-        // Tier 3 (GV > 150k THB) = 20%
-        const getRate = (gvSatang) => {
-            const gvTHB = Number(gvSatang) / 100;
-            if (gvTHB >= 150000)
-                return 0.2;
-            if (gvTHB >= 50000)
-                return 0.15;
-            return 0.1; // Base 10% for everyone handling payments
-        };
         let totalPayoutSatang = 0n;
-        // Traverse top-down to apply differential logic
-        // Root total volume * root rate
-        // minus (Child total volume * child rate)
-        const calculatePayouts = (userId, currentRate) => {
-            const node = nodes.get(userId);
-            const myRate = getRate(node.groupVolumeMinor);
-            node.payoutRate = myRate;
-            // Ensure rate is always at least the minimum allowed (or equal to child's rate to prevent negative)
-            // Note: In real MLMs, if downline matches your rank, payout is 0 (breakaway).
-            const effectiveRateToUseForMe = Math.max(0, myRate);
-            const children = childMap.get(userId) || [];
-            let payoutForMe = (node.groupVolumeMinor *
-                BigInt(Math.floor(effectiveRateToUseForMe * 100))) /
-                100n;
-            for (const childId of children) {
-                const childNode = nodes.get(childId);
-                const childRate = getRate(childNode.groupVolumeMinor);
-                // Subtract the chunk the child gets from my theoretical total payout
-                const childsChunk = (childNode.groupVolumeMinor * BigInt(Math.floor(childRate * 100))) /
-                    100n;
-                payoutForMe -= childsChunk;
-                // Recurse for the child
-                calculatePayouts(childId, childRate);
+        const calculatePayouts = (userId, visiting = new Set()) => {
+            if (visiting.has(userId)) {
+                throw new Error("SPONSOR_TREE_CYCLE");
             }
-            // Safety guard against negative payouts in complex trees
+            visiting.add(userId);
+            const node = nodes.get(userId);
+            const myRate = (0, commissionService_1.calculateCommissionInfo)(Number(node.groupVolumeMinor) / 100).rate;
+            node.payoutRate = myRate;
+            const children = childMap.get(userId) || [];
+            let childPayouts = 0n;
+            for (const childId of children) {
+                childPayouts += calculatePayouts(childId, new Set(visiting));
+            }
+            let payoutForMe = (0, commissionService_1.calculatePayoutMinor)(node.groupVolumeMinor, myRate) - childPayouts;
             if (payoutForMe < 0n)
                 payoutForMe = 0n;
-            // Optional Rule: Must have Personal Volume to be eligible for tree bonuses
             if (node.personalVolumeMinor === 0n && children.length > 0) {
                 node.eligibilityStatus = "INELIGIBLE_NO_PV";
-                payoutForMe = 0n; // Flush their earnings up? Depends on plan. Setting to 0 here.
+                payoutForMe = 0n;
             }
             else if (payoutForMe > 0n) {
                 node.eligibilityStatus = "ELIGIBLE";
             }
             node.payoutAmountMinor = payoutForMe;
             totalPayoutSatang += payoutForMe;
+            return payoutForMe;
         };
         // Find roots again and start the top-down payout calculation
         for (const node of nodes.values()) {
             if (!node.sponsorId) {
-                calculatePayouts(node.userId, 0);
+                calculatePayouts(node.userId);
             }
         }
         // 6. Persist Draft Settlement Run
@@ -178,6 +150,7 @@ class SettlementService {
         // Bulk insert payout lines
         for (const node of nodes.values()) {
             if (node.payoutAmountMinor > 0n || node.groupVolumeMinor > 0n) {
+                const tax = (0, taxService_1.calculateWithholdingTax)(node.payoutAmountMinor);
                 await database_1.prisma.payoutLine.create({
                     data: {
                         settlementRunId: run.settlementRunId,
@@ -185,6 +158,8 @@ class SettlementService {
                         grossVolumeMinor: node.groupVolumeMinor,
                         payoutRate: new client_1.Prisma.Decimal(node.payoutRate),
                         payoutAmountMinor: node.payoutAmountMinor,
+                        withholdingTaxMinor: tax.withholdingTaxMinor,
+                        netPayoutMinor: tax.netPayoutMinor,
                         eligibilityStatus: node.eligibilityStatus,
                     },
                 });
@@ -208,13 +183,34 @@ class SettlementService {
             throw new Error("NOT_FOUND");
         if (run.status !== "DRAFT")
             throw new Error("INVALID_STATUS");
-        const updated = await database_1.prisma.settlementRun.update({
-            where: { settlementRunId: snapshotId },
-            data: {
-                status: "APPROVED",
-                approvedBy,
-                approvedAt: new Date(),
-            },
+        if (run.createdBy === approvedBy)
+            throw new Error("MAKER_CHECKER_VIOLATION");
+        const updated = await database_1.prisma.$transaction(async (tx) => {
+            const approvedRun = await tx.settlementRun.update({
+                where: { settlementRunId: snapshotId },
+                data: {
+                    status: "APPROVED",
+                    approvedBy,
+                    approvedAt: new Date(),
+                },
+                include: { payoutLines: true },
+            });
+            for (const line of approvedRun.payoutLines) {
+                await tx.payoutDocument.upsert({
+                    where: { payoutLineId: line.payoutLineId },
+                    update: {},
+                    create: {
+                        payoutLineId: line.payoutLineId,
+                        tutorUserId: line.tutorUserId,
+                        documentNumber: (0, taxService_1.buildPayoutDocumentNumber)(line.payoutLineId),
+                        documentType: "PAY_SLIP_50_TAWI",
+                        grossAmountMinor: line.payoutAmountMinor,
+                        withholdingTaxMinor: line.withholdingTaxMinor,
+                        netAmountMinor: line.netPayoutMinor,
+                    },
+                });
+            }
+            return approvedRun;
         });
         return updated;
     }

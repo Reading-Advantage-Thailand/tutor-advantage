@@ -31,5 +31,6 @@ async function verifyGoogleToken(code, redirectUri) {
         id: profile.id,
         email: profile.email,
         name: profile.name,
+        picture: profile.picture,
     };
 }

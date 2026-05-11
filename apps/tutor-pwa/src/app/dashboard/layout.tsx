@@ -39,7 +39,7 @@ export default async function DashboardLayout({
 
         {/* Main Content Area — add pb-20 on mobile to account for bottom nav */}
         <main className="flex-1 overflow-y-auto p-4 pb-24 lg:p-8 lg:pb-8">
-          <div className="mx-auto max-w-5xl">
+          <div className="mx-auto max-w-5xl space-y-6">
             {children}
           </div>
         </main>

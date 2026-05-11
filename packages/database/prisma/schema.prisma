@@ -25,6 +25,13 @@ model User {
   sponsorTutorId    String?                   @map("sponsor_tutor_id") @db.Uuid
   sponsorLockedAt   DateTime?                 @map("sponsor_locked_at") @db.Timestamptz
   settings          Json?                     @default("{}")
+  
+  // Verification fields
+  idCardImageUrl    String?                   @map("id_card_image_url")
+  bankBookImageUrl  String?                   @map("bank_book_image_url")
+  verificationStatus String                  @default("UNVERIFIED") @map("verification_status")
+  verificationComment String?                 @map("verification_comment")
+
   createdAt         DateTime                  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt         DateTime                  @default(now()) @map("updated_at") @db.Timestamptz
   oauthIdentities   OAuthIdentity[]

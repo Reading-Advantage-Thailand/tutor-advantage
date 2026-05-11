@@ -1,5 +1,33 @@
 const BASE_URL = "http://localhost:3003";
 
+function getErrorMessage(data: unknown) {
+  if (typeof data === "string" && data.trim()) {
+    return data;
+  }
+
+  if (data && typeof data === "object" && "error" in data) {
+    const error = (data as { error?: unknown }).error;
+    if (typeof error === "string" && error.trim()) {
+      return error;
+    }
+    if (error && typeof error === "object" && "message" in error) {
+      const message = (error as { message?: unknown }).message;
+      if (typeof message === "string" && message.trim()) {
+        return message;
+      }
+    }
+  }
+
+  if (data && typeof data === "object" && "message" in data) {
+    const message = (data as { message?: unknown }).message;
+    if (typeof message === "string" && message.trim()) {
+      return message;
+    }
+  }
+
+  return "Something went wrong";
+}
+
 export async function fetchWithAuth(url: string, options: RequestInit = {}) {
   let token = null;
   if (typeof window !== "undefined") {
@@ -39,11 +67,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
   const data = isJson ? await response.json() : await response.text();
 
   if (!response.ok) {
-    const errorData = data as { error?: { message?: string } };
-    throw new Error(
-      errorData?.error?.message ||
-        (typeof data === "string" ? data : "Something went wrong"),
-    );
+    throw new Error(getErrorMessage(data));
   }
 
   return data;
