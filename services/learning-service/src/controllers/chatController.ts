@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+import { LineNotificationService } from "../services/LineNotificationService";
 
 const prisma = new PrismaClient();
 
@@ -250,6 +251,26 @@ export const sendMessage = async (req: AuthenticatedRequest, res: Response): Pro
       where: { conversationId },
       data: { updatedAt: new Date() },
     });
+
+    // Trigger async Line Push Notifications to other participants
+    (async () => {
+      try {
+        const allParticipants = await prisma.conversationParticipant.findMany({
+          where: { conversationId, userId: { not: userId } },
+          select: { userId: true }
+        });
+        
+        const senderName = newMessage.sender.displayName || "มีข้อความใหม่";
+        const shortContent = content.length > 100 ? content.substring(0, 97) + "..." : content;
+        const pushMessage = `💬 จาก ${senderName}:\n${shortContent}`;
+
+        for (const p of allParticipants) {
+          await LineNotificationService.sendToUser(p.userId, pushMessage, { type: "notifyLineMessages" });
+        }
+      } catch (e) {
+        console.error("Background Notification Error:", e);
+      }
+    })();
 
     res.status(201).json({
       id: newMessage.messageId,

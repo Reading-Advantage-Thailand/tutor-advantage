@@ -4,6 +4,7 @@ import { lessonSessionService } from "../services/LessonSessionService";
 import { evaluateShortAnswer } from "../services/AIEvaluator";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
 import * as dbWriter from "../services/SessionDBWriter";
+import { LineNotificationService } from "../services/LineNotificationService";
 
 function seededShuffle<T>(array: T[], seedInput: string): T[] {
   const result = [...array];
@@ -155,6 +156,24 @@ export const setupLessonSocket = (io: Server) => {
         // If changing to phase 14 (Finish/Leaderboard), mark ACTIVE DB ROUND as FINISHED
         if (phase === 14) {
           dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
+          
+          // Trigger LINE Notifications for final score
+          (async () => {
+            try {
+              const articleTitle = session.articleData?.title || "บทเรียน";
+              const studentList = Array.from(session.participants.values());
+              
+              for (const p of studentList) {
+                 // Get final score in current context
+                 const finalScore = p.score || 0;
+                 const pushMsg = `🎉 จบคาบเรียนแล้ว!\n\nคุณได้คะแนนรวม ${finalScore} คะแนน จากบทเรียน "${articleTitle}" \n\nเข้าเช็คประวัติการเรียนและเฉลยคำตอบได้ที่ Student LIFF ครับ`;
+                 
+                 await LineNotificationService.sendToUser(p.studentId, pushMsg, { type: "notifyScoreUpdates" });
+              }
+            } catch (e) {
+              console.error("[Socket] Failed to trigger score notification:", e);
+            }
+          })();
         }
       }
     });
