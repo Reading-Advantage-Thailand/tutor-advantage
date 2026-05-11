@@ -109,12 +109,12 @@ export default function FraudFlagsPage() {
     <div className="space-y-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-3xl font-black tracking-tight text-foreground">Risk & Fraud Console</h2>
-          <p className="text-muted-foreground font-medium">Monitor and act on automated risk flags and velocity limits.</p>
+          <h2 className="text-3xl font-black tracking-tight text-foreground">ตรวจสอบความเสี่ยง (Risk & Fraud)</h2>
+          <p className="text-muted-foreground font-medium">ติดตามและจัดการความเสี่ยงจากระบบอัตโนมัติ</p>
         </div>
         <Button variant="outline" onClick={loadData} disabled={loading} className="rounded-full font-bold shadow-sm h-12 px-6">
           <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-          Refresh Data
+          รีเฟรชข้อมูล
         </Button>
       </div>
 
@@ -126,7 +126,7 @@ export default function FraudFlagsPage() {
           <CardContent className="p-8 relative z-10">
             <p className="flex items-center gap-2 text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-widest">
               <AlertTriangle className="h-4 w-4" />
-              Active Flags
+              การแจ้งเตือนที่ใช้งานอยู่
             </p>
             <p className="mt-4 text-5xl font-black text-amber-900 dark:text-amber-50">{stats.activeCount}</p>
           </CardContent>
@@ -139,7 +139,7 @@ export default function FraudFlagsPage() {
           <CardContent className="p-8 relative z-10">
             <p className="flex items-center gap-2 text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-widest">
               <Activity className="h-4 w-4" />
-              Velocity Status
+              สถานะความเร็วการทำรายการ
             </p>
             <p className="mt-4 text-5xl font-black text-blue-900 dark:text-blue-50">{stats.velocityStatus}</p>
           </CardContent>
@@ -152,7 +152,7 @@ export default function FraudFlagsPage() {
           <CardContent className="p-8 relative z-10">
             <p className="flex items-center gap-2 text-xs font-bold text-red-700 dark:text-red-400 uppercase tracking-widest">
               <Lock className="h-4 w-4" />
-              Frozen Accounts
+              บัญชีที่ถูกระงับ
             </p>
             <p className="mt-4 text-5xl font-black text-red-900 dark:text-red-50">{stats.autoSuspensions}</p>
           </CardContent>
@@ -162,7 +162,7 @@ export default function FraudFlagsPage() {
       {error && (
         <Alert variant="destructive" className="rounded-2xl border-2 shadow-sm">
           <AlertTriangle className="h-5 w-5" />
-          <AlertTitle className="font-bold">Action Failed</AlertTitle>
+          <AlertTitle className="font-bold">ดำเนินการไม่สำเร็จ</AlertTitle>
           <AlertDescription className="font-medium">{error}</AlertDescription>
         </Alert>
       )}
@@ -180,8 +180,8 @@ export default function FraudFlagsPage() {
               <ShieldAlert className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle className="text-lg font-bold">Investigation Queue</CardTitle>
-              <CardDescription className="font-medium text-xs">Search and resolve pending fraud flags.</CardDescription>
+              <CardTitle className="text-lg font-bold">คิวงานตรวจสอบ</CardTitle>
+              <CardDescription className="font-medium text-xs">ค้นหาและจัดการความเสี่ยงที่รอการตรวจสอบ</CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -194,7 +194,7 @@ export default function FraudFlagsPage() {
               onKeyDown={(event) => {
                 if (event.key === "Enter") loadData();
               }}
-              placeholder="Search by target name, ID, or type..."
+              placeholder="ค้นหาชื่อ, รหัสอ้างอิง หรือประเภท..."
               className="pl-11 h-12 rounded-2xl border-2 focus-visible:ring-brand-500 font-medium bg-muted/30"
             />
           </div>
@@ -209,8 +209,8 @@ export default function FraudFlagsPage() {
           {!loading && activeFlags.length === 0 && (
             <div className="flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
               <ShieldCheck className="h-12 w-12 text-emerald-500/50 mb-4" />
-              <p className="font-bold text-muted-foreground">All clear!</p>
-              <p className="text-sm text-muted-foreground/60 mt-1">No active fraud flags match your criteria.</p>
+              <p className="font-bold text-muted-foreground">ปลอดภัย!</p>
+              <p className="text-sm text-muted-foreground/60 mt-1">ไม่มีความเสี่ยงที่ต้องจัดการในขณะนี้</p>
             </div>
           )}
           
@@ -252,7 +252,7 @@ export default function FraudFlagsPage() {
                     
                     <div className="bg-muted/30 p-3 rounded-xl border border-border/50">
                       <p className="text-sm font-medium text-foreground">
-                        {flag.description || "No description provided."}
+                        {flag.description || "ไม่มีคำอธิบาย"}
                       </p>
                     </div>
                   </div>
@@ -264,7 +264,7 @@ export default function FraudFlagsPage() {
                       onClick={() => handleAction(flag.id, "CLEAR")}
                     >
                       <CheckCircle2 className="mr-2 h-4 w-4" />
-                      Clear Flag
+                      เคลียร์รายการ
                     </Button>
                     <Button
                       variant="outline"
@@ -273,7 +273,7 @@ export default function FraudFlagsPage() {
                       onClick={() => handleAction(flag.id, "MONITOR")}
                     >
                       <Activity className="mr-2 h-4 w-4" />
-                      Monitor
+                      เฝ้าระวัง
                     </Button>
                     <Button
                       variant="destructive"
@@ -282,7 +282,7 @@ export default function FraudFlagsPage() {
                       onClick={() => handleAction(flag.id, "FREEZE")}
                     >
                       <Lock className="mr-2 h-4 w-4" />
-                      Freeze Account
+                      ระงับบัญชี
                     </Button>
                   </div>
                 </div>

@@ -20,7 +20,26 @@ export async function POST(req: Request) {
       { expiresIn: "12h" },
     );
 
-    return NextResponse.json({ token, role });
+    const response = NextResponse.json({ token, role });
+    
+    // Set cookies for middleware
+    response.cookies.set("admin_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 12, // 12 hours
+      path: "/",
+    });
+    
+    response.cookies.set("admin_role", role, {
+      httpOnly: false, // Allow client to read role if needed
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 12,
+      path: "/",
+    });
+
+    return response;
   } catch (error) {
     console.error("Dev login error:", error);
     return NextResponse.json(

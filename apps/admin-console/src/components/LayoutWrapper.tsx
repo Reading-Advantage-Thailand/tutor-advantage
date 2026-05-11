@@ -46,28 +46,28 @@ import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const FINANCE_ITEMS = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/settlements", label: "Settlements", icon: ReceiptText },
-  { href: "/adjustments", label: "Adjustments", icon: FilePenLine },
-  { href: "/audit", label: "Audit Log", icon: ShieldCheck },
+  { href: "/", label: "ภาพรวม", icon: LayoutDashboard },
+  { href: "/settlements", label: "การชำระเงิน", icon: ReceiptText },
+  { href: "/adjustments", label: "ปรับปรุงยอด", icon: FilePenLine },
+  { href: "/audit", label: "ประวัติกิจกรรม", icon: ShieldCheck },
 ];
 
 const OPS_ITEMS = [
   {
     href: "/operations/exceptions",
-    label: "Exceptions",
+    label: "ข้อผิดพลาดระบบ",
     icon: AlertTriangle,
   },
   {
     href: "/operations/legacy-links",
-    label: "Legacy Links",
+    label: "ลิงก์ระบบเก่า",
     icon: LinkIcon,
   },
 ];
 
 const USER_RISK_ITEMS = [
-  { href: "/users", label: "Users & Consent", icon: Users },
-  { href: "/fraud", label: "Fraud Flags", icon: ShieldAlert },
+  { href: "/users", label: "ผู้ใช้งาน & ความยินยอม", icon: Users },
+  { href: "/fraud", label: "ตรวจสอบความเสี่ยง", icon: ShieldAlert },
 ];
 
 function AppSidebar({
@@ -285,10 +285,10 @@ function AppSidebar({
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight ml-1">
                     <span className="truncate font-semibold text-foreground">
-                      {role || "Admin"}
+                      {role || "ผู้ดูแลระบบ"}
                     </span>
                     <span className="flex items-center gap-1.5 truncate text-[10px] font-medium text-muted-foreground uppercase tracking-tight">
-                      <span className="h-1.5 w-1.5 rounded-full bg-brand-500 animate-pulse" /> Online
+                      <span className="h-1.5 w-1.5 rounded-full bg-brand-500 animate-pulse" /> ออนไลน์
                     </span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-3.5 text-muted-foreground" />
@@ -309,7 +309,7 @@ function AppSidebar({
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-bold text-foreground">
-                        {role || "Administrator"}
+                        {role || "ผู้ดูแลระบบ"}
                       </span>
                       <p className="text-xs text-muted-foreground truncate">
                         admin@tutor-advantage.com
@@ -323,7 +323,7 @@ function AppSidebar({
                   className="rounded-lg py-2.5 text-red-600 focus:bg-red-50 focus:text-red-700 dark:focus:bg-red-950/30 cursor-pointer"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span className="font-semibold">Sign Out</span>
+                  <span className="font-semibold">ออกจากระบบ</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -347,7 +347,9 @@ export default function LayoutWrapper({
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("admin_token");
       const savedRole = localStorage.getItem("admin_role");
-      if (!token && pathname !== "/login") {
+      const isPublicPage = pathname === "/login" || pathname === "/unauthorized";
+      
+      if (!token && !isPublicPage) {
         router.push("/login");
       } else {
         setRole(savedRole);
@@ -355,19 +357,28 @@ export default function LayoutWrapper({
     }
   }, [pathname, router]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem("admin_token");
     localStorage.removeItem("admin_role");
-    router.push("/login");
+    
+    // Clear cookies via server API since admin_token is HttpOnly
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (e) {
+      console.error("Failed to clear cookies on server:", e);
+    }
+    
+    // Use window.location to force a hard reload, ensuring middleware sees cleared cookies
+    window.location.href = "/login";
   };
 
-  if (pathname === "/login") {
+  if (pathname === "/login" || pathname === "/unauthorized") {
     return <>{children}</>;
   }
 
   const pageTitle =
     pathname === "/"
-      ? "Dashboard Overview"
+      ? "ภาพรวมระบบ"
       : pathname.split("/")[1]?.charAt(0).toUpperCase() +
         (pathname.split("/")[1]?.slice(1) ?? "");
 
@@ -385,7 +396,7 @@ export default function LayoutWrapper({
           <div className="ml-auto flex items-center gap-4">
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 border border-brand-100 dark:bg-brand-900/10 dark:border-brand-800">
               <span className="h-2 w-2 rounded-full bg-brand-500 shadow-[0_0_8px_rgba(6,199,85,0.5)]" />
-              <span className="text-[10px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider">Production</span>
+              <span className="text-[10px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider">ระบบหลัก (Production)</span>
             </div>
             <ThemeToggle />
           </div>

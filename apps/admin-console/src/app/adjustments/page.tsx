@@ -182,8 +182,8 @@ export default function AdjustmentsPage() {
   return (
     <div className="space-y-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
       <div className="flex flex-col gap-2">
-        <h2 className="text-3xl font-black tracking-tight text-foreground">Manual Adjustments</h2>
-        <p className="text-muted-foreground font-medium">Create and review ledger overrides and corrections.</p>
+        <h2 className="text-3xl font-black tracking-tight text-foreground">จัดการปรับปรุงยอด (Manual Adjustments)</h2>
+        <p className="text-muted-foreground font-medium">สร้างและตรวจสอบคำขอแก้ไขยอดเงิน</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -197,9 +197,9 @@ export default function AdjustmentsPage() {
                     <Scale className="h-5 w-5" />
                   </div>
                   <div>
-                    <CardTitle className="text-lg font-bold">New Adjustment</CardTitle>
+                    <CardTitle className="text-lg font-bold">เพิ่มรายการใหม่</CardTitle>
                     <CardDescription className="font-medium text-brand-700/80 dark:text-brand-400/80">
-                      Submit a ledger correction.
+                      ส่งคำขอแก้ไขยอดเงินในระบบ
                     </CardDescription>
                   </div>
                 </div>
@@ -207,7 +207,7 @@ export default function AdjustmentsPage() {
               <CardContent className="p-6">
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="space-y-1.5">
-                    <Label htmlFor="tutorUserId" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Tutor User ID</Label>
+                    <Label htmlFor="tutorUserId" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">รหัสผู้ใช้งานติวเตอร์</Label>
                     <Input
                       id="tutorUserId"
                       placeholder="usr_xxxxxxxxxxxxxxxx"
@@ -219,7 +219,7 @@ export default function AdjustmentsPage() {
                   </div>
                   
                   <div className="space-y-1.5">
-                    <Label htmlFor="adjPeriod" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Target Period</Label>
+                    <Label htmlFor="adjPeriod" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">รอบบิลเป้าหมาย</Label>
                     <Input
                       id="adjPeriod"
                       type="month"
@@ -232,18 +232,18 @@ export default function AdjustmentsPage() {
                   
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="amountSatang" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Amount (Satang)</Label>
+                      <Label htmlFor="amountSatang" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">จำนวนเงิน (สตางค์)</Label>
                       {amountSatang && !isNaN(parsedAmount) && (
                         <Badge variant="outline" className={`font-bold border-none px-2 py-0.5 ${isPositive ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"}`}>
                           {isPositive ? <PlusCircle className="h-3 w-3 mr-1" /> : <MinusCircle className="h-3 w-3 mr-1" />}
-                          {formatTHB(parsedAmount)}
+                          {formatTHB(Math.abs(parsedAmount))}
                         </Badge>
                       )}
                     </div>
                     <Input
                       id="amountSatang"
                       type="number"
-                      placeholder="e.g. 10000 (100 THB) or -5000 (-50 THB)"
+                      placeholder="เช่น 10000 (100 บาท) หรือ -5000 (-50 บาท)"
                       value={amountSatang}
                       onChange={(e) => setAmountSatang(e.target.value)}
                       required
@@ -252,10 +252,10 @@ export default function AdjustmentsPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="reason" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Reason (Required)</Label>
+                    <Label htmlFor="reason" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">เหตุผล (จำเป็น)</Label>
                     <Textarea
                       id="reason"
-                      placeholder="Explain the reason for this adjustment..."
+                      placeholder="อธิบายเหตุผลในการปรับปรุงยอดครั้งนี้..."
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
                       required
@@ -267,7 +267,7 @@ export default function AdjustmentsPage() {
                   {submitError && (
                     <Alert variant="destructive" className="rounded-xl border-2">
                       <AlertCircle className="h-4 w-4" />
-                      <AlertTitle className="font-bold">Error</AlertTitle>
+                      <AlertTitle className="font-bold">เกิดข้อผิดพลาด</AlertTitle>
                       <AlertDescription className="font-medium">{submitError}</AlertDescription>
                     </Alert>
                   )}
@@ -288,12 +288,12 @@ export default function AdjustmentsPage() {
                     {submitLoading ? (
                       <span className="flex items-center gap-2">
                         <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Submitting...
+                        กำลังส่งคำขอ...
                       </span>
                     ) : (
                       <>
                         <FilePenLine className="h-5 w-5 mr-2" />
-                        Submit Request
+                        ส่งคำขอ
                       </>
                     )}
                   </Button>
@@ -306,9 +306,9 @@ export default function AdjustmentsPage() {
             <Card className="border-none shadow-sm rounded-3xl bg-muted/50">
               <CardContent className="p-8 text-center">
                 <ShieldAlert className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-                <h3 className="font-bold text-lg mb-2">Checker Mode Active</h3>
+                <h3 className="font-bold text-lg mb-2">โหมดผู้ตรวจสอบ (Checker)</h3>
                 <p className="text-muted-foreground text-sm font-medium">
-                  You have approval rights but cannot create new adjustments.
+                  คุณมีสิทธิ์ในการอนุมัติรายการเท่านั้น ไม่สามารถสร้างรายการใหม่ได้
                 </p>
               </CardContent>
             </Card>
@@ -321,10 +321,10 @@ export default function AdjustmentsPage() {
             <div>
               <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
                 <ShieldAlert className="h-5 w-5 text-amber-500" />
-                Pending Approvals
+                รอการอนุมัติ
               </h3>
               <p className="text-sm font-medium text-muted-foreground mt-1">
-                Review and approve ledger corrections. You cannot approve your own requests.
+                ตรวจสอบและอนุมัติคำขอแก้ไขยอดเงิน (ไม่สามารถอนุมัติคำขอที่ตนเองสร้างได้)
               </p>
             </div>
             <Button
@@ -335,7 +335,7 @@ export default function AdjustmentsPage() {
               className="rounded-full font-bold shadow-sm"
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${listLoading ? "animate-spin" : ""}`} />
-              Refresh List
+              รีเฟรชรายการ
             </Button>
           </div>
 
@@ -350,8 +350,8 @@ export default function AdjustmentsPage() {
             <Card className="border-none shadow-sm rounded-3xl bg-muted/20 border-2 border-dashed">
               <CardContent className="flex flex-col items-center justify-center py-20 text-center">
                 <Scale className="h-12 w-12 text-muted-foreground/30 mb-4" />
-                <p className="font-bold text-muted-foreground">No pending adjustments</p>
-                <p className="text-sm text-muted-foreground/60 mt-1">All requests have been processed.</p>
+                <p className="font-bold text-muted-foreground">ไม่มีรายการรออนุมัติ</p>
+                <p className="text-sm text-muted-foreground/60 mt-1">คำขอทั้งหมดได้รับการดำเนินการแล้ว</p>
               </CardContent>
             </Card>
           )}
@@ -368,32 +368,32 @@ export default function AdjustmentsPage() {
                           <CopyableId name={adj.tutorName} id={adj.tutorUserId} />
                         </div>
                         <Badge variant="outline" className="border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 rounded-full px-3 py-0.5 font-bold uppercase tracking-wider">
-                          Pending
+                          รอดำเนินการ
                         </Badge>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="bg-muted/30 p-3 rounded-2xl border border-border/50">
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Period</p>
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">รอบบิล</p>
                           <p className="font-bold text-foreground">{adj.periodMonth}</p>
                         </div>
                         <div className={`p-3 rounded-2xl border ${adj.amountSatang >= 0 ? "bg-emerald-50/50 border-emerald-100 dark:bg-emerald-950/20 dark:border-emerald-900" : "bg-red-50/50 border-red-100 dark:bg-red-950/20 dark:border-red-900"}`}>
-                          <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${adj.amountSatang >= 0 ? "text-emerald-700 dark:text-emerald-400" : "text-red-700 dark:text-red-400"}`}>Amount</p>
+                          <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${adj.amountSatang >= 0 ? "text-emerald-700 dark:text-emerald-400" : "text-red-700 dark:text-red-400"}`}>จำนวนเงิน</p>
                           <p className={`font-black text-lg tabular-nums ${adj.amountSatang >= 0 ? "text-emerald-700 dark:text-emerald-400" : "text-red-700 dark:text-red-400"}`}>
-                            {formatTHB(adj.amountSatang)}
+                            {formatTHB(Math.abs(adj.amountSatang))} {adj.amountSatang >= 0 ? "(เพิ่ม)" : "(หัก)"}
                           </p>
                         </div>
                       </div>
 
                       <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Reason</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">เหตุผล</p>
                         <p className="text-sm font-medium text-foreground bg-muted/30 p-3 rounded-2xl border border-border/50">{adj.reason}</p>
                       </div>
                     </div>
 
                     <div className="flex flex-col justify-between border-t md:border-t-0 md:border-l border-border/50 pt-4 md:pt-0 md:pl-6 min-w-[200px]">
                       <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Requested By</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">ผู้ส่งคำขอ</p>
                         <CopyableId name={adj.createdByName} id={adj.createdByUserId} />
                       </div>
                       
@@ -408,7 +408,7 @@ export default function AdjustmentsPage() {
                           ) : (
                             <CheckCircle2 className="h-4 w-4 mr-2" />
                           )}
-                          Approve
+                          อนุมัติ
                         </Button>
                         <Button
                           variant="outline"
@@ -417,7 +417,7 @@ export default function AdjustmentsPage() {
                           className="w-full rounded-xl font-bold border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-700 h-10"
                         >
                           <XCircle className="h-4 w-4 mr-2" />
-                          Reject
+                          ปฏิเสธ
                         </Button>
                       </div>
                     </div>
@@ -436,10 +436,10 @@ export default function AdjustmentsPage() {
                 disabled={page === 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
               >
-                Previous
+                ก่อนหน้า
               </Button>
               <span className="text-sm font-bold text-muted-foreground bg-muted/50 px-4 py-2 rounded-xl">
-                Page {page} of {totalPages}
+                หน้าที่ {page} จาก {totalPages}
               </span>
               <Button
                 variant="outline"
@@ -447,7 +447,7 @@ export default function AdjustmentsPage() {
                 disabled={page === totalPages}
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               >
-                Next
+                ถัดไป
               </Button>
             </div>
           )}

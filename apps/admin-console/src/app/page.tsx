@@ -147,16 +147,16 @@ export default function DashboardPage() {
         <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              Hello, {role || "Administrator"}!
+              สวัสดี, {role || "ผู้ดูแลระบบ"}!
             </h2>
             <p className="mt-2 text-brand-100/90 font-medium">
-              Welcome back to the Tutor Advantage control center. 
-              {loading ? " Fetching your morning briefing..." : " Everything looks good across the system."}
+              ยินดีต้อนรับกลับสู่ศูนย์ควบคุม Tutor Advantage 
+              {loading ? " กำลังโหลดข้อมูลสรุป..." : " ระบบทำงานได้ตามปกติ"}
             </p>
           </div>
           <div className="flex items-center gap-3">
             <div className="rounded-2xl bg-white/10 p-4 backdrop-blur-md border border-white/10 text-center min-w-[120px]">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-brand-200">System Health</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-brand-200">สถานะระบบ</p>
               <div className="mt-1 flex items-center justify-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
                 <span className="text-xl font-bold">100%</span>
@@ -172,7 +172,7 @@ export default function DashboardPage() {
       {error && (
         <Alert variant="destructive" className="rounded-2xl border-2 shadow-lg animate-in slide-in-from-top-4 duration-300">
           <AlertTriangle className="h-5 w-5" />
-          <AlertTitle className="font-bold">System Connection Issue</AlertTitle>
+          <AlertTitle className="font-bold">ข้อผิดพลาดในการเชื่อมต่อระบบ</AlertTitle>
           <AlertDescription className="font-medium">{error}</AlertDescription>
         </Alert>
       )}
@@ -193,7 +193,7 @@ export default function DashboardPage() {
                     </div>
                     {count > 0 && (
                       <Badge variant="secondary" className="bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400 border-none font-bold">
-                        Pending
+                        รอดำเนินการ
                       </Badge>
                     )}
                   </CardHeader>
@@ -203,7 +203,7 @@ export default function DashboardPage() {
                       <p className="text-4xl font-extrabold tracking-tight tabular-nums text-foreground">
                         {count}
                       </p>
-                      <span className="text-xs font-medium text-muted-foreground">tasks</span>
+                      <span className="text-xs font-medium text-muted-foreground">รายการ</span>
                     </div>
                     <Button
                       asChild
@@ -212,7 +212,7 @@ export default function DashboardPage() {
                       className="mt-4 h-9 w-full justify-between rounded-xl px-2 font-semibold group-hover:bg-brand-50 dark:group-hover:bg-brand-900/20 group-hover:text-brand-700 dark:group-hover:text-brand-400 transition-colors"
                     >
                       <Link href={queue.href}>
-                        Review Queue
+                        ตรวจสอบรายการ
                         <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
                       </Link>
                     </Button>
@@ -230,14 +230,14 @@ export default function DashboardPage() {
               <div>
                 <CardTitle className="flex items-center gap-2 text-xl font-bold">
                   <Clock className="h-5 w-5 text-brand-600 dark:text-brand-400" />
-                  Audit & Compliance Trail
+                  ประวัติและกิจกรรมในระบบ
                 </CardTitle>
                 <CardDescription className="text-sm font-medium">
-                  Recent system-wide administrative actions and changes.
+                  กิจกรรมและการแก้ไขระบบล่าสุด
                 </CardDescription>
               </div>
               <Button variant="outline" size="sm" className="rounded-xl font-bold" asChild>
-                <Link href="/audit">View All</Link>
+                <Link href="/audit">ดูทั้งหมด</Link>
               </Button>
             </div>
           </CardHeader>
@@ -253,8 +253,8 @@ export default function DashboardPage() {
                 <div className="rounded-full bg-muted p-4 mb-4">
                   <ShieldCheck className="h-10 w-10 text-muted-foreground/40" />
                 </div>
-                <p className="font-bold text-muted-foreground">No recent activity detected</p>
-                <p className="text-sm text-muted-foreground/60">All systems are quiet.</p>
+                <p className="font-bold text-muted-foreground">ไม่พบกิจกรรมล่าสุด</p>
+                <p className="text-sm text-muted-foreground/60">ระบบไม่มีการเคลื่อนไหว</p>
               </div>
             ) : (
               <div className="divide-y divide-border">
@@ -297,14 +297,14 @@ export default function DashboardPage() {
             <CardHeader className="pb-4 pt-8 px-8">
               <CardTitle className="flex items-center gap-2 text-xl font-bold">
                 <TrendingUp className="h-5 w-5 text-emerald-500" />
-                Finance Pulse
+                สรุปการเงิน
               </CardTitle>
-              <CardDescription className="text-sm font-medium">30-day performance metrics.</CardDescription>
+              <CardDescription className="text-sm font-medium">ผลการดำเนินการย้อนหลัง 30 วัน</CardDescription>
             </CardHeader>
             <CardContent className="px-8 pb-8 space-y-6">
               <div className="p-6 rounded-2xl bg-brand-50/50 border border-brand-100/50 dark:bg-brand-900/10 dark:border-brand-800/50">
                 <p className="text-xs font-bold text-brand-700 dark:text-brand-400 uppercase tracking-widest">
-                  Settlements Created
+                  รายการชำระเงินที่สร้าง
                 </p>
                 <div className="mt-2 flex items-end justify-between">
                   <p className="text-4xl font-black text-brand-900 dark:text-brand-50 tabular-nums">
@@ -319,7 +319,7 @@ export default function DashboardPage() {
 
               <div className="p-6 rounded-2xl bg-amber-50/50 border border-amber-100/50 dark:bg-amber-900/10 dark:border-amber-800/50">
                 <p className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-widest">
-                  Pending Approvals
+                  รอการอนุมัติ
                 </p>
                 <div className="mt-2 flex items-end justify-between">
                   <p className="text-4xl font-black text-amber-900 dark:text-amber-50 tabular-nums">
@@ -327,14 +327,14 @@ export default function DashboardPage() {
                       (overview?.stats.pendingAdjustments ?? 0)}
                   </p>
                   <Badge variant="outline" className="mb-1 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 font-bold bg-white dark:bg-amber-950/20">
-                    Needs Action
+                    ต้องดำเนินการ
                   </Badge>
                 </div>
               </div>
 
               <Button className="w-full rounded-2xl h-12 font-bold bg-foreground text-background hover:bg-foreground/90 group transition-all" asChild>
                 <Link href="/settlements">
-                  Manage Finances
+                  จัดการการเงิน
                   <ExternalLink className="ml-2 h-4 w-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </Link>
               </Button>
@@ -342,20 +342,20 @@ export default function DashboardPage() {
           </Card>
 
           {/* Quick Support / Links */}
-          <Card className="border-none shadow-sm rounded-3xl p-6 bg-brand-900 text-white relative overflow-hidden group">
+          <Card className="border-none shadow-sm rounded-3xl p-6 bg-brand-900 dark:bg-brand-900/20 text-white dark:text-foreground relative overflow-hidden group">
             <div className="relative z-10">
-              <h3 className="font-bold text-lg mb-2">Need Assistance?</h3>
-              <p className="text-brand-200 text-sm mb-4">Check our internal documentation or contact us directly.</p>
+              <h3 className="font-bold text-lg mb-2">ต้องการความช่วยเหลือ?</h3>
+              <p className="text-brand-200 dark:text-muted-foreground text-sm mb-4">ตรวจสอบคู่มือการใช้งาน หรือติดต่อเราโดยตรง</p>
               <div className="flex flex-wrap gap-2">
-                <Button variant="secondary" size="sm" className="rounded-xl font-bold bg-white text-brand-900 hover:bg-brand-50" asChild>
-                  <Link href="/docs">View Docs</Link>
+                <Button variant="secondary" size="sm" className="rounded-xl font-bold bg-white text-brand-900 hover:bg-brand-50 dark:bg-brand-600 dark:text-white dark:hover:bg-brand-700" asChild>
+                  <Link href="/docs">ดูคู่มือ</Link>
                 </Button>
-                <Button variant="outline" size="sm" className="rounded-xl font-bold border-white/20 hover:bg-white/10 text-white" asChild>
-                  <Link href="https://lin.ee/zqTz6feg" target="_blank">Contact Staff</Link>
+                <Button variant="outline" size="sm" className="rounded-xl font-bold bg-transparent border-white/20 hover:bg-white/10 text-white dark:border-border dark:text-foreground dark:hover:bg-muted" asChild>
+                  <Link href="https://lin.ee/zqTz6feg" target="_blank">ติดต่อเจ้าหน้าที่</Link>
                 </Button>
               </div>
             </div>
-            <ShieldCheck className="absolute -right-4 -bottom-4 h-24 w-24 text-white/5 -rotate-12 group-hover:rotate-0 transition-transform duration-500" />
+            <ShieldCheck className="absolute -right-4 -bottom-4 h-24 w-24 text-white/5 dark:text-brand-500/10 -rotate-12 group-hover:rotate-0 transition-transform duration-500" />
           </Card>
         </div>
       </div>

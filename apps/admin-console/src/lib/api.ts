@@ -57,6 +57,11 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
   if (response.status === 401) {
     if (typeof window !== "undefined") {
       localStorage.clear();
+      try {
+        await fetch("/api/auth/logout", { method: "POST" });
+      } catch (e) {
+        console.error("Failed to clear cookie:", e);
+      }
       window.location.href = "/login";
     }
     throw new Error("Session หมดอายุ กรุณา login ใหม่");
@@ -94,6 +99,11 @@ export async function fetchBlobWithAuth(
   if (response.status === 401) {
     if (typeof window !== "undefined") {
       localStorage.clear();
+      try {
+        await fetch("/api/auth/logout", { method: "POST" });
+      } catch (e) {
+        console.error("Failed to clear cookie:", e);
+      }
       window.location.href = "/login";
     }
     throw new Error("Session expired. Please sign in again.");

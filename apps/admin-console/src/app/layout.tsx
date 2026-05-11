@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   description: "Admin Console for Finance and System settings",
 };
 
+export const dynamic = "force-dynamic";
+
 export default function RootLayout({
   children,
 }: Readonly<{
