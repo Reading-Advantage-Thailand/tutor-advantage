@@ -5,22 +5,17 @@ import {
   ReactFlow,
   Background,
   Controls,
-  MiniMap,
   useNodesState,
   useEdgesState,
   Node,
   Edge,
   Position,
   Handle,
-  NodeProps,
-  ConnectionLineType,
-  Panel,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import dagre from "dagre";
-import { Users, CircleDollarSign, Maximize } from "lucide-react";
+import { Users, CircleDollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 type TutorSummary = {
   userId: string;
@@ -88,8 +83,12 @@ function formatPercent(value: number) {
 }
 
 // Custom Node Component
-const TutorNode = ({ data }: NodeProps<{ tutor: TutorSummary; isRoot: boolean; hasChildren: boolean }>) => {
-  const { tutor, isRoot, hasChildren } = data as { tutor: TutorSummary; isRoot: boolean; hasChildren: boolean };
+const TutorNode = ({
+  data,
+}: {
+  data: { tutor: TutorSummary; isRoot: boolean; hasChildren: boolean };
+}) => {
+  const { tutor, isRoot, hasChildren } = data;
   return (
     <div
       className={`
@@ -213,10 +212,6 @@ export function InteractiveNetwork({ tree }: { tree: NetworkTreeNode }) {
     }
   }, [layoutedNodes, layoutedEdges, mounted, setNodes, setEdges]);
 
-  const onFitView = useCallback(() => {
-    // reactflow hook can be used if nested, but ReactFlow prop also accepts fitView true
-  }, []);
-
   if (!mounted) {
     return (
       <div style={{ height: "600px", width: "100%" }} className="rounded-xl border bg-muted/20 flex items-center justify-center">
@@ -242,13 +237,8 @@ export function InteractiveNetwork({ tree }: { tree: NetworkTreeNode }) {
         maxZoom={1.5}
         proOptions={{ hideAttribution: true }}
       >
-        <Background color="hsl(var(--muted-foreground))" variant={"dots" as any} gap={20} size={1} opacity={0.2} />
+        <Background color="hsl(var(--muted-foreground))" variant={"dots" as any} gap={20} size={1} style={{ opacity: 0.2 }} />
         <Controls showInteractive={false} className="fill-foreground dark:invert bg-card border-border shadow-md" />
-        <Panel position="top-right" className="bg-card/80 backdrop-blur border rounded-lg p-1 shadow-sm">
-            <Button size="icon" variant="ghost" onClick={() => {}} className="h-8 w-8 hidden">
-                <Maximize className="h-4 w-4" />
-            </Button>
-        </Panel>
       </ReactFlow>
     </div>
   );

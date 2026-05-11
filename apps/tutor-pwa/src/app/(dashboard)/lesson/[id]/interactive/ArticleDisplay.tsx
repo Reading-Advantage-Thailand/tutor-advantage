@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 
 interface ArticleDisplayProps {
   articleData: any;
@@ -9,16 +9,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   articleData,
   phase,
 }) => {
-  if (!articleData) {
-    return (
-      <div className="flex-1 flex items-center justify-center text-muted-foreground">
-        Loading article content...
-      </div>
-    );
-  }
-
-  const words = articleData.words || [];
-  const sentences = articleData.sentences || [];
+  const words = useMemo(() => articleData?.words || [], [articleData?.words]);
+  const sentences = useMemo(() => articleData?.sentences || [], [articleData?.sentences]);
 
   // ── Audio state for Phase 9 ─────────────────────────────────
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -32,7 +24,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   const [autoVocabTh, setAutoVocabTh] = useState<Record<number, string>>({});
   const [autoVocabEnTh, setAutoVocabEnTh] = useState<Record<number, string>>({});
 
-  const audioUrl = articleData.id
+  const audioUrl = articleData?.id
     ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/tts/${articleData.id}.mp3`
     : null;
 
@@ -165,7 +157,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   // Auto-translate sentences when no Thai translation available
   useEffect(() => {
-    if (phase !== 9) return;
+    if (!articleData || phase !== 9) return;
     const hasThai = (articleData.translated_passage?.th?.length ?? 0) > 0;
     if (hasThai || sentences.length === 0) return;
     const texts = sentences.map((s: any) =>
@@ -182,6 +174,14 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       })
       .catch(() => {}); // silently fail
   }, [phase, articleData, sentences]);
+
+  if (!articleData) {
+    return (
+      <div className="flex-1 flex items-center justify-center text-muted-foreground">
+        Loading article content...
+      </div>
+    );
+  }
 
   /* ─── Phase 1: Introduction ──────────────────────────────── */
   if (phase === 1) {

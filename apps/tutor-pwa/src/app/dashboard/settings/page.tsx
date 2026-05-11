@@ -104,17 +104,6 @@ export default async function SettingsPage() {
         <Card className="border-border/60">
           <div className="divide-y divide-border/50">
             <EditableSettingText 
-              title="เป้าหมายคอมมิชชั่น (THB)"
-              description="ระบุเพื่อปรับหลอดเป้าหมายในหน้า Dashboard"
-              placeholder="เช่น 50000"
-              iconName="TrendingUp"
-              value={user.settings?.commissionGoal}
-              settingKey="commissionGoal"
-              iconBgClass="bg-amber-500/10"
-              iconColorClass="text-amber-500"
-            />
-            
-            <EditableSettingText 
               title="บัญชีรับเงิน (PromptPay)"
               description="ยังไม่ได้ระบุ"
               placeholder="ระบุหมายเลขพร้อมเพย์ของคุณ"

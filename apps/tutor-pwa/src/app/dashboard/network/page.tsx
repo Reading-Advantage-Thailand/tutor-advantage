@@ -1,13 +1,11 @@
 import { cookies } from "next/headers";
 import {
   ArrowUpRight,
-  CircleDollarSign,
   GitBranch,
   TrendingUp,
   UserRoundCheck,
   Users,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InviteLinkCard } from "./invite-link-card";
 import { InteractiveNetwork } from "./interactive-network";

@@ -31,15 +31,6 @@ async function getFinanceData(token: string) {
   return res.json();
 }
 
-async function getUserProfile(token: string) {
-  const res = await fetch("http://localhost:3001/v1/users/me", {
-    headers: { Authorization: `Bearer ${token}` },
-    next: { revalidate: 60 },
-  });
-  if (!res.ok) return null;
-  return res.json();
-}
-
 // Map status from backend to UI status
 const statusMap: Record<string, { label: string; className: string }> = {
   open: {
@@ -62,13 +53,10 @@ export default async function DashboardPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value || "";
 
-  const [learning, finance, userRes] = await Promise.all([
+  const [learning, finance] = await Promise.all([
     getLearningData(token),
     getFinanceData(token),
-    getUserProfile(token)
   ]);
-  
-  const user = userRes?.user || {};
 
   const stats = [
     {
@@ -108,12 +96,12 @@ export default async function DashboardPage() {
   const recentClasses = learning?.recentClasses || [];
   const commissionRate = finance ? `${(finance.currentRate * 100).toFixed(0)}%` : "0%";
   
-  const targetGoal = user.settings?.commissionGoal 
-    ? Number(user.settings.commissionGoal) 
-    : (finance?.nextTierTargetTHB ?? 20000);
+  const targetGoal = finance?.nextTierTargetTHB ?? 20000;
 
   const progressPercent = finance 
-    ? Math.min(100, Math.round((finance.grossVolumeTHB / targetGoal) * 100)) 
+    ? targetGoal > 0
+      ? Math.min(100, Math.round((finance.grossVolumeTHB / targetGoal) * 100))
+      : 100
     : 0;
 
   return (
@@ -165,7 +153,7 @@ export default async function DashboardPage() {
           <CardHeader className="pb-3 relative z-10">
             <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
               <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-              เป้าหมายคอมมิชชั่น
+              เป้าหมายเรทถัดไป
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-5 relative z-10">
@@ -181,7 +169,11 @@ export default async function DashboardPage() {
             <div className="space-y-2">
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span className="font-medium">฿{finance?.grossVolumeTHB.toLocaleString() ?? "0"}</span>
-                <span>เป้า ฿{targetGoal.toLocaleString()}</span>
+                <span>
+                  {targetGoal > 0
+                    ? `เป้า ฿${targetGoal.toLocaleString()}`
+                    : "เรทสูงสุด"}
+                </span>
               </div>
               <div className="w-full bg-primary/10 rounded-full h-3 overflow-hidden">
                 <div
@@ -195,7 +187,11 @@ export default async function DashboardPage() {
 
             {/* Unlock nudge */}
             <div className="rounded-xl bg-background border border-border shadow-sm p-4 text-sm space-y-1">
-              {progressPercent >= 100 ? (
+              {targetGoal <= 0 ? (
+                <p className="font-semibold text-emerald-500 flex items-center gap-2">
+                  ✅ อยู่ในเรทสูงสุดแล้ว
+                </p>
+              ) : progressPercent >= 100 ? (
                 <p className="font-semibold text-emerald-500 flex items-center gap-2">
                   ✅ ถึงเป้าหมายแล้ว!
                 </p>
