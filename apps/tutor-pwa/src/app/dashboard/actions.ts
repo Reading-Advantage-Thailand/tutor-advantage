@@ -43,7 +43,7 @@ export async function updateSettingsAction(settings: any) {
 
   if (!res.ok) throw new Error("Failed to update settings");
   const { revalidatePath } = await import("next/cache");
-  revalidatePath("/dashboard/settings");
+  revalidatePath("/dashboard", "layout");
   
   const data = await res.json();
   return data.settings;

@@ -96,11 +96,12 @@ function SoundToggleRow() {
 }
 
 function ThemeToggleRow() {
-  const { theme, setTheme } = useTheme();
+  const { theme, resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  const isDark = theme === "dark";
+  // Use resolvedTheme to correctly identify active theme even when set to 'system'
+  const isDark = mounted ? resolvedTheme === "dark" : false;
 
   return (
     <div className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors">
@@ -133,6 +134,11 @@ export function EditableSettingToggle({ title, description, iconName, value, set
   const Icon = iconMap[iconName] || Bell;
   const [isPending, startTransition] = useTransition();
   const [checked, setChecked] = useState(value === true);
+
+  // Sync state if prop changes externally
+  useEffect(() => {
+    setChecked(value === true);
+  }, [value]);
 
   const handleToggle = (newVal: boolean) => {
     setChecked(newVal);
@@ -168,14 +174,39 @@ export function EditableSettingText({ title, description, iconName, value, setti
   const [isPending, startTransition] = useTransition();
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(value || "");
+  const [inputValue, setInputValue] = useState(value || "");
+
+  // Sync from external value prop
+  useEffect(() => {
+    const currentVal = value || "";
+    setText(currentVal);
+    if (!isEditing) {
+      setInputValue(currentVal);
+    }
+  }, [value, isEditing]);
+
+  const handleStartEditing = () => {
+    setInputValue(text);
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    setInputValue(text);
+    setIsEditing(false);
+  };
 
   const handleSave = () => {
     startTransition(async () => {
       try {
-        await updateSettingsAction({ [settingKey]: text });
+        // Optimistic update locally
+        const newText = inputValue.trim();
+        setText(newText);
+        await updateSettingsAction({ [settingKey]: newText });
         setIsEditing(false);
       } catch (e) {
         console.error(e);
+        // If failed, it will eventually re-sync from server props via useEffect
+        // For immediate UX, we keep input open or could show toast.
       }
     });
   };
@@ -193,13 +224,14 @@ export function EditableSettingText({ title, description, iconName, value, setti
         </div>
         <div className="flex gap-2">
           <Input 
-            value={text} 
-            onChange={(e) => setText(e.target.value)} 
+            value={inputValue} 
+            onChange={(e) => setInputValue(e.target.value)} 
             placeholder={placeholder}
             disabled={isPending}
             className="flex-1"
+            autoFocus
           />
-          <Button size="icon" variant="ghost" onClick={() => setIsEditing(false)} disabled={isPending}>
+          <Button size="icon" variant="ghost" onClick={handleCancel} disabled={isPending}>
             <X className="h-4 w-4" />
           </Button>
           <Button size="icon" onClick={handleSave} disabled={isPending}>
@@ -213,7 +245,7 @@ export function EditableSettingText({ title, description, iconName, value, setti
   return (
     <div 
       className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors group cursor-pointer"
-      onClick={() => setIsEditing(true)}
+      onClick={handleStartEditing}
     >
       <div className="flex items-center gap-3">
         <div className={`w-10 h-10 rounded-lg ${iconBgClass} flex items-center justify-center shrink-0`}>

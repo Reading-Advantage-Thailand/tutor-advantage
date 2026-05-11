@@ -17,7 +17,7 @@ import { SettingsInteractiveElements, EditableSettingToggle, EditableSettingText
 async function getUserProfile(token: string) {
   const res = await fetch("http://localhost:3001/v1/users/me", {
     headers: { Authorization: `Bearer ${token}` },
-    next: { revalidate: 60 },
+    cache: "no-store",
   });
   if (!res.ok) return null;
   return res.json();
