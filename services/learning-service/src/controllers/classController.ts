@@ -105,7 +105,7 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
 
     return res.status(201).json({
       message: "Class created successfully",
-      class: newClass,
+      class: serializeClass(newClass),
     });
   } catch (error: any) {
     console.error("Create Class Error:", error);
@@ -118,6 +118,18 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
       },
     });
   }
+}
+
+function serializeClass<T extends { packagePriceMinor?: bigint | number | null }>(
+  cls: T,
+) {
+  return {
+    ...cls,
+    packagePriceMinor:
+      cls.packagePriceMinor === undefined || cls.packagePriceMinor === null
+        ? cls.packagePriceMinor
+        : Number(cls.packagePriceMinor),
+  };
 }
 
 export async function closeClass(req: AuthenticatedRequest, res: Response) {

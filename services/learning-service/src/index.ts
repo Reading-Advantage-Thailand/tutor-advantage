@@ -5,6 +5,7 @@ import path from "path";
 
 // Load root .env file
 dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
+console.log(`[Learning] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
 
 import { createServer } from "http";
 import { Server } from "socket.io";

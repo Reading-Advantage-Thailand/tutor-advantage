@@ -5,31 +5,34 @@ import { type ThemeProviderProps } from "next-themes";
 
 import { useEffect } from "react";
 
+type AudioWindow = Window & {
+  AudioContext?: typeof AudioContext;
+  webkitAudioContext?: typeof AudioContext;
+  __globalAudioCtx?: AudioContext;
+};
+
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     
-    const initGlobalAudio = () => {
+    const initGlobalAudio = (event: Event) => {
       try {
-        const win = window as any;
+        const win = window as AudioWindow;
+        if (!event.isTrusted || win.__globalAudioCtx) return;
+
         if (!win.__globalAudioCtx) {
           const AudioCtx = win.AudioContext || win.webkitAudioContext;
           if (AudioCtx) win.__globalAudioCtx = new AudioCtx();
         }
-        if (win.__globalAudioCtx && win.__globalAudioCtx.state === "suspended") {
-          win.__globalAudioCtx.resume().catch(() => {});
-        }
-      } catch (e) {}
+      } catch {}
     };
 
-    window.addEventListener("click", initGlobalAudio, { capture: true });
-    window.addEventListener("touchstart", initGlobalAudio, { capture: true });
-    window.addEventListener("mousedown", initGlobalAudio, { capture: true });
+    window.addEventListener("pointerdown", initGlobalAudio, { capture: true });
+    window.addEventListener("keydown", initGlobalAudio, { capture: true });
 
     return () => {
-      window.removeEventListener("click", initGlobalAudio, { capture: true });
-      window.removeEventListener("touchstart", initGlobalAudio, { capture: true });
-      window.removeEventListener("mousedown", initGlobalAudio, { capture: true });
+      window.removeEventListener("pointerdown", initGlobalAudio, { capture: true });
+      window.removeEventListener("keydown", initGlobalAudio, { capture: true });
     };
   }, []);
 

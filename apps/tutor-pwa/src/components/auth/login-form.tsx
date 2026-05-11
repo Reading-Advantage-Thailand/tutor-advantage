@@ -9,7 +9,9 @@ export function LoginForm() {
 
   const handleOAuth = async (provider: "google" | "facebook") => {
     setLoading(provider);
-    window.location.href = `/api/auth/${provider}`;
+    const params = new URLSearchParams(window.location.search);
+    const sponsor = params.get("sponsor");
+    window.location.href = `/api/auth/${provider}${sponsor ? `?sponsor=${encodeURIComponent(sponsor)}` : ""}`;
   };
 
   return (

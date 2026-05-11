@@ -7,18 +7,19 @@ import {
   BookOpen,
   MessageSquare,
   BarChart2,
+  GitBranch,
   Award,
   Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState, useEffect, useRef } from "react";
-import { getNotificationsSummary } from "@/app/dashboard/actions";
+import { useState, useEffect } from "react";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "ภาพรวม" },
   { href: "/dashboard/classes", icon: BookOpen, label: "คลาสเรียน" },
   { href: "/dashboard/chat", icon: MessageSquare, label: "ข้อความ" },
   { href: "/dashboard/earnings", icon: BarChart2, label: "รายได้" },
+  { href: "/dashboard/network", icon: GitBranch, label: "เครือข่าย" },
   { href: "/dashboard/performance", icon: Award, label: "ผลงาน" },
   { href: "/dashboard/settings", icon: Settings, label: "ตั้งค่า" },
 ];
@@ -35,7 +36,6 @@ interface BottomNavProps {
 export function BottomNav({ notifications: initialNotifications }: BottomNavProps) {
   const pathname = usePathname();
   const [notifications, setNotifications] = useState(initialNotifications);
-  const prevUnreadRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     setNotifications(initialNotifications);
@@ -44,9 +44,13 @@ export function BottomNav({ notifications: initialNotifications }: BottomNavProp
   useEffect(() => {
     const pollNotifications = async () => {
       try {
-        const data = await getNotificationsSummary();
+        const response = await fetch("/api/notifications/summary", {
+          cache: "no-store",
+        });
+        if (!response.ok) return;
+        const data = await response.json();
         setNotifications(data);
-      } catch (error) {
+      } catch {
         // Fail silently
       }
     };

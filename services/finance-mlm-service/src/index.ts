@@ -5,6 +5,7 @@ import path from "path";
 
 // Load root .env file
 dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
+console.log(`[Finance] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
 
 import {
   requestLoggerMiddleware,
@@ -52,6 +53,7 @@ import {
   triggerFraudAction,
 } from "./controllers/fraudController";
 import { getEarningsSummary, getEarningsHistory } from "./controllers/tutorEarningsController";
+import { getTutorNetwork } from "./controllers/tutorNetworkController";
 
 const app = express();
 const port = process.env.PORT || 3003;
@@ -87,6 +89,7 @@ app.post("/v1/payments/webhook", handleWebhook);
 // ── Tutor Dashboard Routes ─────────────────────────────────────────────────
 app.get("/v1/tutors/earnings/summary", authMiddleware, getEarningsSummary);
 app.get("/v1/tutors/earnings/history", authMiddleware, getEarningsHistory);
+app.get("/v1/tutors/network", authMiddleware, getTutorNetwork);
 
 // ── Settlement Routes ──────────────────────────────────────────────────────
 // NOTE: /summary ต้องอยู่ก่อน /:snapshotId เพื่อไม่ให้ express match "summary" เป็น param

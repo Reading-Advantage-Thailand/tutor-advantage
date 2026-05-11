@@ -18,9 +18,14 @@ export async function processOAuthLogin(
   providerSubject: string,
   email: string | undefined,
   name: string,
-  picture: string = ""
+  picture: string = "",
+  sponsorTutorId?: string | null,
 ): Promise<AuthResult> {
   let user;
+  const invitedSponsorId =
+    provider !== "line" && sponsorTutorId
+      ? await resolveActiveTutorSponsorId(sponsorTutorId)
+      : null;
 
   // 1. Check if OAuth Identity already exists
   const existingIdentity = await prisma.oAuthIdentity.findUnique({
@@ -65,6 +70,9 @@ export async function processOAuthLogin(
           displayName: name,
           email: email,
           profilePictureUrl: picture || null,
+          sponsorTutorId: role === "TUTOR" ? invitedSponsorId : null,
+          sponsorLockedAt:
+            role === "TUTOR" && invitedSponsorId ? new Date() : null,
           oauthIdentities: {
             create: {
               provider,
@@ -93,6 +101,22 @@ export async function processOAuthLogin(
     }
   }
 
+  if (
+    provider !== "line" &&
+    invitedSponsorId &&
+    user.userId !== invitedSponsorId &&
+    !user.sponsorTutorId &&
+    !user.sponsorLockedAt
+  ) {
+    user = await prisma.user.update({
+      where: { userId: user.userId },
+      data: {
+        sponsorTutorId: invitedSponsorId,
+        sponsorLockedAt: new Date(),
+      },
+    });
+  }
+
   // Generate JWT token
   const sessionToken = jwt.sign(
     { userId: user.userId, role: user.role },
@@ -109,4 +133,13 @@ export async function processOAuthLogin(
       requiresGuardian: false, // Tutors are adults
     },
   };
+}
+
+async function resolveActiveTutorSponsorId(sponsorTutorId: string) {
+  const sponsor = await prisma.user.findFirst({
+    where: { userId: sponsorTutorId, role: "TUTOR", isActive: true },
+    select: { userId: true },
+  });
+
+  return sponsor?.userId || null;
 }

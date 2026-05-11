@@ -8,6 +8,10 @@ export async function GET(
   const { provider } = await params;
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
+  const state = url.searchParams.get("state");
+  const sponsorTutorId = state?.startsWith("sponsor:")
+    ? state.replace("sponsor:", "")
+    : null;
 
   if (!code) {
     return NextResponse.redirect(new URL("/?error=missing_code", request.url));
@@ -24,6 +28,7 @@ export async function GET(
       body: JSON.stringify({
         provider,
         code,
+        sponsorTutorId,
         redirectUri: `${url.protocol}//${url.host}/api/auth/callback/${provider}`
       }),
     });
@@ -50,6 +55,7 @@ export async function GET(
       maxAge: 7 * 24 * 60 * 60, // 7 days
       path: "/",
     });
+    cookieStore.delete("tutor_invite_sponsor");
 
     // 3. Redirect to dashboard
     return NextResponse.redirect(new URL("/dashboard", request.url));

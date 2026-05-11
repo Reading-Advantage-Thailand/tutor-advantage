@@ -8,6 +8,7 @@ import {
   Calendar,
   MessageSquare,
   BarChart2,
+  GitBranch,
   Award,
   Settings,
   HelpCircle,
@@ -16,7 +17,6 @@ import {
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { ThemeToggle } from "./theme-toggle";
-import { getNotificationsSummary } from "@/app/dashboard/actions";
 import { useState, useEffect, useRef } from "react";
 
 const navItems = [
@@ -25,6 +25,7 @@ const navItems = [
   { href: "/dashboard/schedule", icon: Calendar, label: "ตารางสอน" },
   { href: "/dashboard/chat", icon: MessageSquare, label: "ข้อความ" },
   { href: "/dashboard/earnings", icon: BarChart2, label: "รายได้" },
+  { href: "/dashboard/network", icon: GitBranch, label: "เครือข่าย" },
   { href: "/dashboard/performance", icon: Award, label: "ผลงาน" },
   { href: "/dashboard/settings", icon: Settings, label: "ตั้งค่า" },
 ];
@@ -89,7 +90,11 @@ export function Sidebar({ notifications: initialNotifications }: SidebarProps) {
   useEffect(() => {
     const pollNotifications = async () => {
       try {
-        const data = await getNotificationsSummary();
+        const response = await fetch("/api/notifications/summary", {
+          cache: "no-store",
+        });
+        if (!response.ok) return;
+        const data = await response.json();
         setNotifications(data);
       } catch (error) {
         console.error("Sidebar notify fail", error);
