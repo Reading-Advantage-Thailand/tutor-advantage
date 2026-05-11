@@ -1,5 +1,6 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
+import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 
 const ACTIVE_CLASS_STATUSES = ["ACTIVE", "OPEN", "IN_PROGRESS", "PUBLISHED"];
 const ACTIVE_ENROLLMENT_STATUSES = ["ACTIVE", "CONFIRMED", "PAID"];
@@ -56,7 +57,11 @@ async function getUserClassCounts(userIds: string[]) {
   };
 }
 
-export const getUsers = async (req: Request, res: Response) => {
+export const getUsers = async (req: AuthenticatedRequest, res: Response) => {
+  if (req.user?.role !== "ADMIN" && req.user?.role !== "FINANCE_CHECKER") {
+    return res.status(403).json({ error: "Forbidden: Requires Admin privileges" });
+  }
+
   try {
     const users = await prisma.user.findMany({
       select: {
@@ -310,7 +315,11 @@ export const verifyUser = async (req: Request, res: Response) => {
   }
 };
 
-export const anonymizeUser = async (req: Request, res: Response) => {
+export const anonymizeUser = async (req: AuthenticatedRequest, res: Response) => {
+  if (req.user?.role !== "ADMIN") {
+    return res.status(403).json({ error: "Forbidden: Requires Super Admin privileges" });
+  }
+
   const { id } = req.params;
   try {
     await prisma.user.update({
@@ -330,5 +339,8 @@ export const anonymizeUser = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Anonymize User Error:", error);
     res.status(500).json({ error: "Could not anonymize user" });
+  }
+};
+ld not anonymize user" });
   }
 };

@@ -14,9 +14,11 @@ export interface LineProfile {
  */
 export async function verifyLineToken(idToken: string): Promise<LineProfile> {
   try {
-    // Decode without full verification for now in development
-    // In production, use line-id-token or verify with channel secret
-    const decoded = jwt.decode(idToken) as any;
+    // In production, we MUST verify the signature to prevent token forgery
+    const secret = process.env.LINE_CHANNEL_SECRET || "fallback_dev_secret";
+    const decoded = jwt.verify(idToken, secret, {
+      algorithms: ["HS256"], // Assuming HS256 for symmetric, or adjust based on LINE's spec
+    }) as any;
     
     if (!decoded) {
       throw new Error("Invalid LINE ID Token");

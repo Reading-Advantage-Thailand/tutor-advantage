@@ -4,6 +4,10 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
 
 export async function POST(req: Request) {
+  if (process.env.NODE_ENV !== "development") {
+    return NextResponse.json({ error: "Endpoint disabled in production" }, { status: 403 });
+  }
+
   try {
     const { role } = await req.json();
 

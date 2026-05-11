@@ -331,6 +331,18 @@ export async function approveSettlement(
  */
 export async function getSettlements(req: AuthenticatedRequest, res: Response) {
   try {
+    const userId = req.user?.userId;
+
+    if (!userId || (req.user?.role !== "ADMIN" && req.user?.role !== "FINANCE_CHECKER")) {
+      return res.status(403).json({
+        error: {
+          code: "FORBIDDEN",
+          message: "Only authorized checkers can view settlements",
+          requestId: req.id,
+        },
+      });
+    }
+
     const runs = await prisma.settlementRun.findMany({
       orderBy: { createdAt: "desc" },
       include: {

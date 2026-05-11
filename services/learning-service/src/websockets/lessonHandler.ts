@@ -1,5 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
+import jwt from "jsonwebtoken";
 import { lessonSessionService } from "../services/LessonSessionService";
 import { evaluateShortAnswer } from "../services/AIEvaluator";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
@@ -25,6 +26,23 @@ function seededShuffle<T>(array: T[], seedInput: string): T[] {
 }
 
 export const setupLessonSocket = (io: Server) => {
+  // Authentication Middleware
+  io.use((socket, next) => {
+    const token = socket.handshake.auth?.token || socket.handshake.query?.token;
+    if (!token) {
+      return next(new Error("Authentication error: No token provided"));
+    }
+    
+    try {
+      const secret = process.env.JWT_SECRET || "fallback_dev_secret";
+      // Explicitly ignore verification in local dev if you want, but for security audit we MUST verify
+      jwt.verify(token, secret);
+      next();
+    } catch (err) {
+      return next(new Error("Authentication error: Invalid or expired token"));
+    }
+  });
+
   io.on("connection", (socket: Socket) => {
     console.log(`Socket connected: ${socket.id}`);
 

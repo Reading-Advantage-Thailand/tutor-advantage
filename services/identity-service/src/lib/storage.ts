@@ -40,10 +40,17 @@ export async function uploadToGCS(
       reject(err);
     });
 
-    blobStream.on("finish", () => {
-      // The public URL can be used to access the file if it's public
-      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-      resolve(publicUrl);
+    blobStream.on("finish", async () => {
+      try {
+        // Generate a signed URL instead of a public URL to secure sensitive documents
+        const [signedUrl] = await blob.getSignedUrl({
+          action: "read",
+          expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 days expiration
+        });
+        resolve(signedUrl);
+      } catch (err) {
+        reject(err);
+      }
     });
 
     blobStream.end(file.buffer);
