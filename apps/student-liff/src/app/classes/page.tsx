@@ -132,33 +132,7 @@ export default function ClassesPage() {
         </button>
       </div>
 
-      {loading && (
-        <div className="flex flex-col items-center justify-center p-12 gap-2">
-          <Loader2 className="animate-spin text-brand-500" />
-          <p className="text-slate-400 text-sm">กำลังหาคลาสที่เหมาะกับคุณ...</p>
-        </div>
-      )}
 
-      {error && (
-        <div className="p-6 m-4 bg-red-50 rounded-2xl flex flex-col items-center gap-3 text-center">
-          <AlertCircle className="text-red-500" />
-          <p className="text-red-700 font-medium">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="text-sm font-bold text-red-600 underline"
-          >
-            ลองอีกครั้ง
-          </button>
-        </div>
-      )}
-
-      {!loading && !error && classes.length === 0 && (
-        <div className="p-12 text-center">
-          <p className="text-slate-500 font-medium">
-            ไม่พบคลาสที่เปิดรับสมัครในขณะนี้
-          </p>
-        </div>
-      )}
 
       <div
         style={{
@@ -272,7 +246,36 @@ export default function ClassesPage() {
               {chip.label}
             </button>
           ))}
+        {/* Filter chips container end */}
         </div>
+
+        {loading && (
+          <div className="flex flex-col items-center justify-center p-12 gap-2" style={{ minHeight: "50dvh" }}>
+            <Loader2 className="animate-spin text-brand-500" />
+            <p className="text-slate-400 text-sm">กำลังหาคลาสที่เหมาะกับคุณ...</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="p-6 bg-red-50 rounded-2xl flex flex-col items-center gap-3 text-center">
+            <AlertCircle className="text-red-500" />
+            <p className="text-red-700 font-medium">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="text-sm font-bold text-red-600 underline"
+            >
+              ลองอีกครั้ง
+            </button>
+          </div>
+        )}
+
+        {!loading && !error && classes.length === 0 && (
+          <div className="p-12 text-center">
+            <p className="text-slate-500 font-medium">
+              ไม่พบคลาสที่เปิดรับสมัครในขณะนี้
+            </p>
+          </div>
+        )}
 
         {/* Class cards */}
         <div

@@ -35,7 +35,7 @@ export default function ClassDetailPage({ params }: PageProps) {
 
   if (!isReady || loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-12 gap-2 bg-slate-50">
+      <div className="min-h-[100dvh] flex flex-col items-center justify-center p-12 gap-2 bg-slate-50">
         <Loader2 className="animate-spin text-brand-500 w-10 h-10" />
         <p className="text-slate-400 font-medium">กำลังโหลดข้อมูลคลาส...</p>
       </div>
@@ -44,7 +44,7 @@ export default function ClassDetailPage({ params }: PageProps) {
 
   if (error || !cls) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center gap-4">
+      <div className="min-h-[100dvh] flex flex-col items-center justify-center p-6 text-center gap-4">
         <AlertCircle className="text-red-500 w-12 h-12" />
         <h2 className="text-xl font-bold text-slate-800">ไม่พบข้อมูลคลาส</h2>
         <p className="text-slate-500">{error || "กรุณาลองใหม่อีกครั้ง"}</p>
