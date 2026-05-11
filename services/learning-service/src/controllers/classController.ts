@@ -9,6 +9,7 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
     const userId = req.user?.userId;
     const role = req.user?.role;
     const { bookId, title, capacity, scheduleDescription } = req.body;
+    const packagePriceSatang = req.body.packagePriceSatang ?? 250000;
 
     if (!userId || role !== "TUTOR") {
       return res.status(401).json({
@@ -25,6 +26,19 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
         error: {
           code: "BAD_REQUEST",
           message: "bookId, title, and capacity are required",
+          requestId: req.id,
+        },
+      });
+    }
+
+    if (
+      !Number.isInteger(packagePriceSatang) ||
+      packagePriceSatang <= 0
+    ) {
+      return res.status(400).json({
+        error: {
+          code: "INVALID_PRICE",
+          message: "packagePriceSatang must be a positive integer",
           requestId: req.id,
         },
       });
@@ -82,6 +96,7 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
         bookId: book.bookId,
         title,
         capacity,
+        packagePriceMinor: BigInt(packagePriceSatang),
         scheduleDescription,
         meetingUrl: req.body.meetingUrl,
         status: "OPEN",
@@ -213,6 +228,7 @@ export async function getClasses(req: AuthenticatedRequest, res: Response) {
       status: c.status.toLowerCase(),
       students: (c as any)._count?.enrollments || 0,
       maxStudents: c.capacity,
+      packagePriceSatang: Number(c.packagePriceMinor),
       tutorUserId: c.tutorUserId,
       tutorName: tutorMap.get(c.tutorUserId) || "Unknown Tutor",
       nextSession: c.scheduleDescription || "ยังไม่ได้กำหนด",
@@ -292,6 +308,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
       status: cls.status.toLowerCase(),
       students: cls.enrollments?.length || 0,
       maxStudents: cls.capacity,
+      packagePriceSatang: Number(cls.packagePriceMinor),
       schedule: cls.scheduleDescription || "ยังไม่ได้กำหนด",
       meetingUrl:
         cls.tutorUserId === userId || isEnrolled ? cls.meetingUrl || "" : "",
@@ -365,7 +382,8 @@ export async function getAvailableClasses(
         status: "open",
         enrolled: (c as any)._count?.enrollments || 0,
         capacity: c.capacity,
-        price: 2800, // Placeholder price
+        price: Number(c.packagePriceMinor) / 100,
+        packagePriceSatang: Number(c.packagePriceMinor),
         nextSession: c.scheduleDescription || "TBA",
       };
     });

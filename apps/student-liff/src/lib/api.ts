@@ -83,6 +83,9 @@ export const studentApi = {
     method: 'POST',
     body: JSON.stringify({ classId }),
   }),
+  enrollByReferral: (referralToken: string) => fetchWithAuth(`/enroll/${referralToken}`, {
+    method: 'POST',
+  }),
 
   // Lesson History
   getLessonHistory: () => fetchWithAuth('/lessons/history'),
@@ -96,6 +99,14 @@ export const studentApi = {
 
   // Finance
   getPaymentHistory: () => fetchWithAuth('/payments/history', {}, FINANCE_API_BASE),
+  createPaymentIntent: (payload: { enrollmentId: string; amountSatang: number; method: 'promptpay' | 'card' }) => fetchWithAuth('/payments/intent', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  }, FINANCE_API_BASE),
+  confirmMockPayment: (paymentIntentId: string) => fetchWithAuth('/payments/confirm-mock', {
+    method: 'POST',
+    body: JSON.stringify({ paymentIntentId }),
+  }, FINANCE_API_BASE),
 
   // Settings
   getSettings: () => fetchWithAuth('/users/me/settings', {}, IDENTITY_API_BASE),

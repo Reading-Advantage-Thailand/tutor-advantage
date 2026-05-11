@@ -157,11 +157,13 @@ export async function exportSettlementCsv(
 
     // สร้าง CSV
     const header =
-      "tutor_user_id,gross_volume_thb,payout_rate,payout_amount_thb,eligibility_status";
+      "tutor_user_id,gross_volume_thb,payout_rate,gross_payout_thb,wht_3pct_thb,net_payout_thb,eligibility_status";
     const rows = run.payoutLines.map((line) => {
       const grossTHB = (Number(line.grossVolumeMinor) / 100).toFixed(2);
       const payoutTHB = (Number(line.payoutAmountMinor) / 100).toFixed(2);
-      return `${line.tutorUserId},${grossTHB},${line.payoutRate},${payoutTHB},${line.eligibilityStatus}`;
+      const whtTHB = (Number(line.withholdingTaxMinor) / 100).toFixed(2);
+      const netTHB = (Number(line.netPayoutMinor) / 100).toFixed(2);
+      return `${line.tutorUserId},${grossTHB},${line.payoutRate},${payoutTHB},${whtTHB},${netTHB},${line.eligibilityStatus}`;
     });
     const csv = [header, ...rows].join("\n");
 
@@ -296,6 +298,16 @@ export async function approveSettlement(
         error: {
           code: "INVALID_STATUS",
           message: "Settlement run must be in DRAFT to approve",
+          requestId: req.id,
+        },
+      });
+    }
+
+    if (error.message === "MAKER_CHECKER_VIOLATION") {
+      return res.status(403).json({
+        error: {
+          code: "MAKER_CHECKER_VIOLATION",
+          message: "Settlement approver must be different from creator",
           requestId: req.id,
         },
       });

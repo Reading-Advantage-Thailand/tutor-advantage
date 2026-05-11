@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -10,9 +10,19 @@ import { studentApi } from "@/lib/api";
 type PaymentMethod = "promptpay" | "card";
 type Step = "select" | "age-check" | "qr" | "card-form" | "success";
 
+type OrderSummary = {
+  id: string;
+  name: string;
+  price: number;
+  priceSatang: number;
+  tutor: string;
+  cefr: string;
+};
+
 function PaymentFlow() {
   const searchParams = useSearchParams();
   const classId = searchParams.get("classId") ?? "cls-001";
+  const referralToken = searchParams.get("referralToken");
 
   const [method, setMethod] = useState<PaymentMethod>("promptpay");
   const [step, setStep] = useState<Step>("select");
@@ -22,7 +32,39 @@ function PaymentFlow() {
   const [cardCvv, setCardCvv] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const cls = { id: classId, name: "Origins 2 — กลุ่มวันเสาร์", price: 2800, tutor: "อ.นภา สุขใส", cefr: "A1" };
+  const [cls, setCls] = useState<OrderSummary>({
+    id: classId,
+    name: "Loading class...",
+    price: 2500,
+    priceSatang: 250000,
+    tutor: "Tutor Advantage",
+    cefr: "Reading Advantage",
+  });
+
+  useEffect(() => {
+    let isMounted = true;
+
+    studentApi.getClassDetails(classId)
+      .then((data) => {
+        if (!isMounted || !data?.class) return;
+        const packagePriceSatang = data.class.packagePriceSatang || 250000;
+        setCls({
+          id: data.class.id || classId,
+          name: data.class.name || data.class.book || "Reading Advantage Class",
+          price: packagePriceSatang / 100,
+          priceSatang: packagePriceSatang,
+          tutor: data.class.tutor?.name || "Tutor Advantage",
+          cefr: data.class.book || "Reading Advantage",
+        });
+      })
+      .catch((error) => {
+        console.error("Could not load class details for payment:", error);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [classId]);
 
   // Age / Guardian states
   const [isAdult, setIsAdult] = useState<boolean | null>(null);
@@ -58,11 +100,21 @@ function PaymentFlow() {
   const handleConfirmPayment = async () => { 
     setLoading(true); 
     try {
-      // 1. Call Enrollment API
-      await studentApi.enrollClass(classId);
-      
-      // 2. Simulate payment processing delay
-      await new Promise((r) => setTimeout(r, 1500)); 
+      const enrollment = referralToken
+        ? await studentApi.enrollByReferral(referralToken)
+        : await studentApi.enrollClass(classId);
+      if (enrollment.status === "ACTIVE") {
+        setStep("success");
+        return;
+      }
+
+      const payment = await studentApi.createPaymentIntent({
+        enrollmentId: enrollment.enrollmentId,
+        amountSatang: cls.priceSatang,
+        method,
+      });
+
+      await studentApi.confirmMockPayment(payment.intent.paymentIntentId);
       
       setStep("success"); 
     } catch (err: any) {

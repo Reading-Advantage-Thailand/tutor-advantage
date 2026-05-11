@@ -14,6 +14,7 @@ import {
 import { authMiddleware } from "./middlewares/authMiddleware";
 import {
   createPaymentIntent,
+  confirmMockPayment,
   handleWebhook,
   getPaymentHistory,
 } from "./controllers/paymentController";
@@ -56,7 +57,13 @@ const app = express();
 const port = process.env.PORT || 3003;
 
 app.use(cors());
-app.use(express.json());
+app.use(
+  express.json({
+    verify: (req, _res, buf) => {
+      (req as Request & { rawBody?: string }).rawBody = buf.toString("utf8");
+    },
+  }),
+);
 
 // Apply shared middleware
 app.use(requestIdMiddleware);
@@ -73,6 +80,7 @@ app.get("/version", (req: Request, res: Response) => {
 
 // ── Payment Routes ─────────────────────────────────────────────────────────
 app.post("/v1/payments/intent", authMiddleware, createPaymentIntent);
+app.post("/v1/payments/confirm-mock", authMiddleware, confirmMockPayment);
 app.get("/v1/payments/history", authMiddleware, getPaymentHistory);
 app.post("/v1/payments/webhook", handleWebhook);
 

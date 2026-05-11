@@ -148,6 +148,7 @@ model Class {
   bookId        String                 @map("book_id") @db.Uuid
   title         String
   capacity      Int
+  packagePriceMinor BigInt                 @default(250000) @map("package_price_minor")
   enrolledCount Int                    @default(0) @map("enrolled_count")
   status              String
   scheduleDescription String?                @map("schedule_description")
@@ -399,6 +400,7 @@ model PaymentIntent {
   updatedAt       DateTime @default(now()) @map("updated_at") @db.Timestamptz
 
   events PaymentEvent[]
+  receipt PaymentReceipt?
 
   @@map("payment_intents")
   @@schema("finance_mlm")
@@ -407,6 +409,7 @@ model PaymentIntent {
 model PaymentEvent {
   paymentEventId  String   @id @default(dbgenerated("gen_random_uuid()")) @map("payment_event_id") @db.Uuid
   paymentIntentId String?  @map("payment_intent_id") @db.Uuid
+  providerEventId String?  @unique @map("provider_event_id")
   eventType       String   @map("event_type")
   rawPayload      Json     @map("raw_payload")
   occurredAt      DateTime @map("occurred_at") @db.Timestamptz
@@ -415,6 +418,25 @@ model PaymentEvent {
   paymentIntent PaymentIntent? @relation(fields: [paymentIntentId], references: [paymentIntentId])
 
   @@map("payment_events")
+  @@schema("finance_mlm")
+}
+
+model PaymentReceipt {
+  receiptId       String   @id @default(dbgenerated("gen_random_uuid()")) @map("receipt_id") @db.Uuid
+  paymentIntentId String   @unique @map("payment_intent_id") @db.Uuid
+  studentUserId   String   @map("student_user_id") @db.Uuid
+  receiptNumber   String   @unique @map("receipt_number")
+  grossAmountMinor BigInt  @map("gross_amount_minor")
+  vatAmountMinor   BigInt  @map("vat_amount_minor")
+  netAmountMinor   BigInt  @map("net_amount_minor")
+  currency         String
+  status           String  @default("ISSUED")
+  issuedAt         DateTime @default(now()) @map("issued_at") @db.Timestamptz
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  paymentIntent PaymentIntent @relation(fields: [paymentIntentId], references: [paymentIntentId])
+
+  @@map("payment_receipts")
   @@schema("finance_mlm")
 }
 
@@ -444,12 +466,34 @@ model PayoutLine {
   grossVolumeMinor  BigInt   @map("gross_volume_minor")
   payoutRate        Decimal  @map("payout_rate") @db.Decimal(12, 8)
   payoutAmountMinor BigInt   @map("payout_amount_minor")
+  withholdingTaxMinor BigInt @default(0) @map("withholding_tax_minor")
+  netPayoutMinor      BigInt @default(0) @map("net_payout_minor")
   eligibilityStatus String   @map("eligibility_status")
   createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   settlementRun SettlementRun @relation(fields: [settlementRunId], references: [settlementRunId])
+  payoutDocument PayoutDocument?
 
   @@map("payout_lines")
+  @@schema("finance_mlm")
+}
+
+model PayoutDocument {
+  payoutDocumentId String   @id @default(dbgenerated("gen_random_uuid()")) @map("payout_document_id") @db.Uuid
+  payoutLineId     String   @unique @map("payout_line_id") @db.Uuid
+  tutorUserId      String   @map("tutor_user_id") @db.Uuid
+  documentNumber   String   @unique @map("document_number")
+  documentType     String   @map("document_type")
+  grossAmountMinor BigInt   @map("gross_amount_minor")
+  withholdingTaxMinor BigInt @map("withholding_tax_minor")
+  netAmountMinor   BigInt   @map("net_amount_minor")
+  status           String   @default("ISSUED")
+  issuedAt         DateTime @default(now()) @map("issued_at") @db.Timestamptz
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  payoutLine PayoutLine @relation(fields: [payoutLineId], references: [payoutLineId])
+
+  @@map("payout_documents")
   @@schema("finance_mlm")
 }
 

@@ -1,19 +1,11 @@
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
-
-function calculateCommissionInfo(grossVolumeTHB: number) {
-  let rate = 0.35;
-  if (grossVolumeTHB >= 20000) rate = 0.45;
-  else if (grossVolumeTHB >= 10000) rate = 0.4;
-  else if (grossVolumeTHB > 0) rate = 0.35 + grossVolumeTHB / 200000;
-
-  let nextTarget = 10000;
-  if (grossVolumeTHB >= 20000) nextTarget = 50000;
-  else if (grossVolumeTHB >= 10000) nextTarget = 20000;
-
-  return { rate, nextTarget };
-}
+import {
+  calculateCommissionInfo,
+  formatIctPeriodMonth,
+  getIctMonthWindow,
+} from "../services/commissionService";
 
 export async function getEarningsSummary(
   req: AuthenticatedRequest,
@@ -28,16 +20,8 @@ export async function getEarningsSummary(
       });
     }
 
-    const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const monthEnd = new Date(
-      now.getFullYear(),
-      now.getMonth() + 1,
-      0,
-      23,
-      59,
-      59,
-    );
+    const periodMonth = formatIctPeriodMonth();
+    const { start: monthStart, end: monthEnd } = getIctMonthWindow(periodMonth);
 
     const classes = await prisma.class.findMany({
       where: { tutorUserId: userId },
@@ -54,7 +38,7 @@ export async function getEarningsSummary(
     const successfulPayments = await prisma.paymentIntent.findMany({
       where: {
         status: "SUCCESS",
-        createdAt: {
+        updatedAt: {
           gte: monthStart,
           lte: monthEnd,
         },
@@ -74,10 +58,7 @@ export async function getEarningsSummary(
     const estimatedCommissionTHB = grossVolumeTHB * rate;
 
     return res.status(200).json({
-      periodMonth: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
-        2,
-        "0",
-      )}`,
+      periodMonth,
       grossVolumeTHB,
       currentRate: rate,
       nextTierTargetTHB: nextTarget,
@@ -111,17 +92,8 @@ export async function getEarningsHistory(
       });
     }
 
-    const now = new Date();
-    const periodMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const monthEnd = new Date(
-      now.getFullYear(),
-      now.getMonth() + 1,
-      0,
-      23,
-      59,
-      59,
-    );
+    const periodMonth = formatIctPeriodMonth();
+    const { start: monthStart, end: monthEnd } = getIctMonthWindow(periodMonth);
 
     // 1. Current Month Projection
     const classes = await prisma.class.findMany({
@@ -139,7 +111,7 @@ export async function getEarningsHistory(
     const successfulPayments = await prisma.paymentIntent.findMany({
       where: {
         status: "SUCCESS",
-        createdAt: { gte: monthStart, lte: monthEnd },
+        updatedAt: { gte: monthStart, lte: monthEnd },
         enrollmentId: { in: enrollmentIds },
       },
     });
@@ -152,38 +124,72 @@ export async function getEarningsHistory(
     const { rate, nextTarget } = calculateCommissionInfo(grossVolumeTHB);
     const estimatedCommissionTHB = grossVolumeTHB * rate;
 
+    const currentAdjustments = await prisma.adjustment.findMany({
+      where: {
+        tutorUserId: userId,
+        status: "APPROVED",
+        amountMinor: { lt: 0 },
+        createdAt: { gte: monthStart, lte: monthEnd },
+      },
+    });
+
+    const currentClawbackTHB = currentAdjustments.reduce(
+      (sum, adj) => sum + Number(adj.amountMinor) / 100,
+      0,
+    );
+
     const currentProjection = {
-      directSales: Math.round(estimatedCommissionTHB * 0.85),
-      networkBonus: Math.round(estimatedCommissionTHB * 0.15),
-      clawback: 0,
-      total: Math.round(estimatedCommissionTHB),
+      directSales: Math.round(estimatedCommissionTHB),
+      networkBonus: 0,
+      clawback: Math.round(currentClawbackTHB),
+      total: Math.round(estimatedCommissionTHB + currentClawbackTHB),
     };
 
     // 2. Past History
     const pastLines = await prisma.payoutLine.findMany({
       where: { tutorUserId: userId },
-      include: { settlementRun: true },
+      include: { settlementRun: true, payoutDocument: true },
       orderBy: { settlementRun: { createdAt: "desc" } },
     });
 
+    const approvedAdjustments = await prisma.adjustment.findMany({
+      where: { tutorUserId: userId, status: "APPROVED", amountMinor: { lt: 0 } },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const clawbackByRun = new Map<string, number>();
+    for (const adjustment of approvedAdjustments) {
+      const current = clawbackByRun.get(adjustment.settlementRunId) || 0;
+      clawbackByRun.set(
+        adjustment.settlementRunId,
+        current + Number(adjustment.amountMinor) / 100,
+      );
+    }
+
     const history = pastLines.map((line) => {
       const totalAmount = Number(line.payoutAmountMinor) / 100;
+      const clawback = clawbackByRun.get(line.settlementRunId) || 0;
       return {
         date: line.settlementRun.periodMonth,
-        direct: Math.round(totalAmount * 0.85),
-        network: Math.round(totalAmount * 0.15),
-        clawback: 0, // Mocked for history view
+        direct: Math.round(totalAmount),
+        network: 0,
+        clawback: Math.round(clawback),
+        withholdingTax: Math.round(Number(line.withholdingTaxMinor) / 100),
+        netPayout: Math.round(Number(line.netPayoutMinor) / 100),
+        payoutDocument: line.payoutDocument
+          ? {
+              documentNumber: line.payoutDocument.documentNumber,
+              documentType: line.payoutDocument.documentType,
+              status: line.payoutDocument.status,
+              issuedAt: line.payoutDocument.issuedAt,
+            }
+          : null,
         status: line.settlementRun.status.toLowerCase(),
       };
     });
 
     // 3. Clawbacks (Adjustments)
-    const adjustments = await prisma.adjustment.findMany({
-      where: { tutorUserId: userId, amountMinor: { lt: 0 } },
-      orderBy: { createdAt: "desc" },
-    });
-
-    const clawbacks = adjustments.map((adj) => ({
+    const clawbacks = approvedAdjustments.map((adj) => ({
       date: adj.createdAt.toLocaleDateString("th-TH", {
         month: "short",
         year: "numeric",

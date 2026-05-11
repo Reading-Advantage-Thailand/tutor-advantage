@@ -160,19 +160,48 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
       });
 
       if (!targetClass) throw new Error("CLASS_NOT_FOUND");
-      if (targetClass.status !== "OPEN") throw new Error("CLASS_CLOSED");
-      if (targetClass.enrolledCount >= targetClass.capacity) throw new Error("CLASS_FULL");
+
+      let targetClassId = targetClass.classId;
+      let placedByFallback = false;
+
+      if (
+        targetClass.status !== "OPEN" ||
+        targetClass.enrolledCount >= targetClass.capacity
+      ) {
+        const fallbackClass = await tx.class.findFirst({
+          where: {
+            tutorUserId: targetClass.tutorUserId,
+            status: "OPEN",
+            enrolledCount: { lt: tx.class.fields.capacity },
+          },
+          orderBy: { createdAt: "asc" },
+        });
+
+        if (!fallbackClass) {
+          throw new Error(
+            targetClass.status !== "OPEN" ? "CLASS_CLOSED" : "CLASS_FULL",
+          );
+        }
+
+        targetClassId = fallbackClass.classId;
+        placedByFallback = true;
+      }
 
       // 2. Check if already enrolled
       const existing = await tx.enrollment.findFirst({
-        where: { classId, studentUserId: userId }
+        where: { classId: targetClassId, studentUserId: userId }
       });
-      if (existing) throw new Error("ALREADY_ENROLLED");
+      if (existing) {
+        if (existing.status === "PENDING_PAYMENT" || existing.status === "ACTIVE") {
+          return { ...existing, placedByFallback };
+        }
+        throw new Error("ALREADY_ENROLLED");
+      }
 
       // 3. Create enrollment
       const enrollment = await tx.enrollment.create({
         data: {
-          classId,
+          classId: targetClassId,
           studentUserId: userId,
           status: "PENDING_PAYMENT"
         }
@@ -180,17 +209,22 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
 
       // 4. Update count
       await tx.class.update({
-        where: { classId },
+        where: { classId: targetClassId },
         data: { enrolledCount: { increment: 1 } }
       });
 
-      return enrollment;
+      return { ...enrollment, placedByFallback };
     });
 
     return res.status(200).json({
-      message: "Direct enrollment successful. Pending payment.",
+      message:
+        result.status === "ACTIVE"
+          ? "Already enrolled and active."
+          : "Direct enrollment successful. Pending payment.",
       enrollmentId: result.enrollmentId,
-      classId: result.classId
+      classId: result.classId,
+      status: result.status,
+      placement: result.placedByFallback ? "FALLBACK" : "PRIMARY",
     });
   } catch (error: any) {
     console.error("Direct Enrollment Error:", error);
