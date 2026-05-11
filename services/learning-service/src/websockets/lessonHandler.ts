@@ -291,7 +291,7 @@ export const setupLessonSocket = (io: Server) => {
               const targetWord = words[idx] || words[0];
               if (targetWord) {
                 const correctTranslation = targetWord.definition?.th || targetWord.translation || "ความหมายที่ถูกต้อง";
-                const distractorWords = words.filter((w: any, i: number) => i !== idx);
+                const distractorWords = words.filter((_w: any, i: number) => i !== idx);
 
                 const usedTranslations = new Set<string>([correctTranslation]);
                 const optionsArray: string[] = [correctTranslation];

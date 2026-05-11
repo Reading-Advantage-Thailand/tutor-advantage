@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useLessonSocket } from '@/hooks/useLessonSocket';
 import { useLiff } from '@/components/providers/LiffProvider';
 import { playSound } from '@/lib/sounds';
+import Image from 'next/image';
 
 function PlayLessonContent() {
   const searchParams = useSearchParams();
@@ -49,7 +50,7 @@ function PlayLessonContent() {
     }
     if (sessionData) setPrevPhase(sessionData.currentPhase);
     setIsSubmitting(false);
-  }, [sessionData?.currentPhase]);
+  }, [sessionData, prevPhase]);
 
   useEffect(() => {
     if (hasAnswered) {
@@ -61,7 +62,7 @@ function PlayLessonContent() {
     if (sessionData && sessionData.currentPhase === 0 && classId) {
       router.push(`/lesson/${classId}`);
     }
-  }, [sessionData?.currentPhase, classId, router]);
+  }, [sessionData, classId, router]);
 
   useEffect(() => {
     if (!hasAnswered && !isSubmitting) setSelectedChoice(null);
@@ -207,7 +208,14 @@ function PlayLessonContent() {
             
             <div className="relative z-10 flex flex-col items-center max-w-sm w-full bg-card/80 backdrop-blur-xl p-8 rounded-3xl border border-border shadow-2xl">
               <div className="w-24 h-24 rounded-full border-4 border-primary/20 p-1 mb-4 shadow-sm bg-background overflow-hidden">
-                <img src={profile?.pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`} alt={name} className="w-full h-full rounded-full object-cover" />
+                <Image 
+                  src={profile?.pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`} 
+                  alt={name} 
+                  className="w-full h-full rounded-full object-cover" 
+                  width={96} 
+                  height={96} 
+                  unoptimized 
+                />
               </div>
               <h2 className="text-2xl font-black text-foreground">{name}</h2>
               <p className="text-sm text-primary font-bold mt-1 mb-6 bg-primary/10 px-3 py-1 rounded-full">นักเรียน</p>

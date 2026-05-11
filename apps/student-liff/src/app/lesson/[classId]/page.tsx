@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, use } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, Users, CheckCircle2, Loader2, AlertCircle, Play, ShieldCheck } from "lucide-react";
@@ -13,12 +14,19 @@ interface PageProps {
   params: Promise<{ classId: string }>;
 }
 
+interface ClassInfo {
+  name?: string;
+  tutor?: {
+    name?: string;
+  };
+}
+
 export default function LessonLobbyPage({ params }: PageProps) {
   const { classId } = use(params);
   const router = useRouter();
   const { profile, isReady: liffReady } = useLiff();
   
-  const [classInfo, setClassInfo] = useState<any>(null);
+  const [classInfo, setClassInfo] = useState<ClassInfo | null>(null);
   const [fetchingClass, setFetchingClass] = useState(true);
 
   const studentId = profile?.userId || "";
@@ -54,7 +62,7 @@ export default function LessonLobbyPage({ params }: PageProps) {
     if (sessionData && sessionData.currentPhase > 0) {
       router.push(`/interactive/play?classId=${classId}&pin=${sessionData.pin}&studentName=${studentName}`);
     }
-  }, [sessionData?.currentPhase, router, classId, studentName, sessionData?.pin, sessionData?.sessionId]);
+  }, [sessionData, router, classId, studentName]);
 
   if (!liffReady || fetchingClass) {
     return (
@@ -165,7 +173,7 @@ export default function LessonLobbyPage({ params }: PageProps) {
                   <div key={p.studentId} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
                     <div style={{ position: "relative" }}>
                        <div style={{ 
-                         width: 72, height: 72, borderRadius: 24, 
+                         width: 72, height: 72, borderRadius: 24, position: "relative",
                          background: isMe ? "var(--brand-50)" : "var(--neutral-100)", 
                          display: "flex", alignItems: "center", justifyContent: "center",
                          border: isMe ? "3px solid var(--brand-500)" : p.isReady ? "3px solid var(--brand-300)" : "3px solid transparent",
@@ -173,9 +181,12 @@ export default function LessonLobbyPage({ params }: PageProps) {
                          transition: "all 0.3s ease",
                          overflow: "hidden"
                        }}>
-                         <img 
+                         <Image
                            src={p.pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.name}`} 
                            alt={p.name} 
+                           fill
+                           sizes="72px"
+                           unoptimized
                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
                          />
                        </div>

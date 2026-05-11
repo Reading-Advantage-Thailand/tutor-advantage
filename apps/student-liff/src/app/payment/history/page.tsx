@@ -10,7 +10,6 @@ import {
   CheckCircle2,
   AlertCircle,
   ReceiptText,
-  Search,
   Calendar,
 } from "lucide-react";
 import { useLiff } from "@/components/providers/LiffProvider";
@@ -70,7 +69,7 @@ export default function PaymentHistoryPage() {
           if (isMounted) {
             setPayments(response.payments || []);
           }
-        } catch (err: any) {
+        } catch (err) {
           console.error("Failed to fetch payment history:", err);
           if (isMounted) {
             setError(

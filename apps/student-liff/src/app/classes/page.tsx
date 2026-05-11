@@ -1,14 +1,29 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { studentApi } from "@/lib/api";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { AlertCircle, Loader2, QrCode } from "lucide-react";
 
+interface ClassItem {
+  id: string;
+  name: string;
+  status: string;
+  seriesColor?: string;
+  capacity: number;
+  enrolled: number;
+  tutor: string;
+  tutorInitials: string;
+  cefr: string;
+  level: number;
+  nextSession: string;
+  price: number;
+}
+
 export default function ClassesPage() {
   const { liff, isReady } = useLiff();
-  const [classes, setClasses] = useState<any[]>([]);
+  const [classes, setClasses] = useState<ClassItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,7 +49,7 @@ export default function ClassesPage() {
         .catch((err) => {
           if (isMounted) {
             console.error("Failed to fetch classes:", err);
-            setError(err.message);
+            setError(err instanceof Error ? err.message : String(err));
           }
         })
         .finally(() => {
@@ -65,9 +80,9 @@ export default function ClassesPage() {
       if (liff.scanCodeV2) {
         const result = await liff.scanCodeV2();
         scannedText = result.value || "";
-      } else if ((liff as any).scanCode) {
+      } else if ("scanCode" in liff) {
         // Fallback to old method
-        const result = await (liff as any).scanCode();
+        const result = await (liff as { scanCode: () => Promise<{ value: string }> }).scanCode();
         scannedText = result.value || "";
       } else {
         alert("⚠️ อุปกรณ์หรือเวอร์ชันของ LINE ไม่รองรับการสแกนในหน้าแอปนี้");
@@ -85,9 +100,10 @@ export default function ClassesPage() {
           alert("❌ รูปแบบ QR Code ไม่ถูกต้อง (ไม่พบข้อมูลคลาสเรียน)");
         }
       }
-    } catch (err: any) {
+    } catch (err) {
       // Users might cancel scanning, usually safe to log
-      console.log("QR Scan stopped:", err.message || err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.log("QR Scan stopped:", errorMessage);
     }
   };
 

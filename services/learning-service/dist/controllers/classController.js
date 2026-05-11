@@ -414,7 +414,7 @@ async function getAvailableClasses(req, res) {
         });
     }
 }
-async function getBooks(req, res) {
+async function getBooks(_req, res) {
     try {
         const books = await database_1.prisma.book.findMany({
             include: { series: true },

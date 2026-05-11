@@ -32,9 +32,13 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setupLessonSocket = void 0;
 const uuid_1 = require("uuid");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const LessonSessionService_1 = require("../services/LessonSessionService");
 const AIEvaluator_1 = require("../services/AIEvaluator");
 const ReadingAdvantageDB_1 = require("../services/ReadingAdvantageDB");
@@ -57,6 +61,22 @@ function seededShuffle(array, seedInput) {
     return result;
 }
 const setupLessonSocket = (io) => {
+    // Authentication Middleware
+    io.use((socket, next) => {
+        const token = socket.handshake.auth?.token || socket.handshake.query?.token;
+        if (!token) {
+            return next(new Error("Authentication error: No token provided"));
+        }
+        try {
+            const secret = process.env.JWT_SECRET || "fallback_dev_secret";
+            // Explicitly ignore verification in local dev if you want, but for security audit we MUST verify
+            jsonwebtoken_1.default.verify(token, secret);
+            next();
+        }
+        catch (err) {
+            return next(new Error("Authentication error: Invalid or expired token"));
+        }
+    });
     io.on("connection", (socket) => {
         console.log(`Socket connected: ${socket.id}`);
         // Tutor creates a new session
@@ -286,7 +306,7 @@ const setupLessonSocket = (io) => {
                             const targetWord = words[idx] || words[0];
                             if (targetWord) {
                                 const correctTranslation = targetWord.definition?.th || targetWord.translation || "ความหมายที่ถูกต้อง";
-                                const distractorWords = words.filter((w, i) => i !== idx);
+                                const distractorWords = words.filter((_w, i) => i !== idx);
                                 const usedTranslations = new Set([correctTranslation]);
                                 const optionsArray = [correctTranslation];
                                 distractorWords.forEach((w) => {

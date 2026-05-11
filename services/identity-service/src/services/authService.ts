@@ -70,9 +70,8 @@ export async function processOAuthLogin(
           displayName: name,
           email: email,
           profilePictureUrl: picture || null,
-          sponsorTutorId: role === "TUTOR" ? invitedSponsorId : null,
-          sponsorLockedAt:
-            role === "TUTOR" && invitedSponsorId ? new Date() : null,
+          sponsorTutorId: null,
+          sponsorLockedAt: null,
           oauthIdentities: {
             create: {
               provider,

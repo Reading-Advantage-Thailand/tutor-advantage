@@ -117,9 +117,9 @@ function PaymentFlow() {
       await studentApi.confirmMockPayment(payment.intent.paymentIntentId);
       
       setStep("success"); 
-    } catch (err: any) {
+    } catch (err) {
       console.error("Payment/Enrollment failed:", err);
-      alert(err.message || "การลงทะเบียนล้มเหลว กรุณาลองใหม่อีกครั้ง");
+      alert(err instanceof Error ? err.message : "การลงทะเบียนล้มเหลว กรุณาลองใหม่อีกครั้ง");
     } finally {
       setLoading(false); 
     }

@@ -27,10 +27,11 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {},
 
   // 2. Fallback to LIFF ID Token for authentication exchange if needed
   // Note: learning-service ONLY accepts custom JWT
-  let idToken = null;
   try {
-    idToken = !isServer ? liff.getIDToken() : null;
-  } catch (e) {
+    if (!isServer) {
+      liff.getIDToken();
+    }
+  } catch {
     // Ignore initialization race conditions
   }
 
@@ -51,7 +52,7 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {},
     }
 
     return await response.json();
-  } catch (err: any) {
+  } catch (err: unknown) {
     if (!isServer) {
       console.error(`[studentApi] Fetch failed for ${url}:`, err);
     }

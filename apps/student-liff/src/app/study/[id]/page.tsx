@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, use } from "react";
 import Link from "next/link";
-import { ChevronLeft, Play, BookOpen, CheckCircle2, Lock, ArrowRight, Video, FileText } from "lucide-react";
+import { ChevronLeft, Play, CheckCircle2, Lock, Video, FileText } from "lucide-react";
 import { studentApi } from "@/lib/api";
 import { useLiff } from "@/components/providers/LiffProvider";
 
@@ -10,10 +10,14 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+interface StudyClass {
+  name?: string;
+}
+
 export default function StudyPage({ params }: PageProps) {
   const { id } = use(params);
   const { isReady } = useLiff();
-  const [cls, setCls] = useState<any>(null);
+  const [cls, setCls] = useState<StudyClass | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

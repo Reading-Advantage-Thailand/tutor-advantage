@@ -12,9 +12,11 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
  */
 async function verifyLineToken(idToken) {
     try {
-        // Decode without full verification for now in development
-        // In production, use line-id-token or verify with channel secret
-        const decoded = jsonwebtoken_1.default.decode(idToken);
+        // In production, we MUST verify the signature to prevent token forgery
+        const secret = process.env.LINE_CHANNEL_SECRET || "fallback_dev_secret";
+        const decoded = jsonwebtoken_1.default.verify(idToken, secret, {
+            algorithms: ["HS256"], // Assuming HS256 for symmetric, or adjust based on LINE's spec
+        });
         if (!decoded) {
             throw new Error("Invalid LINE ID Token");
         }

@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 
@@ -339,8 +339,5 @@ export const anonymizeUser = async (req: AuthenticatedRequest, res: Response) =>
   } catch (error) {
     console.error("Anonymize User Error:", error);
     res.status(500).json({ error: "Could not anonymize user" });
-  }
-};
-ld not anonymize user" });
   }
 };

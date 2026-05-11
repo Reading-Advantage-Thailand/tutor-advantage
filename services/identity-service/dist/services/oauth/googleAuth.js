@@ -19,7 +19,7 @@ async function verifyGoogleToken(code, redirectUri) {
         redirect_uri: redirectUri,
         grant_type: "authorization_code",
     });
-    const { id_token, access_token } = tokenResponse.data;
+    const { access_token } = tokenResponse.data;
     // 2. Fetch user profile
     const profileResponse = await axios_1.default.get("https://www.googleapis.com/oauth2/v2/userinfo", {
         headers: {

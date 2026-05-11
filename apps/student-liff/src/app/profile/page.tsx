@@ -1,11 +1,9 @@
 "use client";
-import { useState, useEffect } from "react";
 
 import Link from "next/link";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";

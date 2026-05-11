@@ -30,7 +30,7 @@ export async function verifyGoogleToken(
     },
   );
 
-  const { id_token, access_token } = tokenResponse.data;
+  const { access_token } = tokenResponse.data;
 
   // 2. Fetch user profile
   const profileResponse = await axios.get(

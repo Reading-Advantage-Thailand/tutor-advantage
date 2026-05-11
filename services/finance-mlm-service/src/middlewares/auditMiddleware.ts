@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "./authMiddleware";
 

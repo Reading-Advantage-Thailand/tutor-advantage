@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, Search, ChevronRight, MessageCircle, BookOpen, User, Users, Loader2 } from "lucide-react";
@@ -12,12 +13,14 @@ const ChatAvatar = ({ src, title, size = 48 }: { src?: string | null, title: str
   
   if (src && !hasError) {
     return (
-      <img 
+      <Image 
         src={src} 
         onError={() => setHasError(true)} 
         alt="" 
-        referrerPolicy="no-referrer"
-        style={{ width: size, height: size, borderRadius: "50%", objectFit: "cover" }} 
+        unoptimized
+        width={size}
+        height={size}
+        style={{ borderRadius: "50%", objectFit: "cover" }} 
       />
     );
   }
@@ -32,7 +35,7 @@ const ChatAvatar = ({ src, title, size = 48 }: { src?: string | null, title: str
 const playNotificationSound = () => {
   try {
     if (typeof window !== "undefined" && localStorage.getItem("app-notif-muted") === "true") return;
-    const win = window as any;
+    const win = window as unknown as { __globalAudioCtx?: AudioContext };
     const ctx = win.__globalAudioCtx;
     if (!ctx || ctx.state !== "running") {
       if (ctx) ctx.resume().catch(() => {});
@@ -55,21 +58,41 @@ const playNotificationSound = () => {
     osc2.start(ctx.currentTime + 0.1);
     osc1.stop(ctx.currentTime + 0.6);
     osc2.stop(ctx.currentTime + 0.6);
-  } catch (err) {}
+  } catch {
+    // Silently catch
+  }
 };
+
+interface Conversation {
+  id: string;
+  image?: string | null;
+  title: string;
+  unreadCount: number;
+  updatedAt: string;
+  lastMessage?: {
+    sender: string;
+    content: string;
+  };
+  type: 'DIRECT' | 'GROUP';
+}
+
+interface EnrolledClass {
+  id: string;
+  name: string;
+  tutorName: string;
+  tutorUserId: string;
+}
 
 export default function ChatListPage() {
   const { profile, isReady } = useLiff();
   const router = useRouter();
-  const [conversations, setConversations] = useState<any[]>([]);
-  const [classes, setClasses] = useState<any[]>([]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [classes, setClasses] = useState<EnrolledClass[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState<'recent' | 'classes'>('classes');
   const [initiatingChat, setInitiatingChat] = useState<string | null>(null);
-  const prevTotalUnreadRef = useState<number | undefined>(undefined)[0] === undefined ? { current: undefined as number | undefined } : { current: 0 };
-  const isMountedRef = useState<boolean>(true); // just as simple wrapper ref
   const prevTotalUnread = useRef<number | undefined>(undefined);
 
   // Handle sound alert effect when total unread from convo list increases
@@ -110,7 +133,7 @@ export default function ChatListPage() {
             setConversations(convRes.conversations || []);
             setClasses(classesRes.classes || []);
           }
-        } catch (err: any) {
+        } catch (err: unknown) {
           console.error("Failed to fetch chat data:", err);
           if (isMounted && showLoading) setError("ไม่สามารถดึงข้อมูลการสนทนาได้");
         } finally {
@@ -132,7 +155,7 @@ export default function ChatListPage() {
     };
   }, [isReady, profile]);
 
-  const handleInitiateChat = async (type: 'DIRECT' | 'GROUP', classId: string, tutorUserId?: string, label?: string) => {
+  const handleInitiateChat = async (type: 'DIRECT' | 'GROUP', classId: string, tutorUserId?: string) => {
     const loadingKey = `${type}-${classId}`;
     setInitiatingChat(loadingKey);
     try {
@@ -146,7 +169,7 @@ export default function ChatListPage() {
       } else {
         throw new Error("Failed to get ID");
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Failed to initiate:", err);
       alert("เกิดข้อผิดพลาดในการเปิดแชท");
       setInitiatingChat(null);

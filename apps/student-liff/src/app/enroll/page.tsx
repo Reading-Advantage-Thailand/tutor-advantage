@@ -58,17 +58,6 @@ function EnrollContent() {
     setLoading(false);
   }, [isReady, classId, referralToken]);
 
-  if (!isReady) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
-        <div className="text-center">
-          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-muted-foreground">กำลังเตรียมข้อมูล...</p>
-        </div>
-      </div>
-    );
-  }
-
   useEffect(() => {
     if (isReady && !profile) {
       const currentParams = searchParams.toString();
@@ -83,6 +72,17 @@ function EnrollContent() {
       router.push(`/payment?classId=${classDetails.classId}`);
     }
   }, [step, classDetails, router]);
+
+  if (!isReady) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="text-center">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-muted-foreground">กำลังเตรียมข้อมูล...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isReady || !profile) {
     return (

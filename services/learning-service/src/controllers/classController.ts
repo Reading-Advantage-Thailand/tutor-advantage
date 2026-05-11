@@ -2,7 +2,6 @@ import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
-import { log } from "console";
 
 export async function createClass(req: AuthenticatedRequest, res: Response) {
   try {
@@ -459,7 +458,7 @@ export async function getAvailableClasses(
   }
 }
 
-export async function getBooks(req: AuthenticatedRequest, res: Response) {
+export async function getBooks(_req: AuthenticatedRequest, res: Response) {
   try {
     const books = await prisma.book.findMany({
       include: { series: true },

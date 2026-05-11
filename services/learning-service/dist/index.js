@@ -31,10 +31,10 @@ app.use(express_1.default.json());
 app.use(shared_config_1.requestIdMiddleware);
 app.use(shared_config_1.requestLoggerMiddleware);
 // Base endpoints
-app.get("/health", (req, res) => {
+app.get("/health", (_req, res) => {
     res.status(200).json({ status: "ok", service: "learning-service" });
 });
-app.get("/version", (req, res) => {
+app.get("/version", (_req, res) => {
     res.status(200).json({ version: "1.0.0", service: "learning-service" });
 });
 // Protected Class Routes

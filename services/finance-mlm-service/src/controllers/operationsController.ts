@@ -118,7 +118,7 @@ export const resolveException = async (
 };
 
 export const getUnresolvedLinks = async (
-  req: AuthenticatedRequest,
+  _req: AuthenticatedRequest,
   res: Response,
 ) => {
   try {
@@ -141,7 +141,7 @@ export const getUnresolvedLinks = async (
 };
 
 export const getMappings = async (
-  req: AuthenticatedRequest,
+  _req: AuthenticatedRequest,
   res: Response,
 ) => {
   try {

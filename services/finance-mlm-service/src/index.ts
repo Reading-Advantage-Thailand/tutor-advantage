@@ -74,11 +74,11 @@ app.use(requestIdMiddleware);
 app.use(requestLoggerMiddleware);
 
 // Base endpoints
-app.get("/health", (req: Request, res: Response) => {
+app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({ status: "ok", service: "finance-mlm-service" });
 });
 
-app.get("/version", (req: Request, res: Response) => {
+app.get("/version", (_req: Request, res: Response) => {
   res.status(200).json({ version: "1.0.0", service: "finance-mlm-service" });
 });
 

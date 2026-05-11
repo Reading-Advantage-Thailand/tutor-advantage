@@ -32,11 +32,11 @@ app.use(express_1.default.json());
 app.use(shared_config_1.requestIdMiddleware);
 app.use(shared_config_1.requestLoggerMiddleware);
 // Health Check Endpoint
-app.get("/health", (req, res) => {
+app.get("/health", (_req, res) => {
     res.status(200).json({ status: "ok", service: "identity-service" });
 });
 // Version Endpoint
-app.get("/version", (req, res) => {
+app.get("/version", (_req, res) => {
     res.status(200).json({ version: "1.0.0", service: "identity-service" }); // Read from package.json in real implementation
 });
 // OAuth Callback Endpoint
@@ -50,7 +50,7 @@ app.post("/v1/users/me/verification", authMiddleware_1.authMiddleware, userContr
 app.post("/v1/upload", authMiddleware_1.authMiddleware, upload.single("file"), uploadController_1.uploadFile);
 app.post("/v1/guardian/consent", authMiddleware_1.authMiddleware, consentController_1.submitGuardianConsent);
 // Root API
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
     res.send("Identity Service API");
 });
 // Error handling middleware (Must be last)

@@ -38,12 +38,12 @@ app.use(requestIdMiddleware);
 app.use(requestLoggerMiddleware);
 
 // Health Check Endpoint
-app.get("/health", (req: Request, res: Response) => {
+app.get("/health", (_req: Request, res: Response) => {
   res.status(200).json({ status: "ok", service: "identity-service" });
 });
 
 // Version Endpoint
-app.get("/version", (req: Request, res: Response) => {
+app.get("/version", (_req: Request, res: Response) => {
   res.status(200).json({ version: "1.0.0", service: "identity-service" }); // Read from package.json in real implementation
 });
 
@@ -60,7 +60,7 @@ app.post("/v1/upload", authMiddleware, upload.single("file"), uploadFile);
 app.post("/v1/guardian/consent", authMiddleware, submitGuardianConsent);
 
 // Root API
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (_req: Request, res: Response) => {
   res.send("Identity Service API");
 });
 

@@ -18,7 +18,12 @@ let audioCtx: AudioContext | null = null;
 
 function getAudioContext(): AudioContext {
   if (!audioCtx) {
-    audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const audioWindow = window as Window & typeof globalThis & { webkitAudioContext?: typeof AudioContext };
+    const AudioContextConstructor = audioWindow.AudioContext || audioWindow.webkitAudioContext;
+    if (!AudioContextConstructor) {
+      throw new Error("Web Audio API is not supported");
+    }
+    audioCtx = new AudioContextConstructor();
   }
   if (audioCtx.state === 'suspended') {
     audioCtx.resume().catch(() => {}); // Silently attempt recovery
@@ -39,7 +44,7 @@ function playTone(frequency: number, duration: number, type: OscillatorType = 's
     gain.connect(ctx.destination);
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + duration);
-  } catch (e) {}
+  } catch {}
 }
 
 export function playSound(name: SoundName): void {
@@ -103,7 +108,7 @@ export function playSound(name: SoundName): void {
              osc1.stop(ctx.currentTime + 0.6);
              osc2.stop(ctx.currentTime + 0.6);
           }
-        } catch (e) {}
+        } catch {}
         break;
     }
   } catch {

@@ -47,6 +47,9 @@ async function getUserClassCounts(userIds) {
     };
 }
 const getUsers = async (req, res) => {
+    if (req.user?.role !== "ADMIN" && req.user?.role !== "FINANCE_CHECKER") {
+        return res.status(403).json({ error: "Forbidden: Requires Admin privileges" });
+    }
     try {
         const users = await database_1.prisma.user.findMany({
             select: {
@@ -264,6 +267,9 @@ const verifyUser = async (req, res) => {
 };
 exports.verifyUser = verifyUser;
 const anonymizeUser = async (req, res) => {
+    if (req.user?.role !== "ADMIN") {
+        return res.status(403).json({ error: "Forbidden: Requires Super Admin privileges" });
+    }
     const { id } = req.params;
     try {
         await database_1.prisma.user.update({

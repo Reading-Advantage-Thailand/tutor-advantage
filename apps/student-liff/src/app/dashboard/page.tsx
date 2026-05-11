@@ -1,16 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLiff } from "@/components/providers/LiffProvider";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import {
-  BookOpen,
   MessageCircle,
   Calendar,
   CreditCard,
@@ -33,18 +30,49 @@ const playNotificationSound = () => {
       return;
     
     playSound('notification');
-  } catch (err) {}
+  } catch {
+    // Silently catch
+  }
 };
+
+interface Enrollment {
+  id?: string;
+  name: string;
+  tutorName: string;
+  status: string;
+  nextSession: string;
+  progress: number;
+  bookName: string | null;
+  seriesCefr: string | null;
+  isLive?: boolean;
+}
+
+interface DashboardData {
+  unreadMessages: number;
+  weekStreak: number;
+  activeEnrollments: number;
+  recentClasses: Enrollment[];
+}
+
+interface LessonHistoryItem {
+  sessionId: string;
+  date: string;
+  rank: number;
+  totalParticipants: number;
+  articleTitle: string;
+  tutorName: string;
+  score: number;
+}
 
 export default function DashboardPage() {
   const { profile, isReady } = useLiff();
 
-  const [dashboardData, setDashboardData] = useState<any>(null);
-  const [historyData, setHistoryData] = useState<any[]>([]);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [historyData, setHistoryData] = useState<LessonHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const prevUnreadRef = React.useRef<number | undefined>(undefined);
+  const prevUnreadRef = useRef<number | undefined>(undefined);
 
   // Effect to play sound when unread messages increase
   useEffect(() => {
@@ -65,7 +93,7 @@ export default function DashboardPage() {
       playNotificationSound();
     }
     prevUnreadRef.current = currentUnread;
-  }, [dashboardData?.unreadMessages]);
+  }, [dashboardData]);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
@@ -95,8 +123,8 @@ export default function DashboardPage() {
           if (!isMounted) return;
 
           const [data, hist] = await Promise.all([
-            studentApi.getDashboard(),
-            studentApi.getLessonHistory().catch(() => ({ history: [] })),
+            studentApi.getDashboard() as Promise<DashboardData>,
+            studentApi.getLessonHistory().catch(() => ({ history: [] as LessonHistoryItem[] })),
           ]);
 
           if (isMounted) {
@@ -104,12 +132,12 @@ export default function DashboardPage() {
             setHistoryData(hist.history || []);
             setError(null); // clear any error on successful fetch
           }
-        } catch (err: any) {
+        } catch (err: unknown) {
           if (isMounted) {
             console.error("Failed to fetch dashboard:", err);
             // Only set error visible state if we haven't loaded data before
             if (showLoading) {
-              setError(err.message || "เกิดข้อผิดพลาดในการโหลดข้อมูล");
+              setError(err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการโหลดข้อมูล");
             }
           }
         } finally {
@@ -133,7 +161,7 @@ export default function DashboardPage() {
     };
   }, [isReady, profile]);
 
-  const enrollment = dashboardData?.recentClasses?.find((c: any) => c.isLive) ||
+  const enrollment: Enrollment = dashboardData?.recentClasses?.find((c) => c.isLive) ||
     dashboardData?.recentClasses?.[0] || {
       name: "ยังไม่มีคลาสเรียน",
       tutorName: "-",
@@ -151,10 +179,6 @@ export default function DashboardPage() {
     level: enrollment.bookName || "Origins 1",
     cefr: enrollment.seriesCefr || "A1",
   };
-
-  const recentArticles = [
-    { id: "art-1", title: "The Magic Garden", level: "A1", readAt: "เมื่อวาน" },
-  ];
 
   const progressPct = enrollment.progress || 0;
 
@@ -345,9 +369,9 @@ export default function DashboardPage() {
         <section>
           <div className="section-header">
             <h2 className="section-title">คลาสของฉัน</h2>
-            {dashboardData?.activeEnrollments > 0 && (
+            {(dashboardData?.activeEnrollments ?? 0) > 0 && (
               <span className={`status-chip status-active`}>
-                กำลังเรียน {dashboardData.activeEnrollments} คลาส
+                กำลังเรียน {dashboardData?.activeEnrollments} คลาส
               </span>
             )}
           </div>
@@ -669,7 +693,7 @@ export default function DashboardPage() {
                 }}
               >
                 {item.id === "quick-chat" &&
-                  dashboardData?.unreadMessages > 0 && (
+                  (dashboardData?.unreadMessages ?? 0) > 0 && (
                     <div
                       style={{
                         position: "absolute",
@@ -686,9 +710,9 @@ export default function DashboardPage() {
                         boxShadow: "0 2px 6px rgba(239, 68, 68, 0.3)",
                       }}
                     >
-                      {dashboardData.unreadMessages > 99
+                      {(dashboardData?.unreadMessages ?? 0) > 99
                         ? "99+"
-                        : dashboardData.unreadMessages}
+                        : dashboardData?.unreadMessages}
                     </div>
                   )}
                 <div
@@ -761,7 +785,7 @@ export default function DashboardPage() {
           {(() => {
             const todayStr = new Date().toDateString();
             const todaysHistory = historyData.filter(
-              (hist: any) => new Date(hist.date).toDateString() === todayStr,
+              (hist: LessonHistoryItem) => new Date(hist.date).toDateString() === todayStr,
             );
 
             if (todaysHistory.length === 0) {
@@ -800,7 +824,7 @@ export default function DashboardPage() {
                   marginTop: 4,
                 }}
               >
-                {todaysHistory.map((hist: any) => (
+                {todaysHistory.map((hist: LessonHistoryItem) => (
                   <Link
                     key={hist.sessionId}
                     href={`/lesson/history/${hist.sessionId}`}

@@ -100,7 +100,7 @@ const resolveException = async (req, res) => {
     }
 };
 exports.resolveException = resolveException;
-const getUnresolvedLinks = async (req, res) => {
+const getUnresolvedLinks = async (_req, res) => {
     try {
         const links = await database_1.prisma.unresolvedLegacyLink.findMany({
             orderBy: [{ hits: "desc" }, { lastSeen: "desc" }],
@@ -120,7 +120,7 @@ const getUnresolvedLinks = async (req, res) => {
     }
 };
 exports.getUnresolvedLinks = getUnresolvedLinks;
-const getMappings = async (req, res) => {
+const getMappings = async (_req, res) => {
     try {
         const mappings = await database_1.prisma.legacyLinkMapping.findMany({
             orderBy: { createdAt: "desc" },

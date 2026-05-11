@@ -50,7 +50,7 @@ const Toggle = ({ checked, onChange, disabled }: { checked: boolean; onChange: (
 );
 
 export default function NotificationsPage() {
-  const { isReady, profile } = useLiff();
+  const { isReady } = useLiff();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle'|'success'|'error'>('idle');

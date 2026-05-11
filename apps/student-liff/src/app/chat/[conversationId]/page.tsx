@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
-import { ChevronLeft, Send, Phone, Video, Smile, Paperclip, MoreVertical } from "lucide-react";
+import Image from "next/image";
+import { ChevronLeft, Send } from "lucide-react";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { studentApi } from "@/lib/api";
 
@@ -28,7 +28,7 @@ interface Metadata {
 const playNotificationSound = () => {
   try {
     if (typeof window !== "undefined" && localStorage.getItem("app-notif-muted") === "true") return;
-    const win = window as any;
+    const win = window as unknown as { __globalAudioCtx?: AudioContext };
     const ctx = win.__globalAudioCtx;
     
     if (!ctx || ctx.state !== "running") {
@@ -54,7 +54,7 @@ const playNotificationSound = () => {
     osc2.start(ctx.currentTime + 0.1);
     osc1.stop(ctx.currentTime + 0.6);
     osc2.stop(ctx.currentTime + 0.6);
-  } catch (err) {
+  } catch {
     // Silently catch
   }
 };
@@ -62,7 +62,17 @@ const playNotificationSound = () => {
 const MessageAvatar = ({ src, name }: { src?: string | null, name: string }) => {
   const [error, setError] = useState(false);
   if (src && !error) {
-    return <img src={src} onError={() => setError(true)} alt="" referrerPolicy="no-referrer" style={{ width: 28, height: 28, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />;
+    return (
+      <Image 
+        src={src} 
+        onError={() => setError(true)} 
+        alt="" 
+        unoptimized
+        width={28}
+        height={28}
+        style={{ borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} 
+      />
+    );
   }
   return (
     <div style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--brand-50)", color: "var(--brand-600)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: 700, flexShrink: 0 }}>
@@ -89,7 +99,7 @@ export default function ChatRoomPage() {
   const prevLengthRef = useRef<number>(0);
 
   // Function to fetch messages
-  const fetchMessages = async (isInitial = false) => {
+  const fetchMessages = useCallback(async (isInitial = false) => {
     try {
       if (isInitial) setLoading(true);
       const response = await studentApi.getConversationMessages(conversationId);
@@ -103,7 +113,7 @@ export default function ChatRoomPage() {
           return [...newMsgs, ...pendingMsgs];
         });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to load messages:", err);
       if (isInitial) {
         setError("ไม่สามารถโหลดข้อความได้");
@@ -111,7 +121,7 @@ export default function ChatRoomPage() {
     } finally {
       if (isInitial) setLoading(false);
     }
-  };
+  }, [conversationId]);
 
   // Initial data fetch and set interval for polling
   useEffect(() => {
@@ -125,7 +135,7 @@ export default function ChatRoomPage() {
     }, 4000);
 
     return () => clearInterval(intervalId);
-  }, [isReady, profile, conversationId]);
+  }, [isReady, profile, fetchMessages]);
 
   // Scroll to bottom and play sound when new messages come
   useEffect(() => {
@@ -245,7 +255,15 @@ export default function ChatRoomPage() {
         
         <div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1, minWidth: 0 }}>
           {metadata?.image && !imgError ? (
-            <img src={metadata.image} onError={() => setImgError(true)} alt="" referrerPolicy="no-referrer" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover" }} />
+            <Image 
+              src={metadata.image} 
+              onError={() => setImgError(true)} 
+              alt="" 
+              unoptimized
+              width={40}
+              height={40}
+              style={{ borderRadius: "50%", objectFit: "cover" }} 
+            />
           ) : (
             <div style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--brand-50)", color: "var(--brand-600)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600 }}>
               {metadata?.title?.charAt(0) || "?"}

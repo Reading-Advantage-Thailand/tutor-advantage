@@ -17,8 +17,15 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // @ts-ignore
   allowedDevOrigins: ["*.ngrok-free.app", "localhost:3000", "localhost:3004"],
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

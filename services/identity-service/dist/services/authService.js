@@ -43,8 +43,8 @@ async function processOAuthLogin(provider, providerSubject, email, name, picture
         }
         // 3. If still no user, create a new one.
         if (!user) {
-            // Default role based on provider
-            const role = provider === "line" ? "STUDENT" : "TUTOR";
+            // Default role is STUDENT to prevent insecure elevated privileges upon signup
+            const role = "STUDENT";
             // Create user and link identity in one transaction
             user = await database_1.prisma.user.create({
                 data: {
@@ -52,8 +52,8 @@ async function processOAuthLogin(provider, providerSubject, email, name, picture
                     displayName: name,
                     email: email,
                     profilePictureUrl: picture || null,
-                    sponsorTutorId: role === "TUTOR" ? invitedSponsorId : null,
-                    sponsorLockedAt: role === "TUTOR" && invitedSponsorId ? new Date() : null,
+                    sponsorTutorId: null,
+                    sponsorLockedAt: null,
                     oauthIdentities: {
                         create: {
                             provider,

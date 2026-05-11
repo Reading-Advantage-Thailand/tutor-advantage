@@ -6,9 +6,43 @@ import { studentApi } from "@/lib/api";
 import { Flame, Clock, BookOpen, Target, Lock, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+interface ProgressStats {
+  level: string;
+  cefr: string;
+  seriesColor: string;
+  totalArticles: number;
+  articlesRead: number;
+  weekStreak: number;
+  totalMinutes: number;
+  nextMilestone: {
+    at: number;
+    reward: string;
+  };
+}
+
+interface WeeklyActivity {
+  day: string;
+  minutes: number;
+  active: boolean;
+}
+
+interface ProgressArticle {
+  id: string;
+  no: number;
+  title: string;
+  minutes: number;
+  done: boolean;
+}
+
+interface ProgressData {
+  stats: ProgressStats;
+  weeklyActivity: WeeklyActivity[];
+  articles: ProgressArticle[];
+}
+
 export default function ProgressPage() {
-  const { isReady, profile } = useLiff();
-  const [data, setData] = useState<any>(null);
+  const { isReady } = useLiff();
+  const [data, setData] = useState<ProgressData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,7 +67,7 @@ export default function ProgressPage() {
           throw new Error("Session unavailable");
         }
 
-        const result = await studentApi.getStudentProgress();
+        const result = await studentApi.getStudentProgress() as ProgressData;
         if (isMounted) {
           setData(result);
         }
@@ -71,7 +105,7 @@ export default function ProgressPage() {
 
   const { stats, weeklyActivity, articles } = data;
   const progressPct = stats.totalArticles > 0 ? Math.round((stats.articlesRead / stats.totalArticles) * 100) : 0;
-  const maxMin = Math.max(...(weeklyActivity.map((d: any) => d.minutes) || [0]), 1);
+  const maxMin = Math.max(...(weeklyActivity.map((d) => d.minutes) || [0]), 1);
 
   return (
     <div>
@@ -130,7 +164,7 @@ export default function ProgressPage() {
         <div className="glass-card" style={{ padding: "20px" }}>
           <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 16 }}>กิจกรรมสัปดาห์นี้</h3>
           <div style={{ display: "flex", gap: 6, alignItems: "flex-end", height: 80 }}>
-            {weeklyActivity.map((d: any) => (
+            {weeklyActivity.map((d) => (
               <div key={d.day} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
                 <div style={{
                   width: "100%",
@@ -159,7 +193,7 @@ export default function ProgressPage() {
           </div>
 
           <div className="glass-card" style={{ overflow: "hidden" }}>
-            {articles.map((art: any, idx: number) => (
+            {articles.map((art, idx) => (
               <div
                 key={art.id}
                 style={{

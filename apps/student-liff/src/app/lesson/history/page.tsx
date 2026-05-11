@@ -4,13 +4,22 @@ import React, { useState, useEffect } from "react";
 import { useLiff } from "@/components/providers/LiffProvider";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { ChevronRight, ArrowLeft, AlertCircle } from "lucide-react";
 import { studentApi } from "@/lib/api";
 
+interface HistoryItem {
+  sessionId: string;
+  date: string;
+  rank: number;
+  totalParticipants: number;
+  articleTitle: string;
+  tutorName: string;
+  score: number;
+}
+
 export default function AllHistoryPage() {
   const { isReady, profile } = useLiff();
-  const [historyData, setHistoryData] = useState<any[]>([]);
+  const [historyData, setHistoryData] = useState<HistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,9 +30,9 @@ export default function AllHistoryPage() {
           const hist = await studentApi.getLessonHistory();
           setHistoryData(hist.history || []);
           setLoading(false);
-        } catch (err: any) {
+        } catch (err) {
           console.error("Failed to fetch history:", err);
-          setError(err.message || "ไม่สามารถโหลดประวัติการเรียนได้");
+          setError(err instanceof Error ? err.message : "ไม่สามารถโหลดประวัติการเรียนได้");
           setLoading(false);
         }
       };
@@ -51,7 +60,7 @@ export default function AllHistoryPage() {
   }
 
   // Group by date string for a nice UI
-  const groupedHistory: Record<string, any[]> = {};
+  const groupedHistory: Record<string, HistoryItem[]> = {};
   historyData.forEach(hist => {
     const date = new Date(hist.date);
     const options: Intl.DateTimeFormatOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
@@ -111,7 +120,7 @@ export default function AllHistoryPage() {
                 </h3>
                 
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {groupedHistory[dateStr].map((hist: any) => (
+                  {groupedHistory[dateStr].map((hist) => (
                     <Link 
                       key={hist.sessionId}
                       href={`/lesson/history/${hist.sessionId}`}

@@ -37,9 +37,9 @@ export default function GuardianPage() {
       setTimeout(() => {
         router.push("/profile");
       }, 2000);
-    } catch (err: any) {
+    } catch (err) {
       console.error("Failed to submit guardian info:", err);
-      setError(err.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+      setError(err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
     } finally {
       setLoading(false);
     }

@@ -35,10 +35,10 @@ app.use(express_1.default.json({
 app.use(shared_config_1.requestIdMiddleware);
 app.use(shared_config_1.requestLoggerMiddleware);
 // Base endpoints
-app.get("/health", (req, res) => {
+app.get("/health", (_req, res) => {
     res.status(200).json({ status: "ok", service: "finance-mlm-service" });
 });
-app.get("/version", (req, res) => {
+app.get("/version", (_req, res) => {
     res.status(200).json({ version: "1.0.0", service: "finance-mlm-service" });
 });
 app.get("/v1/admin/overview", authMiddleware_1.authMiddleware, adminController_1.getAdminOverview);

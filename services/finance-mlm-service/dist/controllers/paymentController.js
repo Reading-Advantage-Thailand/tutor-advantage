@@ -439,8 +439,10 @@ async function recordNegativePaymentOutcome(paymentIntentId, providerRef, eventT
 }
 function verifyWebhookSignature(req, payload) {
     const secret = process.env.OMISE_WEBHOOK_SECRET;
-    if (!secret)
-        return true;
+    if (!secret) {
+        console.error("CRITICAL: Webhook secret is not configured");
+        return false;
+    }
     const signature = req.headers["omise-signature"] || req.headers["x-omise-signature"];
     if (!signature || Array.isArray(signature))
         return false;

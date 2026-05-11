@@ -11,10 +11,36 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+interface Tutor {
+  name: string;
+  initials: string;
+  bio: string;
+  rating?: number;
+  students?: number;
+}
+
+interface ClassDetail {
+  id: string;
+  name: string;
+  status: string;
+  seriesColor?: string;
+  maxStudents: number;
+  students: number;
+  tutor: Tutor;
+  cefr: string;
+  level: number;
+  nextSession: string;
+  price: number;
+  book: string;
+  totalHours?: number;
+  schedule: string;
+  isEnrolled?: boolean;
+}
+
 export default function ClassDetailPage({ params }: PageProps) {
   const { id } = use(params);
   const { isReady } = useLiff();
-  const [cls, setCls] = useState<any>(null);
+  const [cls, setCls] = useState<ClassDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,7 +53,7 @@ export default function ClassDetailPage({ params }: PageProps) {
         })
         .catch(err => {
           console.error("Failed to fetch class details:", err);
-          setError(err.message);
+          setError(err instanceof Error ? err.message : String(err));
           setLoading(false);
         });
     }
@@ -58,7 +84,6 @@ export default function ClassDetailPage({ params }: PageProps) {
   const seriesColor = cls.seriesColor || "#06c755";
   const seatsLeft = cls.maxStudents - cls.students;
   const fillPct = Math.round((cls.students / cls.maxStudents) * 100);
-  const price = cls.price || 2800;
 
   const highlights = [
     "ระบบบทเรียน 15 ขั้นตอนที่ผ่านการพิสูจน์แล้ว",

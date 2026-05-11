@@ -62,22 +62,7 @@ class SettlementService {
                 eligibilityStatus: "ELIGIBLE_BASE",
             });
         }
-        // 4. Calculate Group Volume (Bottom-up)
-        // We need a topological sort from leaves to root.
-        // simpler method: keep iterating until no GV changes occur.
-        let changed = true;
-        while (changed) {
-            changed = false;
-            for (const node of nodes.values()) {
-                const sponsorId = node.sponsorId;
-                if (sponsorId && nodes.has(sponsorId)) {
-                    const sponsorNode = nodes.get(sponsorId);
-                    // In a real multi-level system, this accumulation logic can be complex
-                    // to prevent double-counting. We use a graph traversal to sum properly.
-                }
-            }
-        }
-        // Graph traversal for accurate GV and Payout calculation
+        // 4. Graph traversal for accurate GV and Payout calculation.
         const childMap = new Map();
         for (const node of nodes.values()) {
             if (node.sponsorId) {
