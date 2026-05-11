@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.enrollStudent = enrollStudent;
+exports.directEnroll = directEnroll;
 const database_1 = require("@tutor-advantage/database");
 async function enrollStudent(req, res) {
     try {
@@ -113,6 +114,92 @@ async function enrollStudent(req, res) {
                 details: error.message,
                 requestId: req.id,
             },
+        });
+    }
+}
+async function directEnroll(req, res) {
+    try {
+        const userId = req.user?.userId;
+        const { classId } = req.body;
+        if (!userId) {
+            return res.status(401).json({
+                error: { code: "UNAUTHORIZED", message: "User ID missing", requestId: req.id }
+            });
+        }
+        if (!classId) {
+            return res.status(400).json({
+                error: { code: "BAD_REQUEST", message: "classId is required", requestId: req.id }
+            });
+        }
+        const result = await database_1.prisma.$transaction(async (tx) => {
+            // 1. Check if class exists and has capacity
+            const targetClass = await tx.class.findUnique({
+                where: { classId }
+            });
+            if (!targetClass)
+                throw new Error("CLASS_NOT_FOUND");
+            let targetClassId = targetClass.classId;
+            let placedByFallback = false;
+            if (targetClass.status !== "OPEN" ||
+                targetClass.enrolledCount >= targetClass.capacity) {
+                const fallbackClass = await tx.class.findFirst({
+                    where: {
+                        tutorUserId: targetClass.tutorUserId,
+                        status: "OPEN",
+                        enrolledCount: { lt: tx.class.fields.capacity },
+                    },
+                    orderBy: { createdAt: "asc" },
+                });
+                if (!fallbackClass) {
+                    throw new Error(targetClass.status !== "OPEN" ? "CLASS_CLOSED" : "CLASS_FULL");
+                }
+                targetClassId = fallbackClass.classId;
+                placedByFallback = true;
+            }
+            // 2. Check if already enrolled
+            const existing = await tx.enrollment.findFirst({
+                where: { classId: targetClassId, studentUserId: userId }
+            });
+            if (existing) {
+                if (existing.status === "PENDING_PAYMENT" || existing.status === "ACTIVE") {
+                    return { ...existing, placedByFallback };
+                }
+                throw new Error("ALREADY_ENROLLED");
+            }
+            // 3. Create enrollment
+            const enrollment = await tx.enrollment.create({
+                data: {
+                    classId: targetClassId,
+                    studentUserId: userId,
+                    status: "PENDING_PAYMENT"
+                }
+            });
+            // 4. Update count
+            await tx.class.update({
+                where: { classId: targetClassId },
+                data: { enrolledCount: { increment: 1 } }
+            });
+            return { ...enrollment, placedByFallback };
+        });
+        return res.status(200).json({
+            message: result.status === "ACTIVE"
+                ? "Already enrolled and active."
+                : "Direct enrollment successful. Pending payment.",
+            enrollmentId: result.enrollmentId,
+            classId: result.classId,
+            status: result.status,
+            placement: result.placedByFallback ? "FALLBACK" : "PRIMARY",
+        });
+    }
+    catch (error) {
+        console.error("Direct Enrollment Error:", error);
+        const code = error.message.includes("CLASS") || error.message === "ALREADY_ENROLLED" ? "BAD_REQUEST" : "INTERNAL_SERVER_ERROR";
+        return res.status(code === "BAD_REQUEST" ? 400 : 500).json({
+            error: {
+                code,
+                message: error.message,
+                requestId: req.id
+            }
         });
     }
 }

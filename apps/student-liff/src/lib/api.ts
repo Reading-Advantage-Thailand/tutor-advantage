@@ -77,7 +77,13 @@ export const studentApi = {
   getDashboard: () => fetchWithAuth('/dashboard/summary'),
   getStudentProgress: () => fetchWithAuth('/student/progress'),
   getEnrolledClasses: () => fetchWithAuth('/classes'),
-  getAvailableClasses: () => fetchWithAuth('/classes/available'),
+  getAvailableClasses: (params?: { q?: string; cefr?: string }) => {
+    const qp = new URLSearchParams();
+    if (params?.q) qp.append("q", params.q);
+    if (params?.cefr) qp.append("cefr", params.cefr);
+    const qs = qp.toString();
+    return fetchWithAuth(`/classes/available${qs ? `?${qs}` : ""}`);
+  },
   getClassDetails: (classId: string) => fetchWithAuth(`/classes/${classId}`),
   enrollClass: (classId: string) => fetchWithAuth('/enroll/direct', {
     method: 'POST',

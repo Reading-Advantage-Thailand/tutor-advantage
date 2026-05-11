@@ -366,16 +366,50 @@ export async function getAvailableClasses(
   res: Response,
 ) {
   try {
+    const { q, cefr } = req.query;
+    const where: any = { status: "OPEN" };
+
+    if (cefr && cefr !== "ทั้งหมด") {
+      const targetCefr = String(cefr).split(" ").pop();
+      where.book = {
+        series: {
+          cefrLevel: { equals: targetCefr, mode: "insensitive" }
+        }
+      };
+    }
+
+    if (q) {
+      const searchStr = String(q);
+      const matchingTutors = await prisma.user.findMany({
+        where: { displayName: { contains: searchStr, mode: "insensitive" } },
+        select: { userId: true }
+      });
+      const matchingTutorIds = matchingTutors.map(u => u.userId);
+
+      where.OR = [
+        { title: { contains: searchStr, mode: "insensitive" } },
+        { tutorUserId: { in: matchingTutorIds } },
+        {
+          book: {
+            OR: [
+              { title: { contains: searchStr, mode: "insensitive" } },
+              { bookCode: { contains: searchStr, mode: "insensitive" } },
+              { series: { name: { contains: searchStr, mode: "insensitive" } } }
+            ]
+          }
+        }
+      ];
+    }
+
     const classes = await prisma.class.findMany({
-      where: { status: "OPEN" },
+      where,
       include: {
-        book: true,
+        book: { include: { series: true } },
         _count: { select: { enrollments: true } },
-      } as any,
+      },
       orderBy: { createdAt: "desc" },
     });
 
-    // Fetch tutors manually
     const tutorIds = [...new Set(classes.map((c) => c.tutorUserId))];
     const tutors = await prisma.user.findMany({
       where: { userId: { in: tutorIds } },
@@ -383,20 +417,33 @@ export async function getAvailableClasses(
     });
     const tutorMap = new Map(tutors.map((t) => [t.userId, t.displayName]));
 
+    const getColor = (cefrStr: string) => {
+      switch (cefrStr?.toUpperCase()) {
+        case "A1": return "#06c755";
+        case "A2": return "#3b82f6";
+        case "B1": return "#f59e0b";
+        default: return "#06c755";
+      }
+    };
+
     const mappedClasses = classes.map((c) => {
       const tutorName = tutorMap.get(c.tutorUserId) || "Unknown Tutor";
+      const seriesCefr = c.book?.series?.cefrLevel || "A1";
       return {
         id: c.classId,
-        name: c.title || (c as any).book?.title || "Untitled Class",
+        name: c.title || c.book?.title || "Untitled Class",
         tutor: tutorName,
-        tutorInitials: tutorName.substring(0, 2),
-        book: (c as any).book?.title || "Unknown Book",
+        tutorInitials: tutorName.substring(0, 2).toUpperCase(),
+        book: c.book?.title || "Unknown Book",
+        cefr: seriesCefr,
+        level: c.book?.levelNumber || 1,
+        seriesColor: getColor(seriesCefr),
         status: "open",
-        enrolled: (c as any)._count?.enrollments || 0,
+        enrolled: c._count?.enrollments || 0,
         capacity: c.capacity,
         price: Number(c.packagePriceMinor) / 100,
         packagePriceSatang: Number(c.packagePriceMinor),
-        nextSession: c.scheduleDescription || "TBA",
+        nextSession: c.scheduleDescription || "ยังไม่ได้กำหนด",
       };
     });
 
