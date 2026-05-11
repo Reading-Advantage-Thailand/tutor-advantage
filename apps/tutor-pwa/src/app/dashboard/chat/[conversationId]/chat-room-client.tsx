@@ -3,7 +3,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, Send, MoreVertical, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Send, MoreVertical, ImageIcon, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { sendMessage, getConversationMessages } from "../actions";
 
@@ -59,10 +59,10 @@ const playNotificationSound = () => {
 const MessageAvatar = ({ src, name }: { src?: string | null, name: string }) => {
   const [error, setError] = useState(false);
   if (src && !error) {
-    return <img src={src} onError={() => setError(true)} alt="" referrerPolicy="no-referrer" className="w-6 h-6 rounded-full object-cover shrink-0" />;
+    return <img src={src} onError={() => setError(true)} alt="" referrerPolicy="no-referrer" className="w-8 h-8 rounded-full object-cover shrink-0 shadow-sm border border-border/50" />;
   }
   return (
-    <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold shrink-0">
+    <div className="w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400 flex items-center justify-center text-xs font-bold shrink-0 shadow-sm border border-border/50">
       {name?.charAt(0) || "?"}
     </div>
   );
@@ -87,7 +87,6 @@ export default function ChatRoomClient({
   useEffect(() => {
     if (messages.length > prevLengthRef.current && prevLengthRef.current > 0) {
       const lastMsg = messages[messages.length - 1];
-      // If the newest message is from others and is not numeric temp ID
       if (lastMsg && !lastMsg.isOwn && !/^\d{13}$/.test(lastMsg.id)) {
         playNotificationSound();
       }
@@ -95,6 +94,11 @@ export default function ChatRoomClient({
     prevLengthRef.current = messages.length;
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Initial scroll to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView();
+  }, []);
 
   // Poll for updates every 4 seconds
   useEffect(() => {
@@ -108,23 +112,8 @@ export default function ChatRoomClient({
         if (res && res.messages) {
           setMessages(prev => {
             const newMsgs = res.messages || [];
-            // Preserve any locally created optimistic messages not yet persisted
-            // Our temp IDs use numeric timestamp strings
-            const pendingMsgs = prev.filter(m => m.senderId === "me" && !newMsgs.some((n: any) => n.id === m.id));
-            
-            // Wait, actually simpler logic, if message matches existing Server ID don't repeat.
-            // Let's keep simpler: replace state with server, append any which are genuinely optimistic wait state.
             const realNewIds = new Set(newMsgs.map((m: any) => m.id));
-            const myPending = prev.filter(m => m.senderId === "me" && !realNewIds.has(m.id) && isNaN(Number(m.id)) === false); 
-            // wait actually `tempId` was `Date.now().toString()`. So `isNaN(Number(m.id))` is false for temp IDs.
-            
-            // Let's just filter by length or presence of numeric parse
-            const tempMsgs = prev.filter(m => {
-               // It's temp if it was created with `Date.now().toString()` (approx 13 digits number)
-               // Server IDs are likely UUIDs (non-numeric)
-               return /^\d{13}$/.test(m.id);
-            });
-            
+            const tempMsgs = prev.filter(m => /^\d{13}$/.test(m.id));
             return [...newMsgs, ...tempMsgs];
           });
         }
@@ -160,10 +149,12 @@ export default function ChatRoomClient({
     };
     
     setMessages(prev => [...prev, optimisticMsg]);
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 50);
 
     try {
       const response = await sendMessage(conversationId, textToSend);
-      // Replace optimistic message with actual data from server
       setMessages(prev => prev.map(m => m.id === tempId ? {
         ...m,
         id: response.id,
@@ -171,9 +162,8 @@ export default function ChatRoomClient({
       } : m));
     } catch (error) {
       console.error("Failed to send message", error);
-      // Revert optimistic update on failure (in real app we'd show error state)
       setMessages(prev => prev.filter(m => m.id !== tempId));
-      setInputText(textToSend); // put text back in input
+      setInputText(textToSend);
     } finally {
       setSending(false);
     }
@@ -181,49 +171,53 @@ export default function ChatRoomClient({
 
   const getInitials = (name: string) => {
     if (!name) return "?";
-    // For Thai names, taking the first few logic, but simply taking first character works
     return name.charAt(0);
   };
 
+  // Modern chat layout specifically for mobile PWA
   return (
-    <div className="flex flex-col h-[calc(100vh-140px)] w-full max-w-3xl mx-auto -mt-4 sm:mt-0 bg-background sm:border sm:rounded-2xl sm:shadow-sm overflow-hidden relative">
-      {/* Header */}
-      <div className="flex items-center justify-between p-3 sm:px-6 sm:py-4 border-b bg-card/50 backdrop-blur-md z-10">
+    <div className="fixed inset-0 z-[60] flex flex-col bg-background sm:static sm:h-[calc(100vh-4rem)] sm:max-w-2xl sm:mx-auto sm:border-x sm:border-b sm:border-border sm:rounded-b-none sm:shadow-lg sm:my-0 sm:-mx-8">
+      
+      {/* Header - Fixed at top on mobile */}
+      <div className="flex items-center justify-between px-4 py-3 sm:py-4 border-b bg-background/95 backdrop-blur-md shrink-0 safe-top">
         <div className="flex items-center gap-3">
           <Link href="/dashboard/chat">
-            <Button variant="ghost" size="icon" className="h-8 w-8 sm:h-9 sm:w-9 rounded-full shrink-0">
-              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full shrink-0 -ml-2 text-foreground hover:bg-muted">
+              <ArrowLeft className="h-6 w-6" />
             </Button>
           </Link>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center text-brand-600 dark:text-brand-400 font-bold overflow-hidden border border-border/50">
               {metadata.image ? (
                 <img src={metadata.image} alt={metadata.title} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
               ) : (
                 getInitials(metadata.title)
               )}
             </div>
-            <div>
-              <h2 className="font-semibold text-sm sm:text-base leading-none">{metadata.title}</h2>
-              <p className="text-[10px] text-muted-foreground mt-1">{metadata.status || "คุยแบบเรียลไทม์"}</p>
+            <div className="flex flex-col">
+              <h2 className="font-bold text-base sm:text-lg leading-tight text-foreground truncate max-w-[180px] sm:max-w-[300px]">{metadata.title}</h2>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{metadata.status || "ออนไลน์"}</p>
+              </div>
             </div>
           </div>
         </div>
-        <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 text-muted-foreground">
-          <MoreVertical className="h-4 w-4" />
+        <Button variant="ghost" size="icon" className="rounded-full h-10 w-10 text-muted-foreground hover:bg-muted">
+          <MoreVertical className="h-5 w-5" />
         </Button>
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-muted/10">
-        <div className="text-center my-4">
-          <span className="text-[10px] bg-muted px-3 py-1 rounded-full text-muted-foreground">
-            การสนทนาที่ถูกเข้ารหัส
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 bg-[#f0f4f8] dark:bg-black/20">
+        <div className="text-center my-6">
+          <span className="text-[10px] font-bold uppercase tracking-widest bg-white dark:bg-muted px-4 py-1.5 rounded-full text-muted-foreground shadow-sm border border-border/50 inline-flex items-center gap-1.5">
+            <CheckCircle2 className="h-3 w-3" />
+            การสนทนาถูกเข้ารหัส
           </span>
         </div>
         
         {(() => {
-          // Find index of ABSOLUTELY the last message from the other person
           let lastOtherIdx = -1;
           for (let i = messages.length - 1; i >= 0; i--) {
             if (!messages[i].isOwn) {
@@ -236,63 +230,71 @@ export default function ChatRoomClient({
             const isMe = msg.isOwn;
             const displayTime = new Date(msg.time).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
             const isAbsoluteLastForOther = idx === lastOtherIdx;
+            // Check if previous message was from the same sender to group them
+            const showAvatar = !isMe && (idx === 0 || messages[idx - 1].senderId !== msg.senderId);
             
             return (
-              <div key={msg.id} className={`flex items-end gap-2 ${isMe ? "justify-end" : "justify-start"}`}>
+              <div key={msg.id} className={`flex items-end gap-2.5 ${isMe ? "justify-end" : "justify-start"}`}>
                 {!isMe && (
-                  <div className="w-6 flex justify-center flex-shrink-0 pb-4">
-                    {isAbsoluteLastForOther ? (
+                  <div className="w-8 flex justify-center flex-shrink-0 mb-5">
+                    {showAvatar ? (
                       <MessageAvatar src={msg.senderImage} name={msg.senderName} />
                     ) : (
-                      <div className="w-6" />
+                      <div className="w-8" />
                     )}
                   </div>
                 )}
                 
-                <div className={`flex flex-col max-w-[80%] sm:max-w-[75%] ${isMe ? "items-end" : "items-start"}`}>
+                <div className={`flex flex-col max-w-[75%] sm:max-w-[70%] ${isMe ? "items-end" : "items-start"}`}>
+                  {!isMe && showAvatar && (
+                    <span className="text-[10px] font-bold text-muted-foreground ml-1 mb-1">{msg.senderName}</span>
+                  )}
                   <div 
-                    className={`px-4 py-2.5 rounded-2xl shadow-sm border ${
+                    className={`px-4 py-3 shadow-sm border ${
                       isMe 
-                        ? "bg-primary border-transparent text-primary-foreground rounded-br-sm" 
-                        : "bg-card border-border text-foreground rounded-bl-sm"
+                        ? "bg-brand-500 border-brand-600 text-white rounded-[24px] rounded-br-[4px]" 
+                        : "bg-white dark:bg-card border-border/50 text-foreground rounded-[24px] rounded-bl-[4px]"
                     }`}
                   >
-                    <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{msg.text}</p>
+                    <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-words">{msg.text}</p>
                   </div>
-                  <div className="flex items-center gap-1 mt-0.5 px-1 opacity-60">
-                    <span className="text-[9px]">
+                  <div className="flex items-center gap-1 mt-1 px-1">
+                    <span className="text-[10px] font-bold text-muted-foreground/70">
                       {displayTime}
                     </span>
+                    {isMe && (
+                      <CheckCircle2 className={`h-3 w-3 ${/^\d{13}$/.test(msg.id) ? "text-muted-foreground/30" : "text-brand-500"}`} />
+                    )}
                   </div>
                 </div>
               </div>
             );
           });
         })()}
-        <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} className="h-2" />
       </div>
 
-      {/* Input Area */}
-      <div className="p-3 bg-background border-t">
-        <form onSubmit={handleSend} className="flex items-center gap-2">
-          <div className="flex-1 min-h-0 bg-muted/50 rounded-2xl border border-input focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/50 transition-all flex items-center pr-1">
+      {/* Input Area - Fixed at bottom on mobile */}
+      <div className="p-3 sm:p-4 bg-background border-t border-border shrink-0 safe-bottom">
+        <form onSubmit={handleSend} className="flex items-end gap-2">
+          <div className="flex-1 bg-muted/50 rounded-[24px] border-2 border-border/50 focus-within:border-brand-500 focus-within:bg-background transition-all flex items-center pr-1 min-h-[48px]">
             <input
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               placeholder="พิมพ์ข้อความ..."
-              className="w-full bg-transparent border-none focus:outline-none px-4 py-2.5 text-sm"
+              className="w-full bg-transparent border-none focus:outline-none px-4 py-3 text-[15px] font-medium"
               disabled={sending}
             />
             <Button 
               type="submit" 
               size="icon" 
               disabled={!inputText.trim() || sending}
-              className={`h-8 w-8 rounded-full shrink-0 transition-all ${
-                inputText.trim() ? "bg-primary text-primary-foreground" : "bg-muted-foreground/20 text-muted-foreground"
+              className={`h-10 w-10 rounded-full shrink-0 transition-all shadow-sm mr-1 ${
+                inputText.trim() ? "bg-brand-500 hover:bg-brand-600 text-white" : "bg-muted-foreground/20 text-muted-foreground"
               }`}
             >
-              <Send className="h-4 w-4 ml-0.5" />
+              <Send className="h-5 w-5 ml-1" />
             </Button>
           </div>
         </form>

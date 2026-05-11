@@ -1,4 +1,5 @@
-const BASE_URL = "http://localhost:3003";
+export const FINANCE_API_URL =
+  process.env.NEXT_PUBLIC_FINANCE_API_URL || "http://localhost:3003";
 
 function getErrorMessage(data: unknown) {
   if (typeof data === "string" && data.trim()) {
@@ -45,7 +46,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     headers.set("Content-Type", "application/json");
   }
 
-  const fullUrl = url.startsWith("http") ? url : `${BASE_URL}${url}`;
+  const fullUrl = url.startsWith("http") ? url : `${FINANCE_API_URL}${url}`;
 
   const response = await fetch(fullUrl, {
     ...options,
@@ -71,4 +72,51 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
   }
 
   return data;
+}
+
+export async function fetchBlobWithAuth(
+  url: string,
+  options: RequestInit = {},
+) {
+  let token = null;
+  if (typeof window !== "undefined") {
+    token = localStorage.getItem("admin_token");
+  }
+
+  const headers = new Headers(options.headers);
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  const fullUrl = url.startsWith("http") ? url : `${FINANCE_API_URL}${url}`;
+  const response = await fetch(fullUrl, { ...options, headers });
+
+  if (response.status === 401) {
+    if (typeof window !== "undefined") {
+      localStorage.clear();
+      window.location.href = "/login";
+    }
+    throw new Error("Session expired. Please sign in again.");
+  }
+
+  if (!response.ok) {
+    const isJson = response.headers
+      .get("content-type")
+      ?.includes("application/json");
+    const data = isJson ? await response.json() : await response.text();
+    throw new Error(getErrorMessage(data));
+  }
+
+  return response.blob();
+}
+
+export function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+  URL.revokeObjectURL(url);
 }

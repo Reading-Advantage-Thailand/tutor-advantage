@@ -12,74 +12,74 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col lg:grid lg:grid-cols-2">
       {/* Brand Hero Panel */}
-      <div className="relative flex flex-col bg-sidebar text-sidebar-foreground p-6 lg:p-10 shrink-0">
+      <div className="relative flex flex-col bg-brand-900 text-white p-8 lg:p-12 shrink-0 overflow-hidden">
         {/* Decorative gradient circle */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-primary/20 blur-3xl" />
-          <div className="absolute bottom-20 right-10 w-64 h-64 rounded-full bg-primary/10 blur-2xl" />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-40 -left-40 w-[30rem] h-[30rem] rounded-full bg-brand-500/30 blur-[100px]" />
+          <div className="absolute bottom-0 right-0 w-[20rem] h-[20rem] rounded-full bg-brand-400/20 blur-[80px]" />
         </div>
 
         {/* Top Bar with Logo & Theme Toggle (Mobile + Desktop) */}
-        <div className="relative flex items-center justify-between mb-8 lg:mb-auto">
+        <div className="relative z-10 flex items-center justify-between mb-12 lg:mb-auto">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 shrink-0 flex items-center justify-center">
+            <div className="w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center">
               <Image 
                 src="/icons/icon-192.png" 
                 alt="Tutor Advantage" 
-                width={40} 
-                height={40} 
-                className="rounded-xl shadow-sm"
+                width={36} 
+                height={36} 
+                className="rounded-xl"
               />
             </div>
             <div>
-              <p className="font-bold text-base text-sidebar-foreground">
+              <p className="font-bold text-lg text-white">
                 Tutor Advantage
               </p>
-              <p className="text-xs text-sidebar-foreground/50">
-                ระบบจัดการครูผู้สอน
+              <p className="text-xs text-brand-200 font-medium uppercase tracking-widest">
+                Instructor Portal
               </p>
             </div>
           </div>
           {/* Theme toggle directly in the hero for mobile */}
           <div className="lg:hidden">
-            <ThemeToggle className="text-sidebar-foreground hover:bg-sidebar-accent" />
+            <ThemeToggle className="text-white hover:bg-white/10" />
           </div>
         </div>
 
         {/* Main copy */}
-        <div className="relative flex-1 flex flex-col justify-center max-w-sm mt-4 lg:mt-0">
-          <h2 className="text-2xl lg:text-3xl font-bold text-sidebar-foreground leading-snug mb-3 lg:mb-4">
-            สอนอย่างมืออาชีพ
-            <br />
-            <span className="text-primary">รายได้มั่นคงและโปร่งใส</span>
+        <div className="relative z-10 flex-1 flex flex-col justify-center max-w-lg mt-8 lg:mt-0">
+          <h2 className="text-3xl lg:text-5xl font-black text-white leading-tight mb-6 tracking-tight">
+            Empowering <span className="text-brand-300">Educators</span>
           </h2>
-          <ul className="space-y-2 lg:space-y-3 text-sm text-sidebar-foreground/70 hidden sm:block">
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 text-primary">✓</span>
-              แผนการสอน 15 ขั้นตอนพร้อมใช้ทันที
+          <p className="text-brand-100 text-lg mb-8 font-medium">
+            Manage your classes, track your earnings, and grow your network with full transparency.
+          </p>
+          <ul className="space-y-4 text-brand-50/80 hidden sm:block font-medium">
+            <li className="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/10 backdrop-blur-sm">
+              <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold shrink-0">✓</div>
+              Access to ready-made 15-step lesson plans
             </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 text-primary">✓</span>
-              ระบบคำนวณรายได้และโบนัสเครือข่ายชัดเจน คุยสอบได้ทุกบาท
+            <li className="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/10 backdrop-blur-sm">
+              <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold shrink-0">✓</div>
+              Transparent commission & bonus tracking
             </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 text-primary">✓</span>
-              สร้าง QR Referral ใน 10 วินาที แชร์ให้ผู้ปกครองสมัครทันที
+            <li className="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/10 backdrop-blur-sm">
+              <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold shrink-0">✓</div>
+              Instant QR referral generation
             </li>
           </ul>
         </div>
 
-        {/* Footer quote - hidden on smaller than sm to save space */}
-        <p className="relative hidden sm:block text-xs text-sidebar-foreground/40 mt-8 lg:mt-auto">
-          &ldquo;ราคา การลงทะเบียน และคอมมิชชั่น — โปร่งใสทุกขั้นตอน&rdquo;
+        <p className="relative z-10 hidden sm:block text-xs text-brand-200/50 mt-12 lg:mt-auto font-medium uppercase tracking-widest">
+          Secure · Transparent · Professional
         </p>
       </div>
 
       {/* Login Form Panel */}
-      <div className="flex-1 flex flex-col bg-background relative rounded-t-3xl -mt-6 lg:mt-0 lg:rounded-none overflow-hidden shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] lg:shadow-none">
+      <div className="flex-1 flex flex-col bg-background relative rounded-t-[2.5rem] -mt-8 lg:mt-0 lg:rounded-none overflow-hidden shadow-[0_-20px_50px_-15px_rgba(0,0,0,0.3)] lg:shadow-none">
         
         {/* Desktop Theme Toggle positioned at top right */}
-        <div className="absolute top-6 right-6 lg:top-8 lg:right-8 hidden lg:block z-50">
+        <div className="absolute top-8 right-8 hidden lg:block z-50">
           <ThemeToggle className="text-muted-foreground hover:bg-muted" />
         </div>
 
@@ -87,35 +87,37 @@ export default function LoginPage() {
         <div className="hidden lg:block py-6"></div>
         
         {/* Form area */}
-        <div className="flex-1 flex items-center justify-center p-6 lg:p-8 pt-10 lg:pt-8 relative z-10 bg-background">
-          <div className="w-full max-w-sm space-y-6">
-            <div className="space-y-1 text-center lg:text-left">
-              <h1 className="text-2xl font-bold text-foreground">
-                เข้าสู่ระบบ
+        <div className="flex-1 flex items-center justify-center p-8 lg:p-12 relative z-10 bg-background">
+          <div className="w-full max-w-sm space-y-8">
+            <div className="space-y-2 text-center lg:text-left">
+              <h1 className="text-3xl font-black text-foreground tracking-tight">
+                Welcome Back
               </h1>
-              <p className="text-sm text-muted-foreground">
-                ยินดีต้อนรับกลับเพื่อจัดการคลาสเรียนของคุณ
+              <p className="text-sm font-medium text-muted-foreground">
+                Log in to access your instructor dashboard.
               </p>
             </div>
 
             <LoginForm />
 
-            <p className="text-center text-xs text-muted-foreground mt-8">
-              การเข้าสู่ระบบหมายความว่าคุณยอมรับ{" "}
-              <a
-                href="/terms"
-                className="underline underline-offset-4 hover:text-foreground transition-colors"
-              >
-                ข้อตกลงการให้บริการ
-              </a>{" "}
-              และ{" "}
-              <a
-                href="/privacy"
-                className="underline underline-offset-4 hover:text-foreground transition-colors"
-              >
-                นโยบายความเป็นส่วนตัว
-              </a>
-            </p>
+            <div className="pt-6 border-t border-border text-center">
+              <p className="text-xs text-muted-foreground font-medium">
+                By logging in, you agree to our{" "}
+                <a
+                  href="/terms"
+                  className="font-bold text-foreground hover:text-primary transition-colors underline underline-offset-4"
+                >
+                  Terms of Service
+                </a>{" "}
+                and{" "}
+                <a
+                  href="/privacy"
+                  className="font-bold text-foreground hover:text-primary transition-colors underline underline-offset-4"
+                >
+                  Privacy Policy
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       </div>

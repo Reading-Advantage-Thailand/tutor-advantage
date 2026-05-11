@@ -1,45 +1,128 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.triggerFraudAction = exports.getFraudFlags = void 0;
-const MOCK_FLAGS = [
-    {
-        id: "flg_9921nc9m21",
-        type: "VELOCITY_SPIKE",
-        severity: "HIGH",
-        targetId: "usr_tutor99x",
-        targetName: "Ajarn A",
-        description: "Abnormal enrollment spikes: 25 new enrollments in 1 hour.",
-        status: "INVESTIGATING",
-        createdAt: "2026-03-04T12:00:00Z",
-    },
-    {
-        id: "flg_102nf92n1f",
-        type: "PAYMENT_ANOMALY",
-        severity: "MEDIUM",
-        targetId: "cls_abc88",
-        targetName: "Origins Book 2",
-        description: "Multiple failed payment attempts from identical IP before success.",
-        status: "OPEN",
-        createdAt: "2026-03-04T09:15:00Z",
-    },
-];
+const database_1 = require("@tutor-advantage/database");
+const ACTIVE_STATUSES = ["OPEN", "INVESTIGATING", "MONITORING", "FROZEN"];
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const mapActionToStatus = (action) => {
+    switch (action.toUpperCase()) {
+        case "CLEAR":
+            return "CLEARED";
+        case "MONITOR":
+            return "MONITORING";
+        case "FREEZE":
+            return "FROZEN";
+        default:
+            return "INVESTIGATING";
+    }
+};
 const getFraudFlags = async (req, res) => {
-    res.status(200).json({
-        flags: MOCK_FLAGS,
-        stats: {
-            activeCount: 2,
-            velocityStatus: "Normal",
-            autoSuspensions: 0,
-        },
-    });
+    try {
+        const { q, status } = req.query;
+        const where = {};
+        if (status && status !== "ALL") {
+            where.status = status;
+        }
+        if (q?.trim()) {
+            const search = q.trim();
+            where.OR = [
+                ...(UUID_RE.test(search) ? [{ flagId: search }] : []),
+                { type: { contains: search, mode: "insensitive" } },
+                { severity: { contains: search, mode: "insensitive" } },
+                { targetId: { contains: search, mode: "insensitive" } },
+                { targetName: { contains: search, mode: "insensitive" } },
+                { description: { contains: search, mode: "insensitive" } },
+            ];
+        }
+        const [flags, activeCount, autoSuspensions, highRiskCount] = await Promise.all([
+            database_1.prisma.fraudFlag.findMany({
+                where,
+                orderBy: { createdAt: "desc" },
+                take: 100,
+            }),
+            database_1.prisma.fraudFlag.count({
+                where: { status: { in: ACTIVE_STATUSES } },
+            }),
+            database_1.prisma.fraudFlag.count({ where: { status: "FROZEN" } }),
+            database_1.prisma.fraudFlag.count({
+                where: {
+                    status: { in: ACTIVE_STATUSES },
+                    severity: { in: ["HIGH", "CRITICAL"] },
+                },
+            }),
+        ]);
+        res.status(200).json({
+            flags: flags.map((flag) => ({
+                id: flag.flagId,
+                type: flag.type,
+                severity: flag.severity,
+                targetId: flag.targetId,
+                targetName: flag.targetName ?? flag.targetId,
+                description: flag.description ?? "",
+                status: flag.status,
+                createdAt: flag.createdAt,
+                updatedAt: flag.updatedAt,
+            })),
+            stats: {
+                activeCount,
+                velocityStatus: highRiskCount > 0 ? "Review" : "Normal",
+                autoSuspensions,
+            },
+        });
+    }
+    catch (error) {
+        console.error("Get Fraud Flags Error:", error);
+        res.status(500).json({ error: "Could not fetch fraud flags" });
+    }
 };
 exports.getFraudFlags = getFraudFlags;
 const triggerFraudAction = async (req, res) => {
     const { id } = req.params;
     const { action } = req.body;
-    res.status(200).json({
-        success: true,
-        message: `Action ${action} processed for flag ${id}`,
-    });
+    const userId = req.user?.userId;
+    if (!action) {
+        return res.status(400).json({ error: "action is required" });
+    }
+    try {
+        const current = await database_1.prisma.fraudFlag.findUnique({
+            where: { flagId: id },
+        });
+        if (!current) {
+            return res.status(404).json({ error: "Fraud flag not found" });
+        }
+        const newStatus = mapActionToStatus(action);
+        const flag = await database_1.prisma.fraudFlag.update({
+            where: { flagId: id },
+            data: { status: newStatus, updatedAt: new Date() },
+        });
+        if (userId) {
+            await database_1.prisma.auditEvent.create({
+                data: {
+                    actorId: userId,
+                    action: `FRAUD_${action.toUpperCase()}`,
+                    entityType: "FraudFlag",
+                    entityId: id,
+                    payload: {
+                        previousStatus: current.status,
+                        newStatus,
+                        targetId: current.targetId,
+                        type: current.type,
+                    },
+                },
+            });
+        }
+        res.status(200).json({
+            success: true,
+            message: `Fraud flag ${id} updated to ${newStatus}`,
+            flag: {
+                id: flag.flagId,
+                status: flag.status,
+            },
+        });
+    }
+    catch (error) {
+        console.error("Fraud Action Error:", error);
+        res.status(500).json({ error: "Could not update fraud flag" });
+    }
 };
 exports.triggerFraudAction = triggerFraudAction;

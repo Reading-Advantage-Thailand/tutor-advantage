@@ -450,7 +450,8 @@ function PaymentFlow() {
         </button>
 
         <p style={{ textAlign: "center", fontSize: "0.6875rem", color: "var(--text-tertiary)", lineHeight: 1.65 }}>
-          ชำระเงินครั้งเดียว ไม่มีค่าบริการเพิ่มเติม<br />สอบถามเพิ่มเติมติดต่อทีมงานผ่าน LINE
+          ชำระเงินครั้งเดียว ไม่มีค่าบริการเพิ่มเติม<br />
+          สอบถามเพิ่มเติม <a href="https://lin.ee/zqTz6feg" target="_blank" rel="noopener noreferrer" style={{ color: "var(--brand-600)", fontWeight: 600, textDecoration: "none" }}>ติดต่อทีมงานผ่าน LINE</a>
         </p>
       </div>
     </div>

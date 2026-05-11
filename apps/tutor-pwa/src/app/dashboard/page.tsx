@@ -37,16 +37,16 @@ const statusMap: Record<string, { label: string; className: string }> = {
   open: {
     label: "รับสมัครอยู่",
     className:
-      "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20",
+      "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-none",
   },
   full: {
     label: "เต็มแล้ว",
     className:
-      "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20",
+      "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-none",
   },
   closed: {
     label: "ปิดแล้ว",
-    className: "bg-muted text-muted-foreground border border-border",
+    className: "bg-muted text-muted-foreground border-none",
   },
 };
 
@@ -64,33 +64,29 @@ export default async function DashboardPage() {
       label: "คลาสที่เปิด",
       value: learning?.openClasses ?? "0",
       icon: BookOpen,
-      bg: "bg-indigo-500/10 dark:bg-indigo-500/15",
-      iconColor: "text-indigo-500",
-      border: "border-indigo-500/20",
+      bg: "bg-indigo-500/10 dark:bg-indigo-900/20",
+      iconColor: "text-indigo-600 dark:text-indigo-400",
     },
     {
       label: "นักเรียนทั้งหมด",
       value: learning?.totalStudents ?? "0",
       icon: Users,
-      bg: "bg-emerald-500/10 dark:bg-emerald-500/15",
-      iconColor: "text-emerald-500",
-      border: "border-emerald-500/20",
+      bg: "bg-emerald-500/10 dark:bg-emerald-900/20",
+      iconColor: "text-emerald-600 dark:text-emerald-400",
     },
     {
       label: "รายได้เดือนนี้",
       value: finance ? `฿${finance.estimatedCommissionTHB.toLocaleString()}` : "฿0",
       icon: TrendingUp,
-      bg: "bg-amber-500/10 dark:bg-amber-500/15",
-      iconColor: "text-amber-500",
-      border: "border-amber-500/20",
+      bg: "bg-amber-500/10 dark:bg-amber-900/20",
+      iconColor: "text-amber-600 dark:text-amber-400",
     },
     {
       label: "คลาสสัปดาห์นี้",
       value: learning?.classesThisWeek ?? "0",
       icon: Calendar,
-      bg: "bg-rose-500/10 dark:bg-rose-500/15",
-      iconColor: "text-rose-500",
-      border: "border-rose-500/20",
+      bg: "bg-rose-500/10 dark:bg-rose-900/20",
+      iconColor: "text-rose-600 dark:text-rose-400",
     },
   ];
 
@@ -106,40 +102,40 @@ export default async function DashboardPage() {
     : 0;
 
   return (
-    <div className="space-y-6 lg:space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 max-w-5xl mx-auto w-full animate-in fade-in duration-500">
       <VerificationBanner />
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">ภาพรวม</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
+          <h1 className="text-3xl font-black tracking-tight text-foreground">ภาพรวม</h1>
+          <p className="text-sm font-medium text-muted-foreground mt-1">
             สรุปคลาสและรายได้ของคุณในเดือนนี้
           </p>
         </div>
         <Link href="/dashboard/classes/new" className="hidden sm:block">
-          <Button id="btn-create-class" size="sm" className="gap-2 shrink-0">
+          <Button id="btn-create-class" size="sm" className="h-10 px-6 rounded-xl font-bold bg-primary hover:bg-primary/90 shadow-md shadow-primary/20 gap-2 shrink-0 transition-all">
             <Plus className="h-4 w-4" />
             สร้างคลาสใหม่
           </Button>
         </Link>
       </div>
 
-      {/* Stats — colored accent backgrounds for depth */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-        {stats.map(({ label, value, icon: Icon, bg, iconColor, border }) => (
+      {/* Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {stats.map(({ label, value, icon: Icon, bg, iconColor }) => (
           <div
             key={label}
-            className={`rounded-xl border p-3 lg:p-4 flex flex-col justify-between ${bg} ${border} shadow-sm`}
+            className="rounded-3xl border-none p-5 sm:p-6 flex flex-col justify-between bg-card shadow-sm hover:shadow-md transition-all group"
           >
-            <div className="flex items-start justify-between mb-2 lg:mb-3">
-              <Icon className={`h-4 w-4 lg:h-5 lg:w-5 ${iconColor}`} />
+            <div className={`p-3 rounded-2xl w-fit mb-4 transition-transform group-hover:scale-110 ${bg}`}>
+              <Icon className={`h-5 w-5 ${iconColor}`} />
             </div>
             <div>
-              <p className="text-xl lg:text-2xl font-bold text-foreground tracking-tight">
+              <p className="text-2xl sm:text-3xl font-black text-foreground tracking-tight tabular-nums">
                 {value}
               </p>
-              <p className="text-[11px] lg:text-xs text-muted-foreground mt-0.5 lg:mt-1 font-medium">
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mt-1">
                 {label}
               </p>
             </div>
@@ -148,78 +144,78 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
-        {/* Commission Progress - Prominent on mobile (moved up or emphasized) */}
-        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-background to-background relative overflow-hidden shadow-sm lg:order-last">
-          {/* Subtle glow effect */}
-          <div className="absolute top-0 right-0 p-8 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
+        {/* Commission Progress */}
+        <Card className="border-none shadow-sm rounded-3xl bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/5 relative overflow-hidden lg:order-last group">
+          <div className="absolute top-0 right-0 p-8 w-32 h-32 bg-primary/20 rounded-full blur-3xl group-hover:bg-primary/30 transition-colors" />
 
-          <CardHeader className="pb-3 relative z-10">
-            <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+          <CardHeader className="pb-4 relative z-10">
+            <CardTitle className="text-sm font-bold text-foreground flex items-center gap-2 uppercase tracking-widest">
+              <Star className="h-5 w-5 text-amber-500 fill-amber-500 drop-shadow-sm" />
               เป้าหมายเรทถัดไป
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-5 relative z-10">
-            {/* Rate badge */}
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">เรทปัจจุบัน</span>
-              <span className="text-xl font-bold text-primary">
-                {commissionRate}
-              </span>
+          <CardContent className="space-y-6 relative z-10 pb-6 px-6">
+            <div className="bg-card/80 backdrop-blur-sm p-4 rounded-2xl border border-white/20 dark:border-white/5">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">เรทปัจจุบัน</span>
+                <span className="text-2xl font-black text-primary drop-shadow-sm">
+                  {commissionRate}
+                </span>
+              </div>
             </div>
 
             {/* Bar */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span className="font-medium">฿{finance?.grossVolumeTHB.toLocaleString() ?? "0"}</span>
-                <span>
+            <div className="space-y-3">
+              <div className="flex justify-between text-xs font-bold">
+                <span className="text-foreground">฿{finance?.grossVolumeTHB.toLocaleString() ?? "0"}</span>
+                <span className="text-muted-foreground">
                   {targetGoal > 0
                     ? `เป้า ฿${targetGoal.toLocaleString()}`
                     : "เรทสูงสุด"}
                 </span>
               </div>
-              <div className="w-full bg-primary/10 rounded-full h-3 overflow-hidden">
+              <div className="w-full bg-background rounded-full h-4 overflow-hidden border border-border/50 shadow-inner">
                 <div
-                  className="bg-primary h-3 rounded-full transition-all duration-1000 ease-out relative"
+                  className="bg-primary h-4 rounded-full transition-all duration-1000 ease-out relative"
                   style={{ width: `${progressPercent}%` }}
                 >
-                  <div className="absolute inset-0 bg-white/20 w-full animate-pulse" />
+                  <div className="absolute inset-0 bg-white/20 w-full animate-shimmer-cta" />
                 </div>
               </div>
             </div>
 
             {/* Unlock nudge */}
-            <div className="rounded-xl bg-background border border-border shadow-sm p-4 text-sm space-y-1">
+            <div className="rounded-2xl bg-card border border-border/50 shadow-sm p-5 space-y-2">
               {targetGoal <= 0 ? (
-                <p className="font-semibold text-emerald-500 flex items-center gap-2">
+                <p className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
                   ✅ อยู่ในเรทสูงสุดแล้ว
                 </p>
               ) : progressPercent >= 100 ? (
-                <p className="font-semibold text-emerald-500 flex items-center gap-2">
+                <p className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
                   ✅ ถึงเป้าหมายแล้ว!
                 </p>
               ) : (
-                <p className="font-semibold text-primary flex items-center gap-2">
+                <p className="font-bold text-primary flex items-center gap-2">
                   🎯 ขาดอีก ฿{((finance ? targetGoal - finance.grossVolumeTHB : targetGoal)).toLocaleString()}
                 </p>
               )}
-              <p className="text-muted-foreground text-xs leading-relaxed">
+              <p className="text-muted-foreground text-[10px] font-medium leading-relaxed">
                 ยอดการสอนสดและโบนัสทีมรวมกันจะปลดล็อกเรทคอมมิชชั่นที่สูงขึ้น
               </p>
             </div>
 
             {/* Breakdown Mini */}
-            <div className="pt-2 border-t border-border/50">
+            <div className="pt-4 border-t border-border/50">
               <Link
                 href="/dashboard/earnings"
-                className="flex items-center justify-between w-full group"
+                className="flex items-center justify-between w-full group/link bg-background/50 hover:bg-background p-3 rounded-xl transition-colors border border-transparent hover:border-border/50"
               >
                 <div>
-                  <p className="text-xs text-muted-foreground">รวมสุทธิ</p>
-                  <p className="font-bold text-foreground">฿{finance?.estimatedCommissionTHB.toLocaleString() ?? "0"}</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">รวมสุทธิ</p>
+                  <p className="font-black text-lg text-foreground">฿{finance?.estimatedCommissionTHB.toLocaleString() ?? "0"}</p>
                 </div>
-                <div className="flex items-center gap-1 text-xs text-primary font-medium group-hover:underline">
-                  ดูรายละเอียด <ArrowUpRight className="h-3 w-3" />
+                <div className="flex items-center gap-1 text-xs font-bold text-primary">
+                  ดูรายละเอียด <ArrowUpRight className="h-4 w-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
                 </div>
               </Link>
             </div>
@@ -227,22 +223,23 @@ export default async function DashboardPage() {
         </Card>
 
         {/* Classes List */}
-        <Card className="lg:col-span-2 border-border/60 shadow-sm flex flex-col">
-          <CardHeader className="pb-3 flex flex-row items-center justify-between">
-            <CardTitle className="text-sm font-semibold text-foreground">
+        <Card className="lg:col-span-2 border-none shadow-sm rounded-3xl bg-card flex flex-col overflow-hidden">
+          <CardHeader className="pb-4 bg-muted/20 border-b px-6 sm:px-8 py-6 flex flex-row items-center justify-between">
+            <CardTitle className="text-base font-bold text-foreground">
               คลาสเรียนล่าสุด
             </CardTitle>
             <Link
               href="/dashboard/classes"
-              className="text-xs text-primary hover:underline flex items-center gap-0.5 p-1 -m-1"
+              className="text-xs font-bold text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
             >
-              ดูทั้งหมด <ChevronRight className="h-3 w-3" />
+              ดูทั้งหมด <ChevronRight className="h-4 w-4" />
             </Link>
           </CardHeader>
-          <CardContent className="flex-1 flex flex-col px-4 sm:px-6 pb-2">
+          <CardContent className="flex-1 flex flex-col p-0">
             <div className="divide-y divide-border/50 flex-1">
               {recentClasses.length === 0 && (
-                <div className="py-8 text-center text-muted-foreground text-sm">
+                <div className="py-16 text-center text-muted-foreground font-medium flex flex-col items-center justify-center gap-3">
+                  <BookOpen className="h-10 w-10 text-muted-foreground/30" />
                   ไม่มีคลาสเรียนในขณะนี้
                 </div>
               )}
@@ -252,53 +249,51 @@ export default async function DashboardPage() {
                   <Link
                     key={cls.id}
                     href={`/dashboard/classes/${cls.id}`}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between py-4 group -mx-2 px-2 rounded-xl hover:bg-muted/50 transition-colors gap-3 sm:gap-4"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-6 group hover:bg-muted/30 transition-colors gap-4"
                   >
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between sm:justify-start gap-2 mb-1 sm:mb-0">
-                        <p className="text-[15px] font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                    <div className="min-w-0 flex-1 space-y-2">
+                      <div className="flex items-center justify-between sm:justify-start gap-3">
+                        <p className="text-base font-bold text-foreground truncate group-hover:text-primary transition-colors">
                           {cls.name}
                         </p>
-                        {/* Status badge moved here on mobile for better flow */}
                         <span
-                          className={`sm:hidden px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-wider ${s.className}`}
+                          className={`sm:hidden px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${s.className}`}
                         >
                           {s.label}
                         </span>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3 shrink-0" />
+                      <p className="text-sm font-medium text-muted-foreground flex items-center gap-3">
+                        <span className="flex items-center gap-1.5 bg-muted px-2 py-1 rounded-md">
+                          <Calendar className="h-4 w-4 shrink-0" />
                           {cls.nextSession}
                         </span>
-                        <span className="text-border">|</span>
-                        <span className="flex items-center gap-1">
-                          <Users className="h-3 w-3 shrink-0" />
+                        <span className="flex items-center gap-1.5 bg-muted px-2 py-1 rounded-md">
+                          <Users className="h-4 w-4 shrink-0" />
                           {cls.students} คน
                         </span>
                       </p>
                     </div>
-                    <div className="hidden sm:flex items-center gap-3 shrink-0">
+                    <div className="hidden sm:flex items-center gap-4 shrink-0">
                       <span
-                        className={`px-2.5 py-1 rounded-full text-xs font-semibold ${s.className}`}
+                        className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${s.className}`}
                       >
                         {s.label}
                       </span>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+                      <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                      </div>
                     </div>
                   </Link>
                 );
               })}
             </div>
 
-            {/* Mobile Create Class Button Factory at bottom of card */}
-            <div className="pt-4 pb-2 sm:hidden mt-auto border-t border-border/30">
+            <div className="p-6 sm:hidden mt-auto border-t border-border/30 bg-muted/10">
               <Link href="/dashboard/classes/new" className="block w-full">
                 <Button
-                  variant="outline"
-                  className="w-full gap-2 text-primary border-primary/20 hover:bg-primary/5"
+                  className="w-full h-12 rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md"
                 >
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-5 w-5 mr-2" />
                   สร้างคลาสใหม่
                 </Button>
               </Link>

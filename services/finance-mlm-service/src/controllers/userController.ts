@@ -1,6 +1,61 @@
 import { Request, Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 
+const ACTIVE_CLASS_STATUSES = ["ACTIVE", "OPEN", "IN_PROGRESS", "PUBLISHED"];
+const ACTIVE_ENROLLMENT_STATUSES = ["ACTIVE", "CONFIRMED", "PAID"];
+const VERIFICATION_FIELDS = ["idCard", "bankBook", "address"];
+
+const fieldLabels: Record<string, string> = {
+  idCard: "ID card",
+  bankBook: "Bank book",
+  address: "Address",
+};
+
+const asSettings = (value: unknown) => (value as Record<string, any>) || {};
+
+function getSubmittedVerificationFields(settingsValue: unknown) {
+  const verification = asSettings(settingsValue).verification || {};
+  return VERIFICATION_FIELDS.filter(
+    (field) => verification[field]?.status === "PENDING",
+  ).map((field) => ({
+    field,
+    label: fieldLabels[field],
+    updatedAt: verification[field]?.updatedAt,
+  }));
+}
+
+async function getUserClassCounts(userIds: string[]) {
+  if (userIds.length === 0) {
+    return { tutor: new Map<string, number>(), student: new Map<string, number>() };
+  }
+
+  const [tutorCounts, studentCounts] = await Promise.all([
+    prisma.class.groupBy({
+      by: ["tutorUserId"],
+      where: {
+        tutorUserId: { in: userIds },
+        status: { in: ACTIVE_CLASS_STATUSES },
+      },
+      _count: { classId: true },
+    }),
+    prisma.enrollment.groupBy({
+      by: ["studentUserId"],
+      where: {
+        studentUserId: { in: userIds },
+        status: { in: ACTIVE_ENROLLMENT_STATUSES },
+      },
+      _count: { enrollmentId: true },
+    }),
+  ]);
+
+  return {
+    tutor: new Map(tutorCounts.map((item) => [item.tutorUserId, item._count.classId])),
+    student: new Map(
+      studentCounts.map((item) => [item.studentUserId, item._count.enrollmentId]),
+    ),
+  };
+}
+
 export const getUsers = async (req: Request, res: Response) => {
   try {
     const users = await prisma.user.findMany({
@@ -11,42 +66,49 @@ export const getUsers = async (req: Request, res: Response) => {
         email: true,
         verificationStatus: true,
         settings: true,
-        idCardImageUrl: true,
-        bankBookImageUrl: true,
         isActive: true,
         createdAt: true,
       },
       orderBy: { createdAt: "desc" },
     });
 
-    const fieldLabels: Record<string, string> = {
-      idCard: "บัตรประชาชน",
-      bankBook: "สมุดบัญชีธนาคาร",
-      address: "ที่อยู่",
-    };
+    const userIds = users.map((user) => user.userId);
+    const [classCounts, guardianCounts] = await Promise.all([
+      getUserClassCounts(userIds),
+      prisma.guardianConsent.groupBy({
+        by: ["studentUserId"],
+        where: { studentUserId: { in: userIds } },
+        _count: { consentId: true },
+      }),
+    ]);
+    const guardianMap = new Map(
+      guardianCounts.map((item) => [item.studentUserId, item._count.consentId]),
+    );
 
-    const formattedUsers = users.map(u => {
-      const settings = (u.settings as Record<string, any>) || {};
-      const verification = settings.verification || {};
-      const submittedVerificationFields = ["idCard", "bankBook", "address"]
-        .filter((field) => verification[field]?.status === "PENDING")
-        .map((field) => ({
-          field,
-          label: fieldLabels[field],
-          updatedAt: verification[field]?.updatedAt,
-        }));
+    const formattedUsers = users.map((user) => {
+      const submittedVerificationFields = getSubmittedVerificationFields(
+        user.settings,
+      );
+      const activeClasses =
+        user.role === "TUTOR"
+          ? (classCounts.tutor.get(user.userId) ?? 0)
+          : (classCounts.student.get(user.userId) ?? 0);
 
       return {
-        id: u.userId,
-        name: u.displayName || u.email || u.userId,
-        role: u.role,
-        email: u.email,
-        activeClasses: 0,
-        status: u.isActive ? "ACTIVE" : "INACTIVE",
-        verificationStatus: u.verificationStatus,
+        id: user.userId,
+        name: user.displayName || user.email || user.userId,
+        role: user.role,
+        email: user.email,
+        activeClasses,
+        status: user.isActive ? "ACTIVE" : "INACTIVE",
+        verificationStatus: user.verificationStatus,
         submittedVerificationFields,
         pendingVerificationCount: submittedVerificationFields.length,
-        joined: u.createdAt.toISOString().split("T")[0],
+        guardianSetup:
+          user.role === "STUDENT"
+            ? (guardianMap.get(user.userId) ?? 0) > 0
+            : true,
+        joined: user.createdAt.toISOString().split("T")[0],
       };
     });
 
@@ -72,8 +134,39 @@ export const getUserDetails = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // In a real app, we'd fetch classes from the learning schema
-    // For now, we'll keep the mock classes but use real user data
+    const [guardianCount, tutorClasses, enrollments] = await Promise.all([
+      prisma.guardianConsent.count({ where: { studentUserId: id } }),
+      prisma.class.findMany({
+        where: { tutorUserId: id },
+        include: { book: true },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.enrollment.findMany({
+        where: { studentUserId: id },
+        include: { class: { include: { book: true } } },
+        orderBy: { createdAt: "desc" },
+      }),
+    ]);
+
+    const classes =
+      user.role === "TUTOR"
+        ? tutorClasses.map((cls) => ({
+            id: cls.classId,
+            name: cls.title,
+            students: cls.enrolledCount,
+            status: cls.status,
+            bookTitle: cls.book.title,
+            startsAt: cls.startsAt?.toISOString() ?? null,
+          }))
+        : enrollments.map((enrollment) => ({
+            id: enrollment.class.classId,
+            name: enrollment.class.title,
+            students: enrollment.class.enrolledCount,
+            status: enrollment.status,
+            bookTitle: enrollment.class.book.title,
+            startsAt: enrollment.class.startsAt?.toISOString() ?? null,
+          }));
+
     res.status(200).json({
       user: {
         id: user.userId,
@@ -88,14 +181,15 @@ export const getUserDetails = async (req: Request, res: Response) => {
         verificationStatus: user.verificationStatus,
         verificationComment: user.verificationComment,
         settings: user.settings,
-        guardianSetup: user.role === "STUDENT", // Simplified
-        consentLogs: user.userConsents.map(c => ({
-          id: c.userConsentId,
-          version: "v1.0",
-          type: c.consentType,
-          timestamp: c.createdAt.toISOString(),
+        guardianSetup: user.role === "STUDENT" ? guardianCount > 0 : true,
+        consentLogs: user.userConsents.map((consent) => ({
+          id: consent.userConsentId,
+          version: consent.effectiveAt.toISOString().split("T")[0],
+          type: consent.consentType,
+          status: consent.status,
+          timestamp: consent.createdAt.toISOString(),
         })),
-        classes: [], // Fetching classes would require more joins/queries
+        classes,
       },
     });
   } catch (error) {
@@ -108,16 +202,11 @@ export const verifyUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { status, comment, field, fieldComments } = req.body;
 
-  // status: "VERIFIED" | "REJECTED"
-  // field: "idCard" | "bankBook" | "address" | "ALL"
-  // fieldComments: optional map for bulk review reasons, keyed by field
-
   if (!["VERIFIED", "REJECTED"].includes(status)) {
     return res.status(400).json({ error: "Invalid status" });
   }
 
-  const validFields = ["idCard", "bankBook", "address"];
-  const normalizedField = validFields.includes(field) ? field : "ALL";
+  const normalizedField = VERIFICATION_FIELDS.includes(field) ? field : "ALL";
   const globalComment = typeof comment === "string" ? comment.trim() : "";
   const commentsByField =
     fieldComments && typeof fieldComments === "object" ? fieldComments : {};
@@ -130,8 +219,11 @@ export const verifyUser = async (req: Request, res: Response) => {
   };
 
   if (status === "REJECTED") {
-    const targetFields = normalizedField === "ALL" ? validFields : [normalizedField];
-    const missingReason = targetFields.some((fieldName) => !getCommentForField(fieldName));
+    const targetFields =
+      normalizedField === "ALL" ? VERIFICATION_FIELDS : [normalizedField];
+    const missingReason = targetFields.some(
+      (fieldName) => !getCommentForField(fieldName),
+    );
     if (missingReason) {
       return res.status(400).json({ error: "Reject reason is required" });
     }
@@ -140,50 +232,55 @@ export const verifyUser = async (req: Request, res: Response) => {
   try {
     const user = await prisma.user.findUnique({
       where: { userId: id },
-      select: { settings: true, verificationStatus: true }
+      select: { settings: true },
     });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const currentSettings = (user.settings as Record<string, any>) || {};
+    const currentSettings = asSettings(user.settings);
     const verification = currentSettings.verification || {};
     const newVerification = { ...verification };
-
     const now = new Date().toISOString();
 
     if (normalizedField !== "ALL") {
-      newVerification[normalizedField] = { 
+      newVerification[normalizedField] = {
         ...newVerification[normalizedField],
         status,
-        comment: status === "REJECTED" ? getCommentForField(normalizedField) : "", 
-        updatedAt: now 
+        comment: status === "REJECTED" ? getCommentForField(normalizedField) : "",
+        updatedAt: now,
       };
     } else {
-      // Compatibility with old behavior or bulk verify
-      validFields.forEach(f => {
-        if (newVerification[f]) {
-          newVerification[f] = {
-            ...newVerification[f],
-            status,
-            comment: status === "REJECTED" ? getCommentForField(f) : "",
-            updatedAt: now,
-          };
-        }
+      VERIFICATION_FIELDS.forEach((verificationField) => {
+        newVerification[verificationField] = {
+          ...newVerification[verificationField],
+          status,
+          comment:
+            status === "REJECTED" ? getCommentForField(verificationField) : "",
+          updatedAt: now,
+        };
       });
     }
 
-    const hasRejected = validFields.some(f => newVerification[f]?.status === "REJECTED");
-    const hasPending = validFields.some(f => newVerification[f]?.status === "PENDING");
-    const allVerified = 
-      newVerification.idCard?.status === "VERIFIED" && 
-      newVerification.bankBook?.status === "VERIFIED" && 
-      newVerification.address?.status === "VERIFIED";
+    const hasRejected = VERIFICATION_FIELDS.some(
+      (verificationField) =>
+        newVerification[verificationField]?.status === "REJECTED",
+    );
+    const hasPending = VERIFICATION_FIELDS.some(
+      (verificationField) =>
+        newVerification[verificationField]?.status === "PENDING",
+    );
+    const allVerified = VERIFICATION_FIELDS.every(
+      (verificationField) =>
+        newVerification[verificationField]?.status === "VERIFIED",
+    );
 
-    const data: any = {
+    const data: Record<string, unknown> = {
       settings: { ...currentSettings, verification: newVerification },
-      verificationComment: globalComment || (status === "REJECTED" ? getCommentForField(normalizedField) : null),
+      verificationComment:
+        globalComment ||
+        (status === "REJECTED" ? getCommentForField(normalizedField) : null),
     };
 
     if (allVerified) {
@@ -202,10 +299,10 @@ export const verifyUser = async (req: Request, res: Response) => {
       data,
     });
 
-    res.status(200).json({ 
-      success: true, 
-      message: `User ${id} ${field || 'all'} verification status updated to ${status}`,
-      verificationDetails: newVerification
+    res.status(200).json({
+      success: true,
+      message: `User ${id} ${field || "all"} verification status updated to ${status}`,
+      verificationDetails: newVerification,
     });
   } catch (error) {
     console.error("Verify User Error:", error);
@@ -216,7 +313,6 @@ export const verifyUser = async (req: Request, res: Response) => {
 export const anonymizeUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    // Basic anonymization (clear PII)
     await prisma.user.update({
       where: { userId: id },
       data: {
@@ -225,9 +321,12 @@ export const anonymizeUser = async (req: Request, res: Response) => {
         phoneNumber: null,
         idCardImageUrl: null,
         bankBookImageUrl: null,
+        verificationComment: null,
       },
     });
-    res.status(200).json({ success: true, message: `User ${id} has been anonymized` });
+    res
+      .status(200)
+      .json({ success: true, message: `User ${id} has been anonymized` });
   } catch (error) {
     console.error("Anonymize User Error:", error);
     res.status(500).json({ error: "Could not anonymize user" });

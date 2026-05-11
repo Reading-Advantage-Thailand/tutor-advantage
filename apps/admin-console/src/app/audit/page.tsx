@@ -33,6 +33,8 @@ import {
   Eye,
   Copy,
   Check,
+  Clock,
+  ArrowRight
 } from "lucide-react";
 
 interface AuditLog {
@@ -64,50 +66,49 @@ const ACTION_CONFIG: Record<
   }
 > = {
   PREVIEW: {
-    label: "สร้าง Preview",
+    label: "Preview Generated",
     icon: PlayCircle,
     className:
-      "border-blue-500/40 text-blue-600 dark:text-blue-400 bg-blue-500/10",
+      "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-none",
   },
   APPROVE: {
-    label: "อนุมัติ Settlement",
+    label: "Settlement Approved",
     icon: CheckCircle2,
     className:
-      "border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10",
+      "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-none",
   },
   REJECT: {
-    label: "ปฏิเสธ Settlement",
+    label: "Settlement Rejected",
     icon: XCircle,
-    className: "border-red-500/40 text-red-600 dark:text-red-400 bg-red-500/10",
+    className: "bg-red-500/10 text-red-700 dark:text-red-400 border-none",
   },
   ADJUST_CREATE: {
-    label: "สร้าง Adjustment",
+    label: "Adjustment Created",
     icon: FilePenLine,
     className:
-      "border-violet-500/40 text-violet-600 dark:text-violet-400 bg-violet-500/10",
+      "bg-violet-500/10 text-violet-700 dark:text-violet-400 border-none",
   },
   ADJUST_APPROVE: {
-    label: "อนุมัติ Adjustment",
+    label: "Adjustment Approved",
     icon: CheckCircle2,
     className:
-      "border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10",
+      "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-none",
   },
   ADJUST_REJECT: {
-    label: "ปฏิเสธ Adjustment",
+    label: "Adjustment Rejected",
     icon: XCircle,
-    className: "border-red-500/40 text-red-600 dark:text-red-400 bg-red-500/10",
+    className: "bg-red-500/10 text-red-700 dark:text-red-400 border-none",
   },
   EXPORT: {
     label: "Export CSV",
     icon: Download,
     className:
-      "border-amber-500/40 text-amber-600 dark:text-amber-400 bg-amber-500/10",
+      "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-none",
   },
 };
 
 const ALL_ACTIONS = "ALL";
 
-// ── CopyableId Component ────────────────────────────────────────────────────
 function CopyableId({ name, id }: { name: string; id: string }) {
   const [copied, setCopied] = useState(false);
 
@@ -121,14 +122,14 @@ function CopyableId({ name, id }: { name: string; id: string }) {
 
   return (
     <div>
-      <p className="font-medium text-foreground text-xs">{name}</p>
-      <div className="flex items-center gap-1 mt-0.5">
+      <p className="font-bold text-foreground text-xs">{name}</p>
+      <div className="flex items-center gap-1 mt-0.5 bg-muted/50 px-2 py-0.5 rounded border border-border/50 w-fit">
         <p className="font-mono text-[10px] text-muted-foreground">
           {truncated}
         </p>
         <button
           onClick={handleCopy}
-          className="text-muted-foreground hover:text-foreground transition-colors"
+          className="text-muted-foreground hover:text-brand-600 transition-colors"
           title="Copy full ID"
         >
           {copied ? (
@@ -184,35 +185,40 @@ export default function AuditPage() {
       setPage(1);
     };
 
-  const formatDate = (iso: string) =>
-    new Date(iso).toLocaleString("th-TH", {
-      timeZone: "Asia/Bangkok",
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
+  const formatDate = (iso: string) => {
+    const d = new Date(iso);
+    return {
+      time: d.toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" }),
+      date: d.toLocaleDateString("th-TH", { year: "numeric", month: "short", day: "numeric" })
+    };
+  };
 
   return (
-    <div className="space-y-6 w-full">
+    <div className="space-y-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
+      <div className="flex flex-col gap-2">
+        <h2 className="text-3xl font-black tracking-tight text-foreground">Audit & Compliance Trail</h2>
+        <p className="text-muted-foreground font-medium">Immutable log of all financial and system-critical actions.</p>
+      </div>
+
       {/* Header & Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <ShieldCheck className="h-4 w-4 text-primary" />
-            Audit Trail — ประวัติการทำงานแบบ Immutable
-          </CardTitle>
-          <CardDescription>
-            บันทึกทุกการกระทำที่เกี่ยวกับ Settlement และ Payout
-            ไม่สามารถแก้ไขย้อนหลังได้
-          </CardDescription>
+      <Card className="border-none shadow-sm rounded-3xl bg-card overflow-hidden">
+        <CardHeader className="bg-muted/20 border-b px-8 py-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-brand-50 dark:bg-brand-900/20 rounded-xl text-brand-600 dark:text-brand-400">
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle className="text-lg font-bold">Search Logs</CardTitle>
+              <CardDescription className="font-medium text-xs">
+                Filter by billing period or specific action type.
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
+        <CardContent className="p-8">
+          <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div className="space-y-1.5 w-full sm:w-48">
-              <Label htmlFor="filterPeriod">รอบบิล</Label>
+              <Label htmlFor="filterPeriod" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Billing Period</Label>
               <Input
                 id="filterPeriod"
                 type="month"
@@ -220,31 +226,26 @@ export default function AuditPage() {
                 onChange={(e) =>
                   handleFilterChange(setFilterPeriod)(e.target.value)
                 }
+                className="h-12 rounded-xl border-2 focus-visible:ring-brand-500"
               />
             </div>
-            <div className="space-y-1.5 w-full sm:w-56">
-              <Label>ประเภทการกระทำ</Label>
+            <div className="space-y-1.5 w-full sm:w-64">
+              <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Action Type</Label>
               <Select
                 value={filterAction}
                 onValueChange={handleFilterChange(setFilterAction)}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="ทั้งหมด" />
+                <SelectTrigger className="h-12 rounded-xl border-2 focus-visible:ring-brand-500">
+                  <SelectValue placeholder="All Actions" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={ALL_ACTIONS}>ทั้งหมด</SelectItem>
-                  <SelectItem value="PREVIEW">สร้าง Preview</SelectItem>
-                  <SelectItem value="APPROVE">อนุมัติ Settlement</SelectItem>
-                  <SelectItem value="REJECT">ปฏิเสธ Settlement</SelectItem>
-                  <SelectItem value="ADJUST_CREATE">
-                    สร้าง Adjustment
-                  </SelectItem>
-                  <SelectItem value="ADJUST_APPROVE">
-                    อนุมัติ Adjustment
-                  </SelectItem>
-                  <SelectItem value="ADJUST_REJECT">
-                    ปฏิเสธ Adjustment
-                  </SelectItem>
+                <SelectContent className="rounded-xl border-border/50">
+                  <SelectItem value={ALL_ACTIONS}>All Actions</SelectItem>
+                  <SelectItem value="PREVIEW">Preview Generated</SelectItem>
+                  <SelectItem value="APPROVE">Settlement Approved</SelectItem>
+                  <SelectItem value="REJECT">Settlement Rejected</SelectItem>
+                  <SelectItem value="ADJUST_CREATE">Adjustment Created</SelectItem>
+                  <SelectItem value="ADJUST_APPROVE">Adjustment Approved</SelectItem>
+                  <SelectItem value="ADJUST_REJECT">Adjustment Rejected</SelectItem>
                   <SelectItem value="EXPORT">Export CSV</SelectItem>
                 </SelectContent>
               </Select>
@@ -253,12 +254,12 @@ export default function AuditPage() {
               variant="outline"
               onClick={loadLogs}
               disabled={loading}
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto h-12 px-8 rounded-xl font-bold hover:bg-brand-50 hover:text-brand-600 transition-colors"
             >
               <RefreshCw
                 className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
               />
-              รีเฟรช
+              Filter
             </Button>
           </div>
         </CardContent>
@@ -266,114 +267,134 @@ export default function AuditPage() {
 
       {/* Error */}
       {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
+        <Alert variant="destructive" className="rounded-2xl border-2 shadow-sm">
+          <AlertCircle className="h-5 w-5" />
+          <AlertDescription className="font-medium">{error}</AlertDescription>
         </Alert>
       )}
 
       {/* Empty */}
       {!loading && logs.length === 0 && !error && (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12 text-muted-foreground text-sm gap-2">
-            <Eye className="h-8 w-8 opacity-20" />
-            <p>ไม่พบบันทึกในรอบบิลและตัวกรองที่เลือก</p>
+        <Card className="border-none shadow-sm rounded-3xl bg-muted/20 border-2 border-dashed">
+          <CardContent className="flex flex-col items-center justify-center py-20 text-center">
+            <Clock className="h-12 w-12 text-muted-foreground/30 mb-4" />
+            <p className="font-bold text-muted-foreground">No audit logs found</p>
+            <p className="text-sm text-muted-foreground/60 mt-1">Try adjusting your filters or selecting a different billing period.</p>
           </CardContent>
         </Card>
       )}
 
       {/* Log Timeline */}
-      <div className="space-y-3">
-        {logs.map((log, index) => {
-          const config = ACTION_CONFIG[log.actionType];
-          const Icon = config?.icon ?? Eye;
-          return (
-            <div key={log.auditId} className="flex gap-3">
-              {/* Timeline Connector */}
-              <div className="flex flex-col items-center">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted border border-border shrink-0">
-                  <Icon className="h-4 w-4 text-muted-foreground" />
+      <div className="relative pl-6 sm:pl-10 pb-8">
+        {logs.length > 0 && (
+          <div className="absolute top-0 bottom-0 left-9 sm:left-[3.25rem] w-px bg-border/80" />
+        )}
+        <div className="space-y-8">
+          {logs.map((log) => {
+            const config = ACTION_CONFIG[log.actionType];
+            const Icon = config?.icon ?? Eye;
+            const dateStr = formatDate(log.createdAt);
+            return (
+              <div key={log.auditId} className="relative group">
+                {/* Timeline Node */}
+                <div className="absolute -left-9 sm:-left-10 mt-1.5 flex items-center justify-center w-8 h-8 rounded-full bg-card border-2 border-border shadow-sm z-10 group-hover:border-brand-500 group-hover:text-brand-500 transition-colors">
+                  <Icon className="h-4 w-4" />
                 </div>
-                {index < logs.length - 1 && (
-                  <div className="w-px flex-1 bg-border mt-1 min-h-4" />
-                )}
+
+                {/* Log Card */}
+                <Card className="ml-4 border-none shadow-sm rounded-2xl bg-card overflow-hidden ring-1 ring-border/50 hover:ring-brand-500/20 hover:shadow-md transition-all">
+                  <CardContent className="p-0">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between p-5 gap-4">
+                      <div className="space-y-3 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge
+                            variant="outline"
+                            className={`px-3 py-1 font-bold text-[10px] uppercase tracking-wider rounded-full ${config?.className ?? ""}`}
+                          >
+                            {config?.label ?? log.actionType}
+                          </Badge>
+                          {log.periodMonth && (
+                            <Badge variant="secondary" className="px-2 py-1 font-bold text-[10px] rounded-md bg-muted/50 border-none">
+                              Period: {log.periodMonth}
+                            </Badge>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                          <div className="bg-muted/30 p-3 rounded-xl border border-border/50">
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Actor</p>
+                            <CopyableId
+                              name={log.displayName ?? log.actorUserId}
+                              id={log.actorUserId}
+                            />
+                          </div>
+                          <div className="bg-muted/30 p-3 rounded-xl border border-border/50">
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Target Entity</p>
+                            <CopyableId name={log.actionType} id={log.targetId} />
+                          </div>
+                        </div>
+
+                        {(log.previousStatus || log.newStatus) && (
+                          <div className="flex items-center gap-3 pt-2">
+                            {log.previousStatus && (
+                              <div className="flex flex-col">
+                                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-0.5">From</span>
+                                <span className="font-mono text-xs font-bold text-foreground bg-muted px-2 py-1 rounded-md border border-border/50">
+                                  {log.previousStatus}
+                                </span>
+                              </div>
+                            )}
+                            {log.previousStatus && log.newStatus && <ArrowRight className="h-4 w-4 text-muted-foreground mt-4" />}
+                            {log.newStatus && (
+                              <div className="flex flex-col">
+                                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-0.5">To</span>
+                                <span className="font-mono text-xs font-bold text-foreground bg-muted px-2 py-1 rounded-md border border-border/50">
+                                  {log.newStatus}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex flex-col items-start sm:items-end gap-1 border-t sm:border-t-0 pt-4 sm:pt-0 sm:pl-4">
+                        <span className="text-xl font-black text-foreground tabular-nums tracking-tighter">
+                          {dateStr.time}
+                        </span>
+                        <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
+                          {dateStr.date}
+                        </span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-
-              {/* Log Card */}
-              <Card className="flex-1 mb-3">
-                <CardContent className="p-4 space-y-2">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                    <Badge
-                      variant="outline"
-                      className={config?.className ?? ""}
-                    >
-                      <Icon className="h-3 w-3 mr-1" />
-                      {config?.label ?? log.actionType}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground tabular-nums">
-                      {formatDate(log.createdAt)}
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                    <div>
-                      <p className="text-muted-foreground">ทำโดย</p>
-                      <CopyableId
-                        name={log.displayName ?? log.actorUserId}
-                        id={log.actorUserId}
-                      />
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">รอบบิล</p>
-                      <p className="font-medium">{log.periodMonth || "—"}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Target ID</p>
-                      <CopyableId name={log.actionType} id={log.targetId} />
-                    </div>
-                  </div>
-
-                  {(log.previousStatus || log.newStatus) && (
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      {log.previousStatus && (
-                        <span className="font-mono bg-muted px-1.5 py-0.5 rounded">
-                          {log.previousStatus}
-                        </span>
-                      )}
-                      {log.previousStatus && log.newStatus && <span>→</span>}
-                      {log.newStatus && (
-                        <span className="font-mono bg-muted px-1.5 py-0.5 rounded">
-                          {log.newStatus}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between pt-4">
+        <div className="flex items-center justify-between pt-4 pb-8">
           <Button
             variant="outline"
+            className="rounded-xl font-bold"
             disabled={page === 1}
             onClick={() => setPage((p) => Math.max(1, p - 1))}
           >
-            ก่อนหน้า
+            Previous
           </Button>
-          <span className="text-sm text-muted-foreground">
-            หน้า {page} จาก {totalPages}
+          <span className="text-sm font-bold text-muted-foreground bg-muted/50 px-4 py-2 rounded-xl">
+            Page {page} of {totalPages}
           </span>
           <Button
             variant="outline"
+            className="rounded-xl font-bold"
             disabled={page === totalPages}
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
           >
-            ถัดไป
+            Next
           </Button>
         </div>
       )}

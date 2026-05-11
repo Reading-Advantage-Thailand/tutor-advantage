@@ -1,101 +1,189 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteMapping = exports.createMapping = exports.getMappings = exports.getUnresolvedLinks = exports.resolveException = exports.getExceptions = void 0;
-// Mock Data
-const MOCK_EXCEPTIONS = [
-    {
-        id: "evt_3923nf92301",
-        type: "WEBHOOK_FAILED",
-        studentName: "Somchai J.",
-        classId: "cls_abc123",
-        provider: "OMISE / PROMPTPAY",
-        amount: "2500 THB",
-        status: "UNRESOLVED",
-        createdAt: "2026-03-04T10:15:00Z",
-        errorDetail: "Timeout waiting for learning-service to activate enrollment",
-    },
-    {
-        id: "evt_1a9sd8f7a9s",
-        type: "ENROLLMENT_MISMATCH",
-        studentName: "Nong M.",
-        classId: "cls_xyz987",
-        provider: "OMISE / CARD",
-        amount: "2500 THB",
-        status: "UNRESOLVED",
-        createdAt: "2026-03-04T08:30:22Z",
-        errorDetail: "Payment succeeded but class was full. Payment held.",
-    },
-];
-const UNRESOLVED_LINKS = [
-    {
-        url: "domain.com/student/read/origin-v1-bonus",
-        hits: 1240,
-        lastSeen: "2026-03-04T09:30:00Z",
-    },
-    {
-        url: "domain.com/student/read/quest-special-evt",
-        hits: 856,
-        lastSeen: "2026-03-03T18:15:00Z",
-    },
-    {
-        url: "domain.com/student/read/legacy-test-1",
-        hits: 42,
-        lastSeen: "2026-03-01T10:00:00Z",
-    },
-];
-let ACTIVE_MAPPINGS = [
-    {
-        id: "map_1",
-        source: "domain.com/student/read/origins-book-1-intro",
-        target: "/articles/lvl1-intro",
-        created: "2026-02-28",
-    },
-    {
-        id: "map_2",
-        source: "domain.com/student/read/quest-4-chapter1",
-        target: "/articles/lvl4-ch1",
-        created: "2026-02-28",
-    },
-];
-// Exceptions
+const database_1 = require("@tutor-advantage/database");
+const formatAmount = (amountMinor) => {
+    if (amountMinor == null)
+        return "-";
+    return `${(Number(amountMinor) / 100).toLocaleString("th-TH", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    })} THB`;
+};
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const getExceptions = async (req, res) => {
-    res.status(200).json({ exceptions: MOCK_EXCEPTIONS });
+    try {
+        const { status, q } = req.query;
+        const where = {};
+        if (status && status !== "ALL") {
+            where.status = status;
+        }
+        if (q?.trim()) {
+            const search = q.trim();
+            where.OR = [
+                ...(UUID_RE.test(search) ? [{ exceptionId: search }] : []),
+                { type: { contains: search, mode: "insensitive" } },
+                { studentName: { contains: search, mode: "insensitive" } },
+                { classId: { contains: search, mode: "insensitive" } },
+                { provider: { contains: search, mode: "insensitive" } },
+                { errorDetail: { contains: search, mode: "insensitive" } },
+            ];
+        }
+        const exceptions = await database_1.prisma.exception.findMany({
+            where,
+            orderBy: { createdAt: "desc" },
+            take: 100,
+        });
+        res.status(200).json({
+            exceptions: exceptions.map((item) => ({
+                id: item.exceptionId,
+                type: item.type,
+                studentName: item.studentName ?? "Unknown student",
+                classId: item.classId ?? "-",
+                provider: item.provider ?? "-",
+                amount: formatAmount(item.amountMinor),
+                amountMinor: item.amountMinor == null ? null : Number(item.amountMinor),
+                status: item.status,
+                createdAt: item.createdAt,
+                updatedAt: item.updatedAt,
+                errorDetail: item.errorDetail ?? "",
+            })),
+        });
+    }
+    catch (error) {
+        console.error("Get Exceptions Error:", error);
+        res.status(500).json({ error: "Could not fetch exceptions" });
+    }
 };
 exports.getExceptions = getExceptions;
 const resolveException = async (req, res) => {
     const { id, action } = req.params;
-    res
-        .status(200)
-        .json({
-        success: true,
-        message: `Action ${action} applied to exception ${id}`,
-    });
+    const userId = req.user?.userId;
+    const normalizedAction = action.replace(/\s+/g, "_").toUpperCase();
+    const status = normalizedAction === "VOID" || normalizedAction === "VOID_CANCEL"
+        ? "VOIDED"
+        : "RESOLVED";
+    try {
+        const current = await database_1.prisma.exception.findUnique({
+            where: { exceptionId: id },
+        });
+        if (!current) {
+            return res.status(404).json({ error: "Exception not found" });
+        }
+        const exception = await database_1.prisma.exception.update({
+            where: { exceptionId: id },
+            data: { status, updatedAt: new Date() },
+        });
+        if (userId) {
+            await database_1.prisma.auditEvent.create({
+                data: {
+                    actorId: userId,
+                    action: `EXCEPTION_${normalizedAction}`,
+                    entityType: "Exception",
+                    entityId: id,
+                    payload: {
+                        previousStatus: current.status,
+                        newStatus: status,
+                        exceptionType: exception.type,
+                    },
+                },
+            });
+        }
+        res.status(200).json({
+            success: true,
+            message: `Exception ${id} updated to ${status}`,
+        });
+    }
+    catch (error) {
+        console.error("Resolve Exception Error:", error);
+        res.status(500).json({ error: "Could not update exception" });
+    }
 };
 exports.resolveException = resolveException;
-// Legacy Links
 const getUnresolvedLinks = async (req, res) => {
-    res.status(200).json({ links: UNRESOLVED_LINKS });
+    try {
+        const links = await database_1.prisma.unresolvedLegacyLink.findMany({
+            orderBy: [{ hits: "desc" }, { lastSeen: "desc" }],
+            take: 100,
+        });
+        res.status(200).json({
+            links: links.map((link) => ({
+                url: link.url,
+                hits: link.hits,
+                lastSeen: link.lastSeen,
+            })),
+        });
+    }
+    catch (error) {
+        console.error("Get Unresolved Links Error:", error);
+        res.status(500).json({ error: "Could not fetch unresolved links" });
+    }
 };
 exports.getUnresolvedLinks = getUnresolvedLinks;
 const getMappings = async (req, res) => {
-    res.status(200).json({ mappings: ACTIVE_MAPPINGS });
+    try {
+        const mappings = await database_1.prisma.legacyLinkMapping.findMany({
+            orderBy: { createdAt: "desc" },
+            take: 100,
+        });
+        res.status(200).json({
+            mappings: mappings.map((mapping) => ({
+                id: mapping.mappingId,
+                source: mapping.sourceUrl,
+                target: mapping.targetPath,
+                created: mapping.createdAt.toISOString().split("T")[0],
+                createdAt: mapping.createdAt,
+            })),
+        });
+    }
+    catch (error) {
+        console.error("Get Legacy Mappings Error:", error);
+        res.status(500).json({ error: "Could not fetch legacy mappings" });
+    }
 };
 exports.getMappings = getMappings;
 const createMapping = async (req, res) => {
     const { source, target } = req.body;
-    const newMap = {
-        id: `map_${Date.now()}`,
-        source,
-        target,
-        created: new Date().toISOString().split("T")[0],
-    };
-    ACTIVE_MAPPINGS.push(newMap);
-    res.status(201).json({ success: true, mapping: newMap });
+    if (!source?.trim() || !target?.trim()) {
+        return res.status(400).json({ error: "source and target are required" });
+    }
+    try {
+        const mapping = await database_1.prisma.legacyLinkMapping.upsert({
+            where: { sourceUrl: source.trim() },
+            update: { targetPath: target.trim() },
+            create: {
+                sourceUrl: source.trim(),
+                targetPath: target.trim(),
+            },
+        });
+        await database_1.prisma.unresolvedLegacyLink.deleteMany({
+            where: { url: source.trim() },
+        });
+        res.status(201).json({
+            success: true,
+            mapping: {
+                id: mapping.mappingId,
+                source: mapping.sourceUrl,
+                target: mapping.targetPath,
+                created: mapping.createdAt.toISOString().split("T")[0],
+            },
+        });
+    }
+    catch (error) {
+        console.error("Create Legacy Mapping Error:", error);
+        res.status(500).json({ error: "Could not save legacy mapping" });
+    }
 };
 exports.createMapping = createMapping;
 const deleteMapping = async (req, res) => {
     const { id } = req.params;
-    ACTIVE_MAPPINGS = ACTIVE_MAPPINGS.filter((m) => m.id !== id);
-    res.status(200).json({ success: true, message: "Mapping deleted" });
+    try {
+        await database_1.prisma.legacyLinkMapping.delete({ where: { mappingId: id } });
+        res.status(200).json({ success: true, message: "Mapping deleted" });
+    }
+    catch (error) {
+        console.error("Delete Legacy Mapping Error:", error);
+        res.status(500).json({ error: "Could not delete legacy mapping" });
+    }
 };
 exports.deleteMapping = deleteMapping;

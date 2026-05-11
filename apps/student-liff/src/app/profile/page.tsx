@@ -55,7 +55,7 @@ export default function ProfilePage() {
     {
       title: "ช่วยเหลือ",
       items: [
-        { id: "menu-contact", Icon: MessageCircle, label: "ติดต่อทีมงาน", href: "#", iconBg: "rgba(99, 102, 241, 0.15)", iconColor: "rgb(99, 102, 241)" },
+        { id: "menu-contact", Icon: MessageCircle, label: "ติดต่อทีมงาน", href: "https://lin.ee/zqTz6feg", iconBg: "rgba(99, 102, 241, 0.15)", iconColor: "rgb(99, 102, 241)" },
         { id: "menu-terms", Icon: FileText, label: "เงื่อนไขการใช้งาน", href: "/terms", iconBg: "var(--neutral-100)", iconColor: "var(--neutral-500)" },
         { id: "menu-privacy", Icon: Shield, label: "นโยบายความเป็นส่วนตัว", href: "/privacy", iconBg: "var(--neutral-100)", iconColor: "var(--neutral-500)" },
       ],

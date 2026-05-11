@@ -20,21 +20,26 @@ export default async function DashboardLayout({
 
       {/* Main Container */}
       <div className="flex flex-col flex-1 overflow-hidden relative">
-        {/* Mobile top bar (just branding and theme toggle now) */}
-        <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-background border-b border-border z-10">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 shrink-0 flex items-center justify-center">
+        {/* Mobile top bar */}
+        <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-background border-b border-border/50 z-10 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 shrink-0 flex items-center justify-center bg-brand-500 rounded-lg shadow-sm text-white">
               <Image 
                 src="/icons/icon-192.png" 
                 alt="Tutor Advantage" 
-                width={28} 
-                height={28} 
-                className="rounded-lg shadow-sm"
+                width={32} 
+                height={32} 
+                className="rounded-lg"
               />
             </div>
-            <span className="font-semibold text-sm">Tutor Advantage</span>
+            <div className="flex flex-col">
+              <span className="font-black text-sm leading-tight text-foreground">Tutor Advantage</span>
+              <span className="text-[10px] font-bold text-brand-600 dark:text-brand-400 uppercase tracking-widest leading-tight">Instructor</span>
+            </div>
           </div>
-          <ThemeToggle />
+          <div className="bg-muted/30 rounded-xl p-1 border border-border/50">
+            <ThemeToggle />
+          </div>
         </div>
 
         {/* Main Content Area — add pb-20 on mobile to account for bottom nav */}

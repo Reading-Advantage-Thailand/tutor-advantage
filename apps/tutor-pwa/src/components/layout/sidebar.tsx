@@ -112,32 +112,32 @@ export function Sidebar({ notifications: initialNotifications }: SidebarProps) {
   };
 
   return (
-    <aside className="flex flex-col h-full w-64 bg-sidebar text-sidebar-foreground">
+    <aside className="flex flex-col h-full w-72 bg-sidebar text-sidebar-foreground border-r border-sidebar-border/50">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-5 py-5 border-b border-sidebar-border">
-        <div className="w-9 h-9 shrink-0 flex items-center justify-center">
+      <div className="flex items-center gap-3 px-6 py-6">
+        <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-brand-500 rounded-xl shadow-md text-white">
           <Image
             src="/icons/icon-192.png"
             alt="Tutor Advantage"
-            width={36}
-            height={36}
-            className="rounded-lg shadow-sm"
+            width={40}
+            height={40}
+            className="rounded-xl"
           />
         </div>
         <div className="min-w-0">
-          <p className="font-semibold text-sm text-sidebar-foreground leading-none">
+          <p className="font-black text-base text-foreground leading-tight tracking-tight">
             Tutor Advantage
           </p>
-          <p className="text-xs text-sidebar-foreground/50 mt-0.5 leading-none">
-            ระบบครูผู้สอน
+          <p className="text-xs font-bold text-brand-600 dark:text-brand-400 mt-0.5 uppercase tracking-widest leading-tight">
+            Instructor
           </p>
         </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-        <p className="px-3 text-[10px] font-semibold uppercase tracking-widest text-sidebar-foreground/40 mb-2">
-          เมนูหลัก
+      <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
+        <p className="px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-3 mt-2">
+          Main Menu
         </p>
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -151,23 +151,23 @@ export function Sidebar({ notifications: initialNotifications }: SidebarProps) {
               href={item.href}
               id={`nav-${item.href.split("/").pop()}`}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 relative",
+                "flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-200 relative group",
                 active
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground",
+                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                  : "text-muted-foreground hover:bg-muted/80 hover:text-foreground",
               )}
             >
-              <Icon className="h-4 w-4 shrink-0" />
+              <Icon className={cn("h-5 w-5 shrink-0 transition-transform", active ? "" : "group-hover:scale-110")} />
               <span className="flex-1">{item.label}</span>
               
               {/* Badges for Notifications */}
               {item.href === "/dashboard/chat" && notifications?.unreadChat ? (
-                <span className="bg-destructive text-destructive-foreground text-[10px] font-bold px-1.5 py-0.5 rounded-full inline-flex items-center justify-center min-w-[20px]">
+                <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full inline-flex items-center justify-center min-w-[20px] shadow-sm animate-pulse">
                   {notifications.unreadChat}
                 </span>
               ) : null}
               {item.href === "/dashboard/classes" && notifications?.availableAuctions ? (
-                <span className="bg-amber-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full inline-flex items-center justify-center min-w-[20px]">
+                <span className="bg-amber-500 text-amber-950 text-[10px] font-black px-2 py-0.5 rounded-full inline-flex items-center justify-center min-w-[20px] shadow-sm">
                   {notifications.availableAuctions}
                 </span>
               ) : null}
@@ -177,29 +177,36 @@ export function Sidebar({ notifications: initialNotifications }: SidebarProps) {
       </nav>
 
       {/* Bottom actions */}
-      <div className="px-3 py-3 border-t border-sidebar-border space-y-0.5">
-        <a
-          href="https://line.me/oa"
-          target="_blank"
-          rel="noopener noreferrer"
-          id="nav-help"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
-        >
-          <HelpCircle className="h-4 w-4 shrink-0" />
-          ช่วยเหลือ / LINE OA
-        </a>
-        <div className="flex items-center gap-1">
-          <button
-            id="btn-logout"
-            onClick={handleLogout}
-            className="flex-1 flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
+      <div className="p-4 space-y-2 mt-auto">
+        <div className="bg-muted/30 rounded-3xl p-4 border border-border/50">
+          <a
+            href="https://lin.ee/zqTz6feg"
+            target="_blank"
+            rel="noopener noreferrer"
+            id="nav-help"
+            className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-foreground bg-background hover:bg-brand-50 hover:text-brand-700 transition-colors shadow-sm mb-2 border border-border/50"
           >
-            <LogOut className="h-4 w-4 shrink-0" />
-            ออกจากระบบ
-          </button>
-          <ThemeToggle />
+            <HelpCircle className="h-5 w-5 shrink-0 text-brand-500" />
+            ติดต่อทีมงาน
+          </a>
+          <div className="flex items-center gap-2">
+            <button
+              id="btn-logout"
+              onClick={handleLogout}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-900/30 transition-colors"
+            >
+              <LogOut className="h-4 w-4 shrink-0" />
+              ออก
+            </button>
+            <div className="bg-background rounded-2xl p-1.5 border border-border/50 shadow-sm flex items-center justify-center">
+              <ThemeToggle />
+            </div>
+          </div>
         </div>
       </div>
     </aside>
   );
 }
+
+// Forced component refresh for hydration sync
+

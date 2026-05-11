@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   Card,
@@ -12,10 +12,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Users, Search, ShieldCheck, User, GraduationCap, Bell, FileText } from "lucide-react";
-
+import { Users, Search, ShieldCheck, User, GraduationCap, Bell, FileText, ArrowRight, ShieldAlert } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { fetchWithAuth } from "@/lib/api";
-import { useEffect, useCallback } from "react";
 
 interface UserInfo {
   id: string;
@@ -61,156 +60,157 @@ export default function UsersPage() {
       u.name.toLowerCase().includes(search.toLowerCase()) ||
       u.id.toLowerCase().includes(search.toLowerCase()),
   );
+  
   const pendingVerificationUsers = users.filter(
     (user) => user.role === "TUTOR" && (user.pendingVerificationCount || 0) > 0,
   );
+  
   const pendingVerificationItems = pendingVerificationUsers.reduce(
     (sum, user) => sum + (user.pendingVerificationCount || 0),
     0,
   );
 
   return (
-    <div className="space-y-6 w-full">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Users className="h-4 w-4 text-primary" />
-            Users & Consent Management
-          </CardTitle>
-          <CardDescription>
-            จัดการผู้ใช้งาน, สิทธิผู้ปกครอง, และประวัติความยินยอม (Privacy &
-            PDPA)
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="relative w-full sm:w-80">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="ค้นหาชื่อ, หรือ User ID..."
-              className="pl-8"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-        </CardContent>
-      </Card>
+    <div className="space-y-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
+      <div className="flex flex-col gap-2">
+        <h2 className="text-3xl font-black tracking-tight text-foreground">Users & Compliance</h2>
+        <p className="text-muted-foreground font-medium">Manage user accounts, guardian consent, and identity verifications.</p>
+      </div>
 
-      {pendingVerificationItems > 0 && (
-        <Card className="border-amber-500/40 bg-amber-500/5">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base text-amber-700 dark:text-amber-300">
-              <Bell className="h-4 w-4" />
-              เอกสารรอตรวจสอบ
-            </CardTitle>
-            <CardDescription>
-              มี tutor ส่งเอกสารหรือข้อมูลยืนยันตัวตนเข้ามา {pendingVerificationItems} รายการ
-            </CardDescription>
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Main Search Card */}
+        <Card className="flex-1 overflow-hidden border-none shadow-sm rounded-3xl bg-card">
+          <CardHeader className="pb-4 bg-muted/20 border-b px-6 py-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-brand-50 dark:bg-brand-900/20 rounded-xl text-brand-600 dark:text-brand-400">
+                <Users className="h-5 w-5" />
+              </div>
+              <div>
+                <CardTitle className="text-lg font-bold">User Directory</CardTitle>
+                <CardDescription className="font-medium text-xs">
+                  Search across all students and tutors.
+                </CardDescription>
+              </div>
+            </div>
           </CardHeader>
-          <CardContent className="grid gap-2 sm:grid-cols-2">
-            {pendingVerificationUsers.slice(0, 6).map((user) => (
-              <Link href={`/users/${user.id}`} key={`pending-${user.id}`}>
-                <div className="rounded-md border bg-background/80 p-3 transition-colors hover:border-amber-500/50">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="truncate text-sm font-medium">{user.name || user.id}</p>
-                    <Badge className="bg-amber-500 text-white hover:bg-amber-500">
-                      {user.pendingVerificationCount}
-                    </Badge>
-                  </div>
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {user.submittedVerificationFields?.map((item) => (
-                      <Badge
-                        key={item.field}
-                        variant="outline"
-                        className="border-amber-500/40 bg-amber-500/10 text-[10px] text-amber-700 dark:text-amber-300"
-                      >
-                        <FileText className="mr-1 h-3 w-3" />
-                        {item.label}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </Link>
-            ))}
+          <CardContent className="p-6">
+            <div className="relative max-w-md w-full group">
+              <Search className="absolute left-3.5 top-3.5 h-5 w-5 text-muted-foreground group-focus-within:text-brand-600 transition-colors" />
+              <Input
+                type="text"
+                placeholder="Search by name or User ID..."
+                className="pl-11 h-12 rounded-2xl border-2 focus-visible:ring-brand-500 font-medium bg-muted/30"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
           </CardContent>
         </Card>
-      )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredUsers.map((user) => (
-          <Link href={`/users/${user.id}`} key={user.id}>
-            <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
-              <CardContent className="p-4 flex gap-4">
-                <Avatar className="h-10 w-10">
-                  <AvatarFallback className="bg-primary/10 text-primary">
-                    {user.name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 space-y-1 overflow-hidden">
-                  <div className="flex items-center gap-2">
-                    <p className="font-semibold text-sm truncate">
-                      {user.name}
-                    </p>
-                    {user.role === "TUTOR" ? (
-                      <Badge
-                        variant="outline"
-                        className="border-emerald-500/40 text-emerald-600 bg-emerald-500/10 text-[10px] px-1.5 h-4"
-                      >
-                        Tutor
-                      </Badge>
-                    ) : (
-                      <Badge
-                        variant="outline"
-                        className="border-blue-500/40 text-blue-600 bg-blue-500/10 text-[10px] px-1.5 h-4"
-                      >
-                        Student
-                      </Badge>
-                    )}
-                    {user.role === "TUTOR" && (user.pendingVerificationCount || 0) > 0 && (
-                      <Badge className="bg-amber-500 text-white hover:bg-amber-500 text-[10px] px-1.5 h-4">
-                        รอตรวจ {user.pendingVerificationCount}
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-xs font-mono text-muted-foreground truncate">
-                    {user.id}
-                  </p>
-
-                  <div className="pt-2 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                    {user.role === "STUDENT" && (
-                      <div className="flex items-center gap-1">
-                        <ShieldCheck
-                          className={`h-3 w-3 ${user.guardianSetup ? "text-emerald-500" : "text-amber-500"}`}
-                        />
-                        {user.guardianSetup ? "Guardian OK" : "No Guardian"}
-                      </div>
-                    )}
-                    <div className="flex items-center gap-1">
-                      {user.role === "TUTOR" ? (
-                        <User className="h-3 w-3" />
-                      ) : (
-                        <GraduationCap className="h-3 w-3" />
-                      )}
-                      {user.activeClasses} Classes
-                    </div>
-                    {user.role === "TUTOR" && (user.pendingVerificationCount || 0) > 0 && (
-                      <div className="flex items-center gap-1 text-amber-600">
-                        <Bell className="h-3 w-3" />
-                        {user.submittedVerificationFields?.map((item) => item.label).join(", ")}
-                      </div>
-                    )}
-                  </div>
+        {/* Pending Verification Card - Only shows if there are pending items */}
+        {pendingVerificationItems > 0 && (
+          <Card className="md:max-w-md w-full overflow-hidden border-none shadow-md rounded-3xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 relative group">
+            <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+               <ShieldAlert className="h-24 w-24 text-amber-600" />
+            </div>
+            <CardHeader className="pb-4 relative z-10">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-amber-500 rounded-xl text-white shadow-sm animate-pulse">
+                  <Bell className="h-5 w-5" />
                 </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-        {filteredUsers.length === 0 && (
-          <p className="text-sm text-muted-foreground p-4">
-            ไม่พบข้อมูลผู้ใช้งาน
-          </p>
+                <div>
+                  <CardTitle className="text-lg font-bold text-amber-900 dark:text-amber-100">Action Required</CardTitle>
+                  <CardDescription className="font-medium text-amber-700/80 dark:text-amber-400/80 text-xs">
+                    {pendingVerificationItems} verification items pending.
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="relative z-10 pb-6">
+              <Button className="w-full rounded-xl font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-md" asChild>
+                <Link href="/users?filter=pending">
+                  Review Submissions
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
         )}
       </div>
+
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
+          <div className="animate-spin h-10 w-10 border-4 border-muted-foreground/20 border-t-brand-500 rounded-full mb-4" />
+          <p className="font-bold text-muted-foreground">Loading directory...</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredUsers.map((user) => (
+            <Link href={`/users/${user.id}`} key={user.id} className="block group">
+              <Card className="h-full overflow-hidden border-none shadow-sm rounded-3xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-card group-hover:ring-2 group-hover:ring-brand-500/20">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <Avatar className="h-14 w-14 border-4 border-background shadow-sm ring-1 ring-border/50">
+                      <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 text-white text-lg font-bold">
+                        {user.name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                    
+                    <div className="flex-1 min-w-0 space-y-1.5">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="font-bold text-base truncate text-foreground group-hover:text-brand-600 transition-colors">
+                            {user.name}
+                          </p>
+                          <p className="text-xs font-mono text-muted-foreground truncate uppercase tracking-tight">
+                            ID: {user.id.slice(0,8)}...
+                          </p>
+                        </div>
+                        {user.role === "TUTOR" ? (
+                          <Badge variant="outline" className="shrink-0 border-brand-200 dark:border-brand-800 text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/30 rounded-full px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                            Tutor
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="shrink-0 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 rounded-full px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                            Student
+                          </Badge>
+                        )}
+                      </div>
+
+                      <div className="pt-3 flex flex-wrap gap-2">
+                        {user.role === "STUDENT" && (
+                          <Badge variant="secondary" className={`rounded-md text-[10px] font-semibold border-none px-2 py-0.5 ${user.guardianSetup ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "bg-amber-500/10 text-amber-700 dark:text-amber-400"}`}>
+                            <ShieldCheck className="h-3 w-3 mr-1" />
+                            {user.guardianSetup ? "Guardian: Verified" : "Guardian: Pending"}
+                          </Badge>
+                        )}
+                        
+                        <Badge variant="secondary" className="bg-muted/50 text-muted-foreground rounded-md text-[10px] font-semibold border-none px-2 py-0.5">
+                          {user.role === "TUTOR" ? <User className="h-3 w-3 mr-1" /> : <GraduationCap className="h-3 w-3 mr-1" />}
+                          {user.activeClasses} Active Classes
+                        </Badge>
+
+                        {user.role === "TUTOR" && (user.pendingVerificationCount || 0) > 0 && (
+                          <Badge variant="secondary" className="bg-amber-500 text-white hover:bg-amber-600 rounded-md text-[10px] font-bold border-none px-2 py-0.5 shadow-sm">
+                            <Bell className="h-3 w-3 mr-1" />
+                            {user.pendingVerificationCount} Action Req
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+          {!loading && filteredUsers.length === 0 && (
+            <div className="col-span-full flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
+              <Users className="h-12 w-12 text-muted-foreground/30 mb-4" />
+              <p className="font-bold text-muted-foreground">No users found matching your search.</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

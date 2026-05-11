@@ -53,6 +53,7 @@ import {
   getFraudFlags,
   triggerFraudAction,
 } from "./controllers/fraudController";
+import { getAdminOverview } from "./controllers/adminController";
 import { getEarningsSummary, getEarningsHistory } from "./controllers/tutorEarningsController";
 import { getTutorNetwork } from "./controllers/tutorNetworkController";
 
@@ -80,6 +81,8 @@ app.get("/health", (req: Request, res: Response) => {
 app.get("/version", (req: Request, res: Response) => {
   res.status(200).json({ version: "1.0.0", service: "finance-mlm-service" });
 });
+
+app.get("/v1/admin/overview", authMiddleware, getAdminOverview);
 
 // ── Payment Routes ─────────────────────────────────────────────────────────
 app.post("/v1/payments/intent", authMiddleware, createPaymentIntent);

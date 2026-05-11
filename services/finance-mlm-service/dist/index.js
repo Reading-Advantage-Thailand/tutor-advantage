@@ -20,6 +20,7 @@ const adjustmentController_1 = require("./controllers/adjustmentController");
 const operationsController_1 = require("./controllers/operationsController");
 const userController_1 = require("./controllers/userController");
 const fraudController_1 = require("./controllers/fraudController");
+const adminController_1 = require("./controllers/adminController");
 const tutorEarningsController_1 = require("./controllers/tutorEarningsController");
 const tutorNetworkController_1 = require("./controllers/tutorNetworkController");
 const app = (0, express_1.default)();
@@ -40,6 +41,7 @@ app.get("/health", (req, res) => {
 app.get("/version", (req, res) => {
     res.status(200).json({ version: "1.0.0", service: "finance-mlm-service" });
 });
+app.get("/v1/admin/overview", authMiddleware_1.authMiddleware, adminController_1.getAdminOverview);
 // ── Payment Routes ─────────────────────────────────────────────────────────
 app.post("/v1/payments/intent", authMiddleware_1.authMiddleware, paymentController_1.createPaymentIntent);
 app.post("/v1/payments/confirm-mock", authMiddleware_1.authMiddleware, paymentController_1.confirmMockPayment);

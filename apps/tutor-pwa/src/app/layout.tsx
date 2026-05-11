@@ -34,6 +34,32 @@ export default function RootLayout({
   return (
     <html lang="th" suppressHydrationWarning>
       <body className={inter.className}>
+        {process.env.NODE_ENV === "development" && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                // Auto-clear stale service workers and cache storage in dev mode 
+                // to prevent hydration mismatches from old PWA builds.
+                if (typeof window !== 'undefined') {
+                  if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                      for (var registration of registrations) {
+                        registration.unregister();
+                      }
+                    });
+                  }
+                  if ('caches' in window) {
+                    caches.keys().then(function(keys) {
+                      for (var key of keys) {
+                        caches.delete(key);
+                      }
+                    });
+                  }
+                }
+              `,
+            }}
+          />
+        )}
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

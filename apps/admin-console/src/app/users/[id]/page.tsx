@@ -97,6 +97,8 @@ export default function UserDetailPage() {
   const [user, setUser] = useState<UserDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [actionMessage, setActionMessage] = useState("");
+  const [actionError, setActionError] = useState("");
   
   const [verificationComment, setVerificationComment] = useState("");
   const [fieldComments, setFieldComments] = useState<Record<VerificationField, string>>({
@@ -150,12 +152,14 @@ export default function UserDetailPage() {
           : fieldComments[field].trim() || verificationComment.trim();
 
       if (!hasReason) {
-        alert("Please enter a rejection reason first.");
+        setActionError("Please enter a rejection reason first.");
         return;
       }
     }
 
     setIsVerifying(field);
+    setActionError("");
+    setActionMessage("");
     try {
       await fetchWithAuth(`/v1/users/${user.id}/verify`, {
         method: "POST",
@@ -166,9 +170,12 @@ export default function UserDetailPage() {
           fieldComments,
         }),
       });
-      loadUser();
-    } catch {
-      alert("Error updating verification status");
+      setActionMessage("Verification status updated.");
+      await loadUser();
+    } catch (err) {
+      setActionError(
+        err instanceof Error ? err.message : "Error updating verification status",
+      );
     } finally {
       setIsVerifying(null);
     }
@@ -248,14 +255,16 @@ export default function UserDetailPage() {
   const handleDelete = async () => {
     if (!user || deleteConfirmText !== user.id) return;
     setIsDeleting(true);
+    setActionError("");
+    setActionMessage("");
     try {
       await fetchWithAuth(`/v1/users/${user.id}/anonymize`, {
         method: "POST",
       });
-      alert(`User ${user.id} PII has been anonymized successfully.`);
+      setActionMessage(`User ${user.id} PII has been anonymized successfully.`);
       router.push("/users");
-    } catch {
-      alert("Error anonymizing user");
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "Error anonymizing user");
     } finally {
       setIsDeleting(false);
     }
@@ -673,6 +682,23 @@ export default function UserDetailPage() {
           </Card>
         </div>
       </div>
+
+      {actionError && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Action failed</AlertTitle>
+          <AlertDescription>{actionError}</AlertDescription>
+        </Alert>
+      )}
+
+      {actionMessage && (
+        <Alert className="border-emerald-500/30 bg-emerald-500/5">
+          <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+          <AlertDescription className="text-emerald-700">
+            {actionMessage}
+          </AlertDescription>
+        </Alert>
+      )}
 
       {imageViewer && (
         <div

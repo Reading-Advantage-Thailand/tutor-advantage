@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { fetchWithAuth } from "../../lib/api";
+import { downloadBlob, fetchBlobWithAuth, fetchWithAuth } from "../../lib/api";
 import {
   Card,
   CardContent,
@@ -28,6 +28,8 @@ import {
   Copy,
   Check,
   RefreshCw,
+  TrendingUp,
+  FileText,
 } from "lucide-react";
 
 export interface SettlementPreview {
@@ -48,23 +50,27 @@ const STATUS_CONFIG: Record<
     label: string;
     variant: "default" | "secondary" | "destructive" | "outline";
     className: string;
+    icon: any;
   }
 > = {
   DRAFT: {
-    label: "Draft — รออนุมัติ",
+    label: "Draft — Waiting Approval",
     variant: "outline",
+    icon: ClockIcon,
     className:
       "border-amber-500/40 text-amber-600 dark:text-amber-400 bg-amber-500/10",
   },
   APPROVED: {
-    label: "อนุมัติแล้ว",
+    label: "Approved",
     variant: "outline",
+    icon: CheckCircle2,
     className:
       "border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10",
   },
   REJECTED: {
-    label: "ปฏิเสธแล้ว",
+    label: "Rejected",
     variant: "outline",
+    icon: XCircle,
     className: "border-red-500/40 text-red-600 dark:text-red-400 bg-red-500/10",
   },
 };
@@ -80,14 +86,14 @@ function CopyableId({ name, id }: { name: string; id: string }) {
     id.length > 20 ? `${id.slice(0, 8)}\u2026${id.slice(-4)}` : id;
   return (
     <div>
-      <p className="font-medium text-foreground text-xs">{name}</p>
-      <div className="flex items-center gap-1 mt-0.5">
+      {name && <p className="font-bold text-foreground text-[10px] uppercase tracking-wider mb-1 opacity-60">{name}</p>}
+      <div className="flex items-center gap-2 bg-muted/50 px-2 py-1 rounded-md border border-border/50">
         <p className="font-mono text-[10px] text-muted-foreground">
           {truncated}
         </p>
         <button
           onClick={handleCopy}
-          className="text-muted-foreground hover:text-foreground transition-colors"
+          className="text-muted-foreground hover:text-brand-600 transition-colors"
           title="Copy full ID"
         >
           {copied ? (
@@ -169,8 +175,9 @@ export default function SettlementsPage() {
       await fetchWithAuth(`/v1/settlements/${result.snapshotId}/approve`, {
         method: "POST",
       });
-      setSuccess("Settlement อนุมัติสำเร็จ และปล่อย Payout Batch แล้ว");
+      setSuccess("Settlement Approved Successfully and Payout Batch released.");
       setResult({ ...result, status: "APPROVED" });
+      loadSettlements();
     } catch (error) {
       const err = error as Error;
       setError(err.message);
@@ -187,8 +194,9 @@ export default function SettlementsPage() {
       await fetchWithAuth(`/v1/settlements/${result.snapshotId}/reject`, {
         method: "POST",
       });
-      setSuccess("Settlement ถูกปฏิเสธแล้ว กรุณาแก้ไขและรันใหม่อีกครั้ง");
+      setSuccess("Settlement Rejected. Please correct and rerun.");
       setResult({ ...result, status: "REJECTED" });
+      loadSettlements();
     } catch (error) {
       const err = error as Error;
       setError(err.message);
@@ -204,7 +212,7 @@ export default function SettlementsPage() {
         method: "POST",
       });
       setSuccess(
-        `Settlement ${action === "approve" ? "อนุมัติ" : "ปฏิเสธ"} สำเร็จ`,
+        `Settlement ${action === "approve" ? "Approved" : "Rejected"} Successfully`,
       );
       loadSettlements();
       if (result?.snapshotId === id) {
@@ -224,31 +232,9 @@ export default function SettlementsPage() {
   const handleListExport = async (id: string, periodMonth: string) => {
     setExportLoading(true);
     try {
-      const token =
-        typeof window !== "undefined"
-          ? localStorage.getItem("admin_token")
-          : null;
-      const response = await fetch(
-        `http://localhost:3003/v1/settlements/${id}/export`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      if (!response.ok) {
-        throw new Error("ไม่สามารถส่งออกไฟล์ CSV ได้");
-      }
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `settlement-${periodMonth}-${id.slice(0, 8)}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      setSuccess("ส่งออกไฟล์ CSV สำเร็จ");
+      const blob = await fetchBlobWithAuth(`/v1/settlements/${id}/export`);
+      downloadBlob(blob, `settlement-${periodMonth}-${id.slice(0, 8)}.csv`);
+      setSuccess("Export CSV completed");
     } catch (error) {
       const err = error as Error;
       setError(err.message);
@@ -262,31 +248,14 @@ export default function SettlementsPage() {
     setExportLoading(true);
     setError("");
     try {
-      const token =
-        typeof window !== "undefined"
-          ? localStorage.getItem("admin_token")
-          : null;
-      const response = await fetch(
-        `http://localhost:3003/v1/settlements/${result.snapshotId}/export`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      const blob = await fetchBlobWithAuth(
+        `/v1/settlements/${result.snapshotId}/export`,
       );
-      if (!response.ok) {
-        throw new Error("ไม่สามารถส่งออกไฟล์ CSV ได้");
-      }
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `settlement-${result.periodMonth}-${result.snapshotId.slice(0, 8)}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      setSuccess("ส่งออกไฟล์ CSV สำเร็จ");
+      downloadBlob(
+        blob,
+        `settlement-${result.periodMonth}-${result.snapshotId.slice(0, 8)}.csv`,
+      );
+      setSuccess("Export CSV completed");
     } catch (error) {
       const err = error as Error;
       setError(err.message);
@@ -304,46 +273,51 @@ export default function SettlementsPage() {
   const isRejected = result?.status === "REJECTED";
 
   return (
-    <div className="space-y-6 w-full">
-      {/* Run Preview Card (Hide for Checker) */}
+    <div className="space-y-8 max-w-5xl mx-auto w-full animate-in fade-in duration-500">
+      <div className="flex flex-col gap-2">
+        <h2 className="text-3xl font-black tracking-tight text-foreground">Settlement Console</h2>
+        <p className="text-muted-foreground font-medium">Manage payout cycles and tutor earnings.</p>
+      </div>
+
+      {/* Run Preview Card */}
       {userRole !== "FINANCE_CHECKER" && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <PlayCircle className="h-4 w-4 text-primary" />
-              คำนวณรอบบิลและรายได้ (Settlement)
-            </CardTitle>
-            <CardDescription>
-              จำลองและคำนวณยอดเงินที่จะต้องจ่ายให้ติวเตอร์ตามสายงาน
-              การอนุมัติเพื่อจ่ายเงินจริงจะต้องใช้ระบบ Maker-Checker เสมอ
-            </CardDescription>
+        <Card className="overflow-hidden border-none shadow-lg rounded-3xl bg-gradient-to-br from-brand-500/10 to-brand-600/5">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-brand-500 rounded-2xl text-white shadow-md">
+                <PlayCircle className="h-6 w-6" />
+              </div>
+              <div>
+                <CardTitle className="text-xl font-bold">Calculate Billing Cycle</CardTitle>
+                <CardDescription className="font-medium">
+                  Preview and calculate income for tutors based on their work records.
+                </CardDescription>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
-              <div className="space-y-1.5 w-full sm:w-auto">
-                <Label htmlFor="period">รอบบิล (เดือน)</Label>
+            <div className="flex flex-col sm:flex-row gap-4 items-end bg-card p-6 rounded-2xl border border-brand-100/50 shadow-sm">
+              <div className="space-y-2 w-full sm:w-auto flex-1">
+                <Label htmlFor="period" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">Billing Period (Month)</Label>
                 <Input
                   id="period"
                   type="month"
                   value={period}
                   onChange={(e) => setPeriod(e.target.value)}
-                  className="w-full sm:w-48"
+                  className="h-12 rounded-xl border-2 focus-visible:ring-brand-500"
                 />
               </div>
               <Button
                 onClick={handlePreview}
                 disabled={loading}
-                className="w-full sm:w-auto"
+                className="h-12 px-8 rounded-xl font-bold shadow-lg shadow-brand-500/20 w-full sm:w-auto"
               >
                 {loading ? (
-                  <span className="flex items-center gap-2">
-                    <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                    กำลังประมวลผล…
-                  </span>
+                  <RefreshCw className="h-5 w-5 animate-spin" />
                 ) : (
                   <>
-                    <ReceiptText className="h-4 w-4 mr-2" />
-                    สร้าง Preview
+                    <ReceiptText className="h-5 w-5 mr-2" />
+                    Generate Preview
                   </>
                 )}
               </Button>
@@ -352,126 +326,117 @@ export default function SettlementsPage() {
         </Card>
       )}
 
-      {/* Error */}
-      {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>เกิดข้อผิดพลาด</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      {/* Success */}
-      {success && (
-        <Alert className="border-emerald-500/30 bg-emerald-500/5">
-          <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-          <AlertTitle className="text-emerald-700 dark:text-emerald-300">
-            สำเร็จ
-          </AlertTitle>
-          <AlertDescription className="text-emerald-700/80 dark:text-emerald-400/80">
-            {success}
-          </AlertDescription>
-        </Alert>
+      {/* Alerts */}
+      {(error || success) && (
+        <div className="space-y-4">
+          {error && (
+            <Alert variant="destructive" className="rounded-2xl border-2 shadow-md">
+              <AlertCircle className="h-5 w-5" />
+              <AlertTitle className="font-bold">Error Occurred</AlertTitle>
+              <AlertDescription className="font-medium">{error}</AlertDescription>
+            </Alert>
+          )}
+          {success && (
+            <Alert className="rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/5 shadow-md">
+              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+              <AlertTitle className="font-bold text-emerald-700">Action Successful</AlertTitle>
+              <AlertDescription className="font-medium text-emerald-700/80">{success}</AlertDescription>
+            </Alert>
+          )}
+        </div>
       )}
 
       {/* Settlement Preview Result */}
       {result && (
-        <Card>
-          <CardHeader className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-            <div>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <ShieldCheck className="h-4 w-4 text-primary" />
-                Settlement Snapshot
-              </CardTitle>
-              <CardDescription className="mt-1 font-mono text-xs">
-                {result.snapshotId}
-              </CardDescription>
+        <Card className="overflow-hidden border-none shadow-2xl rounded-3xl bg-card animate-in zoom-in-95 duration-300">
+          <CardHeader className="flex flex-row items-center justify-between border-b bg-muted/20 px-8 py-6">
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-brand-50 dark:bg-brand-900/20 rounded-xl text-brand-600 dark:text-brand-400">
+                <FileText className="h-6 w-6" />
+              </div>
+              <div>
+                <CardTitle className="text-lg font-bold">Preview Result</CardTitle>
+                <div className="mt-1 font-mono text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded uppercase tracking-tighter">
+                  ID: {result.snapshotId}
+                </div>
+              </div>
             </div>
             {statusConfig && (
               <Badge
                 variant={statusConfig.variant}
-                className={statusConfig.className}
+                className={`rounded-full px-4 py-1.5 font-bold shadow-sm ${statusConfig.className}`}
               >
-                {isApproved && <CheckCircle2 className="h-3 w-3 mr-1" />}
-                {isRejected && <XCircle className="h-3 w-3 mr-1" />}
-                {isDraft && <ClockIcon className="h-3 w-3 mr-1" />}
+                <statusConfig.icon className="h-4 w-4 mr-1.5" />
                 {statusConfig.label}
               </Badge>
             )}
           </CardHeader>
 
-          <CardContent>
-            <Separator className="mb-6" />
-            <div className="flex flex-col items-center justify-center py-6 gap-1">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                ยอดจ่ายรวม
-              </p>
-              <p className="text-5xl font-bold text-foreground tabular-nums">
-                {((result.totalPayoutSatang ?? 0) / 100).toLocaleString(
-                  "th-TH",
-                  {
-                    style: "currency",
-                    currency: "THB",
-                  },
-                )}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                รอบบิล:{" "}
-                <span className="font-medium text-foreground">
-                  {result.periodMonth}
-                </span>
-              </p>
+          <CardContent className="px-8 py-12">
+            <div className="flex flex-col items-center justify-center gap-6">
+              <div className="text-center space-y-2">
+                <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em]">Total Payout Amount</p>
+                <p className="text-6xl font-black text-foreground tabular-nums tracking-tighter">
+                  {((result.totalPayoutSatang ?? 0) / 100).toLocaleString(
+                    "th-TH",
+                    {
+                      style: "currency",
+                      currency: "THB",
+                    },
+                  )}
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-8 w-full max-w-md pt-8 border-t border-dashed">
+                <div className="text-center">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Billing Period</p>
+                  <p className="text-lg font-bold text-foreground">{result.periodMonth}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Payees Count</p>
+                  <p className="text-lg font-bold text-foreground">{result.payoutLineCount || "0"} Tutors</p>
+                </div>
+              </div>
             </div>
-            <Separator className="mt-6" />
           </CardContent>
 
-          <CardFooter className="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between pt-4">
-            <p className="text-xs text-muted-foreground leading-relaxed max-w-sm">
-              เพื่อความปลอดภัย การอนุมัติสั่งจ่ายเงินจะต้องใช้แอดมินอีกคนเสมอ
-              (ระบบ Maker-Checker) หลังจากที่อนุมัติแล้ว
-              ข้อมูลการจ่ายเงินจะไม่สามารถเปลี่ยนแปลงได้อีก
-            </p>
-            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-              {/* Export CSV — แสดงเมื่อ Approved */}
-              {isApproved && (
-                <Button
-                  onClick={handleExportCsv}
-                  disabled={exportLoading}
-                  variant="outline"
-                  className="w-full sm:w-auto shrink-0 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/10"
-                >
-                  {exportLoading ? (
-                    <span className="flex items-center gap-2">
-                      <span className="w-4 h-4 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
-                      กำลังส่งออก…
-                    </span>
-                  ) : (
-                    <>
-                      <Download className="h-4 w-4 mr-2" />
-                      Export CSV
-                    </>
-                  )}
-                </Button>
-              )}
-              {/* Reject Button */}
-              <Button
+          <CardFooter className="bg-muted/10 px-8 py-6 border-t flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-start gap-3 max-w-sm">
+              <ShieldCheck className="h-5 w-5 text-brand-600 dark:text-brand-400 shrink-0 mt-0.5" />
+              <p className="text-xs font-medium text-muted-foreground leading-relaxed">
+                Security check: Payments require <strong>Maker-Checker</strong> approval. 
+                Once approved, the ledger becomes immutable.
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-3 w-full md:w-auto">
+               {/* Reject Button */}
+               <Button
                 onClick={handleReject}
                 disabled={loading || !isDraft}
                 variant="outline"
-                className="w-full sm:w-auto shrink-0 border-red-500/40 text-red-600 dark:text-red-400 hover:bg-red-500/10 disabled:opacity-40"
+                className="flex-1 md:flex-none h-12 rounded-xl font-bold border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-700"
               >
-                <XCircle className="h-4 w-4 mr-2" />
-                {isRejected ? "ปฏิเสธแล้ว" : "ปฏิเสธ"}
+                <XCircle className="h-5 w-5 mr-2" />
+                Reject
               </Button>
               {/* Approve Button */}
               <Button
                 onClick={handleApprove}
                 disabled={loading || !isDraft}
-                variant={isDraft ? "default" : "outline"}
-                className="w-full sm:w-auto shrink-0"
+                className={`flex-1 md:flex-none h-12 px-8 rounded-xl font-bold shadow-lg transition-all ${isDraft ? 'bg-brand-600 hover:bg-brand-700 shadow-brand-500/20' : ''}`}
               >
-                <CheckCircle2 className="h-4 w-4 mr-2" />
-                {isApproved ? "อนุมัติแล้ว" : "อนุมัติ & ปล่อยเงิน"}
+                {isApproved ? (
+                   <>
+                    <CheckCircle2 className="h-5 w-5 mr-2" />
+                    Approved
+                  </>
+                ) : (
+                  <>
+                    <TrendingUp className="h-5 w-5 mr-2" />
+                    Approve & Release Payout
+                  </>
+                )}
               </Button>
             </div>
           </CardFooter>
@@ -479,134 +444,95 @@ export default function SettlementsPage() {
       )}
 
       {/* History List */}
-      <div className="space-y-4 pt-4">
-        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-          <ShieldCheck className="h-5 w-5 text-primary" />
-          ประวัติการคำนวณรอบบิล (Settlements History)
+      <div className="space-y-6">
+        <div className="flex items-center justify-between px-2">
+          <div className="flex items-center gap-2">
+            <h3 className="text-xl font-bold text-foreground">Settlement History</h3>
+            <Badge variant="secondary" className="rounded-full font-bold">{list.length}</Badge>
+          </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={loadSettlements}
             disabled={listLoading}
-            className="ml-auto"
+            className="rounded-full hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-brand-600 dark:hover:text-brand-400"
           >
-            <RefreshCw
-              className={`h-4 w-4 ${listLoading ? "animate-spin" : ""}`}
-            />
+            <RefreshCw className={`h-4 w-4 mr-2 ${listLoading ? "animate-spin" : ""}`} />
+            Refresh
           </Button>
-        </h3>
+        </div>
 
         {list.length === 0 && !listLoading && (
-          <Card>
-            <CardContent className="flex items-center justify-center py-10 text-muted-foreground text-sm">
-              ไม่มีประวัติ Settlement
-            </CardContent>
-          </Card>
+          <div className="flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
+            <ReceiptText className="h-12 w-12 text-muted-foreground/30 mb-4" />
+            <p className="font-bold text-muted-foreground">No settlement records found</p>
+          </div>
         )}
 
         <div className="grid grid-cols-1 gap-4">
           {list.map((run) => {
             const sc = STATUS_CONFIG[run.status] ?? STATUS_CONFIG.DRAFT;
-            const isItemApproved = run.status === "APPROVED";
-            const isItemRejected = run.status === "REJECTED";
             const isItemDraft = run.status === "DRAFT";
 
             return (
               <Card
                 key={run.snapshotId}
-                className={isItemDraft ? "border-amber-500/20" : ""}
+                className={`group overflow-hidden border-none shadow-sm rounded-2xl transition-all hover:shadow-md hover:ring-1 hover:ring-brand-500/20 ${isItemDraft ? "bg-amber-50/20 dark:bg-amber-900/10" : "bg-card"}`}
               >
-                <CardHeader className="pb-3 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
-                    <div>
-                      <p className="text-xs text-muted-foreground">รอบบิล</p>
-                      <p className="font-medium">{run.periodMonth}</p>
+                <CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="flex items-center gap-4">
+                      <div className={`p-3 rounded-2xl ${isItemDraft ? 'bg-amber-500/10 dark:bg-amber-900/20 text-amber-600' : 'bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400'}`}>
+                        <FileText className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className="font-bold text-lg">{run.periodMonth}</p>
+                          <Badge
+                            variant={sc.variant}
+                            className={`rounded-full px-3 text-[10px] font-bold ${sc.className}`}
+                          >
+                            {sc.label}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-4 mt-1">
+                           <p className="text-xs font-medium text-muted-foreground">
+                            Created: <span className="font-bold text-foreground">{new Date(run.createdAt || "").toLocaleDateString()}</span>
+                          </p>
+                          <p className="text-xs font-medium text-muted-foreground">
+                            Entries: <span className="font-bold text-foreground">{run.payoutLineCount || 0}</span>
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    <Badge
-                      variant={sc.variant}
-                      className={`w-fit mt-1 sm:mt-0 ${sc.className}`}
-                    >
-                      {isItemApproved && (
-                        <CheckCircle2 className="h-3 w-3 mr-1" />
-                      )}
-                      {isItemRejected && <XCircle className="h-3 w-3 mr-1" />}
-                      {isItemDraft && <ClockIcon className="h-3 w-3 mr-1" />}
-                      {sc.label}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
-                    <div>
-                      <p className="text-xs text-muted-foreground">
-                        รายการจ่าย
-                      </p>
-                      <p className="font-medium text-foreground">
-                        {run.payoutLineCount}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">
-                        Snapshot ID
-                      </p>
-                      <CopyableId name="" id={run.snapshotId} />
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">
-                        สร้างเมื่อ
-                      </p>
-                      <p className="text-foreground text-sm font-mono">
-                        {new Date(run.createdAt || "").toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
 
-                  {(isItemApproved || isItemDraft) && <Separator />}
-
-                  <div className="flex gap-2 justify-end">
-                    {isItemApproved && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        disabled={exportLoading}
-                        onClick={() =>
-                          handleListExport(run.snapshotId, run.periodMonth)
-                        }
-                        className="border-emerald-500/40 text-emerald-600 hover:bg-emerald-500/10"
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Export CSV
-                      </Button>
-                    )}
-                    {isItemDraft && (
-                      <>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={actionLoadingId === run.snapshotId}
-                          onClick={() =>
-                            handleListAction(run.snapshotId, "reject")
-                          }
-                          className="border-red-500/40 text-red-600 dark:text-red-400 hover:bg-red-500/10"
-                        >
-                          ปฏิเสธ
-                        </Button>
-                        <Button
-                          size="sm"
-                          disabled={actionLoadingId === run.snapshotId}
-                          onClick={() =>
-                            handleListAction(run.snapshotId, "approve")
-                          }
-                        >
-                          {actionLoadingId === run.snapshotId ? (
-                            <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                          ) : (
-                            <CheckCircle2 className="h-4 w-4 mr-1" />
-                          )}
-                          อนุมัติ
-                        </Button>
-                      </>
-                    )}
+                    <div className="flex items-center gap-6">
+                      <CopyableId name="Snapshot ID" id={run.snapshotId} />
+                      <div className="flex items-center gap-2">
+                         {run.status === "APPROVED" && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            disabled={exportLoading}
+                            onClick={() => handleListExport(run.snapshotId, run.periodMonth)}
+                            className="h-10 rounded-xl font-bold hover:bg-emerald-50 hover:text-emerald-600"
+                          >
+                            <Download className="h-4 w-4 mr-2" />
+                            CSV
+                          </Button>
+                        )}
+                        {isItemDraft && (
+                          <Button
+                            size="sm"
+                            disabled={actionLoadingId === run.snapshotId}
+                            onClick={() => handleListAction(run.snapshotId, "approve")}
+                            className="h-10 px-4 rounded-xl font-bold bg-brand-600 shadow-md shadow-brand-500/10"
+                          >
+                            Approve
+                          </Button>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

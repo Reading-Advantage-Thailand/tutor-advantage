@@ -144,7 +144,7 @@ export default function PrivacyPage() {
               ท่านสามารถติดต่อฝ่าย สนับสนุน (Support) ได้ที่:
             </p>
             <p className="mt-4 font-semibold text-primary">
-              LINE: @readingadvantage <br />
+              <a href="https://lin.ee/zqTz6feg" target="_blank" rel="noopener noreferrer" className="hover:underline">LINE: ติดต่อเจ้าหน้าที่</a> <br />
               หัวข้อ: คำร้องขอ PDPA / นโยบายความเป็นส่วนตัว (Tutor PWA)
             </p>
           </div>

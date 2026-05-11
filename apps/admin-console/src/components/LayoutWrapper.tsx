@@ -88,17 +88,10 @@ function AppSidebar({
     try {
       if (typeof window === "undefined" || !localStorage.getItem("admin_token"))
         return;
-      const data = await fetchWithAuth("/v1/settlements/summary");
-      setPendingSettlements(data.pendingApprovals ?? 0);
-      setPendingAdjustments(data.pendingAdjustments ?? 0);
-
-      const userData = await fetchWithAuth("/v1/users");
-      const verificationCount = (userData.users || []).reduce(
-        (sum: number, user: { pendingVerificationCount?: number }) =>
-          sum + (user.pendingVerificationCount || 0),
-        0,
-      );
-      setPendingVerifications(verificationCount);
+      const data = await fetchWithAuth("/v1/admin/overview");
+      setPendingSettlements(data.workQueues?.settlements ?? 0);
+      setPendingAdjustments(data.workQueues?.adjustments ?? 0);
+      setPendingVerifications(data.workQueues?.verifications ?? 0);
     } catch (error) {
       console.warn("Failed to fetch admin sidebar summary:", error);
     }
@@ -111,20 +104,20 @@ function AppSidebar({
   }, [fetchSummary]);
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader>
+    <Sidebar collapsible="icon" className="border-r-0">
+      <SidebarHeader className="bg-brand-500/5 py-4">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <ShieldCheck className="h-4 w-4" />
+            <SidebarMenuButton size="lg" asChild className="hover:bg-transparent">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-500/20">
+                  <ShieldCheck className="h-6 w-6" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">
+                  <span className="truncate font-bold text-brand-900 dark:text-brand-50">
                     Tutor Advantage
                   </span>
-                  <span className="truncate text-xs text-muted-foreground">
+                  <span className="truncate text-xs font-medium text-brand-600/80 dark:text-brand-400">
                     Admin Console
                   </span>
                 </div>
@@ -134,9 +127,11 @@ function AppSidebar({
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="px-2">
         <SidebarGroup>
-          <SidebarGroupLabel>Finance</SidebarGroupLabel>
+          <SidebarGroupLabel className="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+            Finance Management
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {FINANCE_ITEMS.map(({ href, label, icon: Icon }) => {
@@ -155,21 +150,25 @@ function AppSidebar({
                       asChild
                       isActive={active}
                       tooltip={label}
+                      className={
+                        active
+                          ? "bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400"
+                          : "hover:bg-brand-50/50 dark:hover:bg-brand-900/10"
+                      }
                     >
                       <Link
                         href={href}
-                        className="flex justify-between items-center w-full"
+                        className="flex justify-between items-center w-full py-2"
                       >
-                        <div className="flex items-center gap-2 overflow-hidden">
-                          <Icon className="h-4 w-4 shrink-0" />
-                          <span className="truncate group-data-[collapsible=icon]:hidden">
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <Icon className={`h-4.5 w-4.5 shrink-0 ${active ? "text-brand-600" : "text-muted-foreground"}`} />
+                          <span className={`truncate font-medium group-data-[collapsible=icon]:hidden ${active ? "font-semibold" : ""}`}>
                             {label}
                           </span>
                         </div>
                         {badgeCount > 0 && (
                           <Badge
-                            variant="destructive"
-                            className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden"
+                            className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden bg-brand-500 hover:bg-brand-600 text-white border-none shadow-sm"
                           >
                             {badgeCount}
                           </Badge>
@@ -184,7 +183,9 @@ function AppSidebar({
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Operations</SidebarGroupLabel>
+          <SidebarGroupLabel className="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+            System Operations
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {OPS_ITEMS.map(({ href, label, icon: Icon }) => {
@@ -195,14 +196,19 @@ function AppSidebar({
                       asChild
                       isActive={active}
                       tooltip={label}
+                      className={
+                        active
+                          ? "bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400"
+                          : "hover:bg-brand-50/50 dark:hover:bg-brand-900/10"
+                      }
                     >
                       <Link
                         href={href}
-                        className="flex justify-between items-center w-full"
+                        className="flex justify-between items-center w-full py-2"
                       >
-                        <div className="flex items-center gap-2 overflow-hidden">
-                          <Icon className="h-4 w-4 shrink-0" />
-                          <span className="truncate group-data-[collapsible=icon]:hidden">
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <Icon className={`h-4.5 w-4.5 shrink-0 ${active ? "text-brand-600" : "text-muted-foreground"}`} />
+                          <span className={`truncate font-medium group-data-[collapsible=icon]:hidden ${active ? "font-semibold" : ""}`}>
                             {label}
                           </span>
                         </div>
@@ -216,7 +222,9 @@ function AppSidebar({
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Users & Risk</SidebarGroupLabel>
+          <SidebarGroupLabel className="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+            Users & Compliance
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {USER_RISK_ITEMS.map(({ href, label, icon: Icon }) => {
@@ -228,21 +236,25 @@ function AppSidebar({
                       asChild
                       isActive={active}
                       tooltip={label}
+                      className={
+                        active
+                          ? "bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400"
+                          : "hover:bg-brand-50/50 dark:hover:bg-brand-900/10"
+                      }
                     >
                       <Link
                         href={href}
-                        className="flex justify-between items-center w-full"
+                        className="flex justify-between items-center w-full py-2"
                       >
-                        <div className="flex items-center gap-2 overflow-hidden">
-                          <Icon className="h-4 w-4 shrink-0" />
-                          <span className="truncate group-data-[collapsible=icon]:hidden">
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <Icon className={`h-4.5 w-4.5 shrink-0 ${active ? "text-brand-600" : "text-muted-foreground"}`} />
+                          <span className={`truncate font-medium group-data-[collapsible=icon]:hidden ${active ? "font-semibold" : ""}`}>
                             {label}
                           </span>
                         </div>
                         {badgeCount > 0 && (
                           <Badge
-                            variant="destructive"
-                            className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden"
+                            className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden bg-brand-500 hover:bg-brand-600 text-white border-none shadow-sm"
                           >
                             {badgeCount}
                           </Badge>
@@ -257,64 +269,61 @@ function AppSidebar({
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter>
+      <SidebarFooter className="p-4">
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton
                   size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                  className="rounded-xl border border-border/50 bg-card/50 shadow-sm data-[state=open]:bg-sidebar-accent"
                 >
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarFallback className="rounded-lg bg-primary text-primary-foreground text-xs font-bold">
+                  <Avatar className="h-9 w-9 border-2 border-brand-100 dark:border-brand-900">
+                    <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 text-white text-xs font-bold">
                       {initial}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">
+                  <div className="grid flex-1 text-left text-sm leading-tight ml-1">
+                    <span className="truncate font-semibold text-foreground">
                       {role || "Admin"}
                     </span>
-                    <span className="truncate text-xs text-muted-foreground">
-                      <span className="text-emerald-500">●</span> Active
+                    <span className="flex items-center gap-1.5 truncate text-[10px] font-medium text-muted-foreground uppercase tracking-tight">
+                      <span className="h-1.5 w-1.5 rounded-full bg-brand-500 animate-pulse" /> Online
                     </span>
                   </div>
-                  <ChevronsUpDown className="ml-auto size-4" />
+                  <ChevronsUpDown className="ml-auto size-3.5 text-muted-foreground" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                side="bottom"
-                align="end"
-                sideOffset={4}
+                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-xl p-2 shadow-xl border-border/40"
+                side="top"
+                align="center"
+                sideOffset={12}
               >
-                <DropdownMenuLabel className="p-0 font-normal">
-                  <div className="flex items-center gap-2 px-1 py-1.5">
-                    <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarFallback className="rounded-lg bg-primary text-primary-foreground text-xs font-bold">
+                <DropdownMenuLabel className="p-2 font-normal">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-10 w-10">
+                      <AvatarFallback className="bg-brand-100 text-brand-700 text-sm font-bold">
                         {initial}
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-semibold">
-                        {role || "Admin"}
+                      <span className="truncate font-bold text-foreground">
+                        {role || "Administrator"}
                       </span>
-                      <Badge
-                        variant="outline"
-                        className="text-[10px] w-fit border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10"
-                      >
-                        Active Session
-                      </Badge>
+                      <p className="text-xs text-muted-foreground truncate">
+                        admin@tutor-advantage.com
+                      </p>
                     </div>
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="my-2" />
                 <DropdownMenuItem
                   onClick={onLogout}
-                  className="text-destructive focus:text-destructive cursor-pointer"
+                  className="rounded-lg py-2.5 text-red-600 focus:bg-red-50 focus:text-red-700 dark:focus:bg-red-950/30 cursor-pointer"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  Sign Out
+                  <span className="font-semibold">Sign Out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -358,28 +367,38 @@ export default function LayoutWrapper({
 
   const pageTitle =
     pathname === "/"
-      ? "Dashboard"
+      ? "Dashboard Overview"
       : pathname.split("/")[1]?.charAt(0).toUpperCase() +
         (pathname.split("/")[1]?.slice(1) ?? "");
 
   return (
     <SidebarProvider>
       <AppSidebar role={role} onLogout={handleLogout} />
-      <SidebarInset>
+      <SidebarInset className="bg-background/50 flex flex-col h-screen overflow-hidden">
         {/* Top Header */}
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <h1 className="text-sm font-semibold text-foreground">{pageTitle}</h1>
-          <div className="ml-auto">
+        <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2 border-b bg-background/95 px-6 backdrop-blur-md">
+          <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-brand-600 transition-colors" />
+          <Separator orientation="vertical" className="mx-2 h-4 bg-border/60" />
+          <h1 className="text-sm font-bold tracking-tight text-foreground">
+            {pageTitle}
+          </h1>
+          <div className="ml-auto flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 border border-brand-100 dark:bg-brand-900/10 dark:border-brand-800">
+              <span className="h-2 w-2 rounded-full bg-brand-500 shadow-[0_0_8px_rgba(6,199,85,0.5)]" />
+              <span className="text-[10px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider">Production</span>
+            </div>
             <ThemeToggle />
           </div>
         </header>
-        {/* Page Content */}
-        <div className="flex flex-1 flex-col gap-4 p-4 sm:p-6 lg:p-8 overflow-auto">
-          {children}
+        {/* Page Content - Scrollable Area */}
+        <div className="flex-1 overflow-auto">
+          <div className="p-4 sm:p-8 lg:p-10 max-w-[1600px] mx-auto w-full">
+            {children}
+          </div>
         </div>
       </SidebarInset>
     </SidebarProvider>
   );
 }
+
+

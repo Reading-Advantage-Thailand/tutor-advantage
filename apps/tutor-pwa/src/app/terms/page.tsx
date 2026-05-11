@@ -117,7 +117,7 @@ export default function TermsPage() {
             </p>
 
             <div className="mt-12 py-6 border-t text-sm text-muted-foreground text-center">
-              <p>หากมีข้อสงสัยเกี่ยวกับข้อตกลงนี้ กรุณาติดต่อ LINE @readingadvantage</p>
+              <p>หากมีข้อสงสัยเกี่ยวกับข้อตกลงนี้ กรุณาติดต่อ <a href="https://lin.ee/zqTz6feg" target="_blank" rel="noopener noreferrer" className="text-primary font-semibold hover:underline">LINE ติดต่อเจ้าหน้าที่</a></p>
             </div>
           </div>
         </div>
