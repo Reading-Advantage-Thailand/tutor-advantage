@@ -648,10 +648,16 @@ async function getClassArticles(req, res) {
                 status: "FINISHED"
             },
             select: { articleId: true }
+        }).catch((error) => {
+            console.warn("Could not fetch completed interactive sessions:", error);
+            return [];
         });
         const completedArticleIds = new Set(completedSessions.map(s => s.articleId));
         const articles = await Promise.all(dbArticles.map(async (art) => {
-            const details = await (0, ReadingAdvantageDB_1.getArticleDetails)(art.articleId);
+            const details = await (0, ReadingAdvantageDB_1.getArticleDetails)(art.articleId).catch((error) => {
+                console.warn(`Could not fetch Reading Advantage details for article ${art.articleId}:`, error);
+                return null;
+            });
             let thaiSummary = "";
             if (details?.translated_summary?.th?.[0]) {
                 thaiSummary = details.translated_summary.th[0];
@@ -671,7 +677,7 @@ async function getClassArticles(req, res) {
                     thaiSummary = await translateToThai(textToTranslate);
                 }
             }
-            let displayCefr = details?.cefr_level || "A1";
+            let displayCefr = String(details?.cefr_level || "A1");
             // Normalize non-standard CEFR strings:
             // 1. If A0, convert to A1
             if (displayCefr === "A0")
@@ -683,7 +689,7 @@ async function getClassArticles(req, res) {
                 articleNumber: parseInt(art.articleId.replace(/\D/g, "")) || 1,
                 title: details?.title || art.title || "Untitled Article",
                 summary: thaiSummary || "ไม่มีสรุปเนื้อหาสำหรับบทความนี้",
-                passage: details?.passage?.substring(0, 120) + "...", // Return a snippet for passage display
+                passage: details?.passage ? `${details.passage.substring(0, 120)}...` : "", // Return a snippet for passage display
                 cefrLevel: displayCefr,
                 isCompleted: completedArticleIds.has(art.articleId)
             };
@@ -697,6 +703,8 @@ async function getClassArticles(req, res) {
             error: {
                 code: "INTERNAL_SERVER_ERROR",
                 message: "Could not fetch class articles",
+                details: process.env.NODE_ENV === "production" ? undefined : error.message,
+                prismaCode: error.code,
             },
         });
     }

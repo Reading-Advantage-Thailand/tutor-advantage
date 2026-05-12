@@ -40,6 +40,16 @@ function getRandomLongSentenceIndex(sentences: any[]): number {
   return source[Math.floor(Math.random() * source.length)];
 }
 
+function getRandomIndex(count: number, excludedIndex?: number): number {
+  if (count <= 0) return 0;
+  if (count === 1 || excludedIndex === undefined || excludedIndex < 0 || excludedIndex >= count) {
+    return Math.floor(Math.random() * count);
+  }
+
+  const candidates = Array.from({ length: count }, (_, index) => index).filter((index) => index !== excludedIndex);
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
 class LessonSessionService {
   private sessions: Map<string, LessonSession> = new Map();
   private pinToSessionId: Map<string, string> = new Map();
@@ -103,8 +113,9 @@ class LessonSessionService {
       phaseSelectedIndices[7] = Math.floor(Math.random() * articleData.multipleChoiceQuestions.length);
     }
     if (articleData?.shortAnswerQuestions?.length) {
-      phaseSelectedIndices[8] = Math.floor(Math.random() * articleData.shortAnswerQuestions.length);
-      phaseSelectedIndices[13] = Math.floor(Math.random() * articleData.shortAnswerQuestions.length);
+      const count = articleData.shortAnswerQuestions.length;
+      phaseSelectedIndices[8] = getRandomIndex(count);
+      phaseSelectedIndices[13] = getRandomIndex(count, phaseSelectedIndices[8]);
     }
     if (articleData?.words?.length) {
       phaseSelectedIndices[10] = Math.floor(Math.random() * articleData.words.length);
@@ -252,7 +263,9 @@ class LessonSessionService {
       session.phaseSelectedIndices[7] = Math.floor(Math.random() * count);
     } else if (phase === 8 || phase === 13) {
       const count = session.articleData?.shortAnswerQuestions?.length || 1;
-      session.phaseSelectedIndices[phase] = Math.floor(Math.random() * count);
+      const pairedPhase = phase === 8 ? 13 : 8;
+      const pairedIndex = session.phaseSelectedIndices[pairedPhase];
+      session.phaseSelectedIndices[phase] = getRandomIndex(count, pairedIndex);
     } else if (phase === 10) {
       const count = session.articleData?.words?.length || 1;
       session.phaseSelectedIndices[10] = Math.floor(Math.random() * count);

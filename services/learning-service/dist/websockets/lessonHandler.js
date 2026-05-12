@@ -69,8 +69,7 @@ const setupLessonSocket = (io) => {
             return next(new Error("Authentication error: No token provided"));
         }
         try {
-            const secret = process.env.JWT_SECRET || "fallback_dev_secret";
-            // Explicitly ignore verification in local dev if you want, but for security audit we MUST verify
+            const secret = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
             jsonwebtoken_1.default.verify(token, secret);
             next();
         }

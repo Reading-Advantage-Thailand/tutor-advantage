@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { getTutorSessionToken } from '../app/dashboard/actions';
+
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_LEARNING_SERVICE_URL || 'http://localhost:3002';
 
@@ -16,67 +18,96 @@ export const useLessonSocket = (tutorId: string, articleId: string, classId?: st
 
   useEffect(() => {
     // Don't initialize if no articleId
-    if (!articleId) return;
+    if (!articleId) {
+      setError("Missing article ID for this lesson.");
+      return;
+    }
 
-    // Initialize socket connection
-    const newSocket = io(SOCKET_URL);
-    socketRef.current = newSocket;
-    setSocket(newSocket);
+    let newSocket: Socket | null = null;
 
-    newSocket.on('connect', () => {
-      console.log('Connected to Learning Service WebSocket');
-      // Auto create session on connect for Tutor with the selected article and classId
-      newSocket.emit('create_session', { tutorId, articleId, classId });
-    });
+    const initSocket = async () => {
+      try {
+        setError(null);
+        const token = await getTutorSessionToken();
 
-    newSocket.on('session_created', (data) => {
-      setSessionData(data);
-      setArticleData(data.articleData);
-    });
+        if (!token) {
+          setError("Please sign in as a tutor before opening the live lesson lobby.");
+          return;
+        }
+        const socketInstance = io(SOCKET_URL, {
+          auth: { token },
+        });
+        newSocket = socketInstance;
+        
+        socketRef.current = socketInstance;
+        setSocket(socketInstance);
 
-    // Updated to listen for participants_updated from the new backend logic
-    newSocket.on('participants_updated', (data) => {
-      setParticipants(data.participants);
-    });
+        socketInstance.on('connect', () => {
+          console.log('Connected to Learning Service WebSocket');
+          // Auto create session on connect for Tutor with the selected article and classId
+          socketInstance.emit('create_session', { tutorId, articleId, classId });
+        });
 
-    // Keep old events for fallback
-    newSocket.on('participant_joined', (data) => {
-      setParticipants(data.participants);
-    });
+        socketInstance.on('connect_error', (err) => {
+          setError(err.message || 'Could not connect to the learning service.');
+        });
 
-    newSocket.on('participant_left', (data) => {
-      setParticipants(data.participants);
-    });
+        socketInstance.on('session_created', (data) => {
+          setSessionData(data);
+          setArticleData(data.articleData);
+        });
 
-    newSocket.on('phase_changed', (data) => {
-      console.log(`[Socket] Phase changed to: ${data.phase}`);
-      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices } : null);
-      setTotalAnswered(0);
-      setAllAnsweredData([]);
-    });
+        // Updated to listen for participants_updated from the new backend logic
+        socketInstance.on('participants_updated', (data) => {
+          setParticipants(data.participants);
+        });
 
-    newSocket.on('participant_answered', (data) => {
-      console.log(`[Socket] Participant answered: ${data.studentId}, Total: ${data.totalAnswered}`);
-      setTotalAnswered(data.totalAnswered);
-    });
+        // Keep old events for fallback
+        socketInstance.on('participant_joined', (data) => {
+          setParticipants(data.participants);
+        });
 
-    newSocket.on('all_answered', (data) => {
-      console.log(`[Socket] All participants answered!`, data.answers);
-      setAllAnsweredData(data.answers);
-    });
+        socketInstance.on('participant_left', (data) => {
+          setParticipants(data.participants);
+        });
 
-    newSocket.on('error', (data) => {
-      setError(data.message);
-    });
+        socketInstance.on('phase_changed', (data) => {
+          console.log(`[Socket] Phase changed to: ${data.phase}`);
+          setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices } : null);
+          setTotalAnswered(0);
+          setAllAnsweredData([]);
+        });
 
-    newSocket.on('session_deleted', (data) => {
-      console.log(`[Socket] Session deleted: ${data.message}`);
-      setSessionData(null);
-      setError("เซสชันถูกยกเลิกแล้ว");
-    });
+        socketInstance.on('participant_answered', (data) => {
+          console.log(`[Socket] Participant answered: ${data.studentId}, Total: ${data.totalAnswered}`);
+          setTotalAnswered(data.totalAnswered);
+        });
+
+        socketInstance.on('all_answered', (data) => {
+          console.log(`[Socket] All participants answered!`, data.answers);
+          setAllAnsweredData(data.answers);
+        });
+
+        socketInstance.on('error', (data) => {
+          setError(data.message);
+        });
+
+        socketInstance.on('session_deleted', (data) => {
+          console.log(`[Socket] Session deleted: ${data.message}`);
+          setSessionData(null);
+          setError("เซสชันถูกยกเลิกแล้ว");
+        });
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Could not prepare the tutor lesson lobby.');
+      }
+    };
+
+    initSocket();
 
     return () => {
-      newSocket.disconnect();
+      if (newSocket) {
+        newSocket.disconnect();
+      }
     };
   }, [tutorId, articleId, classId]);
 

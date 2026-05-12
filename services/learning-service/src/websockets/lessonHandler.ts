@@ -35,8 +35,7 @@ export const setupLessonSocket = (io: Server) => {
     }
     
     try {
-      const secret = process.env.JWT_SECRET || "fallback_dev_secret";
-      // Explicitly ignore verification in local dev if you want, but for security audit we MUST verify
+      const secret = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
       jwt.verify(token, secret);
       next();
     } catch (err) {

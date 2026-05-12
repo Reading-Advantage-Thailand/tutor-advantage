@@ -4,6 +4,9 @@ exports.getStudentLessonHistory = getStudentLessonHistory;
 exports.getLessonSessionDetails = getLessonSessionDetails;
 const database_1 = require("@tutor-advantage/database");
 const ReadingAdvantageDB_1 = require("../services/ReadingAdvantageDB");
+function isMissingTableError(error) {
+    return error?.code === "P2021" || error?.meta?.table;
+}
 async function getStudentLessonHistory(req, res) {
     try {
         const userId = req.user?.userId;
@@ -55,6 +58,9 @@ async function getStudentLessonHistory(req, res) {
     }
     catch (error) {
         console.error("Fetch Lesson History Error:", error);
+        if (isMissingTableError(error)) {
+            return res.status(200).json({ history: [] });
+        }
         return res.status(500).json({ error: "Internal server error fetching history" });
     }
 }
@@ -111,6 +117,9 @@ async function getLessonSessionDetails(req, res) {
     }
     catch (error) {
         console.error("Fetch Session Detail Error:", error);
+        if (isMissingTableError(error)) {
+            return res.status(404).json({ error: "Lesson history is not available yet" });
+        }
         return res.status(500).json({ error: "Internal error" });
     }
 }

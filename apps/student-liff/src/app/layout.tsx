@@ -4,6 +4,7 @@ import { LiffProvider } from "@/components/providers/LiffProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -63,6 +64,7 @@ export default function RootLayout({
         <ThemeProvider>
           <LiffProvider>
             <div className="liff-root">{children}</div>
+            <Toaster position="top-center" richColors />
           </LiffProvider>
         </ThemeProvider>
       </body>

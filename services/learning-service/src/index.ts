@@ -3,8 +3,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 
-// Load root .env file
-dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
+// Load the monorepo .env file from both ts-node src/ and compiled dist/ starts.
+dotenv.config({
+  path: path.resolve(__dirname, "../../../.env"),
+  override: true,
+});
 console.log(`[Learning] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
 
 import { createServer } from "http";

@@ -5,8 +5,12 @@ export function middleware(request: NextRequest) {
   const sessionToken = request.cookies.get("tutor_session")?.value;
   const isAuthPage = request.nextUrl.pathname === "/";
 
-  // If no session and trying to access protected route (dashboard)
-  if (!sessionToken && request.nextUrl.pathname.startsWith("/dashboard")) {
+  const isProtectedRoute =
+    request.nextUrl.pathname.startsWith("/dashboard") ||
+    request.nextUrl.pathname.startsWith("/lesson");
+
+  // If no session and trying to access protected tutor routes
+  if (!sessionToken && isProtectedRoute) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
@@ -19,5 +23,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/dashboard/:path*"],
+  matcher: ["/", "/dashboard/:path*", "/lesson/:path*"],
 };

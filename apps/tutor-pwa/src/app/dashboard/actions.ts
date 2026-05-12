@@ -122,3 +122,8 @@ export async function getCurrentUserAction() {
     return null;
   }
 }
+
+export async function getTutorSessionToken() {
+  const cookieStore = await cookies();
+  return cookieStore.get("tutor_session")?.value || null;
+}

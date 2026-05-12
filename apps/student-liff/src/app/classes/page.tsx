@@ -5,6 +5,7 @@ import Link from "next/link";
 import { studentApi } from "@/lib/api";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { AlertCircle, Loader2, QrCode } from "lucide-react";
+import { toast } from "sonner";
 
 interface ClassItem {
   id: string;
@@ -68,9 +69,7 @@ export default function ClassesPage() {
 
     try {
       if (!liff.isInClient()) {
-        alert(
-          "💡 การสแกน QR Code รองรับเฉพาะการใช้งานผ่านแอป LINE เท่านั้นครับ",
-        );
+        toast.info("💡 การสแกน QR Code รองรับเฉพาะการใช้งานผ่านแอป LINE เท่านั้นครับ");
         return;
       }
 
@@ -85,7 +84,7 @@ export default function ClassesPage() {
         const result = await (liff as { scanCode: () => Promise<{ value: string }> }).scanCode();
         scannedText = result.value || "";
       } else {
-        alert("⚠️ อุปกรณ์หรือเวอร์ชันของ LINE ไม่รองรับการสแกนในหน้าแอปนี้");
+        toast.warning("⚠️ อุปกรณ์หรือเวอร์ชันของ LINE ไม่รองรับการสแกนในหน้าแอปนี้");
         return;
       }
 
@@ -97,7 +96,7 @@ export default function ClassesPage() {
           // Standard deep link behavior
           window.location.href = `/enroll?classId=${classId}`;
         } else {
-          alert("❌ รูปแบบ QR Code ไม่ถูกต้อง (ไม่พบข้อมูลคลาสเรียน)");
+          toast.error("❌ รูปแบบ QR Code ไม่ถูกต้อง (ไม่พบข้อมูลคลาสเรียน)");
         }
       }
     } catch (err) {

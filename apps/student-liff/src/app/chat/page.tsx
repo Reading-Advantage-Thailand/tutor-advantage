@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, Search, ChevronRight, MessageCircle, BookOpen, User, Users, Loader2 } from "lucide-react";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { studentApi } from "@/lib/api";
+import { toast } from "sonner";
 
 const ChatAvatar = ({ src, title, size = 48 }: { src?: string | null, title: string, size?: number }) => {
   const [hasError, setHasError] = useState(false);
@@ -171,7 +172,7 @@ export default function ChatListPage() {
       }
     } catch (err: unknown) {
       console.error("Failed to initiate:", err);
-      alert("เกิดข้อผิดพลาดในการเปิดแชท");
+      toast.error("เกิดข้อผิดพลาดในการเปิดแชท");
       setInitiatingChat(null);
     }
   };

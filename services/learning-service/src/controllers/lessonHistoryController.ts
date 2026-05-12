@@ -3,6 +3,10 @@ import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
 
+function isMissingTableError(error: any) {
+  return error?.code === "P2021" || error?.meta?.table;
+}
+
 export async function getStudentLessonHistory(req: AuthenticatedRequest, res: Response) {
   try {
     const userId = req.user?.userId;
@@ -59,6 +63,9 @@ export async function getStudentLessonHistory(req: AuthenticatedRequest, res: Re
     return res.status(200).json({ history });
   } catch (error: any) {
     console.error("Fetch Lesson History Error:", error);
+    if (isMissingTableError(error)) {
+      return res.status(200).json({ history: [] });
+    }
     return res.status(500).json({ error: "Internal server error fetching history" });
   }
 }
@@ -121,8 +128,11 @@ export async function getLessonSessionDetails(req: AuthenticatedRequest, res: Re
       }))
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Fetch Session Detail Error:", error);
+    if (isMissingTableError(error)) {
+      return res.status(404).json({ error: "Lesson history is not available yet" });
+    }
     return res.status(500).json({ error: "Internal error" });
   }
 }

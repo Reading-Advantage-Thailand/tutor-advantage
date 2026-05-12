@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ChevronLeft, Send } from "lucide-react";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { studentApi } from "@/lib/api";
+import { toast } from "sonner";
 
 interface Message {
   id: string;
@@ -183,7 +184,7 @@ export default function ChatRoomPage() {
       // Revert on error
       setMessages(prev => prev.filter(m => m.id !== optimisticId));
       setInputText(currentText);
-      alert("ไม่สามารถส่งข้อความได้ โปรดลองใหม่อีกครั้ง");
+      toast.error("ไม่สามารถส่งข้อความได้ โปรดลองใหม่อีกครั้ง");
     } finally {
       setIsSending(false);
     }

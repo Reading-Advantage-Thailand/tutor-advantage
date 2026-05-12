@@ -7,8 +7,11 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
-// Load root .env file
-dotenv_1.default.config({ path: path_1.default.resolve(__dirname, "../../../.env") });
+// Load the monorepo .env file from both ts-node src/ and compiled dist/ starts.
+dotenv_1.default.config({
+    path: path_1.default.resolve(__dirname, "../../../.env"),
+    override: true,
+});
 console.log(`[Learning] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
 const http_1 = require("http");
 const socket_io_1 = require("socket.io");
