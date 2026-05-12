@@ -45,6 +45,9 @@ app.get("/v1/admin/overview", authMiddleware_1.authMiddleware, adminController_1
 // ── Payment Routes ─────────────────────────────────────────────────────────
 app.post("/v1/payments/intent", authMiddleware_1.authMiddleware, paymentController_1.createPaymentIntent);
 app.post("/v1/payments/confirm-mock", authMiddleware_1.authMiddleware, paymentController_1.confirmMockPayment);
+app.get("/v1/payments/config", authMiddleware_1.authMiddleware, paymentController_1.getPaymentConfig);
+app.get("/v1/payments/:paymentIntentId/qr-code", authMiddleware_1.authMiddleware, paymentController_1.getPromptPayQrCode);
+app.get("/v1/payments/:paymentIntentId/status", authMiddleware_1.authMiddleware, paymentController_1.getPaymentStatus);
 app.get("/v1/payments/history", authMiddleware_1.authMiddleware, paymentController_1.getPaymentHistory);
 app.post("/v1/payments/webhook", paymentController_1.handleWebhook);
 // ── Tutor Dashboard Routes ─────────────────────────────────────────────────

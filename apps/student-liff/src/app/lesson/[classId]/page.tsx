@@ -19,6 +19,8 @@ interface ClassInfo {
   tutor?: {
     name?: string;
   };
+  isEnrolled?: boolean;
+  enrollmentStatus?: string | null;
 }
 
 export default function LessonLobbyPage({ params }: PageProps) {
@@ -28,6 +30,7 @@ export default function LessonLobbyPage({ params }: PageProps) {
   
   const [classInfo, setClassInfo] = useState<ClassInfo | null>(null);
   const [fetchingClass, setFetchingClass] = useState(true);
+  const [accessDenied, setAccessDenied] = useState<string | null>(null);
 
   const studentId = profile?.userId || "";
   const studentName = profile?.displayName || "Student";
@@ -41,12 +44,18 @@ export default function LessonLobbyPage({ params }: PageProps) {
     toggleReady,
     nudgeMessage,
     kicked
-  } = useLessonSocket(null, studentId, studentName, classId, pictureUrl);
+  } = useLessonSocket(null, studentId, studentName, classInfo?.isEnrolled ? classId : undefined, pictureUrl);
 
   useEffect(() => {
     if (liffReady && classId) {
       studentApi.getClassDetails(classId)
         .then(data => {
+          if (!data.class?.isEnrolled || data.class?.enrollmentStatus !== "ACTIVE") {
+            setAccessDenied("กรุณาชำระเงินให้สำเร็จก่อนเข้าเรียน");
+            setClassInfo(data.class);
+            setFetchingClass(false);
+            return;
+          }
           setClassInfo(data.class);
           setFetchingClass(false);
         })
@@ -66,9 +75,36 @@ export default function LessonLobbyPage({ params }: PageProps) {
 
   if (!liffReady || fetchingClass) {
     return (
-      <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "var(--surface-bg)", gap: 12 }}>
-        <Loader2 className="animate-spin" style={{ color: "var(--brand-500)" }} />
-        <p style={{ color: "var(--text-tertiary)", fontSize: "0.875rem" }}>กำลังเตรียมห้องเรียน...</p>
+      <div
+        style={{
+          minHeight: "100dvh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "var(--surface-bg)",
+          padding: "max(24px, var(--safe-top)) 24px max(24px, var(--safe-bottom))",
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            maxWidth: 280,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 12,
+            padding: 24,
+            borderRadius: 20,
+            background: "var(--surface-card)",
+            border: "1px solid var(--surface-border)",
+            boxShadow: "var(--shadow-sm)",
+            textAlign: "center",
+          }}
+        >
+          <Loader2 className="animate-spin" size={36} style={{ color: "var(--brand-500)" }} />
+          <p style={{ color: "var(--text-primary)", fontSize: "0.875rem", fontWeight: 800 }}>กำลังเตรียมห้องเรียน</p>
+          <p style={{ color: "var(--text-tertiary)", fontSize: "0.75rem", lineHeight: 1.5 }}>เชื่อมต่อข้อมูลคลาสและนักเรียน...</p>
+        </div>
       </div>
     );
   }
@@ -93,6 +129,17 @@ export default function LessonLobbyPage({ params }: PageProps) {
         <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: 8 }}>ไม่พบข้อมูลคลาส</h2>
         <p style={{ color: "var(--text-tertiary)", marginBottom: 24 }}>คลาสนี้อาจยังไม่เปิดสอน หรือคุณยังไม่ได้ลงทะเบียน</p>
         <Link href="/dashboard" className="btn btn-primary" style={{ padding: "0 24px", height: 48, borderRadius: 12 }}>กลับหน้าหลัก</Link>
+      </div>
+    );
+  }
+
+  if (accessDenied) {
+    return (
+      <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "var(--surface-bg)", padding: 24, textAlign: "center" }}>
+        <AlertCircle size={48} style={{ color: "var(--accent-red)", marginBottom: 16 }} />
+        <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: 8 }}>{accessDenied}</h2>
+        <p style={{ color: "var(--text-tertiary)", marginBottom: 24 }}>ระบบพบว่าการลงทะเบียนของคลาสนี้ยังไม่เป็น ACTIVE</p>
+        <Link href={`/payment?classId=${classId}`} className="btn btn-primary" style={{ padding: "0 24px", height: 48, borderRadius: 12 }}>ไปหน้าชำระเงิน</Link>
       </div>
     );
   }

@@ -21,7 +21,7 @@ export async function getDashboardSummary(
     if (role === "STUDENT") {
       // 1. Fetch student enrollments
       const enrollments = await prisma.enrollment.findMany({
-        where: { studentUserId: userId },
+        where: { studentUserId: userId, status: "ACTIVE" },
         include: {
           class: {
             include: {
@@ -203,7 +203,7 @@ export async function getStudentProgress(
 
     // 1. Find main enrollment
     const enrollment = await prisma.enrollment.findFirst({
-      where: { studentUserId: userId },
+      where: { studentUserId: userId, status: "ACTIVE" },
       include: {
         class: {
           include: {

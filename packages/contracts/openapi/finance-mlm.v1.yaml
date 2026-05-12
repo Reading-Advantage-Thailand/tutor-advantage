@@ -38,9 +38,42 @@ paths:
                 amountSatang:
                   type: integer
                   description: Amount in Satang (Value * 100)
+                method:
+                  type: string
+                  enum: [promptpay, card]
+                omiseToken:
+                  type: string
+                  description: Required for card payments. Token generated client-side by Omise.js.
+                returnUri:
+                  type: string
+                  description: URI Omise should return the customer to after 3DS or redirect flows.
       responses:
         "201":
-          description: Payment intent details for Omise frontend SDK
+          description: Payment intent and Omise checkout details.
+  /v1/payments/config:
+    get:
+      summary: Get Payment Gateway Config
+      description: Returns public, non-secret payment gateway configuration for the frontend.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Omise public key and configuration status.
+  /v1/payments/{paymentIntentId}/status:
+    get:
+      summary: Get Payment Status
+      description: Retrieves a payment intent and reconciles current Omise charge status when available.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: paymentIntentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Payment intent and Omise checkout status.
   /v1/payments/webhook:
     post:
       summary: Payment Gateway Webhook

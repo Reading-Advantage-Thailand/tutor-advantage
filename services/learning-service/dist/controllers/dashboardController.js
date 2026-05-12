@@ -16,7 +16,7 @@ async function getDashboardSummary(req, res) {
         if (role === "STUDENT") {
             // 1. Fetch student enrollments
             const enrollments = await database_1.prisma.enrollment.findMany({
-                where: { studentUserId: userId },
+                where: { studentUserId: userId, status: "ACTIVE" },
                 include: {
                     class: {
                         include: {
@@ -175,7 +175,7 @@ async function getStudentProgress(req, res) {
         }
         // 1. Find main enrollment
         const enrollment = await database_1.prisma.enrollment.findFirst({
-            where: { studentUserId: userId },
+            where: { studentUserId: userId, status: "ACTIVE" },
             include: {
                 class: {
                     include: {

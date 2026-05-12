@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { ChevronLeft, Shield, CheckCircle2, CreditCard, QrCode, Clock, ChevronRight } from "lucide-react";
@@ -19,10 +20,55 @@ type OrderSummary = {
   cefr: string;
 };
 
+type CheckoutDetails = {
+  provider: "omise";
+  chargeId: string;
+  status: string;
+  paid: boolean;
+  authorizeUri: string | null;
+  qrCodeUrl: string | null;
+  qrCodeDataUri?: string | null;
+  failureMessage: string | null;
+};
+
+declare global {
+  interface Window {
+    Omise?: {
+      setPublicKey: (key: string) => void;
+      createToken: (
+        type: "card",
+        payload: Record<string, string | number>,
+        callback: (statusCode: number, response: { id?: string; message?: string }) => void,
+      ) => void;
+    };
+  }
+}
+
+function loadOmiseScript() {
+  if (window.Omise) return Promise.resolve();
+
+  return new Promise<void>((resolve, reject) => {
+    const existing = document.querySelector<HTMLScriptElement>("script[src='https://cdn.omise.co/omise.js']");
+    if (existing) {
+      existing.addEventListener("load", () => resolve(), { once: true });
+      existing.addEventListener("error", () => reject(new Error("โหลด Omise.js ไม่สำเร็จ")), { once: true });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://cdn.omise.co/omise.js";
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("โหลด Omise.js ไม่สำเร็จ"));
+    document.head.appendChild(script);
+  });
+}
+
 function PaymentFlow() {
   const searchParams = useSearchParams();
   const classId = searchParams.get("classId") ?? "cls-001";
   const referralToken = searchParams.get("referralToken");
+  const returnedPaymentIntentId = searchParams.get("paymentIntentId");
 
   const [method, setMethod] = useState<PaymentMethod>("promptpay");
   const [step, setStep] = useState<Step>("select");
@@ -31,6 +77,8 @@ function PaymentFlow() {
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvv, setCardCvv] = useState("");
   const [loading, setLoading] = useState(false);
+  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(returnedPaymentIntentId);
+  const [checkout, setCheckout] = useState<CheckoutDetails | null>(null);
 
   const [cls, setCls] = useState<OrderSummary>({
     id: classId,
@@ -66,6 +114,33 @@ function PaymentFlow() {
     };
   }, [classId]);
 
+  useEffect(() => {
+    if (!returnedPaymentIntentId) return;
+
+    let isMounted = true;
+    setLoading(true);
+    studentApi.getPaymentStatus(returnedPaymentIntentId)
+      .then((data) => {
+        if (!isMounted) return;
+        setPaymentIntentId(data.intent.paymentIntentId);
+        setCheckout(data.checkout);
+        setStep(data.intent.status === "SUCCESS" ? "success" : "qr");
+        if (data.intent.status !== "SUCCESS" && data.intent.method === "promptpay") {
+          void loadPromptPayQrCode(data.intent.paymentIntentId);
+        }
+      })
+      .catch((error) => {
+        console.error("Could not verify returned payment:", error);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [returnedPaymentIntentId]);
+
   // Age / Guardian states
   const [isAdult, setIsAdult] = useState<boolean | null>(null);
   const [guardianName, setGuardianName] = useState("");
@@ -97,9 +172,81 @@ function PaymentFlow() {
     }
   };
   
+  const ensureOmiseToken = async () => {
+    const config = await studentApi.getPaymentConfig();
+    if (!config.configured || !config.publicKey) {
+      throw new Error("Omise ยังไม่ได้ตั้งค่า public/private key");
+    }
+
+    await loadOmiseScript();
+    if (!window.Omise) {
+      throw new Error("โหลด Omise.js ไม่สำเร็จ");
+    }
+
+    window.Omise.setPublicKey(config.publicKey);
+    const [month, year] = cardExpiry.split("/");
+    const fullYear = year?.length === 2 ? Number(`20${year}`) : Number(year);
+
+    return new Promise<string>((resolve, reject) => {
+      window.Omise?.createToken(
+        "card",
+        {
+          name: cardName,
+          number: cardNumber.replace(/\s/g, ""),
+          expiration_month: Number(month),
+          expiration_year: fullYear,
+          security_code: cardCvv,
+        },
+        (statusCode, response) => {
+          if (statusCode === 200 && response.id) {
+            resolve(response.id);
+            return;
+          }
+          reject(new Error(response.message || "สร้าง token บัตรไม่สำเร็จ"));
+        },
+      );
+    });
+  };
+
+  const verifyPaymentStatus = async (intentId: string) => {
+    const status = await studentApi.getPaymentStatus(intentId);
+    setCheckout(status.checkout);
+    if (status.intent.status === "SUCCESS") {
+      setStep("success");
+      return;
+    }
+    if (status.intent.status === "FAILED") {
+      throw new Error(status.checkout?.failureMessage || "การชำระเงินไม่สำเร็จ");
+    }
+    alert("ยังไม่พบการชำระเงินสำเร็จ กรุณารอสักครู่แล้วตรวจสอบอีกครั้ง");
+  };
+
+  const loadPromptPayQrCode = async (intentId: string) => {
+    const qr = await studentApi.getPaymentQrCode(intentId);
+    setCheckout((prev) =>
+      prev
+        ? { ...prev, qrCodeDataUri: qr.dataUri }
+        : {
+            provider: "omise",
+            chargeId: qr.chargeId,
+            status: "pending",
+            paid: false,
+            authorizeUri: null,
+            qrCodeUrl: null,
+            qrCodeDataUri: qr.dataUri,
+            failureMessage: null,
+          },
+    );
+  };
+
   const handleConfirmPayment = async () => { 
     setLoading(true); 
     try {
+      if (method === "promptpay" && paymentIntentId) {
+        await verifyPaymentStatus(paymentIntentId);
+        return;
+      }
+
       const enrollment = referralToken
         ? await studentApi.enrollByReferral(referralToken)
         : await studentApi.enrollClass(classId);
@@ -108,15 +255,35 @@ function PaymentFlow() {
         return;
       }
 
+      const omiseToken = method === "card" ? await ensureOmiseToken() : undefined;
       const payment = await studentApi.createPaymentIntent({
         enrollmentId: enrollment.enrollmentId,
         amountSatang: cls.priceSatang,
         method,
+        omiseToken,
+        returnUri: window.location.href.split("?")[0],
       });
 
-      await studentApi.confirmMockPayment(payment.intent.paymentIntentId);
-      
-      setStep("success"); 
+      setPaymentIntentId(payment.intent.paymentIntentId);
+      setCheckout(payment.checkout);
+
+      if (payment.intent.status === "SUCCESS" || payment.checkout?.paid) {
+        setStep("success");
+        return;
+      }
+
+      if (payment.checkout?.authorizeUri && method === "card") {
+        window.location.href = payment.checkout.authorizeUri;
+        return;
+      }
+
+      if (method === "promptpay") {
+        setStep("qr");
+        await loadPromptPayQrCode(payment.intent.paymentIntentId);
+        return;
+      }
+
+      throw new Error(payment.checkout?.failureMessage || "การชำระเงินยังไม่สำเร็จ");
     } catch (err) {
       console.error("Payment/Enrollment failed:", err);
       alert(err instanceof Error ? err.message : "การลงทะเบียนล้มเหลว กรุณาลองใหม่อีกครั้ง");
@@ -290,9 +457,20 @@ function PaymentFlow() {
           </div>
 
           <div className="qr-container" style={{ width: 220, height: 220, borderRadius: 20 }}>
-            <div style={{ width: 180, height: 180, background: "repeating-linear-gradient(0deg, #000 0px, #000 6px, #fff 6px, #fff 12px), repeating-linear-gradient(90deg, #000 0px, #000 6px, #fff 6px, #fff 12px)", backgroundBlendMode: "difference", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
-              <div style={{ background: "#fff", padding: "8px 10px", borderRadius: 6, fontSize: "0.625rem", fontWeight: 700, textAlign: "center", zIndex: 1, boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>QR Code<br />จะแสดงหลัง<br />เชื่อม Omise</div>
-            </div>
+            {checkout?.qrCodeDataUri || checkout?.qrCodeUrl ? (
+              <Image
+                src={checkout.qrCodeDataUri || checkout.qrCodeUrl || ""}
+                alt="PromptPay QR"
+                width={180}
+                height={180}
+                unoptimized
+                style={{ objectFit: "contain", borderRadius: 8 }}
+              />
+            ) : (
+              <div style={{ width: 180, height: 180, background: "var(--neutral-100)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, textAlign: "center", color: "var(--text-tertiary)", fontSize: "0.75rem", lineHeight: 1.5 }}>
+                กดปุ่มด้านล่างเพื่อสร้าง QR จาก Omise
+              </div>
+            )}
           </div>
 
           <div className="glass-card" style={{ padding: "16px", width: "100%" }}>
@@ -314,7 +492,7 @@ function PaymentFlow() {
           </div>
 
           <button id="btn-confirm-promptpay" className="btn btn-primary btn-full btn-lg" onClick={handleConfirmPayment} disabled={loading} style={{ borderRadius: 18 }}>
-            {loading ? (<span style={{ display: "flex", alignItems: "center", gap: 8 }}><span className="animate-spin" style={{ width: 18, height: 18, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", display: "inline-block" }} />กำลังตรวจสอบ...</span>) : "ชำระแล้ว — ยืนยัน"}
+            {loading ? (<span style={{ display: "flex", alignItems: "center", gap: 8 }}><span className="animate-spin" style={{ width: 18, height: 18, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", display: "inline-block" }} />กำลังตรวจสอบ...</span>) : paymentIntentId ? "ตรวจสอบสถานะการชำระเงิน" : "สร้าง QR PromptPay"}
           </button>
         </div>
       </div>

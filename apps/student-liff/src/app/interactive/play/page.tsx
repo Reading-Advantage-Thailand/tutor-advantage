@@ -71,10 +71,11 @@ function PlayLessonContent() {
   // ─── Loading States ────────────────────────────────────────
   if (!liffReady) {
     return (
-      <div className="min-h-[100dvh] flex items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="animate-spin h-8 w-8 border-3 border-primary border-t-transparent rounded-full mx-auto mb-3" />
-          <p className="text-muted-foreground font-medium text-sm">Loading...</p>
+      <div className="min-h-[100dvh] bg-background px-6 py-[max(24px,var(--safe-top))] flex items-center justify-center">
+        <div className="w-full max-w-[280px] rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
+          <div className="animate-spin h-9 w-9 border-4 border-primary/25 border-t-primary rounded-full mx-auto mb-4" />
+          <p className="text-foreground font-bold text-sm">กำลังเปิดบทเรียน</p>
+          <p className="text-muted-foreground font-medium text-xs mt-1">Loading...</p>
         </div>
       </div>
     );
@@ -108,10 +109,11 @@ function PlayLessonContent() {
 
   if (!sessionData) {
     return (
-      <div className="min-h-[100dvh] flex items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="animate-spin h-8 w-8 border-3 border-primary border-t-transparent rounded-full mx-auto mb-3" />
-          <p className="text-muted-foreground font-medium">Connecting...</p>
+      <div className="min-h-[100dvh] bg-background px-6 py-[max(24px,var(--safe-top))] flex items-center justify-center">
+        <div className="w-full max-w-[280px] rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
+          <div className="animate-spin h-9 w-9 border-4 border-primary/25 border-t-primary rounded-full mx-auto mb-4" />
+          <p className="text-foreground font-bold text-sm">กำลังเชื่อมต่อบทเรียน</p>
+          <p className="text-muted-foreground font-medium text-xs mt-1">Connecting...</p>
         </div>
       </div>
     );
@@ -401,17 +403,17 @@ function PlayLessonContent() {
 
         {/* Short Answer Phases (8, 13) */}
         {(currentPhase === 8 || currentPhase === 13) && (
-          <div className="phase-enter w-full max-w-md flex-1 flex flex-col justify-center">
+          <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col justify-start py-3 sm:justify-center">
             {aiFeedback ? (
-              <div className="bg-card rounded-3xl p-6 shadow-2xl border border-border text-center w-full max-w-sm mx-auto flex flex-col items-center">
-                <div className="bg-primary/10 text-primary px-3.5 py-1 rounded-full font-bold text-xs mb-5 uppercase tracking-wider shrink-0">
+              <div className="bg-card rounded-2xl p-5 shadow-xl border border-border text-center w-full mx-auto flex flex-col items-center">
+                <div className="bg-primary/10 text-primary px-3.5 py-1.5 rounded-full font-bold text-xs mb-5 uppercase tracking-wider shrink-0">
                   ผลประเมินจาก AI
                 </div>
                 
                 {/* Main Row */}
-                <div className="flex flex-row items-center gap-5 w-full text-left mb-5 shrink-0">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full text-left mb-4 shrink-0">
                   {/* Score Ring */}
-                  <div className="relative w-24 h-24 shrink-0">
+                  <div className="relative w-24 h-24 shrink-0 self-center">
                     <svg className="w-full h-full -rotate-90 drop-shadow-sm" viewBox="0 0 100 100">
                       <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" className="text-muted/40" strokeWidth="8" />
                       <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" className="text-primary" strokeWidth="8" strokeLinecap="round"
@@ -426,14 +428,14 @@ function PlayLessonContent() {
                   </div>
                   
                   {/* Feedback Box */}
-                  <div className="flex-1 bg-muted/50 border border-border/60 p-4 rounded-2xl relative min-h-[96px] flex items-center">
-                    <p className="text-xs font-bold text-foreground leading-relaxed">
+                  <div className="flex-1 bg-muted/50 border border-border/60 p-4 rounded-2xl relative min-h-[88px] flex items-center">
+                    <p className="text-sm sm:text-xs font-semibold text-foreground leading-relaxed break-words">
                       {aiFeedback.feedback}
                     </p>
                   </div>
                 </div>
 
-                <p className="text-xs font-bold text-muted-foreground mt-4 animate-pulse flex items-center justify-center gap-2 shrink-0">
+                <p className="text-xs font-bold text-muted-foreground mt-2 animate-pulse flex items-center justify-center gap-2 shrink-0 text-center leading-relaxed">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
@@ -442,7 +444,7 @@ function PlayLessonContent() {
                 </p>
               </div>
             ) : (hasAnswered || isSubmitting) ? (
-              <div className="flex-1 flex flex-col items-center justify-center text-center gap-5 w-full max-w-sm mx-auto">
+              <div className="flex-1 min-h-0 flex flex-col items-center justify-center text-center gap-4 w-full mx-auto">
                 {selectedChoice && (
                   <div className="bg-card px-5 py-3.5 rounded-2xl border border-border shadow-md w-full shrink-0">
                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">คำตอบของคุณ</p>
@@ -451,15 +453,15 @@ function PlayLessonContent() {
                 )}
                 
                 {showEveryoneReady ? (
-                  <div className="bg-card rounded-3xl p-6 shadow-xl border border-border text-center w-full flex flex-col items-center shrink-0">
+                  <div className="bg-card rounded-2xl p-5 shadow-xl border border-border text-center w-full flex flex-col items-center shrink-0">
                     <div className="text-5xl mb-3">✅</div>
                     <h2 className="text-xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight mb-1">ส่งคำตอบเรียบร้อย!</h2>
                     <p className="text-xs text-muted-foreground font-medium">รอระบบเปิดเผยคะแนนจาก AI...</p>
                   </div>
                 ) : (
-                  <div className="bg-card rounded-3xl p-6 shadow-2xl border border-border text-center w-full flex flex-col items-center shrink-0">
+                  <div className="bg-card rounded-2xl p-5 shadow-xl border border-border text-center w-full flex flex-col items-center shrink-0">
                     {/* Glowing Live AI Badge */}
-                    <div className="bg-primary/10 text-primary px-3.5 py-1 rounded-full font-bold text-xs mb-5 uppercase tracking-wider flex items-center gap-1.5 shrink-0">
+                    <div className="bg-primary/10 text-primary px-3.5 py-1.5 rounded-full font-bold text-xs mb-5 uppercase tracking-wider flex items-center justify-center gap-1.5 shrink-0 max-w-full">
                       <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
@@ -468,9 +470,9 @@ function PlayLessonContent() {
                     </div>
                     
                     {/* Skeleton Row */}
-                    <div className="flex flex-row items-center gap-5 w-full text-left mb-4 shrink-0">
+                    <div className="flex items-center gap-4 w-full text-left mb-4 shrink-0">
                       {/* Score Circle Skeleton with scanning effect */}
-                      <div className="relative w-20 h-20 shrink-0 rounded-full bg-muted border border-border/60 flex items-center justify-center overflow-hidden">
+                      <div className="relative w-16 h-16 shrink-0 rounded-full bg-muted border border-border/60 flex items-center justify-center overflow-hidden sm:w-20 sm:h-20">
                         {/* Shimmer sweep */}
                         <div className="absolute inset-0 skeleton opacity-40" />
                         <span className="text-2xl animate-bounce relative z-10">🤖</span>
@@ -484,15 +486,15 @@ function PlayLessonContent() {
                       </div>
                     </div>
 
-                    <p className="text-[10px] font-bold text-muted-foreground mt-3 animate-pulse leading-relaxed shrink-0">
+                    <p className="text-xs font-bold text-muted-foreground mt-2 animate-pulse leading-relaxed shrink-0">
                       AI กำลังวิเคราะห์และตรวจสอบความถูกต้อง...
                     </p>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="bg-card rounded-2xl p-6 shadow-lg border border-border">
-                <h2 className="text-lg font-bold text-foreground mb-4">
+              <div className="bg-card rounded-2xl p-5 shadow-lg border border-border w-full">
+                <h2 className="text-base font-bold text-foreground mb-4 leading-relaxed">
                   {(() => {
                     const idx = sessionData?.phaseSelectedIndices?.[currentPhase] || 0;
                     return articleData?.shortAnswerQuestions?.[idx]?.question || "พิมพ์คำตอบของคุณ";
@@ -501,7 +503,7 @@ function PlayLessonContent() {
                 <textarea
                   value={typedAnswer}
                   onChange={(e) => setTypedAnswer(e.target.value)}
-                  className="w-full border-2 border-border bg-background text-foreground rounded-xl p-4 min-h-[150px] text-base focus:border-primary focus:outline-none mb-2 resize-none"
+                  className="w-full border-2 border-border bg-background text-foreground rounded-xl p-4 min-h-[132px] max-h-[42dvh] text-base leading-relaxed focus:border-primary focus:outline-none mb-2 resize-y"
                   placeholder="พิมพ์คำตอบสั้นๆ ที่นี่..."
                 />
                 <div className="flex justify-between items-center mb-4">

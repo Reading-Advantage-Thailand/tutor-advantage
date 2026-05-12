@@ -106,7 +106,16 @@ export const studentApi = {
 
   // Finance
   getPaymentHistory: () => fetchWithAuth('/payments/history', {}, FINANCE_API_BASE),
-  createPaymentIntent: (payload: { enrollmentId: string; amountSatang: number; method: 'promptpay' | 'card' }) => fetchWithAuth('/payments/intent', {
+  getPaymentConfig: () => fetchWithAuth('/payments/config', {}, FINANCE_API_BASE),
+  getPaymentStatus: (paymentIntentId: string) => fetchWithAuth(`/payments/${paymentIntentId}/status`, {}, FINANCE_API_BASE),
+  getPaymentQrCode: (paymentIntentId: string) => fetchWithAuth(`/payments/${paymentIntentId}/qr-code`, {}, FINANCE_API_BASE),
+  createPaymentIntent: (payload: {
+    enrollmentId: string;
+    amountSatang: number;
+    method: 'promptpay' | 'card';
+    omiseToken?: string;
+    returnUri?: string;
+  }) => fetchWithAuth('/payments/intent', {
     method: 'POST',
     body: JSON.stringify(payload),
   }, FINANCE_API_BASE),

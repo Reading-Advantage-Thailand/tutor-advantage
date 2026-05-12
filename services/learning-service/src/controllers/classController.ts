@@ -51,34 +51,6 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
       where: isUuid ? { bookId: bookId } : { bookCode: bookId },
     });
 
-    if (!book && !isUuid) {
-      // Create a mock book since it crosses from another app but doesn't exist here yet
-      let mockSeries = await prisma.series.findFirst({
-        where: { code: "MOCK-X" },
-      });
-      if (!mockSeries) {
-        mockSeries = await prisma.series.create({
-          data: {
-            code: "MOCK-X",
-            name: "Mock Series (Cross App)",
-            cefrLevel: "A1",
-            raLevelStart: 1,
-            raLevelEnd: 6,
-          },
-        });
-      }
-      book = await prisma.book.create({
-        data: {
-          bookCode: bookId,
-          title: `Book: ${bookId}`,
-          levelNumber: 1,
-          seriesId: mockSeries.seriesId,
-          articleCount: 10,
-          classHours: 10,
-        },
-      });
-    }
-
     if (!book) {
       return res.status(404).json({
         error: {
@@ -129,6 +101,37 @@ function serializeClass<T extends { packagePriceMinor?: bigint | number | null }
         ? cls.packagePriceMinor
         : Number(cls.packagePriceMinor),
   };
+}
+
+function getSeriesColor(cefrStr?: string | null) {
+  switch (cefrStr?.toUpperCase()) {
+    case "A1":
+      return "#06c755";
+    case "A2":
+      return "#3b82f6";
+    case "B1":
+      return "#f59e0b";
+    case "B2":
+      return "#8b5cf6";
+    default:
+      return "#06c755";
+  }
+}
+
+function mapClassStatus(status: string, enrolledCount: number, capacity: number) {
+  if (status !== "OPEN") return status.toLowerCase();
+  return enrolledCount >= capacity ? "full" : "open";
+}
+
+function getInitials(name?: string | null) {
+  if (!name) return "TA";
+  return name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
 }
 
 export async function closeClass(req: AuthenticatedRequest, res: Response) {
@@ -213,7 +216,7 @@ export async function getClasses(req: AuthenticatedRequest, res: Response) {
     } else {
       // Student: Fetch enrolled classes
       const enrollments = await prisma.enrollment.findMany({
-        where: { studentUserId: userId },
+        where: { studentUserId: userId, status: "ACTIVE" },
         include: {
           class: {
             include: { book: true, _count: { select: { enrollments: true } } },
@@ -237,7 +240,7 @@ export async function getClasses(req: AuthenticatedRequest, res: Response) {
       name: c.title || (c as any).book?.title || "Untitled Class",
       book: (c as any).book?.title || "Unknown Book",
       status: c.status.toLowerCase(),
-      students: (c as any)._count?.enrollments || 0,
+      students: c.enrolledCount || 0,
       maxStudents: c.capacity,
       packagePriceSatang: Number(c.packagePriceMinor),
       tutorUserId: c.tutorUserId,
@@ -270,7 +273,16 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
 
     const cls = (await prisma.class.findUnique({
       where: { classId },
-      include: { book: true, enrollments: true } as any,
+      include: {
+        book: {
+          include: {
+            series: true,
+            articles: { orderBy: { articleId: "asc" }, take: 3 },
+          },
+        },
+        enrollments: true,
+        _count: { select: { enrollments: true } },
+      } as any,
     })) as any;
 
     if (!cls) {
@@ -285,12 +297,23 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
       select: { displayName: true },
     });
 
-    const role = req.user?.role;
-    const isEnrolled = cls.enrollments?.some(
-      (e: any) => e.studentUserId === userId,
-    );
+    const tutorStudentCount = await prisma.enrollment.count({
+      where: {
+        status: "ACTIVE",
+        class: { tutorUserId: cls.tutorUserId },
+      },
+    });
 
-    if (cls.tutorUserId !== userId && !isEnrolled && role !== "ADMIN") {
+    const role = req.user?.role;
+    const userEnrollments =
+      cls.enrollments?.filter((e: any) => e.studentUserId === userId) || [];
+    const currentEnrollment =
+      userEnrollments.find((e: any) => e.status === "ACTIVE") ||
+      userEnrollments.find((e: any) => e.status === "PENDING_PAYMENT") ||
+      userEnrollments[0];
+    const isActiveEnrollment = currentEnrollment?.status === "ACTIVE";
+
+    if (cls.tutorUserId !== userId && !isActiveEnrollment && role !== "ADMIN") {
       // If student is not enrolled, they can still view if the class is OPEN (for preview)
       if (cls.status !== "OPEN") {
         return res.status(403).json({
@@ -312,27 +335,67 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
     const userMap = new Map();
     users.forEach((u: any) => userMap.set(u.userId, { name: u.displayName, avatar: u.profilePictureUrl }));
 
+    const activeOrPendingStudents = cls.enrolledCount || 0;
+    const series = cls.book?.series;
+    const cefr = series?.cefrLevel || "A1";
+    const totalHours = cls.book?.classHours || 0;
+    const bookArticleCount = cls.book?.articleCount || cls.book?.articles?.length || 0;
+    const status = mapClassStatus(cls.status, activeOrPendingStudents, cls.capacity);
+    const firstArticle = cls.book?.articles?.[0];
     const mapped = {
       id: cls.classId,
       name: cls.title || cls.book?.title || "Untitled Class",
       book: cls.book?.title || "Unknown Book",
-      status: cls.status.toLowerCase(),
-      students: cls.enrollments?.length || 0,
+      bookCode: cls.book?.bookCode || null,
+      seriesName: series?.name || null,
+      seriesTagline: series?.tagline || null,
+      status,
+      students: activeOrPendingStudents,
       maxStudents: cls.capacity,
+      enrolled: activeOrPendingStudents,
+      capacity: cls.capacity,
+      price: Number(cls.packagePriceMinor) / 100,
       packagePriceSatang: Number(cls.packagePriceMinor),
+      cefr,
+      level: cls.book?.levelNumber || 1,
+      seriesColor: getSeriesColor(cefr),
+      totalHours,
+      independentHours: cls.book?.independentHours || 0,
+      articleCount: bookArticleCount,
+      nextSession: cls.scheduleDescription || "ยังไม่ได้กำหนด",
+      startsAt: cls.startsAt,
       schedule: cls.scheduleDescription || "ยังไม่ได้กำหนด",
       meetingUrl:
-        cls.tutorUserId === userId || isEnrolled ? cls.meetingUrl || "" : "",
+        cls.tutorUserId === userId || isActiveEnrollment ? cls.meetingUrl || "" : "",
       tutor: {
         name: tutor?.displayName || "Unknown Tutor",
-        initials: tutor?.displayName?.substring(0, 2) || "TA",
+        initials: getInitials(tutor?.displayName),
+        students: tutorStudentCount,
       },
-      articleId: cls.book?.bookCode
-        ? (await prisma.article.findFirst({ where: { bookId: cls.bookId } }))
-            ?.articleId
-        : "article-default-123",
+      articleId: firstArticle?.articleId || null,
+      articles:
+        cls.book?.articles?.map((article: any, index: number) => ({
+          id: article.articleId,
+          no: index + 1,
+          title: article.title,
+          type: article.type,
+          genre: article.genre,
+        })) || [],
+      highlights: [
+        `${cls.book?.title || "Reading Advantage"} ระดับ ${cefr} Level ${cls.book?.levelNumber || 1}`,
+        bookArticleCount
+          ? `ครอบคลุม ${bookArticleCount} บทความในชุด ${series?.name || "Reading Advantage"}`
+          : `เนื้อหาจากชุด ${series?.name || "Reading Advantage"}`,
+        totalHours
+          ? `เรียนสดรวมประมาณ ${totalHours} ชั่วโมงตามตารางของติวเตอร์`
+          : "เรียนสดตามตารางที่ติวเตอร์กำหนด",
+        cls.book?.independentHours
+          ? `มีเวลาเรียน/ฝึกอ่านด้วยตนเองประมาณ ${cls.book.independentHours} ชั่วโมง`
+          : "ติดตามความคืบหน้าและประวัติการเรียนผ่านแอป",
+      ],
       referralLink: `https://liff.line.me/${process.env.NEXT_PUBLIC_LIFF_ID}/enroll?classId=${cls.classId}`,
-      isEnrolled: isEnrolled, // Added this field
+      isEnrolled: isActiveEnrollment,
+      enrollmentStatus: currentEnrollment?.status || null,
       enrolledStudents:
         cls.tutorUserId === userId
           ? cls.enrollments?.map((e: any) => ({
@@ -416,29 +479,25 @@ export async function getAvailableClasses(
     });
     const tutorMap = new Map(tutors.map((t) => [t.userId, t.displayName]));
 
-    const getColor = (cefrStr: string) => {
-      switch (cefrStr?.toUpperCase()) {
-        case "A1": return "#06c755";
-        case "A2": return "#3b82f6";
-        case "B1": return "#f59e0b";
-        default: return "#06c755";
-      }
-    };
-
     const mappedClasses = classes.map((c) => {
       const tutorName = tutorMap.get(c.tutorUserId) || "Unknown Tutor";
       const seriesCefr = c.book?.series?.cefrLevel || "A1";
+      const enrolled = c.enrolledCount || 0;
       return {
         id: c.classId,
         name: c.title || c.book?.title || "Untitled Class",
         tutor: tutorName,
-        tutorInitials: tutorName.substring(0, 2).toUpperCase(),
+        tutorInitials: getInitials(tutorName),
         book: c.book?.title || "Unknown Book",
+        bookCode: c.book?.bookCode || null,
+        seriesName: c.book?.series?.name || null,
+        articleCount: c.book?.articleCount || 0,
+        totalHours: c.book?.classHours || 0,
         cefr: seriesCefr,
         level: c.book?.levelNumber || 1,
-        seriesColor: getColor(seriesCefr),
-        status: "open",
-        enrolled: c._count?.enrollments || 0,
+        seriesColor: getSeriesColor(seriesCefr),
+        status: mapClassStatus(c.status, enrolled, c.capacity),
+        enrolled,
         capacity: c.capacity,
         price: Number(c.packagePriceMinor) / 100,
         packagePriceSatang: Number(c.packagePriceMinor),
@@ -516,6 +575,12 @@ export async function deleteClass(req: AuthenticatedRequest, res: Response) {
         console.log(
           `[DELETE_CLASS] Step 1: Cleaning up Finance records for ${enrollmentIds.length} enrollments...`,
         );
+        // PaymentReceipts reference PaymentIntents
+        const receiptsDeleted = await prisma.paymentReceipt.deleteMany({
+          where: { paymentIntent: { enrollmentId: { in: enrollmentIds } } },
+        });
+        console.log(`[DELETE_CLASS] Deleted ${receiptsDeleted.count} payment receipts`);
+
         // PaymentEvents reference PaymentIntents
         const eventsDeleted = await prisma.paymentEvent.deleteMany({
           where: { paymentIntent: { enrollmentId: { in: enrollmentIds } } },

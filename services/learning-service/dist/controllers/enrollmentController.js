@@ -56,6 +56,21 @@ async function enrollStudent(req, res) {
                 }
                 targetClassId = fallbackClass.classId;
             }
+            const existing = await tx.enrollment.findFirst({
+                where: {
+                    classId: targetClassId,
+                    studentUserId: userId,
+                    status: { in: ["PENDING_PAYMENT", "ACTIVE"] },
+                },
+                orderBy: { createdAt: "desc" },
+            });
+            if (existing) {
+                return {
+                    enrollmentId: existing.enrollmentId,
+                    classId: existing.classId,
+                    isFallback: targetClassId !== primaryClass.classId,
+                };
+            }
             // 3. Create the enrollment in PENDING_PAYMENT state
             const enrollment = await tx.enrollment.create({
                 data: {
@@ -156,15 +171,17 @@ async function directEnroll(req, res) {
                 targetClassId = fallbackClass.classId;
                 placedByFallback = true;
             }
-            // 2. Check if already enrolled
+            // 2. Check if already enrolled or has an open payment attempt.
             const existing = await tx.enrollment.findFirst({
-                where: { classId: targetClassId, studentUserId: userId }
+                where: {
+                    classId: targetClassId,
+                    studentUserId: userId,
+                    status: { in: ["PENDING_PAYMENT", "ACTIVE"] },
+                },
+                orderBy: { createdAt: "desc" },
             });
             if (existing) {
-                if (existing.status === "PENDING_PAYMENT" || existing.status === "ACTIVE") {
-                    return { ...existing, placedByFallback };
-                }
-                throw new Error("ALREADY_ENROLLED");
+                return { ...existing, placedByFallback };
             }
             // 3. Create enrollment
             const enrollment = await tx.enrollment.create({

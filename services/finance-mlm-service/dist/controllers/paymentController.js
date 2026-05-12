@@ -4,6 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createPaymentIntent = createPaymentIntent;
+exports.getPaymentConfig = getPaymentConfig;
+exports.getPaymentStatus = getPaymentStatus;
+exports.getPromptPayQrCode = getPromptPayQrCode;
 exports.confirmMockPayment = confirmMockPayment;
 exports.handleWebhook = handleWebhook;
 exports.getPaymentHistory = getPaymentHistory;
@@ -11,10 +14,11 @@ const database_1 = require("@tutor-advantage/database");
 const crypto_1 = __importDefault(require("crypto"));
 const taxService_1 = require("../services/taxService");
 const commissionService_1 = require("../services/commissionService");
+const omiseService_1 = require("../services/omiseService");
 async function createPaymentIntent(req, res) {
     try {
         const userId = req.user?.userId;
-        const { enrollmentId, amountSatang, method = "promptpay" } = req.body;
+        const { enrollmentId, amountSatang, method = "promptpay", omiseToken, returnUri, } = req.body;
         const idempotencyKey = req.body.idempotencyKey ||
             req.headers["idempotency-key"] ||
             req.headers["x-idempotency-key"];
@@ -126,6 +130,24 @@ async function createPaymentIntent(req, res) {
                 },
             });
         }
+        if (!(0, omiseService_1.isOmiseConfigured)()) {
+            return res.status(503).json({
+                error: {
+                    code: "PAYMENT_GATEWAY_NOT_CONFIGURED",
+                    message: "Omise public/private keys are not configured",
+                    requestId: req.id,
+                },
+            });
+        }
+        if (method === "card" && typeof omiseToken !== "string") {
+            return res.status(400).json({
+                error: {
+                    code: "OMISE_TOKEN_REQUIRED",
+                    message: "omiseToken is required for card payments",
+                    requestId: req.id,
+                },
+            });
+        }
         if (idempotencyKey && typeof idempotencyKey !== "string") {
             return res.status(400).json({
                 error: {
@@ -139,13 +161,12 @@ async function createPaymentIntent(req, res) {
             const existingByKey = await database_1.prisma.paymentIntent.findUnique({
                 where: { idempotencyKey },
             });
-            if (existingByKey) {
+            if (existingByKey?.providerRef) {
+                const checkout = await buildCheckoutDetails(existingByKey.providerRef);
                 return res.status(200).json({
                     message: "Existing payment intent returned by idempotency key",
-                    intent: {
-                        ...existingByKey,
-                        amountMinor: Number(existingByKey.amountMinor),
-                    },
+                    intent: serializePaymentIntent(existingByKey),
+                    checkout,
                 });
             }
         }
@@ -158,33 +179,64 @@ async function createPaymentIntent(req, res) {
             },
             orderBy: { createdAt: "desc" },
         });
-        if (existingIntent) {
+        if (existingIntent?.providerRef) {
+            const checkout = await buildCheckoutDetails(existingIntent.providerRef);
             return res.status(200).json({
                 message: "Existing pending payment intent returned",
-                intent: {
-                    ...existingIntent,
-                    amountMinor: Number(existingIntent.amountMinor),
-                },
+                intent: serializePaymentIntent(existingIntent),
+                checkout,
             });
         }
-        const intent = await database_1.prisma.paymentIntent.create({
+        const intent = existingIntent ||
+            (await database_1.prisma.paymentIntent.create({
+                data: {
+                    enrollmentId,
+                    studentUserId: userId,
+                    amountMinor: BigInt(amountSatang), // using BigInt as specified in schema
+                    currency: "THB",
+                    method,
+                    status: "PENDING",
+                    idempotencyKey: idempotencyKey || undefined,
+                },
+            }));
+        const charge = await (0, omiseService_1.createOmiseCharge)({
+            amount: amountSatang,
+            currency: "THB",
+            description: `Tutor Advantage enrollment ${enrollmentId}`,
+            paymentIntentId: intent.paymentIntentId,
+            enrollmentId,
+            studentUserId: userId,
+            returnUri: buildReturnUri(returnUri, intent.paymentIntentId),
+            method,
+            cardToken: omiseToken,
+            ip: getClientIp(req),
+        });
+        const updatedIntent = await database_1.prisma.paymentIntent.update({
+            where: { paymentIntentId: intent.paymentIntentId },
             data: {
-                enrollmentId,
-                studentUserId: userId,
-                amountMinor: BigInt(amountSatang), // using BigInt as specified in schema
-                currency: "THB",
-                method,
-                status: "PENDING",
-                idempotencyKey: idempotencyKey || undefined,
+                providerRef: charge.id,
+                status: charge.status === "failed" ? "FAILED" : "PENDING",
             },
         });
+        await database_1.prisma.paymentEvent.create({
+            data: {
+                paymentIntentId: intent.paymentIntentId,
+                providerEventId: `local:${charge.id}:create`,
+                eventType: "omise.charge.create",
+                rawPayload: charge,
+                occurredAt: new Date(),
+            },
+        });
+        const finalIntent = charge.paid
+            ? await fulfillPaymentIntent(intent.paymentIntentId, charge.id)
+            : charge.status === "failed"
+                ? await recordNegativePaymentOutcome(intent.paymentIntentId, charge.id, "omise.charge.failed")
+                : updatedIntent;
         // When returning, convert BigInt back to String/Number to keep JSON serializable
         return res.status(201).json({
             message: "Payment intent created successfully",
-            intent: {
-                ...intent,
-                amountMinor: Number(intent.amountMinor),
-            },
+            intent: serializePaymentIntent(finalIntent),
+            checkout: buildCheckoutDetailsFromCharge(charge),
         });
     }
     catch (error) {
@@ -193,6 +245,151 @@ async function createPaymentIntent(req, res) {
             error: {
                 code: "INTERNAL_SERVER_ERROR",
                 message: "Could not create payment intent",
+                details: error.message,
+                requestId: req.id,
+            },
+        });
+    }
+}
+async function getPaymentConfig(_req, res) {
+    return res.status(200).json({
+        provider: "omise",
+        publicKey: (0, omiseService_1.getOmisePublicKey)(),
+        configured: (0, omiseService_1.isOmiseConfigured)(),
+    });
+}
+async function getPaymentStatus(req, res) {
+    try {
+        const userId = req.user?.userId;
+        const paymentIntentId = req.params.paymentIntentId;
+        if (!userId) {
+            return res.status(401).json({
+                error: {
+                    code: "UNAUTHORIZED",
+                    message: "User ID missing from token",
+                    requestId: req.id,
+                },
+            });
+        }
+        const intent = await database_1.prisma.paymentIntent.findUnique({
+            where: { paymentIntentId },
+        });
+        if (!intent) {
+            return res.status(404).json({
+                error: {
+                    code: "NOT_FOUND",
+                    message: "Payment intent not found",
+                    requestId: req.id,
+                },
+            });
+        }
+        if (intent.studentUserId !== userId) {
+            return res.status(403).json({
+                error: {
+                    code: "FORBIDDEN",
+                    message: "Cannot view someone else's payment intent",
+                    requestId: req.id,
+                },
+            });
+        }
+        let currentIntent = intent;
+        let checkout = await buildCheckoutDetails(intent.providerRef);
+        if (intent.providerRef && intent.status === "PENDING") {
+            const charge = await (0, omiseService_1.retrieveOmiseCharge)(intent.providerRef);
+            checkout = buildCheckoutDetailsFromCharge(charge);
+            if (charge.paid || charge.status === "successful") {
+                currentIntent = await fulfillPaymentIntent(intent.paymentIntentId, charge.id);
+            }
+            else if (charge.status === "failed" ||
+                charge.status === "expired" ||
+                charge.status === "reversed") {
+                currentIntent = await recordNegativePaymentOutcome(intent.paymentIntentId, charge.id, `omise.charge.${charge.status}`);
+            }
+        }
+        return res.status(200).json({
+            intent: serializePaymentIntent(currentIntent),
+            checkout,
+        });
+    }
+    catch (error) {
+        console.error("Get Payment Status Error:", error);
+        return res.status(500).json({
+            error: {
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Could not fetch payment status",
+                details: error.message,
+                requestId: req.id,
+            },
+        });
+    }
+}
+async function getPromptPayQrCode(req, res) {
+    try {
+        const userId = req.user?.userId;
+        const paymentIntentId = req.params.paymentIntentId;
+        if (!userId) {
+            return res.status(401).json({
+                error: {
+                    code: "UNAUTHORIZED",
+                    message: "User ID missing from token",
+                    requestId: req.id,
+                },
+            });
+        }
+        const intent = await database_1.prisma.paymentIntent.findUnique({
+            where: { paymentIntentId },
+        });
+        if (!intent) {
+            return res.status(404).json({
+                error: {
+                    code: "NOT_FOUND",
+                    message: "Payment intent not found",
+                    requestId: req.id,
+                },
+            });
+        }
+        if (intent.studentUserId !== userId) {
+            return res.status(403).json({
+                error: {
+                    code: "FORBIDDEN",
+                    message: "Cannot view someone else's QR code",
+                    requestId: req.id,
+                },
+            });
+        }
+        if (!intent.providerRef) {
+            return res.status(400).json({
+                error: {
+                    code: "QR_NOT_READY",
+                    message: "Payment intent has no Omise charge yet",
+                    requestId: req.id,
+                },
+            });
+        }
+        const charge = await (0, omiseService_1.retrieveOmiseCharge)(intent.providerRef);
+        const downloadUri = charge.source?.scannable_code?.image?.download_uri;
+        if (!downloadUri) {
+            return res.status(404).json({
+                error: {
+                    code: "QR_NOT_FOUND",
+                    message: "Omise did not return a PromptPay QR code for this charge",
+                    requestId: req.id,
+                },
+            });
+        }
+        const dataUri = await (0, omiseService_1.downloadOmiseDocumentAsDataUri)(downloadUri);
+        return res.status(200).json({
+            paymentIntentId,
+            chargeId: charge.id,
+            dataUri,
+        });
+    }
+    catch (error) {
+        console.error("Get PromptPay QR Code Error:", error);
+        return res.status(500).json({
+            error: {
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Could not fetch PromptPay QR code",
                 details: error.message,
                 requestId: req.id,
             },
@@ -399,11 +596,36 @@ async function recordNegativePaymentOutcome(paymentIntentId, providerRef, eventT
     if (!intent)
         throw new Error("PAYMENT_INTENT_NOT_FOUND");
     if (intent.status !== "SUCCESS") {
-        await database_1.prisma.paymentIntent.update({
-            where: { paymentIntentId },
-            data: { status: "FAILED", providerRef },
+        return database_1.prisma.$transaction(async (tx) => {
+            const failedIntent = await tx.paymentIntent.update({
+                where: { paymentIntentId },
+                data: { status: "FAILED", providerRef },
+            });
+            const cancelled = await tx.enrollment.updateMany({
+                where: {
+                    enrollmentId: intent.enrollmentId,
+                    status: "PENDING_PAYMENT",
+                },
+                data: {
+                    status: "CANCELLED",
+                },
+            });
+            if (cancelled.count > 0) {
+                const enrollment = await tx.enrollment.findUnique({
+                    where: { enrollmentId: intent.enrollmentId },
+                    select: { classId: true, class: { select: { enrolledCount: true } } },
+                });
+                if (enrollment) {
+                    await tx.class.update({
+                        where: { classId: enrollment.classId },
+                        data: {
+                            enrolledCount: Math.max(0, enrollment.class.enrolledCount - 1),
+                        },
+                    });
+                }
+            }
+            return failedIntent;
         });
-        return;
     }
     const enrollment = await database_1.prisma.enrollment.findUnique({
         where: { enrollmentId: intent.enrollmentId },
@@ -436,24 +658,86 @@ async function recordNegativePaymentOutcome(paymentIntentId, providerRef, eventT
             createdBy: "payment-webhook",
         },
     });
+    return intent;
 }
 function verifyWebhookSignature(req, payload) {
     const secret = process.env.OMISE_WEBHOOK_SECRET;
+    if (!secret && process.env.NODE_ENV !== "production") {
+        return true;
+    }
     if (!secret) {
         console.error("CRITICAL: Webhook secret is not configured");
         return false;
     }
     const signature = req.headers["omise-signature"] || req.headers["x-omise-signature"];
-    if (!signature || Array.isArray(signature))
+    const timestamp = req.headers["omise-signature-timestamp"];
+    if (!signature || Array.isArray(signature) || !timestamp || Array.isArray(timestamp)) {
         return false;
+    }
+    const rawBody = req.rawBody || JSON.stringify(payload);
     const expected = crypto_1.default
-        .createHmac("sha256", secret)
-        .update(req.rawBody || JSON.stringify(payload))
-        .digest("hex");
-    const normalizedSignature = signature.replace(/^sha256=/, "");
-    if (normalizedSignature.length !== expected.length)
-        return false;
-    return crypto_1.default.timingSafeEqual(Buffer.from(normalizedSignature), Buffer.from(expected));
+        .createHmac("sha256", Buffer.from(secret, "base64"))
+        .update(`${timestamp}.${rawBody}`)
+        .digest();
+    return signature.split(",").some((candidate) => {
+        const normalizedSignature = candidate.trim().replace(/^sha256=/, "");
+        const signatureBuffer = Buffer.from(normalizedSignature, "hex");
+        return (signatureBuffer.length === expected.length &&
+            crypto_1.default.timingSafeEqual(signatureBuffer, expected));
+    });
+}
+function serializePaymentIntent(intent) {
+    return {
+        ...intent,
+        amountMinor: Number(intent.amountMinor),
+    };
+}
+async function buildCheckoutDetails(providerRef) {
+    if (!providerRef)
+        return null;
+    try {
+        const charge = await (0, omiseService_1.retrieveOmiseCharge)(providerRef);
+        return buildCheckoutDetailsFromCharge(charge);
+    }
+    catch (error) {
+        console.error("Could not retrieve Omise checkout details:", error);
+        return { providerRef };
+    }
+}
+function buildCheckoutDetailsFromCharge(charge) {
+    return {
+        provider: "omise",
+        chargeId: charge.id,
+        status: charge.status,
+        paid: Boolean(charge.paid),
+        authorizeUri: charge.authorize_uri || null,
+        qrCodeUrl: charge.source?.scannable_code?.image?.download_uri || null,
+        failureCode: charge.failure_code || null,
+        failureMessage: charge.failure_message || null,
+    };
+}
+function buildReturnUri(returnUri, paymentIntentId) {
+    const fallbackBase = process.env.STUDENT_APP_BASE_URL ||
+        process.env.NEXT_PUBLIC_BASE_URL ||
+        "http://localhost:3004";
+    const fallback = `${fallbackBase.replace(/\/$/, "")}/payment`;
+    const candidate = typeof returnUri === "string" && returnUri ? returnUri : fallback;
+    try {
+        const url = new URL(candidate);
+        url.searchParams.set("paymentIntentId", paymentIntentId);
+        url.searchParams.set("paymentReturn", "omise");
+        return url.toString();
+    }
+    catch {
+        return `${fallback}?paymentIntentId=${encodeURIComponent(paymentIntentId)}&paymentReturn=omise`;
+    }
+}
+function getClientIp(req) {
+    const forwardedFor = req.headers["x-forwarded-for"];
+    if (typeof forwardedFor === "string") {
+        return forwardedFor.split(",")[0]?.trim();
+    }
+    return req.ip;
 }
 function isUnderage(dateOfBirth) {
     const now = new Date();

@@ -62,7 +62,12 @@ export const useLessonSocket = (pin: string | null, studentId: string, name: str
   useEffect(() => {
     if ((!pin && !classId) || !studentId) return;
 
-    const newSocket = io(SOCKET_URL);
+    const token = typeof window !== "undefined"
+      ? localStorage.getItem("student_session_token")
+      : null;
+    const newSocket = io(SOCKET_URL, {
+      auth: token ? { token } : undefined,
+    });
     socketRef.current = newSocket;
     setSocket(newSocket);
 

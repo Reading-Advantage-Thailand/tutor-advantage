@@ -18,6 +18,9 @@ import {
   confirmMockPayment,
   handleWebhook,
   getPaymentHistory,
+  getPaymentConfig,
+  getPaymentStatus,
+  getPromptPayQrCode,
 } from "./controllers/paymentController";
 import {
   previewSettlement,
@@ -87,6 +90,9 @@ app.get("/v1/admin/overview", authMiddleware, getAdminOverview);
 // ── Payment Routes ─────────────────────────────────────────────────────────
 app.post("/v1/payments/intent", authMiddleware, createPaymentIntent);
 app.post("/v1/payments/confirm-mock", authMiddleware, confirmMockPayment);
+app.get("/v1/payments/config", authMiddleware, getPaymentConfig);
+app.get("/v1/payments/:paymentIntentId/qr-code", authMiddleware, getPromptPayQrCode);
+app.get("/v1/payments/:paymentIntentId/status", authMiddleware, getPaymentStatus);
 app.get("/v1/payments/history", authMiddleware, getPaymentHistory);
 app.post("/v1/payments/webhook", handleWebhook);
 

@@ -14,9 +14,17 @@ interface PageProps {
 interface Tutor {
   name: string;
   initials: string;
-  bio: string;
+  bio?: string;
   rating?: number;
   students?: number;
+}
+
+interface ClassArticlePreview {
+  id: string;
+  no: number;
+  title: string;
+  type?: string | null;
+  genre?: string | null;
 }
 
 interface ClassDetail {
@@ -32,9 +40,17 @@ interface ClassDetail {
   nextSession: string;
   price: number;
   book: string;
+  bookCode?: string | null;
+  seriesName?: string | null;
+  seriesTagline?: string | null;
+  articleCount?: number;
+  independentHours?: number;
   totalHours?: number;
   schedule: string;
+  highlights?: string[];
+  articles?: ClassArticlePreview[];
   isEnrolled?: boolean;
+  enrollmentStatus?: string | null;
 }
 
 export default function ClassDetailPage({ params }: PageProps) {
@@ -61,9 +77,12 @@ export default function ClassDetailPage({ params }: PageProps) {
 
   if (!isReady || loading) {
     return (
-      <div className="min-h-[100dvh] flex flex-col items-center justify-center p-12 gap-2 bg-slate-50">
-        <Loader2 className="animate-spin text-brand-500 w-10 h-10" />
-        <p className="text-slate-400 font-medium">กำลังโหลดข้อมูลคลาส...</p>
+      <div className="min-h-[100dvh] flex items-center justify-center bg-background px-6 py-[max(24px,var(--safe-top))]">
+        <div className="w-full max-w-[280px] rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
+          <Loader2 className="animate-spin text-primary w-10 h-10 mx-auto mb-4" />
+          <p className="text-foreground text-sm font-bold">กำลังโหลดข้อมูลคลาส</p>
+          <p className="text-muted-foreground text-xs font-medium mt-1">โปรดรอสักครู่...</p>
+        </div>
       </div>
     );
   }
@@ -85,16 +104,20 @@ export default function ClassDetailPage({ params }: PageProps) {
   const seatsLeft = cls.maxStudents - cls.students;
   const fillPct = Math.round((cls.students / cls.maxStudents) * 100);
 
-  const highlights = [
+  const fallbackHighlights = [
     "ระบบบทเรียน 15 ขั้นตอนที่ผ่านการพิสูจน์แล้ว",
-    "ติวเตอร์คุณภาพ สอน 25 ชั่วโมงต่อคอร์ส",
+    cls.totalHours ? `เรียนสดรวมประมาณ ${cls.totalHours} ชั่วโมง` : "เรียนสดตามตารางที่ติวเตอร์กำหนด",
     "เรียนเพิ่มเติมผ่านแอปได้ตลอดเวลา",
     "รายงานผลการเรียนรู้ให้ผู้ปกครอง",
   ];
 
-  const articles = [
-    { id: "art-1", no: 1, title: "Lesson Overview", done: false },
-  ];
+  const fallbackArticles: ClassArticlePreview[] = [];
+  const highlights = cls.highlights?.length ? cls.highlights : fallbackHighlights;
+  const articles = cls.articles?.length ? cls.articles : fallbackArticles;
+  const articleCount = cls.articleCount || articles.length;
+  const tutorBio =
+    cls.tutor.bio ||
+    `คลาสนี้สอนโดย ${cls.tutor.name} ด้วยเนื้อหา ${cls.book}${cls.seriesName ? ` จากชุด ${cls.seriesName}` : ""}`;
 
   return (
     <div className="page-shell">
@@ -123,7 +146,7 @@ export default function ClassDetailPage({ params }: PageProps) {
         </div>
 
         <h2 style={{ color: "#fff", fontSize: "1.25rem", fontWeight: 800, marginBottom: 6, lineHeight: 1.3 }}>{cls.name}</h2>
-        <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.875rem" }}>{cls.book} · {cls.totalHours || 25} ชั่วโมง / คอร์ส</p>
+        <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.875rem" }}>{cls.book}{cls.bookCode ? ` (${cls.bookCode})` : ""} · {cls.totalHours || 0} ชั่วโมง / คอร์ส</p>
       </div>
 
       {/* Content */}
@@ -138,16 +161,18 @@ export default function ClassDetailPage({ params }: PageProps) {
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--text-primary)" }}>{cls.tutor.name}</div>
               <div style={{ display: "flex", gap: 12, marginTop: 4 }}>
-                <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 3 }}>
-                  <Star size={12} style={{ color: "#f59e0b", fill: "#f59e0b" }} /> {cls.tutor?.rating || 5.0}
-                </span>
+                {typeof cls.tutor?.rating === "number" && (
+                  <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 3 }}>
+                    <Star size={12} style={{ color: "#f59e0b", fill: "#f59e0b" }} /> {cls.tutor.rating.toFixed(1)}
+                  </span>
+                )}
                 <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 3 }}>
                   <Users size={12} /> {cls.tutor?.students || 0} นักเรียน
                 </span>
               </div>
             </div>
           </div>
-          <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.7 }}>{cls.tutor.bio}</p>
+          <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.7 }}>{tutorBio}</p>
         </div>
 
         {/* Schedule */}
@@ -193,7 +218,7 @@ export default function ClassDetailPage({ params }: PageProps) {
         <div>
           <div className="section-header">
             <h3 className="section-title">ตัวอย่างบทเรียน</h3>
-            <span style={{ background: "var(--neutral-100)", color: "var(--text-secondary)", padding: "4px 10px", borderRadius: "var(--radius-full)", fontSize: "0.6875rem", fontWeight: 700 }}>1 จาก 14 บท</span>
+            <span style={{ background: "var(--neutral-100)", color: "var(--text-secondary)", padding: "4px 10px", borderRadius: "var(--radius-full)", fontSize: "0.6875rem", fontWeight: 700 }}>{articles.length} จาก {articleCount} บท</span>
           </div>
           <div className="glass-card" style={{ overflow: "hidden" }}>
             {articles.map((art, idx) => (
@@ -204,7 +229,7 @@ export default function ClassDetailPage({ params }: PageProps) {
               </div>
             ))}
             <div style={{ padding: "12px 16px", borderTop: "1px solid var(--surface-border)", textAlign: "center", fontSize: "0.8125rem", color: "var(--text-tertiary)" }}>
-              + อีก 11 บทเรียน (ปลดล็อกหลังชำระเงิน)
+              {articleCount > articles.length ? `+ อีก ${articleCount - articles.length} บทเรียน (ปลดล็อกหลังชำระเงิน)` : "บทเรียนทั้งหมดของคอร์สนี้จะแสดงหลังชำระเงิน"}
             </div>
           </div>
         </div>
@@ -232,7 +257,7 @@ export default function ClassDetailPage({ params }: PageProps) {
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: "0.6875rem", color: "var(--text-tertiary)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 2 }}>ราคาสุทธิ</div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
-            <span style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>฿{(cls.price || 2800).toLocaleString()}</span>
+            <span style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>฿{cls.price.toLocaleString()}</span>
           </div>
         </div>
         {cls.isEnrolled ? (

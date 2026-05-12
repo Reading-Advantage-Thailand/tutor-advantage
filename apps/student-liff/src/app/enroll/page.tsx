@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
+import { studentApi } from "@/lib/api";
 
 interface ClassDetails {
   classId: string;
@@ -37,21 +38,32 @@ function EnrollContent() {
   useEffect(() => {
     if (!isReady) return;
 
-    // TODO: Fetch class details from API using classId or referralToken
-    // For now, use mock data
-    if (classId || referralToken) {
-      const mockClass: ClassDetails = {
-        classId: classId || "cls-001",
-        className: "Origins 1 - Advanced Group",
-        tutorName: "อ.สีวา สุขพร้อม",
-        bookTitle: "Origins 1",
-        price: 2800,
-        maxStudents: 15,
-        currentStudents: 8,
-        cefrLevel: "A1",
-        schedule: "every Saturday 19:00-21:00",
-      };
-      setClassDetails(mockClass);
+    if (classId) {
+      studentApi.getClassDetails(classId)
+        .then((data) => {
+          const cls = data.class;
+          setClassDetails({
+            classId: cls.id,
+            className: cls.name,
+            tutorName: cls.tutor?.name || "Tutor Advantage",
+            bookTitle: cls.book,
+            price: cls.price,
+            maxStudents: cls.maxStudents,
+            currentStudents: cls.students,
+            cefrLevel: cls.cefr,
+            schedule: cls.schedule,
+          });
+        })
+        .catch((err) => {
+          console.error("Failed to fetch class details for enrollment:", err);
+          setError(err instanceof Error ? err.message : "ไม่สามารถโหลดข้อมูลคลาสได้");
+        })
+        .finally(() => setLoading(false));
+      return;
+    }
+
+    if (referralToken) {
+      setError("ลิงก์สมัครเรียนนี้ไม่มี classId กรุณาขอลิงก์ใหม่จากติวเตอร์");
     } else {
       setError("ไม่พบข้อมูลคลาส กรุณาตรวจสอบลิงก์");
     }

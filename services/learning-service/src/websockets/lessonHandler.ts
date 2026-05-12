@@ -6,6 +6,7 @@ import { evaluateShortAnswer } from "../services/AIEvaluator";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
 import * as dbWriter from "../services/SessionDBWriter";
 import { LineNotificationService } from "../services/LineNotificationService";
+import { prisma } from "@tutor-advantage/database";
 
 function seededShuffle<T>(array: T[], seedInput: string): T[] {
   const result = [...array];
@@ -76,8 +77,26 @@ export const setupLessonSocket = (io: Server) => {
     });
 
     // Student joins a session using classId (No PIN needed)
-    socket.on("join_class", ({ classId, studentId, name, pictureUrl }) => {
+    socket.on("join_class", async ({ classId, studentId, name, pictureUrl }) => {
       console.log(`[Socket] Student ${name} (${studentId}) attempting to join class: ${classId}`);
+      const resolvedStudentId = await dbWriter.resolveUserId(studentId);
+
+      if (!resolvedStudentId) {
+        console.warn(`[Socket] Join denied: could not resolve student ${studentId}`);
+        socket.emit("error", { message: "Please sign in before joining class." });
+        return;
+      }
+
+      const activeEnrollment = await prisma.enrollment.findFirst({
+        where: { classId, studentUserId: resolvedStudentId, status: "ACTIVE" },
+      });
+
+      if (!activeEnrollment) {
+        console.warn(`[Socket] Join denied: student ${studentId} has no ACTIVE enrollment for class ${classId}`);
+        socket.emit("error", { message: "Please complete payment before joining class." });
+        return;
+      }
+
       const session = lessonSessionService.joinSessionByClassId(classId, studentId, name, socket.id, pictureUrl);
       if (session) {
         socket.join(session.sessionId);
