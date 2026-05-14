@@ -1,0 +1,141 @@
+import jwt from "jsonwebtoken";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { processOAuthLogin } from "./authService";
+
+const prisma = vi.hoisted(() => ({
+  oAuthIdentity: {
+    findUnique: vi.fn(),
+    create: vi.fn(),
+  },
+  user: {
+    findFirst: vi.fn(),
+    findUnique: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+  },
+}));
+
+vi.mock("@tutor-advantage/database", () => ({ prisma }));
+
+describe("processOAuthLogin", () => {
+  beforeEach(() => {
+    prisma.oAuthIdentity.findUnique.mockReset();
+    prisma.oAuthIdentity.create.mockReset();
+    prisma.user.findFirst.mockReset();
+    prisma.user.findUnique.mockReset();
+    prisma.user.create.mockReset();
+    prisma.user.update.mockReset();
+  });
+
+  it("returns an existing OAuth user and signs a session token", async () => {
+    prisma.oAuthIdentity.findUnique.mockResolvedValue({
+      user: {
+        userId: "user-1",
+        displayName: "Ada",
+        role: "STUDENT",
+        profilePictureUrl: "avatar.png",
+      },
+    });
+
+    const result = await processOAuthLogin("google", "subject-1", "ada@example.com", "Ada");
+
+    expect(result.user).toEqual({
+      id: "user-1",
+      name: "Ada",
+      role: "STUDENT",
+      requiresGuardian: false,
+    });
+    expect(jwt.verify(result.sessionToken, "secret-for-dev-only-change-me")).toMatchObject({
+      userId: "user-1",
+      role: "STUDENT",
+    });
+    expect(prisma.user.create).not.toHaveBeenCalled();
+  });
+
+  it("creates a new student and links a valid non-LINE sponsor", async () => {
+    prisma.user.findFirst.mockResolvedValue({ userId: "tutor-1" });
+    prisma.oAuthIdentity.findUnique.mockResolvedValue(null);
+    prisma.user.findUnique.mockResolvedValue(null);
+    prisma.user.create.mockResolvedValue({
+      userId: "student-1",
+      displayName: "New Student",
+      role: "STUDENT",
+      sponsorTutorId: null,
+      sponsorLockedAt: null,
+    });
+    prisma.user.update.mockResolvedValue({
+      userId: "student-1",
+      displayName: "New Student",
+      role: "STUDENT",
+      sponsorTutorId: "tutor-1",
+      sponsorLockedAt: new Date("2026-05-14T00:00:00.000Z"),
+    });
+
+    const result = await processOAuthLogin(
+      "google",
+      "subject-1",
+      "student@example.com",
+      "New Student",
+      "avatar.png",
+      "tutor-1",
+    );
+
+    expect(prisma.user.findFirst).toHaveBeenCalledWith({
+      where: { userId: "tutor-1", role: "TUTOR", isActive: true },
+      select: { userId: true },
+    });
+    expect(prisma.user.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        role: "STUDENT",
+        displayName: "New Student",
+        email: "student@example.com",
+        oauthIdentities: {
+          create: {
+            provider: "google",
+            providerSubject: "subject-1",
+          },
+        },
+      }),
+    });
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: { userId: "student-1" },
+      data: expect.objectContaining({
+        sponsorTutorId: "tutor-1",
+        sponsorLockedAt: expect.any(Date),
+      }),
+    });
+    expect(result.user.id).toBe("student-1");
+  });
+
+  it("links a new OAuth provider to an existing email account", async () => {
+    prisma.oAuthIdentity.findUnique.mockResolvedValue(null);
+    prisma.user.findUnique.mockResolvedValue({
+      userId: "user-1",
+      displayName: "Ada",
+      email: "ada@example.com",
+      role: "STUDENT",
+      profilePictureUrl: null,
+    });
+    prisma.user.update.mockResolvedValue({
+      userId: "user-1",
+      displayName: "Ada",
+      email: "ada@example.com",
+      role: "STUDENT",
+      profilePictureUrl: "avatar.png",
+    });
+
+    await processOAuthLogin("facebook", "fb-subject", "ada@example.com", "Ada", "avatar.png");
+
+    expect(prisma.oAuthIdentity.create).toHaveBeenCalledWith({
+      data: {
+        userId: "user-1",
+        provider: "facebook",
+        providerSubject: "fb-subject",
+      },
+    });
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: { userId: "user-1" },
+      data: { profilePictureUrl: "avatar.png" },
+    });
+  });
+});

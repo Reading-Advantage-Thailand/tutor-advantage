@@ -11,10 +11,16 @@
     "build": "npm run build -w student-liff && npm run build -w tutor-pwa && npm run build -w admin-console",
     "build:services": "concurrently \"npm run build -w identity-service\" \"npm run build -w learning-service\" \"npm run build -w finance-mlm-service\"",
     "dev:services": "concurrently \"npm run dev -w identity-service\" \"npm run dev -w learning-service\" \"npm run dev -w finance-mlm-service\"",
-    "dev": "concurrently -n \"proxy,services,student-liff,ngrok,tutor-pwa\" -c \"magenta,green,blue,cyan,yellow\" \"cloud-sql-proxy.exe reading-advantage:asia-southeast1:cloud-sql --credentials-file=service-account.json\" \"npm run dev:services\" \"npm run dev -w student-liff\" \"ngrok http 3000\" \"npm run dev -w tutor-pwa\""
+    "dev": "concurrently -n \"proxy,services,student-liff,ngrok,tutor-pwa\" -c \"magenta,green,blue,cyan,yellow\" \"cloud-sql-proxy.exe reading-advantage:asia-southeast1:cloud-sql --credentials-file=service-account.json\" \"npm run dev:services\" \"npm run dev -w student-liff\" \"ngrok http 3000\" \"npm run dev -w tutor-pwa\"",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.6",
     "concurrently": "^9.2.1",
-    "ts-node-dev": "^2.0.0"
+    "jsdom": "^29.1.1",
+    "ts-node-dev": "^2.0.0",
+    "vitest": "^4.1.6"
   }
 }

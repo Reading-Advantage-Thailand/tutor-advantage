@@ -2,8 +2,13 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import {
+  buildCreateClassRequest,
+  getClassActionErrorMessage,
+  type CreateClassForm,
+} from "@/lib/tutorClassFlow";
 
-export async function createClass(data: { name: string; book: string; schedule: string; meetingUrl?: string }) {
+export async function createClass(data: CreateClassForm) {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value;
   
@@ -11,13 +16,7 @@ export async function createClass(data: { name: string; book: string; schedule: 
     throw new Error("Unauthorized");
   }
 
-  const requestBody = {
-    title: data.name,
-    bookId: data.book,
-    capacity: 30, // Default for now
-    scheduleDescription: data.schedule,
-    meetingUrl: data.meetingUrl,
-  };
+  const requestBody = buildCreateClassRequest(data);
 
   const res = await fetch("http://localhost:3002/v1/classes", {
     method: "POST",
@@ -30,7 +29,7 @@ export async function createClass(data: { name: string; book: string; schedule: 
   
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to create class");
+    throw new Error(getClassActionErrorMessage(err, "Failed to create class"));
   }
 
   revalidatePath("/dashboard/classes");
@@ -56,7 +55,7 @@ export async function updateClassStatus(classId: string, status: "open" | "full"
   
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to update class status");
+    throw new Error(getClassActionErrorMessage(err, "Failed to update class status"));
   }
 
   revalidatePath("/dashboard/classes");
@@ -101,7 +100,7 @@ export async function deleteClass(classId: string) {
   
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || err.error?.message || "Failed to delete class");
+    throw new Error(getClassActionErrorMessage(err, "Failed to delete class"));
   }
 
   revalidatePath("/dashboard/classes");
@@ -126,7 +125,7 @@ export async function updateMeetingUrl(classId: string, meetingUrl: string) {
   
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || err.error?.message || "Failed to update meeting URL");
+    throw new Error(getClassActionErrorMessage(err, "Failed to update meeting URL"));
   }
 
   revalidatePath("/dashboard/classes");

@@ -10,5 +10,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "skipLibCheck": true
-  }
+  },
+  "exclude": ["src/**/*.test.ts", "src/**/*.spec.ts"]
 }

@@ -6,6 +6,7 @@ import { studentApi } from "@/lib/api";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { AlertCircle, Loader2, QrCode } from "lucide-react";
 import { toast } from "sonner";
+import { parseClassIdFromQrText } from "@/lib/paymentFlow";
 
 interface ClassItem {
   id: string;
@@ -89,11 +90,8 @@ export default function ClassesPage() {
       }
 
       if (scannedText) {
-        // Check if contains classId param
-        const match = scannedText.match(/[?&]classId=([^&]+)/);
-        if (match && match[1]) {
-          const classId = match[1];
-          // Standard deep link behavior
+        const classId = parseClassIdFromQrText(scannedText);
+        if (classId) {
           window.location.href = `/enroll?classId=${classId}`;
         } else {
           toast.error("❌ รูปแบบ QR Code ไม่ถูกต้อง (ไม่พบข้อมูลคลาสเรียน)");

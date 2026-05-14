@@ -1,5 +1,6 @@
 # Node.js
 node_modules
+coverage
 
 # Cloud SQL Proxy
 cloud-sql-proxy.exe

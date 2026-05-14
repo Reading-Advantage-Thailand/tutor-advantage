@@ -16,29 +16,19 @@ import {
 } from "lucide-react";
 import { studentApi } from "@/lib/api";
 import { toast } from "sonner";
-
-type PaymentMethod = "promptpay" | "card";
-type Step = "select" | "age-check" | "qr" | "card-form" | "success";
-
-type OrderSummary = {
-  id: string;
-  name: string;
-  price: number;
-  priceSatang: number;
-  tutor: string;
-  cefr: string;
-};
-
-type CheckoutDetails = {
-  provider: "omise";
-  chargeId: string;
-  status: string;
-  paid: boolean;
-  authorizeUri: string | null;
-  qrCodeUrl: string | null;
-  qrCodeDataUri?: string | null;
-  failureMessage: string | null;
-};
+import {
+  buildOrderSummaryFromClass,
+  createDefaultOrderSummary,
+  formatCardExpiry,
+  formatCardNumber,
+  getReturnedPaymentStep,
+  mergeCheckoutDetails,
+  shouldLoadPromptPayQr,
+  type CheckoutDetails,
+  type OrderSummary,
+  type PaymentMethod,
+  type PaymentStep,
+} from "@/lib/paymentFlow";
 
 declare global {
   interface Window {
@@ -89,7 +79,7 @@ function PaymentFlow() {
   const returnedPaymentIntentId = searchParams.get("paymentIntentId");
 
   const [method, setMethod] = useState<PaymentMethod>("promptpay");
-  const [step, setStep] = useState<Step>("select");
+  const [step, setStep] = useState<PaymentStep>("select");
   const [cardNumber, setCardNumber] = useState("");
   const [cardName, setCardName] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
@@ -101,14 +91,7 @@ function PaymentFlow() {
   );
   const [checkout, setCheckout] = useState<CheckoutDetails | null>(null);
 
-  const [cls, setCls] = useState<OrderSummary>({
-    id: classId,
-    name: "Loading class...",
-    price: 2500,
-    priceSatang: 250000,
-    tutor: "Tutor Advantage",
-    cefr: "Reading Advantage",
-  });
+  const [cls, setCls] = useState<OrderSummary>(createDefaultOrderSummary(classId));
 
   useEffect(() => {
     let isMounted = true;
@@ -117,15 +100,7 @@ function PaymentFlow() {
       .getClassDetails(classId)
       .then((data) => {
         if (!isMounted || !data?.class) return;
-        const packagePriceSatang = data.class.packagePriceSatang || 250000;
-        setCls({
-          id: data.class.id || classId,
-          name: data.class.name || data.class.book || "Reading Advantage Class",
-          price: packagePriceSatang / 100,
-          priceSatang: packagePriceSatang,
-          tutor: data.class.tutor?.name || "Tutor Advantage",
-          cefr: data.class.book || "Reading Advantage",
-        });
+        setCls(buildOrderSummaryFromClass(data.class, classId));
       })
       .catch((error) => {
         console.error("Could not load class details for payment:", error);
@@ -147,11 +122,8 @@ function PaymentFlow() {
         if (!isMounted) return;
         setPaymentIntentId(data.intent.paymentIntentId);
         mergeCheckout(data.checkout);
-        setStep(data.intent.status === "SUCCESS" ? "success" : "qr");
-        if (
-          data.intent.status !== "SUCCESS" &&
-          data.intent.method === "promptpay"
-        ) {
+        setStep(getReturnedPaymentStep(data.intent));
+        if (shouldLoadPromptPayQr(data.intent)) {
           void loadPromptPayQrCode(data.intent.paymentIntentId);
         }
       })
@@ -235,13 +207,7 @@ function PaymentFlow() {
   };
 
   const mergeCheckout = (next: CheckoutDetails | null) => {
-    setCheckout((prev) => {
-      if (!next) return prev;
-      return {
-        ...next,
-        qrCodeDataUri: next.qrCodeDataUri || prev?.qrCodeDataUri || null,
-      };
-    });
+    setCheckout((prev) => mergeCheckoutDetails(prev, next));
   };
 
   const verifyPaymentStatus = async (intentId: string) => {
@@ -341,18 +307,6 @@ function PaymentFlow() {
       setLoading(false);
     }
   };
-
-  const formatCardNumber = (val: string) =>
-    val
-      .replace(/\D/g, "")
-      .slice(0, 16)
-      .replace(/(.{4})/g, "$1 ")
-      .trim();
-  const formatExpiry = (val: string) =>
-    val
-      .replace(/\D/g, "")
-      .slice(0, 4)
-      .replace(/(.{2})/, "$1/");
 
   // ── Success ──
   if (step === "success") {
@@ -1062,7 +1016,7 @@ function PaymentFlow() {
                 className="input-field"
                 style={{ borderRadius: 14 }}
                 value={cardExpiry}
-                onChange={(e) => setCardExpiry(formatExpiry(e.target.value))}
+                onChange={(e) => setCardExpiry(formatCardExpiry(e.target.value))}
                 autoComplete="cc-exp"
                 maxLength={5}
               />
