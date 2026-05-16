@@ -79,7 +79,7 @@ export async function getDashboardSummary(
         }
       }
 
-      const recentClasses = await Promise.all(enrollments.slice(0, 3).map(async (e: any) => {
+      const classSummaries = await Promise.all(enrollments.map(async (e: any) => {
         const session = lessonSessionService.getSessionByClassId(e.class.classId);
         const tutorName = tutorMap.get(e.class.tutorUserId) || "Tutor";
         
@@ -106,6 +106,9 @@ export async function getDashboardSummary(
           seriesCefr: e.class.book?.series?.cefrLevel || "A1",
         };
       }));
+      const recentClasses = classSummaries
+        .sort((a, b) => Number(b.isLive) - Number(a.isLive))
+        .slice(0, 3);
 
       // 4. Calculate total unread messages
       const conversationParticipants = await prisma.conversationParticipant.findMany({

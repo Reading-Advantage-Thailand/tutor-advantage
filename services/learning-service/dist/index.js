@@ -77,6 +77,8 @@ app.get("/v1/notifications/summary", authMiddleware_1.authMiddleware, notificati
 app.use(shared_config_1.errorHandlerMiddleware);
 const httpServer = (0, http_1.createServer)(app);
 const io = new socket_io_1.Server(httpServer, {
+    path: "/socket.io",
+    addTrailingSlash: false,
     cors: {
         origin: "*", // Allow all origins for now
         methods: ["GET", "POST"],

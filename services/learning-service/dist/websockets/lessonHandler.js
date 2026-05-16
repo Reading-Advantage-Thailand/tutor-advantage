@@ -456,10 +456,22 @@ const setupLessonSocket = (io) => {
             }
         });
         socket.on("disconnect", () => {
+            const tutorSession = LessonSessionService_1.lessonSessionService.getSessionByTutorSocketId(socket.id);
+            if (tutorSession) {
+                const { sessionId } = tutorSession;
+                console.log(`[Socket] Tutor disconnect detected for: ${socket.id}. Session ${sessionId} will close if tutor does not reconnect.`);
+                setTimeout(() => {
+                    const latestSession = LessonSessionService_1.lessonSessionService.getSession(sessionId);
+                    if (latestSession?.tutorSocketId !== socket.id) {
+                        return;
+                    }
+                    io.to(sessionId).emit("session_deleted", { message: "à¹€à¸‹à¸ªà¸Šà¸±à¸™à¸–à¸¹à¸à¸¢à¸à¹€à¸¥à¸´à¸à¹‚à¸”à¸¢à¸„à¸¸à¸“à¸„à¸£à¸¹" });
+                    LessonSessionService_1.lessonSessionService.deleteSession(sessionId);
+                    console.log(`[Socket] Session ${sessionId} deleted after tutor disconnect grace period`);
+                }, 15000);
+                return;
+            }
             console.log(`[Socket] Disconnect detected for: ${socket.id}. Session state is preserved for auto-recovery.`);
-            // Inform other clients that a connection changed? Optional, but don't delete!
-            // We skip automatic garbage collection on raw disconnects to maximize UX resilience.
-            // Tutor can still manually 'Kick' a student if they are truly gone.
         });
     });
 };

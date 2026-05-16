@@ -15,9 +15,17 @@ const nextConfig: NextConfig = {
         source: "/api/finance/:path*",
         destination: "http://localhost:3003/v1/:path*",
       },
+      {
+        source: "/socket.io",
+        destination: "http://localhost:3002/socket.io",
+      },
+      {
+        source: "/socket.io/:path*",
+        destination: "http://localhost:3002/socket.io/:path*",
+      },
     ];
   },
-  allowedDevOrigins: ["*.ngrok-free.app", "localhost:3000", "localhost:3004"],
+  allowedDevOrigins: ["*.ngrok-free.app", "*.ngrok-free.dev", "localhost:3000", "localhost:3004"],
   images: {
     remotePatterns: [
       {

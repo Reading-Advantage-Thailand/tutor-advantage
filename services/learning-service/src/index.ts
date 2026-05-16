@@ -131,6 +131,8 @@ app.use(errorHandlerMiddleware);
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
+  path: "/socket.io",
+  addTrailingSlash: false,
   cors: {
     origin: "*", // Allow all origins for now
     methods: ["GET", "POST"],

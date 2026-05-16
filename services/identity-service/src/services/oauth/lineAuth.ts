@@ -1,5 +1,3 @@
-import jwt from "jsonwebtoken";
-
 export interface LineProfile {
   id: string;
   name: string;
@@ -7,20 +5,48 @@ export interface LineProfile {
   picture?: string;
 }
 
+interface LineVerifyResponse {
+  sub?: string;
+  name?: string;
+  email?: string;
+  picture?: string;
+  error?: string;
+  error_description?: string;
+}
+
 /**
- * Verifies a LINE ID Token (JWT)
- * In a production app, we would verify the signature using LINE's public keys
- * or use the LINE API token verification endpoint.
+ * Verifies a LINE ID token with LINE's official endpoint.
  */
 export async function verifyLineToken(idToken: string): Promise<LineProfile> {
   try {
-    // In production, we MUST verify the signature to prevent token forgery
-    const secret = process.env.LINE_CHANNEL_SECRET || "fallback_dev_secret";
-    const decoded = jwt.verify(idToken, secret, {
-      algorithms: ["HS256"], // Assuming HS256 for symmetric, or adjust based on LINE's spec
-    }) as any;
-    
-    if (!decoded) {
+    const liffId = process.env.NEXT_PUBLIC_LIFF_ID;
+    const clientId = process.env.LINE_CHANNEL_ID || liffId?.split("-")[0];
+
+    if (!clientId) {
+      throw new Error("LINE_CHANNEL_ID or NEXT_PUBLIC_LIFF_ID is not configured");
+    }
+
+    const params = new URLSearchParams({
+      id_token: idToken,
+      client_id: clientId,
+    });
+
+    const response = await fetch("https://api.line.me/oauth2/v2.1/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: params,
+    });
+
+    const decoded = (await response.json()) as LineVerifyResponse;
+
+    if (!response.ok || !decoded.sub) {
+      const reason = decoded.error_description || decoded.error || "Invalid LINE ID Token";
+      throw new Error(reason);
+    }
+
+    if (!decoded.sub) {
       throw new Error("Invalid LINE ID Token");
     }
 

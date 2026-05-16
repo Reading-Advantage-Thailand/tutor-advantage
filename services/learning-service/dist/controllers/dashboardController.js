@@ -68,7 +68,7 @@ async function getDashboardSummary(req, res) {
                     break;
                 }
             }
-            const recentClasses = await Promise.all(enrollments.slice(0, 3).map(async (e) => {
+            const classSummaries = await Promise.all(enrollments.map(async (e) => {
                 const session = LessonSessionService_1.lessonSessionService.getSessionByClassId(e.class.classId);
                 const tutorName = tutorMap.get(e.class.tutorUserId) || "Tutor";
                 // Calculate actual class progress based on current book articles read
@@ -92,6 +92,9 @@ async function getDashboardSummary(req, res) {
                     seriesCefr: e.class.book?.series?.cefrLevel || "A1",
                 };
             }));
+            const recentClasses = classSummaries
+                .sort((a, b) => Number(b.isLive) - Number(a.isLive))
+                .slice(0, 3);
             // 4. Calculate total unread messages
             const conversationParticipants = await database_1.prisma.conversationParticipant.findMany({
                 where: { userId },

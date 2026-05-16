@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import { t } from "@/lib/i18n";
+import { Volume2 } from "lucide-react";
 
 interface ArticleDisplayProps {
   articleData: any;
@@ -375,7 +376,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                       title={t("lesson.interactive.speakTitle")}
                       className={`w-8 h-8 rounded-full ${c.bg} text-white flex items-center justify-center shadow hover:opacity-80 active:scale-90 transition-all`}
                     >
-                      Sound
+                      <Volume2 size={16} />
                     </button>
                   </div>
 
@@ -722,29 +723,75 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       "bg-lime-500",
     ];
 
-    // Extract vocab word list
-    const vocabWords: string[] = words.map((w: any) =>
-      (typeof w === "object"
-        ? w.vocabulary || w.word || w.text || ""
-        : String(w)
-      ).toLowerCase(),
+    const getSentenceText = (item: any) =>
+      String(typeof item === "object" ? item.sentences || "" : item || "");
+
+    const escapeRegExp = (value: string) =>
+      value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    const getWordCount = (text: string) =>
+      text.trim().split(/\s+/).filter(Boolean).length;
+
+    // Extract vocab word list and prefer meaningful terms over tiny substrings.
+    const vocabWords: string[] = Array.from(
+      new Set(
+        words
+          .map((w: any) =>
+            (typeof w === "object"
+              ? w.vocabulary || w.word || w.text || ""
+              : String(w)
+            )
+              .toLowerCase()
+              .trim(),
+          )
+          .filter((word: string) => word.length >= 3),
+      ),
     );
 
-    // Filter: only sentences that contain at least one vocab word
-    const keySentences = sentences.filter((item: any) => {
-      const sentenceText: string =
-        typeof item === "object" ? item.sentences : item;
-      if (!sentenceText) return false;
-      const lower = sentenceText.toLowerCase();
-      return vocabWords.some((v) => v && lower.includes(v));
-    });
+    const vocabPatterns = vocabWords.map((word) => ({
+      word,
+      pattern: new RegExp(`\\b${escapeRegExp(word)}\\b`, "i"),
+    }));
+
+    const keySentenceLimit = Math.min(
+      5,
+      Math.max(2, Math.ceil(sentences.length * 0.35)),
+    );
+
+    // Score sentences by vocab coverage and teachability, then keep a compact set.
+    const scoredKeySentences: Array<{ item: any; index: number; score: number }> = sentences
+      .map((item: any, index: number) => {
+        const sentenceText = getSentenceText(item);
+        const matchedVocab = vocabPatterns.filter(({ pattern }) =>
+          pattern.test(sentenceText),
+        );
+        const wordCount = getWordCount(sentenceText);
+        const readableLengthBonus =
+          wordCount >= 8 && wordCount <= 28 ? 1 : wordCount < 5 ? -1 : 0;
+
+        return {
+          item,
+          index,
+          score:
+            matchedVocab.length * 3 +
+            matchedVocab.length / Math.max(wordCount, 1) +
+            readableLengthBonus,
+        };
+      });
+
+    const keySentences = scoredKeySentences
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score || a.index - b.index)
+      .slice(0, keySentenceLimit)
+      .sort((a, b) => a.index - b.index)
+      .map(({ item }) => item);
 
     // Helper: highlight vocab words inside a sentence
     const highlightVocab = (text: string) => {
       const parts = text.split(/(\s+)/);
       return parts.map((part, i) => {
         const clean = part.replace(/[.,!?;:"'()]/g, "").toLowerCase();
-        if (vocabWords.includes(clean)) {
+        if (vocabPatterns.some(({ word }) => word === clean)) {
           return (
             <mark
               key={i}

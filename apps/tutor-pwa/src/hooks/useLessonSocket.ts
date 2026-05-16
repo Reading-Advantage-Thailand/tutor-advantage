@@ -6,9 +6,16 @@ import { t } from '@/lib/i18n';
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_LEARNING_SERVICE_URL || 'http://localhost:3002';
 
+type TutorSessionData = {
+  sessionId: string;
+  currentPhase: number;
+  articleData?: any;
+  phaseSelectedIndices?: Record<number, number>;
+};
+
 export const useLessonSocket = (tutorId: string, articleId: string, classId?: string) => {
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [sessionData, setSessionData] = useState<{ sessionId: string; currentPhase: number; articleData?: any } | null>(null);
+  const [sessionData, setSessionData] = useState<TutorSessionData | null>(null);
   const [participants, setParticipants] = useState<any[]>([]);
   const [totalAnswered, setTotalAnswered] = useState(0);
   const [allAnsweredData, setAllAnsweredData] = useState<any[]>([]);
@@ -16,6 +23,11 @@ export const useLessonSocket = (tutorId: string, articleId: string, classId?: st
   const [error, setError] = useState<string | null>(null);
   
   const socketRef = useRef<Socket | null>(null);
+  const sessionDataRef = useRef<TutorSessionData | null>(null);
+
+  useEffect(() => {
+    sessionDataRef.current = sessionData;
+  }, [sessionData]);
 
   useEffect(() => {
     // Don't initialize if no articleId
@@ -37,6 +49,8 @@ export const useLessonSocket = (tutorId: string, articleId: string, classId?: st
         }
         const socketInstance = io(SOCKET_URL, {
           auth: { token },
+          path: '/socket.io',
+          addTrailingSlash: false,
         });
         newSocket = socketInstance;
         
@@ -54,6 +68,7 @@ export const useLessonSocket = (tutorId: string, articleId: string, classId?: st
         });
 
         socketInstance.on('session_created', (data) => {
+          sessionDataRef.current = data;
           setSessionData(data);
           setArticleData(data.articleData);
         });
@@ -74,7 +89,11 @@ export const useLessonSocket = (tutorId: string, articleId: string, classId?: st
 
         socketInstance.on('phase_changed', (data) => {
           console.log(`[Socket] Phase changed to: ${data.phase}`);
-          setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices } : null);
+          setSessionData(prev => {
+            const next = prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices } : null;
+            sessionDataRef.current = next;
+            return next;
+          });
           setTotalAnswered(0);
           setAllAnsweredData([]);
         });
@@ -95,6 +114,7 @@ export const useLessonSocket = (tutorId: string, articleId: string, classId?: st
 
         socketInstance.on('session_deleted', (data) => {
           console.log(`[Socket] Session deleted: ${data.message}`);
+          sessionDataRef.current = null;
           setSessionData(null);
           setError(t("app.lessonSessionCancelled"));
         });
@@ -106,8 +126,16 @@ export const useLessonSocket = (tutorId: string, articleId: string, classId?: st
     initSocket();
 
     return () => {
+      const activeSession = sessionDataRef.current;
       if (newSocket) {
+        if (activeSession) {
+          newSocket.emit('delete_session', { sessionId: activeSession.sessionId });
+          sessionDataRef.current = null;
+        }
         newSocket.disconnect();
+      }
+      if (socketRef.current === newSocket) {
+        socketRef.current = null;
       }
     };
   }, [tutorId, articleId, classId]);
@@ -131,8 +159,11 @@ export const useLessonSocket = (tutorId: string, articleId: string, classId?: st
   };
 
   const deleteSession = () => {
-    if (socketRef.current && sessionData) {
-      socketRef.current.emit('delete_session', { sessionId: sessionData.sessionId });
+    const activeSession = sessionDataRef.current;
+    if (socketRef.current && activeSession) {
+      socketRef.current.emit('delete_session', { sessionId: activeSession.sessionId });
+      sessionDataRef.current = null;
+      setSessionData(null);
     }
   };
 
