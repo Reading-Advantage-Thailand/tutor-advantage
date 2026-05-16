@@ -68,19 +68,25 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
           setProfile(userProfile);
 
           // Exchange LINE ID Token for Backend JWT
-          const idToken = liff.getIDToken();
-          console.log("[LIFF] ID Token available:", !!idToken);
-          
-          if (idToken) {
-            try {
-              console.log("[LIFF] Attempting backend login exchange...");
-              const authData = await studentApi.loginWithLine(idToken);
-              console.log("[LIFF] Backend session established successfully:", authData.user?.role);
-            } catch (authErr) {
-              console.error("[LIFF] Backend login failed:", authErr);
-            }
+          // Skip in development — mock tokens (and even real ones in dev) cannot
+          // be reliably verified against LINE's production API.
+          if (process.env.NODE_ENV !== "production") {
+            console.log("[LIFF] Dev mode: skipping backend token exchange");
           } else {
-            console.warn("[LIFF] No ID Token found even though logged in");
+            const idToken = liff.getIDToken();
+            console.log("[LIFF] ID Token available:", !!idToken);
+
+            if (idToken) {
+              try {
+                console.log("[LIFF] Attempting backend login exchange...");
+                const authData = await studentApi.loginWithLine(idToken);
+                console.log("[LIFF] Backend session established successfully:", authData.user?.role);
+              } catch (authErr) {
+                console.error("[LIFF] Backend login failed:", authErr);
+              }
+            } else {
+              console.warn("[LIFF] No ID Token found even though logged in");
+            }
           }
 
           // Sync session cookie for server-side middleware

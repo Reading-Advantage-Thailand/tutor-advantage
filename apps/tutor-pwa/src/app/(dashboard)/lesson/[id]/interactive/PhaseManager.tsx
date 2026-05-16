@@ -380,14 +380,14 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const idx = sessionData?.phaseSelectedIndices?.[currentPhase] || 0;
     const shortAnswerQuestion = articleData?.shortAnswerQuestions?.[idx] || articleData?.shortAnswerQuestions?.[0];
 
+    // ── Results view (after all students answered) ──────────────────────────
     if (allAnsweredData.length > 0) {
-      // Calculate score ranges counts
       const excellentCount = allAnsweredData.filter(a => (a.answer?.aiScore || 0) >= 4).length;
       const goodCount = allAnsweredData.filter(a => (a.answer?.aiScore || 0) >= 2 && (a.answer?.aiScore || 0) <= 3).length;
       const improveCount = allAnsweredData.filter(a => (a.answer?.aiScore || 0) >= 0 && (a.answer?.aiScore || 0) <= 1).length;
-
       const sumScores = allAnsweredData.reduce((acc, a) => acc + (a.answer?.aiScore || 0), 0);
       const averageScore = allAnsweredData.length > 0 ? sumScores / allAnsweredData.length : 0;
+      const avgPct = (averageScore / 5) * 100;
 
       const chartData = [
         { name: t("lesson.interactive.excellentRange"), count: excellentCount, fill: '#10b981' },
@@ -395,72 +395,200 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         { name: t("lesson.interactive.improveRange"), count: improveCount, fill: '#f43f5e' }
       ];
 
+      const scoreColor = averageScore >= 4 ? 'text-emerald-400' : averageScore >= 2 ? 'text-amber-400' : 'text-rose-400';
+      const scoreRingColor = averageScore >= 4 ? '#10b981' : averageScore >= 2 ? '#f59e0b' : '#f43f5e';
+      const circumference = 2 * Math.PI * 40;
+
       return (
-        <div className="flex-1 flex flex-col items-center">
-          <h2 className="text-3xl font-bold mb-6 text-foreground">{t("lesson.interactive.shortAnswerResults")}</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl">
-            {/* Left: Distribution Bar Chart */}
-            <div className="bg-card p-6 rounded-2xl border-2 border-border shadow-sm flex flex-col items-center justify-center h-80">
-              <h4 className="text-lg font-bold text-foreground mb-4 self-start">{t("lesson.interactive.scoreDistributionChart")}</h4>
-              <div className="w-full h-full max-h-60">
+        <div className="flex-1 flex flex-col items-center w-full px-4 py-2">
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-2 bg-violet-500/15 border border-violet-500/30 rounded-full px-4 py-1.5">
+              <span className="size-2 rounded-full bg-violet-400 animate-pulse" />
+              <span className="text-violet-300 text-sm font-semibold uppercase tracking-widest">AI Analysis</span>
+            </div>
+            <h2 className="text-2xl font-bold text-foreground">{t("lesson.interactive.shortAnswerResults")}</h2>
+          </div>
+
+          <div className="grid grid-cols-[1fr_auto_1fr] gap-6 w-full max-w-5xl items-start">
+            {/* Left: Chart */}
+            <div className="bg-card/60 backdrop-blur border border-border/60 rounded-2xl p-5 shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">{t("lesson.interactive.scoreDistributionChart")}</p>
+              <div className="h-52">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                    <XAxis dataKey="name" tick={{ fontSize: 14, fontWeight: 'bold' }} />
-                    <YAxis allowDecimals={false} />
-                    <Tooltip />
-                    <Bar dataKey="count" radius={[6, 6, 0, 0]} />
+                  <BarChart data={chartData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+                    <XAxis dataKey="name" tick={{ fontSize: 12, fontWeight: 700 }} axisLine={false} tickLine={false} />
+                    <YAxis allowDecimals={false} tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <Tooltip
+                      contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 12, fontSize: 13 }}
+                      cursor={{ fill: 'hsl(var(--muted))' }}
+                    />
+                    <Bar dataKey="count" radius={[8, 8, 0, 0]} maxBarSize={64} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
+
+              {/* Mini breakdown bars */}
+              <div className="mt-4 space-y-2">
+                {[
+                  { label: t("lesson.interactive.excellentRange"), count: excellentCount, color: 'bg-emerald-500', total: allAnsweredData.length },
+                  { label: t("lesson.interactive.goodRange"), count: goodCount, color: 'bg-amber-400', total: allAnsweredData.length },
+                  { label: t("lesson.interactive.improveRange"), count: improveCount, color: 'bg-rose-500', total: allAnsweredData.length },
+                ].map(({ label, count, color, total }) => (
+                  <div key={label} className="flex items-center gap-2 text-xs">
+                    <span className="w-20 text-muted-foreground truncate">{label}</span>
+                    <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                      <div className={`h-full rounded-full ${color} transition-all duration-700`} style={{ width: total > 0 ? `${(count / total) * 100}%` : '0%' }} />
+                    </div>
+                    <span className="w-4 text-right font-bold text-foreground">{count}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Right: Detailed Summary Cards & Average */}
-            <div className="flex flex-col gap-4 justify-between h-80">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-blue-500/10 border-2 border-blue-500/20 rounded-2xl p-4 text-center">
-                  <p className="text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-wider mb-1">{t("lesson.interactive.allSubmitted")}</p>
-                  <h3 className="text-3xl font-black text-blue-700 dark:text-blue-300">{allAnsweredData.length} <span className="text-lg font-normal text-blue-500">{t("lesson.interactive.peopleUnit")}</span></h3>
+            {/* Center: Average Score Ring */}
+            <div className="flex flex-col items-center justify-center gap-3 px-2">
+              <div className="relative">
+                <svg width="100" height="100" viewBox="0 0 100 100" className="-rotate-90">
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--muted))" strokeWidth="8" />
+                  <circle
+                    cx="50" cy="50" r="40" fill="none"
+                    stroke={scoreRingColor} strokeWidth="8"
+                    strokeLinecap="round"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={circumference * (1 - avgPct / 100)}
+                    className="transition-all duration-1000"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className={`text-2xl font-black ${scoreColor}`}>{averageScore.toFixed(1)}</span>
+                  <span className="text-[10px] text-muted-foreground font-medium">/ 5</span>
                 </div>
-                <div className="bg-indigo-500/10 border-2 border-indigo-500/20 rounded-2xl p-4 text-center">
-                  <p className="text-indigo-600 dark:text-indigo-400 font-bold text-xs uppercase tracking-wider mb-1">{t("lesson.interactive.averageScore")}</p>
-                  <h3 className="text-3xl font-black text-indigo-700 dark:text-indigo-300">{averageScore.toFixed(1)} <span className="text-lg font-normal text-indigo-500">/ 5</span></h3>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-muted-foreground uppercase tracking-widest">{t("lesson.interactive.averageScore")}</p>
+              </div>
+            </div>
+
+            {/* Right: KPI cards */}
+            <div className="flex flex-col gap-3">
+              <div className="bg-blue-500/10 border border-blue-500/25 rounded-2xl p-4 flex items-center gap-4">
+                <div className="size-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 text-xl">📨</div>
+                <div>
+                  <p className="text-xs text-blue-400 font-semibold uppercase tracking-wider">{t("lesson.interactive.allSubmitted")}</p>
+                  <p className="text-2xl font-black text-blue-300">{allAnsweredData.length} <span className="text-sm font-normal text-blue-400">{t("lesson.interactive.peopleUnit")}</span></p>
                 </div>
               </div>
 
-              {/* Range KPIs in a compact layout */}
-              <div className="grid grid-cols-3 gap-3">
-                <div className="bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-xl text-center flex flex-col justify-between">
-                  <p className="text-emerald-700 dark:text-emerald-400 font-bold text-xs">{t("lesson.interactive.excellentRange")}</p>
-                  <p className="text-xl font-black text-emerald-600 mt-1">{excellentCount} {t("lesson.interactive.peopleUnit")}</p>
+              <div className="bg-emerald-500/10 border border-emerald-500/25 rounded-2xl p-4 flex items-center gap-4">
+                <div className="size-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl">⭐</div>
+                <div>
+                  <p className="text-xs text-emerald-400 font-semibold uppercase tracking-wider">{t("lesson.interactive.excellentRange")}</p>
+                  <p className="text-2xl font-black text-emerald-300">{excellentCount} <span className="text-sm font-normal text-emerald-400">{t("lesson.interactive.peopleUnit")}</span></p>
                 </div>
-                <div className="bg-amber-500/10 border border-amber-500/20 p-3 rounded-xl text-center flex flex-col justify-between">
-                  <p className="text-amber-700 dark:text-amber-400 font-bold text-xs">{t("lesson.interactive.goodRange")}</p>
-                  <p className="text-xl font-black text-amber-600 mt-1">{goodCount} {t("lesson.interactive.peopleUnit")}</p>
+              </div>
+
+              <div className="bg-amber-500/10 border border-amber-500/25 rounded-2xl p-4 flex items-center gap-4">
+                <div className="size-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 text-xl">📝</div>
+                <div>
+                  <p className="text-xs text-amber-400 font-semibold uppercase tracking-wider">{t("lesson.interactive.goodRange")}</p>
+                  <p className="text-2xl font-black text-amber-300">{goodCount} <span className="text-sm font-normal text-amber-400">{t("lesson.interactive.peopleUnit")}</span></p>
                 </div>
-                <div className="bg-rose-500/10 border border-rose-500/20 p-3 rounded-xl text-center flex flex-col justify-between">
-                  <p className="text-rose-700 dark:text-rose-400 font-bold text-xs">{t("lesson.interactive.improveRange")}</p>
-                  <p className="text-xl font-black text-rose-600 mt-1">{improveCount} {t("lesson.interactive.peopleUnit")}</p>
+              </div>
+
+              <div className="bg-rose-500/10 border border-rose-500/25 rounded-2xl p-4 flex items-center gap-4">
+                <div className="size-10 rounded-xl bg-rose-500/20 flex items-center justify-center text-rose-400 text-xl">💪</div>
+                <div>
+                  <p className="text-xs text-rose-400 font-semibold uppercase tracking-wider">{t("lesson.interactive.improveRange")}</p>
+                  <p className="text-2xl font-black text-rose-300">{improveCount} <span className="text-sm font-normal text-rose-400">{t("lesson.interactive.peopleUnit")}</span></p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-8 bg-muted border border-border p-4 rounded-xl max-w-4xl text-center flex items-center gap-3">
-            <span className="text-2xl">Privacy</span>
-            <p className="text-muted-foreground text-sm font-medium">{t("lesson.interactive.privacyNote")}</p>
+          {/* Privacy note */}
+          <div className="mt-5 flex items-center gap-2.5 bg-muted/40 border border-border/50 rounded-xl px-5 py-3 max-w-3xl">
+            <span className="text-lg">🔒</span>
+            <p className="text-muted-foreground text-xs font-medium">{t("lesson.interactive.privacyNote")}</p>
           </div>
         </div>
       );
     }
 
+    // ── Waiting view (waiting for student answers) ──────────────────────────
+    const submittedPct = totalParticipants > 0 ? (totalAnswered / totalParticipants) * 100 : 0;
+
     return (
-      <div className="flex-1 flex flex-col items-center justify-center">
-        <h2 className="text-4xl font-bold mb-12 text-center">
-          {shortAnswerQuestion?.question || t("lesson.interactive.shortAnswerPrompt")}
-        </h2>
-        <div className="mt-8 text-2xl font-medium text-muted-foreground">
-          {t("lesson.interactive.answersSubmitted")} {totalAnswered} / {totalParticipants}
+      <div className="flex-1 flex flex-col items-center justify-center gap-8 px-8">
+        {/* Question */}
+        <div className="relative max-w-3xl w-full text-center">
+          <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-violet-500/10 via-blue-500/10 to-violet-500/10 blur-2xl" />
+          <div className="relative bg-card/60 backdrop-blur border border-border/60 rounded-3xl px-10 py-8 shadow-lg">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <span className="size-2 rounded-full bg-violet-400 animate-pulse" />
+              <span className="text-xs font-semibold uppercase tracking-widest text-violet-400">Short Answer</span>
+            </div>
+            <h2 className="text-3xl font-bold text-foreground leading-snug">
+              {shortAnswerQuestion?.question || t("lesson.interactive.shortAnswerPrompt")}
+            </h2>
+          </div>
+        </div>
+
+        {/* Progress */}
+        <div className="flex flex-col items-center gap-4 w-full max-w-sm">
+          {/* Circular progress */}
+          <div className="relative">
+            <svg width="88" height="88" viewBox="0 0 88 88" className="-rotate-90">
+              <circle cx="44" cy="44" r="36" fill="none" stroke="hsl(var(--muted))" strokeWidth="7" />
+              <circle
+                cx="44" cy="44" r="36" fill="none"
+                stroke="#8b5cf6" strokeWidth="7"
+                strokeLinecap="round"
+                strokeDasharray={`${2 * Math.PI * 36}`}
+                strokeDashoffset={`${2 * Math.PI * 36 * (1 - submittedPct / 100)}`}
+                className="transition-all duration-700"
+              />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-2xl font-black text-foreground">{totalAnswered}</span>
+            </div>
+          </div>
+
+          <div className="text-center">
+            <p className="text-base font-semibold text-foreground">
+              {totalAnswered} / {totalParticipants}
+            </p>
+            <p className="text-sm text-muted-foreground">{t("lesson.interactive.answersSubmitted")}</p>
+          </div>
+
+          {/* Linear progress bar */}
+          <div className="w-full">
+            <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+              <div
+                className="h-full rounded-full bg-violet-500 transition-all duration-700"
+                style={{ width: `${submittedPct}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Submitted avatars */}
+          {totalAnswered > 0 && (
+            <div className="flex items-center justify-center gap-1 flex-wrap mt-1">
+              {allAnsweredData.slice(0, 12).map((a, i) => (
+                <div key={i} className="size-8 rounded-full overflow-hidden border-2 border-emerald-500/60 bg-emerald-500/20 flex items-center justify-center">
+                  {a.pictureUrl
+                    ? <img src={a.pictureUrl} alt={a.name} className="size-full object-cover" />
+                    : <span className="text-[10px] font-bold text-emerald-400">{(a.name || '?').slice(0, 2)}</span>
+                  }
+                </div>
+              ))}
+              {allAnsweredData.length > 12 && (
+                <div className="size-8 rounded-full bg-muted border-2 border-border flex items-center justify-center text-[10px] font-bold text-muted-foreground">
+                  +{allAnsweredData.length - 12}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     );
