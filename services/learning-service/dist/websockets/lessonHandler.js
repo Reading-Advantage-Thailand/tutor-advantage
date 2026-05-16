@@ -92,21 +92,20 @@ const setupLessonSocket = (io) => {
                 // Keep currentDbSessionId undefined initially, so the first cycle defaults to the standard sessionId!
                 socket.join(session.sessionId);
                 // PERSIST START OF SESSION TO DB (This creates initial Cycle 1 record)
-                dbWriter.persistSessionStart(session.sessionId, tutorId, articleId, classId, session.pin);
+                dbWriter.persistSessionStart(session.sessionId, tutorId, articleId, classId);
                 socket.emit("session_created", {
                     sessionId: session.sessionId,
-                    pin: session.pin,
                     currentPhase: session.currentPhase,
                     articleData: session.articleData
                 });
-                console.log(`[Socket] Session created: ${session.sessionId} (PIN: ${session.pin}) for class ${classId}`);
+                console.log(`[Socket] Session created: ${session.sessionId} for class ${classId}`);
             }
             catch (error) {
                 console.error("[Socket] Error creating session:", error);
                 socket.emit("error", { message: "Failed to create session. Please check database connection." });
             }
         });
-        // Student joins a session using classId (No PIN needed)
+        // Student joins a session using classId.
         socket.on("join_class", async ({ classId, studentId, name, pictureUrl }) => {
             console.log(`[Socket] Student ${name} (${studentId}) attempting to join class: ${classId}`);
             const resolvedStudentId = await dbWriter.resolveUserId(studentId);
@@ -153,27 +152,6 @@ const setupLessonSocket = (io) => {
                 });
             }
         });
-        // Student joins a session using PIN (Keep as fallback)
-        socket.on("join_session", ({ pin, studentId, name, pictureUrl }) => {
-            const session = LessonSessionService_1.lessonSessionService.joinSession(pin, studentId, name, socket.id, pictureUrl);
-            if (session) {
-                socket.join(session.sessionId);
-                socket.emit("join_success", {
-                    sessionId: session.sessionId,
-                    currentPhase: session.currentPhase,
-                    articleData: session.articleData
-                });
-                io.to(session.sessionId).emit("participants_updated", {
-                    participants: Array.from(session.participants.values())
-                });
-                console.log(`Student ${name} joined session ${session.sessionId} (Pic: ${!!pictureUrl})`);
-                // PERSIST PARTICIPANT JOIN
-                dbWriter.persistSessionParticipant(session.currentDbSessionId || session.sessionId, studentId);
-            }
-            else {
-                socket.emit("error", { message: "Invalid PIN or session not found" });
-            }
-        });
         // Tutor changes phase
         socket.on("change_phase", ({ sessionId, phase }) => {
             const session = LessonSessionService_1.lessonSessionService.setPhase(sessionId, phase);
@@ -194,7 +172,7 @@ const setupLessonSocket = (io) => {
                         session.currentDbSessionId = newDbId; // Set explicit new key for this cycle
                         console.log(`[Socket] RECYCLE: Starting fresh learning loop for room ${sessionId}. New DB Session: ${newDbId}`);
                         // 1. Create NEW DB header record
-                        dbWriter.persistSessionStart(newDbId, session.tutorId, session.articleId, session.classId, session.pin);
+                        dbWriter.persistSessionStart(newDbId, session.tutorId, session.articleId, session.classId);
                         // 2. Automatically enroll all existing students in the NEW round immediately
                         const activePeers = Array.from(session.participants.keys());
                         for (const pId of activePeers) {

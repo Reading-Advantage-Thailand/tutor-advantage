@@ -25,7 +25,7 @@ export const resolveUserId = async (inputId: string): Promise<string | null> => 
   return null;
 };
 
-export const persistSessionStart = async (sessionId: string, tutorId: string, articleId: string, classId?: string, pin?: string) => {
+export const persistSessionStart = async (sessionId: string, tutorId: string, articleId: string, classId?: string) => {
   try {
     let resolvedTutorId = await resolveUserId(tutorId);
     
@@ -66,7 +66,6 @@ export const persistSessionStart = async (sessionId: string, tutorId: string, ar
         tutorUserId: resolvedTutorId,
         articleId,
         classId: dbClassId,
-        pin: pin || "000000",
         status: "ACTIVE"
       },
       update: {

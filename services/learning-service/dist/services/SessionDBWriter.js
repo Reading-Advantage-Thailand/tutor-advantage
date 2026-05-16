@@ -25,7 +25,7 @@ const resolveUserId = async (inputId) => {
     return null;
 };
 exports.resolveUserId = resolveUserId;
-const persistSessionStart = async (sessionId, tutorId, articleId, classId, pin) => {
+const persistSessionStart = async (sessionId, tutorId, articleId, classId) => {
     try {
         let resolvedTutorId = await (0, exports.resolveUserId)(tutorId);
         // If placeholder ID (like tutor-123) fails, try to resolve via Class owner!
@@ -61,7 +61,6 @@ const persistSessionStart = async (sessionId, tutorId, articleId, classId, pin) 
                 tutorUserId: resolvedTutorId,
                 articleId,
                 classId: dbClassId,
-                pin: pin || "000000",
                 status: "ACTIVE"
             },
             update: {

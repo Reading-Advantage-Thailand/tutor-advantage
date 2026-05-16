@@ -240,6 +240,11 @@ export const th = {
     cancelReady: "ยกเลิกการ Ready",
     readyCta: "ฉันพร้อมแล้ว! (Ready)",
   },
+  interactiveJoin: {
+    title: "เข้าห้องเรียนผ่านลิงก์คลาส",
+    description: "ระบบเลิกใช้การกรอก PIN แล้ว กรุณาเปิดลิงก์หรือสแกน QR Code ที่ติวเตอร์ส่งให้",
+    backHome: "กลับหน้าหลัก",
+  },
   lessonHistory: {
     loadFailed: "ไม่สามารถโหลดประวัติการเรียนได้",
     detailLoadFailed: "ไม่สามารถโหลดข้อมูลประวัติได้",

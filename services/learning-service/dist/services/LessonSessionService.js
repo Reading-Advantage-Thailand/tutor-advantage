@@ -26,7 +26,6 @@ function getRandomIndex(count, excludedIndex) {
 }
 class LessonSessionService {
     sessions = new Map();
-    pinToSessionId = new Map();
     classToSessionId = new Map(); // Map classId to active session
     createSession(tutorId, tutorSocketId, articleId, articleData, classId) {
         // ATTEMPT RECOVERY: If an active session already exists for this class, REUSE it!
@@ -90,10 +89,8 @@ class LessonSessionService {
         console.log(`[Service] Available Short Answer questions (Phase 8/13):`, articleData?.shortAnswerQuestions?.map((q) => q.question));
         // Force fresh UUID session instantiation every time to ensure unique, separated histories
         const sessionId = (0, uuid_1.v4)();
-        const pin = Math.floor(100000 + Math.random() * 900000).toString();
         const session = {
             sessionId,
-            pin,
             classId,
             tutorId,
             tutorSocketId,
@@ -105,18 +102,11 @@ class LessonSessionService {
             phaseSelectedIndices
         };
         this.sessions.set(sessionId, session);
-        this.pinToSessionId.set(pin, sessionId);
         if (classId) {
             this.classToSessionId.set(classId, sessionId);
         }
-        console.log(`[Service] Created NEW session ${sessionId} (PIN: ${pin}) for class ${classId}`);
+        console.log(`[Service] Created NEW session ${sessionId} for class ${classId}`);
         return session;
-    }
-    getSessionByPin(pin) {
-        const sessionId = this.pinToSessionId.get(pin);
-        if (!sessionId)
-            return undefined;
-        return this.sessions.get(sessionId);
     }
     getSessionByClassId(classId) {
         const sessionId = this.classToSessionId.get(classId);
@@ -134,22 +124,6 @@ class LessonSessionService {
             }
         }
         return undefined;
-    }
-    joinSession(pin, studentId, name, socketId, pictureUrl) {
-        const session = this.getSessionByPin(pin);
-        if (!session)
-            return undefined;
-        const existing = session.participants.get(studentId);
-        session.participants.set(studentId, {
-            studentId,
-            name,
-            pictureUrl,
-            socketId,
-            score: existing ? existing.score : 0,
-            hasAnsweredCurrentPhase: existing ? existing.hasAnsweredCurrentPhase : false,
-            isReady: existing ? existing.isReady : false
-        });
-        return session;
     }
     joinSessionByClassId(classId, studentId, name, socketId, pictureUrl) {
         const session = this.getSessionByClassId(classId);
@@ -261,7 +235,6 @@ class LessonSessionService {
         if (!session)
             return false;
         this.sessions.delete(sessionId);
-        this.pinToSessionId.delete(session.pin);
         if (session.classId) {
             this.classToSessionId.delete(session.classId);
         }

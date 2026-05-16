@@ -8,7 +8,7 @@ const SOCKET_URL = process.env.NEXT_PUBLIC_LEARNING_SERVICE_URL || 'http://local
 
 export const useLessonSocket = (tutorId: string, articleId: string, classId?: string) => {
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [sessionData, setSessionData] = useState<{ sessionId: string; pin: string; currentPhase: number; articleData?: any } | null>(null);
+  const [sessionData, setSessionData] = useState<{ sessionId: string; currentPhase: number; articleData?: any } | null>(null);
   const [participants, setParticipants] = useState<any[]>([]);
   const [totalAnswered, setTotalAnswered] = useState(0);
   const [allAnsweredData, setAllAnsweredData] = useState<any[]>([]);

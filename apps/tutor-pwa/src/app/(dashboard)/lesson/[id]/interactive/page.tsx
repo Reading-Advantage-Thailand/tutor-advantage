@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { useLessonSocket } from "@/hooks/useLessonSocket";
 import { playSound } from "@/lib/sounds";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft, Users, Bell, UserMinus, ShieldCheck,
-  BookOpen, Play, AlertCircle, Copy, Check, X,
+  BookOpen, Play, AlertCircle, X,
 } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,7 +25,6 @@ export default function TutorLobbyPage() {
   const articleId = searchParams.get("articleId") as string;
 
   const tutorId = "tutor-123";
-  const [copiedPin, setCopiedPin] = useState(false);
 
   const {
     sessionData,
@@ -43,18 +42,6 @@ export default function TutorLobbyPage() {
   const readyCount = participants.filter((participant) => participant.isReady).length;
   const totalCount = participants.length;
   const isEveryoneReady = totalCount > 0 && readyCount === totalCount;
-
-  const copyPin = async () => {
-    if (!sessionData?.pin) return;
-    try {
-      await navigator.clipboard.writeText(sessionData.pin);
-      setCopiedPin(true);
-      playSound("tick");
-      setTimeout(() => setCopiedPin(false), 2000);
-    } catch {
-      // Clipboard may fail in some environments.
-    }
-  };
 
   if (sessionData && sessionData.currentPhase > 0) {
     return (
@@ -154,20 +141,6 @@ export default function TutorLobbyPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={copyPin}
-              className="flex items-center gap-3 bg-primary/5 dark:bg-primary/10 border-2 border-primary/20 hover:border-primary/40 rounded-xl px-4 py-2.5 transition-all group cursor-pointer"
-              title={t("lesson.interactive.copyPinTitle")}
-            >
-              <div className="text-right">
-                <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Session PIN</p>
-                <p className="text-2xl font-black text-primary pin-display">{sessionData.pin}</p>
-              </div>
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                {copiedPin ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4 text-primary" />}
-              </div>
-            </button>
-
             <ThemeToggle />
 
             <div className="flex items-center gap-2">
@@ -274,7 +247,7 @@ export default function TutorLobbyPage() {
                 </div>
                 <h4 className="font-bold text-lg text-foreground">{t("lesson.interactive.emptyStudentsTitle")}</h4>
                 <p className="text-sm text-muted-foreground mt-1 max-w-xs">
-                  {t("lesson.interactive.emptyStudentsPrefix")} <span className="font-bold text-primary pin-display">{sessionData.pin}</span> {t("lesson.interactive.emptyStudentsSuffix")}
+                  {t("lesson.interactive.emptyStudentsLinkMessage")}
                 </p>
               </div>
             ) : (

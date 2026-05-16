@@ -24,8 +24,8 @@ export default function LessonDetailPage() {
     {
       step: 2,
       icon: <Zap className="h-5 w-5" />,
-      title: t("lesson.sharePin"),
-      desc: t("lesson.sharePinDescription"),
+      title: t("lesson.shareClassLink"),
+      desc: t("lesson.shareClassLinkDescription"),
       color: "text-amber-600 dark:text-amber-400",
       bg: "bg-amber-500/10 dark:bg-amber-500/15",
       borderColor: "border-amber-500/20",

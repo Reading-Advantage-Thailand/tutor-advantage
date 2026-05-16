@@ -27,7 +27,7 @@ function PlayLessonContent() {
     aiFeedback,
     submitAnswer,
     kicked
-  } = useLessonSocket(null, studentId, name, classId || undefined, profile?.pictureUrl);
+  } = useLessonSocket(classId || undefined, studentId, name, profile?.pictureUrl);
 
   const [typedAnswer, setTypedAnswer] = useState('');
   const [showEveryoneReady, setShowEveryoneReady] = useState(false);

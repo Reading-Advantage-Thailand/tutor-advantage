@@ -6,7 +6,6 @@ const SOCKET_URL = process.env.NEXT_PUBLIC_LEARNING_SERVICE_URL || 'http://local
 interface LessonSessionData {
   sessionId: string;
   currentPhase: number;
-  pin?: string;
   phaseSelectedIndices?: Record<number, number>;
   articleData?: LessonArticleData;
 }
@@ -45,7 +44,7 @@ interface LessonArticleData {
   sentences?: Array<string | LessonSentence>;
 }
 
-export const useLessonSocket = (pin: string | null, studentId: string, name: string, classId?: string, pictureUrl?: string) => {
+export const useLessonSocket = (classId: string | undefined, studentId: string, name: string, pictureUrl?: string) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [sessionData, setSessionData] = useState<LessonSessionData | null>(null);
   const [articleData, setArticleData] = useState<LessonArticleData | null>(null);
@@ -60,7 +59,7 @@ export const useLessonSocket = (pin: string | null, studentId: string, name: str
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    if ((!pin && !classId) || !studentId) return;
+    if (!classId || !studentId) return;
 
     const token = typeof window !== "undefined"
       ? localStorage.getItem("student_session_token")
@@ -73,11 +72,7 @@ export const useLessonSocket = (pin: string | null, studentId: string, name: str
 
     newSocket.on('connect', () => {
       console.log('Connected to Learning Service WebSocket');
-      if (classId) {
-        newSocket.emit('join_class', { classId, studentId, name, pictureUrl });
-      } else if (pin) {
-        newSocket.emit('join_session', { pin, studentId, name, pictureUrl });
-      }
+      newSocket.emit('join_class', { classId, studentId, name, pictureUrl });
     });
 
     newSocket.on('join_success', (data: LessonSessionData) => {
@@ -134,7 +129,7 @@ export const useLessonSocket = (pin: string | null, studentId: string, name: str
     return () => {
       newSocket.disconnect();
     };
-  }, [pin, studentId, name, classId, pictureUrl]);
+  }, [classId, studentId, name, pictureUrl]);
 
   const submitAnswer = (answer: string, question?: string, expectedAnswer?: string) => {
     if (socketRef.current && sessionData) {

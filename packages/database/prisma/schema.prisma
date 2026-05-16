@@ -215,7 +215,6 @@ model InteractiveSession {
   classId     String?  @map("class_id") @db.Uuid
   tutorUserId String   @map("tutor_user_id") @db.Uuid
   articleId   String   @map("article_id")
-  pin         String
   status      String   
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz

@@ -45,7 +45,7 @@ export default function LessonLobbyPage({ params }: PageProps) {
     toggleReady,
     nudgeMessage,
     kicked
-  } = useLessonSocket(null, studentId, studentName, classInfo?.isEnrolled ? classId : undefined, pictureUrl);
+  } = useLessonSocket(classInfo?.isEnrolled ? classId : undefined, studentId, studentName, pictureUrl);
 
   useEffect(() => {
     if (liffReady && classId) {
@@ -70,7 +70,7 @@ export default function LessonLobbyPage({ params }: PageProps) {
   // Handle auto-redirect when phase changes (Lesson Starts)
   useEffect(() => {
     if (sessionData && sessionData.currentPhase > 0) {
-      router.push(`/interactive/play?classId=${classId}&pin=${sessionData.pin}&studentName=${studentName}`);
+      router.push(`/interactive/play?classId=${classId}&studentName=${studentName}`);
     }
   }, [sessionData, router, classId, studentName]);
 
