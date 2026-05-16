@@ -620,6 +620,19 @@ p { line-height: 1.7; }
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Nudge toast animations */
+@keyframes nudgePop {
+  0%   { opacity: 0; transform: translateY(-24px) scale(0.92); }
+  60%  { transform: translateY(4px) scale(1.02); }
+  80%  { transform: translateY(-2px) scale(0.99); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes nudgeRing {
+  0%   { transform: scale(0.6); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
 @keyframes fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }

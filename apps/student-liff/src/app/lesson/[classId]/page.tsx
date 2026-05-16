@@ -4,12 +4,13 @@ import React, { useState, useEffect, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Users, CheckCircle2, Loader2, AlertCircle, Play, ShieldCheck } from "lucide-react";
+import { ChevronLeft, Users, CheckCircle2, Loader2, AlertCircle, Play, ShieldCheck, Bell } from "lucide-react";
 import { studentApi } from "@/lib/api";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { useLessonSocket } from "@/hooks/useLessonSocket";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import { playSound } from "@/lib/sounds";
 
 interface PageProps {
   params: Promise<{ classId: string }>;
@@ -73,6 +74,13 @@ export default function LessonLobbyPage({ params }: PageProps) {
       router.push(`/interactive/play?classId=${classId}&studentName=${studentName}`);
     }
   }, [sessionData, router, classId, studentName]);
+
+  // Play sound when nudge arrives
+  useEffect(() => {
+    if (nudgeMessage) {
+      playSound('nudged');
+    }
+  }, [nudgeMessage]);
 
   if (!liffReady || fetchingClass) {
     return (
@@ -153,19 +161,42 @@ export default function LessonLobbyPage({ params }: PageProps) {
     <div className="page-shell" style={{ background: "var(--surface-bg)", minHeight: "100dvh" }}>
       {/* Nudge Alert */}
       {nudgeMessage && (
-        <div style={{ 
-          position: "fixed", top: 80, left: 20, right: 20, zIndex: 100,
-          background: "var(--brand-500)", color: "#fff", padding: "16px 20px", 
-          borderRadius: 16, boxShadow: "0 10px 25px rgba(6,199,85,0.4)",
-          display: "flex", alignItems: "center", gap: 12,
-          animation: "slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+        <div style={{
+          position: "fixed", top: 72, left: 16, right: 16, zIndex: 200,
+          background: "linear-gradient(135deg, #f97316 0%, #ef4444 100%)",
+          color: "#fff",
+          borderRadius: 20,
+          boxShadow: "0 8px 32px rgba(249,115,22,0.55), 0 2px 8px rgba(0,0,0,0.18)",
+          display: "flex", alignItems: "center", gap: 14,
+          padding: "14px 18px",
+          animation: "nudgePop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+          border: "2px solid rgba(255,255,255,0.25)",
         }}>
-           <div style={{ background: "rgba(255,255,255,0.2)", borderRadius: "50%", padding: 6 }}>
-              <CheckCircle2 size={20} />
-           </div>
-           <div style={{ flex: 1 }}>
-              <p style={{ fontSize: "0.875rem", fontWeight: 700 }}>{nudgeMessage}</p>
-           </div>
+          {/* Bell icon with pulse ring */}
+          <div style={{ position: "relative", flexShrink: 0 }}>
+            <div style={{
+              position: "absolute", inset: -6,
+              borderRadius: "50%",
+              border: "2px solid rgba(255,255,255,0.4)",
+              animation: "nudgeRing 0.8s ease-out",
+            }} />
+            <div style={{
+              width: 40, height: 40, borderRadius: 12,
+              background: "rgba(255,255,255,0.22)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <Bell size={20} fill="white" color="white" />
+            </div>
+          </div>
+          {/* Message */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontSize: "0.7rem", fontWeight: 800, letterSpacing: "0.08em", textTransform: "uppercase", opacity: 0.8, marginBottom: 2 }}>
+              แจ้งเตือนจากครู
+            </p>
+            <p style={{ fontSize: "0.9rem", fontWeight: 700, lineHeight: 1.3 }}>{nudgeMessage}</p>
+          </div>
+          {/* Emoji accent */}
+          <span style={{ fontSize: "1.6rem", flexShrink: 0 }}>👀</span>
         </div>
       )}
 
