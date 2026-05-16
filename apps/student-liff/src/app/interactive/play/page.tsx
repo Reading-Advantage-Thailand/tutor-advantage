@@ -8,6 +8,91 @@ import { playSound } from '@/lib/sounds';
 import { t } from '@/lib/i18n';
 import Image from 'next/image';
 
+// ── Mobile Leaderboard (student side) ────────────────────────────────────────
+function MobileLeaderboard({ participants, studentId }: { participants: { studentId: string; name: string; pictureUrl?: string; score?: number }[]; studentId: string }) {
+  const sorted = [...participants].sort((a, b) => (b.score || 0) - (a.score || 0));
+  const myRank = sorted.findIndex(p => p.studentId === studentId) + 1;
+
+  if (sorted.length === 0) return null;
+
+  return (
+    <div className="w-full mt-1">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-2 px-0.5">
+        <div className="flex items-center gap-1.5">
+          <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Live Leaderboard</span>
+        </div>
+        {myRank > 0 && (
+          <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+            คุณ #{myRank}
+          </span>
+        )}
+      </div>
+
+      {/* List */}
+      <div className="space-y-1.5 max-h-64 overflow-y-auto pr-0.5">
+        {sorted.map((p, i) => {
+          const rank = i + 1;
+          const isMe = p.studentId === studentId;
+          const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : null;
+
+          return (
+            <div
+              key={p.studentId || i}
+              className={[
+                'flex items-center gap-2.5 rounded-xl px-3 py-2.5 border-2 transition-all duration-300',
+                isMe
+                  ? 'border-primary/50 bg-primary/10'
+                  : rank === 1
+                  ? 'border-amber-400/40 bg-amber-400/5'
+                  : rank === 2
+                  ? 'border-slate-400/30 bg-slate-400/5'
+                  : rank === 3
+                  ? 'border-orange-400/30 bg-orange-400/5'
+                  : 'border-border/50 bg-card/60',
+              ].join(' ')}
+            >
+              {/* Rank badge */}
+              <div className="w-6 text-center shrink-0">
+                {rankEmoji
+                  ? <span className="text-base leading-none">{rankEmoji}</span>
+                  : <span className="text-[10px] font-bold text-muted-foreground">#{rank}</span>
+                }
+              </div>
+
+              {/* Avatar */}
+              <div className="size-8 rounded-full overflow-hidden border border-border shrink-0 bg-muted flex items-center justify-center">
+                {p.pictureUrl
+                  ? <img src={p.pictureUrl} alt={p.name} className="size-full object-cover" />
+                  : <span className="text-[10px] font-bold text-muted-foreground">{(p.name || '?').slice(0, 2)}</span>
+                }
+              </div>
+
+              {/* Name */}
+              <span className={`flex-1 text-sm font-semibold truncate ${isMe ? 'text-primary' : 'text-foreground'}`}>
+                {isMe ? 'คุณ' : p.name}
+              </span>
+
+              {isMe && (
+                <span className="text-[9px] bg-primary text-primary-foreground font-bold px-1.5 py-0.5 rounded-full shrink-0">ME</span>
+              )}
+
+              {/* Score */}
+              <div className="text-right shrink-0">
+                <p className={`text-sm font-black tabular-nums ${isMe ? 'text-primary' : rank <= 3 ? 'text-amber-600 dark:text-amber-400' : 'text-foreground'}`}>
+                  {p.score || 0}
+                </p>
+                <p className="text-[9px] text-muted-foreground leading-none">pts</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function PlayLessonContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -331,24 +416,26 @@ function PlayLessonContent() {
         {[7, 10, 11, 12].includes(currentPhase) && (
           <div className="phase-enter w-full max-w-md flex-1 flex flex-col">
             {hasAnswered ? (
-              <div className="flex-1 flex flex-col items-center justify-center text-center gap-4">
+              <div className="flex-1 flex flex-col items-start justify-start text-center gap-3 pt-2 w-full overflow-y-auto">
                 {selectedChoice && (
-                  <div className="bg-card px-6 py-3 rounded-xl border-2 border-border shadow-sm">
+                  <div className="bg-card px-6 py-3 rounded-xl border-2 border-border shadow-sm w-full shrink-0">
                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">{t("interactivePlay.yourAnswer")}</p>
                     <p className="text-4xl font-black text-foreground">{selectedChoice}</p>
                   </div>
                 )}
                 {showEveryoneReady ? (
-                  <>
-                    <h2 className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{t("interactivePlay.everyoneAnswered")}</h2>
-                    <p className="text-muted-foreground">{t("interactivePlay.watchTeacherAnswer")}</p>
-                  </>
+                  <div className="w-full bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 text-center shrink-0">
+                    <h2 className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{t("interactivePlay.everyoneAnswered")}</h2>
+                    <p className="text-sm text-muted-foreground">{t("interactivePlay.watchTeacherAnswer")}</p>
+                  </div>
                 ) : (
-                  <>
-                    <h2 className="text-2xl font-bold text-foreground">{t("interactivePlay.answerSubmitted")}</h2>
-                    <p className="text-muted-foreground">{t("interactivePlay.waitingFriends")}</p>
-                  </>
+                  <div className="w-full bg-card/80 border border-border rounded-xl p-3 text-center shrink-0">
+                    <h2 className="text-lg font-bold text-foreground">{t("interactivePlay.answerSubmitted")}</h2>
+                    <p className="text-sm text-muted-foreground">{t("interactivePlay.waitingFriends")}</p>
+                  </div>
                 )}
+                {/* Live Leaderboard */}
+                <MobileLeaderboard participants={participants} studentId={studentId} />
               </div>
             ) : (
               <div className="flex-1 flex flex-col w-full gap-4">
@@ -435,39 +522,35 @@ function PlayLessonContent() {
                 </p>
               </div>
             ) : (hasAnswered || isSubmitting) ? (
-              <div className="flex-1 min-h-0 flex flex-col items-center justify-center text-center gap-4 w-full mx-auto">
+              <div className="flex-1 min-h-0 flex flex-col items-center justify-start text-center gap-3 pt-2 w-full mx-auto overflow-y-auto">
                 {selectedChoice && (
                   <div className="bg-card px-5 py-3.5 rounded-2xl border border-border shadow-md w-full shrink-0">
                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1">{t("interactivePlay.yourAnswer")}</p>
                     <p className="text-sm font-semibold text-foreground break-words leading-relaxed">{selectedChoice}</p>
                   </div>
                 )}
-                
+
                 {showEveryoneReady ? (
-                  <div className="bg-card rounded-2xl p-5 shadow-xl border border-border text-center w-full flex flex-col items-center shrink-0">
-                    <h2 className="text-xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight mb-1">{t("interactivePlay.submittedDone")}</h2>
+                  <div className="bg-card rounded-2xl p-4 shadow-xl border border-border text-center w-full flex flex-col items-center shrink-0">
+                    <h2 className="text-lg font-black text-emerald-600 dark:text-emerald-400 tracking-tight mb-1">{t("interactivePlay.submittedDone")}</h2>
                     <p className="text-xs text-muted-foreground font-medium">{t("interactivePlay.waitingAiScore")}</p>
                   </div>
                 ) : (
-                  <div className="bg-card rounded-2xl p-5 shadow-xl border border-border text-center w-full flex flex-col items-center shrink-0">
+                  <div className="bg-card rounded-2xl p-4 shadow-xl border border-border text-center w-full flex flex-col items-center shrink-0">
                     {/* Glowing Live AI Badge */}
-                    <div className="bg-primary/10 text-primary px-3.5 py-1.5 rounded-full font-bold text-xs mb-5 uppercase tracking-wider flex items-center justify-center gap-1.5 shrink-0 max-w-full">
+                    <div className="bg-primary/10 text-primary px-3.5 py-1.5 rounded-full font-bold text-xs mb-4 uppercase tracking-wider flex items-center justify-center gap-1.5 shrink-0 max-w-full">
                       <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                       </span>
                       {t("interactivePlay.sendingAi")}
                     </div>
-                    
+
                     {/* Skeleton Row */}
-                    <div className="flex items-center gap-4 w-full text-left mb-4 shrink-0">
-                      {/* Score Circle Skeleton with scanning effect */}
-                      <div className="relative w-16 h-16 shrink-0 rounded-full bg-muted border border-border/60 flex items-center justify-center overflow-hidden sm:w-20 sm:h-20">
-                        {/* Shimmer sweep */}
+                    <div className="flex items-center gap-4 w-full text-left mb-3 shrink-0">
+                      <div className="relative w-14 h-14 shrink-0 rounded-full bg-muted border border-border/60 flex items-center justify-center overflow-hidden">
                         <div className="absolute inset-0 skeleton opacity-40" />
                       </div>
-                      
-                      {/* Text Paragraph Skeletons */}
                       <div className="flex-1 flex flex-col gap-2">
                         <div className="h-3 w-full rounded-md skeleton opacity-40" />
                         <div className="h-3 w-5/6 rounded-md skeleton opacity-40" />
@@ -475,11 +558,14 @@ function PlayLessonContent() {
                       </div>
                     </div>
 
-                    <p className="text-xs font-bold text-muted-foreground mt-2 animate-pulse leading-relaxed shrink-0">
+                    <p className="text-xs font-bold text-muted-foreground animate-pulse leading-relaxed shrink-0">
                       {t("interactivePlay.aiChecking")}
                     </p>
                   </div>
                 )}
+
+                {/* Live Leaderboard while waiting */}
+                <MobileLeaderboard participants={participants} studentId={studentId} />
               </div>
             ) : (
               <div className="bg-card rounded-2xl p-5 shadow-lg border border-border w-full">

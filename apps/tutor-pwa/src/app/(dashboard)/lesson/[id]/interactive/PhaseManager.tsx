@@ -36,6 +36,98 @@ interface PhaseManagerProps {
   onFinishSession?: () => void;
 }
 
+// ── Live Leaderboard Sidebar (Desktop) ───────────────────────────────────────
+function LiveLeaderboard({ participants }: { participants: any[] }) {
+  const sorted = [...participants].sort((a, b) => (b.score || 0) - (a.score || 0));
+  const maxScore = Math.max(...sorted.map(p => p.score || 0), 1);
+
+  return (
+    <div className="w-72 shrink-0 flex flex-col rounded-2xl overflow-hidden border border-border/60 bg-card/60 backdrop-blur shadow-xl">
+      {/* Header */}
+      <div className="px-5 py-3.5 bg-gradient-to-r from-slate-900 to-indigo-950 flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-2.5">
+          <div className="size-7 rounded-lg bg-amber-400/20 flex items-center justify-center">
+            <span className="text-base">🏆</span>
+          </div>
+          <div>
+            <p className="text-white font-bold text-sm leading-none">Leaderboard</p>
+            <p className="text-slate-400 text-[10px] mt-0.5">{sorted.length} นักเรียน</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-2.5 py-1">
+          <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-emerald-400 text-xs font-semibold">Live</span>
+        </div>
+      </div>
+
+      {/* Rank list */}
+      <div className="flex-1 overflow-y-auto p-3 space-y-2">
+        {sorted.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-10 gap-2 text-center">
+            <span className="text-2xl">👥</span>
+            <p className="text-muted-foreground text-xs">ยังไม่มีข้อมูลคะแนน</p>
+          </div>
+        ) : (
+          sorted.map((p, i) => {
+            const rank = i + 1;
+            const scorePct = maxScore > 0 ? ((p.score || 0) / maxScore) * 100 : 0;
+            const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : null;
+            const cardStyle = rank === 1
+              ? 'bg-amber-500/10 border-amber-400/30'
+              : rank === 2
+              ? 'bg-slate-400/10 border-slate-400/20'
+              : rank === 3
+              ? 'bg-orange-400/10 border-orange-400/20'
+              : 'bg-muted/40 border-border/40';
+            const barStyle = rank === 1 ? 'bg-amber-400' : rank === 2 ? 'bg-slate-400' : rank === 3 ? 'bg-orange-400' : 'bg-indigo-400';
+            const scoreStyle = rank === 1 ? 'text-amber-500' : rank === 2 ? 'text-slate-400' : rank === 3 ? 'text-orange-400' : 'text-foreground';
+
+            return (
+              <div
+                key={p.studentId || i}
+                className={`flex items-center gap-2.5 rounded-xl p-2.5 border transition-all duration-500 ${cardStyle}`}
+              >
+                {/* Rank */}
+                <div className="w-6 text-center shrink-0">
+                  {rankEmoji
+                    ? <span className="text-base leading-none">{rankEmoji}</span>
+                    : <span className="text-xs font-bold text-muted-foreground">#{rank}</span>
+                  }
+                </div>
+
+                {/* Avatar */}
+                <div className="size-8 rounded-full overflow-hidden border-2 border-border/60 shrink-0 bg-muted flex items-center justify-center">
+                  {p.pictureUrl
+                    ? <img src={p.pictureUrl} alt={p.name} className="size-full object-cover" />
+                    : <span className="text-[10px] font-bold text-muted-foreground">{(p.name || '?').slice(0, 2)}</span>
+                  }
+                </div>
+
+                {/* Name + bar */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-foreground truncate leading-none mb-1.5">{p.name}</p>
+                  <div className="h-1 w-full rounded-full bg-muted overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all duration-700 ${barStyle}`}
+                      style={{ width: `${Math.max(scorePct, (p.score || 0) > 0 ? 3 : 0)}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Score */}
+                <div className="shrink-0 text-right">
+                  <p className={`text-sm font-black tabular-nums ${scoreStyle}`}>{p.score || 0}</p>
+                  <p className="text-[9px] text-muted-foreground">pts</p>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+}
+
 export const PhaseManager: React.FC<PhaseManagerProps> = ({
   currentPhase,
   participants,
@@ -180,33 +272,33 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const displayKeys = Object.keys(mappedOptions).sort();
 
     return (
-      <div className="flex-1 flex flex-col items-center justify-center">
-        <h2 className="text-4xl font-bold mb-12 text-center max-w-4xl text-foreground">
-          {question}
-        </h2>
-        <div className="grid grid-cols-2 gap-6 w-full max-w-4xl">
-          {displayKeys.map((key) => {
-            const colorMap: Record<string, string> = { 'A': 'red', 'B': 'blue', 'C': 'yellow', 'D': 'green' };
-            const color = colorMap[key] || 'slate';
-            const bgClasses: Record<string, string> = {
-              'red': 'bg-red-500',
-              'blue': 'bg-blue-500',
-              'yellow': 'bg-yellow-500',
-              'green': 'bg-green-500'
-            };
-            const bgClass = bgClasses[color] || 'bg-slate-500';
+      <div className="flex-1 flex gap-5 overflow-hidden min-h-0">
+        {/* Left: Question + Options */}
+        <div className="flex-1 flex flex-col items-center justify-center gap-6 min-w-0 overflow-hidden">
+          <h2 className="text-3xl font-bold text-center max-w-3xl text-foreground leading-snug px-2">
+            {question}
+          </h2>
+          <div className="grid grid-cols-2 gap-4 w-full max-w-3xl">
+            {displayKeys.map((key) => {
+              const bgClasses: Record<string, string> = {
+                'A': 'bg-red-500', 'B': 'bg-blue-500', 'C': 'bg-yellow-500', 'D': 'bg-green-500'
+              };
+              const bgClass = bgClasses[key] || 'bg-slate-500';
+              return (
+                <div key={key} className={`${bgClass} text-white p-6 rounded-2xl text-xl font-bold shadow-lg flex items-start gap-3`}>
+                  <span className="bg-white/20 px-2.5 py-0.5 rounded-lg shrink-0">{key}</span>
+                  <span className="leading-snug">{mappedOptions[key]}</span>
+                </div>
+              );
+            })}
+          </div>
+          <div className="text-xl font-bold text-muted-foreground bg-muted px-6 py-2.5 rounded-full">
+            {t("lesson.interactive.answersSubmitted")} {totalAnswered} / {totalParticipants} {t("lesson.interactive.peopleUnit")}
+          </div>
+        </div>
 
-            return (
-              <div key={key} className={`${bgClass} text-white p-8 rounded-2xl text-2xl font-bold shadow-lg flex items-start gap-4`}>
-                <span className="bg-white/20 px-3 py-1 rounded-lg">{key}</span>
-                <span>{mappedOptions[key]}</span>
-              </div>
-            );
-          })}
-        </div>
-        <div className="mt-12 text-2xl font-bold text-muted-foreground bg-muted px-8 py-3 rounded-full">
-          {t("lesson.interactive.answersSubmitted")} {totalAnswered} / {totalParticipants} {t("lesson.interactive.peopleUnit")}
-        </div>
+        {/* Right: Live Leaderboard */}
+        <LiveLeaderboard participants={participants} />
       </div>
     );
   };
@@ -519,77 +611,74 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const submittedPct = totalParticipants > 0 ? (totalAnswered / totalParticipants) * 100 : 0;
 
     return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-8 px-8">
-        {/* Question */}
-        <div className="relative max-w-3xl w-full text-center">
-          <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-violet-500/10 via-blue-500/10 to-violet-500/10 blur-2xl" />
-          <div className="relative bg-card/60 backdrop-blur border border-border/60 rounded-3xl px-10 py-8 shadow-lg">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <span className="size-2 rounded-full bg-violet-400 animate-pulse" />
-              <span className="text-xs font-semibold uppercase tracking-widest text-violet-400">Short Answer</span>
-            </div>
-            <h2 className="text-3xl font-bold text-foreground leading-snug">
-              {shortAnswerQuestion?.question || t("lesson.interactive.shortAnswerPrompt")}
-            </h2>
-          </div>
-        </div>
-
-        {/* Progress */}
-        <div className="flex flex-col items-center gap-4 w-full max-w-sm">
-          {/* Circular progress */}
-          <div className="relative">
-            <svg width="88" height="88" viewBox="0 0 88 88" className="-rotate-90">
-              <circle cx="44" cy="44" r="36" fill="none" stroke="hsl(var(--muted))" strokeWidth="7" />
-              <circle
-                cx="44" cy="44" r="36" fill="none"
-                stroke="#8b5cf6" strokeWidth="7"
-                strokeLinecap="round"
-                strokeDasharray={`${2 * Math.PI * 36}`}
-                strokeDashoffset={`${2 * Math.PI * 36 * (1 - submittedPct / 100)}`}
-                className="transition-all duration-700"
-              />
-            </svg>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-2xl font-black text-foreground">{totalAnswered}</span>
+      <div className="flex-1 flex gap-5 overflow-hidden min-h-0">
+        {/* Left: Question + Progress */}
+        <div className="flex-1 flex flex-col items-center justify-center gap-5 min-w-0 overflow-hidden">
+          {/* Question card with glow */}
+          <div className="relative w-full max-w-2xl text-center">
+            <div className="absolute -inset-3 rounded-3xl bg-gradient-to-r from-violet-500/10 via-blue-500/10 to-violet-500/10 blur-2xl pointer-events-none" />
+            <div className="relative bg-card/60 backdrop-blur border border-border/60 rounded-3xl px-8 py-7 shadow-lg">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <span className="size-2 rounded-full bg-violet-400 animate-pulse" />
+                <span className="text-xs font-semibold uppercase tracking-widest text-violet-400">Short Answer</span>
+              </div>
+              <h2 className="text-2xl font-bold text-foreground leading-snug">
+                {shortAnswerQuestion?.question || t("lesson.interactive.shortAnswerPrompt")}
+              </h2>
             </div>
           </div>
 
-          <div className="text-center">
-            <p className="text-base font-semibold text-foreground">
-              {totalAnswered} / {totalParticipants}
+          {/* Progress ring + bar */}
+          <div className="flex flex-col items-center gap-3 w-full max-w-xs">
+            <div className="relative">
+              <svg width="80" height="80" viewBox="0 0 80 80" className="-rotate-90">
+                <circle cx="40" cy="40" r="32" fill="none" stroke="hsl(var(--muted))" strokeWidth="7" />
+                <circle
+                  cx="40" cy="40" r="32" fill="none"
+                  stroke="#8b5cf6" strokeWidth="7"
+                  strokeLinecap="round"
+                  strokeDasharray={`${2 * Math.PI * 32}`}
+                  strokeDashoffset={`${2 * Math.PI * 32 * (1 - submittedPct / 100)}`}
+                  className="transition-all duration-700"
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-xl font-black text-foreground">{totalAnswered}</span>
+              </div>
+            </div>
+            <p className="text-sm font-semibold text-foreground">
+              {totalAnswered} / {totalParticipants} <span className="font-normal text-muted-foreground">{t("lesson.interactive.answersSubmitted")}</span>
             </p>
-            <p className="text-sm text-muted-foreground">{t("lesson.interactive.answersSubmitted")}</p>
-          </div>
-
-          {/* Linear progress bar */}
-          <div className="w-full">
-            <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+            <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
               <div
                 className="h-full rounded-full bg-violet-500 transition-all duration-700"
                 style={{ width: `${submittedPct}%` }}
               />
             </div>
-          </div>
 
-          {/* Submitted avatars */}
-          {totalAnswered > 0 && (
-            <div className="flex items-center justify-center gap-1 flex-wrap mt-1">
-              {allAnsweredData.slice(0, 12).map((a, i) => (
-                <div key={i} className="size-8 rounded-full overflow-hidden border-2 border-emerald-500/60 bg-emerald-500/20 flex items-center justify-center">
-                  {a.pictureUrl
-                    ? <img src={a.pictureUrl} alt={a.name} className="size-full object-cover" />
-                    : <span className="text-[10px] font-bold text-emerald-400">{(a.name || '?').slice(0, 2)}</span>
-                  }
-                </div>
-              ))}
-              {allAnsweredData.length > 12 && (
-                <div className="size-8 rounded-full bg-muted border-2 border-border flex items-center justify-center text-[10px] font-bold text-muted-foreground">
-                  +{allAnsweredData.length - 12}
-                </div>
-              )}
-            </div>
-          )}
+            {/* Submitted avatars */}
+            {totalAnswered > 0 && (
+              <div className="flex items-center justify-center gap-1 flex-wrap mt-1">
+                {allAnsweredData.slice(0, 9).map((a, i) => (
+                  <div key={i} className="size-8 rounded-full overflow-hidden border-2 border-emerald-500/60 bg-emerald-500/20 flex items-center justify-center">
+                    {a.pictureUrl
+                      ? <img src={a.pictureUrl} alt={a.name} className="size-full object-cover" />
+                      : <span className="text-[10px] font-bold text-emerald-400">{(a.name || '?').slice(0, 2)}</span>
+                    }
+                  </div>
+                ))}
+                {allAnsweredData.length > 9 && (
+                  <div className="size-8 rounded-full bg-muted border-2 border-border flex items-center justify-center text-[10px] font-bold text-muted-foreground">
+                    +{allAnsweredData.length - 9}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
+
+        {/* Right: Live Leaderboard */}
+        <LiveLeaderboard participants={participants} />
       </div>
     );
   };
