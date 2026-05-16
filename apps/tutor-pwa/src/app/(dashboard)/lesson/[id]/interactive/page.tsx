@@ -44,7 +44,7 @@ export default function TutorLobbyPage() {
   // Article image URL from GCS
   const articleImgId = (articleData as any)?.id as string | undefined;
   const articleImageUrl = articleImgId
-    ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${articleImgId}`
+    ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${articleImgId}.png`
     : null;
 
   if (sessionData && sessionData.currentPhase > 0) {
@@ -319,8 +319,8 @@ export default function TutorLobbyPage() {
                     {participant.isReady ? "✓ Ready" : "Waiting…"}
                   </p>
 
-                  {/* Action buttons (appear on hover) */}
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {/* Action buttons — always visible */}
+                  <div className="flex items-center gap-1">
                     {!participant.isReady && (
                       <button
                         className="h-7 w-7 rounded-lg text-orange-500 hover:bg-orange-500/10 flex items-center justify-center transition-colors"
