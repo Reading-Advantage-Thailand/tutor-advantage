@@ -44,30 +44,31 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { t } from "@/lib/i18n";
 
 const FINANCE_ITEMS = [
-  { href: "/", label: "ภาพรวม", icon: LayoutDashboard },
-  { href: "/settlements", label: "การชำระเงิน", icon: ReceiptText },
-  { href: "/adjustments", label: "ปรับปรุงยอด", icon: FilePenLine },
-  { href: "/audit", label: "ประวัติกิจกรรม", icon: ShieldCheck },
+  { href: "/", label: t("layout.overview"), icon: LayoutDashboard },
+  { href: "/settlements", label: t("layout.settlements"), icon: ReceiptText },
+  { href: "/adjustments", label: t("layout.adjustments"), icon: FilePenLine },
+  { href: "/audit", label: t("layout.audit"), icon: ShieldCheck },
 ];
 
 const OPS_ITEMS = [
   {
     href: "/operations/exceptions",
-    label: "ข้อผิดพลาดระบบ",
+    label: t("layout.exceptions"),
     icon: AlertTriangle,
   },
   {
     href: "/operations/legacy-links",
-    label: "ลิงก์ระบบเก่า",
+    label: t("layout.legacyLinks"),
     icon: LinkIcon,
   },
 ];
 
 const USER_RISK_ITEMS = [
-  { href: "/users", label: "ผู้ใช้งาน & ความยินยอม", icon: Users },
-  { href: "/fraud", label: "ตรวจสอบความเสี่ยง", icon: ShieldAlert },
+  { href: "/users", label: t("layout.usersConsent"), icon: Users },
+  { href: "/fraud", label: t("layout.fraud"), icon: ShieldAlert },
 ];
 
 function AppSidebar({
@@ -285,10 +286,10 @@ function AppSidebar({
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight ml-1">
                     <span className="truncate font-semibold text-foreground">
-                      {role || "ผู้ดูแลระบบ"}
+                      {role || t("layout.defaultRole")}
                     </span>
                     <span className="flex items-center gap-1.5 truncate text-[10px] font-medium text-muted-foreground uppercase tracking-tight">
-                      <span className="h-1.5 w-1.5 rounded-full bg-brand-500 animate-pulse" /> ออนไลน์
+                      <span className="h-1.5 w-1.5 rounded-full bg-brand-500 animate-pulse" /> {t("layout.online")}
                     </span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-3.5 text-muted-foreground" />
@@ -309,7 +310,7 @@ function AppSidebar({
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-bold text-foreground">
-                        {role || "ผู้ดูแลระบบ"}
+                        {role || t("layout.defaultRole")}
                       </span>
                       <p className="text-xs text-muted-foreground truncate">
                         admin@tutor-advantage.com
@@ -323,7 +324,7 @@ function AppSidebar({
                   className="rounded-lg py-2.5 text-red-600 focus:bg-red-50 focus:text-red-700 dark:focus:bg-red-950/30 cursor-pointer"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span className="font-semibold">ออกจากระบบ</span>
+                  <span className="font-semibold">{t("layout.logout")}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -378,7 +379,7 @@ export default function LayoutWrapper({
 
   const pageTitle =
     pathname === "/"
-      ? "ภาพรวมระบบ"
+      ? t("layout.systemOverview")
       : pathname.split("/")[1]?.charAt(0).toUpperCase() +
         (pathname.split("/")[1]?.slice(1) ?? "");
 
@@ -396,7 +397,7 @@ export default function LayoutWrapper({
           <div className="ml-auto flex items-center gap-4">
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 border border-brand-100 dark:bg-brand-900/10 dark:border-brand-800">
               <span className="h-2 w-2 rounded-full bg-brand-500 shadow-[0_0_8px_rgba(6,199,85,0.5)]" />
-              <span className="text-[10px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider">ระบบหลัก (Production)</span>
+              <span className="text-[10px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider">{t("layout.productionSystem")}</span>
             </div>
             <ThemeToggle />
           </div>

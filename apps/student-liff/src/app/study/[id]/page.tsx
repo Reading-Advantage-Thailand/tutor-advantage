@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronLeft, Play, CheckCircle2, Lock, Video, FileText } from "lucide-react";
 import { studentApi } from "@/lib/api";
 import { useLiff } from "@/components/providers/LiffProvider";
+import { studyDemoLessons, t } from "@/lib/i18n";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -42,13 +43,7 @@ export default function StudyPage({ params }: PageProps) {
     );
   }
 
-  // Mock lessons for demonstration
-  const lessons = [
-    { id: "L1", title: "Introduction & Basic Vocab", type: "video", duration: "15:20", completed: true },
-    { id: "L2", title: "Daily Conversations", type: "article", duration: "10 mins", completed: true },
-    { id: "L3", title: "Common Grammar Mistakes", type: "video", duration: "22:45", completed: false },
-    { id: "L4", title: "Final Quiz - Unit 1", type: "quiz", duration: "15 mins", completed: false },
-  ];
+  const lessons = studyDemoLessons;
 
   return (
     <div className="page-shell" style={{ background: "var(--surface-bg)", minHeight: "100dvh", paddingBottom: 40 }}>
@@ -72,16 +67,16 @@ export default function StudyPage({ params }: PageProps) {
             <Play size={28} style={{ color: "#fff", fill: "#fff", marginLeft: 4 }} />
           </div>
           <div style={{ position: "absolute", bottom: 16, left: 16, zIndex: 1 }}>
-            <div style={{ color: "#fff", fontSize: "0.875rem", fontWeight: 700 }}>บทที่ 3: Common Grammar Mistakes</div>
-            <div style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.75rem" }}>22:45 นาที</div>
+            <div style={{ color: "#fff", fontSize: "0.875rem", fontWeight: 700 }}>{t("study.currentLessonTitle")}</div>
+            <div style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.75rem" }}>22:45 {t("study.minuteUnit")}</div>
           </div>
         </div>
 
         {/* Course Info */}
         <div style={{ marginBottom: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <h2 style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--text-primary)" }}>บทเรียนทั้งหมด</h2>
-            <span style={{ fontSize: "0.8125rem", color: "var(--brand-600)", fontWeight: 700 }}>สำเร็จ 2/14</span>
+            <h2 style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--text-primary)" }}>{t("study.allLessons")}</h2>
+            <span style={{ fontSize: "0.8125rem", color: "var(--brand-600)", fontWeight: 700 }}>{t("study.completedProgress")}</span>
           </div>
           
           <div className="progress-bar" style={{ height: 6, background: "var(--neutral-100)" }}>
@@ -130,10 +125,10 @@ export default function StudyPage({ params }: PageProps) {
 
         {/* Quick Review */}
         <div className="glass-card" style={{ marginTop: 24, padding: "18px", background: "linear-gradient(135deg, var(--brand-500), var(--brand-600))", border: "none" }}>
-          <div style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>สถิติการเรียน</div>
-          <div style={{ color: "#fff", fontSize: "1.125rem", fontWeight: 800, marginTop: 4, lineHeight: 1.3 }}>คุณทำคะแนนได้ดีมาก!<br />บทถัดไปพร้อมให้เรียนแล้ว</div>
+          <div style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.75rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>{t("study.statsTitle")}</div>
+          <div style={{ color: "#fff", fontSize: "1.125rem", fontWeight: 800, marginTop: 4, lineHeight: 1.3 }}>{t("study.statsMessageLine1")}<br />{t("study.statsMessageLine2")}</div>
           <button className="btn" style={{ background: "#fff", color: "var(--brand-600)", fontWeight: 700, borderRadius: 14, marginTop: 16, width: "100%", height: 44 }}>
-            ทำแบบทดสอบ Unit 1
+            {t("study.unitQuiz")}
           </button>
         </div>
 

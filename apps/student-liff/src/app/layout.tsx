@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
+import { t } from "@/lib/i18n";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -32,10 +33,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Tutor Advantage — Student Portal",
-  description:
-    "ระบบสมัครเรียนและเรียนภาษาอังกฤษผ่าน LINE สำหรับนักเรียน — Tutor Advantage Student LIFF Portal",
-  keywords: ["tutor advantage", "เรียนภาษาอังกฤษ", "LIFF", "LINE", "ติวเตอร์"],
+  title: "Tutor Advantage - Student Portal",
+  description: t("app.rootDescription"),
+  keywords: ["tutor advantage", t("app.keywordEnglishLearning"), "LIFF", "LINE", "tutor"],
   robots: "noindex, nofollow",
   manifest: "/manifest.json",
   appleWebApp: {
@@ -44,8 +44,8 @@ export const metadata: Metadata = {
     title: "Tutor Advantage",
   },
   openGraph: {
-    title: "Tutor Advantage — Student Portal",
-    description: "เรียนภาษาอังกฤษกับติวเตอร์ที่คุณไว้วางใจ",
+    title: "Tutor Advantage - Student Portal",
+    description: t("app.openGraphDescription"),
     type: "website",
   },
 };

@@ -1,6 +1,7 @@
 import { getCurrentUserAction } from "@/app/dashboard/actions";
 import Link from "next/link";
 import { AlertCircle, AlertTriangle, Clock, ChevronRight } from "lucide-react";
+import { t } from "@/lib/i18n";
 
 type VerificationField = "idCard" | "bankBook" | "address";
 
@@ -19,9 +20,9 @@ interface VerificationBannerProps {
 }
 
 const verificationFieldLabels: Record<VerificationField, string> = {
-  idCard: "บัตรประชาชน",
-  bankBook: "สมุดบัญชีธนาคาร",
-  address: "ที่อยู่สำหรับส่งเอกสาร",
+  idCard: t("verification.idCard"),
+  bankBook: t("verification.bankBook"),
+  address: t("verification.address"),
 };
 
 const verificationFieldOrder: VerificationField[] = ["idCard", "bankBook", "address"];
@@ -91,19 +92,19 @@ export default async function VerificationBanner({
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-sm sm:text-base flex items-center gap-1.5">
             {isPending
-              ? "เอกสารอยู่ระหว่างตรวจสอบ"
+              ? t("verification.pendingTitle")
               : isRejected
-                ? "การยืนยันตัวตนถูกปฏิเสธ"
-                : "กรุณายืนยันตัวตนเพื่อรับเงิน"}
+                ? t("verification.rejectedTitle")
+                : t("verification.requiredTitle")}
           </p>
 
           {isRejected && rejectedFields.length > 0 ? (
             <div className="mt-1 space-y-1">
-              <p className="text-xs font-medium opacity-95">เหตุผลที่ต้องแก้ไข:</p>
+              <p className="text-xs font-medium opacity-95">{t("verification.rejectionReason")}</p>
               {rejectedFields.map((item) => (
                 <p key={item.field} className="text-xs opacity-90">
                   <span className="font-semibold">{item.label}:</span>{" "}
-                  {item.comment || "ไม่ผ่านการตรวจสอบ กรุณาส่งข้อมูลใหม่"}
+                  {item.comment || t("verification.defaultRejectComment")}
                 </p>
               ))}
             </div>
@@ -111,13 +112,13 @@ export default async function VerificationBanner({
             <p className="text-xs opacity-85 mt-0.5">
               {isPending
                 ? pendingFields.length > 0
-                  ? `ส่งแล้ว: ${pendingFields.join(", ")} เจ้าหน้าที่กำลังตรวจสอบ`
-                  : "เจ้าหน้าที่กำลังดำเนินการตรวจสอบเอกสารของคุณ"
+                  ? `${t("verification.submittedPrefix")} ${pendingFields.join(", ")} ${t("verification.reviewingSuffix")}`
+                  : t("verification.reviewingDocuments")
                 : isRejected
-                  ? "กรุณาเปิดหน้าตั้งค่าเพื่อดูรายการที่ไม่ผ่านและส่งข้อมูลใหม่"
+                  ? t("verification.openSettingsToResubmit")
                   : missingFields.length > 0
-                    ? `ยังขาด: ${missingFields.join(", ")}`
-                    : "คุณยังไม่ได้ยืนยันตัวตน ระบบจะไม่สามารถโอนเงินรายได้เข้าบัญชีได้"}
+                    ? `${t("verification.missingPrefix")} ${missingFields.join(", ")}`
+                    : t("verification.notVerifiedWarning")}
             </p>
           )}
         </div>

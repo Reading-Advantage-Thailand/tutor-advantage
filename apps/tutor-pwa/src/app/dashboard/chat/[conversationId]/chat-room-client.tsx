@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Send, MoreVertical, ImageIcon, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { sendMessage, getConversationMessages } from "../actions";
+import { t } from "@/lib/i18n";
 
 type Message = {
   id: string;
@@ -143,7 +144,7 @@ export default function ChatRoomClient({
       id: tempId,
       text: textToSend,
       senderId: "me",
-      senderName: "คุณ",
+      senderName: t("dashboardChat.you"),
       time: new Date().toISOString(),
       isOwn: true,
     };
@@ -198,7 +199,7 @@ export default function ChatRoomClient({
               <h2 className="font-bold text-base sm:text-lg leading-tight text-foreground truncate max-w-[180px] sm:max-w-[300px]">{metadata.title}</h2>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{metadata.status || "ออนไลน์"}</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{metadata.status || t("dashboardChat.online")}</p>
               </div>
             </div>
           </div>
@@ -213,7 +214,7 @@ export default function ChatRoomClient({
         <div className="text-center my-6">
           <span className="text-[10px] font-bold uppercase tracking-widest bg-white dark:bg-muted px-4 py-1.5 rounded-full text-muted-foreground shadow-sm border border-border/50 inline-flex items-center gap-1.5">
             <CheckCircle2 className="h-3 w-3" />
-            การสนทนาถูกเข้ารหัส
+            {t("dashboardChat.encrypted")}
           </span>
         </div>
         
@@ -282,7 +283,7 @@ export default function ChatRoomClient({
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder="พิมพ์ข้อความ..."
+              placeholder={t("dashboardChat.messagePlaceholder")}
               className="w-full bg-transparent border-none focus:outline-none px-4 py-3 text-[15px] font-medium"
               disabled={sending}
             />

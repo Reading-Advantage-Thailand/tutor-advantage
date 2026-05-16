@@ -7,6 +7,7 @@ import { LineIcon } from "@/components/icons/LineIcon";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Shield, Users } from "lucide-react";
+import { t } from "@/lib/i18n";
 
 export default function LoginPage() {
   const { liff, isReady, error } = useLiff();
@@ -25,7 +26,7 @@ export default function LoginPage() {
     return (
       <main className="page-shell" style={{ minHeight: "100dvh", background: "linear-gradient(160deg, #06c755 0%, #047d36 40%, #0f172a 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
         <div className="animate-pulse" style={{ color: "#fff", fontWeight: 600, fontSize: "1.125rem" }}>
-          กำลังเตรียมเข้าสู่ระบบ...
+          {t("app.preparingLogin")}
         </div>
       </main>
     );
@@ -67,7 +68,7 @@ export default function LoginPage() {
             Tutor Advantage
           </h1>
           <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.9375rem", lineHeight: 1.7 }}>
-            พอร์ทัลสำหรับนักเรียน
+            {t("app.studentPortal")}
           </p>
         </div>
       </div>
@@ -75,16 +76,16 @@ export default function LoginPage() {
       {/* Login card */}
       <div className="animate-slide-up" style={{ margin: "0 16px 32px", borderRadius: 24, padding: "28px 24px 24px", boxShadow: "0 20px 60px rgba(0,0,0,0.15)", background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
         <h2 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 6, textAlign: "center" }}>
-          เข้าสู่ระบบ
+          {t("app.login")}
         </h2>
         <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", textAlign: "center", marginBottom: 24, lineHeight: 1.6 }}>
-          ใช้บัญชี LINE เพื่อเข้าถึงคลาสเรียนของคุณ
+          {t("app.loginSubtitle")}
         </p>
 
         {/* Error */}
         {error && (
           <div style={{ color: "#ef4444", fontSize: "0.75rem", textAlign: "center", marginBottom: 12, padding: "10px 14px", background: "var(--accent-red-light)", borderRadius: 14, border: "1px solid #fee2e2" }}>
-            ⚠️ {error}
+            {error}
           </div>
         )}
 
@@ -93,24 +94,24 @@ export default function LoginPage() {
           onClick={handleLogin}
           id="btn-line-login"
           className="w-full h-14 rounded-2xl text-base font-bold bg-[#06c755] hover:bg-[#047d36] text-white shadow-[0_4px_16px_rgba(6,199,85,0.3)] mb-4 shine-effect"
-          aria-label="เข้าสู่ระบบด้วย LINE"
+          aria-label={t("app.lineLogin")}
           disabled={!isReady}
         >
           <LineIcon size={22} />
-          {isReady ? "เข้าสู่ระบบด้วย LINE" : "กำลังโหลด..."}
+          {isReady ? t("app.lineLogin") : t("app.loading")}
         </Button>
 
         {/* PDPA notice */}
         <div style={{ background: "var(--neutral-50)", borderRadius: 14, padding: "12px 14px", border: "1px solid var(--surface-border)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
             <Shield size={14} style={{ color: "var(--text-tertiary)", flexShrink: 0 }} />
-            <span style={{ fontSize: "0.6875rem", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>นโยบายความเป็นส่วนตัว</span>
+            <span style={{ fontSize: "0.6875rem", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{t("app.privacyPolicy")}</span>
           </div>
           <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.7 }}>
-            การเข้าสู่ระบบถือว่าคุณยอมรับ{" "}
-            <a href="/terms" style={{ color: "var(--brand-600)", fontWeight: 600, textDecoration: "none" }}>เงื่อนไขการใช้งาน</a>{" "}
-            และ{" "}
-            <a href="/privacy" style={{ color: "var(--brand-600)", fontWeight: 600, textDecoration: "none" }}>นโยบายความเป็นส่วนตัว</a>
+            {t("app.loginConsentPrefix")}{" "}
+            <a href="/terms" style={{ color: "var(--brand-600)", fontWeight: 600, textDecoration: "none" }}>{t("app.terms")}</a>{" "}
+            {t("app.and")}{" "}
+            <a href="/privacy" style={{ color: "var(--brand-600)", fontWeight: 600, textDecoration: "none" }}>{t("app.privacyPolicy")}</a>
           </p>
         </div>
 
@@ -118,8 +119,8 @@ export default function LoginPage() {
         <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginTop: 14, padding: "12px 14px", background: "var(--accent-amber-light)", borderRadius: 14, border: "1px solid #fde68a" }}>
           <Users size={16} style={{ color: "#92400e", flexShrink: 0, marginTop: 1 }} />
           <p style={{ fontSize: "0.75rem", color: "#92400e", lineHeight: 1.65 }}>
-            <strong>นักเรียนอายุต่ำกว่า 18 ปี</strong>{" "}
-            ต้องได้รับความยินยอมจากผู้ปกครองก่อนชำระเงินและใช้งานช่องทางติดต่อ
+            <strong>{t("app.underagePrefix")}</strong>{" "}
+            {t("app.underageNotice")}
           </p>
         </div>
       </div>
@@ -127,9 +128,9 @@ export default function LoginPage() {
       {/* Footer */}
       <div style={{ textAlign: "center", padding: "0 24px 36px" }}>
         <p style={{ fontSize: "0.6875rem", color: "rgba(255,255,255,0.4)", lineHeight: 1.6 }}>
-          © 2026 Tutor Advantage Thailand
+          2026 Tutor Advantage Thailand
           <br />
-          ชำระเงินปลอดภัยโดย Omise · PromptPay &amp; บัตรเครดิต
+          {t("app.securePaymentLine")}
         </p>
       </div>
     </main>

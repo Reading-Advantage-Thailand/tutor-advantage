@@ -1,6 +1,7 @@
 "use client";
 
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { t } from "@/lib/i18n";
 
 interface ThemeToggleProps {
   className?: string;
@@ -14,7 +15,7 @@ export function ThemeToggle({ className = "", size = 22 }: ThemeToggleProps) {
   return (
     <button
       onClick={toggleTheme}
-      aria-label={isDark ? "เปลี่ยนเป็นโหมดสว่าง" : "เปลี่ยนเป็นโหมดมืด"}
+      aria-label={isDark ? t("app.lightMode") : t("app.darkMode")}
       className={`theme-toggle-btn ${className}`}
       style={{
         width: 40,

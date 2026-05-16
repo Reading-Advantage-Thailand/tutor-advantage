@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { studentApi } from "@/lib/api";
+import { t } from "@/lib/i18n";
 
 export default function GuardianPage() {
   const { isReady } = useLiff();
@@ -25,7 +26,7 @@ export default function GuardianPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!guardianName || !relation || !agreed) {
-      setError("กรุณากรอกข้อมูลให้ครบถ้วนและกดยอมรับเงื่อนไข");
+      setError(t("guardian.validationError"));
       return;
     }
 
@@ -39,7 +40,7 @@ export default function GuardianPage() {
       }, 2000);
     } catch (err) {
       console.error("Failed to submit guardian info:", err);
-      setError(err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+      setError(err instanceof Error ? err.message : t("guardian.saveFailed"));
     } finally {
       setLoading(false);
     }
@@ -74,7 +75,7 @@ export default function GuardianPage() {
             style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "0.875rem", fontWeight: 500, color: "var(--text-secondary)", textDecoration: "none" }}
           >
             <ChevronLeft size={18} />
-            <span>โปรไฟล์</span>
+            <span>{t("profile.title")}</span>
           </Link>
           <ThemeToggle size={16} />
         </div>
@@ -97,10 +98,10 @@ export default function GuardianPage() {
           </div>
           <div>
             <h1 style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "2px" }}>
-              ข้อมูลผู้ปกครอง
+              {t("guardian.title")}
             </h1>
             <p style={{ fontSize: "0.8125rem", color: "var(--text-tertiary)" }}>
-              สำหรับผู้เรียนที่มีอายุต่ำกว่า 18 ปี
+              {t("guardian.subtitle")}
             </p>
           </div>
         </div>
@@ -120,8 +121,8 @@ export default function GuardianPage() {
             }}>
               <Check size={32} />
             </div>
-            <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "8px" }}>บันทึกสำเร็จ!</h2>
-            <p style={{ fontSize: "0.9375rem", color: "var(--text-secondary)", marginBottom: "24px" }}>ระบบบันทึกข้อมูลผู้ปกครองของคุณเรียบร้อยแล้ว</p>
+            <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "8px" }}>{t("guardian.savedTitle")}</h2>
+            <p style={{ fontSize: "0.9375rem", color: "var(--text-secondary)", marginBottom: "24px" }}>{t("guardian.savedDescription")}</p>
           </Card>
         ) : (
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
@@ -145,12 +146,12 @@ export default function GuardianPage() {
             <Card className="glass-card" style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "20px" }}>
               <div>
                 <label htmlFor="guardianName" style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "8px" }}>
-                  ชื่อ-นามสกุล ผู้ปกครอง
+                  {t("guardian.nameLabel")}
                 </label>
                 <input
                   type="text"
                   id="guardianName"
-                  placeholder="เช่น สมศรี รักเรียน"
+                  placeholder={t("guardian.namePlaceholder")}
                   value={guardianName}
                   onChange={(e) => setGuardianName(e.target.value)}
                   style={{
@@ -172,7 +173,7 @@ export default function GuardianPage() {
 
               <div>
                 <label htmlFor="relation" style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "8px" }}>
-                  ความสัมพันธ์
+                  {t("guardian.relationLabel")}
                 </label>
                 <div style={{ position: "relative" }}>
                   <select
@@ -194,14 +195,14 @@ export default function GuardianPage() {
                     className="focus:border-emerald-500"
                     required
                   >
-                    <option value="" disabled>เลือกความสัมพันธ์</option>
-                    <option value="Father">บิดา</option>
-                    <option value="Mother">มารดา</option>
-                    <option value="Relative">ญาติ</option>
-                    <option value="Other">อื่นๆ</option>
+                    <option value="" disabled>{t("guardian.relationPlaceholder")}</option>
+                    <option value="Father">{t("guardian.father")}</option>
+                    <option value="Mother">{t("guardian.mother")}</option>
+                    <option value="Relative">{t("guardian.relative")}</option>
+                    <option value="Other">{t("guardian.other")}</option>
                   </select>
                   <div style={{ position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none", opacity: 0.5 }}>
-                    ▼
+                    v
                   </div>
                 </div>
               </div>
@@ -223,7 +224,7 @@ export default function GuardianPage() {
                 />
               </div>
               <label htmlFor="agreed" style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.5, cursor: "pointer" }}>
-                ข้าพเจ้ายืนยันว่าข้อมูลข้างต้นเป็นความจริง และผู้ปกครองได้รับทราบและยินยอมให้จัดการข้อมูลเพื่อวัตถุประสงค์ทางการศึกษา
+                {t("guardian.agreement")}
               </label>
             </div>
 
@@ -242,12 +243,12 @@ export default function GuardianPage() {
               {loading ? (
                 <>
                   <Loader2 className="animate-spin mr-2" size={18} />
-                  กำลังบันทึก...
+                  {t("guardian.saving")}
                 </>
               ) : (
                 <>
                   <Save size={18} className="mr-2" />
-                  บันทึกข้อมูล
+                  {t("guardian.save")}
                 </>
               )}
             </Button>
@@ -255,16 +256,16 @@ export default function GuardianPage() {
         )}
 
         <div style={{ marginTop: "40px", padding: "20px", borderRadius: "16px", background: "var(--surface-card)", border: "1px solid var(--surface-border)" }}>
-          <h3 style={{ fontSize: "0.875rem", fontWeight: 700, marginBottom: "12px", color: "var(--text-primary)" }}>คำถามที่พบบ่อย</h3>
+          <h3 style={{ fontSize: "0.875rem", fontWeight: 700, marginBottom: "12px", color: "var(--text-primary)" }}>{t("guardian.faqTitle")}</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <div>
-              <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "4px" }}>ทำไมต้องระบุข้อมูลผู้ปกครอง?</p>
-              <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>เพื่อให้สอดคล้องกับกฎหมายคุ้มครองข้อมูลส่วนบุคคล (PDPA) และเพื่อใช้ในการแจ้งเตือนเกี่ยวกับการเรียนและค่าใช้จ่าย ในกรณีที่ผู้เรียนเป็นผู้เยาว์</p>
+              <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "4px" }}>{t("guardian.faqWhyTitle")}</p>
+              <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>{t("guardian.faqWhyDescription")}</p>
             </div>
             <div style={{ height: "1px", background: "var(--surface-border)" }} />
             <div>
-              <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "4px" }}>หากต้องการแก้ไขข้อมูลภายหลัง?</p>
-              <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>ท่านสามารถกลับมากรอกข้อมูลใหม่เพื่อทำการอัปเดตข้อมูลล่าสุดลงในระบบได้ตลอดเวลา</p>
+              <p style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "4px" }}>{t("guardian.faqEditTitle")}</p>
+              <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>{t("guardian.faqEditDescription")}</p>
             </div>
           </div>
         </div>

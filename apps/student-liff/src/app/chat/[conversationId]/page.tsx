@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ChevronLeft, Send } from "lucide-react";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { studentApi } from "@/lib/api";
+import { t } from "@/lib/i18n";
 import { toast } from "sonner";
 
 interface Message {
@@ -117,7 +118,7 @@ export default function ChatRoomPage() {
     } catch (err: unknown) {
       console.error("Failed to load messages:", err);
       if (isInitial) {
-        setError("ไม่สามารถโหลดข้อความได้");
+        setError(t("chat.loadMessagesFailed"));
       }
     } finally {
       if (isInitial) setLoading(false);
@@ -165,7 +166,7 @@ export default function ChatRoomPage() {
       id: optimisticId,
       text: currentText,
       senderId: "me",
-      senderName: "คุณ",
+      senderName: t("chat.you"),
       time: new Date().toISOString(),
       isOwn: true,
     };
@@ -184,7 +185,7 @@ export default function ChatRoomPage() {
       // Revert on error
       setMessages(prev => prev.filter(m => m.id !== optimisticId));
       setInputText(currentText);
-      toast.error("ไม่สามารถส่งข้อความได้ โปรดลองใหม่อีกครั้ง");
+      toast.error(t("chat.sendFailed"));
     } finally {
       setIsSending(false);
     }
@@ -209,7 +210,7 @@ export default function ChatRoomPage() {
     return (
       <div style={{ height: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 20, gap: 12 }}>
         <p className="text-red-500 font-medium">{error}</p>
-        <button onClick={() => router.push("/chat")} className="btn btn-secondary btn-sm">ย้อนกลับ</button>
+        <button onClick={() => router.push("/chat")} className="btn btn-secondary btn-sm">{t("chat.back")}</button>
       </div>
     );
   }
@@ -276,7 +277,7 @@ export default function ChatRoomPage() {
             </h2>
             <p style={{ fontSize: "0.6875rem", color: "#059669", margin: 0, display: "flex", alignItems: "center", gap: 4 }}>
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10b981" }} />
-              {metadata?.status || "ออนไลน์"}
+              {metadata?.status || t("chat.online")}
             </p>
           </div>
         </div>
@@ -294,7 +295,7 @@ export default function ChatRoomPage() {
       }}>
         <div style={{ textAlign: "center", margin: "8px 0" }}>
           <span style={{ fontSize: "0.6875rem", color: "var(--text-tertiary)", background: "var(--neutral-100)", padding: "4px 10px", borderRadius: 10 }}>
-            เริ่มต้นการสนทนาที่ปลอดภัย
+            {t("chat.secureConversation")}
           </span>
         </div>
 
@@ -380,7 +381,7 @@ export default function ChatRoomPage() {
               type="text" 
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder="เขียนข้อความ..."
+              placeholder={t("chat.messagePlaceholder")}
               style={{
                 width: "100%",
                 background: "transparent",

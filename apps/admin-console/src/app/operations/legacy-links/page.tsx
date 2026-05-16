@@ -27,6 +27,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchWithAuth } from "@/lib/api";
+import { t } from "@/lib/i18n";
 
 interface UnresolvedLink {
   url: string;
@@ -62,7 +63,7 @@ export default function LegacyLinksPage() {
       setUnresolved(unresResp.links || []);
       setMappings(mapResp.mappings || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "ไม่สามารถโหลดข้อมูลลิงก์ได้");
+      setError(err instanceof Error ? err.message : t("operations.loadLinksFailed"));
     } finally {
       setLoading(false);
     }
@@ -88,12 +89,12 @@ export default function LegacyLinksPage() {
         method: "POST",
         body: JSON.stringify({ source: newSource, target: newTarget }),
       });
-      setSuccess(`บันทึกการจับคู่สำหรับลิงก์ ${newSource} สำเร็จ`);
+      setSuccess(`${t("operations.saveMappingSuccessPrefix")} ${newSource} ${t("operations.saveMappingSuccessSuffix")}`);
       setNewSource("");
       setNewTarget("");
       await loadData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "ไม่สามารถบันทึกการจับคู่ได้");
+      setError(err instanceof Error ? err.message : t("operations.saveMappingFailed"));
     }
   };
 
@@ -104,10 +105,10 @@ export default function LegacyLinksPage() {
       await fetchWithAuth(`/v1/operations/legacy-links/mappings/${id}`, {
         method: "DELETE",
       });
-      setSuccess("ลบการจับคู่ลิงก์สำเร็จ");
+      setSuccess(t("operations.deleteMappingSuccess"));
       await loadData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "ไม่สามารถลบการจับคู่ได้");
+      setError(err instanceof Error ? err.message : t("operations.deleteMappingFailed"));
     }
   };
 
@@ -116,15 +117,15 @@ export default function LegacyLinksPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-3xl font-black tracking-tight text-foreground">
-            จัดการลิงก์ระบบเก่า (Legacy Links)
+            {t("operations.legacyTitle")}
           </h2>
           <p className="text-muted-foreground font-medium">
-            ตั้งค่าและตรวจสอบการใช้งานลิงก์หรือ QR Code ที่ตกค้างจากระบบเดิม
+            {t("operations.legacyDescription")}
           </p>
         </div>
         <Button variant="outline" onClick={loadData} disabled={loading} className="rounded-full font-bold shadow-sm h-12 px-6">
           <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-          รีเฟรชข้อมูล
+          {t("operations.refresh")}
         </Button>
       </div>
 
@@ -153,11 +154,11 @@ export default function LegacyLinksPage() {
               </div>
               <div>
                 <CardTitle className="text-lg font-bold flex items-center gap-2">
-                  ลิงก์ที่ไม่พบจุดหมาย
+                  {t("operations.missingDestinationLinks")}
                   <Badge variant="secondary" className="bg-amber-500 text-white border-none">{filteredUnresolved.length}</Badge>
                 </CardTitle>
                 <CardDescription className="font-medium text-xs">
-                  จัดอันดับลิงก์ระบบเก่าที่มีการเข้าใช้งานสูงสุด แต่หาหน้าปลายทางไม่เจอ
+                  {t("operations.missingDestinationDescription")}
                 </CardDescription>
               </div>
             </div>
@@ -168,7 +169,7 @@ export default function LegacyLinksPage() {
               <Input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="ค้นหา URL ที่มีปัญหา..."
+                placeholder={t("operations.searchLegacyLinks")}
                 className="pl-11 h-12 rounded-2xl border-2 focus-visible:ring-amber-500 font-medium bg-muted/30"
               />
             </div>
@@ -183,8 +184,8 @@ export default function LegacyLinksPage() {
             {!loading && filteredUnresolved.length === 0 && (
               <div className="rounded-2xl border-2 border-dashed p-8 text-center bg-muted/20">
                 <CheckCircle2 className="h-10 w-10 text-emerald-500/50 mx-auto mb-3" />
-                <p className="font-bold text-muted-foreground">ไม่มีลิงก์ตกค้าง</p>
-                <p className="text-xs text-muted-foreground/60 mt-1">การเปลี่ยนผ่านระบบสมบูรณ์แบบ</p>
+                <p className="font-bold text-muted-foreground">{t("operations.noLegacyTitle")}</p>
+                <p className="text-xs text-muted-foreground/60 mt-1">{t("operations.noLegacyDescription")}</p>
               </div>
             )}
 
@@ -197,12 +198,12 @@ export default function LegacyLinksPage() {
                   <div className="min-w-0">
                     <p className="truncate font-mono text-sm font-bold text-amber-700 dark:text-amber-400 group-hover:text-amber-600">{link.url}</p>
                     <p className="mt-1 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                      พบล่าสุด: {new Date(link.lastSeen).toLocaleString("th-TH")}
+                      {t("operations.lastSeenPrefix")} {new Date(link.lastSeen).toLocaleString("th-TH")}
                     </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-3">
                     <Badge variant="secondary" className="font-mono text-xs py-1">
-                      {link.hits} ครั้ง
+                      {link.hits} {t("operations.hitUnit")}
                     </Badge>
                     <Button
                       type="button"
@@ -210,7 +211,7 @@ export default function LegacyLinksPage() {
                       size="icon"
                       className="rounded-xl h-9 w-9 border-amber-200 text-amber-600 hover:bg-amber-50 dark:border-amber-900 dark:text-amber-400 dark:hover:bg-amber-950/30"
                       onClick={() => setNewSource(link.url)}
-                      title="นำไปสร้างการจับคู่"
+                      title={t("operations.createMappingTitle")}
                     >
                       <Plus className="h-4 w-4" />
                     </Button>
@@ -229,9 +230,9 @@ export default function LegacyLinksPage() {
                 <LinkIcon className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-lg font-bold">การจับคู่ลิงก์ที่ใช้งานอยู่</CardTitle>
+                <CardTitle className="text-lg font-bold">{t("operations.activeMappings")}</CardTitle>
                 <CardDescription className="font-medium text-xs">
-                  สร้างหรือแก้ไขการเปลี่ยนเส้นทาง (Redirect) ของลิงก์
+                  {t("operations.mappingsDescription")}
                 </CardDescription>
               </div>
             </div>
@@ -239,7 +240,7 @@ export default function LegacyLinksPage() {
           <CardContent className="p-8">
             <form onSubmit={handleCreateMapping} className="space-y-5 bg-muted/20 p-6 rounded-2xl border border-border/50">
               <div className="space-y-1.5">
-                <Label htmlFor="source" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">ลิงก์ต้นทาง (Source URL)</Label>
+                <Label htmlFor="source" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("operations.sourceUrl")}</Label>
                 <Input
                   id="source"
                   value={newSource}
@@ -250,7 +251,7 @@ export default function LegacyLinksPage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="target" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">เส้นทางปลายทาง (Target Path)</Label>
+                <Label htmlFor="target" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("operations.targetPath")}</Label>
                 <div className="relative">
                   <ExternalLink className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                   <Input
@@ -265,20 +266,20 @@ export default function LegacyLinksPage() {
               </div>
               <Button type="submit" className="w-full h-11 rounded-xl font-bold bg-brand-600 hover:bg-brand-700 shadow-md shadow-brand-500/20">
                 <Plus className="mr-2 h-4 w-4" />
-                บันทึกการจับคู่
+                {t("operations.saveMapping")}
               </Button>
             </form>
 
             <Separator className="my-8" />
 
             <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
-              <h3 className="text-sm font-bold text-foreground mb-4">รายการทั้งหมด ({mappings.length})</h3>
+              <h3 className="text-sm font-bold text-foreground mb-4">{t("operations.allMappingsPrefix")} ({mappings.length})</h3>
               
               {loading && <Skeleton className="h-20 w-full rounded-2xl" />}
               
               {!loading && mappings.length === 0 && (
                 <div className="rounded-2xl border-2 border-dashed p-6 text-center text-sm text-muted-foreground bg-muted/20">
-                  ยังไม่มีการจับคู่ลิงก์ที่ใช้งานอยู่
+                  {t("operations.noMappings")}
                 </div>
               )}
               
@@ -292,7 +293,7 @@ export default function LegacyLinksPage() {
                       {mapping.source}
                     </p>
                     <p className="mt-1.5 truncate font-mono text-sm font-bold text-brand-600 dark:text-brand-400">
-                      <span className="text-[10px] text-muted-foreground font-semibold tracking-widest uppercase mr-2 no-underline">เปลี่ยนเป็น ➔</span>
+                      <span className="text-[10px] text-muted-foreground font-semibold tracking-widest uppercase mr-2 no-underline">{t("operations.mapsTo")}</span>
                       {mapping.target}
                     </p>
                   </div>
@@ -301,7 +302,7 @@ export default function LegacyLinksPage() {
                     size="icon"
                     className="shrink-0 rounded-xl h-10 w-10 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600"
                     onClick={() => handleDeleteMapping(mapping.id)}
-                    title="ลบการจับคู่"
+                    title={t("operations.deleteMappingTitle")}
                   >
                     <Trash2 className="h-5 w-5" />
                   </Button>

@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { cookies } from "next/headers";
 import { GoalActionButton } from "./goal-action-button";
+import { t } from "@/lib/i18n";
 
 async function getPerformanceData(token: string) {
   try {
@@ -63,6 +64,14 @@ function formatTHB(value: number) {
   return value.toLocaleString("th-TH", { maximumFractionDigits: 0 });
 }
 
+function formatCurrencyTHB(value: number) {
+  return value.toLocaleString("th-TH", {
+    style: "currency",
+    currency: "THB",
+    maximumFractionDigits: 0,
+  });
+}
+
 function formatPercent(value: number) {
   return `${Math.round(value * 100)}%`;
 }
@@ -74,7 +83,7 @@ export default async function PerformancePage() {
   if (!token) {
     return (
       <div className="py-10 text-center text-muted-foreground">
-        กรุณาเข้าสู่ระบบเพื่อดูผลงาน
+        {t("dashboardPerformance.loginRequired")}
       </div>
     );
   }
@@ -130,10 +139,10 @@ export default async function PerformancePage() {
     <div className="space-y-6 lg:space-y-8 max-w-4xl mx-auto pb-24 sm:pb-0">
       <div>
         <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-          ผลงานและเหรียญรางวัล <Award className="h-6 w-6 text-primary" />
+          {t("dashboardPerformance.title")} <Award className="h-6 w-6 text-primary" />
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          ติดตามเป้าหมายการขาย พัฒนาการของนักเรียน และเหรียญตราพิเศษ
+          {t("dashboardPerformance.subtitle")}
         </p>
       </div>
 
@@ -147,10 +156,10 @@ export default async function PerformancePage() {
             <div>
               <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
                 <CircleDollarSign className="h-5 w-5 text-primary" />
-                อัตราคอมมิชชั่นปัจจุบัน
+                {t("dashboardPerformance.currentCommissionRate")}
               </CardTitle>
               <CardDescription className="text-sm font-medium text-primary mt-1">
-                คอมมิชชั่นเครือข่าย {formatPercent(currentRate)}
+                {t("dashboardPerformance.networkCommission")} {formatPercent(currentRate)}
               </CardDescription>
             </div>
             <div className="text-right">
@@ -168,17 +177,17 @@ export default async function PerformancePage() {
             <div className="flex justify-between items-end mb-2">
               <div>
                 <span className="text-xs font-medium text-muted-foreground">
-                  ยอดรวมเครือข่าย (GV)
+                  {t("dashboardPerformance.grossVolume")}
                 </span>
                 <div className="text-xl font-bold">
-                  ฿{formatTHB(grossVolume)}
+                  {formatCurrencyTHB(grossVolume)}
                 </div>
               </div>
               <div className="text-right">
                 <span className="text-xs font-medium text-muted-foreground">
                   {nextTier > 0
-                    ? `เป้าหมายถัดไป: ฿${formatTHB(nextTier)}`
-                    : "สูงสุดแล้ว"}
+                    ? `${t("dashboardPerformance.nextGoalPrefix")} ${formatCurrencyTHB(nextTier)}`
+                    : t("dashboardPerformance.maxTier")}
                 </span>
               </div>
             </div>
@@ -199,16 +208,16 @@ export default async function PerformancePage() {
             {nextTier > 0 ? (
               <p className="text-xs text-muted-foreground mt-2.5 flex items-center gap-1.5 bg-primary/5 p-2 rounded-lg border border-primary/10 w-fit">
                 <Zap className="h-3 w-3 text-amber-500 fill-amber-500" />
-                อีกเพียง{" "}
+                {t("dashboardPerformance.remainingPrefix")}{" "}
                 <strong className="text-foreground">
-                  ฿{formatTHB(volumeRemaining)}
+                  {formatCurrencyTHB(volumeRemaining)}
                 </strong>{" "}
-                เพื่อขยับเข้าใกล้เรทคอมมิชชั่นที่สูงขึ้น!
+                {t("dashboardPerformance.remainingSuffix")}
               </p>
             ) : (
               <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-2.5 flex items-center gap-1.5 font-medium">
                 <Star className="h-3 w-3 fill-emerald-500" />
-                ยินดีด้วย! คุณทำยอดสูงสุดของระดับชั้นนี้แล้ว
+                {t("dashboardPerformance.maxTierCongrats")}
               </p>
             )}
           </div>
@@ -221,17 +230,17 @@ export default async function PerformancePage() {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold flex items-center gap-2">
               <Star className="h-4 w-4 text-amber-500" />
-              เกียรติยศและโบนัส (Gamification)
+              {t("dashboardPerformance.badgesTitle")}
             </CardTitle>
             <CardDescription className="text-xs">
-              สะสมเหรียญตราเพื่อปลดล็อคโบนัสเครือข่ายพิเศษ
+              {t("dashboardPerformance.badgesDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {badges.length === 0 && (
               <div className="py-6 text-center border rounded-xl border-dashed bg-muted/10">
                 <p className="text-muted-foreground text-sm">
-                  ยังไม่มีเหรียญตราสะสม
+                  {t("dashboardPerformance.noBadges")}
                 </p>
               </div>
             )}
@@ -280,17 +289,17 @@ export default async function PerformancePage() {
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold flex items-center gap-2">
               <Target className="h-4 w-4 text-indigo-500" />
-              คุณภาพการสอน (Benchmarks)
+              {t("dashboardPerformance.benchmarksTitle")}
             </CardTitle>
             <CardDescription className="text-xs">
-              ภาพรวมคะแนนประเมินและเรตติ้งจากนักเรียน
+              {t("dashboardPerformance.benchmarksDescription")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {!metrics ? (
               <div className="py-6 text-center border rounded-xl border-dashed bg-muted/10">
                 <p className="text-muted-foreground text-sm">
-                  ไม่มีข้อมูลคุณภาพการสอน
+                  {t("dashboardPerformance.noBenchmarks")}
                 </p>
               </div>
             ) : (
@@ -298,7 +307,7 @@ export default async function PerformancePage() {
                 <div className="grid grid-cols-2 gap-2">
                   <div className="border border-border/50 bg-muted/10 p-3 rounded-xl text-center">
                     <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                      เรตติ้งเฉลี่ย
+                      {t("dashboardPerformance.averageRating")}
                     </p>
                     <div className="text-xl font-bold text-foreground flex items-center justify-center gap-1">
                       {metrics.engagement?.rating?.toFixed(1) || "0.0"}
@@ -307,12 +316,12 @@ export default async function PerformancePage() {
                   </div>
                   <div className="border border-border/50 bg-muted/10 p-3 rounded-xl text-center">
                     <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-                      ตอบแชทไว
+                      {t("dashboardPerformance.fastResponse")}
                     </p>
                     <div className="text-xl font-bold text-foreground flex items-center justify-center gap-1">
                       {metrics.engagement?.responseTimeMinutes || 0}
                       <span className="text-xs font-medium text-muted-foreground">
-                        นาที
+                        {t("dashboardPerformance.minuteUnit")}
                       </span>
                     </div>
                   </div>
@@ -321,7 +330,7 @@ export default async function PerformancePage() {
                 <div className="flex flex-col gap-2 p-3 rounded-xl border border-border/50 bg-indigo-500/[0.03]">
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-sm text-foreground">
-                      เกณฑ์มาตรฐานรวม
+                      {t("dashboardPerformance.overallBenchmark")}
                     </span>
                     <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full">
                       {metrics.studentBenchmark?.level || "N/A"}
@@ -330,7 +339,7 @@ export default async function PerformancePage() {
 
                   <div className="flex items-center justify-between text-xs mt-1">
                     <span className="text-muted-foreground">
-                      ความสำเร็จนักเรียน
+                      {t("dashboardPerformance.studentSuccess")}
                     </span>
                     <div className="flex items-center gap-1 text-indigo-600 font-semibold">
                       {metrics.studentBenchmark?.current || 0}%
@@ -348,9 +357,9 @@ export default async function PerformancePage() {
                     />
                   </div>
                   <div className="flex justify-between text-[10px] text-muted-foreground px-0.5">
-                    <span>เริ่มต้น</span>
+                    <span>{t("dashboardPerformance.start")}</span>
                     <span>
-                      เป้าหมาย {metrics.studentBenchmark?.target || 0}%
+                      {t("dashboardPerformance.target")} {metrics.studentBenchmark?.target || 0}%
                     </span>
                   </div>
                 </div>
@@ -372,7 +381,7 @@ export default async function PerformancePage() {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <h3 className="font-bold text-lg text-foreground leading-tight">
-                    เป้าหมายถัดไป: {nextGoal.label}
+                    {t("dashboardPerformance.nextGoalPrefix")} {nextGoal.label}
                   </h3>
                   <div className="px-1.5 py-0.5 text-[10px] bg-amber-500 text-white font-bold rounded">
                     {nextGoal.progress}%

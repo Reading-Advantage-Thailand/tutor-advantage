@@ -18,6 +18,7 @@ import {
   Glasses
 } from "lucide-react";
 import { studentApi } from "@/lib/api";
+import { t } from "@/lib/i18n";
 
 import { playSound } from "@/lib/sounds";
 
@@ -116,7 +117,7 @@ export default function DashboardPage() {
 
           if (!token && isMounted) {
             throw new Error(
-              "ไม่สามารถสร้างเซสชันกับเซิร์ฟเวอร์ได้ กรุณาลองเข้าสู่ระบบใหม่อีกครั้ง",
+              t("dashboard.sessionCreateFailed"),
             );
           }
 
@@ -137,7 +138,7 @@ export default function DashboardPage() {
             console.error("Failed to fetch dashboard:", err);
             // Only set error visible state if we haven't loaded data before
             if (showLoading) {
-              setError(err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการโหลดข้อมูล");
+              setError(err instanceof Error ? err.message : t("dashboard.loadFailed"));
             }
           }
         } finally {
@@ -163,7 +164,7 @@ export default function DashboardPage() {
 
   const enrollment: Enrollment = dashboardData?.recentClasses?.find((c) => c.isLive) ||
     dashboardData?.recentClasses?.[0] || {
-      name: "ยังไม่มีคลาสเรียน",
+      name: t("dashboard.noClass"),
       tutorName: "-",
       status: "none",
       nextSession: "-",
@@ -173,7 +174,7 @@ export default function DashboardPage() {
     };
 
   const student = {
-    name: profile?.displayName || "กำลังโหลด...",
+    name: profile?.displayName || t("dashboard.loadingName"),
     avatar: profile?.pictureUrl || null,
     initials: profile?.displayName?.charAt(0) || "TA",
     level: enrollment.bookName || "Origins 1",
@@ -184,9 +185,9 @@ export default function DashboardPage() {
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "สวัสดีตอนเช้า ☀️";
-    if (hour < 17) return "สวัสดีตอนบ่าย 🌤️";
-    return "สวัสดีตอนเย็น 🌙";
+    if (hour < 12) return t("dashboard.morning");
+    if (hour < 17) return t("dashboard.afternoon");
+    return t("dashboard.evening");
   };
 
   if (!isReady || loading) {
@@ -219,10 +220,10 @@ export default function DashboardPage() {
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center gap-4">
         <AlertCircle className="text-red-500 w-12 h-12" />
         <h2 className="text-xl font-bold text-slate-800">
-          เกิดข้อผิดพลาดในการโหลดข้อมูล
+          {t("dashboard.loadFailed")}
         </h2>
         <p className="text-slate-500">{error}</p>
-        <Button onClick={() => window.location.reload()}>ลองอีกครั้ง</Button>
+        <Button onClick={() => window.location.reload()}>{t("dashboard.retry")}</Button>
       </div>
     );
   }
@@ -333,7 +334,7 @@ export default function DashboardPage() {
                 marginRight: 6,
               }}
             />
-            {student.level} · {student.cefr}
+            {student.level} / {student.cefr}
           </div>
           <div
             style={{
@@ -349,7 +350,7 @@ export default function DashboardPage() {
             }}
           >
             <Flame size={14} style={{ marginRight: 6, color: "#fbbf24" }} />
-            {dashboardData?.weekStreak || 0} สัปดาห์ต่อเนื่อง
+            {dashboardData?.weekStreak || 0} {t("dashboard.weekStreakSuffix")}
           </div>
         </div>
       </header>
@@ -368,10 +369,10 @@ export default function DashboardPage() {
         {/* Enrollment card */}
         <section>
           <div className="section-header">
-            <h2 className="section-title">คลาสของฉัน</h2>
+            <h2 className="section-title">{t("dashboard.myClasses")}</h2>
             {(dashboardData?.activeEnrollments ?? 0) > 0 && (
               <span className={`status-chip status-active`}>
-                กำลังเรียน {dashboardData?.activeEnrollments} คลาส
+                {t("dashboard.studyingPrefix")} {dashboardData?.activeEnrollments} {t("dashboard.classUnit")}
               </span>
             )}
           </div>
@@ -508,7 +509,7 @@ export default function DashboardPage() {
                         letterSpacing: "0.06em",
                       }}
                     >
-                      คาบถัดไป
+                      {t("dashboard.nextLesson")}
                     </div>
                     <div
                       style={{
@@ -539,7 +540,7 @@ export default function DashboardPage() {
                         fontWeight: 500,
                       }}
                     >
-                      ความก้าวหน้า
+                      {t("dashboard.progress")}
                     </span>
                     <span
                       style={{
@@ -595,7 +596,7 @@ export default function DashboardPage() {
                       color: "var(--text-primary)",
                     }}
                   >
-                    แชร์ให้เพื่อน
+                    {t("dashboard.shareTitle")}
                   </div>
                   <div
                     style={{
@@ -604,7 +605,7 @@ export default function DashboardPage() {
                       marginTop: 1,
                     }}
                   >
-                    เพื่อนสมัครผ่านลิงก์ของคุณ
+                    {t("dashboard.shareDescription")}
                   </div>
                 </div>
               </div>
@@ -618,7 +619,7 @@ export default function DashboardPage() {
                   background: "var(--surface-bg)",
                 }}
               >
-                คัดลอกลิงก์สมัครเรียน
+                {t("dashboard.copyReferral")}
               </Button>
             </CardContent>
           </Card>
@@ -627,7 +628,7 @@ export default function DashboardPage() {
         {/* Quick actions */}
         <section>
           <h2 className="section-title" style={{ marginBottom: 12 }}>
-            เมนูด่วน
+            {t("dashboard.quickMenu")}
           </h2>
           <div
             style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}
@@ -637,8 +638,8 @@ export default function DashboardPage() {
                 id: "quick-read",
                 href: "/classes",
                 Icon: Glasses,
-                label: "ค้นหาห้องเรียน",
-                sub: "เริ่มบทเรียนวันนี้",
+                label: t("dashboard.findClass"),
+                sub: t("dashboard.findClassSub"),
                 bgColor: "var(--brand-50)",
                 iconBg: "var(--brand-100)",
                 iconColor: "var(--brand-600)",
@@ -647,8 +648,8 @@ export default function DashboardPage() {
                 id: "quick-chat",
                 href: "/chat",
                 Icon: MessageCircle,
-                label: "แชทติวเตอร์",
-                sub: "ถาม-ตอบตรงๆ",
+                label: t("dashboard.chatTutor"),
+                sub: t("dashboard.chatTutorSub"),
                 bgColor: "var(--accent-blue-light)",
                 iconBg: "rgba(59, 130, 246, 0.15)",
                 iconColor: "var(--accent-blue)",
@@ -657,8 +658,8 @@ export default function DashboardPage() {
                 id: "quick-schedule",
                 href: "/schedule",
                 Icon: Calendar,
-                label: "ตารางเรียน",
-                sub: "ดูคาบทั้งหมด",
+                label: t("dashboard.schedule"),
+                sub: t("dashboard.scheduleSub"),
                 bgColor: "var(--accent-purple-light)",
                 iconBg: "rgba(139, 92, 246, 0.15)",
                 iconColor: "var(--accent-purple)",
@@ -667,8 +668,8 @@ export default function DashboardPage() {
                 id: "quick-payment",
                 href: "/payment",
                 Icon: CreditCard,
-                label: "ชำระเงิน",
-                sub: "PromptPay / บัตร",
+                label: t("dashboard.payment"),
+                sub: t("dashboard.paymentSub"),
                 bgColor: "var(--accent-amber-light)",
                 iconBg: "rgba(245, 158, 11, 0.15)",
                 iconColor: "var(--accent-amber)",
@@ -763,7 +764,7 @@ export default function DashboardPage() {
               alignItems: "center",
             }}
           >
-            <h2 className="section-title">ประวัติการเรียน (วันนี้)</h2>
+            <h2 className="section-title">{t("dashboard.todayHistory")}</h2>
             <Link
               href="/lesson/history"
               style={{
@@ -778,7 +779,7 @@ export default function DashboardPage() {
                 borderRadius: 8,
               }}
             >
-              ดูประวัติย้อนหลัง <ChevronRight size={14} />
+              {t("dashboard.viewHistory")} <ChevronRight size={14} />
             </Link>
           </div>
 
@@ -801,7 +802,7 @@ export default function DashboardPage() {
                     background: "rgba(var(--surface-card-rgb), 0.5)",
                   }}
                 >
-                  <div style={{ fontSize: "1.5rem", marginBottom: 6 }}>☀️</div>
+                  <div style={{ fontSize: "1.5rem", marginBottom: 6 }}>Today</div>
                   <div
                     style={{
                       fontSize: "0.8125rem",
@@ -809,7 +810,7 @@ export default function DashboardPage() {
                       fontWeight: 500,
                     }}
                   >
-                    ยังไม่มีประวัติการเรียนของวันนี้
+                    {t("dashboard.emptyTodayHistory")}
                   </div>
                 </Card>
               );
@@ -914,7 +915,7 @@ export default function DashboardPage() {
                           color: "var(--text-tertiary)",
                         }}
                       >
-                        <span>ครู {hist.tutorName}</span>
+                        <span>{t("dashboard.tutorPrefix")} {hist.tutorName}</span>
                         <span
                           style={{
                             width: 3,
@@ -929,7 +930,7 @@ export default function DashboardPage() {
                             hour: "2-digit",
                             minute: "2-digit",
                           })}{" "}
-                          น.
+                          {t("dashboard.timeSuffix")}
                         </span>
                       </div>
                     </div>

@@ -16,14 +16,15 @@ import {
   LogOut,
 } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
+import { t } from "@/lib/i18n";
 
 const navItems = [
-  { href: "/dashboard", icon: LayoutDashboard, label: "ภาพรวม" },
-  { href: "/dashboard/classes", icon: BookOpen, label: "คลาสเรียน" },
-  { href: "/dashboard/chat", icon: MessageSquare, label: "ข้อความ" },
-  { href: "/dashboard/earnings", icon: BarChart2, label: "รายได้" },
-  { href: "/dashboard/performance", icon: Award, label: "ผลงาน" },
-  { href: "/dashboard/settings", icon: Settings, label: "ตั้งค่า" },
+  { href: "/dashboard", icon: LayoutDashboard, label: t("app.navOverview") },
+  { href: "/dashboard/classes", icon: BookOpen, label: t("app.navClasses") },
+  { href: "/dashboard/chat", icon: MessageSquare, label: t("app.navChat") },
+  { href: "/dashboard/earnings", icon: BarChart2, label: t("app.navEarnings") },
+  { href: "/dashboard/performance", icon: Award, label: t("app.navPerformance") },
+  { href: "/dashboard/settings", icon: Settings, label: t("app.navSettings") },
 ];
 
 export function MobileNav() {
@@ -93,14 +94,14 @@ export function MobileNav() {
                 className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
               >
                 <HelpCircle className="h-4 w-4" />
-                ช่วยเหลือ / LINE OA
+                {t("app.helpLine")}
               </a>
               <button
                 onClick={handleLogout}
                 className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
               >
                 <LogOut className="h-4 w-4" />
-                ออกจากระบบ
+                {t("app.logout")}
               </button>
             </div>
           </div>

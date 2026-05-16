@@ -13,7 +13,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex h-screen bg-background text-foreground">
-      {/* Sidebar — hidden on mobile */}
+      {/* Sidebar - hidden on mobile */}
       <div className="hidden lg:flex lg:flex-shrink-0">
         <Sidebar notifications={notifications} />
       </div>
@@ -42,7 +42,7 @@ export default async function DashboardLayout({
           </div>
         </div>
 
-        {/* Main Content Area — add pb-20 on mobile to account for bottom nav */}
+        {/* Main Content Area - add pb-20 on mobile to account for bottom nav */}
         <main className="flex-1 overflow-y-auto p-4 pb-24 lg:p-8 lg:pb-8">
           <div className="mx-auto max-w-5xl space-y-6">
             {children}

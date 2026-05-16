@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { studentApi } from "@/lib/api";
+import { t } from "@/lib/i18n";
 
 interface ClassDetails {
   classId: string;
@@ -56,16 +57,16 @@ function EnrollContent() {
         })
         .catch((err) => {
           console.error("Failed to fetch class details for enrollment:", err);
-          setError(err instanceof Error ? err.message : "ไม่สามารถโหลดข้อมูลคลาสได้");
+          setError(err instanceof Error ? err.message : t("enroll.errors.loadClassFailed"));
         })
         .finally(() => setLoading(false));
       return;
     }
 
     if (referralToken) {
-      setError("ลิงก์สมัครเรียนนี้ไม่มี classId กรุณาขอลิงก์ใหม่จากติวเตอร์");
+      setError(t("enroll.errors.referralMissingClassId"));
     } else {
-      setError("ไม่พบข้อมูลคลาส กรุณาตรวจสอบลิงก์");
+      setError(t("enroll.errors.missingClass"));
     }
     setLoading(false);
   }, [isReady, classId, referralToken]);
@@ -90,7 +91,7 @@ function EnrollContent() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="text-center">
           <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-muted-foreground">กำลังเตรียมข้อมูล...</p>
+          <p className="text-muted-foreground">{t("enroll.loadingPreparing")}</p>
         </div>
       </div>
     );
@@ -101,8 +102,8 @@ function EnrollContent() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 px-4">
         <div className="text-center">
           <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-muted-foreground mb-2 font-medium">กำลังพาคุณไปหน้าเข้าสู่ระบบ...</p>
-          <p className="text-xs text-slate-400">เพื่อดำเนินการสมัครเข้าคลาสเรียน</p>
+          <p className="text-muted-foreground mb-2 font-medium">{t("enroll.redirectingLogin")}</p>
+          <p className="text-xs text-slate-400">{t("enroll.loginReason")}</p>
         </div>
       </div>
     );
@@ -116,13 +117,13 @@ function EnrollContent() {
             <>
               <p className="text-red-600 font-semibold mb-4">{error}</p>
               <Link href="/dashboard" className="text-primary hover:underline">
-                กลับไปหน้า Dashboard
+                {t("enroll.backDashboard")}
               </Link>
             </>
           ) : (
             <>
               <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-              <p className="text-muted-foreground">กำลังโหลดข้อมูลคลาส...</p>
+              <p className="text-muted-foreground">{t("enroll.loadingClass")}</p>
             </>
           )}
         </div>
@@ -143,8 +144,8 @@ function EnrollContent() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-xl font-bold text-foreground">สมัครเรียน</h1>
-              <p className="text-xs text-muted-foreground">ยืนยันข้อมูลคลาส</p>
+              <h1 className="text-xl font-bold text-foreground">{t("enroll.title")}</h1>
+              <p className="text-xs text-muted-foreground">{t("enroll.confirmClass")}</p>
             </div>
           </div>
 
@@ -156,27 +157,27 @@ function EnrollContent() {
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 <div className="flex justify-between items-start">
-                  <span className="text-sm text-muted-foreground">ติวเตอร์</span>
+                  <span className="text-sm text-muted-foreground">{t("enroll.tutor")}</span>
                   <span className="font-semibold text-foreground">{classDetails.tutorName}</span>
                 </div>
                 <div className="flex justify-between items-start">
-                  <span className="text-sm text-muted-foreground">หนังสือเรียน</span>
+                  <span className="text-sm text-muted-foreground">{t("enroll.book")}</span>
                   <span className="font-semibold text-foreground">{classDetails.bookTitle}</span>
                 </div>
                 <div className="flex justify-between items-start">
-                  <span className="text-sm text-muted-foreground">ระดับ</span>
+                  <span className="text-sm text-muted-foreground">{t("enroll.level")}</span>
                   <span className="font-semibold text-foreground">{classDetails.cefrLevel}</span>
                 </div>
                 <div className="flex justify-between items-start">
-                  <span className="text-sm text-muted-foreground">วันและเวลา</span>
+                  <span className="text-sm text-muted-foreground">{t("enroll.schedule")}</span>
                   <span className="font-semibold text-foreground text-right text-sm">
                     {classDetails.schedule}
                   </span>
                 </div>
                 <div className="flex justify-between items-start">
-                  <span className="text-sm text-muted-foreground">นักเรียน</span>
+                  <span className="text-sm text-muted-foreground">{t("enroll.students")}</span>
                   <span className="font-semibold text-foreground">
-                    {classDetails.currentStudents}/{classDetails.maxStudents} คน
+                    {classDetails.currentStudents}/{classDetails.maxStudents} {t("enroll.peopleUnit")}
                   </span>
                 </div>
               </div>
@@ -186,9 +187,9 @@ function EnrollContent() {
 
               {/* Your info */}
               <div className="bg-slate-50 rounded-lg p-4 space-y-2">
-                <p className="text-xs text-muted-foreground font-semibold">ข้อมูลนักเรียน</p>
+                <p className="text-xs text-muted-foreground font-semibold">{t("enroll.studentInfo")}</p>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">ชื่อ</span>
+                  <span className="text-sm text-muted-foreground">{t("enroll.name")}</span>
                   <span className="font-semibold text-foreground">{profile.displayName}</span>
                 </div>
               </div>
@@ -196,13 +197,13 @@ function EnrollContent() {
               {/* Price */}
               <div className="border-t border-slate-200 pt-4">
                 <div className="flex justify-between items-center mb-4">
-                  <span className="text-lg font-bold text-foreground">ค่าเรียน</span>
+                  <span className="text-lg font-bold text-foreground">{t("enroll.tuition")}</span>
                   <span className="text-2xl font-black text-primary">
-                    ฿{classDetails.price.toLocaleString()}
+                    THB {classDetails.price.toLocaleString()}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  เรียนประมาณ 25 ชั่วโมง ตลอดหลักสูตร
+                  {t("enroll.courseHoursNote")}
                 </p>
               </div>
             </CardContent>
@@ -212,14 +213,14 @@ function EnrollContent() {
           <div className="flex gap-3">
             <Link href="/dashboard" className="flex-1">
               <Button variant="outline" className="w-full">
-                ยกเลิก
+                {t("enroll.cancel")}
               </Button>
             </Link>
             <Button
               onClick={() => setStep("payment")}
               className="flex-1 gap-2"
             >
-              ดำเนินการต่อ
+              {t("enroll.continue")}
               <ArrowLeft className="h-4 w-4 rotate-180" />
             </Button>
           </div>
@@ -234,7 +235,7 @@ function EnrollContent() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="text-center">
           <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-muted-foreground">กำลังเปลี่ยนไปหน้าชำระเงิน...</p>
+          <p className="text-muted-foreground">{t("enroll.redirectingPayment")}</p>
         </div>
       </div>
     );
@@ -249,20 +250,20 @@ function EnrollContent() {
         </div>
 
         <div>
-          <h1 className="text-2xl font-bold text-foreground mb-2">สมัครเสร็จแล้ว!</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">{t("enroll.successTitle")}</h1>
           <p className="text-muted-foreground">
-            คุณได้สมัครเรียน {classDetails.className} เรียบร้อยแล้ว
+            {t("enroll.successPrefix")} {classDetails.className} {t("enroll.successSuffix")}
           </p>
         </div>
 
         <Card>
           <CardContent className="pt-6 space-y-3 text-left">
             <div>
-              <p className="text-xs text-muted-foreground mb-1">ติวเตอร์</p>
+              <p className="text-xs text-muted-foreground mb-1">{t("enroll.tutor")}</p>
               <p className="font-semibold">{classDetails.tutorName}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground mb-1">เรียนครั้งแรก</p>
+              <p className="text-xs text-muted-foreground mb-1">{t("enroll.firstLesson")}</p>
               <p className="font-semibold">{classDetails.schedule}</p>
             </div>
           </CardContent>
@@ -270,15 +271,15 @@ function EnrollContent() {
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-sm text-blue-900">
-            📱 ติวเตอร์จะติดต่อคุณผ่าน LINE
+            {t("enroll.lineNoticeFirst")}
             <br />
-            ตรวจสอบการแจ้งเตือนจาก LINE Official Account
+            {t("enroll.lineNoticeSecond")}
           </p>
         </div>
 
         <Link href="/dashboard" className="block">
           <Button className="w-full">
-            ไปหน้า Dashboard
+            {t("enroll.dashboardCta")}
           </Button>
         </Link>
       </div>
@@ -293,7 +294,7 @@ export default function EnrollPage() {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
           <div className="text-center">
             <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-muted-foreground">กำลังเตรียมข้อมูล...</p>
+            <p className="text-muted-foreground">{t("enroll.loadingPreparing")}</p>
           </div>
         </div>
       }

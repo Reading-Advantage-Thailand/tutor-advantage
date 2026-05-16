@@ -6,6 +6,7 @@ import { Star, Users, Calendar, CheckCircle2, Lock, Share2, ChevronLeft, Loader2
 import { studentApi } from "@/lib/api";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { Button } from "@/components/ui/button";
+import { t } from "@/lib/i18n";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -80,8 +81,8 @@ export default function ClassDetailPage({ params }: PageProps) {
       <div className="min-h-[100dvh] flex items-center justify-center bg-background px-6 py-[max(24px,var(--safe-top))]">
         <div className="w-full max-w-[280px] rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
           <Loader2 className="animate-spin text-primary w-10 h-10 mx-auto mb-4" />
-          <p className="text-foreground text-sm font-bold">กำลังโหลดข้อมูลคลาส</p>
-          <p className="text-muted-foreground text-xs font-medium mt-1">โปรดรอสักครู่...</p>
+          <p className="text-foreground text-sm font-bold">{t("classes.detail.loadingTitle")}</p>
+          <p className="text-muted-foreground text-xs font-medium mt-1">{t("classes.detail.loadingSubtitle")}</p>
         </div>
       </div>
     );
@@ -91,10 +92,10 @@ export default function ClassDetailPage({ params }: PageProps) {
     return (
       <div className="min-h-[100dvh] flex flex-col items-center justify-center p-6 text-center gap-4">
         <AlertCircle className="text-red-500 w-12 h-12" />
-        <h2 className="text-xl font-bold text-slate-800">ไม่พบข้อมูลคลาส</h2>
-        <p className="text-slate-500">{error || "กรุณาลองใหม่อีกครั้ง"}</p>
+        <h2 className="text-xl font-bold text-slate-800">{t("classes.detail.notFound")}</h2>
+        <p className="text-slate-500">{error || t("classes.detail.retry")}</p>
         <Link href="/classes">
-          <Button variant="outline">กลับไปหน้าคลาสเรียน</Button>
+          <Button variant="outline">{t("classes.detail.backToClasses")}</Button>
         </Link>
       </div>
     );
@@ -105,10 +106,10 @@ export default function ClassDetailPage({ params }: PageProps) {
   const fillPct = Math.round((cls.students / cls.maxStudents) * 100);
 
   const fallbackHighlights = [
-    "ระบบบทเรียน 15 ขั้นตอนที่ผ่านการพิสูจน์แล้ว",
-    cls.totalHours ? `เรียนสดรวมประมาณ ${cls.totalHours} ชั่วโมง` : "เรียนสดตามตารางที่ติวเตอร์กำหนด",
-    "เรียนเพิ่มเติมผ่านแอปได้ตลอดเวลา",
-    "รายงานผลการเรียนรู้ให้ผู้ปกครอง",
+    t("classes.detail.highlightSystem"),
+    cls.totalHours ? `${t("classes.detail.liveHoursPrefix")} ${cls.totalHours} ${t("classes.detail.hourUnit")}` : t("classes.detail.liveBySchedule"),
+    t("classes.detail.appAccess"),
+    t("classes.detail.parentReport"),
   ];
 
   const fallbackArticles: ClassArticlePreview[] = [];
@@ -117,17 +118,17 @@ export default function ClassDetailPage({ params }: PageProps) {
   const articleCount = cls.articleCount || articles.length;
   const tutorBio =
     cls.tutor.bio ||
-    `คลาสนี้สอนโดย ${cls.tutor.name} ด้วยเนื้อหา ${cls.book}${cls.seriesName ? ` จากชุด ${cls.seriesName}` : ""}`;
+    `${t("classes.detail.tutorBioPrefix")} ${cls.tutor.name} ${t("classes.detail.tutorBioWithContent")} ${cls.book}${cls.seriesName ? ` ${t("classes.detail.tutorBioSeriesPrefix")} ${cls.seriesName}` : ""}`;
 
   return (
     <div className="page-shell">
       {/* Top bar */}
       <div className="top-bar" style={{ background: "var(--surface-card)", backdropFilter: "blur(12px)" }}>
-        <Link href="/classes" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, borderRadius: 12, background: "var(--neutral-100)", color: "var(--text-secondary)", textDecoration: "none", flexShrink: 0 }} aria-label="กลับ">
+        <Link href="/classes" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, borderRadius: 12, background: "var(--neutral-100)", color: "var(--text-secondary)", textDecoration: "none", flexShrink: 0 }} aria-label={t("classes.detail.backAria")}>
           <ChevronLeft size={18} />
         </Link>
-        <h1 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", flex: 1 }}>รายละเอียดคลาส</h1>
-        <button id="btn-share-class" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, borderRadius: 12, background: "var(--neutral-100)", border: "none", cursor: "pointer", color: "var(--text-secondary)" }} aria-label="แชร์">
+        <h1 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", flex: 1 }}>{t("classes.detail.title")}</h1>
+        <button id="btn-share-class" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, borderRadius: 12, background: "var(--neutral-100)", border: "none", cursor: "pointer", color: "var(--text-secondary)" }} aria-label={t("classes.detail.shareAria")}>
           <Share2 size={16} />
         </button>
       </div>
@@ -138,15 +139,15 @@ export default function ClassDetailPage({ params }: PageProps) {
 
         <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
           <span style={{ background: "rgba(255,255,255,0.18)", color: "#fff", borderRadius: "var(--radius-full)", padding: "5px 14px", fontSize: "0.75rem", fontWeight: 700, border: "1px solid rgba(255,255,255,0.25)", backdropFilter: "blur(4px)" }}>
-            {cls.cefr || "A1"} · Level {cls.level || 1}
+            {cls.cefr || "A1"} / Level {cls.level || 1}
           </span>
           <span style={{ background: seatsLeft <= 2 ? "rgba(239,68,68,0.2)" : "rgba(255,255,255,0.12)", color: "#fff", borderRadius: "var(--radius-full)", padding: "5px 14px", fontSize: "0.75rem", fontWeight: 700, border: `1px solid ${seatsLeft <= 2 ? "rgba(239,68,68,0.3)" : "rgba(255,255,255,0.2)"}` }}>
-            {seatsLeft <= 2 ? `⚡ เหลือ ${seatsLeft} ที่` : `${seatsLeft} ที่ว่าง`}
+            {seatsLeft <= 2 ? `${t("classes.detail.urgentSeatsPrefix")} ${seatsLeft} ${t("classes.detail.seatsLeftSuffix")}` : `${seatsLeft} ${t("classes.detail.seatsAvailableSuffix")}`}
           </span>
         </div>
 
         <h2 style={{ color: "#fff", fontSize: "1.25rem", fontWeight: 800, marginBottom: 6, lineHeight: 1.3 }}>{cls.name}</h2>
-        <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.875rem" }}>{cls.book}{cls.bookCode ? ` (${cls.bookCode})` : ""} · {cls.totalHours || 0} ชั่วโมง / คอร์ส</p>
+        <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.875rem" }}>{cls.book}{cls.bookCode ? ` (${cls.bookCode})` : ""} / {cls.totalHours || 0} {t("classes.detail.hourUnit")} / {t("classes.detail.perCourse")}</p>
       </div>
 
       {/* Content */}
@@ -167,7 +168,7 @@ export default function ClassDetailPage({ params }: PageProps) {
                   </span>
                 )}
                 <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 3 }}>
-                  <Users size={12} /> {cls.tutor?.students || 0} นักเรียน
+                  <Users size={12} /> {cls.tutor?.students || 0} {t("classes.detail.studentsUnit")}
                 </span>
               </div>
             </div>
@@ -177,24 +178,24 @@ export default function ClassDetailPage({ params }: PageProps) {
 
         {/* Schedule */}
         <div>
-          <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 10 }}>ตารางเรียน</h3>
+          <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 10 }}>{t("classes.detail.schedule")}</h3>
           <div className="glass-card" style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px" }}>
             <div style={{ width: 44, height: 44, borderRadius: 14, background: "var(--brand-50)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "1px solid var(--brand-100)" }}>
               <Calendar size={20} style={{ color: "var(--brand-600)" }} />
             </div>
             <div>
               <div style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--text-primary)" }}>{cls.schedule}</div>
-              <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginTop: 2 }}>คาบถัดไป: {cls.nextSession || "TBA"}</div>
+              <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginTop: 2 }}>{t("classes.detail.nextLessonPrefix")} {cls.nextSession || "TBA"}</div>
             </div>
           </div>
         </div>
 
         {/* Capacity */}
         <div className="glass-card" style={{ padding: "18px" }}>
-          <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 12 }}>ที่นั่ง</h3>
+          <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 12 }}>{t("classes.detail.seats")}</h3>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-            <span style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>{cls.students} จาก {cls.maxStudents} คน</span>
-            <span style={{ fontSize: "0.875rem", fontWeight: 700, color: seatsLeft <= 2 ? "var(--accent-red)" : "var(--brand-600)" }}>เหลือ {seatsLeft} ที่</span>
+            <span style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>{cls.students} {t("classes.detail.from")} {cls.maxStudents} {t("classes.detail.peopleUnit")}</span>
+            <span style={{ fontSize: "0.875rem", fontWeight: 700, color: seatsLeft <= 2 ? "var(--accent-red)" : "var(--brand-600)" }}>{t("classes.detail.remainingPrefix")} {seatsLeft} {t("classes.detail.seatsLeftSuffix")}</span>
           </div>
           <div className="progress-bar">
             <div className="progress-bar-fill" style={{ width: `${fillPct}%`, background: seatsLeft <= 2 ? "linear-gradient(90deg, var(--accent-red), #f87171)" : undefined }} />
@@ -203,7 +204,7 @@ export default function ClassDetailPage({ params }: PageProps) {
 
         {/* Highlights */}
         <div>
-          <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 10 }}>สิ่งที่คุณจะได้รับ</h3>
+          <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 10 }}>{t("classes.detail.benefits")}</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {highlights.map((h, i) => (
               <div key={i} className="glass-card" style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px" }}>
@@ -217,8 +218,8 @@ export default function ClassDetailPage({ params }: PageProps) {
         {/* Article preview */}
         <div>
           <div className="section-header">
-            <h3 className="section-title">ตัวอย่างบทเรียน</h3>
-            <span style={{ background: "var(--neutral-100)", color: "var(--text-secondary)", padding: "4px 10px", borderRadius: "var(--radius-full)", fontSize: "0.6875rem", fontWeight: 700 }}>{articles.length} จาก {articleCount} บท</span>
+            <h3 className="section-title">{t("classes.detail.lessonPreview")}</h3>
+            <span style={{ background: "var(--neutral-100)", color: "var(--text-secondary)", padding: "4px 10px", borderRadius: "var(--radius-full)", fontSize: "0.6875rem", fontWeight: 700 }}>{articles.length} {t("classes.detail.from")} {articleCount} {t("classes.detail.lessonsUnit")}</span>
           </div>
           <div className="glass-card" style={{ overflow: "hidden" }}>
             {articles.map((art, idx) => (
@@ -229,7 +230,7 @@ export default function ClassDetailPage({ params }: PageProps) {
               </div>
             ))}
             <div style={{ padding: "12px 16px", borderTop: "1px solid var(--surface-border)", textAlign: "center", fontSize: "0.8125rem", color: "var(--text-tertiary)" }}>
-              {articleCount > articles.length ? `+ อีก ${articleCount - articles.length} บทเรียน (ปลดล็อกหลังชำระเงิน)` : "บทเรียนทั้งหมดของคอร์สนี้จะแสดงหลังชำระเงิน"}
+              {articleCount > articles.length ? `${t("classes.detail.moreLessonsPrefix")} ${articleCount - articles.length} ${t("classes.detail.moreLessonsSuffix")}` : t("classes.detail.allLessonsAfterPayment")}
             </div>
           </div>
         </div>
@@ -255,9 +256,9 @@ export default function ClassDetailPage({ params }: PageProps) {
         boxShadow: "0 -10px 30px rgba(0,0,0,0.1)"
       }}>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: "0.6875rem", color: "var(--text-tertiary)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 2 }}>ราคาสุทธิ</div>
+          <div style={{ fontSize: "0.6875rem", color: "var(--text-tertiary)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 2 }}>{t("classes.detail.netPrice")}</div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
-            <span style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>฿{cls.price.toLocaleString()}</span>
+            <span style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>THB {cls.price.toLocaleString()}</span>
           </div>
         </div>
         {cls.isEnrolled ? (
@@ -279,7 +280,7 @@ export default function ClassDetailPage({ params }: PageProps) {
               cursor: "default"
             }}
           >
-            ลงทะเบียนแล้ว
+            {t("classes.detail.enrolled")}
           </div>
         ) : (
           <Link 
@@ -299,7 +300,7 @@ export default function ClassDetailPage({ params }: PageProps) {
               boxShadow: "0 8px 20px rgba(6,199,85,0.3)"
             }}
           >
-            สมัครเรียนตอนนี้
+            {t("classes.detail.enrollNow")}
           </Link>
         )}
       </div>

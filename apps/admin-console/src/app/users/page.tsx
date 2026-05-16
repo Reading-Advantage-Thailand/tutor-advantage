@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Users, Search, ShieldCheck, User, GraduationCap, Bell, FileText, ArrowRight, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { fetchWithAuth } from "@/lib/api";
+import { t } from "@/lib/i18n";
 
 interface UserInfo {
   id: string;
@@ -73,8 +74,8 @@ export default function UsersPage() {
   return (
     <div className="space-y-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
       <div className="flex flex-col gap-2">
-        <h2 className="text-3xl font-black tracking-tight text-foreground">ผู้ใช้งาน & ความยินยอม</h2>
-        <p className="text-muted-foreground font-medium">จัดการบัญชีผู้ใช้, ความยินยอมจากผู้ปกครอง และการยืนยันตัวตน</p>
+        <h2 className="text-3xl font-black tracking-tight text-foreground">{t("users.title")}</h2>
+        <p className="text-muted-foreground font-medium">{t("users.description")}</p>
       </div>
 
       <div className="flex flex-col md:flex-row gap-6">
@@ -86,9 +87,9 @@ export default function UsersPage() {
                 <Users className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-lg font-bold">ไดเรกทอรีผู้ใช้งาน</CardTitle>
+                <CardTitle className="text-lg font-bold">{t("users.directoryTitle")}</CardTitle>
                 <CardDescription className="font-medium text-xs">
-                  ค้นหาข้อมูลนักเรียนและติวเตอร์ทั้งหมด
+                  {t("users.directoryDescription")}
                 </CardDescription>
               </div>
             </div>
@@ -98,7 +99,7 @@ export default function UsersPage() {
               <Search className="absolute left-3.5 top-3.5 h-5 w-5 text-muted-foreground group-focus-within:text-brand-600 transition-colors" />
               <Input
                 type="text"
-                placeholder="ค้นหาด้วยชื่อ หรือ ID ผู้ใช้งาน..."
+                placeholder={t("users.searchPlaceholder")}
                 className="pl-11 h-12 rounded-2xl border-2 focus-visible:ring-brand-500 font-medium bg-muted/30"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -119,9 +120,9 @@ export default function UsersPage() {
                   <Bell className="h-5 w-5" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-bold text-amber-900 dark:text-amber-100">ต้องดำเนินการ</CardTitle>
+                  <CardTitle className="text-lg font-bold text-amber-900 dark:text-amber-100">{t("users.actionRequired")}</CardTitle>
                   <CardDescription className="font-medium text-amber-700/80 dark:text-amber-400/80 text-xs">
-                    มี {pendingVerificationItems} รายการรอการตรวจสอบ
+                    {t("users.pendingVerificationPrefix")} {pendingVerificationItems} {t("users.pendingVerificationSuffix")}
                   </CardDescription>
                 </div>
               </div>
@@ -129,7 +130,7 @@ export default function UsersPage() {
             <CardContent className="relative z-10 pb-6">
               <Button className="w-full rounded-xl font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-md" asChild>
                 <Link href="/users?filter=pending">
-                  ตรวจสอบเอกสาร
+                  {t("users.reviewDocuments")}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
@@ -141,7 +142,7 @@ export default function UsersPage() {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
           <div className="animate-spin h-10 w-10 border-4 border-muted-foreground/20 border-t-brand-500 rounded-full mb-4" />
-          <p className="font-bold text-muted-foreground">กำลังโหลดข้อมูล...</p>
+          <p className="font-bold text-muted-foreground">{t("users.loading")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -168,11 +169,11 @@ export default function UsersPage() {
                         </div>
                         {user.role === "TUTOR" ? (
                           <Badge variant="outline" className="shrink-0 border-brand-200 dark:border-brand-800 text-brand-700 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/30 rounded-full px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider">
-                            ติวเตอร์
+                            {t("users.tutor")}
                           </Badge>
                         ) : (
                           <Badge variant="outline" className="shrink-0 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 rounded-full px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider">
-                            นักเรียน
+                            {t("users.student")}
                           </Badge>
                         )}
                       </div>
@@ -181,19 +182,19 @@ export default function UsersPage() {
                         {user.role === "STUDENT" && (
                           <Badge variant="secondary" className={`rounded-md text-[10px] font-semibold border-none px-2 py-0.5 ${user.guardianSetup ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "bg-amber-500/10 text-amber-700 dark:text-amber-400"}`}>
                             <ShieldCheck className="h-3 w-3 mr-1" />
-                            {user.guardianSetup ? "ผู้ปกครอง: ยืนยันแล้ว" : "ผู้ปกครอง: รอยืนยัน"}
+                            {user.guardianSetup ? t("users.guardianVerified") : t("users.guardianPending")}
                           </Badge>
                         )}
                         
                         <Badge variant="secondary" className="bg-muted/50 text-muted-foreground rounded-md text-[10px] font-semibold border-none px-2 py-0.5">
                           {user.role === "TUTOR" ? <User className="h-3 w-3 mr-1" /> : <GraduationCap className="h-3 w-3 mr-1" />}
-                          {user.activeClasses} คลาสที่กำลังเรียน
+                          {user.activeClasses} {t("users.activeClassesSuffix")}
                         </Badge>
 
                         {user.role === "TUTOR" && (user.pendingVerificationCount || 0) > 0 && (
                           <Badge variant="secondary" className="bg-amber-500 text-white hover:bg-amber-600 rounded-md text-[10px] font-bold border-none px-2 py-0.5 shadow-sm">
                             <Bell className="h-3 w-3 mr-1" />
-                            {user.pendingVerificationCount} รายการรอตรวจ
+                            {user.pendingVerificationCount} {t("users.pendingItemsSuffix")}
                           </Badge>
                         )}
                       </div>
@@ -206,7 +207,7 @@ export default function UsersPage() {
           {!loading && filteredUsers.length === 0 && (
             <div className="col-span-full flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
               <Users className="h-12 w-12 text-muted-foreground/30 mb-4" />
-              <p className="font-bold text-muted-foreground">ไม่พบผู้ใช้งานตามเงื่อนไขที่ค้นหา</p>
+              <p className="font-bold text-muted-foreground">{t("users.emptySearch")}</p>
             </div>
           )}
         </div>

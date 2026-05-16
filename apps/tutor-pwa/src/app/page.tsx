@@ -2,10 +2,11 @@ import { Metadata } from "next";
 import Image from "next/image";
 import { LoginForm } from "@/components/auth/login-form";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { t } from "@/lib/i18n";
 
 export const metadata: Metadata = {
-  title: "เข้าสู่ระบบ - Tutor PWA",
-  description: "เข้าสู่ระบบสำหรับครูผู้สอน Tutor Advantage",
+  title: t("app.loginTitle"),
+  description: t("app.loginDescription"),
 };
 
 export default function LoginPage() {
@@ -36,7 +37,7 @@ export default function LoginPage() {
                 Tutor Advantage
               </p>
               <p className="text-xs text-brand-200 font-medium uppercase tracking-widest">
-                Instructor Portal
+                {t("app.instructorPortal")}
               </p>
             </div>
           </div>
@@ -49,29 +50,29 @@ export default function LoginPage() {
         {/* Main copy */}
         <div className="relative z-10 flex-1 flex flex-col justify-center max-w-lg mt-8 lg:mt-0">
           <h2 className="text-3xl lg:text-5xl font-black text-white leading-tight mb-6 tracking-tight">
-            Empowering <span className="text-brand-300">Educators</span>
+            {t("app.loginHeroTitlePrefix")} <span className="text-brand-300">{t("app.loginHeroTitleAccent")}</span>
           </h2>
           <p className="text-brand-100 text-lg mb-8 font-medium">
-            Manage your classes, track your earnings, and grow your network with full transparency.
+            {t("app.loginHeroDescription")}
           </p>
           <ul className="space-y-4 text-brand-50/80 hidden sm:block font-medium">
             <li className="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/10 backdrop-blur-sm">
-              <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold shrink-0">✓</div>
-              Access to ready-made 15-step lesson plans
+              <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold shrink-0">OK</div>
+              {t("app.loginBenefitLessons")}
             </li>
             <li className="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/10 backdrop-blur-sm">
-              <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold shrink-0">✓</div>
-              Transparent commission & bonus tracking
+              <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold shrink-0">OK</div>
+              {t("app.loginBenefitEarnings")}
             </li>
             <li className="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/10 backdrop-blur-sm">
-              <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold shrink-0">✓</div>
-              Instant QR referral generation
+              <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold shrink-0">OK</div>
+              {t("app.loginBenefitReferral")}
             </li>
           </ul>
         </div>
 
         <p className="relative z-10 hidden sm:block text-xs text-brand-200/50 mt-12 lg:mt-auto font-medium uppercase tracking-widest">
-          Secure · Transparent · Professional
+          {t("app.loginTrustLine")}
         </p>
       </div>
 
@@ -91,10 +92,10 @@ export default function LoginPage() {
           <div className="w-full max-w-sm space-y-8">
             <div className="space-y-2 text-center lg:text-left">
               <h1 className="text-3xl font-black text-foreground tracking-tight">
-                Welcome Back
+                {t("app.welcomeBack")}
               </h1>
               <p className="text-sm font-medium text-muted-foreground">
-                Log in to access your instructor dashboard.
+                {t("app.loginSubtitle")}
               </p>
             </div>
 
@@ -102,19 +103,19 @@ export default function LoginPage() {
 
             <div className="pt-6 border-t border-border text-center">
               <p className="text-xs text-muted-foreground font-medium">
-                By logging in, you agree to our{" "}
+                {t("app.loginAgreementPrefix")}{" "}
                 <a
                   href="/terms"
                   className="font-bold text-foreground hover:text-primary transition-colors underline underline-offset-4"
                 >
-                  Terms of Service
+                  {t("app.termsOfService")}
                 </a>{" "}
-                and{" "}
+                {t("app.and")}{" "}
                 <a
                   href="/privacy"
                   className="font-bold text-foreground hover:text-primary transition-colors underline underline-offset-4"
                 >
-                  Privacy Policy
+                  {t("app.privacyPolicy")}
                 </a>
               </p>
             </div>

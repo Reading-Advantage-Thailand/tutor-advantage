@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { cookies } from "next/headers";
 import VerificationBanner from "@/components/dashboard/verification-banner";
+import { t } from "@/lib/i18n";
 
 async function getLearningData(token: string) {
   const res = await fetch("http://localhost:3002/v1/dashboard/summary", {
@@ -35,20 +36,28 @@ async function getFinanceData(token: string) {
 // Map status from backend to UI status
 const statusMap: Record<string, { label: string; className: string }> = {
   open: {
-    label: "รับสมัครอยู่",
+    label: t("tutorClass.classes.statusOpen"),
     className:
       "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-none",
   },
   full: {
-    label: "เต็มแล้ว",
+    label: t("tutorClass.classes.statusFull"),
     className:
       "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-none",
   },
   closed: {
-    label: "ปิดแล้ว",
+    label: t("tutorClass.classes.statusClosed"),
     className: "bg-muted text-muted-foreground border-none",
   },
 };
+
+function formatCurrencyTHB(value: number) {
+  return value.toLocaleString("th-TH", {
+    style: "currency",
+    currency: "THB",
+    maximumFractionDigits: 0,
+  });
+}
 
 export default async function DashboardPage() {
   const cookieStore = await cookies();
@@ -61,28 +70,28 @@ export default async function DashboardPage() {
 
   const stats = [
     {
-      label: "คลาสที่เปิด",
+      label: t("dashboardHome.openClasses"),
       value: learning?.openClasses ?? "0",
       icon: BookOpen,
       bg: "bg-indigo-500/10 dark:bg-indigo-900/20",
       iconColor: "text-indigo-600 dark:text-indigo-400",
     },
     {
-      label: "นักเรียนทั้งหมด",
+      label: t("dashboardHome.totalStudents"),
       value: learning?.totalStudents ?? "0",
       icon: Users,
       bg: "bg-emerald-500/10 dark:bg-emerald-900/20",
       iconColor: "text-emerald-600 dark:text-emerald-400",
     },
     {
-      label: "รายได้เดือนนี้",
-      value: finance ? `฿${finance.estimatedCommissionTHB.toLocaleString()}` : "฿0",
+      label: t("dashboardHome.monthlyIncome"),
+      value: formatCurrencyTHB(finance?.estimatedCommissionTHB ?? 0),
       icon: TrendingUp,
       bg: "bg-amber-500/10 dark:bg-amber-900/20",
       iconColor: "text-amber-600 dark:text-amber-400",
     },
     {
-      label: "คลาสสัปดาห์นี้",
+      label: t("dashboardHome.weeklyClasses"),
       value: learning?.classesThisWeek ?? "0",
       icon: Calendar,
       bg: "bg-rose-500/10 dark:bg-rose-900/20",
@@ -108,15 +117,15 @@ export default async function DashboardPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-foreground">ภาพรวม</h1>
+          <h1 className="text-3xl font-black tracking-tight text-foreground">{t("dashboardHome.title")}</h1>
           <p className="text-sm font-medium text-muted-foreground mt-1">
-            สรุปคลาสและรายได้ของคุณในเดือนนี้
+            {t("dashboardHome.subtitle")}
           </p>
         </div>
         <Link href="/dashboard/classes/new" className="hidden sm:block">
           <Button id="btn-create-class" size="sm" className="h-10 px-6 rounded-xl font-bold bg-primary hover:bg-primary/90 shadow-md shadow-primary/20 gap-2 shrink-0 transition-all">
             <Plus className="h-4 w-4" />
-            สร้างคลาสใหม่
+            {t("tutorClass.classes.create")}
           </Button>
         </Link>
       </div>
@@ -151,13 +160,13 @@ export default async function DashboardPage() {
           <CardHeader className="pb-4 relative z-10">
             <CardTitle className="text-sm font-bold text-foreground flex items-center gap-2 uppercase tracking-widest">
               <Star className="h-5 w-5 text-amber-500 fill-amber-500 drop-shadow-sm" />
-              เป้าหมายเรทถัดไป
+              {t("dashboardHome.nextRateGoal")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6 relative z-10 pb-6 px-6">
             <div className="bg-card/80 backdrop-blur-sm p-4 rounded-2xl border border-white/20 dark:border-white/5">
               <div className="flex items-center justify-between mb-1">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">เรทปัจจุบัน</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{t("dashboardHome.currentRate")}</span>
                 <span className="text-2xl font-black text-primary drop-shadow-sm">
                   {commissionRate}
                 </span>
@@ -167,11 +176,11 @@ export default async function DashboardPage() {
             {/* Bar */}
             <div className="space-y-3">
               <div className="flex justify-between text-xs font-bold">
-                <span className="text-foreground">฿{finance?.grossVolumeTHB.toLocaleString() ?? "0"}</span>
+                <span className="text-foreground">{formatCurrencyTHB(finance?.grossVolumeTHB ?? 0)}</span>
                 <span className="text-muted-foreground">
                   {targetGoal > 0
-                    ? `เป้า ฿${targetGoal.toLocaleString()}`
-                    : "เรทสูงสุด"}
+                    ? `${t("dashboardHome.targetPrefix")} ${formatCurrencyTHB(targetGoal)}`
+                    : t("dashboardHome.maxRate")}
                 </span>
               </div>
               <div className="w-full bg-background rounded-full h-4 overflow-hidden border border-border/50 shadow-inner">
@@ -188,19 +197,19 @@ export default async function DashboardPage() {
             <div className="rounded-2xl bg-card border border-border/50 shadow-sm p-5 space-y-2">
               {targetGoal <= 0 ? (
                 <p className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
-                  ✅ อยู่ในเรทสูงสุดแล้ว
+                  {t("dashboardHome.alreadyMaxRate")}
                 </p>
               ) : progressPercent >= 100 ? (
                 <p className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
-                  ✅ ถึงเป้าหมายแล้ว!
+                  {t("dashboardHome.reachedGoal")}
                 </p>
               ) : (
                 <p className="font-bold text-primary flex items-center gap-2">
-                  🎯 ขาดอีก ฿{((finance ? targetGoal - finance.grossVolumeTHB : targetGoal)).toLocaleString()}
+                  {t("dashboardHome.remainingPrefix")} {formatCurrencyTHB(finance ? targetGoal - finance.grossVolumeTHB : targetGoal)}
                 </p>
               )}
               <p className="text-muted-foreground text-[10px] font-medium leading-relaxed">
-                ยอดการสอนสดและโบนัสทีมรวมกันจะปลดล็อกเรทคอมมิชชั่นที่สูงขึ้น
+                {t("dashboardHome.unlockHint")}
               </p>
             </div>
 
@@ -211,11 +220,11 @@ export default async function DashboardPage() {
                 className="flex items-center justify-between w-full group/link bg-background/50 hover:bg-background p-3 rounded-xl transition-colors border border-transparent hover:border-border/50"
               >
                 <div>
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">รวมสุทธิ</p>
-                  <p className="font-black text-lg text-foreground">฿{finance?.estimatedCommissionTHB.toLocaleString() ?? "0"}</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("dashboardHome.netTotal")}</p>
+                  <p className="font-black text-lg text-foreground">{formatCurrencyTHB(finance?.estimatedCommissionTHB ?? 0)}</p>
                 </div>
                 <div className="flex items-center gap-1 text-xs font-bold text-primary">
-                  ดูรายละเอียด <ArrowUpRight className="h-4 w-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
+                  {t("dashboardHome.viewDetails")} <ArrowUpRight className="h-4 w-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
                 </div>
               </Link>
             </div>
@@ -226,13 +235,13 @@ export default async function DashboardPage() {
         <Card className="lg:col-span-2 border-none shadow-sm rounded-3xl bg-card flex flex-col overflow-hidden">
           <CardHeader className="pb-4 bg-muted/20 border-b px-6 sm:px-8 py-6 flex flex-row items-center justify-between">
             <CardTitle className="text-base font-bold text-foreground">
-              คลาสเรียนล่าสุด
+              {t("dashboardHome.recentClasses")}
             </CardTitle>
             <Link
               href="/dashboard/classes"
               className="text-xs font-bold text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
             >
-              ดูทั้งหมด <ChevronRight className="h-4 w-4" />
+              {t("dashboardHome.viewAll")} <ChevronRight className="h-4 w-4" />
             </Link>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col p-0">
@@ -240,7 +249,7 @@ export default async function DashboardPage() {
               {recentClasses.length === 0 && (
                 <div className="py-16 text-center text-muted-foreground font-medium flex flex-col items-center justify-center gap-3">
                   <BookOpen className="h-10 w-10 text-muted-foreground/30" />
-                  ไม่มีคลาสเรียนในขณะนี้
+                  {t("dashboardHome.emptyClasses")}
                 </div>
               )}
               {recentClasses.map((cls: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -269,7 +278,7 @@ export default async function DashboardPage() {
                         </span>
                         <span className="flex items-center gap-1.5 bg-muted px-2 py-1 rounded-md">
                           <Users className="h-4 w-4 shrink-0" />
-                          {cls.students} คน
+                          {cls.students} {t("tutorClass.classes.peopleUnit")}
                         </span>
                       </p>
                     </div>
@@ -294,7 +303,7 @@ export default async function DashboardPage() {
                   className="w-full h-12 rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md"
                 >
                   <Plus className="h-5 w-5 mr-2" />
-                  สร้างคลาสใหม่
+                  {t("tutorClass.classes.create")}
                 </Button>
               </Link>
             </div>

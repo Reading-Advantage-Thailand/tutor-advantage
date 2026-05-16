@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ShieldAlert, ArrowLeft, MessageSquare } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { t } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +38,7 @@ export default function UnauthorizedPage() {
               <ShieldAlert className="h-10 w-10 text-red-600 dark:text-red-400" />
             </div>
             <CardTitle className="text-2xl font-black text-foreground">
-              ไม่มีสิทธิ์เข้าถึงระบบ
+              {t("unauthorized.title")}
             </CardTitle>
             <CardDescription className="text-sm font-medium mt-2">
               Access Denied
@@ -46,12 +47,12 @@ export default function UnauthorizedPage() {
 
           <CardContent className="p-8 text-center space-y-4">
             <p className="text-muted-foreground text-sm leading-relaxed">
-              บัญชี Google ของคุณยังไม่ได้รับการอนุมัติให้เข้าถึงแผงควบคุมระบบ (Admin Console) ของ Tutor Advantage
+              {t("unauthorized.description")}
             </p>
             <div className="bg-muted/50 p-4 rounded-2xl border border-border/50">
-              <p className="text-xs font-bold text-foreground mb-1">สิ่งที่คุณต้องทำ:</p>
+              <p className="text-xs font-bold text-foreground mb-1">{t("unauthorized.nextStepsTitle")}</p>
               <p className="text-[10px] text-muted-foreground">
-                กรุณาติดต่อผู้ดูแลระบบ (Super Admin) หรือฝ่าย IT Support เพื่อขอรับสิทธิ์การเข้าถึงระบบตามระดับงานของคุณ
+                {t("unauthorized.nextStepsDescription")}
               </p>
             </div>
           </CardContent>
@@ -63,7 +64,7 @@ export default function UnauthorizedPage() {
             >
               <Link href="https://lin.ee/zqTz6feg" target="_blank">
                 <MessageSquare className="mr-2 h-5 w-5" />
-                ติดต่อเจ้าหน้าที่ (Support)
+                {t("unauthorized.support")}
               </Link>
             </Button>
             <Button
@@ -73,7 +74,7 @@ export default function UnauthorizedPage() {
             >
               <Link href="/login">
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                กลับไปหน้าเข้าสู่ระบบ
+                {t("unauthorized.backLogin")}
               </Link>
             </Button>
           </CardFooter>

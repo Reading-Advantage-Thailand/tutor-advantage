@@ -3,6 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recha
 import { ArticleDisplay } from './ArticleDisplay';
 import { ChevronRight, Check } from 'lucide-react';
 import { playSound } from '@/lib/sounds';
+import { t } from '@/lib/i18n';
 import confetti from 'canvas-confetti';
 
 function seededShuffle<T>(array: T[], seedInput: string): T[] {
@@ -113,7 +114,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   const renderLobby = () => (
     <div className="flex-1 flex flex-col items-center justify-center">
-      <h2 className="text-3xl font-bold mb-8 text-foreground">Waiting for students...</h2>
+      <h2 className="text-3xl font-bold mb-8 text-foreground">{t("lesson.interactive.waitingStudents")}</h2>
       <div className="flex gap-4 flex-wrap justify-center max-w-2xl">
         {participants.map((p, i) => (
           <div key={i} className="bg-muted rounded-full px-6 py-3 shadow-sm font-medium text-foreground">
@@ -121,7 +122,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           </div>
         ))}
       </div>
-      {participants.length === 0 && <p className="text-muted-foreground mt-4">No one has joined yet.</p>}
+      {participants.length === 0 && <p className="text-muted-foreground mt-4">{t("lesson.interactive.noJoinedYet")}</p>}
     </div>
   );
 
@@ -144,7 +145,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
       return (
         <div className="flex-1 flex flex-col items-center">
-          <h2 className="text-3xl font-bold mb-4 text-foreground">สรุปผลการตอบ</h2>
+          <h2 className="text-3xl font-bold mb-4 text-foreground">{t("lesson.interactive.answerSummary")}</h2>
           
           <div className="w-full max-w-2xl h-80">
             <ResponsiveContainer width="100%" height="100%">
@@ -160,15 +161,15 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           <div className="mt-8 grid grid-cols-2 gap-6 w-full max-w-2xl">
              <div className="bg-emerald-500/10 border-2 border-emerald-500/20 rounded-2xl p-6 text-center shadow-sm relative overflow-hidden">
                 <div className="absolute inset-0 bg-emerald-500/5 animate-pulse" />
-                <p className="text-emerald-600 dark:text-emerald-400 font-bold text-sm uppercase mb-1 relative z-10">เฉลยที่ถูกต้อง</p>
+                <p className="text-emerald-600 dark:text-emerald-400 font-bold text-sm uppercase mb-1 relative z-10">{t("lesson.interactive.correctAnswer")}</p>
                 <h3 className="text-4xl font-black text-emerald-700 dark:text-emerald-300 relative z-10">{correctAnswer}: {mappedOptions[correctAnswer]}</h3>
              </div>
              <div className="bg-card border-2 border-border rounded-2xl p-6 text-center shadow-sm relative z-10">
-                <p className="text-muted-foreground font-bold text-sm uppercase mb-1">สถิติความถูกต้อง</p>
+                <p className="text-muted-foreground font-bold text-sm uppercase mb-1">{t("lesson.interactive.accuracyStats")}</p>
                 <div className="flex items-center justify-center gap-4">
-                   <span className="text-emerald-600 dark:text-emerald-400 font-bold text-2xl">ถูก {correctCount}</span>
+                   <span className="text-emerald-600 dark:text-emerald-400 font-bold text-2xl">{t("lesson.interactive.correctPrefix")} {correctCount}</span>
                    <span className="text-border">|</span>
-                   <span className="text-destructive font-bold text-2xl">ผิด {wrongCount}</span>
+                   <span className="text-destructive font-bold text-2xl">{t("lesson.interactive.wrongPrefix")} {wrongCount}</span>
                 </div>
              </div>
           </div>
@@ -204,7 +205,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           })}
         </div>
         <div className="mt-12 text-2xl font-bold text-muted-foreground bg-muted px-8 py-3 rounded-full">
-          ส่งคำตอบแล้ว: {totalAnswered} / {totalParticipants} คน
+          {t("lesson.interactive.answersSubmitted")} {totalAnswered} / {totalParticipants} {t("lesson.interactive.peopleUnit")}
         </div>
       </div>
     );
@@ -256,18 +257,18 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       mappedOptions[label] = val;
     });
 
-    return renderKahootGame(mcqQuestion?.question || 'Question', mappedOptions, correctAnswer);
+    return renderKahootGame(mcqQuestion?.question || t("lesson.interactive.genericQuestion"), mappedOptions, correctAnswer);
   };
 
   const renderVocabKahoot = () => {
     const words = articleData?.words || [];
-    if (words.length < 4) return <div className="flex-1 flex items-center justify-center text-xl">Not enough vocabulary words to play.</div>;
+    if (words.length < 4) return <div className="flex-1 flex items-center justify-center text-xl">{t("lesson.interactive.notEnoughVocab")}</div>;
 
     const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
     const targetWord = words[idx] || words[0];
-    const question = `ความหมายของคำว่า "${targetWord.vocabulary || targetWord.word || targetWord.text}" คืออะไร?`;
+    const question = `${t("lesson.interactive.vocabQuestionPrefix")} "${targetWord.vocabulary || targetWord.word || targetWord.text}" ${t("lesson.interactive.vocabQuestionSuffix")}`;
     
-    const correctTranslation = targetWord.definition?.th || targetWord.translation || "ความหมายที่ถูกต้อง";
+    const correctTranslation = targetWord.definition?.th || targetWord.translation || t("lesson.interactive.correctMeaningFallback");
     const distractorWords = words.filter((w: any, i: number) => i !== idx);
 
     const usedTranslations = new Set<string>([correctTranslation]);
@@ -283,7 +284,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
     let fillCounter = 1;
     while (optionsArray.length < 4) {
-      const fb = `ความหมายอื่น ${String.fromCharCode(65 + fillCounter)}`;
+      const fb = `${t("lesson.interactive.otherMeaningPrefix")} ${String.fromCharCode(65 + fillCounter)}`;
       if (!usedTranslations.has(fb)) {
         usedTranslations.add(fb);
         optionsArray.push(fb);
@@ -307,17 +308,17 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   const renderSentenceFlashcardKahoot = () => {
     const sentences = articleData?.sentences || [];
-    if (sentences.length < 1) return <div className="flex-1 flex items-center justify-center text-xl">Not enough sentences to play.</div>;
+    if (sentences.length < 1) return <div className="flex-1 flex items-center justify-center text-xl">{t("lesson.interactive.notEnoughSentences")}</div>;
 
     const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
     const targetSentence = typeof sentences[idx] === 'object' ? sentences[idx].sentences : sentences[idx];
     const words = String(targetSentence).split(' ');
-    if (words.length < 3) return <div className="flex-1 flex items-center justify-center text-xl">Sentence too short to play.</div>;
+    if (words.length < 3) return <div className="flex-1 flex items-center justify-center text-xl">{t("lesson.interactive.sentenceTooShort")}</div>;
     
     const correctWord = words[words.length - 1].replace(/[.,!?]/g, '');
     const displaySentence = words.slice(0, words.length - 1).join(' ') + ' _____';
     
-    const question = `เติมคำในช่องว่าง: ${displaySentence}`;
+    const question = `${t("lesson.interactive.fillBlankPrefix")} ${displaySentence}`;
     
     const vocabWords = articleData?.words?.map((w: any) => w.vocabulary || w.word || w.text) || ["Apple", "Banana", "Cat"];
     const distractors = vocabWords.filter((w: string) => w.toLowerCase() !== correctWord.toLowerCase());
@@ -340,7 +341,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   const renderSentenceOrderingKahoot = () => {
     const sentences = articleData?.sentences || [];
-    if (sentences.length < 1) return <div className="flex-1 flex items-center justify-center text-xl">Not enough sentences to play.</div>;
+    if (sentences.length < 1) return <div className="flex-1 flex items-center justify-center text-xl">{t("lesson.interactive.notEnoughSentences")}</div>;
 
     const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
     const targetSentence = typeof sentences[idx] === 'object' ? sentences[idx].sentences : sentences[idx];
@@ -352,7 +353,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       return res;
     };
     const scrambled = shuffleWords(words).join(' / ');
-    const question = `เรียงประโยคให้ถูกต้อง: ${scrambled}`;
+    const question = `${t("lesson.interactive.orderSentencePrefix")} ${scrambled}`;
     
     const optA = [...words]; optA.push(optA.shift()!); 
     const optB = [...words]; optB.unshift(optB.pop()!);
@@ -371,7 +372,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       mappedOptions[label] = val;
     });
 
-    const finalQuestion = scrambled === targetSentence ? `เรียงประโยคให้ถูกต้อง: ${[...words].reverse().join(' / ')}` : question;
+    const finalQuestion = scrambled === targetSentence ? `${t("lesson.interactive.orderSentencePrefix")} ${[...words].reverse().join(' / ')}` : question;
     return renderKahootGame(finalQuestion, mappedOptions, correctLabel);
   };
 
@@ -389,19 +390,19 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       const averageScore = allAnsweredData.length > 0 ? sumScores / allAnsweredData.length : 0;
 
       const chartData = [
-        { name: 'ดีเยี่ยม (4-5)', count: excellentCount, fill: '#10b981' },
-        { name: 'พอใช้ (2-3)', count: goodCount, fill: '#f59e0b' },
-        { name: 'ปรับปรุง (0-1)', count: improveCount, fill: '#f43f5e' }
+        { name: t("lesson.interactive.excellentRange"), count: excellentCount, fill: '#10b981' },
+        { name: t("lesson.interactive.goodRange"), count: goodCount, fill: '#f59e0b' },
+        { name: t("lesson.interactive.improveRange"), count: improveCount, fill: '#f43f5e' }
       ];
 
       return (
         <div className="flex-1 flex flex-col items-center">
-          <h2 className="text-3xl font-bold mb-6 text-foreground">สรุปผลการประเมินโดย AI (Short Answer)</h2>
+          <h2 className="text-3xl font-bold mb-6 text-foreground">{t("lesson.interactive.shortAnswerResults")}</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl">
             {/* Left: Distribution Bar Chart */}
             <div className="bg-card p-6 rounded-2xl border-2 border-border shadow-sm flex flex-col items-center justify-center h-80">
-              <h4 className="text-lg font-bold text-foreground mb-4 self-start">กราฟสถิติช่วงคะแนนของนักเรียน</h4>
+              <h4 className="text-lg font-bold text-foreground mb-4 self-start">{t("lesson.interactive.scoreDistributionChart")}</h4>
               <div className="w-full h-full max-h-60">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -418,11 +419,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             <div className="flex flex-col gap-4 justify-between h-80">
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-blue-500/10 border-2 border-blue-500/20 rounded-2xl p-4 text-center">
-                  <p className="text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-wider mb-1">ส่งคำตอบแล้วทั้งหมด</p>
-                  <h3 className="text-3xl font-black text-blue-700 dark:text-blue-300">{allAnsweredData.length} <span className="text-lg font-normal text-blue-500">คน</span></h3>
+                  <p className="text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-wider mb-1">{t("lesson.interactive.allSubmitted")}</p>
+                  <h3 className="text-3xl font-black text-blue-700 dark:text-blue-300">{allAnsweredData.length} <span className="text-lg font-normal text-blue-500">{t("lesson.interactive.peopleUnit")}</span></h3>
                 </div>
                 <div className="bg-indigo-500/10 border-2 border-indigo-500/20 rounded-2xl p-4 text-center">
-                  <p className="text-indigo-600 dark:text-indigo-400 font-bold text-xs uppercase tracking-wider mb-1">คะแนนเฉลี่ย</p>
+                  <p className="text-indigo-600 dark:text-indigo-400 font-bold text-xs uppercase tracking-wider mb-1">{t("lesson.interactive.averageScore")}</p>
                   <h3 className="text-3xl font-black text-indigo-700 dark:text-indigo-300">{averageScore.toFixed(1)} <span className="text-lg font-normal text-indigo-500">/ 5</span></h3>
                 </div>
               </div>
@@ -430,24 +431,24 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               {/* Range KPIs in a compact layout */}
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-xl text-center flex flex-col justify-between">
-                  <p className="text-emerald-700 dark:text-emerald-400 font-bold text-xs">ดีเยี่ยม (4-5)</p>
-                  <p className="text-xl font-black text-emerald-600 mt-1">{excellentCount} คน</p>
+                  <p className="text-emerald-700 dark:text-emerald-400 font-bold text-xs">{t("lesson.interactive.excellentRange")}</p>
+                  <p className="text-xl font-black text-emerald-600 mt-1">{excellentCount} {t("lesson.interactive.peopleUnit")}</p>
                 </div>
                 <div className="bg-amber-500/10 border border-amber-500/20 p-3 rounded-xl text-center flex flex-col justify-between">
-                  <p className="text-amber-700 dark:text-amber-400 font-bold text-xs">พอใช้ (2-3)</p>
-                  <p className="text-xl font-black text-amber-600 mt-1">{goodCount} คน</p>
+                  <p className="text-amber-700 dark:text-amber-400 font-bold text-xs">{t("lesson.interactive.goodRange")}</p>
+                  <p className="text-xl font-black text-amber-600 mt-1">{goodCount} {t("lesson.interactive.peopleUnit")}</p>
                 </div>
                 <div className="bg-rose-500/10 border border-rose-500/20 p-3 rounded-xl text-center flex flex-col justify-between">
-                  <p className="text-rose-700 dark:text-rose-400 font-bold text-xs">ปรับปรุง (0-1)</p>
-                  <p className="text-xl font-black text-rose-600 mt-1">{improveCount} คน</p>
+                  <p className="text-rose-700 dark:text-rose-400 font-bold text-xs">{t("lesson.interactive.improveRange")}</p>
+                  <p className="text-xl font-black text-rose-600 mt-1">{improveCount} {t("lesson.interactive.peopleUnit")}</p>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="mt-8 bg-muted border border-border p-4 rounded-xl max-w-4xl text-center flex items-center gap-3">
-            <span className="text-2xl">🔒</span>
-            <p className="text-muted-foreground text-sm font-medium">เพื่อความปลอดภัยและความเป็นส่วนตัว ระบบจะไม่แสดงคำตอบส่วนบุคคลของนักเรียนบนหน้าจอนี้</p>
+            <span className="text-2xl">Privacy</span>
+            <p className="text-muted-foreground text-sm font-medium">{t("lesson.interactive.privacyNote")}</p>
           </div>
         </div>
       );
@@ -456,10 +457,10 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     return (
       <div className="flex-1 flex flex-col items-center justify-center">
         <h2 className="text-4xl font-bold mb-12 text-center">
-          {shortAnswerQuestion?.question || 'Type your answer to the question'}
+          {shortAnswerQuestion?.question || t("lesson.interactive.shortAnswerPrompt")}
         </h2>
         <div className="mt-8 text-2xl font-medium text-muted-foreground">
-          Answers Submitted: {totalAnswered} / {totalParticipants}
+          {t("lesson.interactive.answersSubmitted")} {totalAnswered} / {totalParticipants}
         </div>
       </div>
     );
@@ -472,9 +473,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     return (
       <div className="flex-1 flex flex-col items-center justify-center max-w-4xl mx-auto w-full">
         <div className="text-center mb-8 animate-in fade-in zoom-in">
-          <div className="text-6xl mb-4">🏆</div>
-          <h2 className="text-4xl font-black text-foreground tracking-tight">สรุปอันดับบทเรียน (Leaderboard)</h2>
-          <p className="text-muted-foreground mt-1 font-medium">ยินดีด้วยกับนักเรียนทุกคนที่ตั้งใจเรียนในวันนี้!</p>
+          <div className="text-6xl mb-4">#1</div>
+          <h2 className="text-4xl font-black text-foreground tracking-tight">{t("lesson.interactive.leaderboardTitle")}</h2>
+          <p className="text-muted-foreground mt-1 font-medium">{t("lesson.interactive.leaderboardSubtitle")}</p>
         </div>
 
         {/* 1st, 2nd, 3rd Podiums */}
@@ -489,7 +490,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 <img src={sortedParticipants[1].pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${sortedParticipants[1].name}`} alt={sortedParticipants[1].name} className="w-full h-full object-cover" />
               </div>
               <h3 className="font-bold text-foreground text-lg truncate w-full">{sortedParticipants[1].name}</h3>
-              <p className="text-muted-foreground font-black text-2xl">{sortedParticipants[1].score || 0} <span className="text-xs font-medium">คะแนน</span></p>
+              <p className="text-muted-foreground font-black text-2xl">{sortedParticipants[1].score || 0} <span className="text-xs font-medium">{t("lesson.interactive.scoreUnit")}</span></p>
             </div>
           ) : (
             <div className="h-[210px]" />
@@ -499,13 +500,13 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           {sortedParticipants[0] ? (
             <div className="bg-gradient-to-b from-amber-400/20 to-background border-2 border-amber-400/50 rounded-2xl p-6 text-center flex flex-col items-center justify-between shadow-md animate-in slide-in-from-bottom duration-700 h-[260px] relative border-b-4 border-b-amber-500 scale-105">
               <div className="absolute top-[-20px] bg-amber-500 border-2 border-background text-primary-foreground font-bold w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-md animate-bounce">
-                👑
+                1
               </div>
               <div className="w-20 h-20 rounded-full overflow-hidden bg-amber-500/10 border-4 border-amber-500 mt-2 mb-2 flex items-center justify-center">
                 <img src={sortedParticipants[0].pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${sortedParticipants[0].name}`} alt={sortedParticipants[0].name} className="w-full h-full object-cover" />
               </div>
               <h3 className="font-black text-amber-600 dark:text-amber-400 text-xl truncate w-full">{sortedParticipants[0].name}</h3>
-              <p className="text-amber-500 font-black text-3xl">{sortedParticipants[0].score || 0} <span className="text-sm font-medium">คะแนน</span></p>
+              <p className="text-amber-500 font-black text-3xl">{sortedParticipants[0].score || 0} <span className="text-sm font-medium">{t("lesson.interactive.scoreUnit")}</span></p>
             </div>
           ) : (
             <div className="h-[260px]" />
@@ -521,7 +522,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 <img src={sortedParticipants[2].pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${sortedParticipants[2].name}`} alt={sortedParticipants[2].name} className="w-full h-full object-cover" />
               </div>
               <h3 className="font-bold text-foreground text-base truncate w-full">{sortedParticipants[2].name}</h3>
-              <p className="text-muted-foreground font-black text-xl">{sortedParticipants[2].score || 0} <span className="text-xs font-medium">คะแนน</span></p>
+              <p className="text-muted-foreground font-black text-xl">{sortedParticipants[2].score || 0} <span className="text-xs font-medium">{t("lesson.interactive.scoreUnit")}</span></p>
             </div>
           ) : (
             <div className="h-[180px]" />
@@ -540,7 +541,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                   </div>
                   <span className="font-bold text-foreground">{p.name}</span>
                 </div>
-                <span className="font-black text-muted-foreground text-lg">{p.score || 0} pts</span>
+                <span className="font-black text-muted-foreground text-lg">{p.score || 0} {t("lesson.interactive.scoreUnit")}</span>
               </div>
             ))}
           </div>
@@ -631,15 +632,15 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         <div className="absolute inset-0 z-50 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl animate-in fade-in">
           <div className="bg-card p-8 rounded-2xl shadow-2xl border border-destructive/20 flex flex-col items-center max-w-md text-center">
             <div className="w-16 h-16 bg-destructive/10 text-destructive rounded-full flex items-center justify-center mb-6 text-3xl">
-              ⚠️
+              !
             </div>
-            <h3 className="text-2xl font-bold text-foreground mb-2">นักเรียนออกจากห้องหมดแล้ว</h3>
-            <p className="text-muted-foreground mb-8">ไม่มีนักเรียนเหลืออยู่ในเซสชันนี้เลย คุณครูสามารถกลับไปรอที่ Lobby เพื่อให้นักเรียนเข้ามาใหม่ได้</p>
+            <h3 className="text-2xl font-bold text-foreground mb-2">{t("lesson.interactive.studentsLeftTitle")}</h3>
+            <p className="text-muted-foreground mb-8">{t("lesson.interactive.studentsLeftDescription")}</p>
             <button 
               onClick={() => changePhase(0)}
               className="bg-destructive hover:bg-destructive/90 text-destructive-foreground font-bold py-3 px-8 rounded-xl shadow-lg transition-all active:scale-95 w-full"
             >
-              กลับสู่ Lobby ทันที
+              {t("lesson.interactive.returnLobbyNow")}
             </button>
           </div>
         </div>
@@ -651,7 +652,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       <div className="mt-auto pt-6 border-t border-border flex justify-between items-center">
         <div className="flex items-center gap-4">
           <div className="text-sm text-muted-foreground font-medium">
-            {totalParticipants} Students in class
+            {totalParticipants} {t("lesson.interactive.studentsInClass")}
           </div>
 
           {/* Always Available Return to Lobby */}
@@ -659,7 +660,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             onClick={() => changePhase(0)}
             className="px-3 py-1.5 bg-destructive/10 text-destructive text-sm font-semibold rounded-lg hover:bg-destructive/20 transition-colors ml-2"
           >
-            กลับสู่ Lobby
+            {t("lesson.interactive.returnLobby")}
           </button>
           
           {/* Dev Mode Controls */}
@@ -670,13 +671,13 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 onClick={() => changePhase(Math.max(1, currentPhase - 1))}
                 className="px-3 py-1.5 bg-muted text-muted-foreground text-sm font-semibold rounded-lg hover:bg-accent transition-colors"
               >
-                ย้อนกลับ
+                {t("lesson.interactive.previous")}
               </button>
               <button 
                 onClick={() => changePhase(Math.min(15, currentPhase + 1))}
                 className="px-3 py-1.5 bg-muted text-muted-foreground text-sm font-semibold rounded-lg hover:bg-accent transition-colors"
               >
-                Skip Phase
+                {t("lesson.interactive.skipPhase")}
               </button>
             </div>
           )}
@@ -688,7 +689,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               className="px-3 py-1.5 bg-secondary/10 text-secondary-foreground text-xs font-bold rounded-lg hover:bg-secondary/20 transition-colors flex items-center gap-1"
             >
               <Check size={14} />
-              จบคาบเรียน (เสร็จสิ้น)
+              {t("lesson.interactive.finishLesson")}
             </button>
           </div>
         </div>
@@ -704,18 +705,18 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           {isChangingPhase ? (
             <>
               <div className="animate-spin h-4 w-4 border-2 border-primary-foreground border-t-transparent rounded-full" />
-              Processing...
+              {t("lesson.interactive.processing")}
             </>
           ) : !canProceedDelayed ? (
-            'Waiting for answers...'
+            t("lesson.interactive.waitingAnswers")
           ) : currentPhase === 14 ? (
             <>
-              <span className="flex items-center gap-1">เริ่มรอบใหม่ต่อเนื่อง <kbd className="hidden md:inline-flex bg-primary-foreground/20 text-primary-foreground text-xs px-2 py-0.5 rounded ml-2 shadow-sm font-mono">→</kbd></span>
+              <span className="flex items-center gap-1">{t("lesson.interactive.startNewRound")} <kbd className="hidden md:inline-flex bg-primary-foreground/20 text-primary-foreground text-xs px-2 py-0.5 rounded ml-2 shadow-sm font-mono">→</kbd></span>
               <ChevronRight size={20} />
             </>
           ) : (
             <>
-              <span className="flex items-center gap-1">Next Phase <kbd className="hidden md:inline-flex bg-primary-foreground/20 text-primary-foreground text-xs px-2 py-0.5 rounded ml-2 shadow-sm font-mono">→</kbd></span>
+              <span className="flex items-center gap-1">{t("lesson.interactive.nextPhase")} <kbd className="hidden md:inline-flex bg-primary-foreground/20 text-primary-foreground text-xs px-2 py-0.5 rounded ml-2 shadow-sm font-mono">→</kbd></span>
               <ChevronRight size={20} />
             </>
           )}

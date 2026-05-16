@@ -12,16 +12,17 @@ import {
   Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/i18n";
 import { useState, useEffect } from "react";
 
 const navItems = [
-  { href: "/dashboard", icon: LayoutDashboard, label: "ภาพรวม" },
-  { href: "/dashboard/classes", icon: BookOpen, label: "คลาสเรียน" },
-  { href: "/dashboard/chat", icon: MessageSquare, label: "ข้อความ" },
-  { href: "/dashboard/earnings", icon: BarChart2, label: "รายได้" },
-  { href: "/dashboard/network", icon: GitBranch, label: "เครือข่าย" },
-  { href: "/dashboard/performance", icon: Award, label: "ผลงาน" },
-  { href: "/dashboard/settings", icon: Settings, label: "ตั้งค่า" },
+  { href: "/dashboard", icon: LayoutDashboard, label: t("app.navOverview") },
+  { href: "/dashboard/classes", icon: BookOpen, label: t("app.navClasses") },
+  { href: "/dashboard/chat", icon: MessageSquare, label: t("app.navChat") },
+  { href: "/dashboard/earnings", icon: BarChart2, label: t("app.navEarnings") },
+  { href: "/dashboard/network", icon: GitBranch, label: t("app.navNetwork") },
+  { href: "/dashboard/performance", icon: Award, label: t("app.navPerformance") },
+  { href: "/dashboard/settings", icon: Settings, label: t("app.navSettings") },
 ];
 
 interface BottomNavProps {

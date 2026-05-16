@@ -31,11 +31,12 @@ import {
   TrendingUp,
   FileText,
 } from "lucide-react";
+import { t } from "@/lib/i18n";
 
 export interface SettlementPreview {
   snapshotId: string;
   periodMonth: string;
-  totalPayoutSatang?: number; // มีแค่ตอน preview / approve
+  totalPayoutSatang?: number; // Present only for preview / approve.
   status: string;
   createdBy?: string;
   createdAt?: string;
@@ -54,21 +55,21 @@ const STATUS_CONFIG: Record<
   }
 > = {
   DRAFT: {
-    label: "แบบร่าง — รออนุมัติ",
+    label: t("settlements.draft"),
     variant: "outline",
     icon: ClockIcon,
     className:
       "border-amber-500/40 text-amber-600 dark:text-amber-400 bg-amber-500/10",
   },
   APPROVED: {
-    label: "อนุมัติแล้ว",
+    label: t("settlements.approved"),
     variant: "outline",
     icon: CheckCircle2,
     className:
       "border-emerald-500/40 text-emerald-600 dark:text-emerald-400 bg-emerald-500/10",
   },
   REJECTED: {
-    label: "ถูกปฏิเสธ",
+    label: t("settlements.rejected"),
     variant: "outline",
     icon: XCircle,
     className: "border-red-500/40 text-red-600 dark:text-red-400 bg-red-500/10",
@@ -94,7 +95,7 @@ function CopyableId({ name, id }: { name: string; id: string }) {
         <button
           onClick={handleCopy}
           className="text-muted-foreground hover:text-brand-600 transition-colors"
-          title="คัดลอก ID"
+          title={t("settlements.copyId")}
         >
           {copied ? (
             <Check className="h-3 w-3 text-emerald-500" />
@@ -175,7 +176,7 @@ export default function SettlementsPage() {
       await fetchWithAuth(`/v1/settlements/${result.snapshotId}/approve`, {
         method: "POST",
       });
-      setSuccess("อนุมัติการชำระเงินสำเร็จ และเตรียมโอนเงินเข้าบัญชีติวเตอร์แล้ว");
+      setSuccess(t("settlements.approveSuccess"));
       setResult({ ...result, status: "APPROVED" });
       loadSettlements();
     } catch (error) {
@@ -194,7 +195,7 @@ export default function SettlementsPage() {
       await fetchWithAuth(`/v1/settlements/${result.snapshotId}/reject`, {
         method: "POST",
       });
-      setSuccess("ปฏิเสธการชำระเงินเรียบร้อย กรุณาตรวจสอบและสร้างรายการใหม่");
+      setSuccess(t("settlements.rejectSuccess"));
       setResult({ ...result, status: "REJECTED" });
       loadSettlements();
     } catch (error) {
@@ -212,7 +213,7 @@ export default function SettlementsPage() {
         method: "POST",
       });
       setSuccess(
-        `ดำเนินการ ${action === "approve" ? "อนุมัติ" : "ปฏิเสธ"} สำเร็จ`,
+        `${t("settlements.actionSuccessPrefix")} ${action === "approve" ? t("settlements.approveAction") : t("settlements.rejectAction")} ${t("settlements.successSuffix")}`,
       );
       loadSettlements();
       if (result?.snapshotId === id) {
@@ -234,7 +235,7 @@ export default function SettlementsPage() {
     try {
       const blob = await fetchBlobWithAuth(`/v1/settlements/${id}/export`);
       downloadBlob(blob, `settlement-${periodMonth}-${id.slice(0, 8)}.csv`);
-      setSuccess("ส่งออกเป็น CSV สำเร็จ");
+      setSuccess(t("settlements.exportSuccess"));
     } catch (error) {
       const err = error as Error;
       setError(err.message);
@@ -255,7 +256,7 @@ export default function SettlementsPage() {
         blob,
         `settlement-${result.periodMonth}-${result.snapshotId.slice(0, 8)}.csv`,
       );
-      setSuccess("ส่งออกเป็น CSV สำเร็จ");
+      setSuccess(t("settlements.exportSuccess"));
     } catch (error) {
       const err = error as Error;
       setError(err.message);
@@ -275,8 +276,8 @@ export default function SettlementsPage() {
   return (
     <div className="space-y-8 max-w-5xl mx-auto w-full animate-in fade-in duration-500">
       <div className="flex flex-col gap-2">
-        <h2 className="text-3xl font-black tracking-tight text-foreground">จัดการการชำระเงิน (Settlements)</h2>
-        <p className="text-muted-foreground font-medium">จัดการรอบบิลและรายได้ของติวเตอร์</p>
+        <h2 className="text-3xl font-black tracking-tight text-foreground">{t("settlements.title")}</h2>
+        <p className="text-muted-foreground font-medium">{t("settlements.description")}</p>
       </div>
 
       {/* Run Preview Card */}
@@ -288,9 +289,9 @@ export default function SettlementsPage() {
                 <PlayCircle className="h-6 w-6" />
               </div>
               <div>
-                <CardTitle className="text-xl font-bold">คำนวณรอบบิล</CardTitle>
+                <CardTitle className="text-xl font-bold">{t("settlements.calculatePeriod")}</CardTitle>
                 <CardDescription className="font-medium">
-                  ดูตัวอย่างและคำนวณรายได้สำหรับติวเตอร์ตามบันทึกการทำงาน
+                  {t("settlements.calculateDescription")}
                 </CardDescription>
               </div>
             </div>
@@ -298,7 +299,7 @@ export default function SettlementsPage() {
           <CardContent>
             <div className="flex flex-col sm:flex-row gap-4 items-end bg-card p-6 rounded-2xl border border-brand-100/50 shadow-sm">
               <div className="space-y-2 w-full sm:w-auto flex-1">
-                <Label htmlFor="period" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">รอบบิล (เดือน/ปี)</Label>
+                <Label htmlFor="period" className="text-xs font-bold uppercase tracking-widest text-muted-foreground ml-1">{t("settlements.periodLabel")}</Label>
                 <Input
                   id="period"
                   type="month"
@@ -317,7 +318,7 @@ export default function SettlementsPage() {
                 ) : (
                   <>
                     <ReceiptText className="h-5 w-5 mr-2" />
-                    สร้างตัวอย่างรายการ
+                    {t("settlements.createPreview")}
                   </>
                 )}
               </Button>
@@ -332,14 +333,14 @@ export default function SettlementsPage() {
           {error && (
             <Alert variant="destructive" className="rounded-2xl border-2 shadow-md">
               <AlertCircle className="h-5 w-5" />
-              <AlertTitle className="font-bold">เกิดข้อผิดพลาด</AlertTitle>
+              <AlertTitle className="font-bold">{t("settlements.errorTitle")}</AlertTitle>
               <AlertDescription className="font-medium">{error}</AlertDescription>
             </Alert>
           )}
           {success && (
             <Alert className="rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/5 shadow-md">
               <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-              <AlertTitle className="font-bold text-emerald-700">ดำเนินการสำเร็จ</AlertTitle>
+              <AlertTitle className="font-bold text-emerald-700">{t("settlements.successTitle")}</AlertTitle>
               <AlertDescription className="font-medium text-emerald-700/80">{success}</AlertDescription>
             </Alert>
           )}
@@ -355,7 +356,7 @@ export default function SettlementsPage() {
                 <FileText className="h-6 w-6" />
               </div>
               <div>
-                <CardTitle className="text-lg font-bold">ผลการคำนวณ</CardTitle>
+                <CardTitle className="text-lg font-bold">{t("settlements.calculationResult")}</CardTitle>
                 <div className="mt-1 font-mono text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded uppercase tracking-tighter">
                   ID: {result.snapshotId}
                 </div>
@@ -375,7 +376,7 @@ export default function SettlementsPage() {
           <CardContent className="px-8 py-12">
             <div className="flex flex-col items-center justify-center gap-6">
               <div className="text-center space-y-2">
-                <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em]">ยอดเงินที่ต้องชำระรวม</p>
+                <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em]">{t("settlements.totalPayout")}</p>
                 <p className="text-6xl font-black text-foreground tabular-nums tracking-tighter">
                   {((result.totalPayoutSatang ?? 0) / 100).toLocaleString(
                     "th-TH",
@@ -389,12 +390,12 @@ export default function SettlementsPage() {
               
               <div className="grid grid-cols-2 gap-8 w-full max-w-md pt-8 border-t border-dashed">
                 <div className="text-center">
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">รอบบิล</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("settlements.period")}</p>
                   <p className="text-lg font-bold text-foreground">{result.periodMonth}</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">จำนวนผู้รับเงิน</p>
-                  <p className="text-lg font-bold text-foreground">{result.payoutLineCount || "0"} คน</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("settlements.payeeCount")}</p>
+                  <p className="text-lg font-bold text-foreground">{result.payoutLineCount || "0"} {t("settlements.personUnit")}</p>
                 </div>
               </div>
             </div>
@@ -404,8 +405,7 @@ export default function SettlementsPage() {
             <div className="flex items-start gap-3 max-w-sm">
               <ShieldCheck className="h-5 w-5 text-brand-600 dark:text-brand-400 shrink-0 mt-0.5" />
               <p className="text-xs font-medium text-muted-foreground leading-relaxed">
-                การรักษาความปลอดภัย: การชำระเงินต้องได้รับการอนุมัติโดยระบบ <strong>Maker-Checker</strong> 
-                หลังจากอนุมัติแล้ว บัญชีจะไม่สามารถแก้ไขได้
+                {t("settlements.securityNotice")}
               </p>
             </div>
             
@@ -418,7 +418,7 @@ export default function SettlementsPage() {
                 className="flex-1 md:flex-none h-12 rounded-xl font-bold border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-700"
               >
                 <XCircle className="h-5 w-5 mr-2" />
-                ปฏิเสธ
+                {t("settlements.rejectAction")}
               </Button>
               {/* Approve Button */}
               <Button
@@ -429,12 +429,12 @@ export default function SettlementsPage() {
                 {isApproved ? (
                    <>
                     <CheckCircle2 className="h-5 w-5 mr-2" />
-                    อนุมัติแล้ว
+                    {t("settlements.approved")}
                   </>
                 ) : (
                   <>
                     <TrendingUp className="h-5 w-5 mr-2" />
-                    อนุมัติ & โอนเงิน
+                    {t("settlements.approveAndTransfer")}
                   </>
                 )}
               </Button>
@@ -447,7 +447,7 @@ export default function SettlementsPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center gap-2">
-            <h3 className="text-xl font-bold text-foreground">ประวัติการชำระเงิน</h3>
+            <h3 className="text-xl font-bold text-foreground">{t("settlements.history")}</h3>
             <Badge variant="secondary" className="rounded-full font-bold">{list.length}</Badge>
           </div>
           <Button
@@ -458,14 +458,14 @@ export default function SettlementsPage() {
             className="rounded-full hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-brand-600 dark:hover:text-brand-400"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${listLoading ? "animate-spin" : ""}`} />
-            รีเฟรช
+            {t("settlements.refresh")}
           </Button>
         </div>
 
         {list.length === 0 && !listLoading && (
           <div className="flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
             <ReceiptText className="h-12 w-12 text-muted-foreground/30 mb-4" />
-            <p className="font-bold text-muted-foreground">ไม่พบประวัติการชำระเงิน</p>
+            <p className="font-bold text-muted-foreground">{t("settlements.emptyHistory")}</p>
           </div>
         )}
 
@@ -497,10 +497,10 @@ export default function SettlementsPage() {
                         </div>
                         <div className="flex items-center gap-4 mt-1">
                            <p className="text-xs font-medium text-muted-foreground">
-                            สร้างเมื่อ: <span className="font-bold text-foreground">{new Date(run.createdAt || "").toLocaleDateString("th-TH")}</span>
+                            {t("settlements.createdAtPrefix")} <span className="font-bold text-foreground">{new Date(run.createdAt || "").toLocaleDateString("th-TH")}</span>
                           </p>
                           <p className="text-xs font-medium text-muted-foreground">
-                            รายการ: <span className="font-bold text-foreground">{run.payoutLineCount || 0}</span>
+                            {t("settlements.itemPrefix")} <span className="font-bold text-foreground">{run.payoutLineCount || 0}</span>
                           </p>
                         </div>
                       </div>
@@ -528,7 +528,7 @@ export default function SettlementsPage() {
                             onClick={() => handleListAction(run.snapshotId, "approve")}
                             className="h-10 px-4 rounded-xl font-bold bg-brand-600 shadow-md shadow-brand-500/10"
                           >
-                            อนุมัติ
+                            {t("settlements.approveAction")}
                           </Button>
                         )}
                       </div>

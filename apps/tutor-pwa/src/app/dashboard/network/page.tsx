@@ -9,6 +9,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InviteLinkCard } from "./invite-link-card";
 import { InteractiveNetwork } from "./interactive-network";
+import { t } from "@/lib/i18n";
 
 type TutorSummary = {
   userId: string;
@@ -64,6 +65,14 @@ function formatTHB(value: number) {
   return value.toLocaleString("th-TH", { maximumFractionDigits: 0 });
 }
 
+function formatCurrencyTHB(value: number) {
+  return value.toLocaleString("th-TH", {
+    style: "currency",
+    currency: "THB",
+    maximumFractionDigits: 0,
+  });
+}
+
 function formatPercent(value: number) {
   return `${Math.round(value * 100)}%`;
 }
@@ -99,9 +108,9 @@ export default async function NetworkPage() {
     <div className="max-w-5xl mx-auto space-y-6 lg:space-y-8 pb-20 sm:pb-0">
       <div className="flex flex-col gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">เครือข่าย</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t("dashboardNetwork.title")}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            ภาพรวมสายงาน tutor และยอดขายที่ใช้คำนวณ differential payout เดือน{" "}
+            {t("dashboardNetwork.subtitlePrefix")}{" "}
             {response?.periodMonth || "-"}
           </p>
         </div>
@@ -113,22 +122,22 @@ export default async function NetworkPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <MetricCard
           icon={Users}
-          label="สายตรง"
+          label={t("dashboardNetwork.direct")}
           value={summary.directDownlines.toLocaleString("th-TH")}
         />
         <MetricCard
           icon={GitBranch}
-          label="ทั้งเครือข่าย"
+          label={t("dashboardNetwork.totalNetwork")}
           value={summary.totalDownlines.toLocaleString("th-TH")}
         />
         <MetricCard
           icon={UserRoundCheck}
-          label="มี volume เดือนนี้"
+          label={t("dashboardNetwork.activeThisMonth")}
           value={summary.activeDownlines.toLocaleString("th-TH")}
         />
         <MetricCard
           icon={TrendingUp}
-          label="เรทปัจจุบัน"
+          label={t("dashboardNetwork.currentRate")}
           value={formatPercent(summary.currentRate)}
         />
       </div>
@@ -138,14 +147,14 @@ export default async function NetworkPage() {
           <Card className="border-border/60 shadow-sm h-full flex flex-col">
             <CardHeader>
               <CardTitle className="text-base font-semibold">
-                Volume และ payout
+                {t("dashboardNetwork.volumeAndPayout")}
               </CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4 sm:grid-cols-3 flex-1 items-center">
-              <AmountBlock label="PV ส่วนตัว" value={summary.personalVolumeTHB} />
-              <AmountBlock label="GV เครือข่าย" value={summary.groupVolumeTHB} />
+              <AmountBlock label={t("dashboardNetwork.personalVolume")} value={summary.personalVolumeTHB} />
+              <AmountBlock label={t("dashboardNetwork.groupVolume")} value={summary.groupVolumeTHB} />
               <AmountBlock
-                label="payout ประมาณการ"
+                label={t("dashboardNetwork.estimatedPayout")}
                 value={summary.estimatedPayoutTHB}
               />
             </CardContent>
@@ -157,11 +166,11 @@ export default async function NetworkPage() {
           <Card className="border-border/60 shadow-sm h-full flex flex-col divide-y divide-border/40">
             {/* Section 1: Sponsor */}
             <div className="p-4">
-              <h3 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">ผู้แนะนำ</h3>
+              <h3 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wider">{t("dashboardNetwork.sponsor")}</h3>
               {response?.sponsor ? (
                 <TutorLine tutor={response.sponsor} />
               ) : (
-                <p className="text-xs text-muted-foreground">ไม่มีผู้แนะนำ</p>
+                <p className="text-xs text-muted-foreground">{t("dashboardNetwork.noSponsor")}</p>
               )}
             </div>
 
@@ -179,7 +188,7 @@ export default async function NetworkPage() {
                     </div>
                   ))
                 ) : (
-                  <p className="text-xs text-muted-foreground">ไม่มี upline</p>
+                  <p className="text-xs text-muted-foreground">{t("dashboardNetwork.noUpline")}</p>
                 )}
               </div>
             </div>
@@ -192,7 +201,7 @@ export default async function NetworkPage() {
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base font-semibold">
             <GitBranch className="h-4 w-4 text-primary" />
-            โครงสร้างเครือข่าย
+            {t("dashboardNetwork.networkStructure")}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0 sm:p-0">
@@ -203,7 +212,7 @@ export default async function NetworkPage() {
           ) : (
             <div className="p-6">
               <div className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-                ยังไม่มี tutor ในสายตรง
+                {t("dashboardNetwork.emptyDirectTutors")}
               </div>
             </div>
           )}
@@ -247,7 +256,7 @@ function AmountBlock({ label, value }: { label: string; value: number }) {
     <div className="rounded-lg border border-border/60 bg-background/50 p-4">
       <p className="text-xs text-muted-foreground">{label}</p>
       <p className="mt-2 text-xl font-bold text-foreground">
-        ฿{formatTHB(value)}
+        {formatCurrencyTHB(value)}
       </p>
     </div>
   );
@@ -264,7 +273,7 @@ function TutorLine({ tutor }: { tutor: TutorSummary }) {
         {tutor.email || tutor.userId}
       </p>
       <p className="mt-1 text-xs text-muted-foreground">
-        locked {formatDate(tutor.sponsorLockedAt)}
+        {t("dashboardNetwork.lockedPrefix")} {formatDate(tutor.sponsorLockedAt)}
       </p>
     </div>
   );

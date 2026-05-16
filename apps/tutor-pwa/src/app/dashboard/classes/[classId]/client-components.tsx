@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { t } from "@/lib/i18n";
 import {
   Trash2,
   QrCode,
@@ -65,17 +66,17 @@ export function ClassStatusToggle({
 
   const statusMap = {
     open: {
-      label: "รับสมัครอยู่",
+      label: t("tutorClass.classes.statusOpen"),
       className:
         "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
     },
     full: {
-      label: "เต็มแล้ว",
+      label: t("tutorClass.classes.statusFull"),
       className:
         "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
     },
     closed: {
-      label: "ปิดแล้ว",
+      label: t("tutorClass.classes.statusClosed"),
       className: "bg-muted text-muted-foreground border-border",
     },
   } as Record<string, { label: string; className: string }>;
@@ -94,16 +95,16 @@ export function ClassStatusToggle({
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => handleStatusChange("open")}>
           <span className="text-emerald-600 dark:text-emerald-400 font-medium">
-            รับสมัครอยู่
+            {t("tutorClass.classes.statusOpen")}
           </span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleStatusChange("full")}>
           <span className="text-amber-600 dark:text-amber-400 font-medium">
-            เต็มแล้ว
+            {t("tutorClass.classes.statusFull")}
           </span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleStatusChange("closed")}>
-          <span className="text-muted-foreground font-medium">ปิดแล้ว</span>
+          <span className="text-muted-foreground font-medium">{t("tutorClass.classes.statusClosed")}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -125,7 +126,7 @@ export function ReferralLink({ referralLink }: { referralLink: string }) {
         <CardTitle className="text-sm font-semibold flex items-center justify-between">
           <div className="flex items-center gap-2">
             <QrCode className="h-4 w-4 text-primary" />
-            ลิงก์เชิญนักเรียน (Referral)
+            {t("tutorClass.detail.referralTitle")}
           </div>
 
           <Dialog>
@@ -137,15 +138,15 @@ export function ReferralLink({ referralLink }: { referralLink: string }) {
                   className="h-7 px-2 text-xs gap-1.5 text-primary hover:text-primary hover:bg-primary/10"
                 >
                   <QrCode className="h-3.5 w-3.5" />
-                  โชว์ QR Code
+                  {t("tutorClass.detail.showQr")}
                 </Button>
               }
             />
             <DialogContent className="sm:max-w-sm">
               <DialogHeader>
-                <DialogTitle>QR Code สำหรับโอนเงินสมัคร</DialogTitle>
+                <DialogTitle>{t("tutorClass.detail.qrTitle")}</DialogTitle>
                 <DialogDescription>
-                  สแกนเพื่อเข้าสู่หน้าชำระเงินของคลาสนี้โดยตรง
+                  {t("tutorClass.detail.qrDescription")}
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col items-center justify-center p-4 space-y-6">
@@ -168,7 +169,7 @@ export function ReferralLink({ referralLink }: { referralLink: string }) {
                     ) : (
                       <Copy className="h-4 w-4" />
                     )}
-                    {copied ? "คัดลอกลิงก์แล้ว" : "คัดลอกลิงก์"}
+                    {copied ? t("tutorClass.detail.copied") : t("tutorClass.detail.copy")}
                   </Button>
                 </div>
               </div>
@@ -196,7 +197,7 @@ export function ReferralLink({ referralLink }: { referralLink: string }) {
           </button>
         </div>
         <p className="text-xs text-muted-foreground">
-          แชร์ลิงก์นี้ให้ผู้ปกครองสมัครและชำระเงินผ่าน LINE ได้ทันที
+          {t("tutorClass.detail.referralHelp")}
         </p>
       </CardContent>
     </Card>
@@ -222,7 +223,7 @@ export function ArticleSelector({ classId }: { classId: string }) {
         }
       } catch (err: any) {
         console.error(err);
-        setError("ไม่สามารถโหลดรายชื่อบทความได้");
+        setError(t("tutorClass.detail.articleLoadFailed"));
       } finally {
         setFetching(false);
       }
@@ -243,10 +244,10 @@ export function ArticleSelector({ classId }: { classId: string }) {
           <span className="p-1.5 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
             <BookOpen className="h-4.5 w-4.5" />
           </span>
-          เลือกบทความ (Select Article)
+          {t("tutorClass.detail.articleTitle")}
         </CardTitle>
         <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-          เลือกบทความที่จะใช้สร้างห้องเรียน Interactive ในวันนี้
+          {t("tutorClass.detail.articleDescription")}
         </p>
       </CardHeader>
 
@@ -256,7 +257,7 @@ export function ArticleSelector({ classId }: { classId: string }) {
             <div className="py-24 flex flex-col items-center justify-center text-center gap-2">
               <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
               <p className="text-xs text-muted-foreground font-medium">
-                กำลังโหลดรายการบทความ...
+                {t("tutorClass.detail.articleLoading")}
               </p>
             </div>
           ) : error ? (
@@ -266,7 +267,7 @@ export function ArticleSelector({ classId }: { classId: string }) {
           ) : articles.length === 0 ? (
             <div className="py-24 flex flex-col items-center justify-center text-center gap-2">
               <p className="text-xs text-muted-foreground font-medium">
-                ไม่พบบทความสำหรับหนังสือเล่มนี้
+                {t("tutorClass.detail.articleEmpty")}
               </p>
             </div>
           ) : (
@@ -290,12 +291,12 @@ export function ArticleSelector({ classId }: { classId: string }) {
                 <div className="pl-2.5">
                   <div className="flex items-center gap-2 mb-1.5">
                     <span className="text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground px-2 py-0.5 rounded-md border border-border/40">
-                      บทที่ {idx + 1}
+                      {t("tutorClass.detail.chapterPrefix")} {idx + 1}
                     </span>
                     {article.isCompleted && (
                       <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 flex items-center gap-1">
                         <div className="w-1 h-1 rounded-full bg-emerald-500" />
-                        สอนแล้ว
+                        {t("tutorClass.detail.taught")}
                       </span>
                     )}
                     {article.cefrLevel && (
@@ -326,7 +327,7 @@ export function ArticleSelector({ classId }: { classId: string }) {
             disabled={!selectedArticle || loading || fetching}
             onClick={handleStartLesson}
           >
-            {loading ? "กำลังสร้างห้องเรียน..." : "สร้างห้องเรียน & เริ่มสอน"}
+            {loading ? t("tutorClass.detail.creatingRoom") : t("tutorClass.detail.createRoom")}
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
@@ -349,7 +350,7 @@ export function DeleteClassButton({ classId }: { classId: string }) {
       router.refresh();
     } catch (error: any) {
       console.error(error);
-      alert(error.message || "Delete failed");
+      alert(error.message || t("tutorClass.detail.deleteFailed"));
     } finally {
       setLoading(false);
     }
@@ -369,7 +370,7 @@ export function DeleteClassButton({ classId }: { classId: string }) {
             }}
           >
             <span className="text-[10px] font-bold uppercase tracking-wider opacity-70">
-              Dev Only
+              {t("tutorClass.detail.devOnly")}
             </span>
             <Trash2 className="h-3.5 w-3.5" />
           </Button>
@@ -377,11 +378,11 @@ export function DeleteClassButton({ classId }: { classId: string }) {
       />
       <DialogContent onClick={(e) => e.stopPropagation()}>
         <DialogHeader>
-          <DialogTitle>ยืนยันการลบคลาส?</DialogTitle>
+          <DialogTitle>{t("tutorClass.detail.deleteTitle")}</DialogTitle>
           <DialogDescription>
-            การดำเนินการนี้จะลบข้อมูลคลาส นักเรียน
-            และรายการชำระเงินทั้งหมดที่เกี่ยวข้องถาวรคลาสนี้ (เฉพาะโหมด DEV
-            เท่านั้น)
+            {t("tutorClass.detail.deleteDescription1")}
+            {t("tutorClass.detail.deleteDescription2")}
+            {t("tutorClass.detail.deleteDescription3")}
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4">
@@ -390,14 +391,14 @@ export function DeleteClassButton({ classId }: { classId: string }) {
             onClick={() => setOpen(false)}
             disabled={loading}
           >
-            ยกเลิก
+            {t("tutorClass.detail.cancel")}
           </Button>
           <Button
             variant="destructive"
             onClick={handleDelete}
             disabled={loading}
           >
-            {loading ? "กำลังลบ..." : "ยืนยันลบถาวร"}
+            {loading ? t("tutorClass.detail.deleting") : t("tutorClass.detail.confirmDelete")}
           </Button>
         </div>
       </DialogContent>
@@ -424,7 +425,7 @@ export function MeetingUrlEditor({
       setOpen(false);
       router.refresh();
     } catch (error: any) {
-      alert(error.message || "Failed to update URL");
+      alert(error.message || t("tutorClass.detail.updateMeetingFailed"));
     } finally {
       setLoading(false);
     }
@@ -440,10 +441,10 @@ export function MeetingUrlEditor({
             </div>
             <div className="min-w-0">
               <p className="text-sm font-bold text-foreground">
-                ห้องเรียนออนไลน์
+                {t("tutorClass.detail.onlineRoom")}
               </p>
               <p className="text-xs text-muted-foreground truncate">
-                {initialUrl || "ยังไม่ได้ระบุลิงก์"}
+                {initialUrl || t("tutorClass.detail.missingMeetingUrl")}
               </p>
             </div>
           </div>
@@ -456,20 +457,20 @@ export function MeetingUrlEditor({
                     size="sm"
                     className="flex-1 h-10 px-3 text-xs bg-background font-medium"
                   >
-                    แก้ไขลิงก์
+                    {t("tutorClass.detail.editLink")}
                   </Button>
                 }
               />
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>แก้ไขลิงก์ห้องเรียน</DialogTitle>
+                  <DialogTitle>{t("tutorClass.detail.editMeetingTitle")}</DialogTitle>
                   <DialogDescription>
-                    ระบุลิงก์ Google Meet หรือ Zoom สำหรับใช้ในคลาสนี้
+                    {t("tutorClass.detail.editMeetingDescription")}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                   <div className="space-y-2">
-                    <Label htmlFor="url">ลิงก์ห้องเรียน (URL)</Label>
+                    <Label htmlFor="url">{t("tutorClass.detail.meetingUrlLabel")}</Label>
                     <Input
                       id="url"
                       placeholder="https://meet.google.com/xxx-xxxx-xxx"
@@ -484,10 +485,10 @@ export function MeetingUrlEditor({
                     onClick={() => setOpen(false)}
                     disabled={loading}
                   >
-                    ยกเลิก
+                    {t("tutorClass.detail.cancel")}
                   </Button>
                   <Button onClick={handleUpdate} disabled={loading || !url}>
-                    {loading ? "กำลังบันทึก..." : "บันทึกการเปลี่ยนแปลง"}
+                    {loading ? t("tutorClass.detail.saving") : t("tutorClass.detail.save")}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -505,7 +506,7 @@ export function MeetingUrlEditor({
                   size="sm"
                   className="w-full h-10 gap-2 shrink-0 font-medium"
                 >
-                  เข้าห้องเรียน <ExternalLink className="h-3.5 w-3.5" />
+                  {t("tutorClass.detail.enterRoom")} <ExternalLink className="h-3.5 w-3.5" />
                 </Button>
               </a>
             )}
@@ -530,12 +531,12 @@ export function FeatureLessonButton({
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-bold flex items-center gap-2 text-primary">
           <Sparkles className="h-4 w-4" />
-          Interactive Feature Lesson
+          {t("tutorClass.detail.lessonFeatureTitle")}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-xs text-muted-foreground">
-          เริ่มกิจกรรมแบบ Kahoot! ให้นักเรียนมีส่วนร่วมผ่านมือถือแบบ Real-time
+          {t("tutorClass.detail.interactiveDescription")}
         </p>
         <Button
           className="w-full gap-2 font-bold"
@@ -543,7 +544,7 @@ export function FeatureLessonButton({
             router.push(`/lesson/${classId}/interactive?articleId=${articleId}`)
           }
         >
-          เริ่มสอนตอนนี้เลย
+          {t("tutorClass.detail.startTeaching")}
           <ChevronRight className="h-4 w-4" />
         </Button>
       </CardContent>
@@ -601,12 +602,12 @@ export function StudentAvatars({
                   {s.name}
                 </p>
                 <p className="text-[10px] text-muted-foreground mt-0.5">
-                  สมัครเมื่อ: {s.enrolled}
+                  {t("tutorClass.detail.enrolledAtPrefix")} {s.enrolled}
                 </p>
                 <p
                   className={`text-[10px] font-bold uppercase tracking-wider mt-1.5 flex items-center justify-center gap-1 ${s.paid ? "text-emerald-500" : "text-orange-500"}`}
                 >
-                  {s.paid ? "✓ ชำระเงินแล้ว" : "ยังไม่ชำระเงิน"}
+                  {s.paid ? t("tutorClass.detail.paid") : t("tutorClass.detail.unpaid")}
                 </p>
               </div>
               {/* Small Tooltip Triangle */}

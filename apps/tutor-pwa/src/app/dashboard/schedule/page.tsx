@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import ScheduleClient from "./schedule-client";
+import { t } from "@/lib/i18n";
 
 async function getClassesData(token: string) {
   const res = await fetch("http://localhost:3002/v1/classes", {
@@ -21,9 +22,9 @@ export default async function SchedulePage() {
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">ตารางสอน</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("dashboardSchedule.title")}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            มุมมองปฏิทินการสอนและนัดหมายทั้งหมดของคุณ
+            {t("dashboardSchedule.subtitle")}
           </p>
         </div>
       </div>

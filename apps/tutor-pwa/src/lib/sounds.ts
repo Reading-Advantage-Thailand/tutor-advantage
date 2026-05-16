@@ -104,6 +104,6 @@ export function playSound(name: SoundName): void {
         break;
     }
   } catch {
-    // Silently fail — audio is enhancement only
+    // Silently fail - audio is enhancement only
   }
 }

@@ -6,6 +6,7 @@ import { studentApi } from "@/lib/api";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, CheckCircle2, XCircle, MessageSquare, Award, Trophy } from "lucide-react";
+import { t } from "@/lib/i18n";
 
 interface Answer {
   phase: number;
@@ -48,7 +49,7 @@ export default function LessonHistoryDetailPage() {
           setDetail(data);
         } catch (err: unknown) {
           const errorMessage = err instanceof Error ? err.message : "Unknown error occurred";
-          setError(errorMessage || "ไม่สามารถโหลดข้อมูลประวัติได้");
+          setError(errorMessage || t("lessonHistory.detailLoadFailed"));
         } finally {
           setLoading(false);
         }
@@ -68,11 +69,11 @@ export default function LessonHistoryDetailPage() {
   if (error || !detail) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8 text-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
-        <div className="text-5xl mb-4">⚠️</div>
-        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">เกิดข้อผิดพลาด</h2>
-        <p className="text-slate-600 dark:text-slate-400 text-sm mb-8 max-w-xs">{error || "ไม่พบข้อมูลที่ต้องการ"}</p>
+        <XCircle className="w-12 h-12 text-rose-500 mb-4" />
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{t("lessonHistory.errorTitle")}</h2>
+        <p className="text-slate-600 dark:text-slate-400 text-sm mb-8 max-w-xs">{error || t("lessonHistory.detailNotFound")}</p>
         <Button onClick={() => router.back()} variant="outline" className="rounded-xl dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
-          ย้อนกลับ
+          {t("lessonHistory.back")}
         </Button>
       </div>
     );
@@ -87,7 +88,7 @@ export default function LessonHistoryDetailPage() {
         <button onClick={() => router.back()} className="p-2 -ml-2 active:scale-95 active:bg-slate-100 dark:active:bg-slate-700 rounded-lg transition-all duration-200">
           <ChevronLeft className="w-5 h-5 text-slate-700 dark:text-slate-300" />
         </button>
-        <h1 className="text-base font-bold text-slate-800 dark:text-white truncate">สรุปผลการเรียน</h1>
+        <h1 className="text-base font-bold text-slate-800 dark:text-white truncate">{t("lessonHistory.summaryTitle")}</h1>
       </div>
 
       {/* Header Profile Banner */}
@@ -110,7 +111,7 @@ export default function LessonHistoryDetailPage() {
 
           {/* Tutor Info */}
           <p className="text-emerald-50 dark:text-emerald-100 text-xs sm:text-sm font-semibold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 mb-6">
-            <span>👨‍🏫 ครู {session.tutorName}</span>
+            <span>{t("lessonHistory.tutorPrefix")} {session.tutorName}</span>
             <span className="hidden sm:inline w-1 h-1 bg-emerald-200/60 dark:bg-emerald-300/40 rounded-full"></span>
             <span>📅 {new Date(session.date).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
           </p>
@@ -145,17 +146,17 @@ export default function LessonHistoryDetailPage() {
         <div className="flex items-center justify-between mb-2 px-1">
           <h3 className="text-sm sm:text-base font-bold text-slate-800 dark:text-white flex items-center gap-2">
             <Award className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-            ผลการตอบคำถามรายข้อ
+            {t("lessonHistory.answerSection")}
           </h3>
           <span className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
-            {answers.length} ข้อ
+            {answers.length} {t("lessonHistory.questionUnit")}
           </span>
         </div>
 
         {/* Empty State */}
         {answers.length === 0 ? (
           <Card className="p-8 text-center bg-white dark:bg-slate-800 border-0 shadow-md rounded-2xl transition-colors duration-300">
-            <p className="text-sm text-slate-400 dark:text-slate-500 font-medium">ไม่พบรายการบันทึกคำตอบ</p>
+            <p className="text-sm text-slate-400 dark:text-slate-500 font-medium">{t("lessonHistory.emptyAnswers")}</p>
           </Card>
         ) : (
           /* Answers List */
@@ -181,14 +182,14 @@ export default function LessonHistoryDetailPage() {
                 <div className="p-4 sm:p-6">
                   {/* Question */}
                   <p className="text-slate-800 dark:text-slate-100 font-bold text-base sm:text-lg leading-relaxed mb-6">
-                    ❓ {a.question || "คำถามไม่มีข้อความระบุ"}
+                    {a.question || t("lessonHistory.questionFallback")}
                   </p>
 
                   {/* Student's Answer Section */}
                   <div className="grid gap-4 sm:gap-5">
                     {(() => {
-                      const rawAnswer = a.answer || "ไม่ได้ระบุ";
-                      const match = rawAnswer.match(/^ตัวเลือก\s+([A-Z]):\s*(.+)$/i) || rawAnswer.match(/^([A-D])\s*:\s*(.+)$/i);
+                      const rawAnswer = a.answer || t("lessonHistory.unspecified");
+                      const match = rawAnswer.match(new RegExp(`^${t("lessonHistory.optionPrefix")}\\s+([A-Z]):\\s*(.+)$`, "i")) || rawAnswer.match(/^([A-D])\s*:\s*(.+)$/i);
                       
                       const displayLabel = match ? match[1].toUpperCase() : null;
                       const displayText = match ? match[2] : rawAnswer;
@@ -224,7 +225,7 @@ export default function LessonHistoryDetailPage() {
                                   ? 'text-emerald-700 dark:text-emerald-400' 
                                   : 'text-rose-700 dark:text-rose-400'
                               }`}>
-                                คำตอบของคุณ
+                                {t("lessonHistory.yourAnswer")}
                               </span>
                               <p className={`text-base sm:text-lg font-bold leading-snug ${
                                 a.isCorrect 
@@ -255,7 +256,7 @@ export default function LessonHistoryDetailPage() {
                             <Award className="w-5 h-5 sm:w-6 sm:h-6 text-amber-700 dark:text-amber-200" />
                           </div>
                           <div>
-                            <span className="block text-xs font-extrabold text-amber-700 dark:text-amber-400 tracking-widest mb-1 uppercase">คำตอบที่ถูกต้อง</span>
+                            <span className="block text-xs font-extrabold text-amber-700 dark:text-amber-400 tracking-widest mb-1 uppercase">{t("lessonHistory.correctAnswer")}</span>
                             <p className="text-sm sm:text-base font-bold text-amber-900 dark:text-amber-100">
                               {a.correctAnswer}
                             </p>

@@ -1,3 +1,5 @@
+import { t } from "./i18n";
+
 export const FINANCE_API_URL =
   process.env.NEXT_PUBLIC_FINANCE_API_URL || "http://localhost:3003";
 
@@ -26,7 +28,7 @@ function getErrorMessage(data: unknown) {
     }
   }
 
-  return "Something went wrong";
+  return t("api.genericError");
 }
 
 export async function fetchWithAuth(url: string, options: RequestInit = {}) {
@@ -53,7 +55,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     headers,
   });
 
-  // Token หมดอายุหรือไม่มีสิทธิ์ → redirect กลับ login
+  // Redirect expired or unauthorized sessions back to login.
   if (response.status === 401) {
     if (typeof window !== "undefined") {
       localStorage.clear();
@@ -64,7 +66,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
       }
       window.location.href = "/login";
     }
-    throw new Error("Session หมดอายุ กรุณา login ใหม่");
+    throw new Error(t("api.sessionExpiredThai"));
   }
 
   const isJson = response.headers
@@ -106,7 +108,7 @@ export async function fetchBlobWithAuth(
       }
       window.location.href = "/login";
     }
-    throw new Error("Session expired. Please sign in again.");
+    throw new Error(t("api.sessionExpiredEnglish"));
   }
 
   if (!response.ok) {

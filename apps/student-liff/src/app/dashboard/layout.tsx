@@ -1,7 +1,8 @@
 import { BottomNav } from "@/components/layout/BottomNav";
+import { t } from "@/lib/i18n";
 
 export const metadata = {
-  title: "หน้าหลัก — Tutor Advantage",
+  title: t("app.dashboardTitle"),
 };
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

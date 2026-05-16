@@ -9,17 +9,18 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { BookOpen, CreditCard, Calendar, Bell, Shield, Users, MessageCircle, FileText, ChevronRight, LogOut, Palette } from "lucide-react";
+import { t } from "@/lib/i18n";
 
 export default function ProfilePage() {
   const { liff, profile, isReady } = useLiff();
   const router = useRouter();
 
   const student = {
-    name: profile?.displayName || "กำลังโหลด...",
+    name: profile?.displayName || t("dashboard.loadingName"),
     avatar: profile?.pictureUrl || null,
     initials: profile?.displayName?.charAt(0) || "TA",
     userId: profile?.userId || "...",
-    joinedAt: "มีนาคม 2026",
+    joinedAt: t("profile.joinedAt"),
     level: "Origins 2",
     cefr: "A1",
     isMinor: false,
@@ -35,27 +36,27 @@ export default function ProfilePage() {
 
   const menuGroups = [
     {
-      title: "การเรียน",
+      title: t("profile.learning"),
       items: [
-        { id: "menu-my-classes", Icon: BookOpen, label: "คลาสของฉัน", href: "/classes", iconBg: "var(--brand-50)", iconColor: "var(--brand-600)" },
-        { id: "menu-payment-history", Icon: CreditCard, label: "ประวัติการชำระเงิน", href: "/payment/history", iconBg: "var(--accent-amber-light)", iconColor: "var(--accent-amber)" },
-        { id: "menu-schedule", Icon: Calendar, label: "ตารางเรียน", href: "/schedule", iconBg: "var(--accent-purple-light)", iconColor: "var(--accent-purple)" },
+        { id: "menu-my-classes", Icon: BookOpen, label: t("profile.myClasses"), href: "/classes", iconBg: "var(--brand-50)", iconColor: "var(--brand-600)" },
+        { id: "menu-payment-history", Icon: CreditCard, label: t("profile.paymentHistory"), href: "/payment/history", iconBg: "var(--accent-amber-light)", iconColor: "var(--accent-amber)" },
+        { id: "menu-schedule", Icon: Calendar, label: t("profile.schedule"), href: "/schedule", iconBg: "var(--accent-purple-light)", iconColor: "var(--accent-purple)" },
       ],
     },
     {
-      title: "บัญชี",
+      title: t("profile.account"),
       items: [
-        { id: "menu-notifications", Icon: Bell, label: "การแจ้งเตือน", href: "/notifications", iconBg: "var(--accent-blue-light)", iconColor: "var(--accent-blue)" },
-        { id: "menu-consent", Icon: Shield, label: "การยินยอมข้อมูล (PDPA)", href: "/consent", iconBg: "rgba(16, 185, 129, 0.15)", iconColor: "rgb(16, 185, 129)" },
-        { id: "menu-guardian", Icon: Users, label: "ข้อมูลผู้ปกครอง", href: "/guardian", iconBg: "rgba(236, 72, 153, 0.15)", iconColor: "rgb(236, 72, 153)" },
+        { id: "menu-notifications", Icon: Bell, label: t("profile.notifications"), href: "/notifications", iconBg: "var(--accent-blue-light)", iconColor: "var(--accent-blue)" },
+        { id: "menu-consent", Icon: Shield, label: t("profile.consent"), href: "/consent", iconBg: "rgba(16, 185, 129, 0.15)", iconColor: "rgb(16, 185, 129)" },
+        { id: "menu-guardian", Icon: Users, label: t("profile.guardian"), href: "/guardian", iconBg: "rgba(236, 72, 153, 0.15)", iconColor: "rgb(236, 72, 153)" },
       ],
     },
     {
-      title: "ช่วยเหลือ",
+      title: t("profile.help"),
       items: [
-        { id: "menu-contact", Icon: MessageCircle, label: "ติดต่อทีมงาน", href: "https://lin.ee/zqTz6feg", iconBg: "rgba(99, 102, 241, 0.15)", iconColor: "rgb(99, 102, 241)" },
-        { id: "menu-terms", Icon: FileText, label: "เงื่อนไขการใช้งาน", href: "/terms", iconBg: "var(--neutral-100)", iconColor: "var(--neutral-500)" },
-        { id: "menu-privacy", Icon: Shield, label: "นโยบายความเป็นส่วนตัว", href: "/privacy", iconBg: "var(--neutral-100)", iconColor: "var(--neutral-500)" },
+        { id: "menu-contact", Icon: MessageCircle, label: t("profile.contactTeam"), href: "https://lin.ee/zqTz6feg", iconBg: "rgba(99, 102, 241, 0.15)", iconColor: "rgb(99, 102, 241)" },
+        { id: "menu-terms", Icon: FileText, label: t("profile.terms"), href: "/terms", iconBg: "var(--neutral-100)", iconColor: "var(--neutral-500)" },
+        { id: "menu-privacy", Icon: Shield, label: t("profile.privacy"), href: "/privacy", iconBg: "var(--neutral-100)", iconColor: "var(--neutral-500)" },
       ],
     },
   ];
@@ -86,7 +87,7 @@ export default function ProfilePage() {
       >
         <div aria-hidden style={{ position: "absolute", top: -40, right: -40, width: 140, height: 140, borderRadius: "50%", background: "rgba(255,255,255,0.06)" }} />
 
-        <h1 style={{ color: "#fff", fontSize: "1rem", fontWeight: 700, position: "absolute", top: 20, left: 20, opacity: 0.9 }}>โปรไฟล์</h1>
+        <h1 style={{ color: "#fff", fontSize: "1rem", fontWeight: 700, position: "absolute", top: 20, left: 20, opacity: 0.9 }}>{t("profile.title")}</h1>
 
         {/* Avatar with gradient ring */}
         <div style={{ position: "relative", marginBottom: 16 }}>
@@ -103,11 +104,11 @@ export default function ProfilePage() {
 
         <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginBottom: 10 }}>
           <div style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)", color: "#fff", padding: "4px 12px", borderRadius: 14, fontSize: "0.75rem", fontWeight: 600, backdropFilter: "blur(4px)" }}>
-            {student.level} · {student.cefr}
+            {student.level} / {student.cefr}
           </div>
           {student.isMinor && (
             <div style={{ background: "var(--accent-amber-light)", color: "#92400e", padding: "4px 12px", borderRadius: 14, fontSize: "0.75rem", fontWeight: 600 }}>
-              ผู้เยาว์
+              {t("profile.minor")}
             </div>
           )}
         </div>
@@ -124,7 +125,7 @@ export default function ProfilePage() {
             <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--accent-amber-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <Palette size={18} style={{ color: "var(--accent-amber)" }} />
             </div>
-            <span style={{ flex: 1, fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)" }}>ธีม</span>
+            <span style={{ flex: 1, fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)" }}>{t("profile.theme")}</span>
             <ThemeToggle size={16} />
           </div>
         </Card>
@@ -173,13 +174,13 @@ export default function ProfilePage() {
             <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--accent-red-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginRight: 12 }}>
               <LogOut size={18} style={{ color: "var(--accent-red)" }} />
             </div>
-            <span style={{ fontSize: "0.9375rem", fontWeight: 500 }}>ออกจากระบบ</span>
+            <span style={{ fontSize: "0.9375rem", fontWeight: 500 }}>{t("profile.logout")}</span>
           </Button>
         </Card>
 
         <p style={{ textAlign: "center", fontSize: "0.6875rem", color: "var(--text-tertiary)", lineHeight: 1.6, paddingBottom: 8 }}>
-          Tutor Advantage Thailand · v0.1.0<br />
-          Protected by Omise · PDPA Compliant
+          {t("profile.footer")}<br />
+          {t("profile.compliance")}
         </p>
       </div>
     </div>

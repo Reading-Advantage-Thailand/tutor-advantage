@@ -16,6 +16,7 @@ import "@xyflow/react/dist/style.css";
 import dagre from "dagre";
 import { Users, CircleDollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { t } from "@/lib/i18n";
 
 type TutorSummary = {
   userId: string;
@@ -78,6 +79,14 @@ function formatTHB(value: number) {
   return value.toLocaleString("th-TH", { maximumFractionDigits: 0 });
 }
 
+function formatCurrencyTHB(value: number) {
+  return value.toLocaleString("th-TH", {
+    style: "currency",
+    currency: "THB",
+    maximumFractionDigits: 0,
+  });
+}
+
 function formatPercent(value: number) {
   return `${Math.round(value * 100)}%`;
 }
@@ -115,7 +124,7 @@ const TutorNode = ({
           <p className="truncate font-bold text-foreground max-w-[160px]">
             {tutor.displayName}
           </p>
-          {isRoot ? <Badge variant="default" className="h-5 px-1 text-[10px]">YOU</Badge> : null}
+          {isRoot ? <Badge variant="default" className="h-5 px-1 text-[10px]">{t("dashboardNetwork.youBadge")}</Badge> : null}
           <Badge variant="secondary" className="h-5 px-1 text-[10px]">{formatPercent(tutor.currentRate)}</Badge>
         </div>
         <p className="mt-0.5 truncate text-[10px] text-muted-foreground">
@@ -124,25 +133,25 @@ const TutorNode = ({
 
         <div className="mt-3 grid grid-cols-2 gap-2 border-t border-border/50 pt-3">
           <div>
-            <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Personal Vol</p>
+            <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("dashboardNetwork.personalVol")}</p>
             <p className="font-semibold text-sm text-foreground flex items-center gap-1 mt-0.5">
               <CircleDollarSign className="h-3 w-3 text-muted-foreground" />
-              ฿{formatTHB(tutor.personalVolumeTHB)}
+              {formatCurrencyTHB(tutor.personalVolumeTHB)}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Group Vol</p>
-            <p className="font-semibold text-sm text-foreground mt-0.5">฿{formatTHB(tutor.groupVolumeTHB)}</p>
+            <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">{t("dashboardNetwork.groupVol")}</p>
+            <p className="font-semibold text-sm text-foreground mt-0.5">{formatCurrencyTHB(tutor.groupVolumeTHB)}</p>
           </div>
         </div>
 
         <div className="mt-2 flex items-center justify-between text-[10px] bg-muted/30 px-2 py-1.5 rounded-md border border-border/50">
           <span className="text-muted-foreground flex items-center gap-1">
             <Users className="h-3 w-3" />
-            {(tutor.totalDownlines || 0)} downlines
+            {(tutor.totalDownlines || 0)} {t("dashboardNetwork.downlines")}
           </span>
           <span className="font-bold text-primary">
-            ฿{formatTHB(tutor.estimatedPayoutTHB)}
+            {formatCurrencyTHB(tutor.estimatedPayoutTHB)}
           </span>
         </div>
       </div>
@@ -215,7 +224,7 @@ export function InteractiveNetwork({ tree }: { tree: NetworkTreeNode }) {
   if (!mounted) {
     return (
       <div style={{ height: "600px", width: "100%" }} className="rounded-xl border bg-muted/20 flex items-center justify-center">
-         <div className="text-muted-foreground text-sm animate-pulse">กำลังโหลดเครือข่าย...</div>
+         <div className="text-muted-foreground text-sm animate-pulse">{t("dashboardNetwork.loading")}</div>
       </div>
     );
   }

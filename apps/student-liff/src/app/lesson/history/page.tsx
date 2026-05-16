@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, ArrowLeft, AlertCircle } from "lucide-react";
 import { studentApi } from "@/lib/api";
+import { t } from "@/lib/i18n";
 
 interface HistoryItem {
   sessionId: string;
@@ -32,7 +33,7 @@ export default function AllHistoryPage() {
           setLoading(false);
         } catch (err) {
           console.error("Failed to fetch history:", err);
-          setError(err instanceof Error ? err.message : "ไม่สามารถโหลดประวัติการเรียนได้");
+          setError(err instanceof Error ? err.message : t("lessonHistory.loadFailed"));
           setLoading(false);
         }
       };
@@ -52,9 +53,9 @@ export default function AllHistoryPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center gap-4 bg-[var(--surface-bg)]">
         <AlertCircle className="text-red-500 w-12 h-12" />
-        <h2 className="text-xl font-bold text-slate-800">เกิดข้อผิดพลาด</h2>
+        <h2 className="text-xl font-bold text-slate-800">{t("lessonHistory.errorTitle")}</h2>
         <p className="text-slate-500">{error}</p>
-        <Button onClick={() => window.location.reload()}>ลองอีกครั้ง</Button>
+        <Button onClick={() => window.location.reload()}>{t("lessonHistory.retry")}</Button>
       </div>
     );
   }
@@ -91,14 +92,14 @@ export default function AllHistoryPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
-        <h1 style={{ fontSize: "1.125rem", fontWeight: 700 }}>ประวัติการเข้าเรียนทั้งหมด</h1>
+        <h1 style={{ fontSize: "1.125rem", fontWeight: 700 }}>{t("lessonHistory.title")}</h1>
       </div>
 
       <div style={{ padding: "20px 16px" }}>
         {historyData.length === 0 ? (
           <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--text-secondary)" }}>
             <div style={{ fontSize: "3rem", marginBottom: 16 }}>📜</div>
-            <p>ยังไม่มีประวัติการเรียนในระบบ</p>
+            <p>{t("lessonHistory.empty")}</p>
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -162,9 +163,9 @@ export default function AllHistoryPage() {
                           {hist.articleTitle}
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2, fontSize: "0.6875rem", color: "var(--text-tertiary)" }}>
-                          <span>ครู {hist.tutorName}</span>
+                          <span>{t("lessonHistory.tutorPrefix")} {hist.tutorName}</span>
                           <span style={{ width: 3, height: 3, borderRadius: "50%", background: "currentColor", opacity: 0.5 }} />
-                          <span>{new Date(hist.date).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })} น.</span>
+                          <span>{new Date(hist.date).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })} {t("lessonHistory.timeSuffix")}</span>
                         </div>
                       </div>
 

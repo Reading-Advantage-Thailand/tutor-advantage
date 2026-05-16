@@ -14,11 +14,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { t } from "@/lib/i18n";
 
 const verificationFieldLabels: Record<string, string> = {
-  idCard: "บัตรประชาชน",
-  bankBook: "สมุดบัญชีธนาคาร",
-  address: "ที่อยู่สำหรับส่งเอกสาร",
+  idCard: t("dashboardSettings.idCard"),
+  bankBook: t("dashboardSettings.bankBook"),
+  address: t("dashboardSettings.address"),
 };
 
 export function SettingsInteractiveElements({ type, status }: { type: string; status?: string }) {
@@ -35,7 +36,7 @@ export function SettingsInteractiveElements({ type, status }: { type: string; st
           className="w-full sm:w-auto mt-2 sm:mt-0"
           onClick={() => setShowVerification(true)}
         >
-          {status === "PENDING" ? "ดูข้อมูลการส่ง" : status === "REJECTED" ? "ส่งเอกสารใหม่" : "ยืนยันตัวตนเลย"}
+          {status === "PENDING" ? t("dashboardSettings.viewSubmission") : status === "REJECTED" ? t("dashboardSettings.resubmitDocuments") : t("dashboardSettings.verifyNow")}
         </Button>
         {/* Note: This button use might need updating to pass 'user' if used in a way that requires granular status */}
       </>
@@ -49,7 +50,7 @@ export function SettingsInteractiveElements({ type, status }: { type: string; st
         size="sm"
         className="w-full sm:w-auto mt-2 sm:mt-0"
       >
-        แก้ไขโปรไฟล์
+        {t("dashboardSettings.editProfile")}
       </Button>
     );
   }
@@ -75,7 +76,7 @@ export function SettingsInteractiveElements({ type, status }: { type: string; st
           className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-2 w-full sm:w-auto"
         >
           <LogOut className="w-4 h-4" />
-          ออกจากระบบ
+          {t("dashboardSettings.logout")}
         </Button>
       </div>
     );
@@ -108,15 +109,15 @@ export function VerificationRow({ user }: { user: any }) {
   }, []);
 
   const getStatusText = () => {
-    if (status === "PENDING") return "กำลังดำเนินการตรวจสอบ";
-    if (status === "REJECTED") return "ข้อมูลถูกปฏิเสธ กรุณาส่งใหม่";
-    return "กรุณายืนยันตัวตนก่อนระบุบัญชีรับเงิน";
+    if (status === "PENDING") return t("dashboardSettings.payoutPending");
+    if (status === "REJECTED") return t("dashboardSettings.payoutRejected");
+    return t("dashboardSettings.payoutUnverified");
   };
 
   const getButtonText = () => {
-    if (status === "PENDING") return "ดูความคืบหน้า";
-    if (status === "REJECTED") return "ส่งใหม่";
-    return "ยืนยันตัวตน";
+    if (status === "PENDING") return t("dashboardSettings.viewProgress");
+    if (status === "REJECTED") return t("dashboardSettings.resubmitShort");
+    return t("dashboardSettings.verify");
   };
 
   return (
@@ -140,7 +141,7 @@ export function VerificationRow({ user }: { user: any }) {
             )} />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-medium text-foreground">สถานะบัญชีรับเงิน</p>
+            <p className="text-sm font-medium text-foreground">{t("dashboardSettings.payoutStatusTitle")}</p>
             <p className={cn(
               "text-xs truncate",
               status === "REJECTED" ? "text-destructive" : "text-muted-foreground"
@@ -207,9 +208,9 @@ function SoundToggleRow() {
         </div>
         <div>
           <p className="text-sm font-medium text-foreground">
-            เสียงแจ้งเตือนแอพ
+            {t("dashboardSettings.appSoundTitle")}
           </p>
-          <p className="text-xs text-muted-foreground">เปิด/ปิดเสียงเมื่อมีข้อความเข้า</p>
+          <p className="text-xs text-muted-foreground">{t("dashboardSettings.appSoundDescription")}</p>
         </div>
       </div>
       <div>
@@ -240,9 +241,9 @@ function ThemeToggleRow() {
         </div>
         <div>
           <p className="text-sm font-medium text-foreground">
-            ลักษณะที่ปรากฏ (Theme)
+            {t("dashboardSettings.themeTitle")}
           </p>
-          <p className="text-xs text-muted-foreground">สลับโหมดสว่าง/มืด</p>
+          <p className="text-xs text-muted-foreground">{t("dashboardSettings.themeDescription")}</p>
         </div>
       </div>
       <div>
@@ -430,7 +431,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
 
     return (
       <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-xs text-destructive">
-        <p className="font-medium">เหตุผลที่ไม่ผ่าน</p>
+        <p className="font-medium">{t("dashboardSettings.rejectReason")}</p>
         <p className="mt-1 leading-relaxed">{comment}</p>
       </div>
     );
@@ -452,19 +453,19 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
   const handleSubmitField = (field: 'idCard' | 'bankBook' | 'address') => {
     setError(null);
     if (field === 'idCard' && !idCardFile) {
-      setError("กรุณาเลือกไฟล์บัตรประชาชน");
+      setError(t("dashboardSettings.selectIdCardFile"));
       return;
     }
     if (field === 'bankBook' && !bankBookFile) {
-      setError("กรุณาเลือกไฟล์หน้าสมุดบัญชี");
+      setError(t("dashboardSettings.selectBankBookFile"));
       return;
     }
     if (field === 'bankBook' && !bankAccountNumber.replace(/\D/g, "")) {
-      setError("กรุณากรอกเลขบัญชีธนาคาร");
+      setError(t("dashboardSettings.bankAccountRequired"));
       return;
     }
     if (field === 'address' && !address.trim()) {
-      setError("กรุณากรอกที่อยู่");
+      setError(t("dashboardSettings.addressRequired"));
       return;
     }
 
@@ -509,7 +510,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
         
         setActiveField(null);
       } catch (err: any) {
-        setError(err.message || "เกิดข้อผิดพลาดในการส่งเอกสาร");
+        setError(err.message || t("dashboardSettings.submitDocumentsFailed"));
         setActiveField(null);
       }
     });
@@ -529,7 +530,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
           "bg-red-500/10 text-red-600 border-red-200"
         )}
       >
-        {status === "VERIFIED" ? "ตรวจสอบแล้ว" : status === "PENDING" ? "รอการตรวจสอบ" : "ปฏิเสธ/ส่งใหม่"}
+        {status === "VERIFIED" ? t("dashboardSettings.verifiedBadge") : status === "PENDING" ? t("dashboardSettings.pendingBadge") : t("dashboardSettings.rejectedBadge")}
       </Badge>
     );
   };
@@ -540,10 +541,10 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg">
             <ShieldCheck className="h-5 w-5 text-primary" />
-            ยืนยันตัวตนทีละขั้นตอน
+            {t("dashboardSettings.modalTitle")}
           </DialogTitle>
           <DialogDescription>
-            คุณสามารถทยอยอัปโหลดเอกสารทีละอย่างได้ เมื่อตรวจสอบผ่านแล้วข้อมูลจะถูกล๊อคไม่ให้แก้ไข
+            {t("dashboardSettings.modalDescription")}
           </DialogDescription>
         </DialogHeader>
 
@@ -560,7 +561,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
             {renderFieldFeedback("idCard")}
             <div className="flex items-center justify-between">
               <Label htmlFor="id-card" className="font-semibold flex items-center gap-2">
-                1. สำเนาบัตรประชาชน {renderStatusBadge("idCard")}
+                {t("dashboardSettings.idCardStep")} {renderStatusBadge("idCard")}
               </Label>
             </div>
             
@@ -575,7 +576,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
               {idCardPreview ? (
                 <div className="relative w-full">
                   <img src={idCardPreview} alt="ID Card Preview" className="w-full aspect-video object-contain rounded-md" />
-                  <p className="mt-2 text-center text-xs text-primary">ไฟล์ที่เลือกไว้ รอกดอัปโหลด</p>
+                  <p className="mt-2 text-center text-xs text-primary">{t("dashboardSettings.selectedFilePendingUpload")}</p>
                 </div>
               ) : submittedIdCardUrl ? (
                 <div className="relative w-full">
@@ -594,12 +595,12 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
                       </div>
                     )}
                     </div>
-                  <p className="mt-2 text-center text-xs text-muted-foreground">รูปที่อัปโหลดแล้ว</p>
+                  <p className="mt-2 text-center text-xs text-muted-foreground">{t("dashboardSettings.uploadedImage")}</p>
                 </div>
               ) : (
                 <>
                   <Upload className="h-8 w-8 text-muted-foreground opacity-50" />
-                  <p className="text-xs text-muted-foreground text-center">คลิกเพื่อเลือกไฟล์ หรือลากไฟล์มาวาง</p>
+                  <p className="text-xs text-muted-foreground text-center">{t("dashboardSettings.fileDropHint")}</p>
                 </>
               )}
               <input 
@@ -619,7 +620,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
                 disabled={!idCardFile || (isPending && activeField === 'idCard')}
                 onClick={() => handleSubmitField('idCard')}
               >
-                {activeField === 'idCard' ? "กำลังอัปโหลด..." : "อัปโหลดบัตรประชาชน"}
+                {activeField === 'idCard' ? t("dashboardSettings.uploading") : t("dashboardSettings.uploadIdCard")}
               </Button>
             )}
           </div>
@@ -629,18 +630,18 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
             {renderFieldFeedback("bankBook")}
             <div className="flex items-center justify-between">
               <Label htmlFor="bank-book" className="font-semibold flex items-center gap-2">
-                2. หน้าสมุดบัญชี {renderStatusBadge("bankBook")}
+                {t("dashboardSettings.bankBookStep")} {renderStatusBadge("bankBook")}
               </Label>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="bank-account-number" className="text-xs text-muted-foreground">
-                เลขบัญชีธนาคาร
+                {t("dashboardSettings.bankAccountNumber")}
               </Label>
               <Input
                 id="bank-account-number"
                 inputMode="numeric"
-                placeholder="กรอกเลขบัญชีธนาคาร"
+                placeholder={t("dashboardSettings.bankAccountNumberPlaceholder")}
                 value={bankAccountNumber}
                 onChange={(event) =>
                   setBankAccountNumber(event.target.value.replace(/[^\d-]/g, ""))
@@ -648,7 +649,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
                 disabled={isPending || getFieldStatus("bankBook") === "VERIFIED"}
               />
               {getFieldStatus("bankBook") === "VERIFIED" && bankAccountNumber && (
-                <p className="text-xs text-muted-foreground">เลขบัญชีถูกล็อกหลังผ่านการตรวจสอบ</p>
+                <p className="text-xs text-muted-foreground">{t("dashboardSettings.bankAccountLocked")}</p>
               )}
             </div>
             
@@ -663,7 +664,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
               {bankBookPreview ? (
                 <div className="relative w-full">
                   <img src={bankBookPreview} alt="Bank Book Preview" className="w-full aspect-video object-contain rounded-md" />
-                  <p className="mt-2 text-center text-xs text-primary">ไฟล์ที่เลือกไว้ รอกดอัปโหลด</p>
+                  <p className="mt-2 text-center text-xs text-primary">{t("dashboardSettings.selectedFilePendingUpload")}</p>
                 </div>
               ) : submittedBankBookUrl ? (
                 <div className="relative w-full">
@@ -682,12 +683,12 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
                       </div>
                     )}
                     </div>
-                  <p className="mt-2 text-center text-xs text-muted-foreground">รูปที่อัปโหลดแล้ว</p>
+                  <p className="mt-2 text-center text-xs text-muted-foreground">{t("dashboardSettings.uploadedImage")}</p>
                 </div>
               ) : (
                 <>
                   <Upload className="h-8 w-8 text-muted-foreground opacity-50" />
-                  <p className="text-xs text-muted-foreground text-center">คลิกเพื่อเลือกไฟล์ หรือลากไฟล์มาวาง</p>
+                  <p className="text-xs text-muted-foreground text-center">{t("dashboardSettings.fileDropHint")}</p>
                 </>
               )}
               <input 
@@ -707,7 +708,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
                 disabled={!bankBookFile || !bankAccountNumber.replace(/\D/g, "") || (isPending && activeField === 'bankBook')}
                 onClick={() => handleSubmitField('bankBook')}
               >
-                {activeField === 'bankBook' ? "กำลังอัปโหลด..." : "อัปโหลดสมุดบัญชี"}
+                {activeField === 'bankBook' ? t("dashboardSettings.uploading") : t("dashboardSettings.uploadBankBook")}
               </Button>
             )}
           </div>
@@ -716,11 +717,11 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
           <div className="space-y-3 p-4 border rounded-xl bg-muted/20">
             {renderFieldFeedback("address")}
             <Label htmlFor="address" className="font-semibold flex items-center gap-2">
-              3. ที่อยู่สำหรับส่งเอกสาร (50 ทวิ) {renderStatusBadge("address")}
+              {t("dashboardSettings.addressStep")} {renderStatusBadge("address")}
             </Label>
             <textarea 
               id="address"
-              placeholder="กรอกที่อยู่ปัจจุบันของคุณอย่างละเอียด..."
+              placeholder={t("dashboardSettings.fullAddressPlaceholder")}
               className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
@@ -734,7 +735,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
                 disabled={!address.trim() || address === user?.settings?.address || (isPending && activeField === 'address')}
                 onClick={() => handleSubmitField('address')}
               >
-                {activeField === 'address' ? "กำลังบันทึก..." : "บันทึกที่อยู่"}
+                {activeField === 'address' ? t("dashboardSettings.saving") : t("dashboardSettings.saveAddress")}
               </Button>
             )}
           </div>
@@ -742,7 +743,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
 
         <DialogFooter className="sm:justify-start">
           <Button variant="outline" className="w-full sm:w-auto" onClick={() => onOpenChange(false)} disabled={isPending}>
-            ปิดหน้าต่าง
+            {t("dashboardSettings.closeDialog")}
           </Button>
         </DialogFooter>
       </DialogContent>

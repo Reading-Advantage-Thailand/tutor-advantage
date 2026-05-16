@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { studentApi } from "@/lib/api";
 import { toast } from "sonner";
+import { t } from "@/lib/i18n";
 import {
   buildOrderSummaryFromClass,
   createDefaultOrderSummary,
@@ -57,7 +58,7 @@ function loadOmiseScript() {
       existing.addEventListener("load", () => resolve(), { once: true });
       existing.addEventListener(
         "error",
-        () => reject(new Error("โหลด Omise.js ไม่สำเร็จ")),
+        () => reject(new Error(t("payment.errors.loadOmiseScript"))),
         { once: true },
       );
       return;
@@ -67,7 +68,7 @@ function loadOmiseScript() {
     script.src = "https://cdn.omise.co/omise.js";
     script.async = true;
     script.onload = () => resolve();
-    script.onerror = () => reject(new Error("โหลด Omise.js ไม่สำเร็จ"));
+    script.onerror = () => reject(new Error(t("payment.errors.loadOmiseScript")));
     document.head.appendChild(script);
   });
 }
@@ -155,7 +156,7 @@ function PaymentFlow() {
     try {
       if (isAdult === false) {
         if (!guardianName.trim() || !guardianRelation.trim()) {
-          toast.error("กรุณากรอกข้อมูลให้ครบถ้วน");
+          toast.error(t("payment.errors.guardianRequired"));
           setLoading(false);
           return;
         }
@@ -164,7 +165,7 @@ function PaymentFlow() {
       setStep(method === "promptpay" ? "qr" : "card-form");
     } catch (error) {
       console.error("Error saving consent:", error);
-      toast.error("เกิดข้อผิดพลาดในการยืนยันตัวตน");
+      toast.error(t("payment.errors.consentFailed"));
     } finally {
       setLoading(false);
     }
@@ -173,12 +174,12 @@ function PaymentFlow() {
   const ensureOmiseToken = async () => {
     const config = await studentApi.getPaymentConfig();
     if (!config.configured || !config.publicKey) {
-      throw new Error("Omise ยังไม่ได้ตั้งค่า public/private key");
+      throw new Error(t("payment.errors.omiseNotConfigured"));
     }
 
     await loadOmiseScript();
     if (!window.Omise) {
-      throw new Error("โหลด Omise.js ไม่สำเร็จ");
+      throw new Error(t("payment.errors.loadOmiseScript"));
     }
 
     window.Omise.setPublicKey(config.publicKey);
@@ -200,7 +201,7 @@ function PaymentFlow() {
             resolve(response.id);
             return;
           }
-          reject(new Error(response.message || "สร้าง token บัตรไม่สำเร็จ"));
+          reject(new Error(response.message || t("payment.errors.createCardTokenFailed")));
         },
       );
     });
@@ -219,10 +220,10 @@ function PaymentFlow() {
     }
     if (status.intent.status === "FAILED") {
       throw new Error(
-        `การชำระเงินไม่สำเร็จ โปรดแสกน QR Code ใหม่อีกครั้ง หรือติดต่อเจ้าหน้าที่ ${status.checkout?.failureMessage}`,
+        `${t("payment.errors.paymentFailedPrefix")} ${status.checkout?.failureMessage || ""}`,
       );
     }
-    toast.info("ระบบยังไม่พบการชำระเงิน กรุณารอสักครู่แล้วตรวจสอบอีกครั้ง");
+    toast.info(t("payment.errors.paymentPending"));
   };
 
   const loadPromptPayQrCode = async (intentId: string) => {
@@ -294,14 +295,14 @@ function PaymentFlow() {
       }
 
       throw new Error(
-        payment.checkout?.failureMessage || "การชำระเงินยังไม่สำเร็จ",
+        payment.checkout?.failureMessage || t("payment.errors.paymentIncomplete"),
       );
     } catch (err) {
       console.error("Payment/Enrollment failed:", err);
       toast.error(
         err instanceof Error
           ? err.message
-          : "การลงทะเบียนล้มเหลว กรุณาลองใหม่อีกครั้ง",
+          : t("payment.errors.enrollmentFailed"),
       );
     } finally {
       setLoading(false);
@@ -348,7 +349,7 @@ function PaymentFlow() {
             marginBottom: 8,
           }}
         >
-          ชำระเงินสำเร็จ!
+          {t("payment.success.title")}
         </h1>
         <p
           style={{
@@ -358,7 +359,7 @@ function PaymentFlow() {
             marginBottom: 8,
           }}
         >
-          การลงทะเบียนของคุณได้รับการยืนยันแล้ว
+          {t("payment.success.description")}
         </p>
 
         <div
@@ -373,15 +374,15 @@ function PaymentFlow() {
         >
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {[
-              { label: "คลาส", value: cls.name },
-              { label: "ติวเตอร์", value: cls.tutor },
-              { label: "ยอดชำระ", value: `฿${cls.price.toLocaleString()}` },
+              { label: t("payment.success.classLabel"), value: cls.name },
+              { label: t("payment.success.tutorLabel"), value: cls.tutor },
+              { label: t("payment.success.amountLabel"), value: `THB ${cls.price.toLocaleString()}` },
               {
-                label: "วิธีชำระ",
+                label: t("payment.success.methodLabel"),
                 value:
-                  method === "promptpay" ? "PromptPay" : "บัตรเครดิต/เดบิต",
+                  method === "promptpay" ? "PromptPay" : t("payment.success.cardMethod"),
               },
-              { label: "สถานะ", value: "✅ ยืนยันแล้ว" },
+              { label: t("payment.success.statusLabel"), value: `✅ ${t("payment.success.confirmedStatus")}` },
             ].map(({ label, value }) => (
               <div
                 key={label}
@@ -415,9 +416,9 @@ function PaymentFlow() {
             lineHeight: 1.65,
           }}
         >
-          คุณจะได้รับการแจ้งเตือนผ่าน LINE
+          {t("payment.success.lineNoticeFirst")}
           <br />
-          เมื่อการลงทะเบียนเปิดใช้งาน
+          {t("payment.success.lineNoticeSecond")}
         </p>
         <Link
           href="/dashboard"
@@ -425,7 +426,7 @@ function PaymentFlow() {
           className="btn btn-primary btn-lg btn-full"
           style={{ maxWidth: 320, borderRadius: 18 }}
         >
-          ไปหน้าหลัก
+          {t("payment.success.dashboardCta")}
         </Link>
       </div>
     );
@@ -467,7 +468,7 @@ function PaymentFlow() {
               flex: 1,
             }}
           >
-            ยืนยันข้อมูลผู้เรียน
+            {t("payment.ageCheck.title")}
           </h1>
         </div>
 
@@ -510,12 +511,12 @@ function PaymentFlow() {
                   marginBottom: 2,
                 }}
               >
-                ตรวจสอบสิทธิ์ตามกฎหมาย (PDPA)
+                {t("payment.ageCheck.pdpaTitle")}
               </h2>
               <p
                 style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}
               >
-                เพื่อความปลอดภัยในการชำระเงิน
+                {t("payment.ageCheck.pdpaSubtitle")}
               </p>
             </div>
           </div>
@@ -535,7 +536,7 @@ function PaymentFlow() {
                 marginBottom: 16,
               }}
             >
-              ขณะนี้คุณมีอายุครบ 18 ปีบริบูรณ์แล้วใช่หรือไม่?
+              {t("payment.ageCheck.adultQuestion")}
             </p>
 
             <div
@@ -568,7 +569,7 @@ function PaymentFlow() {
                   transition: "all 0.2s ease",
                 }}
               >
-                ใช่ เกิน 18 ปีแล้ว
+                {t("payment.ageCheck.adultYes")}
               </button>
               <button
                 onClick={() => setIsAdult(false)}
@@ -593,7 +594,7 @@ function PaymentFlow() {
                   transition: "all 0.2s ease",
                 }}
               >
-                ยังไม่ถึง 18 ปี
+                {t("payment.ageCheck.adultNo")}
               </button>
             </div>
 
@@ -625,15 +626,15 @@ function PaymentFlow() {
                       lineHeight: 1.5,
                     }}
                   >
-                    คุณจำเป็นต้องให้ผู้ปกครองรับทราบ
-                    กรุณากรอกข้อมูลผู้ปกครองเพื่อใช้ประกอบความยินยอมทางกฎหมาย
+                    {t("payment.ageCheck.guardianNotice")}
+                    {t("payment.ageCheck.guardianInstruction")}
                   </p>
                 </div>
                 <div>
-                  <label className="input-label">ชื่อ-นามสกุล ผู้ปกครอง</label>
+                  <label className="input-label">{t("payment.ageCheck.guardianNameLabel")}</label>
                   <input
                     type="text"
-                    placeholder="เช่น สมชาย รักการเรียน"
+                    placeholder={t("payment.ageCheck.guardianNamePlaceholder")}
                     className="input-field"
                     style={{ borderRadius: 12 }}
                     value={guardianName}
@@ -641,10 +642,10 @@ function PaymentFlow() {
                   />
                 </div>
                 <div>
-                  <label className="input-label">ความสัมพันธ์</label>
+                  <label className="input-label">{t("payment.ageCheck.guardianRelationLabel")}</label>
                   <input
                     type="text"
-                    placeholder="เช่น บิดา, มารดา, ลุง, ป้า"
+                    placeholder={t("payment.ageCheck.guardianRelationPlaceholder")}
                     className="input-field"
                     style={{ borderRadius: 12 }}
                     value={guardianRelation}
@@ -680,10 +681,10 @@ function PaymentFlow() {
                     display: "inline-block",
                   }}
                 />
-                กำลังบันทึก...
+                {t("payment.ageCheck.saving")}
               </span>
             ) : (
-              "ดำเนินการชำระเงินต่อ"
+              t("payment.ageCheck.continuePayment")
             )}
           </button>
         </div>
@@ -727,7 +728,7 @@ function PaymentFlow() {
               flex: 1,
             }}
           >
-            สแกน PromptPay
+            {t("payment.promptpay.title")}
           </h1>
         </div>
 
@@ -751,13 +752,13 @@ function PaymentFlow() {
                 marginBottom: 4,
               }}
             >
-              ยอดที่ต้องชำระ
+              {t("payment.promptpay.amountDue")}
             </div>
             <div
               style={{ fontSize: "2rem", fontWeight: 800 }}
               className="gradient-text"
             >
-              ฿{cls.price.toLocaleString()}
+              THB {cls.price.toLocaleString()}
             </div>
           </div>
 
@@ -804,10 +805,10 @@ function PaymentFlow() {
           >
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {[
-                "เปิดแอป Mobile Banking ของคุณ",
-                "เลือก สแกน PromptPay",
-                "สแกน QR code ด้านบน",
-                "ยืนยันยอดและชำระเงิน",
+                t("payment.promptpay.step1"),
+                t("payment.promptpay.step2"),
+                t("payment.promptpay.step3"),
+                t("payment.promptpay.step4"),
               ].map((s, i) => (
                 <div
                   key={i}
@@ -863,7 +864,7 @@ function PaymentFlow() {
                 lineHeight: 1.5,
               }}
             >
-              QR Code หมดอายุใน <strong>15 นาที</strong>
+              {t("payment.promptpay.expiryPrefix")} <strong>{t("payment.promptpay.expiryTime")}</strong>
             </p>
           </div>
 
@@ -887,12 +888,12 @@ function PaymentFlow() {
                     display: "inline-block",
                   }}
                 />
-                กำลังตรวจสอบ...
+                {t("payment.promptpay.checking")}
               </span>
             ) : paymentIntentId ? (
-              "ตรวจสอบสถานะการชำระเงิน"
+              t("payment.promptpay.checkStatus")
             ) : (
-              "สร้าง QR PromptPay"
+              t("payment.promptpay.createQr")
             )}
           </button>
         </div>
@@ -936,7 +937,7 @@ function PaymentFlow() {
               flex: 1,
             }}
           >
-            ชำระด้วยบัตร
+            {t("payment.card.title")}
           </h1>
         </div>
 
@@ -960,19 +961,19 @@ function PaymentFlow() {
             <span
               style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}
             >
-              ยอดชำระ
+              {t("payment.card.amount")}
             </span>
             <span
               style={{ fontSize: "1.25rem", fontWeight: 800 }}
               className="gradient-text"
             >
-              ฿{cls.price.toLocaleString()}
+              THB {cls.price.toLocaleString()}
             </span>
           </div>
 
           <div>
             <label htmlFor="input-card-number" className="input-label">
-              หมายเลขบัตร
+              {t("payment.card.numberLabel")}
             </label>
             <input
               id="input-card-number"
@@ -988,7 +989,7 @@ function PaymentFlow() {
           </div>
           <div>
             <label htmlFor="input-card-name" className="input-label">
-              ชื่อผู้ถือบัตร (ภาษาอังกฤษ)
+              {t("payment.card.nameLabel")}
             </label>
             <input
               id="input-card-name"
@@ -1006,7 +1007,7 @@ function PaymentFlow() {
           >
             <div>
               <label htmlFor="input-card-expiry" className="input-label">
-                วันหมดอายุ
+                {t("payment.card.expiryLabel")}
               </label>
               <input
                 id="input-card-expiry"
@@ -1067,8 +1068,8 @@ function PaymentFlow() {
                 lineHeight: 1.65,
               }}
             >
-              การชำระเงินปลอดภัยโดย <strong>Omise</strong>{" "}
-              ข้อมูลบัตรของคุณถูกเข้ารหัสและไม่ถูกเก็บไว้ในระบบของเรา
+              {t("payment.card.securityPrefix")} <strong>{t("payment.card.securityProvider")}</strong>{" "}
+              {t("payment.card.securitySuffix")}
             </p>
           </div>
 
@@ -1094,10 +1095,10 @@ function PaymentFlow() {
                     display: "inline-block",
                   }}
                 />
-                กำลังดำเนินการ...
+                {t("payment.card.processing")}
               </span>
             ) : (
-              `ชำระ ฿${cls.price.toLocaleString()}`
+              `${t("payment.card.payPrefix")} THB ${cls.price.toLocaleString()}`
             )}
           </button>
         </div>
@@ -1140,8 +1141,7 @@ function PaymentFlow() {
             color: "var(--text-primary)",
             flex: 1,
           }}
-        >
-          ชำระเงิน
+        >          {t("payment.select.noExtraFee")}
         </h1>
       </div>
 
@@ -1172,7 +1172,7 @@ function PaymentFlow() {
                 fontWeight: 600,
               }}
             >
-              สรุปคำสั่งซื้อ
+              {t("payment.select.orderSummary")}
             </p>
             <h2
               style={{
@@ -1191,7 +1191,7 @@ function PaymentFlow() {
                 marginTop: 2,
               }}
             >
-              {cls.tutor} · {cls.cefr}
+              {cls.tutor} / {cls.cefr}
             </p>
           </div>
           <div style={{ padding: "16px 20px" }}>
@@ -1205,7 +1205,7 @@ function PaymentFlow() {
               <span
                 style={{ fontSize: "0.875rem", color: "var(--text-tertiary)" }}
               >
-                ค่าเรียน
+                {t("payment.select.tuition")}
               </span>
               <span
                 style={{
@@ -1214,7 +1214,7 @@ function PaymentFlow() {
                   color: "var(--text-primary)",
                 }}
               >
-                ฿{cls.price.toLocaleString()}
+                THB {cls.price.toLocaleString()}
               </span>
             </div>
             <div
@@ -1227,7 +1227,7 @@ function PaymentFlow() {
               <span
                 style={{ fontSize: "0.875rem", color: "var(--text-tertiary)" }}
               >
-                ค่าธรรมเนียม
+                {t("payment.select.fee")}
               </span>
               <span
                 style={{
@@ -1236,7 +1236,7 @@ function PaymentFlow() {
                   color: "var(--text-primary)",
                 }}
               >
-                ฿0
+                THB 0
               </span>
             </div>
             <div className="divider" />
@@ -1248,13 +1248,13 @@ function PaymentFlow() {
                   color: "var(--text-primary)",
                 }}
               >
-                รวมทั้งหมด
+                {t("payment.select.total")}
               </span>
               <span
                 style={{ fontSize: "1.25rem", fontWeight: 800 }}
                 className="gradient-text"
               >
-                ฿{cls.price.toLocaleString()}
+                THB {cls.price.toLocaleString()}
               </span>
             </div>
           </div>
@@ -1270,7 +1270,7 @@ function PaymentFlow() {
               marginBottom: 12,
             }}
           >
-            เลือกวิธีชำระเงิน
+            {t("payment.select.selectMethod")}
           </h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {[
@@ -1279,14 +1279,14 @@ function PaymentFlow() {
                 method: "promptpay" as const,
                 Icon: QrCode,
                 label: "PromptPay",
-                sub: "สแกน QR ผ่านแอปธนาคาร — แนะนำ",
-                badge: "แนะนำ",
+                sub: t("payment.select.promptpaySub"),
+                badge: t("payment.select.recommendedBadge"),
               },
               {
                 id: "pm-card",
                 method: "card" as const,
                 Icon: CreditCard,
-                label: "บัตรเครดิต / เดบิต",
+                label: t("payment.select.cardLabel"),
                 sub: "Visa, Mastercard, JCB",
                 badge: null,
               },
@@ -1431,7 +1431,7 @@ function PaymentFlow() {
             padding: "8px 0",
           }}
         >
-          {["🔒 SSL ปลอดภัย", "✅ Omise Certified", "🏛️ PCI DSS"].map(
+          {[t("payment.select.secureBadgeSsl"), t("payment.select.secureBadgeOmise"), t("payment.select.secureBadgePci")].map(
             (badge) => (
               <span
                 key={badge}
@@ -1453,7 +1453,7 @@ function PaymentFlow() {
           onClick={handleProceed}
           style={{ borderRadius: 18 }}
         >
-          ดำเนินการชำระเงิน <ChevronRight size={18} />
+          {t("payment.select.proceed")} <ChevronRight size={18} />
         </button>
 
         <p
@@ -1463,10 +1463,9 @@ function PaymentFlow() {
             color: "var(--text-tertiary)",
             lineHeight: 1.65,
           }}
-        >
-          ชำระเงินครั้งเดียว ไม่มีค่าบริการเพิ่มเติม
+        >          {t("payment.select.noExtraFee")}
           <br />
-          สอบถามเพิ่มเติม{" "}
+          {t("payment.select.contactPrefix")}{" "}
           <a
             href="https://lin.ee/zqTz6feg"
             target="_blank"
@@ -1477,7 +1476,7 @@ function PaymentFlow() {
               textDecoration: "none",
             }}
           >
-            ติดต่อทีมงานผ่าน LINE
+            {t("payment.select.contactLine")}
           </a>
         </p>
       </div>

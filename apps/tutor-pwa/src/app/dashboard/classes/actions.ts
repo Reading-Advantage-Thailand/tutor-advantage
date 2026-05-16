@@ -7,6 +7,7 @@ import {
   getClassActionErrorMessage,
   type CreateClassForm,
 } from "@/lib/tutorClassFlow";
+import { t } from "@/lib/i18n";
 
 export async function createClass(data: CreateClassForm) {
   const cookieStore = await cookies();
@@ -29,7 +30,7 @@ export async function createClass(data: CreateClassForm) {
   
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(getClassActionErrorMessage(err, "Failed to create class"));
+    throw new Error(getClassActionErrorMessage(err, t("tutorClass.errors.createClass")));
   }
 
   revalidatePath("/dashboard/classes");
@@ -55,7 +56,7 @@ export async function updateClassStatus(classId: string, status: "open" | "full"
   
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(getClassActionErrorMessage(err, "Failed to update class status"));
+    throw new Error(getClassActionErrorMessage(err, t("tutorClass.errors.updateClassStatus")));
   }
 
   revalidatePath("/dashboard/classes");
@@ -100,7 +101,7 @@ export async function deleteClass(classId: string) {
   
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(getClassActionErrorMessage(err, "Failed to delete class"));
+    throw new Error(getClassActionErrorMessage(err, t("tutorClass.errors.deleteClass")));
   }
 
   revalidatePath("/dashboard/classes");
@@ -125,7 +126,7 @@ export async function updateMeetingUrl(classId: string, meetingUrl: string) {
   
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(getClassActionErrorMessage(err, "Failed to update meeting URL"));
+    throw new Error(getClassActionErrorMessage(err, t("tutorClass.errors.updateMeetingUrl")));
   }
 
   revalidatePath("/dashboard/classes");

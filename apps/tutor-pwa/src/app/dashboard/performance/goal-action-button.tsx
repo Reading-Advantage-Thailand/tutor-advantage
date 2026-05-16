@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { ArrowUpRight, CheckCircle2, BookOpen, MessageSquare, Users, Star } from "lucide-react";
 import Link from "next/link";
+import { t } from "@/lib/i18n";
 
 type GoalDetails = {
   code: string;
@@ -15,62 +16,62 @@ const GOAL_ACTIONS: Record<string, { tips: string[]; link?: { href: string; labe
   "RISING_STAR": {
     icon: Star,
     tips: [
-      "เพิ่มรอบเรียนในปฏิทินของคุณเพื่อให้รับจำนวนชั่วโมงสอนสะสมได้ไวขึ้น",
-      "วางแผนตารางสอนล่วงหน้าอย่างน้อย 2 สัปดาห์ให้นักเรียนสามารถจัดสรรเวลาได้สะดวก",
-      "เน้นกิจกรรมเสริมในคลาสเพื่อคงความสนใจของนักเรียนจนจบคลาส"
+      t("dashboardPerformance.tips.risingStar1"),
+      t("dashboardPerformance.tips.risingStar2"),
+      t("dashboardPerformance.tips.risingStar3"),
     ],
-    link: { href: "/dashboard/schedule", label: "ไปที่ตารางสอน" }
+    link: { href: "/dashboard/schedule", label: t("dashboardPerformance.goalLinks.schedule") }
   },
   "FAST_RESPONDER": {
     icon: MessageSquare,
     tips: [
-      "คอยหมั่นตรวจสอบแท็บ 'แชท' เป็นประจำเพื่อไม่พลาดข้อความสอบถามจากนักเรียน",
-      "ให้ข้อมูลเพิ่มเติมหลังจบคลาสเรียนผ่านแชทกลุ่มเพื่อสร้างความเป็นกันเอง",
-      "ตอบรับการแจ้งเตือนโดยเร็วที่สุดเพื่อรักษามาตรฐานเวลาเฉลี่ยของคุณ"
+      t("dashboardPerformance.tips.fastResponder1"),
+      t("dashboardPerformance.tips.fastResponder2"),
+      t("dashboardPerformance.tips.fastResponder3"),
     ],
-    link: { href: "/dashboard/chat", label: "เปิดดูแชท" }
+    link: { href: "/dashboard/chat", label: t("dashboardPerformance.goalLinks.chat") }
   },
   "TOP_RATED": {
     icon: AwardIcon,
     tips: [
-      "ใช้ฟีเจอร์ Live Interactive Session ทุกคลาสเพื่อกระตุ้นความสนุกระหว่างเรียน",
-      "หมั่นใช้ Real-time Leaderboard เพื่อชมเชยนักเรียนที่ทำคะแนนได้ดีทันที",
-      "สร้างปฏิสัมพันธ์กับนักเรียนผ่าน Group Chat อย่างต่อเนื่องเพื่อเพิ่มความประทับใจ"
+      t("dashboardPerformance.tips.topRated1"),
+      t("dashboardPerformance.tips.topRated2"),
+      t("dashboardPerformance.tips.topRated3"),
     ],
-    link: { href: "/dashboard/classes", label: "จัดการคลาสเรียน" }
+    link: { href: "/dashboard/classes", label: t("dashboardPerformance.goalLinks.classes") }
   },
   "NETWORK_BUILDER": {
     icon: Users,
     tips: [
-      "คัดลอก 'ลิงก์เชิญ' จากหน้าเครือข่ายและส่งผ่าน LINE ให้กลุ่มเป้าหมายของคุณ",
-      "ตรวจสอบผังโครงสร้างองค์กรในหน้า 'เครือข่าย' เพื่อติดตามสถานะทีมของคุณ",
-      "สนับสนุนให้ติวเตอร์ในเครือข่ายเปิดคลาสแรกเพื่อสะสมยอด Volume ร่วมกัน"
+      t("dashboardPerformance.tips.networkBuilder1"),
+      t("dashboardPerformance.tips.networkBuilder2"),
+      t("dashboardPerformance.tips.networkBuilder3"),
     ],
-    link: { href: "/dashboard/network", label: "ไปที่เครือข่าย" }
+    link: { href: "/dashboard/network", label: t("dashboardPerformance.goalLinks.network") }
   },
   "CLASS_MASTER": {
     icon: BookOpen,
     tips: [
-      "รักษาตารางสอนให้สม่ำเสมอและกดเริ่ม/จบคลาสตามเวลาที่กำหนด",
-      "หมั่นเตรียมบทความถัดไปตามแผนการสอน 15 ขั้นตอนของระบบ",
-      "จัดสรรจำนวนนักเรียนในคลาสให้เหมาะสมกับศักยภาพการดูแลของคุณ"
+      t("dashboardPerformance.tips.classMaster1"),
+      t("dashboardPerformance.tips.classMaster2"),
+      t("dashboardPerformance.tips.classMaster3"),
     ],
-    link: { href: "/dashboard/classes", label: "จัดการคลาสเรียน" }
+    link: { href: "/dashboard/classes", label: t("dashboardPerformance.goalLinks.classes") }
   },
   "ELITE_EDUCATOR": {
     icon: Star,
     tips: [
-      "ใช้ Interactive Sessions ร่วมวัดความเข้าใจระหว่างเรียนอยู่เสมอ",
-      "ให้เวลาในการอธิบายซ้ำในช่วงการตรวจข้อสอบที่ AI ประเมินให้",
-      "หมั่นติดตามแท็บ 'ผลงาน' เพื่อดูอัตราความสำเร็จรวมของนักเรียนคุณ"
+      t("dashboardPerformance.tips.eliteEducator1"),
+      t("dashboardPerformance.tips.eliteEducator2"),
+      t("dashboardPerformance.tips.eliteEducator3"),
     ]
   },
   "AI_PIONEER": {
     icon: Star,
     tips: [
-      "เปิด Interactive Session ในทุกบทความเพื่อสร้างสภาพแวดล้อมการเรียนที่ล้ำสมัย",
-      "ลองนำคำถามแบบเขียนบรรยาย (SAQ) ให้นักเรียนฝึกใช้และรับคำแนะนำจาก AI",
-      "ตรวจสอบลำดับความถูกต้องของคำตอบในหน้าระบบหลังสอนจบ"
+      t("dashboardPerformance.tips.aiPioneer1"),
+      t("dashboardPerformance.tips.aiPioneer2"),
+      t("dashboardPerformance.tips.aiPioneer3"),
     ]
   }
 };
@@ -85,7 +86,10 @@ export function GoalActionButton({ goal }: { goal: GoalDetails }) {
   
   const config = GOAL_ACTIONS[goal.code] || {
     icon: Star,
-    tips: ["พยายามพัฒนาขีดความสามารถในการสอนและการบริหารจัดการคลาสอย่างต่อเนื่อง", "ติดตามข่าวสารกิจกรรมเทรนนิ่งใหม่ๆ ของแพลตฟอร์ม"]
+    tips: [
+      t("dashboardPerformance.defaultTips.first"),
+      t("dashboardPerformance.defaultTips.second"),
+    ],
   };
 
   const Icon = config.icon;
@@ -97,7 +101,7 @@ export function GoalActionButton({ goal }: { goal: GoalDetails }) {
         variant="outline" 
         className="w-full sm:w-auto border-amber-500/30 text-amber-700 dark:text-amber-400 hover:bg-amber-500/10 shrink-0 shadow-sm group"
       >
-        พัฒนาต่อยอด <ArrowUpRight className="ml-2 h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+        {t("dashboardPerformance.goalAction")} <ArrowUpRight className="ml-2 h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -107,10 +111,10 @@ export function GoalActionButton({ goal }: { goal: GoalDetails }) {
               <div className="p-2 rounded-full bg-amber-500/10">
                 <Icon className="h-5 w-5 text-amber-600" />
               </div>
-              แผนพัฒนา: {goal.label}
+              {t("dashboardPerformance.developmentPlanPrefix")} {goal.label}
             </DialogTitle>
             <DialogDescription>
-              คำแนะนำแนวทางปฏิบัติ (Best Practices) เพื่อให้คุณพิชิตเป้าหมายนี้ได้ไวขึ้น
+              {t("dashboardPerformance.bestPracticesDescription")}
             </DialogDescription>
           </DialogHeader>
           
@@ -132,7 +136,7 @@ export function GoalActionButton({ goal }: { goal: GoalDetails }) {
               </Link>
             ) : <div />}
             <Button variant="ghost" onClick={() => setOpen(false)} className="w-full sm:w-auto text-muted-foreground">
-              เข้าใจแล้ว
+              {t("dashboardPerformance.understood")}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, ChevronRight, MessageSquare } from "lucide-react";
+import { t } from "@/lib/i18n";
 
 async function getConversations() {
   const cookieStore = await cookies();
@@ -33,9 +34,9 @@ export default async function ChatPage() {
     <div className="space-y-6 max-w-2xl mx-auto w-full animate-in fade-in duration-500 pb-6">
       <div className="flex flex-col gap-4">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-foreground">ข้อความ</h1>
+          <h1 className="text-3xl font-black tracking-tight text-foreground">{t("dashboardChat.title")}</h1>
           <p className="text-sm font-medium text-muted-foreground mt-1">
-            สนทนากับนักเรียนและผู้ปกครอง (ข้อมูลจะถูกบันทึกเพื่อความปลอดภัย)
+            {t("dashboardChat.subtitle")}
           </p>
         </div>
         
@@ -43,7 +44,7 @@ export default async function ChatPage() {
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-brand-600 transition-colors" />
           <input
             type="text"
-            placeholder="ค้นหาชื่อนักเรียน หรือคลาสเรียน..."
+            placeholder={t("dashboardChat.searchPlaceholder")}
             className="w-full h-14 pl-12 pr-4 rounded-2xl border-2 border-border/50 bg-muted/30 text-sm font-medium focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all"
           />
         </div>
@@ -53,8 +54,8 @@ export default async function ChatPage() {
         {conversations.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
             <MessageSquare className="h-12 w-12 text-muted-foreground/30 mb-4" />
-            <p className="font-bold text-muted-foreground">ยังไม่มีข้อความ</p>
-            <p className="text-sm text-muted-foreground/60 mt-1">เมื่อมีการสนทนา รายการจะปรากฏที่นี่</p>
+            <p className="font-bold text-muted-foreground">{t("dashboardChat.emptyTitle")}</p>
+            <p className="text-sm text-muted-foreground/60 mt-1">{t("dashboardChat.emptyDescription")}</p>
           </div>
         )}
         
@@ -89,11 +90,11 @@ export default async function ChatPage() {
                     </div>
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-muted text-muted-foreground shrink-0">
-                        {conv.type === "DIRECT" ? "แชทส่วนตัว" : "แชทกลุ่ม"}
+                        {conv.type === "DIRECT" ? t("dashboardChat.direct") : t("dashboardChat.group")}
                       </span>
                     </div>
                     <p className={`text-sm truncate ${conv.unreadCount > 0 ? "text-foreground font-bold" : "text-muted-foreground font-medium"}`}>
-                      {conv.lastMessage?.content || "ยังไม่มีข้อความ"}
+                      {conv.lastMessage?.content || t("dashboardChat.noMessages")}
                     </p>
                   </div>
                 </CardContent>

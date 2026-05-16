@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { studentApi } from "@/lib/api";
+import { t } from "@/lib/i18n";
 
 // A custom toggle component for modern look
 const Toggle = ({ checked, onChange, disabled }: { checked: boolean; onChange: (v: boolean) => void; disabled?: boolean }) => (
@@ -150,7 +151,7 @@ export default function NotificationsPage() {
             style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "0.875rem", fontWeight: 500, color: "var(--text-secondary)", textDecoration: "none" }}
           >
             <ChevronLeft size={18} />
-            <span>โปรไฟล์</span>
+            <span>{t("profile.title")}</span>
           </Link>
           <ThemeToggle size={16} />
         </div>
@@ -174,10 +175,10 @@ export default function NotificationsPage() {
           </div>
           <div>
             <h1 style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "2px" }}>
-              การแจ้งเตือน
+              {t("notifications.title")}
             </h1>
             <p style={{ fontSize: "0.8125rem", color: "var(--text-tertiary)" }}>
-              ตั้งค่าวิธีที่คุณต้องการรับข่าวสาร
+              {t("notifications.subtitle")}
             </p>
           </div>
         </div>
@@ -199,10 +200,10 @@ export default function NotificationsPage() {
             </div>
             <div>
               <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "2px" }}>
-                เชื่อมต่อกับ LINE เรียบร้อย
+                {t("notifications.lineConnected")}
               </p>
               <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
-                ส่งข้อความผ่าน LINE OA (Push Message)
+                {t("notifications.linePush")}
               </p>
             </div>
             <CheckCircle2 size={20} style={{ marginLeft: "auto", color: "#06C755" }} />
@@ -210,7 +211,7 @@ export default function NotificationsPage() {
 
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <h3 style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.05em", paddingLeft: "4px" }}>
-              การตั้งค่าเสียง
+              {t("notifications.soundSettings")}
             </h3>
             <Card className="glass-card overflow-hidden">
               <div style={{ display: "flex", alignItems: "center", gap: "14px", padding: "16px" }}>
@@ -218,8 +219,8 @@ export default function NotificationsPage() {
                   {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
                 </div>
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)" }}>เสียงแจ้งเตือนแอพ</p>
-                  <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "2px" }}>เล่นเสียงเมื่อได้รับข้อความใหม่</p>
+                  <p style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)" }}>{t("notifications.appSound")}</p>
+                  <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "2px" }}>{t("notifications.appSoundDescription")}</p>
                 </div>
                 {mounted && (
                   <Toggle checked={!isMuted} onChange={handleToggleMute} />
@@ -230,7 +231,7 @@ export default function NotificationsPage() {
 
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <h3 style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.05em", paddingLeft: "4px" }}>
-              ช่องทางการเรียน
+              {t("notifications.learningChannel")}
             </h3>
             
             <Card className="glass-card overflow-hidden">
@@ -242,8 +243,8 @@ export default function NotificationsPage() {
                     <BookOpen size={18} />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)" }}>เตือนคาบเรียน</p>
-                    <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "2px" }}>แจ้งเตือนก่อนเริ่มคลาส 15 นาที</p>
+                    <p style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)" }}>{t("notifications.classReminder")}</p>
+                    <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "2px" }}>{t("notifications.classReminderDescription")}</p>
                   </div>
                   <Toggle checked={settings.notifyClassReminders} onChange={(v) => updateSetting('notifyClassReminders', v)} />
                 </div>
@@ -256,8 +257,8 @@ export default function NotificationsPage() {
                     <Trophy size={18} />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)" }}>สรุปคะแนนหลังเรียน</p>
-                    <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "2px" }}>แจ้งผลสรุปและรางวัลหลังจบคลาส</p>
+                    <p style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)" }}>{t("notifications.scoreSummary")}</p>
+                    <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "2px" }}>{t("notifications.scoreSummaryDescription")}</p>
                   </div>
                   <Toggle checked={settings.notifyScoreUpdates} onChange={(v) => updateSetting('notifyScoreUpdates', v)} />
                 </div>
@@ -268,7 +269,7 @@ export default function NotificationsPage() {
 
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <h3 style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.05em", paddingLeft: "4px" }}>
-              การตลาดและข่าวสาร
+              {t("notifications.marketingNews")}
             </h3>
             
             <Card className="glass-card overflow-hidden">
@@ -279,8 +280,8 @@ export default function NotificationsPage() {
                     <AlertCircle size={18} />
                   </div>
                   <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)" }}>ข้อเสนอและส่วนลด</p>
-                    <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "2px" }}>รับข่าวสารโปรโมชั่นคอร์สเรียนใหม่</p>
+                    <p style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)" }}>{t("notifications.offers")}</p>
+                    <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "2px" }}>{t("notifications.offersDescription")}</p>
                   </div>
                   <Toggle checked={settings.notifyMarketing} onChange={(v) => updateSetting('notifyMarketing', v)} />
                 </div>
@@ -292,12 +293,12 @@ export default function NotificationsPage() {
           <div style={{ marginTop: "12px", display: "flex", flexDirection: "column", gap: "12px" }}>
             {saveStatus === 'success' && (
               <div style={{ textAlign: "center", color: "#059669", fontSize: "0.875rem", fontWeight: 600, animation: "fadeIn 0.3s" }}>
-                ✓ บันทึกการตั้งค่าเรียบร้อยแล้ว
+                {t("notifications.saved")}
               </div>
             )}
             {saveStatus === 'error' && (
               <div style={{ textAlign: "center", color: "#ef4444", fontSize: "0.875rem", fontWeight: 600 }}>
-                ✖ ไม่สามารถบันทึกข้อมูลได้ โปรดลองอีกครั้ง
+                {t("notifications.saveFailed")}
               </div>
             )}
 
@@ -314,15 +315,15 @@ export default function NotificationsPage() {
               {saving ? (
                 <>
                   <Loader2 className="animate-spin mr-2" size={18} />
-                  กำลังบันทึก...
+                  {t("notifications.saving")}
                 </>
-              ) : "บันทึกการตั้งค่า"}
+              ) : t("notifications.save")}
             </Button>
           </div>
 
           <div style={{ padding: "16px", marginTop: "20px", borderRadius: "16px", background: "var(--surface-card)", border: "1px solid var(--surface-border)", textAlign: "center" }}>
             <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.5 }}>
-              <strong>💡 เกร็ดความรู้ LINE LIFF:</strong> การเปิดใช้งานการแจ้งเตือนจะอนุญาตให้ระบบส่งข้อความ Direct Message เข้าหาคุณโดยตรงผ่าน LINE Official Account แม้จะไม่ได้เปิดแอปพลิเคชันอยู่
+              <strong>{t("notifications.liffTipTitle")}</strong> {t("notifications.liffTipDescription")}
             </p>
           </div>
 

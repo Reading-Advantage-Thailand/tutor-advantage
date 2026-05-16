@@ -1,3 +1,5 @@
+import { t } from "./i18n";
+
 export type PaymentMethod = "promptpay" | "card";
 export type PaymentStep = "select" | "age-check" | "qr" | "card-form" | "success";
 
@@ -41,11 +43,11 @@ const DEFAULT_PRICE_SATANG = 250_000;
 export function createDefaultOrderSummary(classId: string): OrderSummary {
   return {
     id: classId,
-    name: "Loading class...",
+    name: t("payment.loadingClass"),
     price: DEFAULT_PRICE_SATANG / 100,
     priceSatang: DEFAULT_PRICE_SATANG,
-    tutor: "Tutor Advantage",
-    cefr: "Reading Advantage",
+    tutor: t("payment.defaultTutor"),
+    cefr: t("payment.defaultCefr"),
   };
 }
 
@@ -57,11 +59,11 @@ export function buildOrderSummaryFromClass(
 
   return {
     id: cls.id || fallbackClassId,
-    name: cls.name || cls.book || "Reading Advantage Class",
+    name: cls.name || cls.book || t("payment.defaultClassName"),
     price: priceSatang / 100,
     priceSatang,
-    tutor: cls.tutor?.name || "Tutor Advantage",
-    cefr: cls.book || "Reading Advantage",
+    tutor: cls.tutor?.name || t("payment.defaultTutor"),
+    cefr: cls.book || t("payment.defaultCefr"),
   };
 }
 

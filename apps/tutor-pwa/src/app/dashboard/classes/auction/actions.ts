@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { getClassActionErrorMessage } from "@/lib/tutorClassFlow";
+import { t } from "@/lib/i18n";
 
 export async function claimClass(transferId: string) {
   const cookieStore = await cookies();
@@ -22,7 +23,7 @@ export async function claimClass(transferId: string) {
   
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(getClassActionErrorMessage(err, "Failed to claim class"));
+    throw new Error(getClassActionErrorMessage(err, t("tutorClass.errors.claimClass")));
   }
 
   revalidatePath("/dashboard/classes/auction");

@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { t } from "@/lib/i18n";
 import {
   Video,
   Users,
@@ -43,7 +44,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
             href="/dashboard/classes"
             className="hover:text-foreground transition-colors flex items-center gap-1"
           >
-            <ArrowLeft className="h-3 w-3" /> คลาสเรียน
+            <ArrowLeft className="h-3 w-3" /> {t("tutorClass.classes.title")}
           </Link>
           <ChevronRight className="h-3 w-3" />
           <span className="text-foreground">{cls.name}</span>
@@ -54,7 +55,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
               {cls.name}
             </h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              {cls.book} · {cls.schedule}
+              {cls.book} / {cls.schedule}
             </p>
           </div>
           <ClassStatusToggle classId={classId} initialStatus={cls.status} />
@@ -76,7 +77,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold flex items-center gap-2">
                 <Users className="h-4 w-4 text-primary" />
-                นักเรียน ({cls.students}/{cls.maxStudents} คน)
+                {t("tutorClass.classes.studentsTitle")} ({cls.students}/{cls.maxStudents} {t("tutorClass.classes.peopleUnit")})
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4">

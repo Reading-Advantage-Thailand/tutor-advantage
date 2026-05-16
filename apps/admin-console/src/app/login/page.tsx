@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { ShieldCheck, AlertCircle, Lock, ChevronDown, ChevronUp } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { t } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -30,22 +31,22 @@ const ROLE_DESCRIPTIONS: Record<
   { label: string; description: string; access: string[] }
 > = {
   ADMIN: {
-    label: "ผู้ดูแลระบบสูงสุด (Super Admin)",
-    description: "เข้าถึงได้ทุกส่วนของระบบ พร้อมอำนาจในการตรวจสอบทั้งหมด",
+    label: t("login.superAdminLabel"),
+    description: t("login.superAdminDescription"),
     access: [
-      "ดูภาพรวมแผงควบคุม (Dashboard Overview)",
-      "จัดการและอนุมัติรอบบิล (Settlement Management)",
-      "จัดการบัญชีผู้ใช้งาน (User & Tutor Management)",
-      "ตรวจสอบประวัติการทำรายการ (Finance Audit Log)",
+      t("login.superAdminAccess1"),
+      t("login.superAdminAccess2"),
+      t("login.superAdminAccess3"),
+      t("login.superAdminAccess4"),
     ],
   },
   FINANCE_CHECKER: {
-    label: "ผู้ตรวจสอบการเงิน (Finance Checker)",
-    description: "มีสิทธิ์อ่านข้อมูลเพื่อตรวจสอบรอบบิลและดูประวัติเท่านั้น",
+    label: t("login.financeCheckerLabel"),
+    description: t("login.financeCheckerDescription"),
     access: [
-      "ตรวจสอบรอบบิล (Settlement Review)",
-      "ดูประวัติการจ่ายเงิน (Payout Audit Trail)",
-      "ตรวจสอบที่มาของค่าคอมมิชชัน (Commission Traceability)",
+      t("login.financeCheckerAccess1"),
+      t("login.financeCheckerAccess2"),
+      t("login.financeCheckerAccess3"),
     ],
   },
 };
@@ -131,10 +132,10 @@ export default function LoginPage() {
           <CardHeader className="pb-6 bg-muted/20 border-b">
             <CardTitle className="text-lg flex items-center justify-center gap-2 font-bold">
               <Lock className="w-5 h-5 text-brand-600" />
-              เข้าสู่ระบบผู้ดูแล
+              {t("login.title")}
             </CardTitle>
             <CardDescription className="text-center">
-              กรุณาเข้าสู่ระบบด้วยบัญชีอีเมลระดับองค์กร
+              {t("login.description")}
             </CardDescription>
           </CardHeader>
 
@@ -149,7 +150,7 @@ export default function LoginPage() {
               {googleLoading ? (
                 <span className="flex items-center justify-center gap-2">
                   <span className="w-5 h-5 border-2 border-gray-400 border-t-gray-800 rounded-full animate-spin" />
-                  กำลังเชื่อมต่อ Google...
+                  {t("login.connectingGoogle")}
                 </span>
               ) : (
                 <span className="flex items-center justify-center gap-3">
@@ -171,7 +172,7 @@ export default function LoginPage() {
                       fill="#EA4335"
                     />
                   </svg>
-                  ดำเนินการต่อด้วย Google
+                  {t("login.continueGoogle")}
                 </span>
               )}
             </Button>
@@ -182,7 +183,7 @@ export default function LoginPage() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-card px-2 text-muted-foreground font-bold tracking-widest">
-                  หรือ
+                  {t("login.or")}
                 </span>
               </div>
             </div>
@@ -197,7 +198,7 @@ export default function LoginPage() {
                 >
                   <div className="flex items-center gap-2 text-amber-600 dark:text-amber-500">
                     <AlertCircle className="w-4 h-4" />
-                    เข้าสู่ระบบแบบนักพัฒนา (Dev Mode)
+                    {t("login.devMode")}
                   </div>
                   {showDevLogin ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
                 </button>
@@ -206,10 +207,10 @@ export default function LoginPage() {
                   <div className="p-4 pt-0 border-t border-border/50 bg-background/50">
                     <form onSubmit={handleDevLogin} className="space-y-4 pt-4">
                       <div className="space-y-2">
-                        <Label htmlFor="role" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">เลือกระดับสิทธิ์</Label>
+                        <Label htmlFor="role" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("login.roleLabel")}</Label>
                         <Select value={role} onValueChange={setRole}>
                           <SelectTrigger id="role" className="w-full h-11 rounded-xl border-2 focus:ring-brand-500">
-                            <SelectValue placeholder="เลือกบทบาท" />
+                            <SelectValue placeholder={t("login.rolePlaceholder")} />
                           </SelectTrigger>
                           <SelectContent className="rounded-xl border-border/50">
                             <SelectItem value="ADMIN">Super Admin</SelectItem>
@@ -256,10 +257,10 @@ export default function LoginPage() {
                         {loading ? (
                           <span className="flex items-center gap-2">
                             <span className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />
-                            กำลังสร้าง Token...
+                            {t("login.creatingToken")}
                           </span>
                         ) : (
-                          "เข้าสู่ระบบด้วย Mock JWT"
+                          t("login.mockJwt")
                         )}
                       </Button>
                     </form>
@@ -271,8 +272,8 @@ export default function LoginPage() {
 
           <CardFooter className="bg-muted/10 p-6 flex flex-col gap-2 text-center border-t border-border/50">
             <p className="text-[10px] text-muted-foreground font-medium leading-relaxed">
-              การเข้าสู่ระบบถือเป็นการยอมรับนโยบายความปลอดภัยขององค์กร
-              ทุกกิจกรรมของคุณจะถูกบันทึกอย่างถาวรในระบบ Audit Trail
+              {t("login.footerLine1")}
+              {t("login.footerLine2")}
             </p>
           </CardFooter>
         </Card>

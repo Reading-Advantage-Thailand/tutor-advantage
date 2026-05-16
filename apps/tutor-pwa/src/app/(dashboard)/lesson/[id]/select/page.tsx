@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, BookOpen, Play } from "lucide-react";
 import Link from "next/link";
-
 import { getClassArticles } from "@/app/dashboard/classes/actions";
+import { t } from "@/lib/i18n";
 
 interface Article {
   id: string;
@@ -41,7 +41,7 @@ export default function SelectLessonPage() {
       } catch (err) {
         console.error("Failed to load articles:", err);
         if (isMounted) {
-          setError("ไม่สามารถดึงข้อมูลบทเรียนได้ กรุณาลองใหม่อีกครั้ง");
+          setError(t("lesson.select.loadFailed"));
         }
       } finally {
         if (isMounted) setLoading(false);
@@ -55,7 +55,7 @@ export default function SelectLessonPage() {
 
   const handleStartLesson = async () => {
     if (!selectedArticle) {
-      setError("กรุณาเลือกบทเรียน");
+      setError(t("lesson.select.required"));
       return;
     }
 
@@ -63,20 +63,17 @@ export default function SelectLessonPage() {
     setError(null);
 
     try {
-      // Navigate to interactive page with selected article ID
-      const article = articles.find((a) => a.id === selectedArticle);
       router.push(
         `/lesson/${classId}/interactive?articleId=${selectedArticle}`,
       );
     } catch (err) {
-      setError("เกิดข้อผิดพลาดในการเริ่มบทเรียน");
+      setError(t("lesson.select.startFailed"));
       setLoading(false);
     }
   };
 
   return (
     <div className="w-full max-w-4xl pb-24 lg:pb-0">
-      {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <Link href={`/dashboard/classes/${classId}`}>
           <Button
@@ -88,9 +85,9 @@ export default function SelectLessonPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-xl font-bold text-foreground">เลือกบทเรียน</h1>
+          <h1 className="text-xl font-bold text-foreground">{t("lesson.select.title")}</h1>
           <p className="text-sm text-muted-foreground">
-            เลือกบทความสำหรับเซสชันการเรียนในวันนี้
+            {t("lesson.select.subtitle")}
           </p>
         </div>
       </div>
@@ -101,12 +98,11 @@ export default function SelectLessonPage() {
         </div>
       )}
 
-      {/* Articles Grid */}
       <div className="space-y-4 mb-6">
         {articles.length === 0 ? (
           <Card className="border-border/60">
             <CardContent className="pt-6 text-center text-muted-foreground">
-              ยังไม่มีบทเรียนสำหรับหนังสือนี้
+              {t("lesson.select.empty")}
             </CardContent>
           </Card>
         ) : (
@@ -122,7 +118,6 @@ export default function SelectLessonPage() {
             >
               <CardContent className="p-4">
                 <div className="flex items-start gap-4">
-                  {/* Selection indicator */}
                   <div
                     className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 mt-1 transition-all ${
                       selectedArticle === article.id
@@ -135,12 +130,11 @@ export default function SelectLessonPage() {
                     )}
                   </div>
 
-                  {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
                       <BookOpen className="h-4 w-4 text-primary shrink-0" />
                       <h3 className="font-semibold text-lg text-foreground truncate">
-                        บท {article.articleNumber}: {article.title}
+                        {t("lesson.select.chapterPrefix")} {article.articleNumber}: {article.title}
                       </h3>
                     </div>
 
@@ -150,16 +144,15 @@ export default function SelectLessonPage() {
 
                     {article.summary && (
                       <p className="text-sm text-slate-600 mb-3 bg-slate-50 p-2 rounded border border-slate-200">
-                        📝 {article.summary}
+                        {t("lesson.select.summaryPrefix")}: {article.summary}
                       </p>
                     )}
 
-                    {/* Metadata */}
                     <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                       {article.isCompleted && (
                         <span className="px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center gap-1 border border-emerald-200">
                           <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                          เรียนแล้ว
+                          {t("lesson.select.completed")}
                         </span>
                       )}
                       {article.cefrLevel && (
@@ -176,11 +169,10 @@ export default function SelectLessonPage() {
         )}
       </div>
 
-      {/* Action Buttons */}
       <div className="flex gap-3">
         <Link href={`/dashboard/classes/${classId}`} className="flex-1">
           <Button variant="outline" className="w-full">
-            ยกเลิก
+            {t("lesson.select.cancel")}
           </Button>
         </Link>
         <Button
@@ -189,7 +181,7 @@ export default function SelectLessonPage() {
           className="flex-1 gap-2"
         >
           <Play className="h-4 w-4" />
-          {loading ? "กำลังเริ่ม..." : "เริ่มเรียน"}
+          {loading ? t("lesson.select.starting") : t("lesson.select.start")}
         </Button>
       </div>
     </div>

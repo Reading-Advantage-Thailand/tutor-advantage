@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchWithAuth } from "@/lib/api";
+import { t } from "@/lib/i18n";
 
 interface ExceptionEvent {
   id: string;
@@ -55,7 +56,7 @@ export default function ExceptionsPage() {
       );
       setData(resp.exceptions || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "ไม่สามารถโหลดข้อมูลข้อผิดพลาดได้");
+      setError(err instanceof Error ? err.message : t("operations.loadExceptionsFailed"));
     } finally {
       setLoading(false);
     }
@@ -76,10 +77,10 @@ export default function ExceptionsPage() {
         `/v1/operations/exceptions/${id}/${action.replace(/\s+/g, "_").toUpperCase()}`,
         { method: "POST" },
       );
-      setSuccess(`อัปเดตสถานะของข้อผิดพลาดรหัส ${id.slice(0, 8)} สำเร็จ`);
+      setSuccess(`${t("operations.updateExceptionSuccessPrefix")} ${id.slice(0, 8)} ${t("operations.successSuffix")}`);
       await loadData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการอัปเดตสถานะ");
+      setError(err instanceof Error ? err.message : t("operations.updateExceptionFailed"));
     } finally {
       setResolvingId(null);
     }
@@ -90,22 +91,22 @@ export default function ExceptionsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-3xl font-black tracking-tight text-foreground">
-            ข้อผิดพลาดระบบ (Exceptions)
+            {t("operations.exceptionsTitle")}
           </h2>
           <p className="text-muted-foreground font-medium">
-            ตรวจสอบเหตุการณ์ผิดปกติในระบบการเงิน และการดำเนินงาน
+            {t("operations.exceptionsDescription")}
           </p>
         </div>
         <Button variant="outline" onClick={loadData} disabled={loading} className="rounded-full font-bold shadow-sm h-12 px-6">
           <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-          รีเฟรชข้อมูล
+          {t("operations.refresh")}
         </Button>
       </div>
 
       {error && (
         <Alert variant="destructive" className="rounded-2xl border-2 shadow-sm">
           <AlertTriangle className="h-5 w-5" />
-          <AlertTitle className="font-bold">ดำเนินการไม่สำเร็จ</AlertTitle>
+          <AlertTitle className="font-bold">{t("operations.actionFailed")}</AlertTitle>
           <AlertDescription className="font-medium">{error}</AlertDescription>
         </Alert>
       )}
@@ -127,11 +128,11 @@ export default function ExceptionsPage() {
               </div>
               <div>
                 <CardTitle className="text-lg font-bold flex items-center gap-2">
-                  รายการที่รอการแก้ไข
+                  {t("operations.pendingResolution")}
                   <Badge variant="secondary" className="bg-amber-500 text-white border-none">{totalAmount}</Badge>
                 </CardTitle>
                 <CardDescription className="font-medium text-xs">
-                  ตรวจสอบการเรียกชำระเงินที่ไม่สำเร็จ, การสมัครเรียนที่ผิดพลาด และการแก้ไขด้วยตนเอง
+                  {t("operations.exceptionsQueueDescription")}
                 </CardDescription>
               </div>
             </div>
@@ -146,7 +147,7 @@ export default function ExceptionsPage() {
               onKeyDown={(event) => {
                 if (event.key === "Enter") loadData();
               }}
-              placeholder="ค้นหาข้อผิดพลาด, ชื่อนักเรียน, คลาส..."
+              placeholder={t("operations.searchExceptions")}
               className="pl-11 h-12 rounded-2xl border-2 focus-visible:ring-brand-500 font-medium bg-muted/30"
             />
           </div>
@@ -161,8 +162,8 @@ export default function ExceptionsPage() {
           {!loading && data.length === 0 && (
             <div className="flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
               <Activity className="h-12 w-12 text-emerald-500/50 mb-4" />
-              <p className="font-bold text-muted-foreground">ระบบทำงานได้สมบูรณ์</p>
-              <p className="text-sm text-muted-foreground/60 mt-1">ไม่มีข้อผิดพลาดที่รอการแก้ไขในขณะนี้</p>
+              <p className="font-bold text-muted-foreground">{t("operations.noExceptionsTitle")}</p>
+              <p className="text-sm text-muted-foreground/60 mt-1">{t("operations.noExceptionsDescription")}</p>
             </div>
           )}
 
@@ -188,32 +189,32 @@ export default function ExceptionsPage() {
                     
                     <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4 bg-muted/30 p-4 rounded-xl border border-border/50">
                       <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">นักเรียน</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("operations.student")}</p>
                         <p className="font-bold text-foreground truncate">{item.studentName}</p>
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">คลาส</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("operations.class")}</p>
                         <p className="font-mono text-xs font-bold truncate">{item.classId}</p>
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">ผู้ให้บริการ</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("operations.provider")}</p>
                         <p className="font-bold text-foreground truncate">{item.provider}</p>
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">ยอดเงิน</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("operations.amount")}</p>
                         <p className="font-black text-foreground">{item.amount}</p>
                       </div>
                     </div>
                     
                     <div>
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">รายละเอียดข้อผิดพลาด</p>
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("operations.errorDetail")}</p>
                       <p className="rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 p-3 font-mono text-xs text-red-800 dark:text-red-400 break-words">
-                        {item.errorDetail || "ไม่มีรายละเอียดข้อผิดพลาด"}
+                        {item.errorDetail || t("operations.noErrorDetail")}
                       </p>
                     </div>
                     
                     <p className="text-[10px] font-bold text-muted-foreground">
-                      เวลาเกิดเหตุ: {new Date(item.createdAt).toLocaleString("th-TH")}
+                      {t("operations.occurredAtPrefix")} {new Date(item.createdAt).toLocaleString("th-TH")}
                     </p>
                   </div>
                   
@@ -225,7 +226,7 @@ export default function ExceptionsPage() {
                       className="w-full rounded-xl font-bold border-red-200 text-red-600 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/30 h-11"
                     >
                       <XCircle className="mr-2 h-4 w-4" />
-                      ยกเลิก / โมฆะ
+                      {t("operations.voidCancel")}
                     </Button>
                     <Button
                       disabled={resolvingId === item.id}
@@ -233,7 +234,7 @@ export default function ExceptionsPage() {
                       className="w-full rounded-xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-500/20 h-11"
                     >
                       <CheckCircle2 className="mr-2 h-4 w-4" />
-                      บังคับสำเร็จ
+                      {t("operations.forceActive")}
                     </Button>
                   </div>
                 </div>

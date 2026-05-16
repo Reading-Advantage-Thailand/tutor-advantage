@@ -19,6 +19,7 @@ import {
   VerificationRow,
 } from "./client-components";
 import VerificationBanner from "@/components/dashboard/verification-banner";
+import { t } from "@/lib/i18n";
 
 async function getUserProfile(token: string) {
   const res = await fetch("http://localhost:3001/v1/users/me", {
@@ -43,9 +44,9 @@ export default async function SettingsPage() {
   return (
     <div className="max-w-2xl mx-auto space-y-6 lg:space-y-8 pb-24 sm:pb-0">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">ตั้งค่าบัญชี</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t("dashboardSettings.title")}</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          จัดการข้อมูลส่วนตัว ความเป็นส่วนตัว และบัญชีรับเงิน
+          {t("dashboardSettings.subtitle")}
         </p>
       </div>
 
@@ -68,7 +69,7 @@ export default async function SettingsPage() {
           </div>
           <div className="flex-1 text-center sm:text-left">
             <h2 className="text-xl font-bold text-foreground">
-              {user.displayName || "Unknown User"}
+              {user.displayName || t("dashboardSettings.unknownUser")}
             </h2>
             <p className="text-sm text-muted-foreground mb-3 truncate max-w-xs">
               {user.userId}
@@ -88,18 +89,18 @@ export default async function SettingsPage() {
               >
                 <ShieldCheck className="w-3 h-3 mr-1" />
                 {user.verificationStatus === "VERIFIED"
-                  ? "ยืนยันตัวตนแล้ว"
+                  ? t("dashboardSettings.verified")
                   : user.verificationStatus === "PENDING"
-                    ? "กำลังตรวจสอบ"
+                    ? t("dashboardSettings.pending")
                     : user.verificationStatus === "REJECTED"
-                      ? "การตรวจสอบถูกปฏิเสธ"
-                      : "ยังไม่ได้ยืนยันตัวตน"}
+                      ? t("dashboardSettings.rejected")
+                      : t("dashboardSettings.unverified")}
               </Badge>
               <Badge
                 variant="outline"
                 className="font-normal text-xs uppercase"
               >
-                ระดับ: {user.role?.replace("ROLE_", "") || "TUTOR"}
+                {t("dashboardSettings.rolePrefix")} {user.role?.replace("ROLE_", "") || "TUTOR"}
               </Badge>
             </div>
           </div>
@@ -108,7 +109,7 @@ export default async function SettingsPage() {
 
       <div className="space-y-4">
         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1">
-          ระบบและการแจ้งเตือน
+          {t("dashboardSettings.systemSection")}
         </h3>
 
         <Card className="border-border/60">
@@ -117,8 +118,8 @@ export default async function SettingsPage() {
             <SettingsInteractiveElements type="soundToggleRow" />
 
             <EditableSettingToggle
-              title="การแจ้งเตือนบน LINE"
-              description="รับข้อความเมื่อมีนักเรียนชำระเงิน"
+              title={t("dashboardSettings.lineNotificationTitle")}
+              description={t("dashboardSettings.lineNotificationDescription")}
               iconName="Bell"
               value={user.settings?.lineNotification}
               settingKey="lineNotification"
@@ -131,7 +132,7 @@ export default async function SettingsPage() {
 
       <div className="space-y-4">
         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1">
-          ข้อมูลบัญชีและการเงิน
+          {t("dashboardSettings.financeSection")}
         </h3>
 
         <Card className="border-border/60">
@@ -140,9 +141,9 @@ export default async function SettingsPage() {
               <VerificationRow user={user} />
             ) : (
               <EditableSettingText
-                title="เลขบัญชีธนาคาร"
-                description="ยังไม่ได้ระบุ"
-                placeholder="ระบุหมายเลขบัญชีธนาคารของคุณ"
+                title={t("dashboardSettings.bankAccountTitle")}
+                description={t("dashboardSettings.notSpecified")}
+                placeholder={t("dashboardSettings.bankAccountPlaceholder")}
                 iconName="Wallet"
                 value={user.settings?.promptPay}
                 settingKey="promptPay"
@@ -152,9 +153,9 @@ export default async function SettingsPage() {
             )}
 
             <EditableSettingText
-              title="ที่อยู่สำหรับส่งเอกสาร (50 ทวิ)"
-              description="ยังไม่ได้ระบุ"
-              placeholder="ระบุที่อยู่พร้อมรหัสไปรษณีย์"
+              title={t("dashboardSettings.taxAddressTitle")}
+              description={t("dashboardSettings.notSpecified")}
+              placeholder={t("dashboardSettings.taxAddressPlaceholder")}
               iconName="MapPin"
               value={user.settings?.address}
               settingKey="address"
@@ -167,7 +168,7 @@ export default async function SettingsPage() {
 
       <div className="space-y-4">
         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider px-1">
-          นโยบายและข้อตกลง (PDPA)
+          {t("dashboardSettings.policySection")}
         </h3>
 
         <Card className="border-border/60">
@@ -182,10 +183,10 @@ export default async function SettingsPage() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-foreground">
-                    ข้อตกลงการให้บริการ
+                    {t("dashboardSettings.termsTitle")}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    อ่านข้อควรปฏิบัติของ Tutor Advantage
+                    {t("dashboardSettings.termsDescription")}
                   </p>
                 </div>
               </div>
@@ -202,10 +203,10 @@ export default async function SettingsPage() {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-foreground">
-                    นโยบายความเป็นส่วนตัว
+                    {t("dashboardSettings.privacyTitle")}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    เรียนรู้การจัดการข้อมูลส่วนบุคคลของคุณ
+                    {t("dashboardSettings.privacyDescription")}
                   </p>
                 </div>
               </div>

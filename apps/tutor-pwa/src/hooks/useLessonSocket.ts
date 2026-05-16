@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { getTutorSessionToken } from '../app/dashboard/actions';
+import { t } from '@/lib/i18n';
 
 
 const SOCKET_URL = process.env.NEXT_PUBLIC_LEARNING_SERVICE_URL || 'http://localhost:3002';
@@ -95,7 +96,7 @@ export const useLessonSocket = (tutorId: string, articleId: string, classId?: st
         socketInstance.on('session_deleted', (data) => {
           console.log(`[Socket] Session deleted: ${data.message}`);
           setSessionData(null);
-          setError("เซสชันถูกยกเลิกแล้ว");
+          setError(t("app.lessonSessionCancelled"));
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Could not prepare the tutor lesson lobby.');

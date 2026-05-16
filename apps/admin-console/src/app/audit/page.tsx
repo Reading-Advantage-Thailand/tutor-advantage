@@ -36,6 +36,7 @@ import {
   Clock,
   ArrowRight
 } from "lucide-react";
+import { t } from "@/lib/i18n";
 
 interface AuditLog {
   auditId: string;
@@ -118,7 +119,7 @@ function CopyableId({ name, id }: { name: string; id: string }) {
     setTimeout(() => setCopied(false), 1500);
   };
 
-  const truncated = id.length > 20 ? `${id.slice(0, 8)}…${id.slice(-4)}` : id;
+  const truncated = id.length > 20 ? `${id.slice(0, 8)}\u2026${id.slice(-4)}` : id;
 
   return (
     <div>
@@ -196,8 +197,8 @@ export default function AuditPage() {
   return (
     <div className="space-y-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
       <div className="flex flex-col gap-2">
-        <h2 className="text-3xl font-black tracking-tight text-foreground">ประวัติกิจกรรม (Audit Trail)</h2>
-        <p className="text-muted-foreground font-medium">บันทึกกิจกรรมทางการเงินและการตั้งค่าระบบที่ไม่สามารถแก้ไขได้</p>
+        <h2 className="text-3xl font-black tracking-tight text-foreground">{t("audit.title")}</h2>
+        <p className="text-muted-foreground font-medium">{t("audit.description")}</p>
       </div>
 
       {/* Header & Filters */}
@@ -208,9 +209,9 @@ export default function AuditPage() {
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div>
-              <CardTitle className="text-lg font-bold">ค้นหาบันทึกกิจกรรม</CardTitle>
+              <CardTitle className="text-lg font-bold">{t("audit.searchTitle")}</CardTitle>
               <CardDescription className="font-medium text-xs">
-                กรองตามรอบบิล หรือประเภทของกิจกรรม
+                {t("audit.searchDescription")}
               </CardDescription>
             </div>
           </div>
@@ -218,7 +219,7 @@ export default function AuditPage() {
         <CardContent className="p-8">
           <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div className="space-y-1.5 w-full sm:w-48">
-              <Label htmlFor="filterPeriod" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">รอบบิล</Label>
+              <Label htmlFor="filterPeriod" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("audit.period")}</Label>
               <Input
                 id="filterPeriod"
                 type="month"
@@ -230,23 +231,23 @@ export default function AuditPage() {
               />
             </div>
             <div className="space-y-1.5 w-full sm:w-64">
-              <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">ประเภทกิจกรรม</Label>
+              <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("audit.actionType")}</Label>
               <Select
                 value={filterAction}
                 onValueChange={handleFilterChange(setFilterAction)}
               >
                 <SelectTrigger className="h-12 rounded-xl border-2 focus-visible:ring-brand-500">
-                  <SelectValue placeholder="ทุกกิจกรรม" />
+                  <SelectValue placeholder={t("audit.allActions")} />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-border/50">
-                  <SelectItem value={ALL_ACTIONS}>ทุกกิจกรรม</SelectItem>
-                  <SelectItem value="PREVIEW">สร้างพรีวิวแล้ว</SelectItem>
-                  <SelectItem value="APPROVE">อนุมัติการชำระเงิน</SelectItem>
-                  <SelectItem value="REJECT">ปฏิเสธการชำระเงิน</SelectItem>
-                  <SelectItem value="ADJUST_CREATE">สร้างรายการปรับปรุง</SelectItem>
-                  <SelectItem value="ADJUST_APPROVE">อนุมัติการปรับปรุง</SelectItem>
-                  <SelectItem value="ADJUST_REJECT">ปฏิเสธการปรับปรุง</SelectItem>
-                  <SelectItem value="EXPORT">ส่งออกไฟล์ CSV</SelectItem>
+                  <SelectItem value={ALL_ACTIONS}>{t("audit.allActions")}</SelectItem>
+                  <SelectItem value="PREVIEW">{t("audit.preview")}</SelectItem>
+                  <SelectItem value="APPROVE">{t("audit.approve")}</SelectItem>
+                  <SelectItem value="REJECT">{t("audit.reject")}</SelectItem>
+                  <SelectItem value="ADJUST_CREATE">{t("audit.adjustCreate")}</SelectItem>
+                  <SelectItem value="ADJUST_APPROVE">{t("audit.adjustApprove")}</SelectItem>
+                  <SelectItem value="ADJUST_REJECT">{t("audit.adjustReject")}</SelectItem>
+                  <SelectItem value="EXPORT">{t("audit.export")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -259,7 +260,7 @@ export default function AuditPage() {
               <RefreshCw
                 className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
               />
-              กรองข้อมูล
+              {t("audit.filter")}
             </Button>
           </div>
         </CardContent>
@@ -278,8 +279,8 @@ export default function AuditPage() {
         <Card className="border-none shadow-sm rounded-3xl bg-muted/20 border-2 border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-20 text-center">
             <Clock className="h-12 w-12 text-muted-foreground/30 mb-4" />
-            <p className="font-bold text-muted-foreground">ไม่พบบันทึกกิจกรรม</p>
-            <p className="text-sm text-muted-foreground/60 mt-1">ลองเปลี่ยนตัวกรอง หรือเลือกรอบบิลอื่น</p>
+            <p className="font-bold text-muted-foreground">{t("audit.emptyTitle")}</p>
+            <p className="text-sm text-muted-foreground/60 mt-1">{t("audit.emptyDescription")}</p>
           </CardContent>
         </Card>
       )}
@@ -315,21 +316,21 @@ export default function AuditPage() {
                           </Badge>
                           {log.periodMonth && (
                             <Badge variant="secondary" className="px-2 py-1 font-bold text-[10px] rounded-md bg-muted/50 border-none">
-                              รอบบิล: {log.periodMonth}
+                              {t("audit.periodPrefix")} {log.periodMonth}
                             </Badge>
                           )}
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                           <div className="bg-muted/30 p-3 rounded-xl border border-border/50">
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">ผู้ดำเนินการ</p>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("audit.actor")}</p>
                             <CopyableId
                               name={log.displayName ?? log.actorUserId}
                               id={log.actorUserId}
                             />
                           </div>
                           <div className="bg-muted/30 p-3 rounded-xl border border-border/50">
-                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">เป้าหมาย (Target Entity)</p>
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("audit.targetEntity")}</p>
                             <CopyableId name={log.actionType} id={log.targetId} />
                           </div>
                         </div>
@@ -338,7 +339,7 @@ export default function AuditPage() {
                           <div className="flex items-center gap-3 pt-2">
                             {log.previousStatus && (
                               <div className="flex flex-col">
-                                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-0.5">จากเดิม</span>
+                                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-0.5">{t("audit.before")}</span>
                                 <span className="font-mono text-xs font-bold text-foreground bg-muted px-2 py-1 rounded-md border border-border/50">
                                   {log.previousStatus}
                                 </span>
@@ -347,7 +348,7 @@ export default function AuditPage() {
                             {log.previousStatus && log.newStatus && <ArrowRight className="h-4 w-4 text-muted-foreground mt-4" />}
                             {log.newStatus && (
                               <div className="flex flex-col">
-                                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-0.5">เปลี่ยนเป็น</span>
+                                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mb-0.5">{t("audit.after")}</span>
                                 <span className="font-mono text-xs font-bold text-foreground bg-muted px-2 py-1 rounded-md border border-border/50">
                                   {log.newStatus}
                                 </span>
@@ -383,10 +384,10 @@ export default function AuditPage() {
             disabled={page === 1}
             onClick={() => setPage((p) => Math.max(1, p - 1))}
           >
-            ก่อนหน้า
+            {t("audit.previous")}
           </Button>
           <span className="text-sm font-bold text-muted-foreground bg-muted/50 px-4 py-2 rounded-xl">
-            หน้าที่ {page} จาก {totalPages}
+            {t("audit.pagePrefix")} {page} {t("audit.pageMiddle")} {totalPages}
           </span>
           <Button
             variant="outline"
@@ -394,7 +395,7 @@ export default function AuditPage() {
             disabled={page === totalPages}
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
           >
-            ถัดไป
+            {t("audit.next")}
           </Button>
         </div>
       )}

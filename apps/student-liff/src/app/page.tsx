@@ -8,6 +8,7 @@ import { LineIcon } from "@/components/icons/LineIcon";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Sparkles, ChevronRight, BookOpen, Users, Clock, Shield } from "lucide-react";
+import { t } from "@/lib/i18n";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -35,7 +36,7 @@ export default function LandingPage() {
     return (
       <main className="page-shell" style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--surface-bg)" }}>
         <div className="animate-pulse" style={{ color: "var(--brand-600)", fontWeight: 600, fontSize: "1.125rem" }}>
-          กำลังดำเนินการเข้าสู่ระบบ...
+          {t("app.redirectingLogin")}
         </div>
       </main>
     );
@@ -80,22 +81,22 @@ export default function LandingPage() {
           <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.12)", borderRadius: "var(--radius-full)", padding: "6px 14px", marginBottom: 20, backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.15)" }}>
             <Sparkles size={13} style={{ color: "#fbbf24" }} />
             <span style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.9)", fontWeight: 600 }}>
-              โปรแกรมภาษาอังกฤษ Origins & Quest
+              {t("app.programBadge")}
             </span>
           </div>
 
           <h1 style={{ color: "#fff", fontSize: "2rem", fontWeight: 800, lineHeight: 1.2, marginBottom: 14, letterSpacing: "-0.02em" }}>
-            เรียนภาษาอังกฤษ
+            {t("app.heroTitleLine1")}
             <br />
-            <span style={{ color: "#86efac" }}>กับติวเตอร์ที่คุณ</span>
+            <span style={{ color: "#86efac" }}>{t("app.heroTitleLine2")}</span>
             <br />
-            ไว้วางใจ
+            {t("app.heroTitleLine3")}
           </h1>
 
           <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.9375rem", lineHeight: 1.7, marginBottom: 32 }}>
-            ระบบเรียนรู้ 15 ขั้นตอน รองรับทุกระดับ A1–C1
+            {t("app.heroSubtitleLine1")}
             <br />
-            สมัครง่าย จ่ายสะดวก ผ่าน LINE โดยตรง
+            {t("app.heroSubtitleLine2")}
           </p>
 
           {/* CTA */}
@@ -107,7 +108,7 @@ export default function LandingPage() {
               id="cta-line-login"
             >
               <LineIcon size={20} />
-              {isLoggedIn ? "ไปที่หน้า Dashboard" : "เข้าสู่ระบบด้วย LINE"}
+              {isLoggedIn ? t("app.goDashboard") : t("app.lineLogin")}
             </Button>
 
             <Button
@@ -116,7 +117,7 @@ export default function LandingPage() {
               variant="outline"
               className="w-full h-12 rounded-2xl text-sm font-semibold border-2 border-white/25 bg-white/10 text-white hover:bg-white/15 hover:text-white backdrop-blur-sm"
             >
-              ดูคลาสเรียนทั้งหมด
+              {t("app.browseClasses")}
               <ChevronRight size={16} />
             </Button>
           </div>
@@ -127,9 +128,9 @@ export default function LandingPage() {
       <section style={{ padding: "24px 20px 8px" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
           {[
-            { value: "32", label: "หนังสือเรียน", suffix: "เล่ม", Icon: BookOpen },
-            { value: "448", label: "บทความ", suffix: "บท", Icon: Users },
-            { value: "1,150+", label: "ชั่วโมงเรียน", suffix: "", Icon: Clock },
+            { value: "32", label: t("app.statBooks"), suffix: t("app.statBookUnit"), Icon: BookOpen },
+            { value: "448", label: t("app.statArticles"), suffix: t("app.statArticleUnit"), Icon: Users },
+            { value: "1,150+", label: t("app.statHours"), suffix: "", Icon: Clock },
           ].map((stat) => (
             <div
               key={stat.label}
@@ -151,7 +152,7 @@ export default function LandingPage() {
       {/* ── How it works ── */}
       <section style={{ padding: "28px 20px" }}>
         <h2 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 20 }}>
-          เริ่มเรียนง่ายๆ 3 ขั้นตอน
+          {t("app.howItWorksTitle")}
         </h2>
 
         <div className="stagger" style={{ display: "flex", flexDirection: "column", gap: 0, position: "relative" }}>
@@ -159,9 +160,9 @@ export default function LandingPage() {
           <div aria-hidden style={{ position: "absolute", left: 21, top: 44, bottom: 44, width: 2, background: "linear-gradient(180deg, var(--brand-200), var(--brand-100), transparent)", borderRadius: 2, zIndex: 0 }} />
 
           {[
-            { step: "01", title: "รับลิงก์จากติวเตอร์", desc: "ติวเตอร์แชร์ลิงก์สมัครเรียนผ่าน LINE", color: "var(--brand-600)", bg: "var(--brand-50)" },
-            { step: "02", title: "เข้าสู่ระบบและชำระเงิน", desc: "ล็อกอินด้วย LINE จ่ายด้วย PromptPay", color: "var(--accent-blue)", bg: "var(--accent-blue-light)" },
-            { step: "03", title: "เริ่มเรียนได้ทันที", desc: "เข้าถึงบทเรียนผ่านแอปนี้", color: "var(--accent-purple)", bg: "var(--accent-purple-light)" },
+            { step: "01", title: t("app.stepLinkTitle"), desc: t("app.stepLinkDesc"), color: "var(--brand-600)", bg: "var(--brand-50)" },
+            { step: "02", title: t("app.stepPayTitle"), desc: t("app.stepPayDesc"), color: "var(--accent-blue)", bg: "var(--accent-blue-light)" },
+            { step: "03", title: t("app.stepStartTitle"), desc: t("app.stepStartDesc"), color: "var(--accent-purple)", bg: "var(--accent-purple-light)" },
           ].map((item) => (
             <div
               key={item.step}
@@ -187,16 +188,16 @@ export default function LandingPage() {
       {/* ── Series overview ── */}
       <section style={{ padding: "4px 20px 28px" }}>
         <h2 style={{ fontSize: "1.125rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 16 }}>
-          หลักสูตรที่เปิดสอน
+          {t("app.availableCourses")}
         </h2>
 
         <div className="scrollbar-hide" style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8, scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}>
           {[
-            { name: "Origins", cefr: "A1", levels: "1–3", tag: "Your journey starts here", color: "#06c755", gradient: "linear-gradient(135deg, #06c755, #049a42)" },
-            { name: "Quest", cefr: "A2", levels: "4–6", tag: "Your quest awaits", color: "#3b82f6", gradient: "linear-gradient(135deg, #3b82f6, #2563eb)" },
-            { name: "Adventure", cefr: "B1", levels: "7–9", tag: "Adventure's in sight", color: "#8b5cf6", gradient: "linear-gradient(135deg, #8b5cf6, #7c3aed)" },
-            { name: "Hero", cefr: "B2", levels: "10–12", tag: "You're the hero", color: "#f59e0b", gradient: "linear-gradient(135deg, #f59e0b, #d97706)" },
-            { name: "Legend", cefr: "C1", levels: "13–15", tag: "Legendary stories", color: "#ef4444", gradient: "linear-gradient(135deg, #ef4444, #dc2626)" },
+            { name: "Origins", cefr: "A1", levels: "1-3", tag: "Your journey starts here", color: "#06c755", gradient: "linear-gradient(135deg, #06c755, #049a42)" },
+            { name: "Quest", cefr: "A2", levels: "4-6", tag: "Your quest awaits", color: "#3b82f6", gradient: "linear-gradient(135deg, #3b82f6, #2563eb)" },
+            { name: "Adventure", cefr: "B1", levels: "7-9", tag: "Adventure's in sight", color: "#8b5cf6", gradient: "linear-gradient(135deg, #8b5cf6, #7c3aed)" },
+            { name: "Hero", cefr: "B2", levels: "10-12", tag: "You're the hero", color: "#f59e0b", gradient: "linear-gradient(135deg, #f59e0b, #d97706)" },
+            { name: "Legend", cefr: "C1", levels: "13-15", tag: "Legendary stories", color: "#ef4444", gradient: "linear-gradient(135deg, #ef4444, #dc2626)" },
           ].map((series) => (
             <div
               key={series.name}
@@ -214,7 +215,7 @@ export default function LandingPage() {
             >
               <div aria-hidden style={{ position: "absolute", top: -15, right: -15, width: 60, height: 60, borderRadius: "50%", background: "rgba(255,255,255,0.1)" }} />
               <div style={{ fontSize: "0.6875rem", fontWeight: 700, opacity: 0.9, marginBottom: 8, letterSpacing: "0.05em" }}>
-                {series.cefr} · Level {series.levels}
+                {series.cefr} / Level {series.levels}
               </div>
               <div style={{ fontSize: "1.125rem", fontWeight: 800, marginBottom: 4 }}>
                 {series.name}
@@ -232,9 +233,9 @@ export default function LandingPage() {
         <div className="glass-card" style={{ padding: "28px 24px", textAlign: "center" }}>
           <Shield size={28} style={{ color: "var(--brand-500)", marginBottom: 12 }} />
           <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", marginBottom: 18, lineHeight: 1.7 }}>
-            มีลิงก์สมัครเรียนจากติวเตอร์แล้ว?
+            {t("app.haveTutorLink")}
             <br />
-            เข้าสู่ระบบเพื่อดำเนินการต่อได้เลย
+            {t("app.continueAfterLogin")}
           </p>
           <Button
             render={<Link href={isLoggedIn ? "/dashboard" : "/login"} />}
@@ -243,10 +244,10 @@ export default function LandingPage() {
             id="cta-line-login-bottom"
           >
             <LineIcon size={18} />
-            {isLoggedIn ? "ไปที่หน้า Dashboard" : "เข้าสู่ระบบด้วย LINE"}
+            {isLoggedIn ? t("app.goDashboard") : t("app.lineLogin")}
           </Button>
           <p style={{ fontSize: "0.6875rem", color: "var(--text-tertiary)", marginTop: 14, lineHeight: 1.6 }}>
-            ชำระเงินผ่าน PromptPay หรือบัตรเครดิต · ปลอดภัย 100% โดย Omise
+            {t("app.secureOmiseLine")}
           </p>
         </div>
       </section>

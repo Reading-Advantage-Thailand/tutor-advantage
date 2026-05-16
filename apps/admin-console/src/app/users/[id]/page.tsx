@@ -34,6 +34,7 @@ import {
 import { fetchWithAuth } from "@/lib/api";
 import { useEffect, useState, useCallback } from "react";
 import { Textarea } from "@/components/ui/textarea";
+import { t } from "@/lib/i18n";
 
 interface ConsentLog {
   id: string;
@@ -217,7 +218,7 @@ export default function UserDetailPage() {
               disabled={!!isVerifying || !imageUrl || status === "VERIFIED" || (!reason.trim() && !verificationComment.trim())}
               onClick={() => handleVerify("REJECTED", field)}
             >
-              <XCircle className="h-3.5 w-3.5 mr-1" /> ปฏิเสธ
+              <XCircle className="h-3.5 w-3.5 mr-1" /> {t("userDetail.reject")}
             </Button>
             <Button 
               size="sm"
@@ -226,7 +227,7 @@ export default function UserDetailPage() {
               disabled={!!isVerifying || !imageUrl || status === "VERIFIED"}
               onClick={() => handleVerify("VERIFIED", field)}
             >
-              <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> อนุมัติ
+              <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> {t("userDetail.approve")}
             </Button>
           </div>
         </div>
@@ -331,24 +332,24 @@ export default function UserDetailPage() {
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <UserIcon className="h-4 w-4 text-primary" />
-              ข้อมูลพื้นฐาน
+              {t("userDetail.basicInfo")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-xs text-muted-foreground">ชื่อ-นามสกุล</p>
+              <p className="text-xs text-muted-foreground">{t("userDetail.fullName")}</p>
               <p className="font-medium mt-0.5">{user.name}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">อีเมล</p>
+              <p className="text-xs text-muted-foreground">{t("userDetail.email")}</p>
               <p className="font-medium mt-0.5">{user.email}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">เบอร์โทรศัพท์</p>
+              <p className="text-xs text-muted-foreground">{t("userDetail.phone")}</p>
               <p className="font-medium mt-0.5">{user.phone}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">บทบาท</p>
+              <p className="text-xs text-muted-foreground">{t("userDetail.role")}</p>
               <Badge
                 variant="outline"
                 className={`mt-1 ${user.role === "TUTOR" ? "border-emerald-500/40 text-emerald-600 bg-emerald-500/10" : "border-blue-500/40 text-blue-600 bg-blue-500/10"}`}
@@ -363,7 +364,7 @@ export default function UserDetailPage() {
                 className="w-full text-amber-600 border-amber-500/40 hover:bg-amber-500/10"
               >
                 <AlertTriangle className="h-4 w-4 mr-2" />
-                ระงับบัญชี (Suspend)
+                {t("userDetail.suspend")}
               </Button>
             </div>
           </CardContent>
@@ -391,19 +392,19 @@ export default function UserDetailPage() {
                     className={`h-4 w-4 ${user.guardianSetup ? "text-emerald-600" : "text-amber-600"}`}
                   />
                   <AlertTitle className="text-sm">
-                    สถานะความยินยอมจากผู้ปกครอง (Guardian)
+                    {t("userDetail.guardianStatus")}
                   </AlertTitle>
                   <AlertDescription className="text-xs">
                     {user.guardianSetup
-                      ? "ผู้ปกครองยืนยันตัวตนและให้ความยินยอมเรียบร้อยแล้ว"
-                      : "รอการยืนยันจากผู้ปกครอง (จำกัดสิทธิ์การเข้าถึงข้อมูลและการเงิน)"}
+                      ? t("userDetail.guardianVerified")
+                      : t("userDetail.guardianPending")}
                   </AlertDescription>
                 </Alert>
               )}
 
               <div className="space-y-2">
                 <p className="text-sm font-medium">
-                  ประวัติการกดรับ Consent (Versioned)
+                  {t("userDetail.consentHistory")}
                 </p>
                 <div className="rounded-md border bg-muted/30">
                   {user.consentLogs.map((log, i) => (
@@ -442,9 +443,9 @@ export default function UserDetailPage() {
                 <div>
                   <CardTitle className="text-base flex items-center gap-2">
                     <FileText className="h-4 w-4 text-primary" />
-                    การยืนยันตัวตน (Identity Verification)
+                    {t("userDetail.identityVerification")}
                   </CardTitle>
-                  <CardDescription>ตรวจสอบเอกสารประจำตัวและบัญชีธนาคาร</CardDescription>
+                  <CardDescription>{t("userDetail.identityDescription")}</CardDescription>
                 </div>
                 <Badge 
                   variant={user.verificationStatus === "VERIFIED" ? "secondary" : "outline"}
@@ -460,20 +461,20 @@ export default function UserDetailPage() {
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label className="text-xs text-muted-foreground uppercase font-bold tracking-wider">สำเนาบัตรประชาชน</Label>
+                    <Label className="text-xs text-muted-foreground uppercase font-bold tracking-wider">{t("userDetail.idCard")}</Label>
                     {user.idCardImageUrl ? (
                       <div className="relative aspect-video rounded-lg border overflow-hidden bg-muted group">
                         <button
                           type="button"
                           className="block h-full w-full cursor-zoom-in"
-                          onClick={() => openImageViewer(user.idCardImageUrl!, "สำเนาบัตรประชาชน")}
+                          onClick={() => openImageViewer(user.idCardImageUrl!, t("userDetail.idCard"))}
                         >
                           <img src={user.idCardImageUrl} alt="ID Card" className="object-cover w-full h-full" />
                         </button>
                         <div className="pointer-events-none absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                           <Button size="sm" variant="secondary" className="pointer-events-auto" asChild>
                             <a href={user.idCardImageUrl} target="_blank" rel="noreferrer">
-                              <ExternalLink className="h-3 w-3 mr-1" /> ดูรูปเต็ม
+                              <ExternalLink className="h-3 w-3 mr-1" /> {t("userDetail.viewFullImage")}
                             </a>
                           </Button>
                         </div>
@@ -481,18 +482,18 @@ export default function UserDetailPage() {
                     ) : (
                       <div className="aspect-video rounded-lg border border-dashed flex flex-col items-center justify-center bg-muted/30 text-muted-foreground">
                         <UserIcon className="h-8 w-8 mb-2 opacity-20" />
-                        <p className="text-xs">ไม่ได้อัปโหลด</p>
+                        <p className="text-xs">{t("userDetail.notUploaded")}</p>
                       </div>
                     )}
                     {renderVerificationActions("idCard", user.idCardImageUrl)}
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-xs text-muted-foreground uppercase font-bold tracking-wider">หน้าสมุดบัญชี</Label>
+                    <Label className="text-xs text-muted-foreground uppercase font-bold tracking-wider">{t("userDetail.bankBook")}</Label>
                     <div className="rounded-md border bg-muted/20 p-3 text-sm">
-                      <p className="text-xs text-muted-foreground">เลขบัญชีธนาคาร</p>
+                      <p className="text-xs text-muted-foreground">{t("userDetail.bankAccountNumber")}</p>
                       <p className="mt-0.5 font-mono font-semibold">
-                        {user.settings?.bankAccountNumber || "ไม่ได้ระบุเลขบัญชี"}
+                        {user.settings?.bankAccountNumber || t("userDetail.missingBankAccountNumber")}
                       </p>
                     </div>
                     {user.bankBookImageUrl ? (
@@ -500,14 +501,14 @@ export default function UserDetailPage() {
                         <button
                           type="button"
                           className="block h-full w-full cursor-zoom-in"
-                          onClick={() => openImageViewer(user.bankBookImageUrl!, "หน้าสมุดบัญชี")}
+                          onClick={() => openImageViewer(user.bankBookImageUrl!, t("userDetail.bankBook"))}
                         >
                           <img src={user.bankBookImageUrl} alt="Bank Book" className="object-cover w-full h-full" />
                         </button>
                         <div className="pointer-events-none absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                           <Button size="sm" variant="secondary" className="pointer-events-auto" asChild>
                             <a href={user.bankBookImageUrl} target="_blank" rel="noreferrer">
-                              <ExternalLink className="h-3 w-3 mr-1" /> ดูรูปเต็ม
+                              <ExternalLink className="h-3 w-3 mr-1" /> {t("userDetail.viewFullImage")}
                             </a>
                           </Button>
                         </div>
@@ -515,7 +516,7 @@ export default function UserDetailPage() {
                     ) : (
                       <div className="aspect-video rounded-lg border border-dashed flex flex-col items-center justify-center bg-muted/30 text-muted-foreground">
                         <FileText className="h-8 w-8 mb-2 opacity-20" />
-                        <p className="text-xs">ไม่ได้อัปโหลด</p>
+                        <p className="text-xs">{t("userDetail.notUploaded")}</p>
                       </div>
                     )}
                     {renderVerificationActions("bankBook", user.bankBookImageUrl)}
@@ -523,9 +524,9 @@ export default function UserDetailPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground uppercase font-bold tracking-wider">ที่อยู่สำหรับส่งเอกสาร</Label>
+                  <Label className="text-xs text-muted-foreground uppercase font-bold tracking-wider">{t("userDetail.deliveryAddress")}</Label>
                   <div className="p-3 border rounded-md bg-muted/20 text-sm">
-                    {user.settings?.address || "ไม่ได้ระบุที่อยู่"}
+                    {user.settings?.address || t("userDetail.missingAddress")}
                   </div>
                   {renderVerificationActions("address", user.settings?.address)}
                 </div>
@@ -535,10 +536,10 @@ export default function UserDetailPage() {
                 <Separator />
 
                 <div className="space-y-3">
-                  <Label htmlFor="verificationComment">ความเห็นหรือเหตุผลการปฏิเสธรวม (Global Comment)</Label>
+                  <Label htmlFor="verificationComment">{t("userDetail.verificationComment")}</Label>
                   <Textarea 
                     id="verificationComment"
-                    placeholder="ระบุเหตุผลรวมสำหรับผลการตรวจสอบ..."
+                    placeholder={t("userDetail.verificationCommentPlaceholder")}
                     value={verificationComment}
                     onChange={(e) => setVerificationComment(e.target.value)}
                     className="min-h-[80px]"
@@ -551,7 +552,7 @@ export default function UserDetailPage() {
                       onClick={() => handleVerify("REJECTED", "ALL")}
                     >
                       <XCircle className="h-4 w-4 mr-2" />
-                      ปฏิเสธทั้งหมด
+                      {t("userDetail.rejectAll")}
                     </Button>
                     <Button 
                       className="bg-primary text-primary-foreground"
@@ -559,7 +560,7 @@ export default function UserDetailPage() {
                       onClick={() => handleVerify("VERIFIED", "ALL")}
                     >
                       <CheckCircle2 className="h-4 w-4 mr-2" />
-                      อนุมัติทั้งหมด
+                      {t("userDetail.approveAll")}
                     </Button>
                   </div>
                 </div>
@@ -574,7 +575,7 @@ export default function UserDetailPage() {
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
                 <BookOpen className="h-4 w-4 text-primary" />
-                {user.role === "TUTOR" ? "คลาสที่รับผิดชอบ" : "คลาสที่ลงเรียน"}
+                {user.role === "TUTOR" ? t("userDetail.tutorClasses") : t("userDetail.studentClasses")}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -611,7 +612,7 @@ export default function UserDetailPage() {
               {user.role === "TUTOR" && (
                 <div className="mt-4 pt-4 border-t flex justify-end">
                   <Button variant="outline" size="sm">
-                    โอนย้ายคลาส (Reassign / Auction)
+                    {t("userDetail.reassignClasses")}
                   </Button>
                 </div>
               )}
@@ -626,8 +627,7 @@ export default function UserDetailPage() {
                 Right to be Forgotten
               </CardTitle>
               <CardDescription>
-                ลบข้อมูล PII ตามคำขอของเจ้าของข้อมูล (Anonymization)
-                ข้อมูลเชิงธุรกรรมจะยังคงอยู่เพื่อการตรวจสอบทางบัญชี
+                {t("userDetail.anonymizeDescription")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -636,7 +636,7 @@ export default function UserDetailPage() {
                   variant="destructive"
                   onClick={() => setShowDeleteConfirm(true)}
                 >
-                  เริ่มกระบวนการลบข้อมูล (Soft Delete)
+                  {t("userDetail.startDelete")}
                 </Button>
               ) : (
                 <div className="space-y-4 p-4 border border-red-500/40 rounded-md bg-red-500/5">
@@ -645,15 +645,14 @@ export default function UserDetailPage() {
                     className="bg-transparent border-none p-0"
                   >
                     <AlertTriangle className="h-4 w-4" />
-                    <AlertTitle>ยืนยันการทำ Data Anonymization</AlertTitle>
+                    <AlertTitle>{t("userDetail.confirmAnonymize")}</AlertTitle>
                     <AlertDescription>
-                      การกระทำนี้ไม่สามารถย้อนกลับได้ ข้อมูลชื่อ อีเมล เบอร์โทร
-                      จะถูกเข้ารหัสทับทั้งหมด โปรดพิมพ์ User ID เพื่อยืนยัน:{" "}
+                      {t("userDetail.confirmAnonymizeDescription")}{" "}
                       <span className="font-mono font-bold">{user.id}</span>
                     </AlertDescription>
                   </Alert>
                   <Input
-                    placeholder="พิมพ์ User ID เพื่อยืนยัน"
+                    placeholder={t("userDetail.confirmPlaceholder")}
                     value={deleteConfirmText}
                     onChange={(e) => setDeleteConfirmText(e.target.value)}
                     className="border-red-500/40 focus-visible:ring-red-500"
@@ -666,14 +665,14 @@ export default function UserDetailPage() {
                         setDeleteConfirmText("");
                       }}
                     >
-                      ยกเลิก
+                      {t("userDetail.cancel")}
                     </Button>
                     <Button
                       variant="destructive"
                       disabled={deleteConfirmText !== user.id || isDeleting}
                       onClick={handleDelete}
                     >
-                      {isDeleting ? "กำลังลบ..." : "ยืนยันการลบข้อมูล"}
+                      {isDeleting ? t("userDetail.deleting") : t("userDetail.confirmDelete")}
                     </Button>
                   </div>
                 </div>

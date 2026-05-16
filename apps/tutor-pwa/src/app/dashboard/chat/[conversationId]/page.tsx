@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import ChatRoomClient from "./chat-room-client";
+import { t } from "@/lib/i18n";
 
 async function getChatData(id: string) {
   const cookieStore = await cookies();
@@ -34,7 +35,7 @@ export default async function ChatRoomPage({ params }: { params: Promise<{ conve
   if (!chatData || !chatData.metadata) {
     return (
       <div className="flex flex-col items-center justify-center p-8 gap-4 h-[calc(100vh-140px)]">
-        <p className="text-muted-foreground">ไม่พบห้องสนทนานี้</p>
+        <p className="text-muted-foreground">{t("dashboardChat.roomNotFound")}</p>
       </div>
     );
   }

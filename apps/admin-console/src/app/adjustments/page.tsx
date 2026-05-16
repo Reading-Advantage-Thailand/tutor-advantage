@@ -29,6 +29,7 @@ import {
   PlusCircle,
   MinusCircle
 } from "lucide-react";
+import { t } from "@/lib/i18n";
 
 interface Adjustment {
   adjustmentId: string;
@@ -142,7 +143,7 @@ export default function AdjustmentsPage() {
           reason,
         }),
       });
-      setSubmitSuccess("ส่งคำขอปรับยอดเงินสำเร็จ รอ Checker อนุมัติ");
+      setSubmitSuccess(t("adjustments.submitSuccess"));
       setTutorUserId("");
       setAmountSatang("");
       setReason("");
@@ -182,8 +183,8 @@ export default function AdjustmentsPage() {
   return (
     <div className="space-y-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
       <div className="flex flex-col gap-2">
-        <h2 className="text-3xl font-black tracking-tight text-foreground">จัดการปรับปรุงยอด (Manual Adjustments)</h2>
-        <p className="text-muted-foreground font-medium">สร้างและตรวจสอบคำขอแก้ไขยอดเงิน</p>
+        <h2 className="text-3xl font-black tracking-tight text-foreground">{t("adjustments.title")}</h2>
+        <p className="text-muted-foreground font-medium">{t("adjustments.description")}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -197,9 +198,9 @@ export default function AdjustmentsPage() {
                     <Scale className="h-5 w-5" />
                   </div>
                   <div>
-                    <CardTitle className="text-lg font-bold">เพิ่มรายการใหม่</CardTitle>
+                    <CardTitle className="text-lg font-bold">{t("adjustments.addNew")}</CardTitle>
                     <CardDescription className="font-medium text-brand-700/80 dark:text-brand-400/80">
-                      ส่งคำขอแก้ไขยอดเงินในระบบ
+                      {t("adjustments.addDescription")}
                     </CardDescription>
                   </div>
                 </div>
@@ -207,7 +208,7 @@ export default function AdjustmentsPage() {
               <CardContent className="p-6">
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="space-y-1.5">
-                    <Label htmlFor="tutorUserId" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">รหัสผู้ใช้งานติวเตอร์</Label>
+                    <Label htmlFor="tutorUserId" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("adjustments.tutorUserId")}</Label>
                     <Input
                       id="tutorUserId"
                       placeholder="usr_xxxxxxxxxxxxxxxx"
@@ -219,7 +220,7 @@ export default function AdjustmentsPage() {
                   </div>
                   
                   <div className="space-y-1.5">
-                    <Label htmlFor="adjPeriod" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">รอบบิลเป้าหมาย</Label>
+                    <Label htmlFor="adjPeriod" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("adjustments.targetPeriod")}</Label>
                     <Input
                       id="adjPeriod"
                       type="month"
@@ -232,7 +233,7 @@ export default function AdjustmentsPage() {
                   
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="amountSatang" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">จำนวนเงิน (สตางค์)</Label>
+                      <Label htmlFor="amountSatang" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("adjustments.amountSatang")}</Label>
                       {amountSatang && !isNaN(parsedAmount) && (
                         <Badge variant="outline" className={`font-bold border-none px-2 py-0.5 ${isPositive ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"}`}>
                           {isPositive ? <PlusCircle className="h-3 w-3 mr-1" /> : <MinusCircle className="h-3 w-3 mr-1" />}
@@ -243,7 +244,7 @@ export default function AdjustmentsPage() {
                     <Input
                       id="amountSatang"
                       type="number"
-                      placeholder="เช่น 10000 (100 บาท) หรือ -5000 (-50 บาท)"
+                      placeholder={t("adjustments.amountPlaceholder")}
                       value={amountSatang}
                       onChange={(e) => setAmountSatang(e.target.value)}
                       required
@@ -252,10 +253,10 @@ export default function AdjustmentsPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="reason" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">เหตุผล (จำเป็น)</Label>
+                    <Label htmlFor="reason" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("adjustments.reason")}</Label>
                     <Textarea
                       id="reason"
-                      placeholder="อธิบายเหตุผลในการปรับปรุงยอดครั้งนี้..."
+                      placeholder={t("adjustments.reasonPlaceholder")}
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
                       required
@@ -267,7 +268,7 @@ export default function AdjustmentsPage() {
                   {submitError && (
                     <Alert variant="destructive" className="rounded-xl border-2">
                       <AlertCircle className="h-4 w-4" />
-                      <AlertTitle className="font-bold">เกิดข้อผิดพลาด</AlertTitle>
+                      <AlertTitle className="font-bold">{t("adjustments.errorTitle")}</AlertTitle>
                       <AlertDescription className="font-medium">{submitError}</AlertDescription>
                     </Alert>
                   )}
@@ -288,12 +289,12 @@ export default function AdjustmentsPage() {
                     {submitLoading ? (
                       <span className="flex items-center gap-2">
                         <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        กำลังส่งคำขอ...
+                        {t("adjustments.submitting")}
                       </span>
                     ) : (
                       <>
                         <FilePenLine className="h-5 w-5 mr-2" />
-                        ส่งคำขอ
+                        {t("adjustments.submit")}
                       </>
                     )}
                   </Button>
@@ -306,9 +307,9 @@ export default function AdjustmentsPage() {
             <Card className="border-none shadow-sm rounded-3xl bg-muted/50">
               <CardContent className="p-8 text-center">
                 <ShieldAlert className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-                <h3 className="font-bold text-lg mb-2">โหมดผู้ตรวจสอบ (Checker)</h3>
+                <h3 className="font-bold text-lg mb-2">{t("adjustments.checkerMode")}</h3>
                 <p className="text-muted-foreground text-sm font-medium">
-                  คุณมีสิทธิ์ในการอนุมัติรายการเท่านั้น ไม่สามารถสร้างรายการใหม่ได้
+                  {t("adjustments.checkerDescription")}
                 </p>
               </CardContent>
             </Card>
@@ -321,10 +322,10 @@ export default function AdjustmentsPage() {
             <div>
               <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
                 <ShieldAlert className="h-5 w-5 text-amber-500" />
-                รอการอนุมัติ
+                {t("adjustments.pendingApproval")}
               </h3>
               <p className="text-sm font-medium text-muted-foreground mt-1">
-                ตรวจสอบและอนุมัติคำขอแก้ไขยอดเงิน (ไม่สามารถอนุมัติคำขอที่ตนเองสร้างได้)
+                {t("adjustments.pendingDescription")}
               </p>
             </div>
             <Button
@@ -335,7 +336,7 @@ export default function AdjustmentsPage() {
               className="rounded-full font-bold shadow-sm"
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${listLoading ? "animate-spin" : ""}`} />
-              รีเฟรชรายการ
+              {t("adjustments.refresh")}
             </Button>
           </div>
 
@@ -350,8 +351,8 @@ export default function AdjustmentsPage() {
             <Card className="border-none shadow-sm rounded-3xl bg-muted/20 border-2 border-dashed">
               <CardContent className="flex flex-col items-center justify-center py-20 text-center">
                 <Scale className="h-12 w-12 text-muted-foreground/30 mb-4" />
-                <p className="font-bold text-muted-foreground">ไม่มีรายการรออนุมัติ</p>
-                <p className="text-sm text-muted-foreground/60 mt-1">คำขอทั้งหมดได้รับการดำเนินการแล้ว</p>
+                <p className="font-bold text-muted-foreground">{t("adjustments.emptyTitle")}</p>
+                <p className="text-sm text-muted-foreground/60 mt-1">{t("adjustments.emptyDescription")}</p>
               </CardContent>
             </Card>
           )}
@@ -368,32 +369,32 @@ export default function AdjustmentsPage() {
                           <CopyableId name={adj.tutorName} id={adj.tutorUserId} />
                         </div>
                         <Badge variant="outline" className="border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 rounded-full px-3 py-0.5 font-bold uppercase tracking-wider">
-                          รอดำเนินการ
+                          {t("adjustments.pending")}
                         </Badge>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="bg-muted/30 p-3 rounded-2xl border border-border/50">
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">รอบบิล</p>
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("adjustments.period")}</p>
                           <p className="font-bold text-foreground">{adj.periodMonth}</p>
                         </div>
                         <div className={`p-3 rounded-2xl border ${adj.amountSatang >= 0 ? "bg-emerald-50/50 border-emerald-100 dark:bg-emerald-950/20 dark:border-emerald-900" : "bg-red-50/50 border-red-100 dark:bg-red-950/20 dark:border-red-900"}`}>
-                          <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${adj.amountSatang >= 0 ? "text-emerald-700 dark:text-emerald-400" : "text-red-700 dark:text-red-400"}`}>จำนวนเงิน</p>
+                          <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${adj.amountSatang >= 0 ? "text-emerald-700 dark:text-emerald-400" : "text-red-700 dark:text-red-400"}`}>{t("adjustments.amount")}</p>
                           <p className={`font-black text-lg tabular-nums ${adj.amountSatang >= 0 ? "text-emerald-700 dark:text-emerald-400" : "text-red-700 dark:text-red-400"}`}>
-                            {formatTHB(Math.abs(adj.amountSatang))} {adj.amountSatang >= 0 ? "(เพิ่ม)" : "(หัก)"}
+                            {formatTHB(Math.abs(adj.amountSatang))} {adj.amountSatang >= 0 ? t("adjustments.addAmount") : t("adjustments.deductAmount")}
                           </p>
                         </div>
                       </div>
 
                       <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">เหตุผล</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("adjustments.reason")}</p>
                         <p className="text-sm font-medium text-foreground bg-muted/30 p-3 rounded-2xl border border-border/50">{adj.reason}</p>
                       </div>
                     </div>
 
                     <div className="flex flex-col justify-between border-t md:border-t-0 md:border-l border-border/50 pt-4 md:pt-0 md:pl-6 min-w-[200px]">
                       <div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">ผู้ส่งคำขอ</p>
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("adjustments.requestor")}</p>
                         <CopyableId name={adj.createdByName} id={adj.createdByUserId} />
                       </div>
                       
@@ -408,7 +409,7 @@ export default function AdjustmentsPage() {
                           ) : (
                             <CheckCircle2 className="h-4 w-4 mr-2" />
                           )}
-                          อนุมัติ
+                          {t("adjustments.approve")}
                         </Button>
                         <Button
                           variant="outline"
@@ -417,7 +418,7 @@ export default function AdjustmentsPage() {
                           className="w-full rounded-xl font-bold border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-700 h-10"
                         >
                           <XCircle className="h-4 w-4 mr-2" />
-                          ปฏิเสธ
+                          {t("adjustments.reject")}
                         </Button>
                       </div>
                     </div>
@@ -436,10 +437,10 @@ export default function AdjustmentsPage() {
                 disabled={page === 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
               >
-                ก่อนหน้า
+                {t("adjustments.previous")}
               </Button>
               <span className="text-sm font-bold text-muted-foreground bg-muted/50 px-4 py-2 rounded-xl">
-                หน้าที่ {page} จาก {totalPages}
+                {t("adjustments.pagePrefix")} {page} {t("adjustments.pageMiddle")} {totalPages}
               </span>
               <Button
                 variant="outline"
@@ -447,7 +448,7 @@ export default function AdjustmentsPage() {
                 disabled={page === totalPages}
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               >
-                ถัดไป
+                {t("adjustments.next")}
               </Button>
             </div>
           )}

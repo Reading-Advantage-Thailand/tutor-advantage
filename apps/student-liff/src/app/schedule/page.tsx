@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { studentApi } from "@/lib/api";
+import { studentScheduleCopy, t } from "@/lib/i18n";
 
 interface ScheduledEvent {
   id: string;
@@ -26,30 +27,21 @@ interface ScheduledEvent {
 }
 
 function extractTime(str: string) {
-  const regex = /(\d{1,2}[:.]\d{2})\s*[-–]\s*(\d{1,2}[:.]\d{2})/;
+  const regex = /(\d{1,2}[:.]\d{2})\s*[-\u2013]\s*(\d{1,2}[:.]\d{2})/;
   const match = str.match(regex);
   if (match) {
-    return `${match[1].replace(".", ":")} - ${match[2].replace(".", ":")} น.`;
+    return `${match[1].replace(".", ":")} - ${match[2].replace(".", ":")} ${t("schedule.timeSuffix")}`;
   }
-  return "ตามนัดหมาย";
+  return t("schedule.byAppointment");
 }
 
 function parseThaiSchedule(scheduleStr: string) {
-  if (!scheduleStr || scheduleStr === "ยังไม่ได้กำหนด") {
-    return { days: [1, 3, 5], timeRange: "ยังไม่ได้กำหนด" };
+  if (!scheduleStr || scheduleStr === t("schedule.unset")) {
+    return { days: [1, 3, 5], timeRange: t("schedule.unset") };
   }
 
   const lowerStr = scheduleStr.toLowerCase();
-  const dayMapping: { [key: string]: number } = {
-    อาทิตย์: 0,
-    จันทร์: 1,
-    อังคาร: 2,
-    พุธ: 3,
-    พฤหัสบดี: 4,
-    พฤหัส: 4,
-    ศุกร์: 5,
-    เสาร์: 6,
-  };
+  const dayMapping: { [key: string]: number } = studentScheduleCopy.dayMapping;
 
   const detectedDays: number[] = [];
 
@@ -60,8 +52,8 @@ function parseThaiSchedule(scheduleStr: string) {
     }
   });
 
-  // Case "ทุกวัน" explicitly means all 7 days
-  if (lowerStr.includes("ทุกวัน") && detectedDays.length === 0) {
+  // Explicit "every day" schedule means all 7 days.
+  if (lowerStr.includes(studentScheduleCopy.everyDay) && detectedDays.length === 0) {
     return {
       days: [0, 1, 2, 3, 4, 5, 6],
       timeRange: extractTime(scheduleStr),
@@ -193,21 +185,8 @@ export default function SchedulePage() {
   };
 
   const days = getDaysInMonth(currentDate);
-  const thaiMonths = [
-    "มกราคม",
-    "กุมภาพันธ์",
-    "มีนาคม",
-    "เมษายน",
-    "พฤษภาคม",
-    "มิถุนายน",
-    "กรกฎาคม",
-    "สิงหาคม",
-    "กันยายน",
-    "ตุลาคม",
-    "พฤศจิกายน",
-    "ธันวาคม",
-  ];
-  const daysOfWeek = ["อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"];
+  const thaiMonths = studentScheduleCopy.months;
+  const daysOfWeek = studentScheduleCopy.daysOfWeek;
 
   const handlePrevMonth = () => {
     setCurrentDate(
@@ -279,7 +258,7 @@ export default function SchedulePage() {
             margin: 0,
           }}
         >
-          ตารางเรียน
+          {t("schedule.title")}
         </h1>
       </div>
 
@@ -455,8 +434,8 @@ export default function SchedulePage() {
               }}
             >
               {isSameDay(selectedDate, new Date())
-                ? "ตารางวันนี้"
-                : `ตารางวันที่ ${selectedDate.getDate()} ${thaiMonths[selectedDate.getMonth()]}`}
+                ? t("schedule.todayTitle")
+                : `${t("schedule.dateTitlePrefix")} ${selectedDate.getDate()} ${thaiMonths[selectedDate.getMonth()]}`}
             </h3>
             <span
               style={{
@@ -465,7 +444,7 @@ export default function SchedulePage() {
                 fontWeight: 500,
               }}
             >
-              {selectedEvents.length} รายการ
+              {selectedEvents.length} {t("schedule.itemUnit")}
             </span>
           </div>
 
@@ -529,7 +508,7 @@ export default function SchedulePage() {
                             border: "none",
                           }}
                         >
-                          Class
+                          {t("schedule.classBadge")}
                         </Badge>
                       </div>
 
@@ -563,7 +542,7 @@ export default function SchedulePage() {
                           }}
                         >
                           <BookOpen size={14} />
-                          <span>ติวเตอร์: {ev.tutor}</span>
+                          <span>{t("schedule.tutorPrefix")} {ev.tutor}</span>
                         </div>
                         <div
                           style={{
@@ -576,7 +555,7 @@ export default function SchedulePage() {
                           }}
                         >
                           <MapPin size={14} />
-                          <span>เข้าสู่ห้องเรียน</span>
+                          <span>{t("schedule.enterClassroom")}</span>
                           <ChevronRight size={14} style={{ marginLeft: 2 }} />
                         </div>
                       </div>
@@ -600,7 +579,7 @@ export default function SchedulePage() {
                 size={32}
                 style={{ margin: "0 auto 12px", opacity: 0.6 }}
               />
-              <p style={{ fontSize: "0.875rem" }}>ไม่มีตารางเรียนในวันนี้</p>
+              <p style={{ fontSize: "0.875rem" }}>{t("schedule.emptyDay")}</p>
             </div>
           )}
         </div>

@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
+import { t } from "@/lib/i18n";
 
 interface ArticleDisplayProps {
   articleData: any;
@@ -178,7 +179,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   if (!articleData) {
     return (
       <div className="flex-1 flex items-center justify-center text-muted-foreground">
-        Loading article content...
+        {t("lesson.interactive.articleLoading")}
       </div>
     );
   }
@@ -194,9 +195,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           <div className="p-10 text-white text-center">
             <div className="inline-flex items-center gap-2 bg-black/20 dark:bg-black/40 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-bold mb-6">
               {articleData.genre && <span>{articleData.genre}</span>}
-              {articleData.genre && articleData.cefr_level && <span className="opacity-50">·</span>}
+              {articleData.genre && articleData.cefr_level && <span className="opacity-50">/</span>}
               {articleData.cefr_level && <span>CEFR: {articleData.cefr_level}</span>}
-              {articleData.cefr_level && articleData.ra_level && <span className="opacity-50">·</span>}
+              {articleData.cefr_level && articleData.ra_level && <span className="opacity-50">/</span>}
               {articleData.ra_level && <span>RA Level: {articleData.ra_level}</span>}
             </div>
             <h1 className="text-5xl font-black mb-4 leading-tight animate-in zoom-in duration-700 text-white">
@@ -205,20 +206,20 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             <p className="text-white/90 dark:text-white/80 text-xl max-w-2xl mx-auto leading-relaxed">
               {articleData.translated_summary?.th?.[0] ||
                 articleData.summary ||
-                "ในบทเรียนนี้ เราจะมาฝึกทักษะการอ่านและเรียนรู้คำศัพท์ใหม่ๆ ไปด้วยกัน"}
+                t("lesson.interactive.articleFallbackSummary")}
             </p>
           </div>
           <div className="flex items-center justify-center gap-6 bg-black/20 dark:bg-black/40 py-4 px-8">
             <div className="text-center">
               <p className="text-white/60 text-xs uppercase tracking-widest">
-                คำศัพท์
+                {t("lesson.interactive.vocabulary")}
               </p>
               <p className="text-white font-black text-2xl">{words.length}</p>
             </div>
             <div className="w-px h-8 bg-white/20" />
             <div className="text-center">
               <p className="text-white/60 text-xs uppercase tracking-widest">
-                ประโยคหลัก
+                {t("lesson.interactive.keySentences")}
               </p>
               <p className="text-white font-black text-2xl">
                 {sentences.length}
@@ -238,19 +239,19 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         <div className="w-full max-w-4xl grid grid-cols-3 gap-4">
           {[
             {
-              icon: "👋",
-              title: "แนะนำบทเรียน",
-              desc: "บอกนักเรียนว่าวันนี้จะอ่านเรื่องอะไร",
+              icon: "1",
+              title: t("lesson.interactive.introChecklistIntroduceTitle"),
+              desc: t("lesson.interactive.introChecklistIntroduceDesc"),
             },
             {
-              icon: "🎯",
-              title: "ตั้งเป้าหมาย",
-              desc: "บอก vocab และ skills ที่จะได้เรียน",
+              icon: "2",
+              title: t("lesson.interactive.introChecklistGoalTitle"),
+              desc: t("lesson.interactive.introChecklistGoalDesc"),
             },
             {
-              icon: "🔥",
-              title: "ปลุกไฟ",
-              desc: "ถามคำถาม pre-reading สร้าง curiosity",
+              icon: "3",
+              title: t("lesson.interactive.introChecklistSparkTitle"),
+              desc: t("lesson.interactive.introChecklistSparkDesc"),
             },
           ].map((item, i) => (
             <div
@@ -318,13 +319,13 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               Vocabulary Preview
             </h2>
             <p className="text-purple-500 dark:text-purple-400 text-sm mt-1">
-              Phase 2 · ปูพื้นคำศัพท์ก่อนอ่าน
+              {t("lesson.interactive.phase2Subtitle")}
             </p>
           </div>
           <div className="bg-purple-600 text-white rounded-2xl px-5 py-3 text-center">
             <p className="text-3xl font-black">{words.length}</p>
             <p className="text-xs opacity-80 uppercase tracking-wider">
-              คำศัพท์
+              {t("lesson.interactive.vocabulary")}
             </p>
           </div>
         </div>
@@ -371,10 +372,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     </div>
                     <button
                       onClick={speak}
-                      title="อ่านออกเสียง"
+                      title={t("lesson.interactive.speakTitle")}
                       className={`w-8 h-8 rounded-full ${c.bg} text-white flex items-center justify-center shadow hover:opacity-80 active:scale-90 transition-all`}
                     >
-                      🔊
+                      Sound
                     </button>
                   </div>
 
@@ -383,7 +384,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     {String(wordText)}
                   </p>
 
-                  {/* Thai translation — always visible */}
+                  {/* Thai translation - always visible */}
                   {defTh && (
                     <p className="text-foreground font-semibold text-sm leading-snug">
                       {defTh}
@@ -398,7 +399,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                       </p>
                       {autoVocabEnTh[index] && (
                         <p className="text-purple-600 dark:text-purple-400 font-semibold text-xs leading-snug border-t border-purple-500/20 pt-1">
-                          💡 {autoVocabEnTh[index]}
+                          {autoVocabEnTh[index]}
                         </p>
                       )}
                     </div>
@@ -413,7 +414,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         </div>
 
         <div className="mt-6 bg-muted border border-border rounded-xl px-6 py-3 text-purple-700 dark:text-purple-400 text-sm font-medium">
-          🔊 กดปุ่มลำโพงเพื่อฟังการออกเสียง · แนะนำให้นักเรียนอ่านตามทีละคำ
+          {t("lesson.interactive.pronunciationHint")}
         </div>
       </div>
     );
@@ -477,20 +478,20 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           <div className="col-span-12 md:col-span-4 space-y-4">
             <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-5">
               <h4 className="font-bold text-blue-900 dark:text-blue-200 text-sm mb-3 flex items-center gap-2">
-                <span>📖</span> Tutor Guide
+                <span>Guide</span> Tutor Guide
               </h4>
               <ul className="text-blue-800 dark:text-blue-300 text-xs space-y-2">
                 <li className="flex gap-2">
-                  <span>1.</span> ให้นักเรียนอ่านในใจก่อน
+                  <span>1.</span> {t("lesson.interactive.phase3SilentRead1")}
                 </li>
                 <li className="flex gap-2">
-                  <span>2.</span> อย่าหยุดอธิบายคำศัพท์ ให้ผ่านไปก่อน
+                  <span>2.</span> {t("lesson.interactive.phase3SilentRead2")}
                 </li>
                 <li className="flex gap-2">
-                  <span>3.</span> จับเวลาและสังเกต engagement
+                  <span>3.</span> {t("lesson.interactive.phase3SilentRead3")}
                 </li>
                 <li className="flex gap-2">
-                  <span>4.</span> ถาม &quot;เข้าใจเรื่องอะไรบ้าง?&quot; หลังอ่านจบ
+                  <span>4.</span> {t("lesson.interactive.phase3SilentRead4")}
                 </li>
               </ul>
             </div>
@@ -499,7 +500,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 Silent Reading Mode
               </h4>
               <p className="text-muted-foreground text-xs">
-                นักเรียนอ่านในใจพร้อมกัน · ครูสังเกต body language
+                {t("lesson.interactive.phase3SilentReadingNote")}
               </p>
             </div>
           </div>
@@ -546,11 +547,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             Vocabulary Focus
           </span>
           <p className="text-muted-foreground text-sm ml-2">
-            คำที่{" "}
+            {t("lesson.interactive.wordPrefix")}{" "}
             <mark className="bg-[var(--highlight-bg)] text-[var(--highlight-text)] px-1 rounded not-italic">
               highlight
             </mark>{" "}
-            คือ vocabulary ในบทเรียนนี้
+            {t("lesson.interactive.vocabInLessonSuffix")}
           </p>
         </div>
 
@@ -608,7 +609,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                           <p className="text-muted-foreground text-xs italic">{defEn}</p>
                           {autoVocabEnTh[i] && (
                             <p className="text-purple-600 dark:text-purple-400 font-semibold text-xs border-t border-purple-500/20 pt-1">
-                              💡 {autoVocabEnTh[i]}
+                              {autoVocabEnTh[i]}
                             </p>
                           )}
                         </div>
@@ -644,11 +645,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         </div>
 
         <div className="w-full max-w-5xl grid grid-cols-12 gap-6">
-          {/* Passage – high contrast */}
+          {/* Passage - high contrast */}
           <div className="col-span-12 md:col-span-8">
             <div className="bg-slate-900 rounded-2xl shadow-2xl p-10 border-t-4 border-teal-400">
               <h3 className="text-teal-400 text-xs font-bold uppercase tracking-widest mb-6">
-                📖 {articleData.title}
+                {articleData.title}
               </h3>
               <p
                 className="text-slate-100 text-xl leading-[2.4] font-medium"
@@ -663,10 +664,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           <div className="col-span-12 md:col-span-4 space-y-4">
             <div className="bg-muted border-2 border-border rounded-2xl p-5">
               <h4 className="font-bold text-foreground text-sm mb-3 flex items-center gap-2">
-                <span>🔍</span> Comprehension Guide
+                <span>Guide</span> Comprehension Guide
               </h4>
               <p className="text-muted-foreground text-xs mb-4">
-                ช่วยนักเรียนหาคำตอบสำหรับคำถามต่อไปนี้:
+                {t("lesson.interactive.comprehensionGuideHelp")}
               </p>
               {comprehensionQuestions.length > 0 ? (
                 <div className="space-y-3">
@@ -683,19 +684,19 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 </div>
               ) : (
                 <p className="text-muted-foreground text-xs italic">
-                  ให้นักเรียนจับประเด็นสำคัญของบทความ
+                  {t("lesson.interactive.comprehensionFallback")}
                 </p>
               )}
             </div>
 
             <div className="bg-card border border-border rounded-2xl p-5">
               <h4 className="font-bold text-foreground text-sm mb-2">
-                🎙 Tutor Actions
+                Tutor Actions
               </h4>
               <ul className="text-muted-foreground text-xs space-y-2">
-                <li>· อ่านออกเสียงพร้อมนักเรียน</li>
-                <li>· หยุดอธิบาย context ที่ยาก</li>
-                <li>· ให้นักเรียน underline ประโยคสำคัญ</li>
+                <li>{t("lesson.interactive.tutorActionReadAloud")}</li>
+                <li>{t("lesson.interactive.tutorActionExplainContext")}</li>
+                <li>{t("lesson.interactive.tutorActionUnderline")}</li>
               </ul>
             </div>
           </div>
@@ -767,7 +768,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             Key Sentences
           </span>
           <p className="text-muted-foreground text-xs ml-2">
-            {keySentences.length} ประโยคที่มีคำศัพท์ประกอบ
+            {keySentences.length} {t("lesson.interactive.keySentenceCountSuffix")}
           </p>
         </div>
 
@@ -775,7 +776,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           {/* Timeline */}
           <div className="col-span-12 md:col-span-6">
             <h3 className="text-sm font-bold text-green-800 dark:text-green-300 uppercase tracking-widest mb-4 flex items-center gap-2">
-              <span>📝</span> Key Sentences Timeline
+              <span>List</span> Key Sentences Timeline
             </h3>
             <div className="relative">
               <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-green-500/30" />
@@ -808,7 +809,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 })}
                 {keySentences.length === 0 && (
                   <p className="text-muted-foreground text-sm pl-10">
-                    ไม่มีประโยคที่มีคำศัพท์ในบทเรียนนี้
+                    {t("lesson.interactive.noKeySentences")}
                   </p>
                 )}
               </div>
@@ -818,7 +819,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           {/* Passage with context */}
           <div className="col-span-12 md:col-span-6">
             <h3 className="text-sm font-bold text-green-800 dark:text-green-300 uppercase tracking-widest mb-4 flex items-center gap-2">
-              <span>📖</span> Passage Reference
+              <span>Article</span> Passage Reference
             </h3>
             <div className="bg-card rounded-2xl shadow-xl border-t-4 border-green-400 p-6">
               <p className="text-foreground text-base leading-[2.2]">
@@ -827,11 +828,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             </div>
             <div className="mt-4 bg-green-500/10 border border-green-500/20 rounded-xl p-4">
               <p className="text-green-800 dark:text-green-300 text-xs font-bold mb-1">
-                🎯 Tutor Tip
+                Tutor Tip
               </p>
               <p className="text-green-700 dark:text-green-400 text-xs">
-                ให้นักเรียน identify ว่าแต่ละประโยคอยู่ส่วนไหนของ passage
-                และทำไมถึงสำคัญ
+                {t("lesson.interactive.keySentenceTip")}
               </p>
             </div>
           </div>
@@ -909,11 +909,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             </div>
             <h2 className="text-3xl font-black text-foreground mb-1">{articleData.title}</h2>
             {articleData.genre && (
-              <p className="text-muted-foreground text-sm">{articleData.genre} · CEFR {articleData.cefr_level}</p>
+              <p className="text-muted-foreground text-sm">{articleData.genre} / CEFR {articleData.cefr_level}</p>
             )}
           </div>
 
-          {/* Article body — flowing paragraphs with inline highlights */}
+          {/* Article body - flowing paragraphs with inline highlights */}
           <div
             className="max-w-3xl mx-auto bg-card rounded-3xl shadow-xl border border-border p-10"
             style={{ fontFamily: "Georgia, serif" }}
@@ -946,7 +946,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           </div>
         </div>
 
-        {/* Floating mini audio player — bottom-center */}
+        {/* Floating mini audio player - bottom-center */}
         {audioUrl && (
           <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2">
             {/* Translation tooltip above player */}
@@ -959,7 +959,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 {activeThText ? (
                   <p className="text-orange-600 text-xs mt-1 leading-snug">{activeThText}</p>
                 ) : (
-                  <p className="text-slate-300 text-xs mt-1 italic">ให้นักเรียนแปลประโยคนี้...</p>
+                  <p className="text-slate-300 text-xs mt-1 italic">{t("lesson.interactive.translateSentencePrompt")}</p>
                 )}
               </div>
             )}
@@ -1018,7 +1018,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>{fmtTime(currentTime)}</span>
                   <span className="text-orange-500 font-bold truncate mx-1">
-                    {activeIdx >= 0 ? `ประโยค ${activeIdx + 1} / ${sentences.length}` : "–"}
+                    {activeIdx >= 0 ? `${t("lesson.interactive.sentencePrefix")} ${activeIdx + 1} / ${sentences.length}` : "-"}
                   </span>
                   <span>{fmtTime(duration)}</span>
                 </div>

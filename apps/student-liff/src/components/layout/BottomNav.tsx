@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, BookOpen, Activity, User } from "lucide-react";
+import { t } from "@/lib/i18n";
 
 const NAV_ITEMS = [
-  { href: "/dashboard", label: "หน้าหลัก", Icon: Home },
-  { href: "/classes", label: "คลาสเรียน", Icon: BookOpen },
-  { href: "/progress", label: "ก้าวหน้า", Icon: Activity },
-  { href: "/profile", label: "โปรไฟล์", Icon: User },
+  { href: "/dashboard", label: t("app.navHome"), Icon: Home },
+  { href: "/classes", label: t("app.navClasses"), Icon: BookOpen },
+  { href: "/progress", label: t("app.navProgress"), Icon: Activity },
+  { href: "/profile", label: t("app.navProfile"), Icon: User },
 ];
 
 export function BottomNav() {
@@ -16,7 +17,7 @@ export function BottomNav() {
 
   return (
     <nav
-      aria-label="Navigation หลัก"
+      aria-label={t("app.navAria")}
       style={{
         position: "fixed",
         bottom: 12,

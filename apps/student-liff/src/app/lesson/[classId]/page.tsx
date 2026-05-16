@@ -9,6 +9,7 @@ import { studentApi } from "@/lib/api";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { useLessonSocket } from "@/hooks/useLessonSocket";
 import { Button } from "@/components/ui/button";
+import { t } from "@/lib/i18n";
 
 interface PageProps {
   params: Promise<{ classId: string }>;
@@ -51,7 +52,7 @@ export default function LessonLobbyPage({ params }: PageProps) {
       studentApi.getClassDetails(classId)
         .then(data => {
           if (!data.class?.isEnrolled || data.class?.enrollmentStatus !== "ACTIVE") {
-            setAccessDenied("กรุณาชำระเงินให้สำเร็จก่อนเข้าเรียน");
+            setAccessDenied(t("lessonLobby.paymentRequired"));
             setClassInfo(data.class);
             setFetchingClass(false);
             return;
@@ -102,8 +103,8 @@ export default function LessonLobbyPage({ params }: PageProps) {
           }}
         >
           <Loader2 className="animate-spin" size={36} style={{ color: "var(--brand-500)" }} />
-          <p style={{ color: "var(--text-primary)", fontSize: "0.875rem", fontWeight: 800 }}>กำลังเตรียมห้องเรียน</p>
-          <p style={{ color: "var(--text-tertiary)", fontSize: "0.75rem", lineHeight: 1.5 }}>เชื่อมต่อข้อมูลคลาสและนักเรียน...</p>
+          <p style={{ color: "var(--text-primary)", fontSize: "0.875rem", fontWeight: 800 }}>{t("lessonLobby.preparingTitle")}</p>
+          <p style={{ color: "var(--text-tertiary)", fontSize: "0.75rem", lineHeight: 1.5 }}>{t("lessonLobby.preparingDescription")}</p>
         </div>
       </div>
     );
@@ -116,8 +117,8 @@ export default function LessonLobbyPage({ params }: PageProps) {
            <AlertCircle size={40} style={{ color: "#ef4444" }} />
         </div>
         <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: 12 }}>{kicked}</h2>
-        <p style={{ color: "var(--text-tertiary)", marginBottom: 32 }}>กรุณาติดต่อคุณครูหากนี่เป็นข้อผิดพลาด</p>
-        <Link href="/dashboard" className="btn btn-secondary btn-lg btn-full" style={{ textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center" }}>กลับหน้าหลัก</Link>
+        <p style={{ color: "var(--text-tertiary)", marginBottom: 32 }}>{t("lessonLobby.contactTutorIfMistake")}</p>
+        <Link href="/dashboard" className="btn btn-secondary btn-lg btn-full" style={{ textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center" }}>{t("lessonLobby.backHome")}</Link>
       </div>
     );
   }
@@ -126,9 +127,9 @@ export default function LessonLobbyPage({ params }: PageProps) {
     return (
       <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "var(--surface-bg)", padding: 24, textAlign: "center" }}>
         <AlertCircle size={48} style={{ color: "var(--accent-red)", marginBottom: 16 }} />
-        <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: 8 }}>ไม่พบข้อมูลคลาส</h2>
-        <p style={{ color: "var(--text-tertiary)", marginBottom: 24 }}>คลาสนี้อาจยังไม่เปิดสอน หรือคุณยังไม่ได้ลงทะเบียน</p>
-        <Link href="/dashboard" className="btn btn-primary" style={{ padding: "0 24px", height: 48, borderRadius: 12 }}>กลับหน้าหลัก</Link>
+        <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: 8 }}>{t("lessonLobby.classNotFoundTitle")}</h2>
+        <p style={{ color: "var(--text-tertiary)", marginBottom: 24 }}>{t("lessonLobby.classNotFoundDescription")}</p>
+        <Link href="/dashboard" className="btn btn-primary" style={{ padding: "0 24px", height: 48, borderRadius: 12 }}>{t("lessonLobby.backHome")}</Link>
       </div>
     );
   }
@@ -138,8 +139,8 @@ export default function LessonLobbyPage({ params }: PageProps) {
       <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "var(--surface-bg)", padding: 24, textAlign: "center" }}>
         <AlertCircle size={48} style={{ color: "var(--accent-red)", marginBottom: 16 }} />
         <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: 8 }}>{accessDenied}</h2>
-        <p style={{ color: "var(--text-tertiary)", marginBottom: 24 }}>ระบบพบว่าการลงทะเบียนของคลาสนี้ยังไม่เป็น ACTIVE</p>
-        <Link href={`/payment?classId=${classId}`} className="btn btn-primary" style={{ padding: "0 24px", height: 48, borderRadius: 12 }}>ไปหน้าชำระเงิน</Link>
+        <p style={{ color: "var(--text-tertiary)", marginBottom: 24 }}>{t("lessonLobby.enrollmentInactive")}</p>
+        <Link href={`/payment?classId=${classId}`} className="btn btn-primary" style={{ padding: "0 24px", height: 48, borderRadius: 12 }}>{t("lessonLobby.goPayment")}</Link>
       </div>
     );
   }
@@ -173,7 +174,7 @@ export default function LessonLobbyPage({ params }: PageProps) {
         <Link href="/dashboard" style={{ background: "var(--neutral-100)", border: "none", borderRadius: 12, width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-secondary)", textDecoration: "none" }}>
           <ChevronLeft size={18} />
         </Link>
-        <h1 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", flex: 1 }}>ห้องพักคอย (Lobby)</h1>
+        <h1 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", flex: 1 }}>{t("lessonLobby.lobbyTitle")}</h1>
       </div>
 
       <div style={{ padding: "24px 20px", display: "flex", flexDirection: "column", gap: 20 }}>
@@ -189,7 +190,7 @@ export default function LessonLobbyPage({ params }: PageProps) {
                 <span style={{ color: "#fff", fontSize: "0.6875rem", fontWeight: 700, textTransform: "uppercase" }}>Live Lesson</span>
               </div>
               <h2 style={{ color: "#fff", fontSize: "1.25rem", fontWeight: 800, marginBottom: 4 }}>{classInfo.name}</h2>
-              <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.875rem" }}>ติวเตอร์: {classInfo.tutor?.name || "อ.สีวา สุขพร้อม"}</p>
+              <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.875rem" }}>{t("lessonLobby.tutorPrefix")} {classInfo.tutor?.name || t("lessonLobby.defaultTutor")}</p>
            </div>
         </div>
 
@@ -197,10 +198,10 @@ export default function LessonLobbyPage({ params }: PageProps) {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
           <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 8 }}>
             <Users size={18} style={{ color: "var(--brand-500)" }} />
-            เพื่อนในคลาส ({participants.length})
+            {t("lessonLobby.classmates")} ({participants.length})
           </h3>
           <span style={{ fontSize: "0.8125rem", color: "var(--brand-600)", fontWeight: 700 }}>
-             พร้อมแล้ว {readyCount}/{participants.length}
+             {t("lessonLobby.readyPrefix")} {readyCount}/{participants.length}
           </span>
         </div>
 
@@ -209,7 +210,7 @@ export default function LessonLobbyPage({ params }: PageProps) {
           {participants.length === 0 ? (
              <div className="glass-card" style={{ gridColumn: "span 3", padding: "40px 20px", textAlign: "center", border: "2px dashed var(--neutral-200)", background: "transparent" }}>
                 <div style={{ fontSize: "2rem", marginBottom: 10 }}>👋</div>
-                <p style={{ fontSize: "0.8125rem", color: "var(--text-tertiary)" }}>กำลังรอเพื่อนๆ เข้าห้องเรียน...</p>
+                <p style={{ fontSize: "0.8125rem", color: "var(--text-tertiary)" }}>{t("lessonLobby.waitingClassmates")}</p>
              </div>
           ) : (
             [...participants]
@@ -250,7 +251,7 @@ export default function LessonLobbyPage({ params }: PageProps) {
                         color: isMe ? "var(--brand-600)" : p.isReady ? "var(--text-primary)" : "var(--text-secondary)",
                         whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"
                       }}>
-                        {isMe ? "ฉันเอง" : p.name}
+                        {isMe ? t("lessonLobby.me") : p.name}
                       </div>
                       {isMe && <div style={{ fontSize: "0.625rem", color: "var(--brand-500)", fontWeight: 700, textTransform: "uppercase", marginTop: 2 }}>You</div>}
                     </div>
@@ -270,12 +271,12 @@ export default function LessonLobbyPage({ params }: PageProps) {
            ) : !sessionData ? (
               <div className="glass-card" style={{ padding: "16px", textAlign: "center", border: "1px solid var(--surface-border)" }}>
                 <Loader2 className="animate-spin" size={20} style={{ color: "var(--brand-500)", margin: "0 auto 8px" }} />
-                <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>กำลังเชื่อมต่อกับระบบบทเรียน...</p>
+                <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>{t("lessonLobby.connectingLesson")}</p>
               </div>
            ) : (
               <div className="glass-card" style={{ padding: "16px", textAlign: "center", border: "1px solid var(--surface-border)" }}>
                 <p style={{ fontSize: "0.875rem", color: "var(--text-primary)", fontWeight: 500 }}>
-                  {isReady ? "รอติวเตอร์เริ่มการสอน..." : "กดปุ่มด้านล่างเมื่อคุณพร้อมเรียน"}
+                  {isReady ? t("lessonLobby.waitingTutor") : t("lessonLobby.readyInstruction")}
                 </p>
               </div>
            )}
@@ -292,7 +293,7 @@ export default function LessonLobbyPage({ params }: PageProps) {
                boxShadow: isReady ? "none" : "0 10px 25px rgba(6,199,85,0.3)"
              }}
            >
-             {isReady ? "ยกเลิกการ Ready" : "ฉันพร้อมแล้ว! (Ready)"}
+             {isReady ? t("lessonLobby.cancelReady") : t("lessonLobby.readyCta")}
            </Button>
         </div>
 

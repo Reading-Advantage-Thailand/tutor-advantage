@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/i18n";
 
 interface ScheduledEvent {
   id: string;
@@ -86,8 +87,29 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
     return cells;
   }, [currentDate]);
 
-  const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-  const daysOfWeek = ["อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"];
+  const thaiMonths = [
+    t("dashboardSchedule.months.jan"),
+    t("dashboardSchedule.months.feb"),
+    t("dashboardSchedule.months.mar"),
+    t("dashboardSchedule.months.apr"),
+    t("dashboardSchedule.months.may"),
+    t("dashboardSchedule.months.jun"),
+    t("dashboardSchedule.months.jul"),
+    t("dashboardSchedule.months.aug"),
+    t("dashboardSchedule.months.sep"),
+    t("dashboardSchedule.months.oct"),
+    t("dashboardSchedule.months.nov"),
+    t("dashboardSchedule.months.dec"),
+  ];
+  const daysOfWeek = [
+    t("dashboardSchedule.weekdays.sun"),
+    t("dashboardSchedule.weekdays.mon"),
+    t("dashboardSchedule.weekdays.tue"),
+    t("dashboardSchedule.weekdays.wed"),
+    t("dashboardSchedule.weekdays.thu"),
+    t("dashboardSchedule.weekdays.fri"),
+    t("dashboardSchedule.weekdays.sat"),
+  ];
 
   const handlePrevMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
   const handleNextMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
@@ -175,7 +197,7 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
                       ))}
                       {dayEvts.length > 3 && (
                         <div className="hidden sm:block text-[8px] text-muted-foreground pl-1">
-                          +{dayEvts.length - 3} คลาส
+                          +{dayEvts.length - 3} {t("dashboardSchedule.moreClassesSuffix")}
                         </div>
                       )}
                       {/* Mobile summary dot */}
@@ -197,10 +219,10 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
       <div className="lg:col-span-5 sticky top-24">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold text-foreground">
-            {isSameDay(selectedDate, new Date()) ? "วันนี้" : `${selectedDate.getDate()} ${thaiMonths[selectedDate.getMonth()]}`}
+            {isSameDay(selectedDate, new Date()) ? t("dashboardSchedule.today") : `${selectedDate.getDate()} ${thaiMonths[selectedDate.getMonth()]}`}
           </h3>
           <Badge variant="secondary" className="font-medium">
-            {selectedEvents.length} รายการสอน
+            {selectedEvents.length} {t("dashboardSchedule.teachingItems")}
           </Badge>
         </div>
 
@@ -210,7 +232,7 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
               <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center mb-3">
                 <CalendarDays className="h-6 w-6 text-muted-foreground" />
               </div>
-              <p className="text-sm text-muted-foreground">ไม่มีตารางสอนในวันนี้</p>
+              <p className="text-sm text-muted-foreground">{t("dashboardSchedule.emptyDay")}</p>
             </div>
           ) : (
             selectedEvents.map((ev, idx) => (
@@ -239,7 +261,7 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
                         </div>
                         <div className="flex items-center gap-1">
                           <Users className="h-3.5 w-3.5 text-muted-foreground/60" />
-                          {ev.students} คน
+                          {ev.students} {t("dashboardSchedule.peopleUnit")}
                         </div>
                       </div>
                     </div>
@@ -260,20 +282,20 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
   Duplicated from shared logic or kept inline for performance isolation.
 */
 function parseThaiSchedule(scheduleStr: string) {
-  if (!scheduleStr || scheduleStr === "ยังไม่ได้กำหนด") {
-    return { days: [1, 3, 5], timeRange: "ตามนัดหมาย" };
+  if (!scheduleStr || scheduleStr === t("dashboardSchedule.unsetSchedule")) {
+    return { days: [1, 3, 5], timeRange: t("dashboardSchedule.byAppointment") };
   }
 
   const lowerStr = scheduleStr.toLowerCase();
   const dayMapping: { [key: string]: number } = {
-    "อาทิตย์": 0,
-    "จันทร์": 1,
-    "อังคาร": 2,
-    "พุธ": 3,
-    "พฤหัสบดี": 4,
-    "พฤหัส": 4,
-    "ศุกร์": 5,
-    "เสาร์": 6,
+    [t("tutorClass.days.sunFull")]: 0,
+    [t("tutorClass.days.monFull")]: 1,
+    [t("tutorClass.days.tueFull")]: 2,
+    [t("tutorClass.days.wedFull")]: 3,
+    [t("tutorClass.days.thuFull")]: 4,
+    [t("dashboardSchedule.parserThuShort")]: 4,
+    [t("tutorClass.days.friFull")]: 5,
+    [t("tutorClass.days.satFull")]: 6,
   };
 
   const detectedDays: number[] = [];
@@ -283,7 +305,7 @@ function parseThaiSchedule(scheduleStr: string) {
     }
   });
 
-  if (lowerStr.includes("ทุกวัน") && detectedDays.length === 0) {
+  if (lowerStr.includes(t("tutorClass.scheduleEveryDayPrefix")) && detectedDays.length === 0) {
     return { days: [0, 1, 2, 3, 4, 5, 6], timeRange: extractTime(scheduleStr) };
   }
 
@@ -295,10 +317,10 @@ function parseThaiSchedule(scheduleStr: string) {
 }
 
 function extractTime(str: string) {
-  const regex = /(\d{1,2}[:.]\d{2})\s*[-–]\s*(\d{1,2}[:.]\d{2})/;
+  const regex = /(\d{1,2}[:.]\d{2})\s*[\u002d\u2013]\s*(\d{1,2}[:.]\d{2})/;
   const match = str.match(regex);
   if (match) {
-    return `${match[1].replace('.', ':')} - ${match[2].replace('.', ':')} น.`;
+    return `${match[1].replace('.', ':')} - ${match[2].replace('.', ':')} ${t("tutorClass.scheduleSuffix")}`;
   }
-  return "ตามนัดหมาย";
+  return t("dashboardSchedule.byAppointment");
 }

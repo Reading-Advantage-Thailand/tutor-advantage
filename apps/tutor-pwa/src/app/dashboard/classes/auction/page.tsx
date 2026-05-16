@@ -4,6 +4,7 @@ import { BookOpen, Users, Calendar, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { ClaimButton } from "./claim-button";
+import { t } from "@/lib/i18n";
 
 async function getAuctions() {
   const cookieStore = await cookies();
@@ -37,15 +38,15 @@ export default async function AuctionPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            คลาสที่ต้องการครูด่วน <AlertTriangle className="h-5 w-5 text-amber-500" />
+            {t("tutorClass.auction.title")} <AlertTriangle className="h-5 w-5 text-amber-500" />
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            รับช่วงต่อคลาสเรียนเพื่อรับฐานนักเรียนและโบนัสเครือข่ายพิเศษ
+            {t("tutorClass.auction.subtitle")}
           </p>
         </div>
         <Link href="/dashboard/classes" className="hidden sm:block">
           <Button variant="outline" className="gap-2 shrink-0">
-            กลับไปหน้าคลาสของฉัน
+            {t("tutorClass.auction.back")}
           </Button>
         </Link>
       </div>
@@ -53,7 +54,7 @@ export default async function AuctionPage() {
       <div className="grid gap-4">
         {abandonedClasses.length === 0 && (
           <div className="py-12 text-center border rounded-xl border-dashed">
-            <p className="text-muted-foreground">ไม่มีคลาสที่ต้องการครูรับช่วงต่อในขณะนี้</p>
+            <p className="text-muted-foreground">{t("tutorClass.auction.empty")}</p>
           </div>
         )}
         
@@ -71,24 +72,24 @@ export default async function AuctionPage() {
                         {cls.title}
                       </p>
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-destructive/10 text-destructive font-semibold">
-                        ต้องการด่วน
+                        {t("tutorClass.auction.urgent")}
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground truncate mb-1.5">
-                      วิชา: <span className="text-foreground">{cls.subject}</span>
+                      {t("tutorClass.auction.subjectLabel")} <span className="text-foreground">{cls.subject}</span>
                     </p>
                     <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mb-2">
                       <span className="flex items-center gap-1.5">
                         <Calendar className="h-3.5 w-3.5 text-primary/70" />
-                        หมดเวลา: {cls.expiresAt ? new Date(cls.expiresAt).toLocaleDateString('th-TH') : 'ไม่มีกำหนด'}
+                        {t("tutorClass.auction.expiresLabel")} {cls.expiresAt ? new Date(cls.expiresAt).toLocaleDateString('th-TH') : t("tutorClass.auction.noExpiry")}
                       </span>
                       <span className="flex items-center gap-1.5">
                         <Users className="h-3.5 w-3.5 text-primary/70" />
-                        {cls.students} คน
+                        {cls.students} {t("tutorClass.classes.peopleUnit")}
                       </span>
                     </div>
                     <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">
-                      รับส่วนลดโบนัสเครือข่าย {cls.networkBonusRate}% • สาเหตุ: {cls.reason}
+                      {t("tutorClass.auction.bonusPrefix")} {cls.networkBonusRate}% • {t("tutorClass.auction.reasonLabel")} {cls.reason}
                     </p>
                   </div>
                 </div>

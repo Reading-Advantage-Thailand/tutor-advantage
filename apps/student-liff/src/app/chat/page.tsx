@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, Search, ChevronRight, MessageCircle, BookOpen, User, Users, Loader2 } from "lucide-react";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { studentApi } from "@/lib/api";
+import { t } from "@/lib/i18n";
 import { toast } from "sonner";
 
 const ChatAvatar = ({ src, title, size = 48 }: { src?: string | null, title: string, size?: number }) => {
@@ -121,7 +122,7 @@ export default function ChatListPage() {
             token = localStorage.getItem("student_session_token");
             retries++;
           }
-          if (!token && isMounted) throw new Error("ไม่สามารถสร้างเซสชันได้");
+          if (!token && isMounted) throw new Error(t("chat.sessionUnavailable"));
 
           if (!isMounted) return;
 
@@ -136,7 +137,7 @@ export default function ChatListPage() {
           }
         } catch (err: unknown) {
           console.error("Failed to fetch chat data:", err);
-          if (isMounted && showLoading) setError("ไม่สามารถดึงข้อมูลการสนทนาได้");
+          if (isMounted && showLoading) setError(t("chat.loadConversationsFailed"));
         } finally {
           if (isMounted && showLoading) setLoading(false);
         }
@@ -172,7 +173,7 @@ export default function ChatListPage() {
       }
     } catch (err: unknown) {
       console.error("Failed to initiate:", err);
-      toast.error("เกิดข้อผิดพลาดในการเปิดแชท");
+      toast.error(t("chat.openFailed"));
       setInitiatingChat(null);
     }
   };
@@ -213,7 +214,7 @@ export default function ChatListPage() {
           <ChevronLeft size={18} />
         </Link>
         <h1 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", flex: 1, textAlign: "center", marginRight: 36 }}>
-          ข้อความ
+          {t("chat.title")}
         </h1>
       </div>
 
@@ -237,7 +238,7 @@ export default function ChatListPage() {
               cursor: "pointer", transition: "all 0.2s"
             }}
           >
-            ห้องเรียนของฉัน
+            {t("chat.myClasses")}
           </button>
           <button 
             onClick={() => setActiveTab('recent')}
@@ -250,7 +251,7 @@ export default function ChatListPage() {
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6
             }}
           >
-            ล่าสุด
+            {t("chat.recent")}
             {conversations.filter(c => c.unreadCount > 0).length > 0 && (
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent-red)" }} />
             )}
@@ -262,7 +263,7 @@ export default function ChatListPage() {
           <Search size={16} style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--text-tertiary)" }} />
           <input
             type="text"
-            placeholder={activeTab === 'classes' ? "ค้นหารายวิชา..." : "ค้นหาชื่อการสนทนา..."}
+            placeholder={activeTab === 'classes' ? t("chat.searchClasses") : t("chat.searchConversations")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{
@@ -276,12 +277,12 @@ export default function ChatListPage() {
         {loading ? (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "60px 0", gap: 12 }}>
             <Loader2 className="animate-spin text-green-500" size={32} />
-            <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>กำลังโหลดข้อมูล...</p>
+            <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>{t("chat.loading")}</p>
           </div>
         ) : error ? (
           <div className="glass-card" style={{ padding: "24px", textAlign: "center", color: "var(--text-secondary)" }}>
             <p>{error}</p>
-            <button onClick={() => window.location.reload()} className="btn btn-secondary btn-sm" style={{ marginTop: 12 }}>ลองใหม่อีกครั้ง</button>
+            <button onClick={() => window.location.reload()} className="btn btn-secondary btn-sm" style={{ marginTop: 12 }}>{t("chat.retry")}</button>
           </div>
         ) : activeTab === 'classes' ? (
           // ── CLASSES AS FOLDERS ──
@@ -289,7 +290,7 @@ export default function ChatListPage() {
             {filteredClasses.length === 0 ? (
               <div style={{ textAlign: "center", padding: "40px 20px", color: "var(--text-tertiary)" }}>
                 <BookOpen size={48} style={{ opacity: 0.3, margin: "0 auto 12px" }} />
-                <p>ยังไม่มีประวัติการลงทะเบียนเรียน</p>
+                <p>{t("chat.emptyEnrollments")}</p>
               </div>
             ) : (
               filteredClasses.map((cls) => (
@@ -306,7 +307,7 @@ export default function ChatListPage() {
                           {cls.name}
                         </h4>
                         <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", margin: "2px 0 0" }}>
-                          ติวเตอร์: {cls.tutorName}
+                          {t("chat.tutorPrefix")} {cls.tutorName}
                         </p>
                       </div>
                     </div>
@@ -329,8 +330,8 @@ export default function ChatListPage() {
                         {initiatingChat === `DIRECT-${cls.id}` ? <Loader2 size={16} className="animate-spin" /> : <User size={16} />}
                       </div>
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)" }}>คุยกับครู (Direct Chat)</div>
-                        <div style={{ fontSize: "0.75rem", color: "var(--text-tertiary)" }}>แชทถามตอบกับ {cls.tutorName} แบบส่วนตัว</div>
+                        <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)" }}>{t("chat.directChatTitle")}</div>
+                        <div style={{ fontSize: "0.75rem", color: "var(--text-tertiary)" }}>{t("chat.directChatPrefix")} {cls.tutorName} {t("chat.directChatSuffix")}</div>
                       </div>
                       <ChevronRight size={16} style={{ color: "var(--neutral-300)" }} />
                     </button>
@@ -349,8 +350,8 @@ export default function ChatListPage() {
                          {initiatingChat === `GROUP-${cls.id}` ? <Loader2 size={16} className="animate-spin" /> : <Users size={16} />}
                       </div>
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)" }}>กลุ่มแชทห้องเรียน (Group Chat)</div>
-                        <div style={{ fontSize: "0.75rem", color: "var(--text-tertiary)" }}>คุยกับเพื่อนร่วมคลาสและครูผู้สอน</div>
+                        <div style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--text-primary)" }}>{t("chat.groupChatTitle")}</div>
+                        <div style={{ fontSize: "0.75rem", color: "var(--text-tertiary)" }}>{t("chat.groupChatDescription")}</div>
                       </div>
                       <ChevronRight size={16} style={{ color: "var(--neutral-300)" }} />
                     </button>
@@ -365,7 +366,7 @@ export default function ChatListPage() {
             {filteredConversations.length === 0 ? (
               <div style={{ textAlign: "center", padding: "40px 20px", color: "var(--text-tertiary)" }}>
                 <MessageCircle size={48} style={{ opacity: 0.3, margin: "0 auto 12px" }} />
-                <p>ยังไม่มีประวัติแชทล่าสุด</p>
+                <p>{t("chat.emptyRecent")}</p>
               </div>
             ) : (
               filteredConversations.map((conv) => (
@@ -390,9 +391,9 @@ export default function ChatListPage() {
                       </div>
                       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                         <p style={{ fontSize: "0.8125rem", color: conv.unreadCount > 0 ? "var(--text-primary)" : "var(--text-secondary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1 }}>
-                          {conv.lastMessage ? (<>{conv.lastMessage.sender === "คุณ" ? "คุณ: " : ""}{conv.lastMessage.content}</>) : "ยังไม่มีข้อความ"}
+                          {conv.lastMessage ? (<>{conv.lastMessage.sender === t("chat.you") ? t("chat.youPrefix") : ""}{conv.lastMessage.content}</>) : t("chat.noMessages")}
                         </p>
-                        {conv.type !== "DIRECT" && <span style={{ background: "var(--neutral-100)", color: "var(--text-tertiary)", fontSize: "0.625rem", padding: "2px 6px", borderRadius: 4, fontWeight: 600 }}>กลุ่ม</span>}
+                        {conv.type !== "DIRECT" && <span style={{ background: "var(--neutral-100)", color: "var(--text-tertiary)", fontSize: "0.625rem", padding: "2px 6px", borderRadius: 4, fontWeight: 600 }}>{t("chat.groupBadge")}</span>}
                       </div>
                     </div>
                     <ChevronRight size={16} style={{ color: "var(--neutral-300)", flexShrink: 0 }} />

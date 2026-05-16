@@ -1,5 +1,5 @@
 /**
- * Sound Effects utility for Interactive Lesson — Student side.
+ * Sound Effects utility for Interactive Lesson - Student side.
  * Uses the Web Audio API to generate lightweight synth sounds.
  */
 

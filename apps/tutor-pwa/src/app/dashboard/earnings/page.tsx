@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Download, AlertCircle, Wallet, Star } from "lucide-react";
 import { cookies } from "next/headers";
 import VerificationBanner from "@/components/dashboard/verification-banner";
+import { t } from "@/lib/i18n";
 
 type EarningsHistoryItem = {
   date: string;
@@ -58,21 +59,19 @@ async function getEarningsHistoryData(token: string): Promise<EarningsResponse |
 
 const statusMap: Record<string, { label: string; className: string }> = {
   draft: {
-    label: "ร่างรายการ",
+    label: t("dashboardEarnings.statuses.draft"),
     className: "bg-muted text-muted-foreground border-border",
   },
   pending: {
-    label: "รอพิจารณา",
-    className:
-      "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+    label: t("dashboardEarnings.statuses.pending"),
+    className: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
   },
   approved: {
-    label: "อนุมัติแล้ว",
-    className:
-      "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+    label: t("dashboardEarnings.statuses.approved"),
+    className: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
   },
   rejected: {
-    label: "ถูกปฏิเสธ",
+    label: t("dashboardEarnings.statuses.rejected"),
     className: "bg-destructive/10 text-destructive border-destructive/20",
   },
 };
@@ -90,8 +89,12 @@ const emptyRateInfo: EarningsResponse["rateInfo"] = {
   nextTarget: 0,
 };
 
-function formatTHB(value: number) {
-  return value.toLocaleString("th-TH", { maximumFractionDigits: 0 });
+function formatCurrencyTHB(value: number) {
+  return value.toLocaleString("th-TH", {
+    style: "currency",
+    currency: "THB",
+    maximumFractionDigits: 0,
+  });
 }
 
 export default async function EarningsPage() {
@@ -118,9 +121,9 @@ export default async function EarningsPage() {
       <VerificationBanner />
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">รายได้ของฉัน</h1>
+          <h1 className="text-2xl font-bold text-foreground">{t("dashboardEarnings.title")}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            สรุปรายได้จาก payment และ settlement ที่บันทึกในฐานข้อมูลจริง
+            {t("dashboardEarnings.subtitle")}
           </p>
         </div>
         <Button
@@ -129,7 +132,7 @@ export default async function EarningsPage() {
           className="gap-2 shrink-0 hidden sm:flex"
         >
           <Download className="h-4 w-4" />
-          ดาวน์โหลดรายงาน (CSV)
+          {t("dashboardEarnings.downloadCsv")}
         </Button>
       </div>
 
@@ -143,27 +146,27 @@ export default async function EarningsPage() {
                   <Wallet className="h-5 w-5 text-primary" />
                 </div>
                 <h2 className="text-sm font-semibold text-foreground">
-                  รายได้ประมาณการเดือนนี้ ({response?.periodMonth || "N/A"})
+                  {t("dashboardEarnings.projectedIncomePrefix")} ({response?.periodMonth || "N/A"})
                 </h2>
               </div>
               <div className="flex items-baseline gap-2 mb-6">
                 <span className="text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
-                  ฿{formatTHB(earnings.total)}
+                  {formatCurrencyTHB(earnings.total)}
                 </span>
                 <span className="text-sm font-medium text-muted-foreground">THB</span>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="rounded-xl border border-border/50 bg-background/50 p-3 sm:p-4">
-                  <p className="text-xs text-muted-foreground mb-1">ค่าคอมมิชชันจากยอดชำระ</p>
+                  <p className="text-xs text-muted-foreground mb-1">{t("dashboardEarnings.directCommission")}</p>
                   <p className="text-lg sm:text-xl font-bold text-foreground">
-                    ฿{formatTHB(earnings.directSales)}
+                    {formatCurrencyTHB(earnings.directSales)}
                   </p>
                 </div>
                 <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 sm:p-4">
-                  <p className="text-xs text-emerald-600 dark:text-emerald-400 mb-1">โบนัสเครือข่าย</p>
+                  <p className="text-xs text-emerald-600 dark:text-emerald-400 mb-1">{t("dashboardEarnings.networkBonus")}</p>
                   <p className="text-lg sm:text-xl font-bold text-emerald-600 dark:text-emerald-400">
-                    +฿{formatTHB(earnings.networkBonus)}
+                    +{formatCurrencyTHB(earnings.networkBonus)}
                   </p>
                 </div>
               </div>
@@ -172,10 +175,10 @@ export default async function EarningsPage() {
                 <div className="mt-4 flex items-center justify-between rounded-xl bg-destructive/5 border border-destructive/15 px-4 py-3 text-sm">
                   <span className="text-destructive/90 flex items-center gap-2">
                     <AlertCircle className="h-4 w-4" />
-                    <span className="font-medium">ยอดปรับหักคืน</span>
+                    <span className="font-medium">{t("dashboardEarnings.clawback")}</span>
                   </span>
                   <span className="font-bold text-destructive">
-                    ฿{formatTHB(earnings.clawback)}
+                    {formatCurrencyTHB(earnings.clawback)}
                   </span>
                 </div>
               )}
@@ -187,7 +190,7 @@ export default async function EarningsPage() {
               <CardTitle className="text-sm font-semibold text-foreground flex items-center justify-between">
                 <span className="flex items-center gap-2">
                   <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-                  คอมมิชชันปัจจุบัน
+                  {t("dashboardEarnings.currentCommission")}
                 </span>
                 <span className="text-lg font-bold text-primary">{commissionPercent}%</span>
               </CardTitle>
@@ -195,11 +198,11 @@ export default async function EarningsPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-xs text-muted-foreground">
-                  <span className="font-medium text-foreground">฿{formatTHB(rateInfo.volume)}</span>
+                  <span className="font-medium text-foreground">{formatCurrencyTHB(rateInfo.volume)}</span>
                   <span>
                     {rateInfo.nextTarget > 0
-                      ? `เป้าหมาย ฿${formatTHB(rateInfo.nextTarget)} เพื่อปรับเรท`
-                      : "อยู่ในเรทสูงสุดแล้ว"}
+                      ? `${t("dashboardEarnings.rateTargetPrefix")} ${formatCurrencyTHB(rateInfo.nextTarget)} ${t("dashboardEarnings.rateTargetSuffix")}`
+                      : t("dashboardEarnings.maxRate")}
                   </span>
                 </div>
                 <div className="w-full bg-primary/10 rounded-full h-2.5 overflow-hidden">
@@ -219,7 +222,7 @@ export default async function EarningsPage() {
           <Card className="border-border/60 shadow-sm flex flex-col h-full">
             <CardHeader className="pb-3 flex flex-row items-center justify-between border-b border-border/40">
               <CardTitle className="text-sm font-semibold text-foreground">
-                ประวัติการจ่ายเงิน
+                {t("dashboardEarnings.payoutHistory")}
               </CardTitle>
               <Button
                 variant="ghost"
@@ -234,7 +237,7 @@ export default async function EarningsPage() {
               <div className="divide-y divide-border/50">
                 {history.length === 0 && (
                   <div className="p-6 text-center text-sm text-muted-foreground">
-                    ยังไม่มีประวัติการจ่ายเงิน
+                    {t("dashboardEarnings.emptyPayoutHistory")}
                   </div>
                 )}
                 {history.map((item) => {
@@ -255,47 +258,47 @@ export default async function EarningsPage() {
                       </div>
 
                       <p className="text-lg font-bold text-foreground mb-3">
-                        ฿{formatTHB(total)}
+                        {formatCurrencyTHB(total)}
                       </p>
 
                       <div className="space-y-1.5 text-xs">
                         <div className="flex justify-between text-muted-foreground">
-                          <span>ยอดจ่ายตาม settlement</span>
-                          <span className="font-medium text-foreground">฿{formatTHB(item.direct)}</span>
+                          <span>{t("dashboardEarnings.settlementPayout")}</span>
+                          <span className="font-medium text-foreground">{formatCurrencyTHB(item.direct)}</span>
                         </div>
                         <div className="flex justify-between text-muted-foreground">
-                          <span>โบนัสเครือข่าย</span>
+                          <span>{t("dashboardEarnings.networkBonus")}</span>
                           <span className="font-medium text-emerald-600 dark:text-emerald-400">
-                            +฿{formatTHB(item.network)}
+                            +{formatCurrencyTHB(item.network)}
                           </span>
                         </div>
                         {item.clawback !== 0 && (
                           <div className="flex justify-between pt-1 border-t border-border/40 mt-1">
-                            <span className="text-destructive/80">ยอดปรับหักคืน</span>
+                            <span className="text-destructive/80">{t("dashboardEarnings.clawback")}</span>
                             <span className="font-semibold text-destructive">
-                              ฿{formatTHB(item.clawback)}
+                              {formatCurrencyTHB(item.clawback)}
                             </span>
                           </div>
                         )}
                         {item.withholdingTax !== undefined && (
                           <div className="flex justify-between text-muted-foreground">
-                            <span>หัก ณ ที่จ่าย 3%</span>
+                            <span>{t("dashboardEarnings.withholdingTax")}</span>
                             <span className="font-medium text-foreground">
-                              ฿{formatTHB(item.withholdingTax)}
+                              {formatCurrencyTHB(item.withholdingTax)}
                             </span>
                           </div>
                         )}
                         {item.netPayout !== undefined && (
                           <div className="flex justify-between pt-1 border-t border-border/40 mt-1 text-muted-foreground">
-                            <span>ยอดรับสุทธิ</span>
+                            <span>{t("dashboardEarnings.netPayout")}</span>
                             <span className="font-semibold text-foreground">
-                              ฿{formatTHB(item.netPayout)}
+                              {formatCurrencyTHB(item.netPayout)}
                             </span>
                           </div>
                         )}
                         {item.payoutDocument && (
                           <div className="pt-1 text-[11px] text-muted-foreground">
-                            เอกสาร: {item.payoutDocument.documentNumber}
+                            {t("dashboardEarnings.documentPrefix")} {item.payoutDocument.documentNumber}
                           </div>
                         )}
                       </div>
@@ -313,7 +316,7 @@ export default async function EarningsPage() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
               <AlertCircle className="h-4 w-4 text-destructive" />
-              รายละเอียดการปรับยอดหักคืน
+              {t("dashboardEarnings.clawbackDetails")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -325,16 +328,16 @@ export default async function EarningsPage() {
                 >
                   <div className="space-y-1">
                     <p className="text-sm font-medium text-foreground leading-tight">{item.reason}</p>
-                    <p className="text-[11px] text-muted-foreground">รอบบิล: {item.date}</p>
+                    <p className="text-[11px] text-muted-foreground">{t("dashboardEarnings.billingPeriodPrefix")} {item.date}</p>
                   </div>
                   <span className="text-sm font-bold text-destructive shrink-0 bg-destructive/10 px-2 py-1 rounded-md">
-                    {formatTHB(item.amount)} THB
+                    {formatCurrencyTHB(item.amount)}
                   </span>
                 </div>
               ))}
             </div>
             <p className="text-[11px] text-muted-foreground mt-4 leading-relaxed">
-              * ยอดปรับหักคืนจะแสดงเฉพาะรายการที่ได้รับการอนุมัติแล้วและถูกนำไปคำนวณกับรายได้ในรอบที่เกี่ยวข้อง
+              {t("dashboardEarnings.clawbackNote")}
             </p>
           </CardContent>
         </Card>

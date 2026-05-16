@@ -7,6 +7,7 @@ import { useLiff } from "@/components/providers/LiffProvider";
 import { AlertCircle, Loader2, QrCode } from "lucide-react";
 import { toast } from "sonner";
 import { parseClassIdFromQrText } from "@/lib/paymentFlow";
+import { t } from "@/lib/i18n";
 
 interface ClassItem {
   id: string;
@@ -29,7 +30,7 @@ export default function ClassesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState("ทั้งหมด");
+  const [activeFilter, setActiveFilter] = useState(t("classes.allFilter"));
 
   useEffect(() => {
     if (!isReady) return;
@@ -40,7 +41,7 @@ export default function ClassesPage() {
       studentApi
         .getAvailableClasses({
           q: searchQuery || undefined,
-          cefr: activeFilter !== "ทั้งหมด" ? activeFilter : undefined,
+          cefr: activeFilter !== t("classes.allFilter") ? activeFilter : undefined,
         })
         .then((data) => {
           if (isMounted) {
@@ -70,7 +71,7 @@ export default function ClassesPage() {
 
     try {
       if (!liff.isInClient()) {
-        toast.info("💡 การสแกน QR Code รองรับเฉพาะการใช้งานผ่านแอป LINE เท่านั้นครับ");
+        toast.info(t("classes.qrLineOnly"));
         return;
       }
 
@@ -85,7 +86,7 @@ export default function ClassesPage() {
         const result = await (liff as { scanCode: () => Promise<{ value: string }> }).scanCode();
         scannedText = result.value || "";
       } else {
-        toast.warning("⚠️ อุปกรณ์หรือเวอร์ชันของ LINE ไม่รองรับการสแกนในหน้าแอปนี้");
+        toast.warning(t("classes.qrUnsupported"));
         return;
       }
 
@@ -94,7 +95,7 @@ export default function ClassesPage() {
         if (classId) {
           window.location.href = `/enroll?classId=${classId}`;
         } else {
-          toast.error("❌ รูปแบบ QR Code ไม่ถูกต้อง (ไม่พบข้อมูลคลาสเรียน)");
+          toast.error(t("classes.qrInvalid"));
         }
       }
     } catch (err) {
@@ -105,9 +106,9 @@ export default function ClassesPage() {
   };
 
   const statusMap = {
-    open: { label: "รับสมัคร", className: "status-active" },
-    full: { label: "เต็มแล้ว", className: "status-full" },
-    closed: { label: "ปิดรับ", className: "status-closed" },
+    open: { label: t("classes.statusOpen"), className: "status-active" },
+    full: { label: t("classes.statusFull"), className: "status-full" },
+    closed: { label: t("classes.statusClosed"), className: "status-closed" },
   };
 
   return (
@@ -127,7 +128,7 @@ export default function ClassesPage() {
             flex: 1,
           }}
         >
-          คลาสเรียน
+          {t("classes.title")}
         </h1>
       </div>
 
@@ -165,7 +166,7 @@ export default function ClassesPage() {
             <input
               id="input-search-classes"
               type="search"
-              placeholder="ค้นหาคลาสหรือติวเตอร์..."
+              placeholder={t("classes.searchPlaceholder")}
               className="input-field"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -182,7 +183,7 @@ export default function ClassesPage() {
           <button
             id="btn-scan-qr"
             onClick={handleScanQr}
-            title="สแกน QR Code"
+            title={t("classes.scanQrTitle")}
             style={{
               width: 48,
               height: 48,
@@ -212,7 +213,7 @@ export default function ClassesPage() {
             paddingBottom: 2,
           }}
         >
-          {["ทั้งหมด", "Origins A1", "Quest A2", "Adventure B1"].map(
+          {[t("classes.allFilter"), "Origins A1", "Quest A2", "Adventure B1"].map(
             (label, i) => {
               const isActive = activeFilter === label;
               return (
@@ -256,7 +257,7 @@ export default function ClassesPage() {
           >
             <Loader2 className="animate-spin text-brand-500" />
             <p className="text-slate-400 text-sm">
-              กำลังหาคลาสที่เหมาะกับคุณ...
+              {t("classes.loading")}
             </p>
           </div>
         )}
@@ -269,7 +270,7 @@ export default function ClassesPage() {
               onClick={() => window.location.reload()}
               className="text-sm font-bold text-red-600 underline"
             >
-              ลองอีกครั้ง
+              {t("classes.retry")}
             </button>
           </div>
         )}
@@ -278,8 +279,8 @@ export default function ClassesPage() {
           <div className="p-12 text-center">
             <p className="text-slate-500 font-medium">
               {classes.length === 0
-                ? "ไม่พบคลาสที่เปิดรับสมัครในขณะนี้"
-                : "ไม่พบผลลัพธ์ที่ตรงกับการค้นหา"}
+                ? t("classes.emptyOpen")
+                : t("classes.emptySearch")}
             </p>
           </div>
         )}
@@ -405,7 +406,7 @@ export default function ClassesPage() {
                             borderRadius: 8,
                           }}
                         >
-                          {cls.cefr || "A1"} · Lv.{cls.level || 1}
+                          {cls.cefr || "A1"} / Lv.{cls.level || 1}
                         </span>
                         <span
                           style={{
@@ -416,7 +417,7 @@ export default function ClassesPage() {
                             color: "var(--text-tertiary)",
                           }}
                         >
-                          📅 {cls.nextSession}
+                          {t("classes.nextSessionPrefix")} {cls.nextSession}
                         </span>
                       </div>
 
@@ -462,7 +463,7 @@ export default function ClassesPage() {
                             flexShrink: 0,
                           }}
                         >
-                          {seatsLeft > 0 ? `${seatsLeft} ว่าง` : "เต็ม"}
+                          {seatsLeft > 0 ? `${seatsLeft} ${t("classes.seatAvailable")}` : t("classes.statusFull")}
                         </span>
                       </div>
 
@@ -482,7 +483,7 @@ export default function ClassesPage() {
                               color: "var(--text-primary)",
                             }}
                           >
-                            ฿{cls.price.toLocaleString()}
+                            THB {cls.price.toLocaleString()}
                           </span>
                           <span
                             style={{
@@ -491,7 +492,7 @@ export default function ClassesPage() {
                               marginLeft: 4,
                             }}
                           >
-                            / คอร์ส
+                            / {t("classes.courseSuffix")}
                           </span>
                         </div>
                         <div
@@ -515,7 +516,7 @@ export default function ClassesPage() {
                             gap: 4,
                           }}
                         >
-                          {cls.status === "open" ? "ดูรายละเอียด" : "เต็มแล้ว"}
+                          {cls.status === "open" ? t("classes.viewDetails") : t("classes.statusFull")}
                           {cls.status === "open" && (
                             <svg
                               width="14"

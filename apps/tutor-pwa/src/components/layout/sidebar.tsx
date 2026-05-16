@@ -18,16 +18,17 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { ThemeToggle } from "./theme-toggle";
 import { useState, useEffect, useRef } from "react";
+import { t } from "@/lib/i18n";
 
 const navItems = [
-  { href: "/dashboard", icon: LayoutDashboard, label: "ภาพรวม" },
-  { href: "/dashboard/classes", icon: BookOpen, label: "คลาสเรียน" },
-  { href: "/dashboard/schedule", icon: Calendar, label: "ตารางสอน" },
-  { href: "/dashboard/chat", icon: MessageSquare, label: "ข้อความ" },
-  { href: "/dashboard/earnings", icon: BarChart2, label: "รายได้" },
-  { href: "/dashboard/network", icon: GitBranch, label: "เครือข่าย" },
-  { href: "/dashboard/performance", icon: Award, label: "ผลงาน" },
-  { href: "/dashboard/settings", icon: Settings, label: "ตั้งค่า" },
+  { href: "/dashboard", icon: LayoutDashboard, label: t("app.navOverview") },
+  { href: "/dashboard/classes", icon: BookOpen, label: t("app.navClasses") },
+  { href: "/dashboard/schedule", icon: Calendar, label: t("app.navSchedule") },
+  { href: "/dashboard/chat", icon: MessageSquare, label: t("app.navChat") },
+  { href: "/dashboard/earnings", icon: BarChart2, label: t("app.navEarnings") },
+  { href: "/dashboard/network", icon: GitBranch, label: t("app.navNetwork") },
+  { href: "/dashboard/performance", icon: Award, label: t("app.navPerformance") },
+  { href: "/dashboard/settings", icon: Settings, label: t("app.navSettings") },
 ];
 
 interface SidebarProps {
@@ -187,7 +188,7 @@ export function Sidebar({ notifications: initialNotifications }: SidebarProps) {
             className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-foreground bg-background hover:bg-brand-50 hover:text-brand-700 transition-colors shadow-sm mb-2 border border-border/50"
           >
             <HelpCircle className="h-5 w-5 shrink-0 text-brand-500" />
-            ติดต่อทีมงาน
+            {t("app.contactTeam")}
           </a>
           <div className="flex items-center gap-2">
             <button
@@ -196,7 +197,7 @@ export function Sidebar({ notifications: initialNotifications }: SidebarProps) {
               className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-900/30 transition-colors"
             >
               <LogOut className="h-4 w-4 shrink-0" />
-              ออก
+              {t("app.logoutShort")}
             </button>
             <div className="bg-background rounded-2xl p-1.5 border border-border/50 shadow-sm flex items-center justify-center">
               <ThemeToggle />

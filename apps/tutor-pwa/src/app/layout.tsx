@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { t } from "@/lib/i18n";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +18,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "Tutor PWA - Tutor Advantage",
-  description: "แอปสำหรับครูผู้สอน Tutor Advantage",
+  description: t("app.rootDescription"),
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { studentApi } from "@/lib/api";
+import { t } from "@/lib/i18n";
 
 interface PaymentRecord {
   paymentIntentId: string;
@@ -60,7 +61,7 @@ export default function PaymentHistoryPage() {
           }
 
           if (!token && isMounted) {
-            throw new Error("ไม่สามารถสร้างเซสชันได้ กรุณาลองใหม่อีกครั้ง");
+            throw new Error(t("payment.history.sessionUnavailable"));
           }
 
           if (!isMounted) return;
@@ -72,9 +73,7 @@ export default function PaymentHistoryPage() {
         } catch (err) {
           console.error("Failed to fetch payment history:", err);
           if (isMounted) {
-            setError(
-              "ไม่สามารถดึงข้อมูลประวัติการชำระเงินได้ กรุณาลองใหม่อีกครั้ง",
-            );
+            setError(t("payment.history.fetchFailed"));
           }
         } finally {
           if (isMounted) {
@@ -118,7 +117,7 @@ export default function PaymentHistoryPage() {
               fontWeight: 700,
             }}
           >
-            <CheckCircle2 size={12} /> สำเร็จ
+            <CheckCircle2 size={12} /> {t("payment.history.statusSuccess")}
           </div>
         );
       case "PENDING":
@@ -136,7 +135,7 @@ export default function PaymentHistoryPage() {
               fontWeight: 700,
             }}
           >
-            <Clock size={12} /> รอชำระ
+            <Clock size={12} /> {t("payment.history.statusPending")}
           </div>
         );
       case "FAILED":
@@ -154,7 +153,7 @@ export default function PaymentHistoryPage() {
               fontWeight: 700,
             }}
           >
-            <AlertCircle size={12} /> ล้มเหลว
+            <AlertCircle size={12} /> {t("payment.history.statusFailed")}
           </div>
         );
       default:
@@ -225,7 +224,7 @@ export default function PaymentHistoryPage() {
             marginRight: 36,
           }}
         >
-          ประวัติการชำระเงิน
+          {t("payment.history.title")}
         </h1>
       </div>
 
@@ -259,7 +258,7 @@ export default function PaymentHistoryPage() {
               }}
             />
             <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)" }}>
-              กำลังโหลดประวัติ...
+              {t("payment.history.loading")}
             </p>
           </div>
         ) : error ? (
@@ -302,7 +301,7 @@ export default function PaymentHistoryPage() {
               className="btn btn-secondary btn-sm"
               style={{ borderRadius: 8 }}
             >
-              ลองใหม่อีกครั้ง
+              {t("payment.history.retry")}
             </button>
           </div>
         ) : payments.length === 0 ? (
@@ -339,7 +338,7 @@ export default function PaymentHistoryPage() {
                 marginBottom: 8,
               }}
             >
-              ยังไม่มีประวัติการชำระเงิน
+              {t("payment.history.emptyTitle")}
             </h3>
             <p
               style={{
@@ -349,14 +348,14 @@ export default function PaymentHistoryPage() {
                 maxWidth: 240,
               }}
             >
-              เมื่อคุณซื้อคอร์สเรียน ประวัติการชำระเงินทั้งหมดจะแสดงที่นี่
+              {t("payment.history.emptyDescription")}
             </p>
             <Link
               href="/classes"
               className="btn btn-primary"
               style={{ marginTop: 24, borderRadius: 12 }}
             >
-              ดูคอร์สเรียนที่น่าสนใจ
+              {t("payment.history.browseClasses")}
             </Link>
           </div>
         ) : (
@@ -410,7 +409,7 @@ export default function PaymentHistoryPage() {
                         marginBottom: 2,
                       }}
                     >
-                      {payment.enrollment?.class?.title || "ไม่ได้ระบุชื่อคลาส"}
+                      {payment.enrollment?.class?.title || t("payment.history.unnamedClass")}
                     </h4>
                     <p
                       style={{
@@ -420,7 +419,7 @@ export default function PaymentHistoryPage() {
                     >
                       {payment.enrollment?.class?.book?.title
                         ? `${payment.enrollment.class.book.bookCode}: ${payment.enrollment.class.book.title}`
-                        : "รายจ่ายอื่นๆ"}
+                        : t("payment.history.otherExpense")}
                     </p>
                   </div>
 
@@ -475,7 +474,7 @@ export default function PaymentHistoryPage() {
                           color: "var(--text-primary)",
                         }}
                       >
-                        ฿
+                        THB
                         {(payment.amountMinor / 100).toLocaleString(undefined, {
                           minimumFractionDigits: 2,
                         })}
@@ -495,7 +494,7 @@ export default function PaymentHistoryPage() {
                 paddingBottom: 20,
               }}
             >
-              สิ้นสุดรายการประวัติ
+              {t("payment.history.endOfList")}
             </p>
           </div>
         )}

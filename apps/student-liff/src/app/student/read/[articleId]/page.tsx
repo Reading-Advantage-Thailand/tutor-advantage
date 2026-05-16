@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { studentReadMockArticle, t } from "@/lib/i18n";
 
 interface PageProps {
   params: Promise<{ articleId: string }>;
@@ -7,45 +8,17 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps) {
   const { articleId } = await params;
   return {
-    title: `บทอ่าน ${articleId} — Tutor Advantage`,
-    description: "อ่านบทความภาษาอังกฤษจากโปรแกรม Tutor Advantage",
+    title: `${t("articleReader.metadataTitlePrefix")} ${articleId} - Tutor Advantage`,
+    description: t("articleReader.metadataDescription"),
   };
 }
 
 export default async function ArticleReaderPage({ params }: PageProps) {
   const { articleId } = await params;
 
-  // Mock article — wire to legacy-bridge / learning-service
   const article = {
     id: articleId,
-    title: "The Magic Garden",
-    level: "A1",
-    series: "Origins",
-    levelNum: 2,
-    wordCount: 142,
-    readTimeMin: 3,
-    content: `Once upon a time, there was a small garden behind a big house. The garden had many colorful flowers: red roses, yellow sunflowers, and purple lavender.
-
-Every morning, a girl named Nong walked through the garden. She loved the smell of the flowers. She talked to them and gave them water.
-
-One day, Nong found a small door in the garden wall. She opened the door and saw a magical place. There were giant butterflies, singing birds, and a rainbow waterfall.
-
-Nong was not afraid. She smiled and said, "Hello, magic garden!"
-
-The flowers smiled back. From that day on, Nong visited the magic garden every morning. The garden grew bigger and more beautiful.
-
-The end.`,
-    vocabulary: [
-      { word: "garden", thai: "สวน", phonetic: "/ˈɡɑːrdən/" },
-      { word: "colorful", thai: "มีสีสัน", phonetic: "/ˈkʌlərfəl/" },
-      { word: "magical", thai: "มหัศจรรย์", phonetic: "/ˈmædʒɪkəl/" },
-      { word: "butterfly", thai: "ผีเสื้อ", phonetic: "/ˈbʌtərflaɪ/" },
-      { word: "rainbow", thai: "รุ้งกินน้ำ", phonetic: "/ˈreɪnboʊ/" },
-    ],
-    comprehensionQ: [
-      { q: "ใครเดินผ่านสวนทุกเช้า?", a: "น้องนง (Nong)" },
-      { q: "น้องนงพบอะไรในกำแพงสวน?", a: "ประตูเล็กๆ" },
-    ],
+    ...studentReadMockArticle,
   };
 
   return (
@@ -66,7 +39,7 @@ The end.`,
             textDecoration: "none",
             flexShrink: 0,
           }}
-          aria-label="กลับ"
+          aria-label={t("articleReader.back")}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6"/>
@@ -77,7 +50,7 @@ The end.`,
             {article.title}
           </div>
           <div style={{ fontSize: "0.6875rem", color: "var(--neutral-400)" }}>
-            {article.series} · Level {article.levelNum} · {article.level}
+            {article.series} / {t("articleReader.levelLabel")} {article.levelNum} / {article.level}
           </div>
         </div>
         <button
@@ -95,7 +68,7 @@ The end.`,
             color: "var(--brand-600)",
             flexShrink: 0,
           }}
-          aria-label="ฟังเสียง"
+          aria-label={t("articleReader.listen")}
         >
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
@@ -114,8 +87,8 @@ The end.`,
           }}
         >
           <span className="badge badge-success">{article.level}</span>
-          <span className="badge badge-neutral">⏱ {article.readTimeMin} นาที</span>
-          <span className="badge badge-neutral">📝 {article.wordCount} คำ</span>
+          <span className="badge badge-neutral">{article.readTimeMin} {t("articleReader.minuteUnit")}</span>
+          <span className="badge badge-neutral">{article.wordCount} {t("articleReader.wordUnit")}</span>
         </div>
 
         {/* Article body */}
@@ -158,7 +131,7 @@ The end.`,
               marginBottom: 10,
             }}
           >
-            คำศัพท์สำคัญ
+            {t("articleReader.vocabularyTitle")}
           </h2>
           <div className="card" style={{ overflow: "hidden" }}>
             {article.vocabulary.map((v, idx) => (
@@ -207,7 +180,7 @@ The end.`,
         {/* Comprehension */}
         <div>
           <h2 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--neutral-900)", marginBottom: 10 }}>
-            คำถามทบทวน
+            {t("articleReader.comprehensionTitle")}
           </h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {article.comprehensionQ.map((item, i) => (
@@ -226,7 +199,7 @@ The end.`,
                     letterSpacing: "0.04em",
                   }}
                 >
-                  คำถาม {i + 1}
+                  {t("articleReader.questionPrefix")} {i + 1}
                 </div>
                 <p style={{ fontSize: "0.9375rem", color: "var(--neutral-800)", fontWeight: 500, marginBottom: 10 }}>
                   {item.q}
@@ -244,7 +217,7 @@ The end.`,
                       gap: 4,
                     }}
                   >
-                    ดูเฉลย
+                    {t("articleReader.showAnswer")}
                   </summary>
                   <div
                     style={{
@@ -271,7 +244,7 @@ The end.`,
           className="btn btn-primary btn-full btn-lg"
           style={{ borderRadius: "var(--radius-full)" }}
         >
-          ✅ อ่านจบแล้ว — บันทึกความก้าวหน้า
+          {t("articleReader.completeCta")}
         </button>
       </div>
     </div>

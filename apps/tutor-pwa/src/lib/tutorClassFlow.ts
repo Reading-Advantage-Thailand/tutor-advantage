@@ -1,3 +1,5 @@
+import { t } from "./i18n";
+
 export type ClassDay = {
   label: string;
   full: string;
@@ -20,13 +22,13 @@ export type CreateClassRequest = {
 };
 
 export const CLASS_DAYS: ClassDay[] = [
-  { label: "จ", full: "จันทร์", value: "MON" },
-  { label: "อ", full: "อังคาร", value: "TUE" },
-  { label: "พ", full: "พุธ", value: "WED" },
-  { label: "พฤ", full: "พฤหัสบดี", value: "THU" },
-  { label: "ศ", full: "ศุกร์", value: "FRI" },
-  { label: "ส", full: "เสาร์", value: "SAT" },
-  { label: "อา", full: "อาทิตย์", value: "SUN" },
+  { label: t("tutorClass.days.monShort"), full: t("tutorClass.days.monFull"), value: "MON" },
+  { label: t("tutorClass.days.tueShort"), full: t("tutorClass.days.tueFull"), value: "TUE" },
+  { label: t("tutorClass.days.wedShort"), full: t("tutorClass.days.wedFull"), value: "WED" },
+  { label: t("tutorClass.days.thuShort"), full: t("tutorClass.days.thuFull"), value: "THU" },
+  { label: t("tutorClass.days.friShort"), full: t("tutorClass.days.friFull"), value: "FRI" },
+  { label: t("tutorClass.days.satShort"), full: t("tutorClass.days.satFull"), value: "SAT" },
+  { label: t("tutorClass.days.sunShort"), full: t("tutorClass.days.sunFull"), value: "SUN" },
 ];
 
 export const CLASS_TIME_OPTIONS = [
@@ -63,7 +65,7 @@ export function buildScheduleString(
 
   if (!dayLabels) return "";
 
-  return `ทุกวัน${dayLabels} ${startTime}-${endTime} น.`;
+  return `${t("tutorClass.scheduleEveryDayPrefix")}${dayLabels} ${startTime}-${endTime} ${t("tutorClass.scheduleSuffix")}`;
 }
 
 export function toggleClassDay(selectedDays: string[], day: string): string[] {
