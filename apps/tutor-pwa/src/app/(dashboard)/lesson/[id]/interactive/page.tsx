@@ -10,9 +10,7 @@ import {
   BookOpen, Play, AlertCircle, X,
 } from "lucide-react";
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { PhaseManager } from "./PhaseManager";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { t } from "@/lib/i18n";
@@ -42,6 +40,12 @@ export default function TutorLobbyPage() {
   const readyCount = participants.filter((participant) => participant.isReady).length;
   const totalCount = participants.length;
   const isEveryoneReady = totalCount > 0 && readyCount === totalCount;
+
+  // Article image URL from GCS
+  const articleImgId = (articleData as any)?.id as string | undefined;
+  const articleImageUrl = articleImgId
+    ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${articleImgId}`
+    : null;
 
   if (sessionData && sessionData.currentPhase > 0) {
     return (
@@ -175,53 +179,83 @@ export default function TutorLobbyPage() {
 
       <main className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-4 space-y-5">
-          <Card className="overflow-hidden border-border/60 shadow-lg">
-            <div className="bg-gradient-to-br from-primary to-primary/80 p-6 text-primary-foreground">
-              <div className="flex items-center gap-2 mb-4 opacity-80">
-                <BookOpen size={16} />
-                <span className="text-xs font-bold uppercase tracking-wider">{t("lesson.interactive.teaching")}</span>
+          {/* Article Hero Card */}
+          <div className="overflow-hidden rounded-3xl border border-border/60 shadow-xl bg-card">
+            {/* Image Banner */}
+            <div className="relative h-44 bg-gradient-to-br from-indigo-500 to-violet-600 overflow-hidden">
+              {articleImageUrl && (
+                <img
+                  src={articleImageUrl}
+                  alt={articleData?.title || "article"}
+                  className="w-full h-full object-cover"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+              )}
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              {/* Badges overlaid on image */}
+              <div className="absolute top-3 left-3 flex items-center gap-2">
+                <span className="bg-white/20 backdrop-blur text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
+                  <BookOpen size={10} /> {t("lesson.interactive.teaching")}
+                </span>
+                {articleData?.cefr_level && (
+                  <span className="bg-indigo-500/80 backdrop-blur text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
+                    CEFR {articleData.cefr_level}
+                  </span>
+                )}
               </div>
-              <h2 className="text-xl font-bold leading-tight mb-2">
-                {articleData?.title || t("lesson.interactive.lessonLoading")}
-              </h2>
-              <p className="text-sm opacity-90 line-clamp-2">
+              {/* Title at bottom of image */}
+              <div className="absolute bottom-0 left-0 right-0 p-4">
+                <h2 className="text-white text-lg font-black leading-tight line-clamp-2 drop-shadow-lg">
+                  {articleData?.title || t("lesson.interactive.lessonLoading")}
+                </h2>
+              </div>
+            </div>
+            {/* Article meta */}
+            <div className="p-4 space-y-3">
+              <p className="text-sm text-muted-foreground line-clamp-2">
                 {articleData?.translated_summary?.th?.[0] ||
                   articleData?.summary?.th?.[0] ||
                   (typeof articleData?.summary === "string" ? articleData.summary : "") ||
                   articleData?.description ||
                   t("lesson.interactive.noDescription")}
               </p>
-            </div>
-            <CardContent className="p-5 bg-card">
-              <div className="space-y-4">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">{t("lesson.interactive.phasesCount")}</span>
-                  <span className="font-bold text-foreground">{t("lesson.interactive.steps14")}</span>
+              <div className="flex items-center gap-3 pt-1 border-t border-border">
+                <div className="flex-1 text-center">
+                  <p className="text-xs text-muted-foreground">{t("lesson.interactive.phasesCount")}</p>
+                  <p className="font-black text-foreground text-sm">{t("lesson.interactive.steps14")}</p>
                 </div>
-                <Separator className="bg-border" />
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">{t("lesson.interactive.contentType")}</span>
-                  <Badge variant="secondary" className="font-semibold">Reading & Vocabulary</Badge>
+                <div className="w-px h-8 bg-border" />
+                <div className="flex-1 text-center">
+                  <p className="text-xs text-muted-foreground">{t("lesson.interactive.contentType")}</p>
+                  <p className="font-bold text-indigo-600 dark:text-indigo-400 text-xs">Reading & Vocab</p>
                 </div>
+                {articleData?.genre && (
+                  <>
+                    <div className="w-px h-8 bg-border" />
+                    <div className="flex-1 text-center">
+                      <p className="text-xs text-muted-foreground">Genre</p>
+                      <p className="font-bold text-foreground text-xs truncate">{articleData.genre}</p>
+                    </div>
+                  </>
+                )}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card className="border-border/40 bg-primary/5 dark:bg-primary/8">
-            <CardContent className="p-5">
-              <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
-                <ShieldCheck size={16} className="text-primary" /> {t("lesson.interactive.tutorTips")}
-              </h4>
-              <ul className="text-xs text-muted-foreground space-y-2.5 list-none">
-                {[t("lesson.interactive.tipWaitReady"), t("lesson.interactive.tipNudge"), t("lesson.interactive.tipReconnect")].map((tip) => (
-                  <li key={tip} className="flex gap-2.5 items-start">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
-                    {tip}
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+          <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/5 p-5">
+            <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+              <ShieldCheck size={16} className="text-indigo-500" /> {t("lesson.interactive.tutorTips")}
+            </h4>
+            <ul className="text-xs text-muted-foreground space-y-2.5 list-none">
+              {[t("lesson.interactive.tipWaitReady"), t("lesson.interactive.tipNudge"), t("lesson.interactive.tipReconnect")].map((tip) => (
+                <li key={tip} className="flex gap-2.5 items-start">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
+                  {tip}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         <div className="lg:col-span-8 space-y-6">
@@ -239,11 +273,11 @@ export default function TutorLobbyPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className={`grid gap-4 ${participants.length === 0 ? 'grid-cols-1' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'}`}>
             {participants.length === 0 ? (
-              <div className="col-span-2 py-20 bg-card rounded-2xl border-2 border-dashed border-border flex flex-col items-center justify-center text-center">
-                <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mb-4">
-                  <Users className="text-muted-foreground" size={28} />
+              <div className="py-20 bg-card rounded-3xl border-2 border-dashed border-border flex flex-col items-center justify-center text-center">
+                <div className="w-16 h-16 bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-4">
+                  <Users className="text-indigo-500" size={28} />
                 </div>
                 <h4 className="font-bold text-lg text-foreground">{t("lesson.interactive.emptyStudentsTitle")}</h4>
                 <p className="text-sm text-muted-foreground mt-1 max-w-xs">
@@ -252,59 +286,68 @@ export default function TutorLobbyPage() {
               </div>
             ) : (
               participants.map((participant) => (
-                <Card key={participant.studentId} className={`overflow-hidden border-2 transition-all duration-300 ${participant.isReady ? "border-emerald-500/30 dark:border-emerald-500/20 bg-emerald-500/5" : "border-border bg-card"}`}>
-                  <CardContent className="p-4 flex items-center gap-4">
-                    <div className="relative">
-                      <div className="w-12 h-12 rounded-xl bg-muted overflow-hidden border border-border">
-                        <img src={participant.pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${participant.name}`} alt={participant.name} className="w-full h-full object-cover" />
+                <div
+                  key={participant.studentId}
+                  className={`group relative flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all duration-300 ${
+                    participant.isReady
+                      ? "border-emerald-400/60 bg-emerald-500/5 shadow-md shadow-emerald-500/10"
+                      : "border-dashed border-border bg-card"
+                  }`}
+                >
+                  {/* Avatar with ring */}
+                  <div className="relative">
+                    {participant.isReady && (
+                      <div className="absolute -inset-1.5 rounded-full border-4 border-emerald-400 animate-pulse" />
+                    )}
+                    <div className="relative w-16 h-16 rounded-full overflow-hidden bg-muted border-2 border-white shadow-md">
+                      <img
+                        src={participant.pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${participant.name}`}
+                        alt={participant.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    {participant.isReady && (
+                      <div className="absolute -bottom-1 -right-1 bg-emerald-500 rounded-full p-0.5 border-2 border-card shadow">
+                        <ShieldCheck size={10} color="white" />
                       </div>
-                      {participant.isReady && (
-                        <div className="absolute -top-1 -right-1 bg-emerald-500 rounded-full p-0.5 border-2 border-card">
-                          <ShieldCheck size={10} color="white" />
-                        </div>
-                      )}
-                    </div>
+                    )}
+                  </div>
 
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm text-foreground truncate">{participant.name}</p>
-                      <p className={`text-[10px] font-bold uppercase tracking-wider ${participant.isReady ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
-                        {participant.isReady ? "Ready to Learn" : "Waiting..."}
-                      </p>
-                    </div>
+                  {/* Name */}
+                  <p className="font-bold text-xs text-foreground text-center truncate w-full px-1">{participant.name}</p>
+                  <p className={`text-[10px] font-bold uppercase tracking-wider ${participant.isReady ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
+                    {participant.isReady ? "✓ Ready" : "Waiting…"}
+                  </p>
 
-                    <div className="flex items-center gap-1">
-                      {!participant.isReady && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-orange-500 hover:bg-orange-500/10 rounded-lg"
-                          onClick={() => { nudgeStudent(participant.studentId); playSound("nudge"); }}
-                          title={t("lesson.interactive.nudgeTitle")}
-                        >
-                          <Bell size={16} />
-                        </Button>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive rounded-lg"
-                        onClick={() => kickStudent(participant.studentId)}
-                        title={t("lesson.interactive.kickTitle")}
+                  {/* Action buttons (appear on hover) */}
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {!participant.isReady && (
+                      <button
+                        className="h-7 w-7 rounded-lg text-orange-500 hover:bg-orange-500/10 flex items-center justify-center transition-colors"
+                        onClick={() => { nudgeStudent(participant.studentId); playSound("nudge"); }}
+                        title={t("lesson.interactive.nudgeTitle")}
                       >
-                        <UserMinus size={16} />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                        <Bell size={13} />
+                      </button>
+                    )}
+                    <button
+                      className="h-7 w-7 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive flex items-center justify-center transition-colors"
+                      onClick={() => kickStudent(participant.studentId)}
+                      title={t("lesson.interactive.kickTitle")}
+                    >
+                      <UserMinus size={13} />
+                    </button>
+                  </div>
+                </div>
               ))
             )}
           </div>
 
           <div className="pt-6">
-            <Button
-              className={`w-full h-18 rounded-2xl text-lg font-bold gap-3 shadow-xl transition-all duration-300 ${
+            <button
+              className={`w-full py-5 rounded-2xl text-lg font-black flex items-center justify-center gap-3 shadow-xl transition-all duration-300 ${
                 isEveryoneReady
-                  ? "bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-white shadow-emerald-500/25 shimmer-cta"
+                  ? "bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white shadow-indigo-500/30 active:scale-[0.98] shimmer-cta"
                   : "bg-muted text-muted-foreground cursor-not-allowed"
               }`}
               disabled={!isEveryoneReady}
@@ -312,7 +355,7 @@ export default function TutorLobbyPage() {
             >
               <Play fill="currentColor" className="h-6 w-6" />
               {isEveryoneReady ? t("lesson.interactive.startNow") : `${t("lesson.interactive.waitingReadyPrefix")} (${readyCount}/${totalCount})`}
-            </Button>
+            </button>
             {!isEveryoneReady && totalCount > 0 && (
               <p className="text-center text-xs text-muted-foreground mt-4">
                 {t("lesson.interactive.readyOnlyNote")}

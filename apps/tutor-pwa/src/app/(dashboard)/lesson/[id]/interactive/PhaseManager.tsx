@@ -224,46 +224,65 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   const renderKahootGame = (question: string, mappedOptions: Record<string, string>, correctAnswer: string) => {
     if (allAnsweredData.length > 0) {
-      // Show results chart
-      const data = [
-        { name: 'A', count: allAnsweredData.filter(a => a.answer === 'A').length, fill: correctAnswer === 'A' ? '#10b981' : '#ef4444' },
-        { name: 'B', count: allAnsweredData.filter(a => a.answer === 'B').length, fill: correctAnswer === 'B' ? '#10b981' : '#3b82f6' },
-        { name: 'C', count: allAnsweredData.filter(a => a.answer === 'C').length, fill: correctAnswer === 'C' ? '#10b981' : '#eab308' },
-        { name: 'D', count: allAnsweredData.filter(a => a.answer === 'D').length, fill: correctAnswer === 'D' ? '#10b981' : '#22c55e' },
-      ];
+      // Show results chart — EduPop colors
+      const optionFills: Record<string, string> = { A: '#f43f5e', B: '#0ea5e9', C: '#f59e0b', D: '#10b981' };
+      const data = ['A', 'B', 'C', 'D'].map(key => ({
+        name: key,
+        count: allAnsweredData.filter(a => a.answer === key).length,
+        fill: correctAnswer === key ? '#10b981' : (optionFills[key] || '#94a3b8'),
+      }));
 
       const correctCount = allAnsweredData.filter(a => a.answer === correctAnswer).length;
       const wrongCount = allAnsweredData.length - correctCount;
+      const accuracy = allAnsweredData.length > 0 ? Math.round((correctCount / allAnsweredData.length) * 100) : 0;
 
       return (
-        <div className="flex-1 flex flex-col items-center">
-          <h2 className="text-3xl font-bold mb-4 text-foreground">{t("lesson.interactive.answerSummary")}</h2>
-          
-          <div className="w-full max-w-2xl h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                <XAxis dataKey="name" tick={{ fontSize: 20, fontWeight: 'bold' }} />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="count" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+        <div className="flex-1 flex flex-col items-center gap-5 px-2">
+          {/* Correct answer reveal banner */}
+          <div className="w-full max-w-3xl bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl p-5 text-white flex items-center gap-4 shadow-xl shadow-emerald-500/20">
+            <div className="size-14 rounded-2xl bg-white/20 flex items-center justify-center text-3xl shrink-0">✅</div>
+            <div>
+              <p className="text-emerald-100 text-xs font-bold uppercase tracking-widest mb-1">{t("lesson.interactive.correctAnswer")}</p>
+              <h3 className="text-2xl font-black leading-snug">{correctAnswer}: {mappedOptions[correctAnswer]}</h3>
+            </div>
+            <div className="ml-auto text-center shrink-0 bg-white/20 rounded-2xl px-5 py-3">
+              <p className="text-5xl font-black">{accuracy}%</p>
+              <p className="text-emerald-100 text-xs font-bold">Accuracy</p>
+            </div>
           </div>
 
-          <div className="mt-8 grid grid-cols-2 gap-6 w-full max-w-2xl">
-             <div className="bg-emerald-500/10 border-2 border-emerald-500/20 rounded-2xl p-6 text-center shadow-sm relative overflow-hidden">
-                <div className="absolute inset-0 bg-emerald-500/5 animate-pulse" />
-                <p className="text-emerald-600 dark:text-emerald-400 font-bold text-sm uppercase mb-1 relative z-10">{t("lesson.interactive.correctAnswer")}</p>
-                <h3 className="text-4xl font-black text-emerald-700 dark:text-emerald-300 relative z-10">{correctAnswer}: {mappedOptions[correctAnswer]}</h3>
-             </div>
-             <div className="bg-card border-2 border-border rounded-2xl p-6 text-center shadow-sm relative z-10">
-                <p className="text-muted-foreground font-bold text-sm uppercase mb-1">{t("lesson.interactive.accuracyStats")}</p>
-                <div className="flex items-center justify-center gap-4">
-                   <span className="text-emerald-600 dark:text-emerald-400 font-bold text-2xl">{t("lesson.interactive.correctPrefix")} {correctCount}</span>
-                   <span className="text-border">|</span>
-                   <span className="text-destructive font-bold text-2xl">{t("lesson.interactive.wrongPrefix")} {wrongCount}</span>
-                </div>
-             </div>
+          <div className="w-full max-w-3xl grid grid-cols-[1fr_auto] gap-5">
+            {/* Bar chart */}
+            <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">{t("lesson.interactive.answerSummary")}</p>
+              <div className="h-52">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={data} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+                    <XAxis dataKey="name" tick={{ fontSize: 18, fontWeight: 900 }} axisLine={false} tickLine={false} />
+                    <YAxis allowDecimals={false} tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <Tooltip
+                      contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 12, fontSize: 13 }}
+                      cursor={{ fill: 'hsl(var(--muted))' }}
+                    />
+                    <Bar dataKey="count" radius={[8, 8, 0, 0]} maxBarSize={72} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Stats */}
+            <div className="flex flex-col gap-3 w-44">
+              <div className="bg-emerald-500/10 border border-emerald-500/25 rounded-2xl p-4 flex flex-col items-center text-center">
+                <span className="text-2xl mb-1">✅</span>
+                <p className="text-3xl font-black text-emerald-600 dark:text-emerald-400">{correctCount}</p>
+                <p className="text-xs font-bold text-emerald-500 uppercase">{t("lesson.interactive.correctPrefix")}</p>
+              </div>
+              <div className="bg-rose-500/10 border border-rose-500/25 rounded-2xl p-4 flex flex-col items-center text-center">
+                <span className="text-2xl mb-1">❌</span>
+                <p className="text-3xl font-black text-rose-500">{wrongCount}</p>
+                <p className="text-xs font-bold text-rose-400 uppercase">{t("lesson.interactive.wrongPrefix")}</p>
+              </div>
+            </div>
           </div>
         </div>
       );
@@ -271,29 +290,53 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
     const displayKeys = Object.keys(mappedOptions).sort();
 
+    // EduPop color palette per option
+    const optionStyles: Record<string, { bg: string; shadow: string; badge: string }> = {
+      A: { bg: 'bg-rose-500',   shadow: 'shadow-[0_6px_0_theme(colors.rose.700)]',   badge: 'bg-rose-700/40' },
+      B: { bg: 'bg-sky-500',    shadow: 'shadow-[0_6px_0_theme(colors.sky.700)]',    badge: 'bg-sky-700/40' },
+      C: { bg: 'bg-amber-400',  shadow: 'shadow-[0_6px_0_theme(colors.amber.600)]',  badge: 'bg-amber-600/40' },
+      D: { bg: 'bg-emerald-500',shadow: 'shadow-[0_6px_0_theme(colors.emerald.700)]',badge: 'bg-emerald-700/40' },
+    };
+
     return (
       <div className="flex-1 flex gap-5 overflow-hidden min-h-0">
         {/* Left: Question + Options */}
-        <div className="flex-1 flex flex-col items-center justify-center gap-6 min-w-0 overflow-hidden">
-          <h2 className="text-3xl font-bold text-center max-w-3xl text-foreground leading-snug px-2">
-            {question}
-          </h2>
+        <div className="flex-1 flex flex-col items-center justify-center gap-5 min-w-0 overflow-hidden">
+          {/* Question card with indigo gradient header */}
+          <div className="w-full max-w-3xl rounded-3xl overflow-hidden shadow-xl border border-indigo-500/20">
+            <div className="bg-gradient-to-r from-indigo-500 to-violet-600 px-8 py-5">
+              <div className="flex items-center gap-2 mb-2 opacity-80">
+                <span className="size-2 rounded-full bg-white animate-pulse" />
+                <span className="text-white/80 text-xs font-bold uppercase tracking-widest">Multiple Choice</span>
+              </div>
+              <h2 className="text-2xl font-black text-white leading-snug">
+                {question}
+              </h2>
+            </div>
+          </div>
+
+          {/* 2×2 EduPop option tiles */}
           <div className="grid grid-cols-2 gap-4 w-full max-w-3xl">
             {displayKeys.map((key) => {
-              const bgClasses: Record<string, string> = {
-                'A': 'bg-red-500', 'B': 'bg-blue-500', 'C': 'bg-yellow-500', 'D': 'bg-green-500'
-              };
-              const bgClass = bgClasses[key] || 'bg-slate-500';
+              const style = optionStyles[key] || { bg: 'bg-slate-500', shadow: 'shadow-[0_6px_0_theme(colors.slate.700)]', badge: 'bg-slate-700/40' };
               return (
-                <div key={key} className={`${bgClass} text-white p-6 rounded-2xl text-xl font-bold shadow-lg flex items-start gap-3`}>
-                  <span className="bg-white/20 px-2.5 py-0.5 rounded-lg shrink-0">{key}</span>
-                  <span className="leading-snug">{mappedOptions[key]}</span>
+                <div
+                  key={key}
+                  className={`${style.bg} ${style.shadow} text-white p-5 rounded-2xl font-bold flex items-center gap-3 transition-transform active:translate-y-1 active:shadow-none`}
+                >
+                  <span className={`${style.badge} text-white text-lg font-black w-10 h-10 rounded-xl flex items-center justify-center shrink-0`}>{key}</span>
+                  <span className="text-base leading-snug">{mappedOptions[key]}</span>
                 </div>
               );
             })}
           </div>
-          <div className="text-xl font-bold text-muted-foreground bg-muted px-6 py-2.5 rounded-full">
-            {t("lesson.interactive.answersSubmitted")} {totalAnswered} / {totalParticipants} {t("lesson.interactive.peopleUnit")}
+
+          {/* Submitted counter */}
+          <div className="flex items-center gap-2 bg-muted border border-border px-6 py-2.5 rounded-full">
+            <span className="size-2 rounded-full bg-indigo-400 animate-pulse" />
+            <span className="text-sm font-bold text-foreground">
+              {t("lesson.interactive.answersSubmitted")} {totalAnswered} / {totalParticipants} {t("lesson.interactive.peopleUnit")}
+            </span>
           </div>
         </div>
 
@@ -684,81 +727,92 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   };
 
   const renderLeaderboard = () => {
-    // Sort participants by score descending
     const sortedParticipants = [...participants].sort((a, b) => (b.score || 0) - (a.score || 0));
+    const articleImgId = (articleData as any)?.id as string | undefined;
+    const articleImageUrl = articleImgId
+      ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${articleImgId}`
+      : null;
 
     return (
-      <div className="flex-1 flex flex-col items-center justify-center max-w-4xl mx-auto w-full">
-        <div className="text-center mb-8 animate-in fade-in zoom-in">
-          <div className="text-6xl mb-4">#1</div>
-          <h2 className="text-4xl font-black text-foreground tracking-tight">{t("lesson.interactive.leaderboardTitle")}</h2>
-          <p className="text-muted-foreground mt-1 font-medium">{t("lesson.interactive.leaderboardSubtitle")}</p>
+      <div className="flex-1 flex flex-col items-center max-w-4xl mx-auto w-full relative overflow-hidden">
+        {/* Subtle article image watermark */}
+        {articleImageUrl && (
+          <div
+            className="absolute inset-0 rounded-2xl bg-center bg-cover opacity-[0.04] pointer-events-none"
+            style={{ backgroundImage: `url(${articleImageUrl})` }}
+          />
+        )}
+
+        {/* 🎉 Banner */}
+        <div className="relative z-10 text-center mb-6 animate-in fade-in zoom-in">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-400/20 to-amber-500/10 border border-amber-400/30 rounded-full px-5 py-2 mb-3">
+            <span className="text-xl">🎉</span>
+            <span className="text-amber-600 dark:text-amber-400 font-black text-sm uppercase tracking-wider">{t("lesson.interactive.leaderboardTitle")}</span>
+          </div>
+          <p className="text-muted-foreground font-medium text-sm">{t("lesson.interactive.leaderboardSubtitle")}</p>
         </div>
 
-        {/* 1st, 2nd, 3rd Podiums */}
-        <div className="grid grid-cols-3 gap-6 w-full items-end mb-12 min-h-[260px]">
+        {/* Podium — 2nd | 1st | 3rd */}
+        <div className="relative z-10 grid grid-cols-3 gap-5 w-full items-end mb-8 min-h-[240px]">
           {/* 2nd Place */}
           {sortedParticipants[1] ? (
-            <div className="bg-card border-2 border-border rounded-2xl p-6 text-center flex flex-col items-center justify-between shadow-sm animate-in slide-in-from-bottom duration-500 h-[210px] relative border-b-4 border-b-muted-foreground/30">
-              <div className="absolute top-[-16px] bg-muted border-2 border-card text-foreground font-bold w-10 h-10 rounded-full flex items-center justify-center text-lg shadow-sm">
-                2
-              </div>
-              <div className="w-16 h-16 rounded-full overflow-hidden bg-muted border-2 border-border mt-2 mb-2 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-2 animate-in slide-in-from-bottom duration-500">
+              <div className="text-3xl">🥈</div>
+              <div className="w-16 h-16 rounded-full overflow-hidden border-4 border-slate-300 shadow-lg">
                 <img src={sortedParticipants[1].pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${sortedParticipants[1].name}`} alt={sortedParticipants[1].name} className="w-full h-full object-cover" />
               </div>
-              <h3 className="font-bold text-foreground text-lg truncate w-full">{sortedParticipants[1].name}</h3>
-              <p className="text-muted-foreground font-black text-2xl">{sortedParticipants[1].score || 0} <span className="text-xs font-medium">{t("lesson.interactive.scoreUnit")}</span></p>
+              <p className="font-black text-foreground text-sm truncate max-w-full px-1 text-center">{sortedParticipants[1].name}</p>
+              <p className="font-black text-slate-400 text-xl">{sortedParticipants[1].score || 0}</p>
+              <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-t-xl h-24 flex items-center justify-center">
+                <span className="text-slate-500 dark:text-slate-300 font-black text-4xl">2</span>
+              </div>
             </div>
-          ) : (
-            <div className="h-[210px]" />
-          )}
+          ) : <div />}
 
           {/* 1st Place */}
           {sortedParticipants[0] ? (
-            <div className="bg-gradient-to-b from-amber-400/20 to-background border-2 border-amber-400/50 rounded-2xl p-6 text-center flex flex-col items-center justify-between shadow-md animate-in slide-in-from-bottom duration-700 h-[260px] relative border-b-4 border-b-amber-500 scale-105">
-              <div className="absolute top-[-20px] bg-amber-500 border-2 border-background text-primary-foreground font-bold w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-md animate-bounce">
-                1
-              </div>
-              <div className="w-20 h-20 rounded-full overflow-hidden bg-amber-500/10 border-4 border-amber-500 mt-2 mb-2 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-2 animate-in slide-in-from-bottom duration-700">
+              <div className="text-4xl animate-bounce">🥇</div>
+              <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-amber-400 shadow-xl shadow-amber-400/30">
                 <img src={sortedParticipants[0].pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${sortedParticipants[0].name}`} alt={sortedParticipants[0].name} className="w-full h-full object-cover" />
               </div>
-              <h3 className="font-black text-amber-600 dark:text-amber-400 text-xl truncate w-full">{sortedParticipants[0].name}</h3>
-              <p className="text-amber-500 font-black text-3xl">{sortedParticipants[0].score || 0} <span className="text-sm font-medium">{t("lesson.interactive.scoreUnit")}</span></p>
+              <p className="font-black text-amber-600 dark:text-amber-400 text-base truncate max-w-full px-1 text-center">{sortedParticipants[0].name}</p>
+              <p className="font-black text-amber-500 text-3xl">{sortedParticipants[0].score || 0}</p>
+              <div className="w-full bg-gradient-to-b from-amber-400 to-amber-500 rounded-t-xl h-36 flex items-center justify-center shadow-lg shadow-amber-500/25">
+                <span className="text-white font-black text-5xl">1</span>
+              </div>
             </div>
-          ) : (
-            <div className="h-[260px]" />
-          )}
+          ) : <div />}
 
           {/* 3rd Place */}
           {sortedParticipants[2] ? (
-            <div className="bg-card border-2 border-border rounded-2xl p-6 text-center flex flex-col items-center justify-between shadow-sm animate-in slide-in-from-bottom duration-300 h-[180px] relative border-b-4 border-b-amber-700/50">
-              <div className="absolute top-[-16px] bg-amber-700 border-2 border-card text-white font-bold w-10 h-10 rounded-full flex items-center justify-center text-lg shadow-sm">
-                3
-              </div>
-              <div className="w-14 h-14 rounded-full overflow-hidden bg-muted border-2 border-border mt-2 mb-2 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-2 animate-in slide-in-from-bottom duration-300">
+              <div className="text-3xl">🥉</div>
+              <div className="w-14 h-14 rounded-full overflow-hidden border-4 border-orange-400 shadow-md">
                 <img src={sortedParticipants[2].pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${sortedParticipants[2].name}`} alt={sortedParticipants[2].name} className="w-full h-full object-cover" />
               </div>
-              <h3 className="font-bold text-foreground text-base truncate w-full">{sortedParticipants[2].name}</h3>
-              <p className="text-muted-foreground font-black text-xl">{sortedParticipants[2].score || 0} <span className="text-xs font-medium">{t("lesson.interactive.scoreUnit")}</span></p>
+              <p className="font-black text-foreground text-sm truncate max-w-full px-1 text-center">{sortedParticipants[2].name}</p>
+              <p className="font-black text-orange-400 text-lg">{sortedParticipants[2].score || 0}</p>
+              <div className="w-full bg-orange-300 dark:bg-orange-700 rounded-t-xl h-16 flex items-center justify-center">
+                <span className="text-white font-black text-3xl">3</span>
+              </div>
             </div>
-          ) : (
-            <div className="h-[180px]" />
-          )}
+          ) : <div />}
         </div>
 
-        {/* All participants list (4th and below) */}
+        {/* All participants (4th+) */}
         {sortedParticipants.length > 3 && (
-          <div className="w-full bg-card border border-border rounded-2xl p-4 max-h-[25vh] overflow-y-auto grid gap-2">
+          <div className="relative z-10 w-full bg-card border border-border rounded-2xl overflow-hidden max-h-[22vh] overflow-y-auto shadow-sm">
             {sortedParticipants.slice(3).map((p, i) => (
-              <div key={i} className="flex items-center justify-between bg-muted p-3 rounded-xl border border-border">
+              <div key={i} className={`flex items-center justify-between px-5 py-3 border-b border-border/60 last:border-0 ${i === 0 ? 'bg-muted/30' : ''}`}>
                 <div className="flex items-center gap-3">
-                  <span className="font-bold text-muted-foreground w-6 text-center">{i + 4}</span>
+                  <span className="font-bold text-muted-foreground w-7 text-center text-sm">{i === 0 ? '🏅' : `#${i + 4}`}</span>
                   <div className="w-8 h-8 rounded-full overflow-hidden border border-border">
                     <img src={p.pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.name}`} alt={p.name} className="w-full h-full object-cover" />
                   </div>
-                  <span className="font-bold text-foreground">{p.name}</span>
+                  <span className="font-semibold text-foreground text-sm">{p.name}</span>
                 </div>
-                <span className="font-black text-muted-foreground text-lg">{p.score || 0} {t("lesson.interactive.scoreUnit")}</span>
+                <span className="font-black text-foreground text-base tabular-nums">{p.score || 0} <span className="text-xs font-normal text-muted-foreground">{t("lesson.interactive.scoreUnit")}</span></span>
               </div>
             ))}
           </div>

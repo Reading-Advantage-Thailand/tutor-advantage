@@ -14,6 +14,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   const words = useMemo(() => articleData?.words || [], [articleData?.words]);
   const sentences = useMemo(() => articleData?.sentences || [], [articleData?.sentences]);
 
+  // Article image URL from GCS
+  const articleImageUrl = articleData?.id
+    ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${articleData.id}`
+    : null;
+
   // ── Audio state for Phase 9 ─────────────────────────────────
   const audioRef = useRef<HTMLAudioElement>(null);
   const stopAtRef = useRef<number>(Infinity); // for single-sentence mode
@@ -188,84 +193,96 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   /* ─── Phase 1: Introduction ──────────────────────────────── */
   if (phase === 1) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center py-8 px-6 w-full animate-in fade-in duration-500">
-        {/* Hero Banner */}
-        <div
-          className="w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl mb-8 bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 dark:from-indigo-950 dark:via-purple-900 dark:to-fuchsia-950"
-        >
-          <div className="p-10 text-white text-center">
-            <div className="inline-flex items-center gap-2 bg-black/20 dark:bg-black/40 backdrop-blur-sm rounded-full px-4 py-1.5 text-sm font-bold mb-6">
-              {articleData.genre && <span>{articleData.genre}</span>}
-              {articleData.genre && articleData.cefr_level && <span className="opacity-50">/</span>}
-              {articleData.cefr_level && <span>CEFR: {articleData.cefr_level}</span>}
-              {articleData.cefr_level && articleData.ra_level && <span className="opacity-50">/</span>}
-              {articleData.ra_level && <span>RA Level: {articleData.ra_level}</span>}
+      <div className="flex-1 flex gap-6 items-stretch py-6 px-4 w-full max-w-6xl mx-auto animate-in fade-in duration-500">
+        {/* Left 45%: Article Image Panel */}
+        <div className="w-[45%] shrink-0 rounded-3xl overflow-hidden shadow-2xl relative">
+          {articleImageUrl ? (
+            <img
+              src={articleImageUrl}
+              alt={articleData.title}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+                ((e.target as HTMLImageElement).parentElement as HTMLElement).classList.add('bg-gradient-to-br', 'from-indigo-600', 'via-purple-600', 'to-fuchsia-600');
+              }}
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 flex items-center justify-center">
+              <span className="text-8xl">📖</span>
             </div>
-            <h1 className="text-5xl font-black mb-4 leading-tight animate-in zoom-in duration-700 text-white">
-              {articleData.title}
-            </h1>
-            <p className="text-white/90 dark:text-white/80 text-xl max-w-2xl mx-auto leading-relaxed">
-              {articleData.translated_summary?.th?.[0] ||
-                articleData.summary ||
-                t("lesson.interactive.articleFallbackSummary")}
-            </p>
+          )}
+          {/* Gradient overlay at bottom */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+          {/* Genre / CEFR badge overlaid */}
+          <div className="absolute top-4 left-4 flex items-center gap-2 flex-wrap">
+            {articleData.genre && (
+              <span className="bg-white/20 backdrop-blur text-white text-xs font-bold px-3 py-1 rounded-full">
+                {articleData.genre}
+              </span>
+            )}
+            {articleData.cefr_level && (
+              <span className="bg-indigo-500/80 backdrop-blur text-white text-xs font-bold px-3 py-1 rounded-full">
+                CEFR {articleData.cefr_level}
+              </span>
+            )}
           </div>
-          <div className="flex items-center justify-center gap-6 bg-black/20 dark:bg-black/40 py-4 px-8">
-            <div className="text-center">
-              <p className="text-white/60 text-xs uppercase tracking-widest">
-                {t("lesson.interactive.vocabulary")}
-              </p>
-              <p className="text-white font-black text-2xl">{words.length}</p>
+          {/* Stat chips at bottom of image */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 flex items-center gap-3">
+            <div className="bg-black/40 backdrop-blur rounded-xl px-3 py-2 text-center">
+              <p className="text-white/60 text-[10px] uppercase tracking-wider">{t("lesson.interactive.vocabulary")}</p>
+              <p className="text-white font-black text-xl">{words.length}</p>
             </div>
-            <div className="w-px h-8 bg-white/20" />
-            <div className="text-center">
-              <p className="text-white/60 text-xs uppercase tracking-widest">
-                {t("lesson.interactive.keySentences")}
-              </p>
-              <p className="text-white font-black text-2xl">
-                {sentences.length}
-              </p>
+            <div className="bg-black/40 backdrop-blur rounded-xl px-3 py-2 text-center">
+              <p className="text-white/60 text-[10px] uppercase tracking-wider">{t("lesson.interactive.keySentences")}</p>
+              <p className="text-white font-black text-xl">{sentences.length}</p>
             </div>
-            <div className="w-px h-8 bg-white/20" />
-            <div className="text-center">
-              <p className="text-white/60 text-xs uppercase tracking-widest">
-                Phase
-              </p>
-              <p className="text-white font-black text-2xl">1 / 14</p>
+            <div className="bg-black/40 backdrop-blur rounded-xl px-3 py-2 text-center">
+              <p className="text-white/60 text-[10px] uppercase tracking-wider">Phase</p>
+              <p className="text-white font-black text-xl">1 / 14</p>
             </div>
           </div>
         </div>
 
-        {/* Tutor Checklist */}
-        <div className="w-full max-w-4xl grid grid-cols-3 gap-4">
-          {[
-            {
-              icon: "1",
-              title: t("lesson.interactive.introChecklistIntroduceTitle"),
-              desc: t("lesson.interactive.introChecklistIntroduceDesc"),
-            },
-            {
-              icon: "2",
-              title: t("lesson.interactive.introChecklistGoalTitle"),
-              desc: t("lesson.interactive.introChecklistGoalDesc"),
-            },
-            {
-              icon: "3",
-              title: t("lesson.interactive.introChecklistSparkTitle"),
-              desc: t("lesson.interactive.introChecklistSparkDesc"),
-            },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="bg-card border-2 border-border rounded-2xl p-5 text-center hover:border-indigo-300 hover:shadow-md transition-all"
-            >
-              <div className="text-3xl mb-2">{item.icon}</div>
-              <p className="font-bold text-foreground text-sm mb-1">
-                {item.title}
-              </p>
-              <p className="text-primary text-xs">{item.desc}</p>
-            </div>
-          ))}
+        {/* Right 55%: Title + Checklist */}
+        <div className="flex-1 flex flex-col justify-center gap-5">
+          {/* Badge row */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="bg-indigo-500 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">Phase 1</span>
+            <span className="bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-xs font-bold px-3 py-1 rounded-full border border-indigo-500/20">Introduction</span>
+          </div>
+
+          {/* Title */}
+          <h1 className="text-4xl font-black text-foreground leading-tight">
+            {articleData.title}
+          </h1>
+          <p className="text-muted-foreground text-base leading-relaxed line-clamp-3">
+            {articleData.translated_summary?.th?.[0] ||
+              articleData.summary ||
+              t("lesson.interactive.articleFallbackSummary")}
+          </p>
+
+          {/* Tutor Checklist */}
+          <div className="space-y-3 mt-2">
+            {[
+              { num: "1", emoji: "💬", title: t("lesson.interactive.introChecklistIntroduceTitle"), desc: t("lesson.interactive.introChecklistIntroduceDesc") },
+              { num: "2", emoji: "🎯", title: t("lesson.interactive.introChecklistGoalTitle"), desc: t("lesson.interactive.introChecklistGoalDesc") },
+              { num: "3", emoji: "✨", title: t("lesson.interactive.introChecklistSparkTitle"), desc: t("lesson.interactive.introChecklistSparkDesc") },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-4 bg-indigo-500/5 border border-indigo-500/15 rounded-2xl p-4 hover:border-indigo-400/40 hover:bg-indigo-500/10 transition-all"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                <div className="size-11 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-black text-lg shrink-0 shadow-md">
+                  {item.emoji}
+                </div>
+                <div>
+                  <p className="font-bold text-foreground text-sm">{item.title}</p>
+                  <p className="text-indigo-600 dark:text-indigo-400 text-xs mt-0.5">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -467,13 +484,32 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         {/* Article body */}
         <div className="w-full max-w-5xl grid grid-cols-12 gap-6">
           <div className="col-span-12 md:col-span-8">
-            <div className="bg-card rounded-2xl shadow-xl border-t-4 border-blue-500 p-10">
-              <p
-                className="text-foreground text-xl leading-[2.2] font-medium"
-                style={{ fontFamily: "Georgia, serif" }}
-              >
-                {articleData.passage}
-              </p>
+            <div className="bg-card rounded-2xl shadow-xl border-t-4 border-blue-500 overflow-hidden">
+              {/* Magazine-style article image header */}
+              {articleImageUrl && (
+                <div className="relative h-40 overflow-hidden">
+                  <img
+                    src={articleImageUrl}
+                    alt={articleData.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = 'none'; }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40" />
+                  <div className="absolute bottom-3 left-4">
+                    <span className="text-white/80 text-xs font-semibold bg-black/30 backdrop-blur rounded-full px-2 py-0.5">
+                      📷 Article Image
+                    </span>
+                  </div>
+                </div>
+              )}
+              <div className="p-10">
+                <p
+                  className="text-foreground text-xl leading-[2.2] font-medium"
+                  style={{ fontFamily: "Georgia, serif" }}
+                >
+                  {articleData.passage}
+                </p>
+              </div>
             </div>
           </div>
           <div className="col-span-12 md:col-span-4 space-y-4">
@@ -646,14 +682,14 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         </div>
 
         <div className="w-full max-w-5xl grid grid-cols-12 gap-6">
-          {/* Passage - high contrast */}
+          {/* Passage - high contrast indigo-950 deep */}
           <div className="col-span-12 md:col-span-8">
-            <div className="bg-slate-900 rounded-2xl shadow-2xl p-10 border-t-4 border-teal-400">
+            <div className="bg-indigo-950 rounded-2xl shadow-2xl p-10 border-t-4 border-teal-400">
               <h3 className="text-teal-400 text-xs font-bold uppercase tracking-widest mb-6">
                 {articleData.title}
               </h3>
               <p
-                className="text-slate-100 text-xl leading-[2.4] font-medium"
+                className="text-indigo-100 text-xl leading-[2.4] font-medium"
                 style={{ fontFamily: "Georgia, serif" }}
               >
                 {articleData.passage}
