@@ -2,19 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   buildPayoutDocumentNumber,
   buildReceiptNumber,
-  calculateVatInclusive,
   calculateWithholdingTax,
 } from "./taxService";
 
 describe("taxService", () => {
-  it("splits VAT-inclusive gross amount into VAT and net portions", () => {
-    expect(calculateVatInclusive(107_00n)).toEqual({
-      grossAmountMinor: 107_00n,
-      vatAmountMinor: 700n,
-      netAmountMinor: 100_00n,
-    });
-  });
-
   it("calculates withholding tax and net payout", () => {
     expect(calculateWithholdingTax(10_000n)).toEqual({
       grossPayoutMinor: 10_000n,

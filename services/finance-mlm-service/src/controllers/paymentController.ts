@@ -2,10 +2,7 @@ import { Request, Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import crypto from "crypto";
-import {
-  buildReceiptNumber,
-  calculateVatInclusive,
-} from "../services/taxService";
+import { buildReceiptNumber } from "../services/taxService";
 import { getIctMonthWindow } from "../services/commissionService";
 import {
   createOmiseCharge,
@@ -496,7 +493,6 @@ async function fulfillPaymentIntent(paymentIntentId: string, providerRef?: strin
       },
     });
 
-    const tax = calculateVatInclusive(intent.amountMinor);
     await tx.paymentReceipt.upsert({
       where: { paymentIntentId },
       update: {},
@@ -504,9 +500,9 @@ async function fulfillPaymentIntent(paymentIntentId: string, providerRef?: strin
         paymentIntentId,
         studentUserId: intent.studentUserId,
         receiptNumber: buildReceiptNumber(paymentIntentId),
-        grossAmountMinor: tax.grossAmountMinor,
-        vatAmountMinor: tax.vatAmountMinor,
-        netAmountMinor: tax.netAmountMinor,
+        grossAmountMinor: intent.amountMinor,
+        vatAmountMinor: 0n,
+        netAmountMinor: intent.amountMinor,
         currency: intent.currency,
       },
     });

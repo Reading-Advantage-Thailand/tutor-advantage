@@ -42,6 +42,15 @@ export async function previewSettlement(
       preview,
     });
   } catch (error: any) {
+    if (error.message === "DRAFT_EXISTS") {
+      return res.status(409).json({
+        error: {
+          code: "DRAFT_EXISTS",
+          message: "A draft settlement already exists for this period",
+          requestId: req.id,
+        },
+      });
+    }
     console.error("Preview Settlement Error:", error);
     return res.status(500).json({
       error: {

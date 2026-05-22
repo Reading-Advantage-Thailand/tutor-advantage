@@ -29,6 +29,11 @@ export class SettlementService {
     const { start: startOfMonth, end: endOfMonth } =
       getIctMonthWindow(periodMonth);
 
+    const existingDraft = await prisma.settlementRun.findFirst({
+      where: { periodMonth, status: "DRAFT" },
+    });
+    if (existingDraft) throw new Error("DRAFT_EXISTS");
+
     const payments = await prisma.paymentIntent.findMany({
       where: {
         status: "SUCCESS",
@@ -61,7 +66,7 @@ export class SettlementService {
 
     for (const payment of payments) {
       const tutorId = enrollmentTutorMap.get(payment.enrollmentId);
-      if (!tutorId) continue; // Safety check
+      if (!tutorId) continue;
 
       const currentVol = tutorVolumes.get(tutorId) || 0n;
       tutorVolumes.set(tutorId, currentVol + payment.amountMinor);
