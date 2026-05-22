@@ -3,6 +3,7 @@
 import React, { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { Star, Users, Calendar, CheckCircle2, Lock, Share2, ChevronLeft, Loader2, AlertCircle } from "lucide-react";
+import { toast } from "sonner";
 import { studentApi } from "@/lib/api";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { Button } from "@/components/ui/button";
@@ -54,10 +55,22 @@ interface ClassDetail {
   enrollmentStatus?: string | null;
 }
 
+interface TutorReview {
+  id: string;
+  rating: number;
+  comment?: string | null;
+}
+
 export default function ClassDetailPage({ params }: PageProps) {
   const { id } = use(params);
   const { isReady } = useLiff();
   const [cls, setCls] = useState<ClassDetail | null>(null);
+  const [review, setReview] = useState<TutorReview | null>(null);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewLoading, setReviewLoading] = useState(false);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewEditing, setReviewEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -75,6 +88,47 @@ export default function ClassDetailPage({ params }: PageProps) {
         });
     }
   }, [isReady, id]);
+
+  const canReview = Boolean(cls?.isEnrolled && cls.status === "closed");
+
+  useEffect(() => {
+    if (!isReady || !id || !canReview) return;
+
+    setReviewLoading(true);
+    studentApi.getClassReview(id)
+      .then(data => {
+        const existingReview = data.review || null;
+        setReview(existingReview);
+        setReviewRating(existingReview?.rating || 0);
+        setReviewComment(existingReview?.comment || "");
+      })
+      .catch(() => {
+        setReview(null);
+      })
+      .finally(() => setReviewLoading(false));
+  }, [isReady, id, canReview]);
+
+  const handleSubmitReview = async () => {
+    if (!reviewRating) {
+      toast.error("กรุณาเลือกจำนวนดาวก่อนส่งรีวิว");
+      return;
+    }
+
+    setReviewSubmitting(true);
+    try {
+      const data = await studentApi.submitClassReview(id, {
+        rating: reviewRating,
+        comment: reviewComment.trim() || undefined,
+      });
+      setReview(data.review);
+      setReviewEditing(false);
+      toast.success("บันทึกรีวิวเรียบร้อยแล้ว");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "บันทึกรีวิวไม่สำเร็จ");
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
 
   if (!isReady || loading) {
     return (
@@ -201,6 +255,152 @@ export default function ClassDetailPage({ params }: PageProps) {
             <div className="progress-bar-fill" style={{ width: `${fillPct}%`, background: seatsLeft <= 2 ? "linear-gradient(90deg, var(--accent-red), #f87171)" : undefined }} />
           </div>
         </div>
+
+        {canReview && (
+          <div className="glass-card" style={{ padding: "18px", border: "1px solid rgba(245,158,11,0.28)", background: "linear-gradient(135deg, rgba(245,158,11,0.10), var(--surface-card))" }}>
+            <h3 style={{ fontSize: "0.9375rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: 6 }}>
+              ให้คะแนนคุณครู
+            </h3>
+            <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 14 }}>
+              คะแนนนี้จะถูกนำไปคำนวณเรตติ้งเฉลี่ยจริงบนหน้า Performance ของครู
+            </p>
+
+            {reviewLoading ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--text-secondary)", fontSize: "0.8125rem", fontWeight: 700 }}>
+                <Loader2 size={16} className="animate-spin" />
+                กำลังโหลดรีวิวของคุณ...
+              </div>
+            ) : review && !reviewEditing ? (
+              /* ── Read-only: already reviewed ── */
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <CheckCircle2 size={16} style={{ color: "#22c55e", flexShrink: 0 }} />
+                  <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "#22c55e" }}>รีวิวแล้ว</span>
+                </div>
+                <div style={{ display: "flex", gap: 6 }}>
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <Star
+                      key={value}
+                      size={22}
+                      fill={value <= review.rating ? "#f59e0b" : "transparent"}
+                      color={value <= review.rating ? "#f59e0b" : "var(--neutral-300)"}
+                    />
+                  ))}
+                </div>
+                {review.comment && (
+                  <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.6, margin: 0 }}>
+                    {review.comment}
+                  </p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setReviewEditing(true)}
+                  style={{
+                    alignSelf: "flex-start",
+                    fontSize: "0.8125rem",
+                    fontWeight: 700,
+                    color: "var(--text-secondary)",
+                    background: "none",
+                    border: "1px solid var(--surface-border)",
+                    borderRadius: 10,
+                    padding: "6px 14px",
+                    cursor: "pointer",
+                  }}
+                >
+                  แก้ไขรีวิว
+                </button>
+              </div>
+            ) : (
+              /* ── Editable form ── */
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setReviewRating(value)}
+                      aria-label={`ให้ ${value} ดาว`}
+                      style={{
+                        width: 42,
+                        height: 42,
+                        borderRadius: 14,
+                        border: value <= reviewRating ? "1px solid rgba(245,158,11,0.45)" : "1px solid var(--surface-border)",
+                        background: value <= reviewRating ? "rgba(245,158,11,0.14)" : "var(--surface-card)",
+                        color: value <= reviewRating ? "#f59e0b" : "var(--neutral-300)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Star size={22} fill={value <= reviewRating ? "#f59e0b" : "transparent"} />
+                    </button>
+                  ))}
+                </div>
+
+                <textarea
+                  value={reviewComment}
+                  onChange={(event) => setReviewComment(event.target.value)}
+                  placeholder="เล่าความประทับใจหรือข้อเสนอแนะเพิ่มเติม"
+                  maxLength={500}
+                  style={{
+                    width: "100%",
+                    minHeight: 92,
+                    borderRadius: 16,
+                    border: "1px solid var(--surface-border)",
+                    background: "var(--surface-card)",
+                    color: "var(--text-primary)",
+                    padding: "12px 14px",
+                    fontSize: "0.875rem",
+                    lineHeight: 1.6,
+                    resize: "vertical",
+                    outline: "none",
+                  }}
+                />
+
+                <div style={{ display: "flex", gap: 8 }}>
+                  {reviewEditing && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setReviewRating(review!.rating);
+                        setReviewComment(review!.comment ?? "");
+                        setReviewEditing(false);
+                      }}
+                      style={{
+                        flex: 1,
+                        height: 48,
+                        borderRadius: 16,
+                        fontWeight: 800,
+                        fontSize: "0.875rem",
+                        border: "1px solid var(--surface-border)",
+                        background: "var(--surface-card)",
+                        color: "var(--text-secondary)",
+                        cursor: "pointer",
+                      }}
+                    >
+                      ยกเลิก
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleSubmitReview}
+                    disabled={reviewSubmitting || reviewRating === 0}
+                    className="btn btn-primary"
+                    style={{
+                      flex: 1,
+                      height: 48,
+                      borderRadius: 16,
+                      fontWeight: 800,
+                      opacity: reviewSubmitting || reviewRating === 0 ? 0.55 : 1,
+                    }}
+                  >
+                    {reviewSubmitting ? "กำลังบันทึก..." : reviewEditing ? "บันทึกการแก้ไข" : "ส่งรีวิว"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Highlights */}
         <div>

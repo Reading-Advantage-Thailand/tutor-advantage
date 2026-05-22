@@ -5,8 +5,10 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useLessonSocket } from '@/hooks/useLessonSocket';
 import { useLiff } from '@/components/providers/LiffProvider';
 import { playSound } from '@/lib/sounds';
+import { studentApi } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import Image from 'next/image';
+import { toast } from 'sonner';
 
 // ── Phase Config (Look at Screen) ────────────────────────────────────────────
 const PHASE_CONFIG: Record<number, {
@@ -116,6 +118,11 @@ function PlayLessonContent() {
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [prevPhase, setPrevPhase] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState('');
+  const [reviewLoaded, setReviewLoaded] = useState(false);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const currentPhase = sessionData?.currentPhase ?? 0;
 
   useEffect(() => {
     if (isEveryoneReady) {
@@ -141,6 +148,42 @@ function PlayLessonContent() {
       router.push(`/lesson/${classId}`);
     }
   }, [sessionData, classId, router]);
+
+  useEffect(() => {
+    if (!classId || currentPhase !== 14 || reviewLoaded) return;
+
+    studentApi.getClassReview(classId)
+      .then((data) => {
+        if (data.review) {
+          setReviewRating(data.review.rating || 0);
+          setReviewComment(data.review.comment || '');
+        }
+      })
+      .catch(() => {
+        // No existing review is a normal state after a lesson.
+      })
+      .finally(() => setReviewLoaded(true));
+  }, [classId, currentPhase, reviewLoaded]);
+
+  const submitTutorReview = async () => {
+    if (!classId || reviewRating === 0) {
+      toast.error('กรุณาเลือกจำนวนดาวก่อนส่งรีวิว');
+      return;
+    }
+
+    setReviewSubmitting(true);
+    try {
+      await studentApi.submitClassReview(classId, {
+        rating: reviewRating,
+        comment: reviewComment.trim() || undefined,
+      });
+      toast.success('บันทึกรีวิวเรียบร้อยแล้ว');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'บันทึกรีวิวไม่สำเร็จ');
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     if (!hasAnswered && !isSubmitting) setSelectedChoice(null);
@@ -253,7 +296,6 @@ function PlayLessonContent() {
     }
   };
 
-  const currentPhase = sessionData.currentPhase;
   const isLookAtScreenPhase = [1, 2, 3, 4, 5, 6, 9].includes(currentPhase);
   const articleId = (articleData as any)?.id as string | undefined;
   const articleTitle = (articleData as any)?.title as string | undefined;
@@ -487,6 +529,49 @@ function PlayLessonContent() {
               <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4">
                 <h4 className="font-black text-emerald-600 dark:text-emerald-400 text-sm mb-1">{t("interactivePlay.lessonCompletedTitle")}</h4>
                 <p className="text-emerald-600/80 dark:text-emerald-400/80 text-xs leading-relaxed">{t("interactivePlay.lessonCompletedDescription")}</p>
+              </div>
+
+              <div className="bg-card rounded-3xl border border-amber-500/30 shadow-lg p-5">
+                <p className="text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-2">Tutor Review</p>
+                <h4 className="font-black text-foreground text-base mb-1">ให้คะแนนคุณครู</h4>
+                <p className="text-muted-foreground text-xs leading-relaxed mb-4">
+                  คะแนนนี้จะถูกนำไปคำนวณเรตติ้งเฉลี่ยจริงของคุณครู
+                </p>
+
+                <div className="grid grid-cols-5 gap-2 mb-3">
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setReviewRating(value)}
+                      aria-label={`ให้ ${value} ดาว`}
+                      className={`h-12 rounded-2xl border text-2xl transition-all active:scale-95 ${
+                        value <= reviewRating
+                          ? 'border-amber-400 bg-amber-400/15 text-amber-500'
+                          : 'border-border bg-muted/40 text-muted-foreground'
+                      }`}
+                    >
+                      ★
+                    </button>
+                  ))}
+                </div>
+
+                <textarea
+                  value={reviewComment}
+                  onChange={(event) => setReviewComment(event.target.value)}
+                  placeholder="เล่าความประทับใจหรือข้อเสนอแนะเพิ่มเติม"
+                  maxLength={500}
+                  className="min-h-24 w-full resize-y rounded-2xl border border-border bg-background p-3 text-sm font-medium text-foreground outline-none focus:border-amber-400"
+                />
+
+                <button
+                  type="button"
+                  onClick={submitTutorReview}
+                  disabled={reviewSubmitting || reviewRating === 0}
+                  className="mt-3 w-full rounded-2xl bg-amber-500 py-3.5 text-sm font-black text-white shadow-lg shadow-amber-500/20 transition-all active:scale-95 disabled:opacity-50"
+                >
+                  {reviewSubmitting ? 'กำลังบันทึก...' : reviewLoaded && reviewRating > 0 ? 'บันทึกรีวิว' : 'ส่งรีวิว'}
+                </button>
               </div>
 
               <button

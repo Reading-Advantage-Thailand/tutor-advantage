@@ -95,7 +95,7 @@ export const setupLessonSocket = (io: Server) => {
         return;
       }
 
-      const session = lessonSessionService.joinSessionByClassId(classId, studentId, name, socket.id, pictureUrl);
+      const session = lessonSessionService.joinSessionByClassId(classId, studentId, name, socket.id, pictureUrl, resolvedStudentId);
       if (session) {
         socket.join(session.sessionId);
         socket.emit("join_success", {
@@ -180,7 +180,9 @@ export const setupLessonSocket = (io: Server) => {
                  const finalScore = p.score || 0;
                  const pushMsg = `🎉 จบคาบเรียนแล้ว!\n\nคุณได้คะแนนรวม ${finalScore} คะแนน จากบทเรียน "${articleTitle}" \n\nเข้าเช็คประวัติการเรียนและเฉลยคำตอบได้ที่ Student LIFF ครับ`;
                  
-                 await LineNotificationService.sendToUser(p.studentId, pushMsg, { type: "notifyScoreUpdates" });
+                 if (p.resolvedUserId) {
+                   await LineNotificationService.sendToUser(p.resolvedUserId, pushMsg, { type: "notifyScoreUpdates" });
+                 }
               }
             } catch (e) {
               console.error("[Socket] Failed to trigger score notification:", e);

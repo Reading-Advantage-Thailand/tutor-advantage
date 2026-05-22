@@ -569,16 +569,16 @@ export function StudentAvatars({
           onMouseLeave={() => setHoveredIdx(null)}
         >
           {/* Avatar with paid checkmark */}
-          <div className="w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/15 flex items-center justify-center text-sm font-bold text-primary uppercase border-2 border-border/50 hover:border-primary/50 transition-all duration-300 relative cursor-pointer shadow-sm overflow-hidden">
+          <div className="w-10 h-10 rounded-full bg-primary/10 hover:bg-primary/15 flex items-center justify-center text-sm font-bold text-primary uppercase border-2 border-border/50 hover:border-primary/50 transition-all duration-300 relative cursor-pointer shadow-sm">
             {s.avatarUrl ? (
-              <img src={s.avatarUrl} alt={s.name} className="w-full h-full object-cover" />
+              <img src={s.avatarUrl} alt={s.name} className="w-full h-full rounded-full object-cover" />
             ) : (
               s.name[0] || "?"
             )}
             {s.paid && (
-              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full border border-background flex items-center justify-center shadow-sm">
+              <div className="absolute -bottom-1 -right-1 z-10 flex h-5 w-5 items-center justify-center rounded-full border-2 border-background bg-emerald-500 shadow-sm">
                 <svg
-                  className="w-2.5 h-2.5 text-white"
+                  className="h-3 w-3 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

@@ -2,13 +2,14 @@ import { v4 as uuidv4 } from "uuid";
 
 export interface SessionParticipant {
   studentId: string;
+  resolvedUserId?: string;
   name: string;
-  pictureUrl?: string; // Added pictureUrl
+  pictureUrl?: string;
   socketId: string;
   score: number;
   hasAnsweredCurrentPhase: boolean;
   latestAnswer?: any;
-  isReady: boolean; // Added isReady status
+  isReady: boolean;
 }
 
 export interface LessonSession {
@@ -169,13 +170,14 @@ class LessonSessionService {
     return undefined;
   }
 
-  joinSessionByClassId(classId: string, studentId: string, name: string, socketId: string, pictureUrl?: string): LessonSession | undefined {
+  joinSessionByClassId(classId: string, studentId: string, name: string, socketId: string, pictureUrl?: string, resolvedUserId?: string): LessonSession | undefined {
     const session = this.getSessionByClassId(classId);
     if (!session) return undefined;
 
     const existing = session.participants.get(studentId);
     session.participants.set(studentId, {
       studentId,
+      resolvedUserId: resolvedUserId ?? existing?.resolvedUserId,
       name,
       pictureUrl,
       socketId,

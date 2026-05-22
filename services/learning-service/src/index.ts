@@ -46,6 +46,7 @@ import {
   claimAuctionClass,
 } from "./controllers/auctionController";
 import { getPerformanceSummary } from "./controllers/performanceController";
+import { getMyTutorReviewForClass, submitTutorReview } from "./controllers/reviewController";
 import { getNotificationSummary } from "./controllers/notificationsController";
 import { getStudentLessonHistory, getLessonSessionDetails } from "./controllers/lessonHistoryController";
 
@@ -122,6 +123,10 @@ app.post(
 
 // Protected Performance Route
 app.get("/v1/tutors/performance", authMiddleware, getPerformanceSummary);
+
+// Protected Review Routes
+app.get("/v1/classes/:classId/review", authMiddleware, getMyTutorReviewForClass);
+app.post("/v1/classes/:classId/review", authMiddleware, submitTutorReview);
 
 // Protected Notifications Summary
 app.get("/v1/notifications/summary", authMiddleware, getNotificationSummary);

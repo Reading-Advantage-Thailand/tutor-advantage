@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Image from "next/image";
 import { LoginForm } from "@/components/auth/login-form";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { CheckCircle2 } from "lucide-react";
+import { BarChart3, BookOpenCheck, CheckCircle2, QrCode, ShieldCheck, UsersRound } from "lucide-react";
 import { t } from "@/lib/i18n";
 
 export const metadata: Metadata = {
@@ -11,130 +11,127 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
+  const benefits = [
+    { icon: BookOpenCheck, label: t("app.loginBenefitLessons") },
+    { icon: BarChart3, label: t("app.loginBenefitEarnings") },
+    { icon: QrCode, label: t("app.loginBenefitReferral") },
+  ];
+
   return (
-    <div className="min-h-screen bg-background flex flex-col lg:grid lg:grid-cols-2">
-      {/* Brand Hero Panel */}
-      <div className="relative flex flex-col bg-hero-gradient-animated text-white p-8 lg:p-12 shrink-0 overflow-hidden min-h-[50vh] lg:min-h-screen">
-        {/* Decorative gradient circle */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-40 -left-40 w-[30rem] h-[30rem] rounded-full bg-brand-400/35 blur-[120px] animate-pulse" style={{ animationDuration: '4s' }} />
-          <div className="absolute top-1/2 -right-40 w-[24rem] h-[24rem] rounded-full bg-emerald-400/25 blur-[100px] animate-pulse" style={{ animationDuration: '6s' }} />
-          <div className="absolute -bottom-20 left-1/3 w-[20rem] h-[20rem] rounded-full bg-brand-500/30 blur-[90px] animate-pulse" style={{ animationDuration: '5s' }} />
-        </div>
+    <main className="min-h-screen overflow-hidden bg-[linear-gradient(160deg,#06c755_0%,#049a42_36%,#037d36_58%,#0f172a_100%)] text-foreground">
+      <div className="grid min-h-screen lg:grid-cols-[1.05fr_0.95fr]">
+        <section className="relative flex min-h-[44vh] flex-col overflow-hidden bg-[linear-gradient(160deg,#06c755_0%,#049a42_36%,#047d36_58%,#0f172a_100%)] p-6 text-white sm:p-8 lg:min-h-screen lg:p-12">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_10%,rgba(255,255,255,0.20),transparent_30%),radial-gradient(circle_at_88%_18%,rgba(255,255,255,0.10),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.08),transparent_45%)]" />
+          <div aria-hidden className="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-white/5" />
+          <div aria-hidden className="absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-white/5" />
 
-        {/* Top Bar with Logo & Theme Toggle (Mobile + Desktop) */}
-        <div className="relative z-10 flex items-center justify-between mb-12 lg:mb-auto">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center hover:rotate-3 transition-transform duration-300">
-              <Image 
-                src="/icons/icon-192.png" 
-                alt="Tutor Advantage" 
-                width={36} 
-                height={36} 
-                className="rounded-xl"
-              />
+          <div className="relative z-10 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-[1.1rem] border border-white/30 bg-white shadow-lg shadow-black/20">
+                <Image
+                  src="/icons/icon-192.png"
+                  alt="Tutor Advantage"
+                  width={36}
+                  height={36}
+                  className="rounded-xl"
+                />
+              </div>
+              <div>
+                <p className="text-lg font-extrabold tracking-tight text-white">
+                  Tutor Advantage
+                </p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-white/65">
+                  {t("app.instructorPortal")}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="font-extrabold text-lg text-white tracking-tight">
-                Tutor Advantage
-              </p>
-              <p className="text-[10px] text-brand-200 font-bold uppercase tracking-widest">
-                {t("app.instructorPortal")}
-              </p>
+            <div className="lg:hidden">
+              <ThemeToggle className="rounded-xl border border-white/20 bg-white/10 text-white hover:bg-white/15" />
             </div>
           </div>
-          {/* Theme toggle directly in the hero for mobile */}
-          <div className="lg:hidden">
-            <ThemeToggle className="text-white hover:bg-white/10 rounded-xl" />
+
+          <div className="relative z-10 flex flex-1 flex-col justify-center py-14 lg:max-w-xl lg:py-20">
+            <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/14 px-3 py-1.5 text-xs font-bold text-white/85 backdrop-blur">
+              <span className="h-2 w-2 rounded-full bg-white" />
+              {t("app.loginTrustLine")}
+            </div>
+
+            <h1 className="animate-slide-up text-4xl font-black leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl" style={{ animationDelay: "50ms" }}>
+              {t("app.loginHeroTitlePrefix")}{" "}
+              <span className="text-white drop-shadow-sm">{t("app.loginHeroTitleAccent")}</span>
+            </h1>
+            <p className="mt-5 max-w-lg animate-slide-up text-base font-medium leading-8 text-slate-300 sm:text-lg" style={{ animationDelay: "100ms" }}>
+              {t("app.loginHeroDescription")}
+            </p>
+
+            <div className="mt-8 grid gap-3 sm:grid-cols-3 lg:max-w-2xl">
+              {benefits.map((benefit) => {
+                const Icon = benefit.icon;
+                return (
+                  <div key={benefit.label} className="rounded-2xl border border-white/20 bg-white/14 p-4 shadow-sm shadow-black/10 backdrop-blur-sm">
+                    <Icon className="mb-3 h-5 w-5 text-white" />
+                    <p className="text-sm font-semibold leading-6 text-white/92">{benefit.label}</p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-        {/* Main copy */}
-        <div className="relative z-10 flex-1 flex flex-col justify-center max-w-lg mt-8 lg:mt-0">
-          <h2 className="text-3xl lg:text-5xl font-black text-white leading-tight mb-6 tracking-tight animate-slide-up" style={{ animationDelay: '50ms' }}>
-            {t("app.loginHeroTitlePrefix")} <span className="text-brand-300 font-extrabold shadow-sm">{t("app.loginHeroTitleAccent")}</span>
-          </h2>
-          <p className="text-brand-100 text-lg mb-8 font-medium animate-slide-up" style={{ animationDelay: '100ms' }}>
-            {t("app.loginHeroDescription")}
-          </p>
-          <ul className="space-y-4 text-brand-50/90 hidden sm:block font-medium stagger animate-slide-up" style={{ animationDelay: '150ms' }}>
-            <li className="flex items-center gap-4 bg-white/10 hover:bg-white/15 p-4 rounded-2xl border border-white/10 backdrop-blur-md shadow-sm transition-all duration-300 hover:translate-x-1.5">
-              <div className="w-8 h-8 rounded-full bg-brand-400/20 border border-brand-300/30 flex items-center justify-center text-brand-300 shrink-0 shadow-[0_0_15px_rgba(74,222,128,0.2)]">
-                <CheckCircle2 className="w-5 h-5 text-brand-300" />
-              </div>
-              <span className="text-sm font-semibold tracking-wide text-white">{t("app.loginBenefitLessons")}</span>
-            </li>
-            <li className="flex items-center gap-4 bg-white/10 hover:bg-white/15 p-4 rounded-2xl border border-white/10 backdrop-blur-md shadow-sm transition-all duration-300 hover:translate-x-1.5">
-              <div className="w-8 h-8 rounded-full bg-brand-400/20 border border-brand-300/30 flex items-center justify-center text-brand-300 shrink-0 shadow-[0_0_15px_rgba(74,222,128,0.2)]">
-                <CheckCircle2 className="w-5 h-5 text-brand-300" />
-              </div>
-              <span className="text-sm font-semibold tracking-wide text-white">{t("app.loginBenefitEarnings")}</span>
-            </li>
-            <li className="flex items-center gap-4 bg-white/10 hover:bg-white/15 p-4 rounded-2xl border border-white/10 backdrop-blur-md shadow-sm transition-all duration-300 hover:translate-x-1.5">
-              <div className="w-8 h-8 rounded-full bg-brand-400/20 border border-brand-300/30 flex items-center justify-center text-brand-300 shrink-0 shadow-[0_0_15px_rgba(74,222,128,0.2)]">
-                <CheckCircle2 className="w-5 h-5 text-brand-300" />
-              </div>
-              <span className="text-sm font-semibold tracking-wide text-white">{t("app.loginBenefitReferral")}</span>
-            </li>
-          </ul>
-        </div>
+          <div className="relative z-10 hidden items-center gap-3 text-xs font-semibold text-white/60 sm:flex">
+            <ShieldCheck className="h-4 w-4" />
+            <span>{t("app.loginTrustLine")}</span>
+          </div>
+        </section>
 
-        <p className="relative z-10 hidden sm:block text-[10px] text-brand-200/50 mt-12 lg:mt-auto font-bold uppercase tracking-[0.2em]">
-          {t("app.loginTrustLine")}
-        </p>
+        <section className="relative -mt-7 flex flex-col rounded-t-[2rem] bg-background shadow-[0_-20px_60px_rgba(15,23,42,0.18)] lg:mt-0 lg:rounded-none lg:bg-[linear-gradient(180deg,#f8fafc_0%,#eef9f2_100%)] lg:shadow-none dark:lg:bg-[linear-gradient(180deg,#0d1117_0%,#0b1f13_100%)]">
+          <div className="absolute right-6 top-6 z-20 hidden lg:block">
+            <ThemeToggle className="rounded-xl border border-[#06c755]/20 bg-card text-muted-foreground shadow-sm hover:bg-[#06c755]/10" />
+          </div>
+
+          <div className="flex flex-1 items-center justify-center px-5 py-10 sm:px-8 lg:px-12">
+            <div className="w-full max-w-md animate-scale-in space-y-7">
+              <div className="text-center lg:text-left">
+                <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-[1.35rem] border border-border bg-card shadow-sm lg:mx-0">
+                  <UsersRound className="h-7 w-7 text-[#047d36] dark:text-[#86efb0]" />
+                </div>
+                <h2 className="text-3xl font-black tracking-tight text-foreground">
+                  {t("app.welcomeBack")}
+                </h2>
+                <p className="mt-2 text-sm font-semibold leading-6 text-muted-foreground">
+                  {t("app.loginSubtitle")}
+                </p>
+              </div>
+
+              <div className="rounded-[1.5rem] border border-[#06c755]/15 bg-card p-5 shadow-xl shadow-[#047d36]/10 dark:shadow-black/25 sm:p-6">
+                <LoginForm />
+
+                <div className="mt-5 rounded-2xl border border-border bg-muted/45 p-4">
+                  <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase text-muted-foreground">
+                    <CheckCircle2 className="h-4 w-4 text-[#06c755]" />
+                    {t("app.loginTrustLine")}
+                  </div>
+                  <p className="text-xs font-medium leading-6 text-muted-foreground">
+                    {t("app.loginAgreementPrefix")}{" "}
+                    <a
+                      href="/terms"
+                      className="font-bold text-foreground underline underline-offset-4 transition-colors hover:text-[#047d36] dark:hover:text-[#86efb0]"
+                    >
+                      {t("app.termsOfService")}
+                    </a>{" "}
+                    {t("app.and")}{" "}
+                    <a
+                      href="/privacy"
+                      className="font-bold text-foreground underline underline-offset-4 transition-colors hover:text-[#047d36] dark:hover:text-[#86efb0]"
+                    >
+                      {t("app.privacyPolicy")}
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
-
-      {/* Login Form Panel */}
-      <div className="flex-1 flex flex-col bg-background relative rounded-t-[2.5rem] -mt-8 lg:mt-0 lg:rounded-none overflow-hidden shadow-[0_-20px_50px_-15px_rgba(0,0,0,0.15)] lg:shadow-none bg-gradient-to-tr from-background via-background to-brand-500/2 dark:to-brand-500/5">
-        
-        {/* Desktop Theme Toggle positioned at top right */}
-        <div className="absolute top-8 right-8 hidden lg:block z-50">
-          <ThemeToggle className="text-muted-foreground hover:bg-muted rounded-xl" />
-        </div>
-
-        {/* Helper spacing for desktop since top bar was moved */}
-        <div className="hidden lg:block py-6"></div>
-        
-        {/* Form area */}
-        <div className="flex-1 flex items-center justify-center p-6 sm:p-8 lg:p-12 relative z-10">
-          <div className="w-full max-w-md p-6 sm:p-8 rounded-[2rem] border border-border/40 bg-card/65 backdrop-blur-xl shadow-xl space-y-8 relative overflow-hidden group animate-scale-in">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-brand-500/5 rounded-full blur-2xl -mr-6 -mt-6 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none" />
-            
-            <div className="space-y-2 text-center lg:text-left relative z-10">
-              <h1 className="text-3xl font-black text-foreground tracking-tight">
-                {t("app.welcomeBack")}
-              </h1>
-              <p className="text-sm font-semibold text-muted-foreground mt-1">
-                {t("app.loginSubtitle")}
-              </p>
-            </div>
-
-            <div className="relative z-10">
-              <LoginForm />
-            </div>
-
-            <div className="pt-6 border-t border-border/40 text-center relative z-10">
-              <p className="text-xs text-muted-foreground font-medium leading-relaxed">
-                {t("app.loginAgreementPrefix")}{" "}
-                <a
-                  href="/terms"
-                  className="font-bold text-foreground hover:text-primary transition-colors underline underline-offset-4"
-                >
-                  {t("app.termsOfService")}
-                </a>{" "}
-                {t("app.and")}{" "}
-                <a
-                  href="/privacy"
-                  className="font-bold text-foreground hover:text-primary transition-colors underline underline-offset-4"
-                >
-                  {t("app.privacyPolicy")}
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </main>
   );
 }

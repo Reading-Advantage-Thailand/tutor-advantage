@@ -41,6 +41,8 @@ model User {
   participants      ConversationParticipant[]
   messages          Message[]
   performances      TutorPerformance[]
+  tutorReviews      TutorReview[]             @relation("TutorReviews")
+  studentReviews    TutorReview[]             @relation("StudentReviews")
   badges            TutorBadge[]
   interactiveSessions InteractiveSession[]
   sessionParticipants SessionParticipant[]
@@ -168,6 +170,7 @@ model Class {
   enrollments   Enrollment[]
   conversations Conversation[]
   transfers     ClassTransferRequest[]
+  reviews       TutorReview[]
 
   @@index([tutorUserId, status])
   @@map("classes")
@@ -372,6 +375,27 @@ model TutorPerformance {
 
   @@unique([tutorUserId, periodMonth])
   @@map("tutor_performances")
+  @@schema("learning")
+}
+
+model TutorReview {
+  reviewId      String   @id @default(dbgenerated("gen_random_uuid()")) @map("review_id") @db.Uuid
+  tutorUserId   String   @map("tutor_user_id") @db.Uuid
+  studentUserId String   @map("student_user_id") @db.Uuid
+  classId       String   @map("class_id") @db.Uuid
+  rating        Int
+  comment       String?
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz
+
+  tutor   User  @relation("TutorReviews", fields: [tutorUserId], references: [userId])
+  student User  @relation("StudentReviews", fields: [studentUserId], references: [userId])
+  class   Class @relation(fields: [classId], references: [classId])
+
+  @@unique([studentUserId, classId])
+  @@index([tutorUserId])
+  @@index([classId])
+  @@map("tutor_reviews")
   @@schema("learning")
 }
 

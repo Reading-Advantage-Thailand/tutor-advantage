@@ -24,6 +24,7 @@ const dashboardController_1 = require("./controllers/dashboardController");
 const chatController_1 = require("./controllers/chatController");
 const auctionController_1 = require("./controllers/auctionController");
 const performanceController_1 = require("./controllers/performanceController");
+const reviewController_1 = require("./controllers/reviewController");
 const notificationsController_1 = require("./controllers/notificationsController");
 const lessonHistoryController_1 = require("./controllers/lessonHistoryController");
 const app = (0, express_1.default)();
@@ -71,6 +72,9 @@ app.get("/v1/classes/auction", authMiddleware_1.authMiddleware, auctionControlle
 app.post("/v1/classes/auction/:transferId/claim", authMiddleware_1.authMiddleware, auctionController_1.claimAuctionClass);
 // Protected Performance Route
 app.get("/v1/tutors/performance", authMiddleware_1.authMiddleware, performanceController_1.getPerformanceSummary);
+// Protected Review Routes
+app.get("/v1/classes/:classId/review", authMiddleware_1.authMiddleware, reviewController_1.getMyTutorReviewForClass);
+app.post("/v1/classes/:classId/review", authMiddleware_1.authMiddleware, reviewController_1.submitTutorReview);
 // Protected Notifications Summary
 app.get("/v1/notifications/summary", authMiddleware_1.authMiddleware, notificationsController_1.getNotificationSummary);
 // Apply error handler last
