@@ -125,13 +125,14 @@ class LessonSessionService {
         }
         return undefined;
     }
-    joinSessionByClassId(classId, studentId, name, socketId, pictureUrl) {
+    joinSessionByClassId(classId, studentId, name, socketId, pictureUrl, resolvedUserId) {
         const session = this.getSessionByClassId(classId);
         if (!session)
             return undefined;
         const existing = session.participants.get(studentId);
         session.participants.set(studentId, {
             studentId,
+            resolvedUserId: resolvedUserId ?? existing?.resolvedUserId,
             name,
             pictureUrl,
             socketId,

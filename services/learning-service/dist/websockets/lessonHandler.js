@@ -122,7 +122,7 @@ const setupLessonSocket = (io) => {
                 socket.emit("error", { message: "Please complete payment before joining class." });
                 return;
             }
-            const session = LessonSessionService_1.lessonSessionService.joinSessionByClassId(classId, studentId, name, socket.id, pictureUrl);
+            const session = LessonSessionService_1.lessonSessionService.joinSessionByClassId(classId, studentId, name, socket.id, pictureUrl, resolvedStudentId);
             if (session) {
                 socket.join(session.sessionId);
                 socket.emit("join_success", {
@@ -198,7 +198,9 @@ const setupLessonSocket = (io) => {
                                 // Get final score in current context
                                 const finalScore = p.score || 0;
                                 const pushMsg = `🎉 จบคาบเรียนแล้ว!\n\nคุณได้คะแนนรวม ${finalScore} คะแนน จากบทเรียน "${articleTitle}" \n\nเข้าเช็คประวัติการเรียนและเฉลยคำตอบได้ที่ Student LIFF ครับ`;
-                                await LineNotificationService_1.LineNotificationService.sendToUser(p.studentId, pushMsg, { type: "notifyScoreUpdates" });
+                                if (p.resolvedUserId) {
+                                    await LineNotificationService_1.LineNotificationService.sendToUser(p.resolvedUserId, pushMsg, { type: "notifyScoreUpdates" });
+                                }
                             }
                         }
                         catch (e) {
