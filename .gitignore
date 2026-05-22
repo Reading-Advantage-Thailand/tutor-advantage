@@ -23,4 +23,8 @@ public/swe-worker-*.js.map
 apps/tutor-pwa/public/sw.js
 apps/tutor-pwa/public/swe-worker-*.js
 
-.claude
+.gha-key.json
+*.key.json
+
+# Claude Code local config
+.claude/

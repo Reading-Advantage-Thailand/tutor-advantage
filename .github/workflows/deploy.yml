@@ -1,0 +1,142 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+env:
+  PROJECT_ID: reading-advantage
+  REGION: asia-southeast1
+  REGISTRY: asia-southeast1-docker.pkg.dev/reading-advantage/tutor-advantage
+
+jobs:
+  # -------------------------------------------------------
+  # Detect which services/apps changed
+  # -------------------------------------------------------
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      learning-service: ${{ steps.filter.outputs.learning-service }}
+      identity-service: ${{ steps.filter.outputs.identity-service }}
+      finance-mlm-service: ${{ steps.filter.outputs.finance-mlm-service }}
+      tutor-pwa: ${{ steps.filter.outputs.tutor-pwa }}
+      student-liff: ${{ steps.filter.outputs.student-liff }}
+      admin-console: ${{ steps.filter.outputs.admin-console }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            learning-service:
+              - 'services/learning-service/**'
+              - 'packages/**'
+            identity-service:
+              - 'services/identity-service/**'
+              - 'packages/**'
+            finance-mlm-service:
+              - 'services/finance-mlm-service/**'
+              - 'packages/**'
+            tutor-pwa:
+              - 'apps/tutor-pwa/**'
+              - 'packages/**'
+            student-liff:
+              - 'apps/student-liff/**'
+              - 'packages/**'
+            admin-console:
+              - 'apps/admin-console/**'
+              - 'packages/**'
+
+  # -------------------------------------------------------
+  # Build and deploy each service (only if changed)
+  # -------------------------------------------------------
+  deploy:
+    name: Deploy ${{ matrix.service }}
+    runs-on: ubuntu-latest
+    needs: changes
+    if: |
+      needs.changes.outputs.learning-service == 'true' ||
+      needs.changes.outputs.identity-service == 'true' ||
+      needs.changes.outputs.finance-mlm-service == 'true' ||
+      needs.changes.outputs.tutor-pwa == 'true' ||
+      needs.changes.outputs.student-liff == 'true' ||
+      needs.changes.outputs.admin-console == 'true'
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: learning-service
+            dockerfile: services/learning-service/Dockerfile
+            changed: ${{ needs.changes.outputs.learning-service }}
+          - service: identity-service
+            dockerfile: services/identity-service/Dockerfile
+            changed: ${{ needs.changes.outputs.identity-service }}
+          - service: finance-mlm-service
+            dockerfile: services/finance-mlm-service/Dockerfile
+            changed: ${{ needs.changes.outputs.finance-mlm-service }}
+          - service: tutor-pwa
+            dockerfile: apps/tutor-pwa/Dockerfile
+            changed: ${{ needs.changes.outputs.tutor-pwa }}
+          - service: student-liff
+            dockerfile: apps/student-liff/Dockerfile
+            changed: ${{ needs.changes.outputs.student-liff }}
+          - service: admin-console
+            dockerfile: apps/admin-console/Dockerfile
+            changed: ${{ needs.changes.outputs.admin-console }}
+
+    steps:
+      - name: Skip if unchanged
+        if: matrix.changed != 'true'
+        run: echo "No changes in ${{ matrix.service }}, skipping."
+
+      - name: Checkout
+        if: matrix.changed == 'true'
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        if: matrix.changed == 'true'
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        if: matrix.changed == 'true'
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker
+        if: matrix.changed == 'true'
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Build Docker image
+        if: matrix.changed == 'true'
+        run: |
+          docker build \
+            -f ${{ matrix.dockerfile }} \
+            -t ${{ env.REGISTRY }}/${{ matrix.service }}:${{ github.sha }} \
+            -t ${{ env.REGISTRY }}/${{ matrix.service }}:latest \
+            .
+
+      - name: Push Docker image
+        if: matrix.changed == 'true'
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ matrix.service }}:${{ github.sha }}
+          docker push ${{ env.REGISTRY }}/${{ matrix.service }}:latest
+
+      - name: Deploy to Cloud Run
+        if: matrix.changed == 'true'
+        run: |
+          gcloud run deploy ${{ matrix.service }} \
+            --image=${{ env.REGISTRY }}/${{ matrix.service }}:${{ github.sha }} \
+            --region=${{ env.REGION }} \
+            --quiet
+
+      - name: Show service URL
+        if: matrix.changed == 'true'
+        run: |
+          gcloud run services describe ${{ matrix.service }} \
+            --region=${{ env.REGION }} \
+            --format='value(status.url)'
