@@ -67,6 +67,30 @@ export class SettlementService {
       tutorVolumes.set(tutorId, currentVol + payment.amountMinor);
     }
 
+    const approvedAdjustments = await prisma.adjustment.findMany({
+      where: {
+        status: "APPROVED",
+        settlementRun: {
+          periodMonth,
+        },
+      },
+      select: {
+        adjustmentId: true,
+        tutorUserId: true,
+        amountMinor: true,
+        reason: true,
+      },
+    });
+
+    const adjustmentTotals = new Map<string, bigint>();
+    for (const adjustment of approvedAdjustments) {
+      adjustmentTotals.set(
+        adjustment.tutorUserId,
+        (adjustmentTotals.get(adjustment.tutorUserId) || 0n) +
+          adjustment.amountMinor,
+      );
+    }
+
     // 3. Build the organizational tree to calculate Group Volume (GV) and Payouts
     // For a real MLM tree, we need the upline structure.
     const allUsers = await prisma.user.findMany({
@@ -85,6 +109,20 @@ export class SettlementService {
         payoutAmountMinor: 0n,
         eligibilityStatus: "ELIGIBLE_BASE",
       });
+    }
+
+    for (const [tutorUserId] of adjustmentTotals) {
+      if (!nodes.has(tutorUserId)) {
+        nodes.set(tutorUserId, {
+          userId: tutorUserId,
+          sponsorId: null,
+          personalVolumeMinor: 0n,
+          groupVolumeMinor: 0n,
+          payoutRate: 0,
+          payoutAmountMinor: 0n,
+          eligibilityStatus: "ADJUSTMENT_ONLY",
+        });
+      }
     }
 
     // 4. Graph traversal for accurate GV and Payout calculation.
@@ -151,7 +189,6 @@ export class SettlementService {
       }
 
       node.payoutAmountMinor = payoutForMe;
-      totalPayoutSatang += payoutForMe;
       return payoutForMe;
     };
 
@@ -168,24 +205,48 @@ export class SettlementService {
         periodMonth,
         status: "DRAFT",
         createdBy,
-        previewPayload: {}, // Store stringified generic info if needed
+        previewPayload: {
+          paymentCount: payments.length,
+          approvedAdjustmentCount: approvedAdjustments.length,
+          approvedAdjustmentTotalSatang: approvedAdjustments
+            .reduce((sum, adjustment) => sum + adjustment.amountMinor, 0n)
+            .toString(),
+        },
       },
     });
 
     // Bulk insert payout lines
     for (const node of nodes.values()) {
-      if (node.payoutAmountMinor > 0n || node.groupVolumeMinor > 0n) {
-        const tax = calculateWithholdingTax(node.payoutAmountMinor);
+      const adjustmentMinor = adjustmentTotals.get(node.userId) || 0n;
+      const adjustedPayoutMinor = node.payoutAmountMinor + adjustmentMinor;
+
+      if (
+        adjustedPayoutMinor !== 0n ||
+        node.groupVolumeMinor > 0n ||
+        adjustmentMinor !== 0n
+      ) {
+        const tax =
+          adjustedPayoutMinor > 0n
+            ? calculateWithholdingTax(adjustedPayoutMinor)
+            : {
+                withholdingTaxMinor: 0n,
+                netPayoutMinor: adjustedPayoutMinor,
+              };
+        totalPayoutSatang += adjustedPayoutMinor;
+
         await prisma.payoutLine.create({
           data: {
             settlementRunId: run.settlementRunId,
             tutorUserId: node.userId,
             grossVolumeMinor: node.groupVolumeMinor,
             payoutRate: new Prisma.Decimal(node.payoutRate),
-            payoutAmountMinor: node.payoutAmountMinor,
+            payoutAmountMinor: adjustedPayoutMinor,
             withholdingTaxMinor: tax.withholdingTaxMinor,
             netPayoutMinor: tax.netPayoutMinor,
-            eligibilityStatus: node.eligibilityStatus,
+            eligibilityStatus:
+              adjustmentMinor !== 0n
+                ? `${node.eligibilityStatus}_ADJUSTED`
+                : node.eligibilityStatus,
           },
         });
       }

@@ -16,7 +16,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   // Article image URL from GCS
   const articleImageUrl = articleData?.id
-    ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${articleData.id}`
+    ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${articleData.id}.png`
     : null;
 
   // ── Audio state for Phase 9 ─────────────────────────────────

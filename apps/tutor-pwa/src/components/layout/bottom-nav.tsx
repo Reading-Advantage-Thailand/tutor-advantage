@@ -61,7 +61,10 @@ export function BottomNav({ notifications: initialNotifications }: BottomNavProp
   }, []);
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around bg-background/80 backdrop-blur-md border-t border-border pb-safe pt-2 px-2 lg:hidden">
+    <nav
+      className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-4 right-4 z-50 flex items-center justify-around rounded-2xl border border-white/20 dark:border-white/5 shadow-xl backdrop-blur-xl bg-white/80 dark:bg-neutral-900/80 py-2 px-3 lg:hidden"
+      aria-label="Main navigation"
+    >
       {navItems.map((item) => {
         const Icon = item.icon;
         const active =
@@ -73,36 +76,42 @@ export function BottomNav({ notifications: initialNotifications }: BottomNavProp
           <Link
             key={item.href}
             href={item.href}
+            aria-current={active ? "page" : undefined}
             className={cn(
-              "flex flex-col items-center justify-center w-full py-1 text-xs font-medium transition-colors",
+              "group flex flex-col items-center justify-center w-full py-2 px-2 rounded-xl text-xs font-medium transition-all duration-200",
               active
-                ? "text-primary"
+                ? "bg-brand-50 dark:bg-brand-900/30 text-primary"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
             <div className="relative mb-1">
-              <div
+              <Icon
                 className={cn(
-                  "p-1 rounded-full transition-colors",
-                  active ? "bg-primary/10" : "bg-transparent"
+                  "h-5 w-5 transition-all duration-200 group-hover:scale-110",
+                  active && "scale-110 text-primary"
                 )}
-              >
-                <Icon className="h-5 w-5" />
-              </div>
-              
+              />
+
               {/* Badges for Notifications */}
               {item.href === "/dashboard/chat" && notifications?.unreadChat ? (
-                <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[9px] font-bold px-1 rounded-full border-2 border-background min-w-[16px] flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 animate-bounce bg-gradient-to-r from-red-500 to-rose-500 text-white text-[9px] font-bold px-1 rounded-full border-2 border-white dark:border-neutral-900 min-w-[16px] flex items-center justify-center shadow-md">
                   {notifications.unreadChat}
                 </span>
               ) : null}
               {item.href === "/dashboard/classes" && notifications?.availableAuctions ? (
-                <span className="absolute -top-1 -right-1 bg-amber-500 text-white text-[9px] font-bold px-1 rounded-full border-2 border-background min-w-[16px] flex items-center justify-center">
+                <span className="absolute -top-2 -right-2 animate-bounce bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[9px] font-bold px-1 rounded-full border-2 border-white dark:border-neutral-900 min-w-[16px] flex items-center justify-center shadow-md">
                   {notifications.availableAuctions}
                 </span>
               ) : null}
             </div>
-            <span className="scale-90 origin-bottom">{item.label}</span>
+            <span
+              className={cn(
+                "scale-90 origin-bottom transition-all duration-200",
+                active ? "font-bold text-primary" : ""
+              )}
+            >
+              {item.label}
+            </span>
           </Link>
         );
       })}

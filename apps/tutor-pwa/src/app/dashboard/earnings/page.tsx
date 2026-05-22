@@ -4,6 +4,8 @@ import { Download, AlertCircle, Wallet, Star } from "lucide-react";
 import { cookies } from "next/headers";
 import VerificationBanner from "@/components/dashboard/verification-banner";
 import { t } from "@/lib/i18n";
+import { PageTransition } from "@/components/ui/page-transition";
+import { AnimatedCurrencyCounter, AnimatedCounter } from "@/components/ui/animated-counter";
 
 type EarningsHistoryItem = {
   date: string;
@@ -68,7 +70,7 @@ const statusMap: Record<string, { label: string; className: string }> = {
   },
   approved: {
     label: t("dashboardEarnings.statuses.approved"),
-    className: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+    className: "bg-brand-500/10 text-brand-600 dark:text-brand-400 border-brand-500/20",
   },
   rejected: {
     label: t("dashboardEarnings.statuses.rejected"),
@@ -117,97 +119,105 @@ export default async function EarningsPage() {
   );
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 lg:space-y-8 pb-20 sm:pb-0">
+    <PageTransition variant="slide-up" stagger className="max-w-3xl mx-auto space-y-6 lg:space-y-8 pb-24 sm:pb-12">
       <VerificationBanner />
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 animate-fade-in">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{t("dashboardEarnings.title")}</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h1 className="text-3xl font-black tracking-tight text-foreground">{t("dashboardEarnings.title")}</h1>
+          <p className="text-sm font-medium text-muted-foreground mt-1">
             {t("dashboardEarnings.subtitle")}
           </p>
         </div>
         <Button
           id="btn-download-reports"
           variant="outline"
-          className="gap-2 shrink-0 hidden sm:flex"
+          className="h-10 px-5 rounded-xl font-bold hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-brand-600 hover:border-brand-500/30 shadow-sm transition-all gap-2 shrink-0 hidden sm:flex hover-lift press-scale"
         >
           <Download className="h-4 w-4" />
           {t("dashboardEarnings.downloadCsv")}
         </Button>
       </div>
 
-      <div className="grid gap-6 lg:gap-8 md:grid-cols-12">
-        <div className="md:col-span-7 space-y-6 lg:space-y-8">
-          <Card className="border-border/60 shadow-sm overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10" />
-            <CardContent className="p-6 relative z-10">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Wallet className="h-5 w-5 text-primary" />
+      <div className="grid gap-6 lg:gap-8 md:grid-cols-12 stagger">
+        {/* Left column */}
+        <div className="md:col-span-7 space-y-6 lg:space-y-8 animate-slide-up" style={{ animationDelay: '50ms' }}>
+          <Card className="border border-border/40 hover:shadow-lg rounded-3xl shadow-sm bg-card bg-gradient-to-br from-card via-card to-brand-500/2 dark:to-brand-500/5 transition-all duration-300 overflow-hidden relative group">
+            <div className="absolute top-0 right-0 w-44 h-44 bg-brand-500/10 dark:bg-brand-500/5 rounded-full blur-3xl -mr-12 -mt-12 pointer-events-none" />
+            <CardContent className="p-5 sm:p-6 relative z-10">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 rounded-2xl bg-brand-500/10 border border-brand-500/10 flex items-center justify-center">
+                  <Wallet className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                 </div>
-                <h2 className="text-sm font-semibold text-foreground">
+                <h2 className="text-sm font-bold text-foreground">
                   {t("dashboardEarnings.projectedIncomePrefix")} ({response?.periodMonth || "N/A"})
                 </h2>
               </div>
+              
               <div className="flex items-baseline gap-2 mb-6">
-                <span className="text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
-                  {formatCurrencyTHB(earnings.total)}
-                </span>
-                <span className="text-sm font-medium text-muted-foreground">THB</span>
+                <AnimatedCurrencyCounter
+                  value={earnings.total}
+                  className="text-4xl lg:text-5xl font-black tracking-tight text-foreground"
+                />
+                <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest bg-muted px-2 py-0.5 rounded-md">THB</span>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-xl border border-border/50 bg-background/50 p-3 sm:p-4">
-                  <p className="text-xs text-muted-foreground mb-1">{t("dashboardEarnings.directCommission")}</p>
-                  <p className="text-lg sm:text-xl font-bold text-foreground">
-                    {formatCurrencyTHB(earnings.directSales)}
-                  </p>
+                <div className="rounded-2xl border border-border/40 bg-background/50 backdrop-blur-sm p-3 sm:p-4">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">{t("dashboardEarnings.directCommission")}</p>
+                  <AnimatedCurrencyCounter
+                    value={earnings.directSales}
+                    className="text-lg sm:text-xl font-black text-foreground"
+                  />
                 </div>
-                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 sm:p-4">
-                  <p className="text-xs text-emerald-600 dark:text-emerald-400 mb-1">{t("dashboardEarnings.networkBonus")}</p>
-                  <p className="text-lg sm:text-xl font-bold text-emerald-600 dark:text-emerald-400">
-                    +{formatCurrencyTHB(earnings.networkBonus)}
-                  </p>
+                <div className="rounded-2xl border border-brand-500/20 bg-brand-500/5 backdrop-blur-sm p-3 sm:p-4">
+                  <p className="text-[10px] font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider mb-1.5">{t("dashboardEarnings.networkBonus")}</p>
+                  <div className="flex items-center text-lg sm:text-xl font-black text-brand-600 dark:text-brand-400">
+                    <span>+</span>
+                    <AnimatedCurrencyCounter value={earnings.networkBonus} />
+                  </div>
                 </div>
               </div>
 
               {earnings.clawback !== 0 && (
-                <div className="mt-4 flex items-center justify-between rounded-xl bg-destructive/5 border border-destructive/15 px-4 py-3 text-sm">
-                  <span className="text-destructive/90 flex items-center gap-2">
+                <div className="mt-4 flex items-center justify-between rounded-2xl bg-destructive/5 border border-destructive/15 px-4 py-3 text-sm animate-scale-in">
+                  <span className="text-destructive/90 flex items-center gap-2 font-semibold">
                     <AlertCircle className="h-4 w-4" />
-                    <span className="font-medium">{t("dashboardEarnings.clawback")}</span>
+                    <span>{t("dashboardEarnings.clawback")}</span>
                   </span>
-                  <span className="font-bold text-destructive">
-                    {formatCurrencyTHB(earnings.clawback)}
-                  </span>
+                  <AnimatedCurrencyCounter
+                    value={earnings.clawback}
+                    className="font-black text-destructive"
+                  />
                 </div>
               )}
             </CardContent>
           </Card>
 
-          <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-background to-background shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-semibold text-foreground flex items-center justify-between">
+          <Card className="border border-brand-500/20 bg-gradient-to-br from-brand-500/5 via-card to-card hover:shadow-lg rounded-3xl shadow-sm transition-all duration-300 overflow-hidden relative">
+            <CardHeader className="pb-3 pt-5 px-5 sm:px-6">
+              <CardTitle className="text-sm font-bold text-foreground flex items-center justify-between">
                 <span className="flex items-center gap-2">
-                  <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+                  <Star className="h-4 w-4 text-amber-500 fill-amber-500 animate-float" />
                   {t("dashboardEarnings.currentCommission")}
                 </span>
-                <span className="text-lg font-bold text-primary">{commissionPercent}%</span>
+                <span className="text-xl font-black text-brand-500">
+                  <AnimatedCounter value={commissionPercent} />%
+                </span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span className="font-medium text-foreground">{formatCurrencyTHB(rateInfo.volume)}</span>
+            <CardContent className="space-y-4 pb-5 sm:pb-6 px-5 sm:px-6">
+              <div className="space-y-2.5">
+                <div className="flex justify-between text-xs font-bold text-muted-foreground">
+                  <AnimatedCurrencyCounter value={rateInfo.volume} className="text-foreground" />
                   <span>
                     {rateInfo.nextTarget > 0
                       ? `${t("dashboardEarnings.rateTargetPrefix")} ${formatCurrencyTHB(rateInfo.nextTarget)} ${t("dashboardEarnings.rateTargetSuffix")}`
                       : t("dashboardEarnings.maxRate")}
                   </span>
                 </div>
-                <div className="w-full bg-primary/10 rounded-full h-2.5 overflow-hidden">
+                <div className="w-full bg-brand-500/10 rounded-full h-3 overflow-hidden border border-brand-500/5 p-[1px]">
                   <div
-                    className="bg-primary h-2.5 rounded-full transition-all duration-1000 ease-out relative"
+                    className="bg-gradient-to-r from-brand-400 to-brand-600 h-2 rounded-full transition-all duration-1000 ease-out relative shadow-[0_0_8px_rgba(6,199,85,0.4)]"
                     style={{ width: `${progressPercent}%` }}
                   >
                     <div className="absolute inset-0 bg-white/20 w-full animate-pulse" />
@@ -218,86 +228,84 @@ export default async function EarningsPage() {
           </Card>
         </div>
 
-        <div className="md:col-span-5 space-y-6 lg:space-y-8">
-          <Card className="border-border/60 shadow-sm flex flex-col h-full">
-            <CardHeader className="pb-3 flex flex-row items-center justify-between border-b border-border/40">
-              <CardTitle className="text-sm font-semibold text-foreground">
+        {/* Right column */}
+        <div className="md:col-span-5 space-y-6 lg:space-y-8 animate-slide-up" style={{ animationDelay: '100ms' }}>
+          <Card className="border border-border/40 hover:shadow-md rounded-3xl shadow-sm bg-card overflow-hidden transition-all duration-300">
+            <CardHeader className="py-4 px-5 flex flex-row items-center justify-between border-b border-border/40">
+              <CardTitle className="text-sm font-bold text-foreground">
                 {t("dashboardEarnings.payoutHistory")}
               </CardTitle>
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-8 gap-1 text-primary sm:hidden px-2 -mr-2"
+                className="h-8 gap-1 text-brand-500 hover:text-brand-600 hover:bg-brand-500/5 sm:hidden px-2 -mr-2 font-bold"
               >
                 <Download className="h-4 w-4" />
                 CSV
               </Button>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="divide-y divide-border/50">
+              <div className="divide-y divide-border/30">
                 {history.length === 0 && (
-                  <div className="p-6 text-center text-sm text-muted-foreground">
+                  <div className="p-6 text-center text-sm font-semibold text-muted-foreground">
                     {t("dashboardEarnings.emptyPayoutHistory")}
                   </div>
                 )}
-                {history.map((item) => {
+                {history.map((item, idx) => {
                   const total = item.direct + item.network + item.clawback;
                   const status = statusMap[item.status] || {
                     label: item.status,
                     className: "bg-muted",
                   };
                   return (
-                    <div key={`${item.date}-${item.status}`} className="p-4 sm:p-5 hover:bg-muted/30 transition-colors">
+                    <div key={`${item.date}-${item.status}`} className="p-4 sm:p-5 hover:bg-brand-500/2 dark:hover:bg-brand-500/4 transition-colors relative group">
+                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-brand-500 transition-all duration-300" />
                       <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm font-semibold text-foreground">{item.date}</p>
+                        <p className="text-sm font-bold text-foreground">{item.date}</p>
                         <span
-                          className={`px-2 py-0.5 rounded-md text-[11px] font-semibold tracking-wide border ${status.className}`}
+                          className={`px-2.5 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${status.className}`}
                         >
                           {status.label}
                         </span>
                       </div>
 
-                      <p className="text-lg font-bold text-foreground mb-3">
-                        {formatCurrencyTHB(total)}
-                      </p>
+                      <AnimatedCurrencyCounter
+                        value={total}
+                        className="text-xl font-black text-foreground block mb-3"
+                      />
 
-                      <div className="space-y-1.5 text-xs">
+                      <div className="space-y-1.5 text-xs font-medium">
                         <div className="flex justify-between text-muted-foreground">
                           <span>{t("dashboardEarnings.settlementPayout")}</span>
-                          <span className="font-medium text-foreground">{formatCurrencyTHB(item.direct)}</span>
+                          <AnimatedCurrencyCounter value={item.direct} className="font-semibold text-foreground" />
                         </div>
                         <div className="flex justify-between text-muted-foreground">
                           <span>{t("dashboardEarnings.networkBonus")}</span>
-                          <span className="font-medium text-emerald-600 dark:text-emerald-400">
-                            +{formatCurrencyTHB(item.network)}
-                          </span>
+                          <div className="flex items-center font-bold text-brand-600 dark:text-brand-400">
+                            <span>+</span>
+                            <AnimatedCurrencyCounter value={item.network} />
+                          </div>
                         </div>
                         {item.clawback !== 0 && (
                           <div className="flex justify-between pt-1 border-t border-border/40 mt-1">
                             <span className="text-destructive/80">{t("dashboardEarnings.clawback")}</span>
-                            <span className="font-semibold text-destructive">
-                              {formatCurrencyTHB(item.clawback)}
-                            </span>
+                            <AnimatedCurrencyCounter value={item.clawback} className="font-bold text-destructive" />
                           </div>
                         )}
                         {item.withholdingTax !== undefined && (
                           <div className="flex justify-between text-muted-foreground">
                             <span>{t("dashboardEarnings.withholdingTax")}</span>
-                            <span className="font-medium text-foreground">
-                              {formatCurrencyTHB(item.withholdingTax)}
-                            </span>
+                            <AnimatedCurrencyCounter value={item.withholdingTax} className="font-semibold text-foreground" />
                           </div>
                         )}
                         {item.netPayout !== undefined && (
                           <div className="flex justify-between pt-1 border-t border-border/40 mt-1 text-muted-foreground">
-                            <span>{t("dashboardEarnings.netPayout")}</span>
-                            <span className="font-semibold text-foreground">
-                              {formatCurrencyTHB(item.netPayout)}
-                            </span>
+                            <span className="font-bold">{t("dashboardEarnings.netPayout")}</span>
+                            <AnimatedCurrencyCounter value={item.netPayout} className="font-black text-foreground" />
                           </div>
                         )}
                         {item.payoutDocument && (
-                          <div className="pt-1 text-[11px] text-muted-foreground">
+                          <div className="pt-1.5 text-[10px] font-bold text-muted-foreground/60 tracking-wider">
                             {t("dashboardEarnings.documentPrefix")} {item.payoutDocument.documentNumber}
                           </div>
                         )}
@@ -312,36 +320,37 @@ export default async function EarningsPage() {
       </div>
 
       {clawbacks.length > 0 && (
-        <Card className="border-destructive/20 bg-destructive/5 shadow-sm">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
-              <AlertCircle className="h-4 w-4 text-destructive" />
+        <Card className="border border-destructive/20 bg-destructive/5 rounded-3xl shadow-sm overflow-hidden animate-scale-in">
+          <CardHeader className="pb-3 px-5 sm:px-6">
+            <CardTitle className="text-sm font-bold flex items-center gap-2 text-foreground">
+              <AlertCircle className="h-4 w-4 text-destructive animate-pulse" />
               {t("dashboardEarnings.clawbackDetails")}
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="divide-y divide-border/40 -mx-6 px-6 sm:mx-0 sm:px-0">
+          <CardContent className="px-5 sm:px-6 pb-5 sm:pb-6">
+            <div className="divide-y divide-border/30 -mx-6 px-6 sm:mx-0 sm:px-0">
               {clawbacks.map((item, index) => (
                 <div
                   key={`${item.date}-${index}`}
                   className="flex items-start justify-between py-3 gap-3"
                 >
                   <div className="space-y-1">
-                    <p className="text-sm font-medium text-foreground leading-tight">{item.reason}</p>
-                    <p className="text-[11px] text-muted-foreground">{t("dashboardEarnings.billingPeriodPrefix")} {item.date}</p>
+                    <p className="text-sm font-bold text-foreground leading-tight">{item.reason}</p>
+                    <p className="text-[11px] font-semibold text-muted-foreground">{t("dashboardEarnings.billingPeriodPrefix")} {item.date}</p>
                   </div>
-                  <span className="text-sm font-bold text-destructive shrink-0 bg-destructive/10 px-2 py-1 rounded-md">
-                    {formatCurrencyTHB(item.amount)}
-                  </span>
+                  <AnimatedCurrencyCounter
+                    value={item.amount}
+                    className="text-sm font-black text-destructive shrink-0 bg-destructive/10 px-2.5 py-1 rounded-lg"
+                  />
                 </div>
               ))}
             </div>
-            <p className="text-[11px] text-muted-foreground mt-4 leading-relaxed">
+            <p className="text-[11px] font-semibold text-muted-foreground/60 mt-4 leading-relaxed">
               {t("dashboardEarnings.clawbackNote")}
             </p>
           </CardContent>
         </Card>
       )}
-    </div>
+    </PageTransition>
   );
 }

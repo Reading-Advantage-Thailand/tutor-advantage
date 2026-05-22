@@ -113,10 +113,12 @@ export function Sidebar({ notifications: initialNotifications }: SidebarProps) {
   };
 
   return (
-    <aside className="flex flex-col h-full w-72 bg-sidebar text-sidebar-foreground border-r border-sidebar-border/50">
+    <aside className="flex flex-col h-full w-72 bg-gradient-to-b from-sidebar via-sidebar to-brand-50/5 dark:to-brand-900/5 text-sidebar-foreground border-r border-sidebar-border/50 relative">
+      {/* Right edge gradient accent line */}
+      <div className="absolute top-0 right-0 w-[2px] h-full bg-gradient-to-b from-brand-400 via-brand-500 to-brand-600 opacity-60" aria-hidden="true" />
       {/* Logo */}
       <div className="flex items-center gap-3 px-6 py-6">
-        <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-brand-500 rounded-xl shadow-md text-white">
+        <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-brand-500 rounded-xl shadow-md shadow-brand-500/40 ring-4 ring-brand-400/20 text-white">
           <Image
             src="/icons/icon-192.png"
             alt="Tutor Advantage"
@@ -134,10 +136,12 @@ export function Sidebar({ notifications: initialNotifications }: SidebarProps) {
           </p>
         </div>
       </div>
+      {/* Gradient separator */}
+      <div className="mx-6 h-px bg-gradient-to-r from-transparent via-brand-500/30 to-transparent" aria-hidden="true" />
 
       {/* Nav */}
       <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
-        <p className="px-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-3 mt-2">
+        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground/50 mb-4 mt-4 px-4">
           Main Menu
         </p>
         {navItems.map((item) => {
@@ -154,10 +158,17 @@ export function Sidebar({ notifications: initialNotifications }: SidebarProps) {
               className={cn(
                 "flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-200 relative group",
                 active
-                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                  : "text-muted-foreground hover:bg-muted/80 hover:text-foreground",
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                  : "text-muted-foreground hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-foreground hover:translate-x-1",
               )}
             >
+              {/* Active left border indicator */}
+              {active && (
+                <span
+                  className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-full bg-primary-foreground animate-scale-in"
+                  aria-hidden="true"
+                />
+              )}
               <Icon className={cn("h-5 w-5 shrink-0 transition-transform", active ? "" : "group-hover:scale-110")} />
               <span className="flex-1">{item.label}</span>
               
@@ -179,27 +190,27 @@ export function Sidebar({ notifications: initialNotifications }: SidebarProps) {
 
       {/* Bottom actions */}
       <div className="p-4 space-y-2 mt-auto">
-        <div className="bg-muted/30 rounded-3xl p-4 border border-border/50">
+        <div className="backdrop-blur-sm bg-muted/20 rounded-3xl p-3 border border-border/30">
           <a
             href="https://lin.ee/zqTz6feg"
             target="_blank"
             rel="noopener noreferrer"
             id="nav-help"
-            className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-foreground bg-background hover:bg-brand-50 hover:text-brand-700 transition-colors shadow-sm mb-2 border border-border/50"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-2xl text-sm font-bold text-foreground bg-background hover:bg-brand-50 hover:text-brand-700 dark:hover:bg-brand-900/20 hover:shadow-md hover:border-l-2 hover:border-l-brand-500 transition-all duration-200 shadow-sm mb-2 border border-border/50"
           >
             <HelpCircle className="h-5 w-5 shrink-0 text-brand-500" />
             {t("app.contactTeam")}
           </a>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <button
               id="btn-logout"
               onClick={handleLogout}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-900/30 transition-colors"
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-2xl text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-950/20 dark:hover:bg-red-900/30 transition-all duration-200 hover:shadow-sm"
             >
               <LogOut className="h-4 w-4 shrink-0" />
               {t("app.logoutShort")}
             </button>
-            <div className="bg-background rounded-2xl p-1.5 border border-border/50 shadow-sm flex items-center justify-center">
+            <div className="bg-background/80 rounded-2xl p-1 border border-border/30 shadow-sm flex items-center justify-center">
               <ThemeToggle />
             </div>
           </div>

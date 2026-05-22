@@ -1,9 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { studentApi } from "@/lib/api";
-import { Flame, Clock, BookOpen, Target, Lock, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  AlertCircle,
+  BookOpen,
+  CheckCircle2,
+  Clock,
+  Flag,
+  Flame,
+  Lock,
+  Map,
+  PlayCircle,
+  Sparkles,
+  Target,
+  Trophy,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 
@@ -39,6 +53,280 @@ interface ProgressData {
   stats: ProgressStats;
   weeklyActivity: WeeklyActivity[];
   articles: ProgressArticle[];
+}
+
+const mapCopy = {
+  title: "แผนที่การเรียน",
+  subtitle: "เดินทางผ่านบทเรียนทีละ checkpoint",
+  current: "บทปัจจุบัน",
+  completed: "ผ่านแล้ว",
+  locked: "รอปลดล็อก",
+  milestone: "Milestone",
+  finalGoal: "ปลายทาง",
+  tapToRead: "แตะเพื่ออ่าน",
+};
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function getJourneyState(articles: ProgressArticle[]) {
+  const firstIncompleteIndex = articles.findIndex((article) => !article.done);
+  const currentIndex =
+    articles.length === 0
+      ? -1
+      : firstIncompleteIndex >= 0
+        ? firstIncompleteIndex
+        : articles.length - 1;
+
+  return { currentIndex };
+}
+
+function getMilestoneLabel(article: ProgressArticle, index: number, total: number) {
+  if (index === total - 1) return mapCopy.finalGoal;
+  if ((article.no || index + 1) % 5 === 0) return mapCopy.milestone;
+  return null;
+}
+
+function LearningJourneyMap({
+  articles,
+  seriesColor,
+}: {
+  articles: ProgressArticle[];
+  seriesColor: string;
+}) {
+  const { currentIndex } = getJourneyState(articles);
+  const visibleArticles = articles.slice(0, Math.max(articles.length, 1));
+
+  if (articles.length === 0) {
+    return (
+      <section className="glass-card" style={{ padding: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+          <Map size={19} style={{ color: "var(--brand-600)" }} />
+          <h3 style={{ fontSize: "1rem", fontWeight: 800, color: "var(--text-primary)" }}>
+            {mapCopy.title}
+          </h3>
+        </div>
+        <p style={{ color: "var(--text-tertiary)", fontSize: "0.8125rem" }}>
+          {t("progress.noData")}
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section
+      aria-labelledby="learning-journey-title"
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        borderRadius: "var(--radius-2xl)",
+        background:
+          "linear-gradient(180deg, var(--surface-card), var(--surface-elevated))",
+        border: "1px solid var(--surface-border)",
+        boxShadow: "var(--shadow-sm)",
+      }}
+    >
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage:
+            "radial-gradient(circle at 18% 14%, rgba(6,199,85,0.08) 0 8px, transparent 9px), radial-gradient(circle at 82% 20%, rgba(59,130,246,0.08) 0 10px, transparent 11px), radial-gradient(circle at 72% 82%, rgba(245,158,11,0.10) 0 12px, transparent 13px)",
+          pointerEvents: "none",
+        }}
+      />
+
+      <div style={{ position: "relative", padding: "20px 16px 18px" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 16 }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 3 }}>
+              <div
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: 12,
+                  background: "var(--brand-50)",
+                  border: "1px solid var(--brand-100)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Map size={18} style={{ color: "var(--brand-600)" }} />
+              </div>
+              <h3 id="learning-journey-title" style={{ fontSize: "1rem", fontWeight: 800, color: "var(--text-primary)" }}>
+                {mapCopy.title}
+              </h3>
+            </div>
+            <p style={{ color: "var(--text-tertiary)", fontSize: "0.75rem", marginLeft: 43 }}>
+              {mapCopy.subtitle}
+            </p>
+          </div>
+          <div style={{ flexShrink: 0, textAlign: "right" }}>
+            <div style={{ fontSize: "1.25rem", lineHeight: 1, fontWeight: 900, color: seriesColor }}>
+              {clamp(currentIndex + 1, 0, articles.length)}
+            </div>
+            <div style={{ fontSize: "0.625rem", color: "var(--text-tertiary)", fontWeight: 700 }}>
+              / {articles.length}
+            </div>
+          </div>
+        </div>
+
+        <div style={{ position: "relative", padding: "4px 0 2px" }}>
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              top: 24,
+              bottom: 24,
+              left: "50%",
+              width: 4,
+              transform: "translateX(-50%)",
+              borderRadius: "var(--radius-full)",
+              background:
+                "linear-gradient(180deg, rgba(6,199,85,0.35), rgba(59,130,246,0.18), rgba(245,158,11,0.22))",
+            }}
+          />
+
+          {visibleArticles.map((article, index) => {
+            const isComplete = article.done;
+            const isCurrent = index === currentIndex && !article.done;
+            const isUnlocked = index <= currentIndex || isComplete;
+            const isLeft = index % 2 === 0;
+            const milestone = getMilestoneLabel(article, index, visibleArticles.length);
+            const titleColor = isUnlocked ? "var(--text-primary)" : "var(--text-tertiary)";
+            const checkpointBg = isComplete
+              ? "var(--brand-500)"
+              : isCurrent
+                ? "var(--surface-card)"
+                : "var(--neutral-100)";
+            const checkpointBorder = isComplete
+              ? "var(--brand-500)"
+              : isCurrent
+                ? seriesColor
+                : "var(--neutral-200)";
+
+            const checkpoint = (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 54px 1fr",
+                  alignItems: "center",
+                  minHeight: 82,
+                  position: "relative",
+                }}
+              >
+                <div style={{ gridColumn: isLeft ? "1" : "3", justifySelf: isLeft ? "end" : "start", width: "min(100%, 170px)" }}>
+                  <div
+                    style={{
+                      padding: "10px 11px",
+                      borderRadius: 14,
+                      background: "var(--surface-card)",
+                      border: isCurrent ? `1.5px solid ${seriesColor}` : "1px solid var(--surface-border)",
+                      boxShadow: isCurrent ? "0 10px 24px rgba(6,199,85,0.18)" : "0 5px 14px rgba(15,23,42,0.05)",
+                      transform: isCurrent ? "translateY(-1px)" : "none",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                      {milestone ? (
+                        <Trophy size={13} style={{ color: "var(--accent-amber)" }} />
+                      ) : isCurrent ? (
+                        <Sparkles size={13} style={{ color: seriesColor }} />
+                      ) : (
+                        <BookOpen size={13} style={{ color: isUnlocked ? "var(--brand-600)" : "var(--neutral-300)" }} />
+                      )}
+                      <span style={{ color: isCurrent ? seriesColor : "var(--text-tertiary)", fontSize: "0.625rem", fontWeight: 800 }}>
+                        {milestone || (isCurrent ? mapCopy.current : `${t("progress.articleUnit")} ${article.no}`)}
+                      </span>
+                    </div>
+                    <div
+                      className="line-clamp-2"
+                      style={{
+                        color: titleColor,
+                        fontSize: "0.8125rem",
+                        fontWeight: 750,
+                        lineHeight: 1.35,
+                        minHeight: 35,
+                      }}
+                    >
+                      {article.title}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 7, color: isUnlocked ? "var(--text-tertiary)" : "var(--neutral-300)", fontSize: "0.625rem", fontWeight: 700 }}>
+                      {isComplete ? (
+                        <>
+                          <CheckCircle2 size={11} />
+                          {mapCopy.completed}
+                        </>
+                      ) : isCurrent ? (
+                        <>
+                          <PlayCircle size={11} />
+                          {mapCopy.tapToRead}
+                        </>
+                      ) : (
+                        <>
+                          <Lock size={11} />
+                          {mapCopy.locked}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    gridColumn: "2",
+                    justifySelf: "center",
+                    width: 48,
+                    height: 48,
+                    borderRadius: "50%",
+                    background: checkpointBg,
+                    border: `3px solid ${checkpointBorder}`,
+                    color: isComplete ? "#fff" : isCurrent ? seriesColor : "var(--neutral-400)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: isCurrent
+                      ? "0 0 0 6px rgba(6,199,85,0.10), 0 8px 18px rgba(6,199,85,0.22)"
+                      : "0 4px 12px rgba(15,23,42,0.08)",
+                    zIndex: 1,
+                    fontSize: "0.8125rem",
+                    fontWeight: 900,
+                  }}
+                >
+                  {isComplete ? (
+                    <CheckCircle2 size={21} />
+                  ) : milestone && isUnlocked ? (
+                    <Flag size={19} />
+                  ) : isUnlocked ? (
+                    article.no
+                  ) : (
+                    <Lock size={17} />
+                  )}
+                </div>
+              </div>
+            );
+
+            return isUnlocked ? (
+              <Link
+                href={`/student/read/${article.id}`}
+                key={article.id}
+                aria-label={`${mapCopy.tapToRead}: ${article.title}`}
+                style={{ display: "block", textDecoration: "none", WebkitTapHighlightColor: "transparent" }}
+              >
+                {checkpoint}
+              </Link>
+            ) : (
+              <div key={article.id} aria-disabled="true">
+                {checkpoint}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 export default function ProgressPage() {
@@ -145,6 +433,8 @@ export default function ProgressPage() {
             </div>
           </div>
         </div>
+
+        <LearningJourneyMap articles={articles} seriesColor={stats.seriesColor} />
 
         {/* Stat chips */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>

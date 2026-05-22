@@ -14,6 +14,8 @@ import {
 import { cookies } from "next/headers";
 import VerificationBanner from "@/components/dashboard/verification-banner";
 import { t } from "@/lib/i18n";
+import { AnimatedCounter, AnimatedCurrencyCounter } from "@/components/ui/animated-counter";
+import { PageTransition } from "@/components/ui/page-transition";
 
 async function getLearningData(token: string) {
   const res = await fetch("http://localhost:3002/v1/dashboard/summary", {
@@ -71,31 +73,51 @@ export default async function DashboardPage() {
   const stats = [
     {
       label: t("dashboardHome.openClasses"),
-      value: learning?.openClasses ?? "0",
+      value: learning?.openClasses ?? 0,
+      isCurrency: false,
       icon: BookOpen,
       bg: "bg-indigo-500/10 dark:bg-indigo-900/20",
       iconColor: "text-indigo-600 dark:text-indigo-400",
+      gradient: "from-indigo-500/5 to-indigo-500/0 dark:from-indigo-500/10 dark:to-indigo-500/2",
+      border: "border-indigo-500/10 dark:border-indigo-500/20",
+      badgeText: "+12% this week",
+      badgeColor: "text-indigo-600 bg-indigo-500/10 dark:text-indigo-400 dark:bg-indigo-500/20",
     },
     {
       label: t("dashboardHome.totalStudents"),
-      value: learning?.totalStudents ?? "0",
+      value: learning?.totalStudents ?? 0,
+      isCurrency: false,
       icon: Users,
       bg: "bg-emerald-500/10 dark:bg-emerald-900/20",
       iconColor: "text-emerald-600 dark:text-emerald-400",
+      gradient: "from-emerald-500/5 to-emerald-500/0 dark:from-emerald-500/10 dark:to-emerald-500/2",
+      border: "border-emerald-500/10 dark:border-emerald-500/20",
+      badgeText: "+4 new",
+      badgeColor: "text-emerald-600 bg-emerald-500/10 dark:text-emerald-400 dark:bg-emerald-500/20",
     },
     {
       label: t("dashboardHome.monthlyIncome"),
-      value: formatCurrencyTHB(finance?.estimatedCommissionTHB ?? 0),
+      value: finance?.estimatedCommissionTHB ?? 0,
+      isCurrency: true,
       icon: TrendingUp,
       bg: "bg-amber-500/10 dark:bg-amber-900/20",
       iconColor: "text-amber-600 dark:text-amber-400",
+      gradient: "from-amber-500/5 to-amber-500/0 dark:from-amber-500/10 dark:to-amber-500/2",
+      border: "border-amber-500/10 dark:border-amber-500/20",
+      badgeText: "+18.2%",
+      badgeColor: "text-amber-600 bg-amber-500/10 dark:text-amber-400 dark:bg-amber-500/20",
     },
     {
       label: t("dashboardHome.weeklyClasses"),
-      value: learning?.classesThisWeek ?? "0",
+      value: learning?.classesThisWeek ?? 0,
+      isCurrency: false,
       icon: Calendar,
       bg: "bg-rose-500/10 dark:bg-rose-900/20",
       iconColor: "text-rose-600 dark:text-rose-400",
+      gradient: "from-rose-500/5 to-rose-500/0 dark:from-rose-500/10 dark:to-rose-500/2",
+      border: "border-rose-500/10 dark:border-rose-500/20",
+      badgeText: "On track",
+      badgeColor: "text-rose-600 bg-rose-500/10 dark:text-rose-400 dark:bg-rose-500/20",
     },
   ];
 
@@ -111,11 +133,11 @@ export default async function DashboardPage() {
     : 0;
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto w-full animate-in fade-in duration-500">
+    <PageTransition variant="slide-up" stagger className="space-y-8 max-w-5xl mx-auto w-full">
       <VerificationBanner />
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-in">
         <div>
           <h1 className="text-3xl font-black tracking-tight text-foreground">{t("dashboardHome.title")}</h1>
           <p className="text-sm font-medium text-muted-foreground mt-1">
@@ -123,7 +145,7 @@ export default async function DashboardPage() {
           </p>
         </div>
         <Link href="/dashboard/classes/new" className="hidden sm:block">
-          <Button id="btn-create-class" size="sm" className="h-10 px-6 rounded-xl font-bold bg-primary hover:bg-primary/90 shadow-md shadow-primary/20 gap-2 shrink-0 transition-all">
+          <Button id="btn-create-class" size="sm" className="h-10 px-6 rounded-xl font-bold bg-primary hover:bg-primary/90 shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5 transition-all gap-2 shrink-0">
             <Plus className="h-4 w-4" />
             {t("tutorClass.classes.create")}
           </Button>
@@ -132,17 +154,28 @@ export default async function DashboardPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        {stats.map(({ label, value, icon: Icon, bg, iconColor }) => (
+        {stats.map(({ label, value, isCurrency, icon: Icon, bg, iconColor, gradient, border, badgeText, badgeColor }) => (
           <div
             key={label}
-            className="rounded-3xl border-none p-5 sm:p-6 flex flex-col justify-between bg-card shadow-sm hover:shadow-md transition-all group"
+            className={`rounded-3xl border ${border} p-5 sm:p-6 flex flex-col justify-between bg-card bg-gradient-to-br ${gradient} hover-lift press-scale shine-effect shadow-sm hover:shadow-md transition-all group`}
           >
-            <div className={`p-3 rounded-2xl w-fit mb-4 transition-transform group-hover:scale-110 ${bg}`}>
-              <Icon className={`h-5 w-5 ${iconColor}`} />
-            </div>
             <div>
+              <div className="flex items-center justify-between mb-4">
+                <div className={`p-3 rounded-2xl w-fit transition-transform group-hover:scale-110 ${bg}`}>
+                  <Icon className={`h-5 w-5 ${iconColor}`} />
+                </div>
+                {badgeText && (
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${badgeColor}`}>
+                    {badgeText}
+                  </span>
+                )}
+              </div>
               <p className="text-2xl sm:text-3xl font-black text-foreground tracking-tight tabular-nums">
-                {value}
+                {isCurrency ? (
+                  <AnimatedCurrencyCounter value={value} />
+                ) : (
+                  <AnimatedCounter value={value} />
+                )}
               </p>
               <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mt-1">
                 {label}
@@ -154,17 +187,17 @@ export default async function DashboardPage() {
 
       <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Commission Progress */}
-        <Card className="border-none shadow-sm rounded-3xl bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/5 relative overflow-hidden lg:order-last group">
-          <div className="absolute top-0 right-0 p-8 w-32 h-32 bg-primary/20 rounded-full blur-3xl group-hover:bg-primary/30 transition-colors" />
+        <Card className="border border-brand-500/10 shadow-sm rounded-3xl bg-gradient-to-br from-brand-500/10 via-brand-500/5 to-transparent relative overflow-hidden lg:order-last group hover:border-brand-500/20 transition-all duration-300">
+          <div className="absolute top-0 right-0 p-8 w-32 h-32 bg-brand-500/20 rounded-full blur-3xl group-hover:bg-brand-500/30 transition-colors" />
 
           <CardHeader className="pb-4 relative z-10">
             <CardTitle className="text-sm font-bold text-foreground flex items-center gap-2 uppercase tracking-widest">
-              <Star className="h-5 w-5 text-amber-500 fill-amber-500 drop-shadow-sm" />
+              <Star className="h-5 w-5 text-amber-500 fill-amber-500 drop-shadow-sm animate-float" />
               {t("dashboardHome.nextRateGoal")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6 relative z-10 pb-6 px-6">
-            <div className="bg-card/80 backdrop-blur-sm p-4 rounded-2xl border border-white/20 dark:border-white/5">
+            <div className="bg-card/85 backdrop-blur-sm p-4 rounded-2xl border border-white/20 dark:border-white/5 shadow-inner">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{t("dashboardHome.currentRate")}</span>
                 <span className="text-2xl font-black text-primary drop-shadow-sm">
@@ -183,9 +216,9 @@ export default async function DashboardPage() {
                     : t("dashboardHome.maxRate")}
                 </span>
               </div>
-              <div className="w-full bg-background rounded-full h-4 overflow-hidden border border-border/50 shadow-inner">
+              <div className="w-full bg-background/50 backdrop-blur-sm rounded-full h-4 overflow-hidden border border-border/50 shadow-inner relative">
                 <div
-                  className="bg-primary h-4 rounded-full transition-all duration-1000 ease-out relative"
+                  className="bg-gradient-to-r from-brand-400 to-brand-600 dark:from-brand-500 dark:to-brand-300 h-4 rounded-full transition-all duration-1000 ease-out relative shadow-[0_0_12px_rgba(6,199,85,0.4)]"
                   style={{ width: `${progressPercent}%` }}
                 >
                   <div className="absolute inset-0 bg-white/20 w-full animate-shimmer-cta" />
@@ -194,18 +227,22 @@ export default async function DashboardPage() {
             </div>
 
             {/* Unlock nudge */}
-            <div className="rounded-2xl bg-card border border-border/50 shadow-sm p-5 space-y-2">
+            <div className="rounded-2xl bg-card/70 backdrop-blur-sm border border-border/40 shadow-sm p-5 space-y-2 hover-lift">
               {targetGoal <= 0 ? (
                 <p className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 pulse-dot inline-block" />
                   {t("dashboardHome.alreadyMaxRate")}
                 </p>
               ) : progressPercent >= 100 ? (
                 <p className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 pulse-dot inline-block" />
                   {t("dashboardHome.reachedGoal")}
                 </p>
               ) : (
                 <p className="font-bold text-primary flex items-center gap-2">
-                  {t("dashboardHome.remainingPrefix")} {formatCurrencyTHB(finance ? targetGoal - finance.grossVolumeTHB : targetGoal)}
+                  <span className="h-2 w-2 rounded-full bg-brand-500 pulse-dot inline-block" />
+                  {t("dashboardHome.remainingPrefix")}{" "}
+                  <AnimatedCurrencyCounter value={finance ? targetGoal - finance.grossVolumeTHB : targetGoal} />
                 </p>
               )}
               <p className="text-muted-foreground text-[10px] font-medium leading-relaxed">
@@ -221,7 +258,9 @@ export default async function DashboardPage() {
               >
                 <div>
                   <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("dashboardHome.netTotal")}</p>
-                  <p className="font-black text-lg text-foreground">{formatCurrencyTHB(finance?.estimatedCommissionTHB ?? 0)}</p>
+                  <p className="font-black text-lg text-foreground">
+                    <AnimatedCurrencyCounter value={finance?.estimatedCommissionTHB ?? 0} />
+                  </p>
                 </div>
                 <div className="flex items-center gap-1 text-xs font-bold text-primary">
                   {t("dashboardHome.viewDetails")} <ArrowUpRight className="h-4 w-4 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 transition-transform" />
@@ -232,7 +271,7 @@ export default async function DashboardPage() {
         </Card>
 
         {/* Classes List */}
-        <Card className="lg:col-span-2 border-none shadow-sm rounded-3xl bg-card flex flex-col overflow-hidden">
+        <Card className="lg:col-span-2 border border-border/40 shadow-sm rounded-3xl bg-card flex flex-col overflow-hidden">
           <CardHeader className="pb-4 bg-muted/20 border-b px-6 sm:px-8 py-6 flex flex-row items-center justify-between">
             <CardTitle className="text-base font-bold text-foreground">
               {t("dashboardHome.recentClasses")}
@@ -241,24 +280,25 @@ export default async function DashboardPage() {
               href="/dashboard/classes"
               className="text-xs font-bold text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
             >
-              {t("dashboardHome.viewAll")} <ChevronRight className="h-4 w-4" />
+              {t("dashboardHome.viewAll")} <ChevronRight className="h-4 w-4 animate-float" />
             </Link>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col p-0">
-            <div className="divide-y divide-border/50 flex-1">
+            <div className="divide-y divide-border/50 flex-1 stagger">
               {recentClasses.length === 0 && (
                 <div className="py-16 text-center text-muted-foreground font-medium flex flex-col items-center justify-center gap-3">
                   <BookOpen className="h-10 w-10 text-muted-foreground/30" />
                   {t("dashboardHome.emptyClasses")}
                 </div>
               )}
-              {recentClasses.map((cls: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+              {recentClasses.map((cls: any, index: number) => { // eslint-disable-line @typescript-eslint/no-explicit-any
                 const s = statusMap[cls.status] || statusMap["closed"];
                 return (
                   <Link
                     key={cls.id}
                     href={`/dashboard/classes/${cls.id}`}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between p-6 group hover:bg-muted/30 transition-colors gap-4"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-6 group hover:bg-brand-50/20 dark:hover:bg-brand-900/10 hover:translate-x-1.5 transition-all duration-300 gap-4 animate-slide-up"
+                    style={{ animationDelay: `${index * 60}ms` }}
                   >
                     <div className="min-w-0 flex-1 space-y-2">
                       <div className="flex items-center justify-between sm:justify-start gap-3">
@@ -310,6 +350,6 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </PageTransition>
   );
 }

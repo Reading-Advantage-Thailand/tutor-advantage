@@ -44,6 +44,25 @@ class SettlementService {
             const currentVol = tutorVolumes.get(tutorId) || 0n;
             tutorVolumes.set(tutorId, currentVol + payment.amountMinor);
         }
+        const approvedAdjustments = await database_1.prisma.adjustment.findMany({
+            where: {
+                status: "APPROVED",
+                settlementRun: {
+                    periodMonth,
+                },
+            },
+            select: {
+                adjustmentId: true,
+                tutorUserId: true,
+                amountMinor: true,
+                reason: true,
+            },
+        });
+        const adjustmentTotals = new Map();
+        for (const adjustment of approvedAdjustments) {
+            adjustmentTotals.set(adjustment.tutorUserId, (adjustmentTotals.get(adjustment.tutorUserId) || 0n) +
+                adjustment.amountMinor);
+        }
         // 3. Build the organizational tree to calculate Group Volume (GV) and Payouts
         // For a real MLM tree, we need the upline structure.
         const allUsers = await database_1.prisma.user.findMany({
@@ -61,6 +80,19 @@ class SettlementService {
                 payoutAmountMinor: 0n,
                 eligibilityStatus: "ELIGIBLE_BASE",
             });
+        }
+        for (const [tutorUserId] of adjustmentTotals) {
+            if (!nodes.has(tutorUserId)) {
+                nodes.set(tutorUserId, {
+                    userId: tutorUserId,
+                    sponsorId: null,
+                    personalVolumeMinor: 0n,
+                    groupVolumeMinor: 0n,
+                    payoutRate: 0,
+                    payoutAmountMinor: 0n,
+                    eligibilityStatus: "ADJUSTMENT_ONLY",
+                });
+            }
         }
         // 4. Graph traversal for accurate GV and Payout calculation.
         const childMap = new Map();
@@ -114,7 +146,6 @@ class SettlementService {
                 node.eligibilityStatus = "ELIGIBLE";
             }
             node.payoutAmountMinor = payoutForMe;
-            totalPayoutSatang += payoutForMe;
             return payoutForMe;
         };
         // Find roots again and start the top-down payout calculation
@@ -129,23 +160,41 @@ class SettlementService {
                 periodMonth,
                 status: "DRAFT",
                 createdBy,
-                previewPayload: {}, // Store stringified generic info if needed
+                previewPayload: {
+                    paymentCount: payments.length,
+                    approvedAdjustmentCount: approvedAdjustments.length,
+                    approvedAdjustmentTotalSatang: approvedAdjustments
+                        .reduce((sum, adjustment) => sum + adjustment.amountMinor, 0n)
+                        .toString(),
+                },
             },
         });
         // Bulk insert payout lines
         for (const node of nodes.values()) {
-            if (node.payoutAmountMinor > 0n || node.groupVolumeMinor > 0n) {
-                const tax = (0, taxService_1.calculateWithholdingTax)(node.payoutAmountMinor);
+            const adjustmentMinor = adjustmentTotals.get(node.userId) || 0n;
+            const adjustedPayoutMinor = node.payoutAmountMinor + adjustmentMinor;
+            if (adjustedPayoutMinor !== 0n ||
+                node.groupVolumeMinor > 0n ||
+                adjustmentMinor !== 0n) {
+                const tax = adjustedPayoutMinor > 0n
+                    ? (0, taxService_1.calculateWithholdingTax)(adjustedPayoutMinor)
+                    : {
+                        withholdingTaxMinor: 0n,
+                        netPayoutMinor: adjustedPayoutMinor,
+                    };
+                totalPayoutSatang += adjustedPayoutMinor;
                 await database_1.prisma.payoutLine.create({
                     data: {
                         settlementRunId: run.settlementRunId,
                         tutorUserId: node.userId,
                         grossVolumeMinor: node.groupVolumeMinor,
                         payoutRate: new client_1.Prisma.Decimal(node.payoutRate),
-                        payoutAmountMinor: node.payoutAmountMinor,
+                        payoutAmountMinor: adjustedPayoutMinor,
                         withholdingTaxMinor: tax.withholdingTaxMinor,
                         netPayoutMinor: tax.netPayoutMinor,
-                        eligibilityStatus: node.eligibilityStatus,
+                        eligibilityStatus: adjustmentMinor !== 0n
+                            ? `${node.eligibilityStatus}_ADJUSTED`
+                            : node.eligibilityStatus,
                     },
                 });
             }

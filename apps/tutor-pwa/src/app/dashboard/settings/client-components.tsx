@@ -125,14 +125,15 @@ export function VerificationRow({ user }: { user: any }) {
       <div 
         id="verify"
         className={cn(
-          "space-y-3 p-4 sm:p-5 transition-all duration-500 scroll-mt-20",
-          isHighlighted ? "bg-primary/10 ring-2 ring-primary/40 animate-pulse" : "hover:bg-muted/30"
+          "space-y-3 p-4 sm:p-5 transition-all duration-500 scroll-mt-20 relative group",
+          isHighlighted ? "bg-primary/10 ring-2 ring-primary/40 animate-pulse" : "hover:bg-brand-500/2 dark:hover:bg-brand-500/4"
         )}
       >
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-brand-500 transition-all duration-300" />
         <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <div className={cn(
-            "w-10 h-10 rounded-lg flex items-center justify-center shrink-0",
+            "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300",
             status === "REJECTED" ? "bg-destructive/10" : "bg-orange-500/10"
           )}>
             <ShieldCheck className={cn(
@@ -141,9 +142,9 @@ export function VerificationRow({ user }: { user: any }) {
             )} />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-medium text-foreground">{t("dashboardSettings.payoutStatusTitle")}</p>
+            <p className="text-sm font-bold text-foreground">{t("dashboardSettings.payoutStatusTitle")}</p>
             <p className={cn(
-              "text-xs truncate",
+              "text-xs font-semibold truncate mt-0.5",
               status === "REJECTED" ? "text-destructive" : "text-muted-foreground"
             )}>
               {getStatusText()}
@@ -156,7 +157,7 @@ export function VerificationRow({ user }: { user: any }) {
             variant={status === "REJECTED" ? "destructive" : "default"}
             onClick={() => setShowVerification(true)}
             className={cn(
-              "h-8 text-xs px-3 whitespace-nowrap shadow-sm",
+              "h-8 text-xs font-bold px-4 rounded-xl whitespace-nowrap shadow-sm hover-lift press-scale",
               status !== "REJECTED" && status !== "PENDING" && "bg-orange-500 hover:bg-orange-600 text-white"
             )}
           >
@@ -165,10 +166,10 @@ export function VerificationRow({ user }: { user: any }) {
         </div>
         </div>
         {rejectedFields.length > 0 && (
-          <div className="space-y-1 rounded-md border border-destructive/30 bg-destructive/5 p-3">
+          <div className="space-y-1 rounded-xl border border-destructive/20 bg-destructive/5 p-3 sm:mx-2 animate-scale-in">
             {rejectedFields.map((item) => (
-              <p key={item.field} className="text-xs text-destructive">
-                <span className="font-medium">{item.label}:</span> {item.comment}
+              <p key={item.field} className="text-xs text-destructive font-semibold">
+                <span className="font-bold">{item.label}:</span> {item.comment}
               </p>
             ))}
           </div>
@@ -201,16 +202,17 @@ function SoundToggleRow() {
   };
 
   return (
-    <div className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors">
+    <div className="flex items-center justify-between p-4 sm:p-5 hover:bg-brand-500/2 dark:hover:bg-brand-500/4 transition-all duration-300 relative group">
+      <div className="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-brand-500 transition-all duration-300" />
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
+        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
           {isMuted ? <VolumeX className="h-5 w-5 text-emerald-500" /> : <Volume2 className="h-5 w-5 text-emerald-500" />}
         </div>
         <div>
-          <p className="text-sm font-medium text-foreground">
+          <p className="text-sm font-bold text-foreground">
             {t("dashboardSettings.appSoundTitle")}
           </p>
-          <p className="text-xs text-muted-foreground">{t("dashboardSettings.appSoundDescription")}</p>
+          <p className="text-xs font-semibold text-muted-foreground/75 mt-0.5">{t("dashboardSettings.appSoundDescription")}</p>
         </div>
       </div>
       <div>
@@ -234,16 +236,17 @@ function ThemeToggleRow() {
   const isDark = mounted ? resolvedTheme === "dark" : false;
 
   return (
-    <div className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors">
+    <div className="flex items-center justify-between p-4 sm:p-5 hover:bg-brand-500/2 dark:hover:bg-brand-500/4 transition-all duration-300 relative group">
+      <div className="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-brand-500 transition-all duration-300" />
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0">
+        <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
           {(!mounted || !isDark) ? <Sun className="h-5 w-5 text-indigo-500" /> : <Moon className="h-5 w-5 text-indigo-500" />}
         </div>
         <div>
-          <p className="text-sm font-medium text-foreground">
+          <p className="text-sm font-bold text-foreground">
             {t("dashboardSettings.themeTitle")}
           </p>
-          <p className="text-xs text-muted-foreground">{t("dashboardSettings.themeDescription")}</p>
+          <p className="text-xs font-semibold text-muted-foreground/75 mt-0.5">{t("dashboardSettings.themeDescription")}</p>
         </div>
       </div>
       <div>
@@ -282,14 +285,15 @@ export function EditableSettingToggle({ title, description, iconName, value, set
   };
 
   return (
-    <div className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors">
+    <div className="flex items-center justify-between p-4 sm:p-5 hover:bg-brand-500/2 dark:hover:bg-brand-500/4 transition-all duration-300 relative group">
+      <div className="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-brand-500 transition-all duration-300" />
       <div className="flex items-center gap-3">
-        <div className={`w-10 h-10 rounded-lg ${iconBgClass} flex items-center justify-center shrink-0`}>
+        <div className={`w-10 h-10 rounded-xl ${iconBgClass} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300`}>
           <Icon className={`h-5 w-5 ${iconColorClass}`} />
         </div>
         <div>
-          <p className="text-sm font-medium text-foreground">{title}</p>
-          <p className="text-xs text-muted-foreground">{description}</p>
+          <p className="text-sm font-bold text-foreground">{title}</p>
+          <p className="text-xs font-semibold text-muted-foreground/75 mt-0.5">{description}</p>
         </div>
       </div>
       <div>
@@ -343,13 +347,13 @@ export function EditableSettingText({ title, description, iconName, value, setti
 
   if (isEditing) {
     return (
-      <div className="p-4 sm:p-5 bg-muted/10 transition-colors">
+      <div className="p-4 sm:p-5 bg-brand-500/5 dark:bg-brand-500/10 border-l-4 border-l-brand-500 transition-all duration-300 animate-scale-in">
         <div className="flex items-center gap-3 mb-3">
-          <div className={`w-10 h-10 rounded-lg ${iconBgClass} flex items-center justify-center shrink-0`}>
+          <div className={`w-10 h-10 rounded-xl ${iconBgClass} flex items-center justify-center shrink-0`}>
             <Icon className={`h-5 w-5 ${iconColorClass}`} />
           </div>
           <div>
-            <p className="text-sm font-medium text-foreground">{title}</p>
+            <p className="text-sm font-bold text-foreground">{title}</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -358,13 +362,13 @@ export function EditableSettingText({ title, description, iconName, value, setti
             onChange={(e) => setInputValue(e.target.value)} 
             placeholder={placeholder}
             disabled={isPending}
-            className="flex-1"
+            className="flex-1 rounded-xl focus-visible:ring-brand-500/30 focus-visible:border-brand-500"
             autoFocus
           />
-          <Button size="icon" variant="ghost" onClick={handleCancel} disabled={isPending}>
+          <Button size="icon" variant="ghost" className="rounded-xl hover:bg-muted/50" onClick={handleCancel} disabled={isPending}>
             <X className="h-4 w-4" />
           </Button>
-          <Button size="icon" onClick={handleSave} disabled={isPending}>
+          <Button size="icon" className="rounded-xl bg-brand-500 hover:bg-brand-600 text-white shadow-sm" onClick={handleSave} disabled={isPending}>
             <Save className="h-4 w-4" />
           </Button>
         </div>
@@ -374,19 +378,20 @@ export function EditableSettingText({ title, description, iconName, value, setti
 
   return (
     <div 
-      className="flex items-center justify-between p-4 sm:p-5 hover:bg-muted/30 transition-colors group cursor-pointer"
+      className="flex items-center justify-between p-4 sm:p-5 hover:bg-brand-500/2 dark:hover:bg-brand-500/4 transition-all duration-300 group cursor-pointer relative"
       onClick={handleStartEditing}
     >
+      <div className="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-brand-500 transition-all duration-300" />
       <div className="flex items-center gap-3">
-        <div className={`w-10 h-10 rounded-lg ${iconBgClass} flex items-center justify-center shrink-0`}>
+        <div className={`w-10 h-10 rounded-xl ${iconBgClass} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300`}>
           <Icon className={`h-5 w-5 ${iconColorClass}`} />
         </div>
         <div>
-          <p className="text-sm font-medium text-foreground">{title}</p>
-          <p className="text-xs text-muted-foreground">{text || description}</p>
+          <p className="text-sm font-bold text-foreground">{title}</p>
+          <p className="text-xs font-semibold text-muted-foreground/75 mt-0.5">{text || description}</p>
         </div>
       </div>
-      <ChevronRight className="h-5 w-5 text-muted-foreground/40 group-hover:text-foreground transition-colors" />
+      <ChevronRight className="h-5 w-5 text-muted-foreground/40 group-hover:text-foreground transition-colors group-hover:translate-x-1 duration-300" />
     </div>
   );
 }

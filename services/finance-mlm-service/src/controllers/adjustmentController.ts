@@ -2,6 +2,21 @@ import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 
+function canCreateAdjustment(role?: string) {
+  return role === "ADMIN" || role === "FINANCE_MAKER";
+}
+
+function canCheckAdjustment(role?: string) {
+  return role === "ADMIN" || role === "FINANCE_CHECKER";
+}
+
+function normalizeAmountSatang(value: unknown) {
+  if (typeof value === "bigint") return value;
+  if (typeof value === "number" && Number.isInteger(value)) return BigInt(value);
+  if (typeof value === "string" && /^-?\d+$/.test(value)) return BigInt(value);
+  throw new Error("INVALID_AMOUNT");
+}
+
 /**
  * GET /v1/adjustments?status=PENDING
  */
@@ -103,9 +118,13 @@ export async function createAdjustment(
 ) {
   try {
     const userId = req.user?.userId;
-    if (!userId || req.user?.role !== "ADMIN") {
+    if (!userId || !canCreateAdjustment(req.user?.role)) {
       return res.status(403).json({
-        error: { code: "FORBIDDEN", message: "Admins only", requestId: req.id },
+        error: {
+          code: "FORBIDDEN",
+          message: "Only finance makers or admins can create adjustments",
+          requestId: req.id,
+        },
       });
     }
 
@@ -116,6 +135,29 @@ export async function createAdjustment(
         error: {
           code: "BAD_REQUEST",
           message: "tutorUserId, periodMonth, amountSatang, reason required",
+          requestId: req.id,
+        },
+      });
+    }
+
+    let normalizedAmount: bigint;
+    try {
+      normalizedAmount = normalizeAmountSatang(amountSatang);
+    } catch {
+      return res.status(400).json({
+        error: {
+          code: "INVALID_AMOUNT",
+          message: "amountSatang must be an integer in Satang",
+          requestId: req.id,
+        },
+      });
+    }
+
+    if (normalizedAmount === 0n) {
+      return res.status(400).json({
+        error: {
+          code: "INVALID_AMOUNT",
+          message: "amountSatang cannot be zero",
           requestId: req.id,
         },
       });
@@ -142,7 +184,7 @@ export async function createAdjustment(
       data: {
         settlementRunId: run.settlementRunId,
         tutorUserId,
-        amountMinor: BigInt(amountSatang),
+        amountMinor: normalizedAmount,
         reason,
         createdBy: userId,
       },
@@ -155,7 +197,7 @@ export async function createAdjustment(
         action: "ADJUST_CREATE",
         entityType: "Adjustment",
         entityId: adj.adjustmentId,
-        payload: { amountSatang, reason, periodMonth },
+        payload: { amountSatang: normalizedAmount.toString(), reason, periodMonth },
       },
     });
 
@@ -186,6 +228,16 @@ export async function approveAdjustment(
   const userId = req.user?.userId;
 
   try {
+    if (!userId || !canCheckAdjustment(req.user?.role)) {
+      return res.status(403).json({
+        error: {
+          code: "FORBIDDEN",
+          message: "Only finance checkers or admins can approve adjustments",
+          requestId: req.id,
+        },
+      });
+    }
+
     const adj = await prisma.adjustment.findUnique({ where: { adjustmentId } });
     if (!adj) {
       return res.status(404).json({
@@ -216,11 +268,14 @@ export async function approveAdjustment(
 
     await prisma.auditEvent.create({
       data: {
-        actorId: userId!,
+        actorId: userId,
         action: "ADJUST_APPROVE",
         entityType: "Adjustment",
         entityId: adjustmentId,
-        payload: {},
+        payload: {
+          createdBy: adj.createdBy,
+          amountSatang: adj.amountMinor.toString(),
+        },
       },
     });
 
@@ -248,12 +303,33 @@ export async function rejectAdjustment(
   const userId = req.user?.userId;
 
   try {
+    if (!userId || !canCheckAdjustment(req.user?.role)) {
+      return res.status(403).json({
+        error: {
+          code: "FORBIDDEN",
+          message: "Only finance checkers or admins can reject adjustments",
+          requestId: req.id,
+        },
+      });
+    }
+
     const adj = await prisma.adjustment.findUnique({ where: { adjustmentId } });
     if (!adj) {
       return res.status(404).json({
         error: {
           code: "NOT_FOUND",
           message: "Adjustment not found",
+          requestId: req.id,
+        },
+      });
+    }
+
+    if (adj.createdBy === userId) {
+      return res.status(403).json({
+        error: {
+          code: "FORBIDDEN",
+          message:
+            "You cannot reject your own adjustment (Makers-Checkers rule)",
           requestId: req.id,
         },
       });
@@ -266,11 +342,14 @@ export async function rejectAdjustment(
 
     await prisma.auditEvent.create({
       data: {
-        actorId: userId!,
+        actorId: userId,
         action: "ADJUST_REJECT",
         entityType: "Adjustment",
         entityId: adjustmentId,
-        payload: {},
+        payload: {
+          createdBy: adj.createdBy,
+          amountSatang: adj.amountMinor.toString(),
+        },
       },
     });
 
