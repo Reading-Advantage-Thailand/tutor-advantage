@@ -1,0 +1,35 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+**/dist
+**/.next
+**/build
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Dev tools
+.git
+.github
+.vscode
+.claude
+
+# Test files
+**/*.test.ts
+**/*.spec.ts
+**/coverage
+
+# Misc
+**/*.log
+**/npm-debug.log*
+README.md
+scratch/
+conductor/
+
+# Cloud SQL proxy (local dev only)
+cloud-sql-proxy.exe
+service-account.json

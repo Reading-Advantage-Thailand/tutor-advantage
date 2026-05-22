@@ -1,0 +1,178 @@
+openapi: 3.1.0
+info:
+  title: Tutor Advantage Finance & MLM Service API
+  version: "1.0.0"
+  description: API for payments, MLM settlement, and admin console tasks. Note that all currency amounts are in Satang (Integer).
+servers:
+  - url: http://localhost:3003
+    description: Local development server
+paths:
+  /health:
+    get:
+      summary: Health Check
+      responses:
+        "200":
+          description: OK
+  /version:
+    get:
+      summary: Get Service Version
+      responses:
+        "200":
+          description: Version metadata
+  /v1/payments/intent:
+    post:
+      summary: Create Payment Intent
+      description: Create a payment intent for THB checkout.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [enrollmentId, amountSatang]
+              properties:
+                enrollmentId:
+                  type: string
+                amountSatang:
+                  type: integer
+                  description: Amount in Satang (Value * 100)
+                method:
+                  type: string
+                  enum: [promptpay, card]
+                omiseToken:
+                  type: string
+                  description: Required for card payments. Token generated client-side by Omise.js.
+                returnUri:
+                  type: string
+                  description: URI Omise should return the customer to after 3DS or redirect flows.
+      responses:
+        "201":
+          description: Payment intent and Omise checkout details.
+  /v1/payments/config:
+    get:
+      summary: Get Payment Gateway Config
+      description: Returns public, non-secret payment gateway configuration for the frontend.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Omise public key and configuration status.
+  /v1/payments/{paymentIntentId}/status:
+    get:
+      summary: Get Payment Status
+      description: Retrieves a payment intent and reconciles current Omise charge status when available.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: paymentIntentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Payment intent and Omise checkout status.
+  /v1/payments/webhook:
+    post:
+      summary: Payment Gateway Webhook
+      description: Receives Omise charge completion events.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Webhook ingested successfully
+  /v1/settlements/preview:
+    post:
+      summary: Preview Monthly Settlement
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Settlement preview details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  snapshotId:
+                    type: string
+                  totalPayoutSatang:
+                    type: integer
+  /v1/settlements/{snapshotId}/approve:
+    post:
+      summary: Approve Settlement Run
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: snapshotId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Run approved by checker
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+  /v1/audit/logs:
+    get:
+      summary: Settlement Audit Trail
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Audit events
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ErrorEnvelope:
+      type: object
+      properties:
+        error:
+          type: object
+          required: [code, message, requestId]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            requestId:
+              type: string
+            details:
+              type: object
+  responses:
+    BadRequestError:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
+    UnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
+    ForbiddenError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorEnvelope"

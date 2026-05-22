@@ -1,0 +1,531 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useLiff } from "@/components/providers/LiffProvider";
+import { studentApi } from "@/lib/api";
+import {
+  AlertCircle,
+  BookOpen,
+  CheckCircle2,
+  Clock,
+  Flag,
+  Flame,
+  Lock,
+  Map,
+  PlayCircle,
+  Sparkles,
+  Target,
+  Trophy,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { t } from "@/lib/i18n";
+
+interface ProgressStats {
+  level: string;
+  cefr: string;
+  seriesColor: string;
+  totalArticles: number;
+  articlesRead: number;
+  weekStreak: number;
+  totalMinutes: number;
+  nextMilestone: {
+    at: number;
+    reward: string;
+  };
+}
+
+interface WeeklyActivity {
+  day: string;
+  minutes: number;
+  active: boolean;
+}
+
+interface ProgressArticle {
+  id: string;
+  no: number;
+  title: string;
+  minutes: number;
+  done: boolean;
+}
+
+interface ProgressData {
+  stats: ProgressStats;
+  weeklyActivity: WeeklyActivity[];
+  articles: ProgressArticle[];
+}
+
+const mapCopy = {
+  title: "แผนที่การเรียน",
+  subtitle: "เดินทางผ่านบทเรียนทีละ checkpoint",
+  current: "บทปัจจุบัน",
+  completed: "ผ่านแล้ว",
+  locked: "รอปลดล็อก",
+  milestone: "Milestone",
+  finalGoal: "ปลายทาง",
+  tapToRead: "แตะเพื่ออ่าน",
+};
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function getJourneyState(articles: ProgressArticle[]) {
+  const firstIncompleteIndex = articles.findIndex((article) => !article.done);
+  const currentIndex =
+    articles.length === 0
+      ? -1
+      : firstIncompleteIndex >= 0
+        ? firstIncompleteIndex
+        : articles.length - 1;
+
+  return { currentIndex };
+}
+
+function getMilestoneLabel(article: ProgressArticle, index: number, total: number) {
+  if (index === total - 1) return mapCopy.finalGoal;
+  if ((article.no || index + 1) % 5 === 0) return mapCopy.milestone;
+  return null;
+}
+
+function LearningJourneyMap({
+  articles,
+  seriesColor,
+}: {
+  articles: ProgressArticle[];
+  seriesColor: string;
+}) {
+  const { currentIndex } = getJourneyState(articles);
+  const visibleArticles = articles.slice(0, Math.max(articles.length, 1));
+
+  if (articles.length === 0) {
+    return (
+      <section className="glass-card" style={{ padding: 20 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+          <Map size={19} style={{ color: "var(--brand-600)" }} />
+          <h3 style={{ fontSize: "1rem", fontWeight: 800, color: "var(--text-primary)" }}>
+            {mapCopy.title}
+          </h3>
+        </div>
+        <p style={{ color: "var(--text-tertiary)", fontSize: "0.8125rem" }}>
+          {t("progress.noData")}
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section
+      aria-labelledby="learning-journey-title"
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        borderRadius: "var(--radius-2xl)",
+        background:
+          "linear-gradient(180deg, var(--surface-card), var(--surface-elevated))",
+        border: "1px solid var(--surface-border)",
+        boxShadow: "var(--shadow-sm)",
+      }}
+    >
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage:
+            "radial-gradient(circle at 18% 14%, rgba(6,199,85,0.08) 0 8px, transparent 9px), radial-gradient(circle at 82% 20%, rgba(59,130,246,0.08) 0 10px, transparent 11px), radial-gradient(circle at 72% 82%, rgba(245,158,11,0.10) 0 12px, transparent 13px)",
+          pointerEvents: "none",
+        }}
+      />
+
+      <div style={{ position: "relative", padding: "20px 16px 18px" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 16 }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 3 }}>
+              <div
+                style={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: 12,
+                  background: "var(--brand-50)",
+                  border: "1px solid var(--brand-100)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Map size={18} style={{ color: "var(--brand-600)" }} />
+              </div>
+              <h3 id="learning-journey-title" style={{ fontSize: "1rem", fontWeight: 800, color: "var(--text-primary)" }}>
+                {mapCopy.title}
+              </h3>
+            </div>
+            <p style={{ color: "var(--text-tertiary)", fontSize: "0.75rem", marginLeft: 43 }}>
+              {mapCopy.subtitle}
+            </p>
+          </div>
+          <div style={{ flexShrink: 0, textAlign: "right" }}>
+            <div style={{ fontSize: "1.25rem", lineHeight: 1, fontWeight: 900, color: seriesColor }}>
+              {clamp(currentIndex + 1, 0, articles.length)}
+            </div>
+            <div style={{ fontSize: "0.625rem", color: "var(--text-tertiary)", fontWeight: 700 }}>
+              / {articles.length}
+            </div>
+          </div>
+        </div>
+
+        <div style={{ position: "relative", padding: "4px 0 2px" }}>
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              top: 24,
+              bottom: 24,
+              left: "50%",
+              width: 4,
+              transform: "translateX(-50%)",
+              borderRadius: "var(--radius-full)",
+              background:
+                "linear-gradient(180deg, rgba(6,199,85,0.35), rgba(59,130,246,0.18), rgba(245,158,11,0.22))",
+            }}
+          />
+
+          {visibleArticles.map((article, index) => {
+            const isComplete = article.done;
+            const isCurrent = index === currentIndex && !article.done;
+            const isUnlocked = index <= currentIndex || isComplete;
+            const isLeft = index % 2 === 0;
+            const milestone = getMilestoneLabel(article, index, visibleArticles.length);
+            const titleColor = isUnlocked ? "var(--text-primary)" : "var(--text-tertiary)";
+            const checkpointBg = isComplete
+              ? "var(--brand-500)"
+              : isCurrent
+                ? "var(--surface-card)"
+                : "var(--neutral-100)";
+            const checkpointBorder = isComplete
+              ? "var(--brand-500)"
+              : isCurrent
+                ? seriesColor
+                : "var(--neutral-200)";
+
+            const checkpoint = (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 54px 1fr",
+                  alignItems: "center",
+                  minHeight: 82,
+                  position: "relative",
+                }}
+              >
+                <div style={{ gridColumn: isLeft ? "1" : "3", justifySelf: isLeft ? "end" : "start", width: "min(100%, 170px)" }}>
+                  <div
+                    style={{
+                      padding: "10px 11px",
+                      borderRadius: 14,
+                      background: "var(--surface-card)",
+                      border: isCurrent ? `1.5px solid ${seriesColor}` : "1px solid var(--surface-border)",
+                      boxShadow: isCurrent ? "0 10px 24px rgba(6,199,85,0.18)" : "0 5px 14px rgba(15,23,42,0.05)",
+                      transform: isCurrent ? "translateY(-1px)" : "none",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                      {milestone ? (
+                        <Trophy size={13} style={{ color: "var(--accent-amber)" }} />
+                      ) : isCurrent ? (
+                        <Sparkles size={13} style={{ color: seriesColor }} />
+                      ) : (
+                        <BookOpen size={13} style={{ color: isUnlocked ? "var(--brand-600)" : "var(--neutral-300)" }} />
+                      )}
+                      <span style={{ color: isCurrent ? seriesColor : "var(--text-tertiary)", fontSize: "0.625rem", fontWeight: 800 }}>
+                        {milestone || (isCurrent ? mapCopy.current : `${t("progress.articleUnit")} ${article.no}`)}
+                      </span>
+                    </div>
+                    <div
+                      className="line-clamp-2"
+                      style={{
+                        color: titleColor,
+                        fontSize: "0.8125rem",
+                        fontWeight: 750,
+                        lineHeight: 1.35,
+                        minHeight: 35,
+                      }}
+                    >
+                      {article.title}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 7, color: isUnlocked ? "var(--text-tertiary)" : "var(--neutral-300)", fontSize: "0.625rem", fontWeight: 700 }}>
+                      {isComplete ? (
+                        <>
+                          <CheckCircle2 size={11} />
+                          {mapCopy.completed}
+                        </>
+                      ) : isCurrent ? (
+                        <>
+                          <PlayCircle size={11} />
+                          {mapCopy.tapToRead}
+                        </>
+                      ) : (
+                        <>
+                          <Lock size={11} />
+                          {mapCopy.locked}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    gridColumn: "2",
+                    justifySelf: "center",
+                    width: 48,
+                    height: 48,
+                    borderRadius: "50%",
+                    background: checkpointBg,
+                    border: `3px solid ${checkpointBorder}`,
+                    color: isComplete ? "#fff" : isCurrent ? seriesColor : "var(--neutral-400)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: isCurrent
+                      ? "0 0 0 6px rgba(6,199,85,0.10), 0 8px 18px rgba(6,199,85,0.22)"
+                      : "0 4px 12px rgba(15,23,42,0.08)",
+                    zIndex: 1,
+                    fontSize: "0.8125rem",
+                    fontWeight: 900,
+                  }}
+                >
+                  {isComplete ? (
+                    <CheckCircle2 size={21} />
+                  ) : milestone && isUnlocked ? (
+                    <Flag size={19} />
+                  ) : isUnlocked ? (
+                    article.no
+                  ) : (
+                    <Lock size={17} />
+                  )}
+                </div>
+              </div>
+            );
+
+            return isUnlocked ? (
+              <Link
+                href={`/student/read/${article.id}`}
+                key={article.id}
+                aria-label={`${mapCopy.tapToRead}: ${article.title}`}
+                style={{ display: "block", textDecoration: "none", WebkitTapHighlightColor: "transparent" }}
+              >
+                {checkpoint}
+              </Link>
+            ) : (
+              <div key={article.id} aria-disabled="true">
+                {checkpoint}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default function ProgressPage() {
+  const { isReady } = useLiff();
+  const [data, setData] = useState<ProgressData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchData() {
+      if (!isReady) return;
+      
+      try {
+        setLoading(true);
+        // Wait for session token
+        let token = localStorage.getItem('student_session_token');
+        let retries = 0;
+        while (!token && retries < 10 && isMounted) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+          token = localStorage.getItem('student_session_token');
+          retries++;
+        }
+
+        if (!token) {
+          throw new Error("Session unavailable");
+        }
+
+        const result = await studentApi.getStudentProgress() as ProgressData;
+        if (isMounted) {
+          setData(result);
+        }
+      } catch (err) {
+        console.error(err);
+        if (isMounted) {
+          setError(t("progress.loadFailed"));
+        }
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+
+    fetchData();
+    return () => { isMounted = false; };
+  }, [isReady]);
+
+  if (!isReady || loading) {
+    return (
+      <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--surface-bg)" }}>
+        <div className="animate-spin" style={{ width: 32, height: 32, border: "3px solid var(--neutral-200)", borderTopColor: "var(--brand-500)", borderRadius: "50%" }} />
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center gap-4">
+        <AlertCircle className="text-red-500 w-12 h-12" />
+        <p className="text-slate-500">{error || t("progress.noData")}</p>
+        <Button onClick={() => window.location.reload()}>{t("progress.retry")}</Button>
+      </div>
+    );
+  }
+
+  const { stats, weeklyActivity, articles } = data;
+  const progressPct = stats.totalArticles > 0 ? Math.round((stats.articlesRead / stats.totalArticles) * 100) : 0;
+  const maxMin = Math.max(...(weeklyActivity.map((d) => d.minutes) || [0]), 1);
+
+  return (
+    <div>
+      {/* Header */}
+      <div className="top-bar" style={{ background: "var(--surface-card)", backdropFilter: "blur(12px)" }}>
+        <h1 style={{ fontSize: "1.0625rem", fontWeight: 700, color: "var(--text-primary)", flex: 1 }}>{t("progress.title")}</h1>
+        <span style={{ background: "var(--brand-50)", color: "var(--brand-700)", padding: "5px 12px", borderRadius: "var(--radius-full)", fontSize: "0.75rem", fontWeight: 700, border: "1px solid var(--brand-100)" }}>
+          {stats.level} / {stats.cefr}
+        </span>
+      </div>
+
+      <div style={{ padding: "16px 16px", display: "flex", flexDirection: "column", gap: 16 }}>
+
+        {/* Main progress card */}
+        <div className="curved-bottom" style={{ background: `linear-gradient(135deg, ${stats.seriesColor} 0%, #037d36 100%)`, borderRadius: 24, overflow: "hidden", position: "relative" }}>
+          <div aria-hidden style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.06)" }} />
+          <div style={{ padding: "24px 20px" }}>
+            <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.75rem", marginBottom: 4, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.05em" }}>{t("progress.currentLevel")}</p>
+            <h2 style={{ color: "#fff", fontSize: "1.5rem", fontWeight: 800, marginBottom: 20 }}>{stats.level}</h2>
+
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                <span style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.8125rem" }}>{stats.articlesRead} {t("progress.from")} {stats.totalArticles} {t("progress.articleUnit")}</span>
+                <span style={{ color: "#fff", fontWeight: 700, fontSize: "0.875rem" }}>{progressPct}%</span>
+              </div>
+              <div style={{ height: 8, background: "rgba(255,255,255,0.15)", borderRadius: 20, overflow: "hidden" }}>
+                <div style={{ height: "100%", width: `${progressPct}%`, background: "linear-gradient(90deg, #fff, #bbf7d0)", borderRadius: 20, transition: "width 0.6s ease", boxShadow: "0 0 10px rgba(255,255,255,0.3)" }} />
+              </div>
+            </div>
+
+            <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 14, padding: "10px 14px", display: "flex", alignItems: "center", gap: 10, border: "1px solid rgba(255,255,255,0.15)" }}>
+              <Target size={16} style={{ color: "#fbbf24", flexShrink: 0 }} />
+              <span style={{ color: "rgba(255,255,255,0.85)", fontSize: "0.8125rem" }}>
+                {t("progress.remainingPrefix")} <strong>{stats.nextMilestone.at - stats.articlesRead} {t("progress.articleUnit")}</strong> {t("progress.receive")} {stats.nextMilestone.reward}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <LearningJourneyMap articles={articles} seriesColor={stats.seriesColor} />
+
+        {/* Stat chips */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
+          {[
+            { Icon: Flame, label: t("progress.streak"), value: `${stats.weekStreak} ${t("progress.weekUnit")}`, bgColor: "var(--accent-amber-light)", iconColor: "var(--accent-amber)" },
+            { Icon: Clock, label: t("progress.studyTime"), value: `${stats.totalMinutes} ${t("progress.minuteUnit")}`, bgColor: "var(--accent-blue-light)", iconColor: "var(--accent-blue)" },
+            { Icon: BookOpen, label: t("progress.completedLessons"), value: `${stats.articlesRead} ${t("progress.articleUnit")}`, bgColor: "var(--brand-50)", iconColor: "var(--brand-600)" },
+          ].map((s) => (
+            <div key={s.label} className="glass-card" style={{ textAlign: "center", padding: "16px 10px", background: s.bgColor, border: "1px solid var(--surface-border)" }}>
+              <s.Icon size={20} style={{ color: s.iconColor, marginBottom: 6, marginInline: "auto" }} />
+              <div style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text-primary)", lineHeight: 1.2 }}>{s.value}</div>
+              <div style={{ fontSize: "0.625rem", color: "var(--text-tertiary)", marginTop: 3 }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Weekly chart */}
+        <div className="glass-card" style={{ padding: "20px" }}>
+          <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 16 }}>{t("progress.weeklyActivity")}</h3>
+          <div style={{ display: "flex", gap: 6, alignItems: "flex-end", height: 80 }}>
+            {weeklyActivity.map((d) => (
+              <div key={d.day} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                <div style={{
+                  width: "100%",
+                  height: maxMin > 0 && d.minutes > 0 ? `${(d.minutes / maxMin) * 60}px` : "5px",
+                  background: d.active ? `linear-gradient(180deg, ${stats.seriesColor}, #34d399)` : "var(--neutral-200)",
+                  borderRadius: 6,
+                  transition: "height 0.5s ease",
+                  minHeight: 5,
+                  boxShadow: d.active ? "0 2px 6px rgba(6,199,85,0.2)" : "none",
+                }} />
+                <span style={{ fontSize: "0.625rem", fontWeight: d.active ? 700 : 400, color: d.active ? "var(--brand-600)" : "var(--text-tertiary)" }}>
+                  {d.day}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Article list */}
+        <div>
+          <div className="section-header">
+            <h3 className="section-title">{t("progress.allLessons")}</h3>
+            <span style={{ background: "var(--neutral-100)", color: "var(--text-secondary)", padding: "4px 10px", borderRadius: "var(--radius-full)", fontSize: "0.6875rem", fontWeight: 700 }}>
+              {stats.articlesRead}/{stats.totalArticles}
+            </span>
+          </div>
+
+          <div className="glass-card" style={{ overflow: "hidden" }}>
+            {articles.map((art, idx) => (
+              <div
+                key={art.id}
+                style={{
+                  display: "flex", alignItems: "center", gap: 12, padding: "14px 16px",
+                  borderTop: idx > 0 ? "1px solid var(--surface-border)" : "none",
+                  opacity: art.done ? 1 : 0.55,
+                }}
+              >
+                <div style={{
+                  width: 28, height: 28, borderRadius: "50%",
+                  background: art.done ? "var(--brand-100)" : "var(--neutral-100)",
+                  border: `2px solid ${art.done ? "var(--brand-400)" : "var(--neutral-200)"}`,
+                  display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                }}>
+                  {art.done ? (
+                    <CheckCircle2 size={14} style={{ color: "var(--brand-600)" }} />
+                  ) : (
+                    <span style={{ fontSize: "0.625rem", fontWeight: 700, color: "var(--text-tertiary)" }}>{art.no}</span>
+                  )}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: art.done ? "var(--text-primary)" : "var(--text-tertiary)" }} className="text-ellipsis">
+                    {art.title}
+                  </div>
+                  {art.done && (
+                    <div style={{ fontSize: "0.6875rem", color: "var(--text-tertiary)", marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
+                      <Clock size={10} /> {art.minutes} {t("progress.minuteUnit")}
+                    </div>
+                  )}
+                </div>
+                {art.done ? (
+                  <span style={{ background: "var(--brand-50)", color: "var(--brand-700)", fontSize: "0.625rem", fontWeight: 700, padding: "3px 8px", borderRadius: 8 }}>{t("progress.done")}</span>
+                ) : (
+                  <Lock size={14} style={{ color: "var(--neutral-300)" }} />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}

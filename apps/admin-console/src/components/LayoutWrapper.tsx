@@ -1,0 +1,416 @@
+"use client";
+
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import { useEffect, useState, useCallback } from "react";
+import { fetchWithAuth } from "../lib/api";
+import {
+  LayoutDashboard,
+  ReceiptText,
+  LogOut,
+  ChevronsUpDown,
+  ShieldCheck,
+  FilePenLine,
+  AlertTriangle,
+  Link as LinkIcon,
+  Users,
+  ShieldAlert,
+} from "lucide-react";
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { t } from "@/lib/i18n";
+
+const FINANCE_ITEMS = [
+  { href: "/", label: t("layout.overview"), icon: LayoutDashboard },
+  { href: "/settlements", label: t("layout.settlements"), icon: ReceiptText },
+  { href: "/adjustments", label: t("layout.adjustments"), icon: FilePenLine },
+  { href: "/audit", label: t("layout.audit"), icon: ShieldCheck },
+];
+
+const OPS_ITEMS = [
+  {
+    href: "/operations/exceptions",
+    label: t("layout.exceptions"),
+    icon: AlertTriangle,
+  },
+  {
+    href: "/operations/legacy-links",
+    label: t("layout.legacyLinks"),
+    icon: LinkIcon,
+  },
+];
+
+const USER_RISK_ITEMS = [
+  { href: "/users", label: t("layout.usersConsent"), icon: Users },
+  { href: "/fraud", label: t("layout.fraud"), icon: ShieldAlert },
+];
+
+function AppSidebar({
+  role,
+  onLogout,
+}: {
+  role: string | null;
+  onLogout: () => void;
+}) {
+  const pathname = usePathname();
+  const initial = role ? role[0].toUpperCase() : "A";
+
+  const [pendingSettlements, setPendingSettlements] = useState(0);
+  const [pendingAdjustments, setPendingAdjustments] = useState(0);
+  const [pendingVerifications, setPendingVerifications] = useState(0);
+
+  const fetchSummary = useCallback(async () => {
+    try {
+      if (typeof window === "undefined" || !localStorage.getItem("admin_token"))
+        return;
+      const data = await fetchWithAuth("/v1/admin/overview");
+      setPendingSettlements(data.workQueues?.settlements ?? 0);
+      setPendingAdjustments(data.workQueues?.adjustments ?? 0);
+      setPendingVerifications(data.workQueues?.verifications ?? 0);
+    } catch (error) {
+      console.warn("Failed to fetch admin sidebar summary:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchSummary();
+    const interval = setInterval(fetchSummary, 30000); // Poll every 30s
+    return () => clearInterval(interval);
+  }, [fetchSummary]);
+
+  return (
+    <Sidebar collapsible="icon" className="border-r-0">
+      <SidebarHeader className="bg-brand-500/5 py-4">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild className="hover:bg-transparent">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 text-white shadow-lg shadow-brand-500/20">
+                  <ShieldCheck className="h-6 w-6" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-bold text-brand-900 dark:text-brand-50">
+                    Tutor Advantage
+                  </span>
+                  <span className="truncate text-xs font-medium text-brand-600/80 dark:text-brand-400">
+                    Admin Console
+                  </span>
+                </div>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+
+      <SidebarContent className="px-2">
+        <SidebarGroup>
+          <SidebarGroupLabel className="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+            Finance Management
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {FINANCE_ITEMS.map(({ href, label, icon: Icon }) => {
+                const active =
+                  href === "/" ? pathname === "/" : pathname.startsWith(href);
+                const badgeCount =
+                  href === "/settlements"
+                    ? pendingSettlements
+                    : href === "/adjustments"
+                      ? pendingAdjustments
+                      : 0;
+
+                return (
+                  <SidebarMenuItem key={href}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={active}
+                      tooltip={label}
+                      className={
+                        active
+                          ? "bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400"
+                          : "hover:bg-brand-50/50 dark:hover:bg-brand-900/10"
+                      }
+                    >
+                      <Link
+                        href={href}
+                        className="flex justify-between items-center w-full py-2"
+                      >
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <Icon className={`h-4.5 w-4.5 shrink-0 ${active ? "text-brand-600" : "text-muted-foreground"}`} />
+                          <span className={`truncate font-medium group-data-[collapsible=icon]:hidden ${active ? "font-semibold" : ""}`}>
+                            {label}
+                          </span>
+                        </div>
+                        {badgeCount > 0 && (
+                          <Badge
+                            className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden bg-brand-500 hover:bg-brand-600 text-white border-none shadow-sm"
+                          >
+                            {badgeCount}
+                          </Badge>
+                        )}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+            System Operations
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {OPS_ITEMS.map(({ href, label, icon: Icon }) => {
+                const active = pathname.startsWith(href);
+                return (
+                  <SidebarMenuItem key={href}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={active}
+                      tooltip={label}
+                      className={
+                        active
+                          ? "bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400"
+                          : "hover:bg-brand-50/50 dark:hover:bg-brand-900/10"
+                      }
+                    >
+                      <Link
+                        href={href}
+                        className="flex justify-between items-center w-full py-2"
+                      >
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <Icon className={`h-4.5 w-4.5 shrink-0 ${active ? "text-brand-600" : "text-muted-foreground"}`} />
+                          <span className={`truncate font-medium group-data-[collapsible=icon]:hidden ${active ? "font-semibold" : ""}`}>
+                            {label}
+                          </span>
+                        </div>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+            Users & Compliance
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {USER_RISK_ITEMS.map(({ href, label, icon: Icon }) => {
+                const active = pathname.startsWith(href);
+                const badgeCount = href === "/users" ? pendingVerifications : 0;
+                return (
+                  <SidebarMenuItem key={href}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={active}
+                      tooltip={label}
+                      className={
+                        active
+                          ? "bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400"
+                          : "hover:bg-brand-50/50 dark:hover:bg-brand-900/10"
+                      }
+                    >
+                      <Link
+                        href={href}
+                        className="flex justify-between items-center w-full py-2"
+                      >
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <Icon className={`h-4.5 w-4.5 shrink-0 ${active ? "text-brand-600" : "text-muted-foreground"}`} />
+                          <span className={`truncate font-medium group-data-[collapsible=icon]:hidden ${active ? "font-semibold" : ""}`}>
+                            {label}
+                          </span>
+                        </div>
+                        {badgeCount > 0 && (
+                          <Badge
+                            className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden bg-brand-500 hover:bg-brand-600 text-white border-none shadow-sm"
+                          >
+                            {badgeCount}
+                          </Badge>
+                        )}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter className="p-4">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuButton
+                  size="lg"
+                  className="rounded-xl border border-border/50 bg-card/50 shadow-sm data-[state=open]:bg-sidebar-accent"
+                >
+                  <Avatar className="h-9 w-9 border-2 border-brand-100 dark:border-brand-900">
+                    <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 text-white text-xs font-bold">
+                      {initial}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="grid flex-1 text-left text-sm leading-tight ml-1">
+                    <span className="truncate font-semibold text-foreground">
+                      {role || t("layout.defaultRole")}
+                    </span>
+                    <span className="flex items-center gap-1.5 truncate text-[10px] font-medium text-muted-foreground uppercase tracking-tight">
+                      <span className="h-1.5 w-1.5 rounded-full bg-brand-500 animate-pulse" /> {t("layout.online")}
+                    </span>
+                  </div>
+                  <ChevronsUpDown className="ml-auto size-3.5 text-muted-foreground" />
+                </SidebarMenuButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-xl p-2 shadow-xl border-border/40"
+                side="top"
+                align="center"
+                sideOffset={12}
+              >
+                <DropdownMenuLabel className="p-2 font-normal">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-10 w-10">
+                      <AvatarFallback className="bg-brand-100 text-brand-700 text-sm font-bold">
+                        {initial}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-bold text-foreground">
+                        {role || t("layout.defaultRole")}
+                      </span>
+                      <p className="text-xs text-muted-foreground truncate">
+                        admin@tutor-advantage.com
+                      </p>
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="my-2" />
+                <DropdownMenuItem
+                  onClick={onLogout}
+                  className="rounded-lg py-2.5 text-red-600 focus:bg-red-50 focus:text-red-700 dark:focus:bg-red-950/30 cursor-pointer"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span className="font-semibold">{t("layout.logout")}</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+    </Sidebar>
+  );
+}
+
+export default function LayoutWrapper({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("admin_token");
+      const savedRole = localStorage.getItem("admin_role");
+      const isPublicPage = pathname === "/login" || pathname === "/unauthorized";
+      
+      if (!token && !isPublicPage) {
+        router.push("/login");
+      } else {
+        setRole(savedRole);
+      }
+    }
+  }, [pathname, router]);
+
+  const handleLogout = async () => {
+    localStorage.removeItem("admin_token");
+    localStorage.removeItem("admin_role");
+    
+    // Clear cookies via server API since admin_token is HttpOnly
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (e) {
+      console.error("Failed to clear cookies on server:", e);
+    }
+    
+    // Use window.location to force a hard reload, ensuring middleware sees cleared cookies
+    window.location.href = "/login";
+  };
+
+  if (pathname === "/login" || pathname === "/unauthorized") {
+    return <>{children}</>;
+  }
+
+  const pageTitle =
+    pathname === "/"
+      ? t("layout.systemOverview")
+      : pathname.split("/")[1]?.charAt(0).toUpperCase() +
+        (pathname.split("/")[1]?.slice(1) ?? "");
+
+  return (
+    <SidebarProvider>
+      <AppSidebar role={role} onLogout={handleLogout} />
+      <SidebarInset className="bg-background/50 flex flex-col h-screen overflow-hidden">
+        {/* Top Header */}
+        <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2 border-b bg-background/95 px-6 backdrop-blur-md">
+          <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-brand-600 transition-colors" />
+          <Separator orientation="vertical" className="mx-2 h-4 bg-border/60" />
+          <h1 className="text-sm font-bold tracking-tight text-foreground">
+            {pageTitle}
+          </h1>
+          <div className="ml-auto flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 border border-brand-100 dark:bg-brand-900/10 dark:border-brand-800">
+              <span className="h-2 w-2 rounded-full bg-brand-500 shadow-[0_0_8px_rgba(6,199,85,0.5)]" />
+              <span className="text-[10px] font-bold text-brand-700 dark:text-brand-400 uppercase tracking-wider">{t("layout.productionSystem")}</span>
+            </div>
+            <ThemeToggle />
+          </div>
+        </header>
+        {/* Page Content - Scrollable Area */}
+        <div className="flex-1 overflow-auto">
+          <div className="p-4 sm:p-8 lg:p-10 max-w-[1600px] mx-auto w-full">
+            {children}
+          </div>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  );
+}
+
+

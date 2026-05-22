@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  test-and-build:
+    name: Test and build services
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npx prisma generate --schema=packages/database/prisma/schema.prisma
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Run service builds
+        run: npm run build:services
+
+      - name: Build shared config
+        run: npm run build -w @tutor-advantage/shared-config

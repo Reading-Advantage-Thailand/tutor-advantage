@@ -1,0 +1,333 @@
+import { Response } from "express";
+import { prisma } from "@tutor-advantage/database";
+import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+import {
+  calculateCommissionInfo,
+  calculatePayoutMinor,
+  formatIctPeriodMonth,
+  getIctMonthWindow,
+} from "../services/commissionService";
+
+type EarningsNode = {
+  userId: string;
+  sponsorTutorId: string | null;
+  personalVolumeMinor: bigint;
+  groupVolumeMinor: bigint;
+  payoutAmountMinor: bigint;
+  rate: number;
+  children: EarningsNode[];
+};
+
+export async function getEarningsSummary(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  try {
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        error: { code: "UNAUTHORIZED", message: "User not identified" },
+      });
+    }
+
+    const periodMonth = formatIctPeriodMonth();
+    const projection = await calculateTutorPeriodProjection(
+      userId,
+      periodMonth,
+    );
+
+    return res.status(200).json({
+      periodMonth,
+      grossVolumeTHB: projection.groupVolumeTHB,
+      personalVolumeTHB: projection.personalVolumeTHB,
+      currentRate: projection.rate,
+      nextTierTargetTHB: projection.nextTarget,
+      estimatedCommissionTHB: projection.totalPayoutTHB,
+      networkBonusTHB: projection.networkBonusTHB,
+    });
+  } catch (error: any) {
+    console.error("Get Earnings Summary Error:", error);
+    return res.status(500).json({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not calculate earnings summary",
+        requestId: req.id,
+      },
+    });
+  }
+}
+
+export async function getEarningsHistory(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({
+        error: {
+          code: "UNAUTHORIZED",
+          message: "User not identified",
+          requestId: req.id,
+        },
+      });
+    }
+
+    const periodMonth = formatIctPeriodMonth();
+    const { start: monthStart, end: monthEnd } = getIctMonthWindow(periodMonth);
+
+    const projection = await calculateTutorPeriodProjection(
+      userId,
+      periodMonth,
+    );
+
+    const currentAdjustments = await prisma.adjustment.findMany({
+      where: {
+        tutorUserId: userId,
+        status: "APPROVED",
+        amountMinor: { lt: 0 },
+        createdAt: { gte: monthStart, lte: monthEnd },
+      },
+    });
+
+    const currentClawbackTHB = currentAdjustments.reduce(
+      (sum, adj) => sum + Number(adj.amountMinor) / 100,
+      0,
+    );
+
+    const currentProjection = {
+      directSales: Math.round(projection.directSalesTHB),
+      networkBonus: Math.round(projection.networkBonusTHB),
+      clawback: Math.round(currentClawbackTHB),
+      total: Math.round(projection.totalPayoutTHB + currentClawbackTHB),
+    };
+
+    // 2. Past History
+    const pastLines = await prisma.payoutLine.findMany({
+      where: { tutorUserId: userId },
+      include: { settlementRun: true, payoutDocument: true },
+      orderBy: { settlementRun: { createdAt: "desc" } },
+    });
+
+    const approvedAdjustments = await prisma.adjustment.findMany({
+      where: { tutorUserId: userId, status: "APPROVED", amountMinor: { lt: 0 } },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const clawbackByRun = new Map<string, number>();
+    for (const adjustment of approvedAdjustments) {
+      const current = clawbackByRun.get(adjustment.settlementRunId) || 0;
+      clawbackByRun.set(
+        adjustment.settlementRunId,
+        current + Number(adjustment.amountMinor) / 100,
+      );
+    }
+
+    const history = await Promise.all(pastLines.map(async (line) => {
+      const totalAmount = Number(line.payoutAmountMinor) / 100;
+      const periodProjection = await calculateTutorPeriodProjection(
+        userId,
+        line.settlementRun.periodMonth,
+      );
+      const networkAmount = Math.min(
+        totalAmount,
+        Math.max(0, periodProjection.networkBonusTHB),
+      );
+      const clawback = clawbackByRun.get(line.settlementRunId) || 0;
+      return {
+        date: line.settlementRun.periodMonth,
+        direct: Math.round(totalAmount - networkAmount),
+        network: Math.round(networkAmount),
+        clawback: Math.round(clawback),
+        withholdingTax: Math.round(Number(line.withholdingTaxMinor) / 100),
+        netPayout: Math.round(Number(line.netPayoutMinor) / 100),
+        payoutDocument: line.payoutDocument
+          ? {
+              documentNumber: line.payoutDocument.documentNumber,
+              documentType: line.payoutDocument.documentType,
+              status: line.payoutDocument.status,
+              issuedAt: line.payoutDocument.issuedAt,
+            }
+          : null,
+        status: line.settlementRun.status.toLowerCase(),
+      };
+    }));
+
+    // 3. Clawbacks (Adjustments)
+    const clawbacks = approvedAdjustments.map((adj) => ({
+      date: adj.createdAt.toLocaleDateString("th-TH", {
+        month: "short",
+        year: "numeric",
+      }),
+      amount: Number(adj.amountMinor) / 100,
+      reason: adj.reason,
+    }));
+
+    return res.status(200).json({
+      periodMonth,
+      currentProjection,
+      history,
+      clawbacks,
+      rateInfo: {
+        rate: projection.rate,
+        volume: projection.groupVolumeTHB,
+        personalVolume: projection.personalVolumeTHB,
+        nextTarget: projection.nextTarget,
+      },
+    });
+  } catch (error: any) {
+    console.error("Get Earnings History Error:", error);
+    return res.status(500).json({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not fetch earnings history",
+        requestId: req.id,
+      },
+    });
+  }
+}
+
+async function calculateTutorPeriodProjection(
+  userId: string,
+  periodMonth: string,
+) {
+  const { start: monthStart, end: monthEnd } = getIctMonthWindow(periodMonth);
+
+  const tutors = await prisma.user.findMany({
+    where: { role: "TUTOR", isActive: true },
+    select: { userId: true, sponsorTutorId: true },
+  });
+
+  const classRows = await prisma.class.findMany({
+    select: { classId: true, tutorUserId: true },
+  });
+  const classTutorMap = new Map(
+    classRows.map((classRow) => [classRow.classId, classRow.tutorUserId]),
+  );
+
+  const enrollments = await prisma.enrollment.findMany({
+    where: { classId: { in: classRows.map((classRow) => classRow.classId) } },
+    select: { enrollmentId: true, classId: true },
+  });
+  const enrollmentTutorMap = new Map<string, string>();
+  for (const enrollment of enrollments) {
+    const tutorId = classTutorMap.get(enrollment.classId);
+    if (tutorId) enrollmentTutorMap.set(enrollment.enrollmentId, tutorId);
+  }
+
+  const successfulPayments = await prisma.paymentIntent.findMany({
+    where: {
+      status: "SUCCESS",
+      updatedAt: { gte: monthStart, lte: monthEnd },
+      enrollmentId: { in: enrollments.map((enrollment) => enrollment.enrollmentId) },
+    },
+    select: { enrollmentId: true, amountMinor: true },
+  });
+
+  const personalVolumes = new Map<string, bigint>();
+  for (const payment of successfulPayments) {
+    const tutorId = enrollmentTutorMap.get(payment.enrollmentId);
+    if (!tutorId) continue;
+    personalVolumes.set(
+      tutorId,
+      (personalVolumes.get(tutorId) || 0n) + payment.amountMinor,
+    );
+  }
+
+  const nodes = new Map<string, EarningsNode>();
+  for (const tutor of tutors) {
+    nodes.set(tutor.userId, {
+      userId: tutor.userId,
+      sponsorTutorId: tutor.sponsorTutorId,
+      personalVolumeMinor: personalVolumes.get(tutor.userId) || 0n,
+      groupVolumeMinor: 0n,
+      payoutAmountMinor: 0n,
+      rate: 0,
+      children: [],
+    });
+  }
+
+  for (const node of nodes.values()) {
+    if (node.sponsorTutorId && nodes.has(node.sponsorTutorId)) {
+      nodes.get(node.sponsorTutorId)!.children.push(node);
+    }
+  }
+
+  const calculateGroupVolume = (
+    node: EarningsNode,
+    seen = new Set<string>(),
+  ): bigint => {
+    if (seen.has(node.userId)) throw new Error("SPONSOR_TREE_CYCLE");
+    seen.add(node.userId);
+    node.groupVolumeMinor =
+      node.personalVolumeMinor +
+      node.children.reduce(
+        (sum, child) => sum + calculateGroupVolume(child, new Set(seen)),
+        0n,
+      );
+    node.rate = calculateCommissionInfo(Number(node.groupVolumeMinor) / 100).rate;
+    return node.groupVolumeMinor;
+  };
+
+  const calculatePayout = (
+    node: EarningsNode,
+    seen = new Set<string>(),
+  ): bigint => {
+    if (seen.has(node.userId)) throw new Error("SPONSOR_TREE_CYCLE");
+    seen.add(node.userId);
+    const childPayouts = node.children.reduce(
+      (sum, child) => sum + calculatePayout(child, new Set(seen)),
+      0n,
+    );
+    const grossPayout = calculatePayoutMinor(node.groupVolumeMinor, node.rate);
+    node.payoutAmountMinor =
+      grossPayout > childPayouts ? grossPayout - childPayouts : 0n;
+    if (node.personalVolumeMinor === 0n && node.children.length > 0) {
+      node.payoutAmountMinor = 0n;
+    }
+    return node.payoutAmountMinor;
+  };
+
+  for (const node of nodes.values()) {
+    if (!node.sponsorTutorId || !nodes.has(node.sponsorTutorId)) {
+      calculateGroupVolume(node);
+      calculatePayout(node);
+    }
+  }
+
+  const node = nodes.get(userId);
+  if (!node) {
+    return {
+      personalVolumeTHB: 0,
+      groupVolumeTHB: 0,
+      rate: 0,
+      nextTarget: 0,
+      directSalesTHB: 0,
+      networkBonusTHB: 0,
+      totalPayoutTHB: 0,
+    };
+  }
+
+  const { nextTarget } = calculateCommissionInfo(
+    Number(node.groupVolumeMinor) / 100,
+  );
+  const directSalesMinor = calculatePayoutMinor(
+    node.personalVolumeMinor,
+    node.rate,
+  );
+  const networkBonusMinor =
+    node.payoutAmountMinor > directSalesMinor
+      ? node.payoutAmountMinor - directSalesMinor
+      : 0n;
+
+  return {
+    personalVolumeTHB: Number(node.personalVolumeMinor) / 100,
+    groupVolumeTHB: Number(node.groupVolumeMinor) / 100,
+    rate: node.rate,
+    nextTarget,
+    directSalesTHB: Number(directSalesMinor) / 100,
+    networkBonusTHB: Number(networkBonusMinor) / 100,
+    totalPayoutTHB: Number(node.payoutAmountMinor) / 100,
+  };
+}

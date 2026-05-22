@@ -1,0 +1,10 @@
+{
+  "name": "Tutor Advantage",
+  "short_name": "TutorAdvantage",
+  "description": "Student Portal for Tutor Advantage",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#06c755",
+  "theme_color": "#06c755",
+  "icons": []
+}

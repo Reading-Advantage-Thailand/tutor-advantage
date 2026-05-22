@@ -1,0 +1,22 @@
+{
+  "name": "@tutor-advantage/shared-config",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "description": "Shared configurations and middleware for Tutor Advantage services",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "uuid": "^10.0.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.2",
+    "@types/uuid": "^10.0.0",
+    "express": "^4.21.2",
+    "typescript": "^5.7.2"
+  }
+}
