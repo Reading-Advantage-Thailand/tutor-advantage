@@ -28,3 +28,4 @@ apps/tutor-pwa/public/swe-worker-*.js
 
 # Claude Code local config
 .claude/
+brain/
