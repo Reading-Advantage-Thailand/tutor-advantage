@@ -54,7 +54,14 @@ describe("admin API helpers", () => {
 
   it("returns blobs from blob requests", async () => {
     const blob = new Blob(["hello"]);
-    vi.mocked(fetch).mockResolvedValueOnce(new Response(blob, { status: 200 }));
+    // jsdom's Blob lacks .stream() — mock the Response directly instead
+    const mockResponse = {
+      ok: true,
+      status: 200,
+      headers: { get: () => null },
+      blob: () => Promise.resolve(blob),
+    } as unknown as Response;
+    vi.mocked(fetch).mockResolvedValueOnce(mockResponse);
 
     await expect(fetchBlobWithAuth("/documents/file")).resolves.toBeInstanceOf(Blob);
   });

@@ -30,6 +30,16 @@ const prismaMock = vi.hoisted(() => ({
 
 vi.mock("@tutor-advantage/database", () => ({
   prisma: prismaMock,
+  Prisma: {
+    Decimal: class Decimal {
+      private val: number;
+      constructor(value: number | string) {
+        this.val = Number(value);
+      }
+      toNumber() { return this.val; }
+      toString() { return String(this.val); }
+    },
+  },
 }));
 
 describe("SettlementService", () => {
