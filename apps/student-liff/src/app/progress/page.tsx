@@ -55,6 +55,16 @@ interface ProgressData {
   articles: ProgressArticle[];
 }
 
+const MASCOT = "🦊";
+
+const JOURNEY_DECORATIONS: Array<{ emoji: string; top: string; delay: string; left?: string; right?: string }> = [
+  { emoji: "⭐", top: "6%",  left:  "5%",  delay: "0s"   },
+  { emoji: "🌸", top: "28%", right: "4%",  delay: "0.8s" },
+  { emoji: "✨", top: "52%", left:  "3%",  delay: "1.5s" },
+  { emoji: "🍀", top: "74%", right: "5%",  delay: "0.4s" },
+  { emoji: "💫", top: "90%", left:  "6%",  delay: "2s"   },
+];
+
 const mapCopy = {
   title: "แผนที่การเรียน",
   subtitle: "เดินทางผ่านบทเรียนทีละ checkpoint",
@@ -96,7 +106,6 @@ function LearningJourneyMap({
   seriesColor: string;
 }) {
   const { currentIndex } = getJourneyState(articles);
-  const visibleArticles = articles.slice(0, Math.max(articles.length, 1));
 
   if (articles.length === 0) {
     return (
@@ -121,25 +130,48 @@ function LearningJourneyMap({
         position: "relative",
         overflow: "hidden",
         borderRadius: "var(--radius-2xl)",
-        background:
-          "linear-gradient(180deg, var(--surface-card), var(--surface-elevated))",
+        background: "linear-gradient(180deg, var(--surface-card), var(--surface-elevated))",
         border: "1px solid var(--surface-border)",
         boxShadow: "var(--shadow-sm)",
       }}
     >
+      {/* Ambient blobs */}
       <div
         aria-hidden
         style={{
           position: "absolute",
           inset: 0,
           backgroundImage:
-            "radial-gradient(circle at 18% 14%, rgba(6,199,85,0.08) 0 8px, transparent 9px), radial-gradient(circle at 82% 20%, rgba(59,130,246,0.08) 0 10px, transparent 11px), radial-gradient(circle at 72% 82%, rgba(245,158,11,0.10) 0 12px, transparent 13px)",
+            "radial-gradient(circle at 18% 14%, rgba(6,199,85,0.07) 0 8px, transparent 9px), radial-gradient(circle at 82% 20%, rgba(59,130,246,0.07) 0 10px, transparent 11px), radial-gradient(circle at 72% 82%, rgba(245,158,11,0.09) 0 12px, transparent 13px)",
           pointerEvents: "none",
         }}
       />
 
-      <div style={{ position: "relative", padding: "20px 16px 18px" }}>
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 16 }}>
+      {/* Floating decorative elements */}
+      {JOURNEY_DECORATIONS.map((d, i) => (
+        <div
+          key={i}
+          className="sparkle-twinkle"
+          aria-hidden
+          style={{
+            position: "absolute",
+            top: d.top,
+            left: "left" in d ? d.left : undefined,
+            right: "right" in d ? d.right : undefined,
+            fontSize: "0.9rem",
+            pointerEvents: "none",
+            userSelect: "none",
+            animationDelay: d.delay,
+            zIndex: 0,
+          }}
+        >
+          {d.emoji}
+        </div>
+      ))}
+
+      <div style={{ position: "relative", zIndex: 1, padding: "20px 16px 18px" }}>
+        {/* Header */}
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 20 }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 3 }}>
               <div
@@ -175,135 +207,210 @@ function LearningJourneyMap({
         </div>
 
         <div style={{ position: "relative", padding: "4px 0 2px" }}>
+          {/* Dashed path line */}
           <div
             aria-hidden
             style={{
               position: "absolute",
-              top: 24,
-              bottom: 24,
+              top: 28,
+              bottom: 28,
               left: "50%",
-              width: 4,
+              width: 3,
               transform: "translateX(-50%)",
               borderRadius: "var(--radius-full)",
-              background:
-                "linear-gradient(180deg, rgba(6,199,85,0.35), rgba(59,130,246,0.18), rgba(245,158,11,0.22))",
+              backgroundImage: `repeating-linear-gradient(180deg, ${seriesColor}55 0px, ${seriesColor}55 8px, transparent 8px, transparent 15px)`,
             }}
           />
 
-          {visibleArticles.map((article, index) => {
+          {articles.map((article, index) => {
             const isComplete = article.done;
             const isCurrent = index === currentIndex && !article.done;
             const isUnlocked = index <= currentIndex || isComplete;
             const isLeft = index % 2 === 0;
-            const milestone = getMilestoneLabel(article, index, visibleArticles.length);
-            const titleColor = isUnlocked ? "var(--text-primary)" : "var(--text-tertiary)";
-            const checkpointBg = isComplete
-              ? "var(--brand-500)"
-              : isCurrent
-                ? "var(--surface-card)"
-                : "var(--neutral-100)";
-            const checkpointBorder = isComplete
-              ? "var(--brand-500)"
-              : isCurrent
-                ? seriesColor
-                : "var(--neutral-200)";
+            const milestone = getMilestoneLabel(article, index, articles.length);
+            const isFinalGoal = milestone === mapCopy.finalGoal;
+            const isMilestone = milestone === mapCopy.milestone;
+
+            /* Node sizing */
+            const nodeSize = isCurrent ? 60 : isFinalGoal ? 56 : (isMilestone && isUnlocked) ? 52 : isComplete ? 52 : 46;
+
+            /* Node background */
+            const nodeBg = isComplete
+              ? `linear-gradient(145deg, ${seriesColor} 0%, ${seriesColor}cc 100%)`
+              : isFinalGoal && isUnlocked
+                ? "linear-gradient(145deg, #f59e0b, #d97706)"
+                : isMilestone && isUnlocked
+                  ? "linear-gradient(145deg, #fbbf24, #f59e0b)"
+                  : isCurrent
+                    ? "var(--surface-card)"
+                    : "var(--neutral-100)";
+
+            /* Node shadow (undefined = handled by CSS animation class) */
+            const nodeShadow = isCurrent
+              ? undefined
+              : isComplete
+                ? `0 5px 0 ${seriesColor}66, 0 8px 20px rgba(6,199,85,0.2)`
+                : isFinalGoal && isUnlocked
+                  ? "0 5px 0 #b45309, 0 8px 20px rgba(245,158,11,0.3)"
+                  : isMilestone && isUnlocked
+                    ? "0 5px 0 #92400e55, 0 8px 20px rgba(245,158,11,0.2)"
+                    : "0 4px 0 var(--neutral-200), 0 2px 8px rgba(0,0,0,0.05)";
+
+            /* Node icon / content */
+            const nodeContent = isComplete ? (
+              <span style={{ fontSize: "1.2rem" }}>✓</span>
+            ) : isFinalGoal ? (
+              <span style={{ fontSize: "1.5rem" }}>🎯</span>
+            ) : isMilestone && isUnlocked ? (
+              <span style={{ fontSize: "1.2rem" }}>🏆</span>
+            ) : (
+              <span style={{ fontSize: "0.8125rem", fontWeight: 900 }}>
+                {isUnlocked ? article.no : <Lock size={16} />}
+              </span>
+            );
+
+            /* Card border / shadow */
+            const cardBorder = isCurrent
+              ? `1.5px solid ${seriesColor}`
+              : isFinalGoal
+                ? "1.5px solid #f59e0b"
+                : "1px solid var(--surface-border)";
+
+            const cardShadow = isCurrent
+              ? `0 8px 24px rgba(6,199,85,0.16)`
+              : isFinalGoal
+                ? "0 8px 24px rgba(245,158,11,0.16)"
+                : "0 4px 12px rgba(15,23,42,0.05)";
+
+            const nodeEntryAnim = `journey-node-in 0.45s cubic-bezier(0.34,1.56,0.64,1) ${Math.min(index * 45, 350)}ms both`;
 
             const checkpoint = (
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 54px 1fr",
-                  alignItems: "center",
-                  minHeight: 82,
-                  position: "relative",
-                }}
-              >
-                <div style={{ gridColumn: isLeft ? "1" : "3", justifySelf: isLeft ? "end" : "start", width: "min(100%, 170px)" }}>
+              /* Extra top padding creates space for the floating mascot */
+              <div style={{ position: "relative", paddingTop: isCurrent ? 42 : 0 }}>
+                {isCurrent && (
                   <div
-                    style={{
-                      padding: "10px 11px",
-                      borderRadius: 14,
-                      background: "var(--surface-card)",
-                      border: isCurrent ? `1.5px solid ${seriesColor}` : "1px solid var(--surface-border)",
-                      boxShadow: isCurrent ? "0 10px 24px rgba(6,199,85,0.18)" : "0 5px 14px rgba(15,23,42,0.05)",
-                      transform: isCurrent ? "translateY(-1px)" : "none",
-                    }}
+                    className="mascot-float"
+                    aria-hidden
+                    style={{ top: 0, fontSize: "2rem", zIndex: 3, filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.12))" }}
                   >
-                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                      {milestone ? (
-                        <Trophy size={13} style={{ color: "var(--accent-amber)" }} />
-                      ) : isCurrent ? (
-                        <Sparkles size={13} style={{ color: seriesColor }} />
-                      ) : (
-                        <BookOpen size={13} style={{ color: isUnlocked ? "var(--brand-600)" : "var(--neutral-300)" }} />
-                      )}
-                      <span style={{ color: isCurrent ? seriesColor : "var(--text-tertiary)", fontSize: "0.625rem", fontWeight: 800 }}>
-                        {milestone || (isCurrent ? mapCopy.current : `${t("progress.articleUnit")} ${article.no}`)}
-                      </span>
-                    </div>
-                    <div
-                      className="line-clamp-2"
-                      style={{
-                        color: titleColor,
-                        fontSize: "0.8125rem",
-                        fontWeight: 750,
-                        lineHeight: 1.35,
-                        minHeight: 35,
-                      }}
-                    >
-                      {article.title}
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 5, marginTop: 7, color: isUnlocked ? "var(--text-tertiary)" : "var(--neutral-300)", fontSize: "0.625rem", fontWeight: 700 }}>
-                      {isComplete ? (
-                        <>
-                          <CheckCircle2 size={11} />
-                          {mapCopy.completed}
-                        </>
-                      ) : isCurrent ? (
-                        <>
-                          <PlayCircle size={11} />
-                          {mapCopy.tapToRead}
-                        </>
-                      ) : (
-                        <>
-                          <Lock size={11} />
-                          {mapCopy.locked}
-                        </>
-                      )}
-                    </div>
+                    {MASCOT}
                   </div>
-                </div>
+                )}
 
                 <div
                   style={{
-                    gridColumn: "2",
-                    justifySelf: "center",
-                    width: 48,
-                    height: 48,
-                    borderRadius: "50%",
-                    background: checkpointBg,
-                    border: `3px solid ${checkpointBorder}`,
-                    color: isComplete ? "#fff" : isCurrent ? seriesColor : "var(--neutral-400)",
-                    display: "flex",
+                    display: "grid",
+                    gridTemplateColumns: "1fr 64px 1fr",
                     alignItems: "center",
-                    justifyContent: "center",
-                    boxShadow: isCurrent
-                      ? "0 0 0 6px rgba(6,199,85,0.10), 0 8px 18px rgba(6,199,85,0.22)"
-                      : "0 4px 12px rgba(15,23,42,0.08)",
-                    zIndex: 1,
-                    fontSize: "0.8125rem",
-                    fontWeight: 900,
+                    minHeight: 88,
+                    position: "relative",
                   }}
                 >
-                  {isComplete ? (
-                    <CheckCircle2 size={21} />
-                  ) : milestone && isUnlocked ? (
-                    <Flag size={19} />
-                  ) : isUnlocked ? (
-                    article.no
-                  ) : (
-                    <Lock size={17} />
-                  )}
+                  {/* Article card */}
+                  <div style={{ gridColumn: isLeft ? "1" : "3", justifySelf: isLeft ? "end" : "start", width: "min(100%, 164px)" }}>
+                    <div
+                      style={{
+                        padding: "10px 11px",
+                        borderRadius: 14,
+                        background: "var(--surface-card)",
+                        border: cardBorder,
+                        boxShadow: cardShadow,
+                        transform: isCurrent ? "translateY(-2px)" : "none",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                        {isFinalGoal ? (
+                          <span style={{ fontSize: "0.75rem" }}>🎯</span>
+                        ) : isMilestone ? (
+                          <Trophy size={13} style={{ color: "var(--accent-amber)" }} />
+                        ) : isCurrent ? (
+                          <Sparkles size={13} style={{ color: seriesColor }} />
+                        ) : (
+                          <BookOpen size={13} style={{ color: isUnlocked ? "var(--brand-600)" : "var(--neutral-300)" }} />
+                        )}
+                        <span
+                          style={{
+                            color: isCurrent ? seriesColor : isFinalGoal ? "#f59e0b" : "var(--text-tertiary)",
+                            fontSize: "0.625rem",
+                            fontWeight: 800,
+                          }}
+                        >
+                          {milestone || (isCurrent ? mapCopy.current : `${t("progress.articleUnit")} ${article.no}`)}
+                        </span>
+                      </div>
+
+                      <div
+                        className="line-clamp-2"
+                        style={{
+                          color: isUnlocked ? "var(--text-primary)" : "var(--text-tertiary)",
+                          fontSize: "0.8125rem",
+                          fontWeight: 750,
+                          lineHeight: 1.35,
+                          minHeight: 35,
+                        }}
+                      >
+                        {article.title}
+                      </div>
+
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 5,
+                          marginTop: 7,
+                          color: isUnlocked ? "var(--text-tertiary)" : "var(--neutral-300)",
+                          fontSize: "0.625rem",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {isComplete ? (
+                          <><CheckCircle2 size={11} />{mapCopy.completed}</>
+                        ) : isCurrent ? (
+                          <><PlayCircle size={11} />{mapCopy.tapToRead}</>
+                        ) : (
+                          <><Lock size={11} />{mapCopy.locked}</>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Center node (game-style 3D button) */}
+                  <div
+                    className={
+                      isCurrent
+                        ? "node-pulse-ring"
+                        : isFinalGoal && isUnlocked
+                          ? "milestone-glow"
+                          : ""
+                    }
+                    style={{
+                      gridColumn: "2",
+                      justifySelf: "center",
+                      width: nodeSize,
+                      height: nodeSize,
+                      borderRadius: "50%",
+                      background: nodeBg,
+                      border: isCurrent
+                        ? `3px solid ${seriesColor}`
+                        : isComplete || (isUnlocked && (isMilestone || isFinalGoal))
+                          ? "none"
+                          : `2px solid ${isUnlocked ? "var(--neutral-300)" : "var(--neutral-200)"}`,
+                      boxShadow: nodeShadow,
+                      color: isComplete || (isUnlocked && (isMilestone || isFinalGoal))
+                        ? "#fff"
+                        : isCurrent
+                          ? seriesColor
+                          : "var(--neutral-400)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      zIndex: 2,
+                      flexShrink: 0,
+                      animation: nodeEntryAnim,
+                    }}
+                  >
+                    {nodeContent}
+                  </div>
                 </div>
               </div>
             );
@@ -395,6 +502,7 @@ export default function ProgressPage() {
   const { stats, weeklyActivity, articles } = data;
   const progressPct = stats.totalArticles > 0 ? Math.round((stats.articlesRead / stats.totalArticles) * 100) : 0;
   const maxMin = Math.max(...(weeklyActivity.map((d) => d.minutes) || [0]), 1);
+  const currentArticleIdx = articles.findIndex((a) => !a.done);
 
   return (
     <div>
@@ -484,44 +592,71 @@ export default function ProgressPage() {
           </div>
 
           <div className="glass-card" style={{ overflow: "hidden" }}>
-            {articles.map((art, idx) => (
-              <div
-                key={art.id}
-                style={{
-                  display: "flex", alignItems: "center", gap: 12, padding: "14px 16px",
-                  borderTop: idx > 0 ? "1px solid var(--surface-border)" : "none",
-                  opacity: art.done ? 1 : 0.55,
-                }}
-              >
-                <div style={{
-                  width: 28, height: 28, borderRadius: "50%",
-                  background: art.done ? "var(--brand-100)" : "var(--neutral-100)",
-                  border: `2px solid ${art.done ? "var(--brand-400)" : "var(--neutral-200)"}`,
-                  display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-                }}>
-                  {art.done ? (
-                    <CheckCircle2 size={14} style={{ color: "var(--brand-600)" }} />
-                  ) : (
-                    <span style={{ fontSize: "0.625rem", fontWeight: 700, color: "var(--text-tertiary)" }}>{art.no}</span>
-                  )}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: "0.875rem", fontWeight: 600, color: art.done ? "var(--text-primary)" : "var(--text-tertiary)" }} className="text-ellipsis">
-                    {art.title}
+            {articles.map((art, idx) => {
+              const isCur = idx === currentArticleIdx;
+              const isInteractive = art.done || isCur;
+
+              const row = (
+                <div
+                  style={{
+                    display: "flex", alignItems: "center", gap: 12, padding: "14px 16px",
+                    borderTop: idx > 0 ? "1px solid var(--surface-border)" : "none",
+                    opacity: !art.done && !isCur ? 0.5 : 1,
+                    background: isCur ? `${stats.seriesColor}08` : "transparent",
+                  }}
+                >
+                  <div style={{
+                    width: 28, height: 28, borderRadius: "50%",
+                    background: art.done ? "var(--brand-100)" : isCur ? `${stats.seriesColor}22` : "var(--neutral-100)",
+                    border: `2px solid ${art.done ? "var(--brand-400)" : isCur ? stats.seriesColor : "var(--neutral-200)"}`,
+                    display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                  }}>
+                    {art.done ? (
+                      <CheckCircle2 size={14} style={{ color: "var(--brand-600)" }} />
+                    ) : isCur ? (
+                      <PlayCircle size={13} style={{ color: stats.seriesColor }} />
+                    ) : (
+                      <span style={{ fontSize: "0.625rem", fontWeight: 700, color: "var(--text-tertiary)" }}>{art.no}</span>
+                    )}
                   </div>
-                  {art.done && (
-                    <div style={{ fontSize: "0.6875rem", color: "var(--text-tertiary)", marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
-                      <Clock size={10} /> {art.minutes} {t("progress.minuteUnit")}
+
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: "0.875rem", fontWeight: isCur ? 700 : 600, color: art.done || isCur ? "var(--text-primary)" : "var(--text-tertiary)" }} className="text-ellipsis">
+                      {art.title}
                     </div>
+                    {art.done && (
+                      <div style={{ fontSize: "0.6875rem", color: "var(--text-tertiary)", marginTop: 2, display: "flex", alignItems: "center", gap: 4 }}>
+                        <Clock size={10} /> {art.minutes} {t("progress.minuteUnit")}
+                      </div>
+                    )}
+                  </div>
+
+                  {art.done ? (
+                    <span style={{ background: "var(--brand-50)", color: "var(--brand-700)", fontSize: "0.625rem", fontWeight: 700, padding: "3px 8px", borderRadius: 8, flexShrink: 0 }}>
+                      {t("progress.done")}
+                    </span>
+                  ) : isCur ? (
+                    <span style={{ background: `${stats.seriesColor}22`, color: stats.seriesColor, fontSize: "0.625rem", fontWeight: 700, padding: "3px 8px", borderRadius: 8, border: `1px solid ${stats.seriesColor}44`, flexShrink: 0 }}>
+                      ▶ เรียน
+                    </span>
+                  ) : (
+                    <Lock size={14} style={{ color: "var(--neutral-300)", flexShrink: 0 }} />
                   )}
                 </div>
-                {art.done ? (
-                  <span style={{ background: "var(--brand-50)", color: "var(--brand-700)", fontSize: "0.625rem", fontWeight: 700, padding: "3px 8px", borderRadius: 8 }}>{t("progress.done")}</span>
-                ) : (
-                  <Lock size={14} style={{ color: "var(--neutral-300)" }} />
-                )}
-              </div>
-            ))}
+              );
+
+              return isInteractive ? (
+                <Link
+                  key={art.id}
+                  href={`/student/read/${art.id}`}
+                  style={{ display: "block", textDecoration: "none", color: "inherit", WebkitTapHighlightColor: "transparent" }}
+                >
+                  {row}
+                </Link>
+              ) : (
+                <div key={art.id}>{row}</div>
+              );
+            })}
           </div>
         </div>
 

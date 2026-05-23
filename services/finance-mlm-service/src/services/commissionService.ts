@@ -33,14 +33,14 @@ export function calculateCommissionRate(volumeTHB: number) {
   }
 
   if (volumeTHB >= 20000) {
-    const rate =
+    return (
       (baseRate *
         (1 - Math.pow(0.3, 1 + Math.log(volumeTHB / 20000) / Math.log(5)))) /
-      0.7;
-    return Math.min(rate, baseRate);
+      0.7
+    );
   }
 
-  return Math.min(0.4 + volumeTHB / 200000, baseRate);
+  return 0.4 + volumeTHB / 200000;
 }
 
 export function calculateCommissionInfo(volumeTHB: number) {
