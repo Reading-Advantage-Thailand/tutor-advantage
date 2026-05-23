@@ -16,6 +16,7 @@ const prismaMock = vi.hoisted(() => ({
   },
   settlementRun: {
     create: vi.fn(),
+    findFirst: vi.fn(),
     findUnique: vi.fn(),
     update: vi.fn(),
   },
