@@ -118,6 +118,7 @@ jobs:
             -f ${{ matrix.dockerfile }} \
             -t ${{ env.REGISTRY }}/${{ matrix.service }}:${{ github.sha }} \
             -t ${{ env.REGISTRY }}/${{ matrix.service }}:latest \
+            --build-arg NEXT_PUBLIC_LIFF_ID=${{ secrets.NEXT_PUBLIC_LIFF_ID }} \
             .
 
       - name: Push Docker image

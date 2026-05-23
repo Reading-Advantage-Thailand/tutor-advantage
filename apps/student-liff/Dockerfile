@@ -13,6 +13,10 @@ COPY apps/student-liff/ ./apps/student-liff/
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# NEXT_PUBLIC_* vars are inlined at build time — must be provided as build args
+ARG NEXT_PUBLIC_LIFF_ID
+ENV NEXT_PUBLIC_LIFF_ID=$NEXT_PUBLIC_LIFF_ID
+
 RUN npm run build -w student-liff
 
 FROM node:22-slim AS runner
