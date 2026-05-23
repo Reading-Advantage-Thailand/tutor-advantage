@@ -60,10 +60,31 @@ import { getAdminOverview } from "./controllers/adminController";
 import { getEarningsSummary, getEarningsHistory } from "./controllers/tutorEarningsController";
 import { getTutorNetwork } from "./controllers/tutorNetworkController";
 
+if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
+  console.error("FATAL: JWT_SECRET must be set in production");
+  process.exit(1);
+}
+
 const app = express();
 const port = process.env.PORT || 3003;
 
-app.use(cors());
+const ALLOWED_ORIGINS = (
+  process.env.ALLOWED_ORIGINS || "http://localhost:3005"
+).split(",").map((o) => o.trim());
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow server-to-server calls (no origin header) and whitelisted origins
+      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS: origin ${origin} not allowed`));
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(
   express.json({
     verify: (req, _res, buf) => {

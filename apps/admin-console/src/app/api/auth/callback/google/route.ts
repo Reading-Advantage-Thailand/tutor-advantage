@@ -8,18 +8,35 @@ const JWT_SECRET = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
+  const state = url.searchParams.get("state");
   const baseUrl = `${url.protocol}//${url.host}`;
   const redirectUri = `${baseUrl}/api/auth/callback/google`;
 
-  if (!code) {
-    return NextResponse.redirect(new URL("/login?error=missing_code", request.url));
+  // Validate CSRF state before doing anything else
+  const cookieStore = await cookies();
+  const storedState = cookieStore.get("oauth_state")?.value;
+
+  if (!state || !storedState || state !== storedState) {
+    return NextResponse.redirect(
+      new URL("/login?error=invalid_state", request.url)
+    );
   }
 
-  const clientId = process.env.AUTH_GOOGLE_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  if (!code) {
+    return NextResponse.redirect(
+      new URL("/login?error=missing_code", request.url)
+    );
+  }
+
+  const clientId =
+    process.env.AUTH_GOOGLE_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
   const clientSecret = process.env.AUTH_GOOGLE_SECRET;
 
   if (!clientId || !clientSecret) {
-    return NextResponse.json({ error: "Google OAuth credentials not fully configured on server" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Google OAuth credentials not fully configured on server" },
+      { status: 500 }
+    );
   }
 
   try {
@@ -39,82 +56,64 @@ export async function GET(request: Request) {
     if (!tokenResponse.ok) {
       const errorText = await tokenResponse.text();
       console.error("Google token exchange failed:", errorText);
-      return NextResponse.redirect(new URL("/login?error=google_token_failed", request.url));
+      return NextResponse.redirect(
+        new URL("/login?error=google_token_failed", request.url)
+      );
     }
 
     const { access_token } = await tokenResponse.json();
 
     // 2. Fetch user profile
-    const profileResponse = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
-      headers: { Authorization: `Bearer ${access_token}` },
-    });
+    const profileResponse = await fetch(
+      "https://www.googleapis.com/oauth2/v2/userinfo",
+      { headers: { Authorization: `Bearer ${access_token}` } }
+    );
 
     if (!profileResponse.ok) {
-      return NextResponse.redirect(new URL("/login?error=google_profile_failed", request.url));
+      return NextResponse.redirect(
+        new URL("/login?error=google_profile_failed", request.url)
+      );
     }
 
     const profile = await profileResponse.json();
     const { email, name } = profile;
 
     if (!email) {
-      return NextResponse.redirect(new URL("/login?error=no_email_returned", request.url));
+      return NextResponse.redirect(
+        new URL("/login?error=no_email_returned", request.url)
+      );
     }
 
-    // 3. Query database to verify user exists and has an admin role
+    // 3. Verify user exists in DB with an admin role
     const dbUser = await prisma.user.findUnique({
-      where: { email: email },
+      where: { email },
       select: { userId: true, role: true, isActive: true },
     });
 
-    // Only allow access if the user exists, is active, and has authorized admin roles
     const ALLOWED_ROLES = ["ADMIN", "FINANCE_CHECKER"];
     if (!dbUser || !dbUser.isActive || !ALLOWED_ROLES.includes(dbUser.role)) {
-      console.warn(`Unauthorized access attempt from: ${email} with role: ${dbUser?.role}`);
+      console.warn(
+        `Unauthorized access attempt from: ${email} with role: ${dbUser?.role}`
+      );
       return NextResponse.redirect(new URL("/unauthorized", request.url));
     }
 
-    const role = dbUser.role;
-    const userId = dbUser.userId;
+    const { role, userId } = dbUser;
 
-    // 4. Generate JWT
+    // 4. Issue JWT stored only in an httpOnly cookie — never injected into HTML
     const token = jwt.sign(
-      {
-        userId,
-        email,
-        name,
-        role,
-        isGoogle: true
-      },
+      { userId, email, name, role, iss: "admin-console" },
       JWT_SECRET,
       { expiresIn: "12h" }
     );
 
-    // 4. Setup response body with HTML injection for localStorage hydration
-    const responseHtml = `
-      <!DOCTYPE html>
-      <html>
-        <head><title>Authenticating...</title></head>
-        <body>
-          <script>
-            localStorage.setItem("admin_token", "${token}");
-            localStorage.setItem("admin_role", "${role}");
-            window.location.href = "/";
-          </script>
-        </body>
-      </html>
-    `;
+    const response = NextResponse.redirect(new URL("/", request.url));
 
-    const response = new NextResponse(responseHtml, {
-      status: 200,
-      headers: { "Content-Type": "text/html" },
-    });
-
-    // Set cookies mimicking dev-login.ts structure
     response.cookies.set("admin_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 12, // 12 hours
+      maxAge: 60 * 60 * 12,
       path: "/",
     });
 
@@ -126,9 +125,14 @@ export async function GET(request: Request) {
       path: "/",
     });
 
+    // Consume the one-time OAuth state cookie
+    response.cookies.delete("oauth_state");
+
     return response;
   } catch (error) {
     console.error("Google OAuth error:", error);
-    return NextResponse.redirect(new URL("/login?error=internal_server_error", request.url));
+    return NextResponse.redirect(
+      new URL("/login?error=internal_server_error", request.url)
+    );
   }
 }

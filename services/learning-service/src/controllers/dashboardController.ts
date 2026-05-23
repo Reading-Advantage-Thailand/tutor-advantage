@@ -2,6 +2,8 @@ import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { lessonSessionService } from "../services/LessonSessionService";
+import { getArticleDetails } from "../services/ReadingAdvantageDB";
+import { v4 as uuidv4 } from "uuid";
 
 export async function getDashboardSummary(
   req: AuthenticatedRequest,
@@ -234,12 +236,39 @@ export async function getStudentProgress(
     }) as any[];
 
     const distinctArticlesRead = new Set(participations.map(p => p.session.articleId));
-    const totalMinutes = participations.length * 25; // Estimate 25 min per read session
 
-    // 3. Get Book Articles
+    // Calculate real session durations from timestamps (cap at 90 min each)
+    const sessionDurations = new Map<string, number>();
+    for (const p of participations) {
+      const sid = p.session.sessionId;
+      if (!sessionDurations.has(sid)) {
+        const start = new Date(p.session.createdAt).getTime();
+        const end   = new Date(p.session.updatedAt).getTime();
+        const mins  = Math.min(Math.round((end - start) / 60000), 90);
+        sessionDurations.set(sid, mins > 0 ? mins : 25);
+      }
+    }
+    const totalMinutes = Array.from(sessionDurations.values()).reduce((s, m) => s + m, 0);
+
+    // Per-article duration: use the session that covered it
+    const articleMinutes = new Map<string, number>();
+    for (const p of participations) {
+      const aid = p.session.articleId;
+      if (!articleMinutes.has(aid)) {
+        articleMinutes.set(aid, sessionDurations.get(p.session.sessionId) ?? 25);
+      }
+    }
+
+    // 3. Get Book Articles — natural sort on trailing number in articleId
     const dbArticles = await prisma.article.findMany({
       where: { bookId: book.bookId },
-      orderBy: { articleId: 'asc' }
+    });
+    dbArticles.sort((a, b) => {
+      const num = (id: string) => {
+        const m = id.match(/(\d+)$/);
+        return m ? parseInt(m[1], 10) : 0;
+      };
+      return num(a.articleId) - num(b.articleId);
     });
 
     const articles = dbArticles.map((art, idx) => {
@@ -249,7 +278,7 @@ export async function getStudentProgress(
         no: idx + 1,
         title: art.title || "Untitled",
         done: isRead,
-        minutes: isRead ? 25 : 0 // Mock 25 mins for finished articles
+        minutes: isRead ? (articleMinutes.get(art.articleId) ?? 25) : 0,
       };
     });
 
@@ -273,7 +302,7 @@ export async function getStudentProgress(
           const joined = new Date(p.joinedAt);
           return joined >= dayDateStart && joined < dayDateEnd;
         })
-        .length * 25;
+        .reduce((sum, p) => sum + (sessionDurations.get(p.session.sessionId) ?? 25), 0);
       
       return {
         day: label,
@@ -304,23 +333,42 @@ export async function getStudentProgress(
       }
     }
 
+    const articlesRead = articles.filter(a => a.done).length;
+    const totalArticles = dbArticles.length || book.articleCount || 10;
+
+    // Color varies by CEFR level
+    const cefrColors: Record<string, string> = {
+      A1: "#06c755", A2: "#10b981",
+      B1: "#3b82f6", B2: "#8b5cf6",
+      C1: "#f59e0b", C2: "#ef4444",
+    };
+    const cefr = book.series?.cefrLevel || "A1";
+    const seriesColor = cefrColors[cefr] ?? "#06c755";
+
+    // Next milestone: every 5 articles, or the final article
+    const nextMilestoneAt = Math.min(
+      Math.ceil((articlesRead + 1) / 5) * 5,
+      totalArticles,
+    );
+    const isFinalStretch = nextMilestoneAt === totalArticles;
+    const nextMilestone = {
+      at: nextMilestoneAt,
+      reward: isFinalStretch ? "🎓 จบระดับ!" : `⭐ รางวัล Milestone บทที่ ${nextMilestoneAt}`,
+    };
+
     return res.status(200).json({
       stats: {
-        articlesRead: articles.filter(a => a.done).length,
-        totalArticles: dbArticles.length || book.articleCount || 10,
+        articlesRead,
+        totalArticles,
         weekStreak: streak,
         totalMinutes,
         level: book.title || "Origins",
-        cefr: book.series?.cefrLevel || "A1",
-        seriesColor: "#06c755",
-        nextMilestone: {
-          label: `บทที่ ${articles.length}`,
-          at: articles.length,
-          reward: "Graduate"
-        }
+        cefr,
+        seriesColor,
+        nextMilestone,
       },
       weeklyActivity,
-      articles
+      articles,
     });
 
   } catch (error: any) {
@@ -328,5 +376,134 @@ export async function getStudentProgress(
     return res.status(500).json({
       error: { code: "INTERNAL_SERVER_ERROR", message: "Could not fetch progress" },
     });
+  }
+}
+
+/**
+ * GET /v1/student/articles/:articleId
+ * Returns article content + session history (pre-class or review mode).
+ */
+export async function getStudentArticle(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+    const { articleId } = req.params;
+
+    // Fetch article content from ReadingAdvantage DB
+    const articleData = await getArticleDetails(articleId).catch(() => null);
+    if (!articleData) {
+      return res.status(404).json({ error: "Article not found" });
+    }
+
+    // Check if the student has a FINISHED session for this article
+    const participant = await (prisma.sessionParticipant as any).findFirst({
+      where: {
+        studentUserId: userId,
+        session: { articleId, status: "FINISHED" },
+      },
+      include: { session: true },
+      orderBy: { joinedAt: "desc" },
+    });
+
+    if (!participant) {
+      return res.status(200).json({
+        article: articleData,
+        mode: "pre-class",
+        session: null,
+      });
+    }
+
+    // Fetch the student's answers for the session (phases with questions)
+    const answers = await (prisma.sessionAnswer as any).findMany({
+      where: { sessionId: participant.sessionId, studentUserId: userId },
+      orderBy: { phase: "asc" },
+    });
+
+    return res.status(200).json({
+      article: articleData,
+      mode: "review",
+      session: {
+        sessionId: participant.sessionId,
+        score: participant.score,
+        finishedAt: participant.session.updatedAt,
+        answers: answers.map((a: any) => ({
+          phase: a.phase,
+          questionText: a.questionText,
+          answerText: a.answerText,
+          correctAnswer: a.correctAnswer,
+          isCorrect: a.isCorrect,
+          score: a.score,
+          aiFeedback: a.aiFeedback,
+        })),
+      },
+    });
+  } catch (error: any) {
+    console.error("Get Student Article Error:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * POST /v1/student/share-link
+ * Returns (or creates) a shareable referral URL for the student's active class.
+ */
+export async function generateStudentShareLink(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+    const { classId } = req.body;
+
+    // Find the enrollment to confirm the student is actually in this class
+    const enrollment = await prisma.enrollment.findFirst({
+      where: {
+        studentUserId: userId,
+        status: "ACTIVE",
+        ...(classId ? { classId } : {}),
+      },
+      include: { class: true },
+      orderBy: { createdAt: "desc" },
+    }) as any;
+
+    if (!enrollment) {
+      return res.status(404).json({ error: "No active enrollment found" });
+    }
+
+    const targetClass = enrollment.class;
+
+    // Reuse an existing ACTIVE referral for this class if one exists
+    let referral = await (prisma.referral as any).findFirst({
+      where: { classId: targetClass.classId, status: "ACTIVE" },
+    });
+
+    if (!referral) {
+      referral = await (prisma.referral as any).create({
+        data: {
+          token: uuidv4(),
+          classId: targetClass.classId,
+          tutorUserId: targetClass.tutorUserId,
+          status: "ACTIVE",
+        },
+      });
+    }
+
+    const baseUrl = process.env.FRONTEND_APP_URL || "http://localhost:3000";
+    const url = `${baseUrl}/enroll?token=${referral.token}`;
+
+    return res.status(200).json({
+      url,
+      token: referral.token,
+      className: targetClass.title,
+    });
+  } catch (error: any) {
+    console.error("Generate Student Share Link Error:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }

@@ -5,7 +5,10 @@ const JWT_SECRET = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
 
 export async function POST(req: Request) {
   if (process.env.NODE_ENV !== "development") {
-    return NextResponse.json({ error: "Endpoint disabled in production" }, { status: 403 });
+    return NextResponse.json(
+      { error: "Endpoint disabled in production" },
+      { status: 403 }
+    );
   }
 
   try {
@@ -16,27 +19,24 @@ export async function POST(req: Request) {
     }
 
     const token = jwt.sign(
-      {
-        userId: "mock-admin-uuid-0000",
-        role: role,
-      },
+      { userId: "mock-admin-uuid-0000", role, iss: "admin-console" },
       JWT_SECRET,
-      { expiresIn: "12h" },
+      { expiresIn: "12h" }
     );
 
-    const response = NextResponse.json({ token, role });
-    
-    // Set cookies for middleware
+    // Token goes only into httpOnly cookie — not returned in response body
+    const response = NextResponse.json({ success: true, role });
+
     response.cookies.set("admin_token", token, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
-      maxAge: 60 * 60 * 12, // 12 hours
+      maxAge: 60 * 60 * 12,
       path: "/",
     });
-    
+
     response.cookies.set("admin_role", role, {
-      httpOnly: false, // Allow client to read role if needed
+      httpOnly: false,
       secure: false,
       sameSite: "lax",
       maxAge: 60 * 60 * 12,
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     console.error("Dev login error:", error);
     return NextResponse.json(
       { error: "Failed to generate dev token" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

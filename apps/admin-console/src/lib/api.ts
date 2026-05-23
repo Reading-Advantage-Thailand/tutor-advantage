@@ -1,8 +1,5 @@
 import { t } from "./i18n";
 
-export const FINANCE_API_URL =
-  process.env.NEXT_PUBLIC_FINANCE_API_URL || "http://localhost:3003";
-
 function getErrorMessage(data: unknown) {
   if (typeof data === "string" && data.trim()) {
     return data;
@@ -31,16 +28,21 @@ function getErrorMessage(data: unknown) {
   return t("api.genericError");
 }
 
-export async function fetchWithAuth(url: string, options: RequestInit = {}) {
-  let token = null;
-  if (typeof window !== "undefined") {
-    token = localStorage.getItem("admin_token");
+async function handleUnauthorized() {
+  try {
+    await fetch("/api/auth/logout", { method: "POST" });
+  } catch (e) {
+    console.error("Failed to clear cookie:", e);
   }
+  window.location.href = "/login";
+}
+
+// Routes all finance API calls through the Next.js proxy so the httpOnly
+// admin_token cookie is read server-side — never exposed to client JavaScript.
+export async function fetchWithAuth(url: string, options: RequestInit = {}) {
+  const proxyUrl = url.startsWith("/") ? `/api/proxy${url}` : url;
 
   const headers = new Headers(options.headers);
-  if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
-  }
   if (
     !headers.has("Content-Type") &&
     !(options.body && options.body instanceof FormData)
@@ -48,23 +50,11 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     headers.set("Content-Type", "application/json");
   }
 
-  const fullUrl = url.startsWith("http") ? url : `${FINANCE_API_URL}${url}`;
+  const response = await fetch(proxyUrl, { ...options, headers });
 
-  const response = await fetch(fullUrl, {
-    ...options,
-    headers,
-  });
-
-  // Redirect expired or unauthorized sessions back to login.
   if (response.status === 401) {
     if (typeof window !== "undefined") {
-      localStorage.clear();
-      try {
-        await fetch("/api/auth/logout", { method: "POST" });
-      } catch (e) {
-        console.error("Failed to clear cookie:", e);
-      }
-      window.location.href = "/login";
+      await handleUnauthorized();
     }
     throw new Error(t("api.sessionExpiredThai"));
   }
@@ -83,30 +73,15 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
 
 export async function fetchBlobWithAuth(
   url: string,
-  options: RequestInit = {},
+  options: RequestInit = {}
 ) {
-  let token = null;
-  if (typeof window !== "undefined") {
-    token = localStorage.getItem("admin_token");
-  }
+  const proxyUrl = url.startsWith("/") ? `/api/proxy${url}` : url;
 
-  const headers = new Headers(options.headers);
-  if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
-  }
-
-  const fullUrl = url.startsWith("http") ? url : `${FINANCE_API_URL}${url}`;
-  const response = await fetch(fullUrl, { ...options, headers });
+  const response = await fetch(proxyUrl, options);
 
   if (response.status === 401) {
     if (typeof window !== "undefined") {
-      localStorage.clear();
-      try {
-        await fetch("/api/auth/logout", { method: "POST" });
-      } catch (e) {
-        console.error("Failed to clear cookie:", e);
-      }
-      window.location.href = "/login";
+      await handleUnauthorized();
     }
     throw new Error(t("api.sessionExpiredEnglish"));
   }
@@ -131,4 +106,10 @@ export function downloadBlob(blob: Blob, filename: string) {
   anchor.click();
   document.body.removeChild(anchor);
   URL.revokeObjectURL(url);
+}
+
+export function getAdminRole(): string {
+  if (typeof document === "undefined") return "";
+  const match = document.cookie.match(/(?:^|; )admin_role=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : "";
 }

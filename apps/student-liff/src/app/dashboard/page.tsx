@@ -250,6 +250,7 @@ export default function DashboardPage() {
   const [historyData, setHistoryData] = useState<LessonHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [copyState, setCopyState] = useState<'idle' | 'loading' | 'copied'>('idle');
 
   const prevUnreadRef = useRef<number | undefined>(undefined);
 
@@ -341,6 +342,21 @@ export default function DashboardPage() {
     if (hour < 12) return t("dashboard.morning");
     if (hour < 17) return t("dashboard.afternoon");
     return t("dashboard.evening");
+  };
+
+  /* ── Referral copy handler ── */
+  const handleCopyReferral = async () => {
+    if (copyState !== 'idle') return;
+    setCopyState('loading');
+    try {
+      const firstActiveClassId = activeClasses[0]?.id;
+      const data = await studentApi.generateShareLink(firstActiveClassId);
+      await navigator.clipboard.writeText(data.url);
+      setCopyState('copied');
+      setTimeout(() => setCopyState('idle'), 2500);
+    } catch {
+      setCopyState('idle');
+    }
   };
 
   /* ── Loading / Error ── */
@@ -491,19 +507,37 @@ export default function DashboardPage() {
 
         {/* ── Referral card ── */}
         <section className="px-4">
-          <div className="rounded-2xl border border-border bg-card p-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: "var(--brand-50)", border: "1px solid var(--brand-100)" }}>
-              <Copy size={16} style={{ color: "var(--brand-600)" }} />
+          <div className="glass-card" style={{ padding: "14px 16px", display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ width: 42, height: 42, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, background: "rgba(6,199,85,0.12)", fontSize: "1.375rem" }}>
+              🔗
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-bold text-sm text-foreground">{t("dashboard.shareTitle")}</p>
-              <p className="text-xs text-muted-foreground">{t("dashboard.shareDescription")}</p>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontWeight: 700, fontSize: "0.875rem", color: "var(--text-primary)", margin: 0 }}>{t("dashboard.shareTitle")}</p>
+              <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", margin: "2px 0 0" }}>{t("dashboard.shareDescription")}</p>
             </div>
             <button
               id="btn-copy-referral"
-              className="shrink-0 text-xs font-bold px-3 py-2 rounded-xl border border-border bg-background text-foreground"
+              onClick={handleCopyReferral}
+              disabled={copyState !== 'idle' || activeClasses.length === 0}
+              style={{
+                flexShrink: 0,
+                fontSize: "0.75rem",
+                fontWeight: 700,
+                padding: "8px 14px",
+                borderRadius: 12,
+                border: "none",
+                cursor: activeClasses.length === 0 ? "not-allowed" : "pointer",
+                transition: "all 0.2s",
+                background: copyState === 'copied'
+                  ? "var(--brand-500)"
+                  : "var(--neutral-100)",
+                color: copyState === 'copied'
+                  ? "white"
+                  : "var(--text-primary)",
+                opacity: copyState === 'loading' ? 0.6 : 1,
+              }}
             >
-              {t("dashboard.copyReferral")}
+              {copyState === 'loading' ? "..." : copyState === 'copied' ? "✓ คัดลอกแล้ว" : t("dashboard.copyReferral")}
             </button>
           </div>
         </section>

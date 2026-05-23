@@ -96,15 +96,8 @@ export default function AdjustmentsPage() {
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    const token = localStorage.getItem("admin_token");
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        setUserRole(payload.role);
-      } catch (error) {
-        console.error("Failed to parse token:", error);
-      }
-    }
+    const match = document.cookie.match(/(?:^|; )admin_role=([^;]*)/);
+    if (match) setUserRole(decodeURIComponent(match[1]));
   }, []);
 
   const loadPending = useCallback(async () => {

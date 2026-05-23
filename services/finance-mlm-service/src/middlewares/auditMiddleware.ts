@@ -2,21 +2,27 @@ import { Response, NextFunction } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "./authMiddleware";
 
-/**
- * Middleware to log high-privilege actions (e.g., Maker/Checker approvals, manual adjustments)
- * This acts as an interceptor. In a real system, you might attach to Prisma middlewares
- * or emit events AFTER the controller successfully completes.
- * Here we use an interceptor approach that hooks into res.json to log IF the request succeeded.
- */
+const SENSITIVE_FIELDS = new Set([
+  "password", "token", "secret", "cvv", "cardNumber", "pan",
+  "bankAccount", "accountNumber", "privateKey", "accessToken", "refreshToken",
+]);
+
+function sanitizeBody(body: unknown): unknown {
+  if (!body || typeof body !== "object" || Array.isArray(body)) return body;
+  const sanitized: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(body as Record<string, unknown>)) {
+    sanitized[key] = SENSITIVE_FIELDS.has(key.toLowerCase()) ? "[REDACTED]" : value;
+  }
+  return sanitized;
+}
+
 export function auditTrailMiddleware(actionName: string) {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const originalJson = res.json;
 
-    // Override res.json to capture the response and log the action
     res.json = function (body) {
-      res.json = originalJson; // Cleanup override
+      res.json = originalJson;
 
-      // If the action was successful (e.g., 200, 201)
       if (res.statusCode >= 200 && res.statusCode < 300) {
         const userId = req.user?.userId;
         const targetId =
@@ -25,7 +31,6 @@ export function auditTrailMiddleware(actionName: string) {
           req.body.tutorUserId ||
           "system";
 
-        // Fire-and-forget log writing
         prisma.auditEvent
           .create({
             data: {
@@ -34,7 +39,8 @@ export function auditTrailMiddleware(actionName: string) {
               entityType: "general_action",
               entityId: targetId,
               payload: {
-                body: req.body,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              body: sanitizeBody(req.body) as any,
                 params: req.params,
                 ip: req.ip,
                 timestamp: new Date().toISOString(),

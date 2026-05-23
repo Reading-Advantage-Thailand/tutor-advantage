@@ -83,9 +83,6 @@ export default function LoginPage() {
         throw new Error(data.error || "Login failed");
       }
 
-      localStorage.setItem("admin_token", data.token);
-      localStorage.setItem("admin_role", data.role);
-
       router.push("/");
     } catch (error) {
       const err = error as Error;

@@ -77,6 +77,11 @@ export const studentApi = {
   // Learning
   getDashboard: () => fetchWithAuth('/dashboard/summary'),
   getStudentProgress: () => fetchWithAuth('/student/progress'),
+  getStudentArticle: (articleId: string) => fetchWithAuth(`/student/articles/${articleId}`),
+  generateShareLink: (classId?: string) => fetchWithAuth('/student/share-link', {
+    method: 'POST',
+    body: JSON.stringify(classId ? { classId } : {}),
+  }),
   getEnrolledClasses: () => fetchWithAuth('/classes'),
   getAvailableClasses: (params?: { q?: string; cefr?: string }) => {
     const qp = new URLSearchParams();

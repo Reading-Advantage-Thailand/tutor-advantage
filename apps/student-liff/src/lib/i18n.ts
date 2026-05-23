@@ -9,7 +9,7 @@ export const th = {
     navAria: "Navigation หลัก",
     navHome: "หน้าหลัก",
     navClasses: "คลาสเรียน",
-    navProgress: "ก้าวหน้า",
+    navProgress: "ความก้าวหน้า",
     navProfile: "โปรไฟล์",
     lightMode: "เปลี่ยนเป็นโหมดสว่าง",
     darkMode: "เปลี่ยนเป็นโหมดมืด",

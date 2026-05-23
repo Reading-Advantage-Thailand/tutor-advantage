@@ -121,7 +121,8 @@ export default function DashboardPage() {
   const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
-    setRole(localStorage.getItem("admin_role"));
+    const match = document.cookie.match(/(?:^|; )admin_role=([^;]*)/);
+    setRole(match ? decodeURIComponent(match[1]) : null);
   }, []);
 
   useEffect(() => {

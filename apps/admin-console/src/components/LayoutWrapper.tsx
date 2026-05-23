@@ -87,8 +87,7 @@ function AppSidebar({
 
   const fetchSummary = useCallback(async () => {
     try {
-      if (typeof window === "undefined" || !localStorage.getItem("admin_token"))
-        return;
+      if (typeof window === "undefined") return;
       const data = await fetchWithAuth("/v1/admin/overview");
       setPendingSettlements(data.workQueues?.settlements ?? 0);
       setPendingAdjustments(data.workQueues?.adjustments ?? 0);
@@ -346,11 +345,11 @@ export default function LayoutWrapper({
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("admin_token");
-      const savedRole = localStorage.getItem("admin_role");
+      const match = document.cookie.match(/(?:^|; )admin_role=([^;]*)/);
+      const savedRole = match ? decodeURIComponent(match[1]) : null;
       const isPublicPage = pathname === "/login" || pathname === "/unauthorized";
-      
-      if (!token && !isPublicPage) {
+
+      if (!savedRole && !isPublicPage) {
         router.push("/login");
       } else {
         setRole(savedRole);
@@ -359,17 +358,11 @@ export default function LayoutWrapper({
   }, [pathname, router]);
 
   const handleLogout = async () => {
-    localStorage.removeItem("admin_token");
-    localStorage.removeItem("admin_role");
-    
-    // Clear cookies via server API since admin_token is HttpOnly
     try {
       await fetch("/api/auth/logout", { method: "POST" });
     } catch (e) {
       console.error("Failed to clear cookies on server:", e);
     }
-    
-    // Use window.location to force a hard reload, ensuring middleware sees cleared cookies
     window.location.href = "/login";
   };
 

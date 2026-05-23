@@ -34,7 +34,7 @@ import {
   enrollStudent,
   directEnroll,
 } from "./controllers/enrollmentController";
-import { getDashboardSummary, getStudentProgress } from "./controllers/dashboardController";
+import { getDashboardSummary, getStudentProgress, getStudentArticle, generateStudentShareLink } from "./controllers/dashboardController";
 import {
   getConversations,
   getMessages,
@@ -90,6 +90,8 @@ app.post("/v1/enroll/:referralToken", authMiddleware, enrollStudent);
 // Protected Dashboard API
 app.get("/v1/dashboard/summary", authMiddleware, getDashboardSummary);
 app.get("/v1/student/progress", authMiddleware, getStudentProgress);
+app.get("/v1/student/articles/:articleId", authMiddleware, getStudentArticle);
+app.post("/v1/student/share-link", authMiddleware, generateStudentShareLink);
 
 // Protected Lesson History Routes
 app.get("/v1/lessons/history", authMiddleware, getStudentLessonHistory);
