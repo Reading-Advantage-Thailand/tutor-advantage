@@ -1,17 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export async function POST(req: NextRequest) {
+  // Require an active session to prevent API key abuse
+  const cookieStore = await cookies();
+  if (!cookieStore.get("tutor_session")?.value) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { texts } = await req.json();
 
     if (!Array.isArray(texts) || texts.length === 0) {
-      return NextResponse.json({ error: "texts must be a non-empty array" }, { status: 400 });
+      return NextResponse.json(
+        { error: "texts must be a non-empty array" },
+        { status: 400 }
+      );
     }
 
     const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
     if (!apiKey) {
       console.error("[translate] GOOGLE_TRANSLATE_API_KEY is not set");
-      return NextResponse.json({ error: "GOOGLE_TRANSLATE_API_KEY not configured" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Translation service not configured" },
+        { status: 500 }
+      );
     }
 
     const res = await fetch(
@@ -19,19 +32,14 @@ export async function POST(req: NextRequest) {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          q: texts,
-          source: "en",
-          target: "th",
-          format: "text",
-        }),
+        body: JSON.stringify({ q: texts, source: "en", target: "th", format: "text" }),
       }
     );
 
     if (!res.ok) {
       const err = await res.text();
       console.error("[translate] Google API error:", res.status, err);
-      return NextResponse.json({ error: err }, { status: res.status });
+      return NextResponse.json({ error: "Translation failed" }, { status: res.status });
     }
 
     const data = await res.json();
@@ -40,8 +48,9 @@ export async function POST(req: NextRequest) {
     );
 
     return NextResponse.json({ translations });
-  } catch (e: any) {
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : "Unknown error";
     console.error("[translate] Exception:", e);
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

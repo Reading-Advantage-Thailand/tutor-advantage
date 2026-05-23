@@ -4,8 +4,6 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import liff from "@line/liff";
 import { LiffMockPlugin } from "@line/liff-mock";
 import type { Liff } from "@line/liff";
-import { Cookies } from "@/lib/cookieUtils";
-import { studentApi } from "@/lib/api";
 
 interface LiffContextType {
   liff: Liff | null;
@@ -40,11 +38,10 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
       const liffId = process.env.NEXT_PUBLIC_LIFF_ID;
 
       if (!liffId) {
-        const errorMsg =
-          "LIFF_ID is missing in environment variables (.env.local)";
+        const errorMsg = "LIFF_ID is missing in environment variables (.env.local)";
         console.error(errorMsg);
         setError(errorMsg);
-        setIsReady(true); // Set ready so UI can show error
+        setIsReady(true);
         return;
       }
 
@@ -52,7 +49,6 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
         const isLocalhost = window.location.hostname === "localhost";
         const useMock = process.env.NODE_ENV === "development" && isLocalhost;
 
-        // Use Mock plugin only on localhost
         if (useMock) {
           liff.use(new LiffMockPlugin());
         }
@@ -67,20 +63,23 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
           const userProfile = await liff.getProfile();
           setProfile(userProfile);
 
-          // Exchange LINE ID Token for Backend JWT
-          // Skip in development — mock tokens (and even real ones in dev) cannot
-          // be reliably verified against LINE's production API.
           if (process.env.NODE_ENV !== "production") {
             console.log("[LIFF] Dev mode: skipping backend token exchange");
           } else {
             const idToken = liff.getIDToken();
-            console.log("[LIFF] ID Token available:", !!idToken);
-
             if (idToken) {
               try {
-                console.log("[LIFF] Attempting backend login exchange...");
-                const authData = await studentApi.loginWithLine(idToken);
-                console.log("[LIFF] Backend session established successfully:", authData.user?.role);
+                // Exchange LINE token via server route — stores JWT in cookie, not localStorage
+                const authRes = await fetch("/api/auth/line", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ idToken }),
+                });
+                if (!authRes.ok) {
+                  console.error("[LIFF] Backend login failed:", await authRes.json());
+                } else {
+                  console.log("[LIFF] Backend session established");
+                }
               } catch (authErr) {
                 console.error("[LIFF] Backend login failed:", authErr);
               }
@@ -88,35 +87,25 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
               console.warn("[LIFF] No ID Token found even though logged in");
             }
           }
-
-          // Sync session cookie for server-side middleware
-          Cookies.set("liff-session", "active", { expires: 7 });
-        } else {
-          // Ensure cookie is removed if not logged in
-          Cookies.remove("liff-session");
         }
 
         setIsReady(true);
       } catch (err) {
         const errorObject = err instanceof Error ? err : new Error(String(err));
-        const errorMessage = errorObject.message || "Failed to initialize LIFF";
         console.error("LIFF Provider: Init failed:", err);
-        setError(errorMessage);
-        setIsReady(true); // Still set ready to allow UI to show the error
+        setError(errorObject.message || "Failed to initialize LIFF");
+        setIsReady(true);
       }
     };
 
     init();
   }, []);
 
-
-
   const logout = () => {
     if (liff?.isLoggedIn()) {
       liff.logout();
       setProfile(null);
-      localStorage.removeItem('student_session_token');
-      Cookies.remove("liff-session");
+      fetch("/api/auth/logout", { method: "POST" }).catch(console.error);
       window.location.href = "/login";
     }
   };

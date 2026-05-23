@@ -107,9 +107,9 @@ export function Sidebar({ notifications: initialNotifications }: SidebarProps) {
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleLogout = () => {
-    // Redirect to the server-side logout route which will clear the httpOnly cookie
-    window.location.href = "/api/auth/logout";
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" }).catch(console.error);
+    window.location.href = "/";
   };
 
   return (

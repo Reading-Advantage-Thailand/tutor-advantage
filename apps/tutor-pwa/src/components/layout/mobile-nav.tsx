@@ -31,11 +31,10 @@ export function MobileNav() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
-  const handleLogout = () => {
-    document.cookie =
-      "tutor_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" }).catch(console.error);
     setOpen(false);
-    router.push("/");
+    window.location.href = "/";
   };
 
   return (

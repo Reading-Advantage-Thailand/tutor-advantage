@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -52,11 +52,11 @@ export default function PaymentHistoryPage() {
           setLoading(true);
 
           // Wait for session token to appear (consistent pattern from dashboard)
-          let token = localStorage.getItem("student_session_token");
+          let token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
           let retries = 0;
           while (!token && retries < 10 && isMounted) {
             await new Promise((resolve) => setTimeout(resolve, 500));
-            token = localStorage.getItem("student_session_token");
+            token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
             retries++;
           }
 

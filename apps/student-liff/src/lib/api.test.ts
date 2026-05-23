@@ -11,12 +11,13 @@ vi.mock("@line/liff", () => ({
 
 describe("student API helpers", () => {
   beforeEach(() => {
-    localStorage.clear();
     vi.stubGlobal("fetch", vi.fn());
+    // Reset cookies
+    document.cookie = "student-session=; max-age=0; path=/";
   });
 
-  it("uses browser proxy URLs and attaches the stored session token", async () => {
-    localStorage.setItem("student_session_token", "token-1");
+  it("uses browser proxy URLs and attaches the session token from cookie", async () => {
+    document.cookie = "student-session=token-1; path=/";
     vi.mocked(fetch).mockResolvedValueOnce(
       new Response(JSON.stringify({ ok: true }), {
         status: 200,
@@ -33,20 +34,6 @@ describe("student API helpers", () => {
         "Content-Type": "application/json",
       }),
     }));
-  });
-
-  it("stores the session token after LINE login", async () => {
-    vi.mocked(fetch).mockResolvedValueOnce(
-      new Response(JSON.stringify({ sessionToken: "new-token" }), {
-        status: 200,
-        headers: { "content-type": "application/json" },
-      }),
-    );
-    const { studentApi } = await import("./api");
-
-    await studentApi.loginWithLine("id-token");
-
-    expect(localStorage.getItem("student_session_token")).toBe("new-token");
   });
 
   it("throws API error messages from error envelopes", async () => {

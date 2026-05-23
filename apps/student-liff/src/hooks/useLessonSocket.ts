@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 const getSocketUrl = () => {
@@ -79,7 +79,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     if (!classId || !studentId) return;
 
     const token = typeof window !== "undefined"
-      ? localStorage.getItem("student_session_token")
+      ? (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null
       : null;
     const newSocket = io(getSocketUrl(), {
       auth: token ? { token } : undefined,

@@ -352,11 +352,11 @@ export default function ArticleReaderPage() {
     async function load() {
       try {
         setLoading(true);
-        let token = localStorage.getItem("student_session_token");
+        let token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
         let retries = 0;
         while (!token && retries < 10) {
           await new Promise(r => setTimeout(r, 400));
-          token = localStorage.getItem("student_session_token");
+          token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
           retries++;
         }
         const result = await studentApi.getStudentArticle(articleId) as PageData;

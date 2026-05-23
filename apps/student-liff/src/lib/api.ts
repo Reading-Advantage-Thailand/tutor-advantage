@@ -1,32 +1,32 @@
 import liff from "@line/liff";
 
-// Use relative paths to take advantage of Next.js rewrites (proxy)
 const LEARNING_API_BASE = '/api/learning';
 const IDENTITY_API_BASE = '/api/identity';
 const FINANCE_API_BASE = '/api/finance';
 
+function getSessionToken(): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(/(?:^|; )student-session=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 export async function fetchWithAuth(endpoint: string, options: RequestInit = {}, apiBase: string = LEARNING_API_BASE) {
   const isServer = typeof window === 'undefined';
-  
+
   let defaultBaseUrl = 'http://localhost:3002/v1';
   if (apiBase === IDENTITY_API_BASE) defaultBaseUrl = 'http://localhost:3001/v1';
   if (apiBase === FINANCE_API_BASE) defaultBaseUrl = 'http://localhost:3003/v1';
 
-  const baseUrl = isServer 
-    ? defaultBaseUrl
-    : apiBase;
-
+  const baseUrl = isServer ? defaultBaseUrl : apiBase;
   const url = `${baseUrl}${endpoint}`;
-  
+
   if (!isServer) {
     console.log(`[studentApi] Requesting: ${url}`);
   }
 
-  // 1. Try to get custom JWT from localStorage
-  const token = !isServer ? localStorage.getItem('student_session_token') : null;
+  // Read session token from cookie instead of localStorage
+  const token = !isServer ? getSessionToken() : null;
 
-  // 2. Fallback to LIFF ID Token for authentication exchange if needed
-  // Note: learning-service ONLY accepts custom JWT
   try {
     if (!isServer) {
       liff.getIDToken();
@@ -48,7 +48,7 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {},
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       console.error(`[studentApi] Error ${response.status}:`, errorData);
-      throw new Error(errorData.error?.message || `API Error ${response.status}`);
+      throw new Error((errorData as { error?: { message?: string } }).error?.message || `API Error ${response.status}`);
     }
 
     return await response.json();
@@ -61,19 +61,6 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {},
 }
 
 export const studentApi = {
-  // Auth
-  loginWithLine: async (idToken: string) => {
-    const data = await fetchWithAuth('/auth/callback', {
-      method: 'POST',
-      body: JSON.stringify({ provider: 'line', code: idToken }),
-    }, IDENTITY_API_BASE);
-    
-    if (data.sessionToken) {
-      localStorage.setItem('student_session_token', data.sessionToken);
-    }
-    return data;
-  },
-
   // Learning
   getDashboard: () => fetchWithAuth('/dashboard/summary'),
   getStudentProgress: () => fetchWithAuth('/student/progress'),

@@ -64,8 +64,9 @@ export function SettingsInteractiveElements({ type, status }: { type: string; st
   }
 
   if (type === "logoutSection") {
-    const handleLogout = () => {
-      window.location.href = "/api/auth/logout";
+    const handleLogout = async () => {
+      await fetch("/api/auth/logout", { method: "POST" }).catch(console.error);
+      window.location.href = "/";
     };
 
     return (

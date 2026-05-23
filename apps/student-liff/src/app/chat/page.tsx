@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
@@ -115,11 +115,11 @@ export default function ChatListPage() {
         try {
           if (showLoading) setLoading(true);
           
-          let token = localStorage.getItem("student_session_token");
+          let token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
           let retries = 0;
           while (!token && retries < 10 && isMounted) {
             await new Promise((resolve) => setTimeout(resolve, 500));
-            token = localStorage.getItem("student_session_token");
+            token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
             retries++;
           }
           if (!token && isMounted) throw new Error(t("chat.sessionUnavailable"));
