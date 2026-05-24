@@ -53,11 +53,15 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
           liff.use(new LiffMockPlugin());
         }
 
-        // LIFF Inspector — remove before go-live
-        // To activate: add ?li.origin=wss://YOUR_NGROK_URL to LIFF Endpoint URL in LINE Developers Console
-        // e.g. https://student-liff-1090865515742.asia-southeast1.run.app?li.origin=wss://resource-pushpin-tabby.ngrok-free.dev
-        const { LIFFInspectorPlugin } = await import("@line/liff-inspector");
-        liff.use(new LIFFInspectorPlugin());
+        // LIFF Inspector — only load when ?li.origin= is present in the URL (debug sessions only)
+        // To activate: add ?li.origin=wss%3A%2F%2FNGROK_HOST to LIFF Endpoint URL in LINE Developers Console
+        // e.g. https://student-liff-1090865515742.asia-southeast1.run.app?li.origin=wss%3A%2F%2Fresource-pushpin-tabby.ngrok-free.dev
+        const liOrigin = new URLSearchParams(window.location.search).get("li.origin");
+        if (liOrigin) {
+          const { LIFFInspectorPlugin } = await import("@line/liff-inspector");
+          liff.use(new LIFFInspectorPlugin());
+          console.log("[LIFF] Inspector enabled, origin:", liOrigin);
+        }
 
         await liff.init({
           liffId,
@@ -90,6 +94,15 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
                   console.error("[LIFF] Backend login failed:", errorPayload);
                   setError(message);
                 } else {
+                  // Parse response to get sessionToken for manual cookie fallback.
+                  // LINE WebView (WKWebView on iOS) may not apply Set-Cookie from fetch()
+                  // responses — setting document.cookie explicitly ensures the cookie lands.
+                  const authData = await authRes.json().catch(() => null) as { sessionToken?: string } | null;
+                  if (authData?.sessionToken) {
+                    const maxAge = 7 * 24 * 60 * 60;
+                    const secure = window.location.protocol === "https:" ? "; Secure" : "";
+                    document.cookie = `student-session=${authData.sessionToken}; path=/; max-age=${maxAge}; SameSite=Lax${secure}`;
+                  }
                   console.log("[LIFF] Backend session established");
                 }
               } catch (authErr) {

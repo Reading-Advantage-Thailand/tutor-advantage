@@ -61,7 +61,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "No session token returned" }, { status: 500 });
   }
 
-  const res = NextResponse.json({ success: true, user: data.user });
+  // Include sessionToken in body so client can set document.cookie manually
+  // (needed for LINE WebView / WKWebView which may not apply Set-Cookie from fetch responses)
+  const res = NextResponse.json({ success: true, user: data.user, sessionToken });
 
   // Store JWT in a cookie readable by JavaScript (needed for Authorization headers
   // in API calls via Next.js rewrites). Protected by SameSite=Lax.
