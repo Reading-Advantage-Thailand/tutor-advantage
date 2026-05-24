@@ -4,6 +4,8 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import liff from "@line/liff";
 import { LiffMockPlugin } from "@line/liff-mock";
 import type { Liff } from "@line/liff";
+// @ts-expect-error: no type declarations for liff-inspector
+import { LIFFInspectorPlugin } from "@line/liff-inspector";
 
 interface LiffContextType {
   liff: Liff | null;
@@ -53,6 +55,11 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
           liff.use(new LiffMockPlugin());
         }
 
+        // LIFF Inspector — dev only, lets you debug LINE WebView via browser DevTools
+        if (process.env.NODE_ENV === "development") {
+          liff.use(new LIFFInspectorPlugin());
+        }
+
         await liff.init({
           liffId,
           // @ts-expect-error: mock is a custom property from the @line/liff-mock plugin
@@ -100,8 +107,23 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
         setIsReady(true);
       } catch (err) {
         const errorObject = err instanceof Error ? err : new Error(String(err));
-        console.warn("[LIFF] Init failed:", errorObject.message);
-        setError(errorObject.message || "Failed to initialize LIFF");
+        const rawMsg = errorObject.message || "Failed to initialize LIFF";
+        console.warn("[LIFF] Init failed:", rawMsg);
+
+        // Help diagnose ngrok URL-mismatch: "Failed to fetch" during init means
+        // LINE WebView can't validate the LIFF endpoint — update LINE Developers
+        // Console to match the current URL.
+        const isFetchError =
+          rawMsg.toLowerCase().includes("failed to fetch") ||
+          rawMsg.toLowerCase().includes("fail to fetch") ||
+          rawMsg.toLowerCase().includes("networkerror");
+
+        const displayMsg =
+          isFetchError && process.env.NODE_ENV === "development"
+            ? `LIFF init network error — ตรวจสอบว่า ${window.location.origin} ถูก register ใน LINE Developers Console แล้ว (LIFF endpoint URL)`
+            : rawMsg;
+
+        setError(displayMsg);
         setIsReady(true);
       }
     };
