@@ -3,7 +3,6 @@
 
 import { cookies } from "next/headers";
 import { IDENTITY_URL, LEARNING_URL } from "@/lib/service-urls";
-import { LEARNING_URL } from "@/lib/service-urls";
 
 export async function getNotificationsSummary() {
   const cookieStore = await cookies();
