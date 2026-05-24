@@ -121,7 +121,7 @@ export default async function ClassesPage() {
                         <Badge variant={status.variant} className={`text-xs px-2.5 py-0.5 sm:hidden ${status.className || ""}`}>
                           {status.label}
                         </Badge>
-                        <DeleteClassButton classId={cls.id} />
+                        <DeleteClassButton classId={cls.id} className={cls.name} />
                       </div>
                       <div className="flex items-center gap-1 text-xs font-bold text-primary ml-auto sm:ml-0 group-hover:underline">
                         {t("tutorClass.classes.manage")}
