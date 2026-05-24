@@ -19,6 +19,7 @@ interface PageProps {
 interface Tutor {
   name: string;
   initials: string;
+  pictureUrl?: string | null;
   bio?: string;
   rating?: number;
   students?: number;
@@ -660,14 +661,26 @@ export default function ClassDetailPage({ params }: PageProps) {
         {/* Tutor card */}
         <div className="glass-card" style={{ padding: "18px" }}>
           <div style={{ display: "flex", gap: 14, alignItems: "center", marginBottom: 12 }}>
-            <div style={{
-              width: 52, height: 52, borderRadius: 16,
-              background: `linear-gradient(135deg, ${seriesColor}, ${seriesColor}88)`,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              color: "#fff", fontSize: "1rem", fontWeight: 800, flexShrink: 0,
-            }}>
-              {cls.tutor?.initials}
-            </div>
+            {cls.tutor?.pictureUrl ? (
+              <img
+                src={cls.tutor.pictureUrl}
+                alt={cls.tutor.name}
+                style={{
+                  width: 52, height: 52, borderRadius: 16,
+                  objectFit: "cover", flexShrink: 0,
+                  border: `2px solid ${seriesColor}44`,
+                }}
+              />
+            ) : (
+              <div style={{
+                width: 52, height: 52, borderRadius: 16,
+                background: `linear-gradient(135deg, ${seriesColor}, ${seriesColor}88)`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: "#fff", fontSize: "1rem", fontWeight: 800, flexShrink: 0,
+              }}>
+                {cls.tutor?.initials}
+              </div>
+            )}
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--text-primary)" }}>
                 {cls.tutor.name}

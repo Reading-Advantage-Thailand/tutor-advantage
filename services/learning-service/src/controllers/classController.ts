@@ -294,7 +294,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
     // Fetch tutor manually
     const tutor = await prisma.user.findUnique({
       where: { userId: cls.tutorUserId },
-      select: { displayName: true },
+      select: { displayName: true, profilePictureUrl: true },
     });
 
     const tutorStudentCount = await prisma.enrollment.count({
@@ -370,6 +370,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
       tutor: {
         name: tutor?.displayName || "Unknown Tutor",
         initials: getInitials(tutor?.displayName),
+        pictureUrl: tutor?.profilePictureUrl || null,
         students: tutorStudentCount,
       },
       articleId: firstArticle?.articleId || null,
@@ -707,8 +708,15 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
         .json({ error: { code: "NOT_FOUND", message: "Class not found" } });
     }
 
-    const dbArticles = await prisma.article.findMany({
+    const dbArticlesRaw = await prisma.article.findMany({
       where: { bookId: cls.bookId },
+    });
+
+    // Sort articles by their numeric articleId so order is stable and sequential
+    const dbArticles = [...dbArticlesRaw].sort((a, b) => {
+      const aNum = parseInt(a.articleId.replace(/\D/g, ""), 10) || 0;
+      const bNum = parseInt(b.articleId.replace(/\D/g, ""), 10) || 0;
+      return aNum - bNum;
     });
 
     // Fetch completed sessions for this class to mark completed articles
@@ -725,7 +733,7 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
     const completedArticleIds = new Set(completedSessions.map(s => s.articleId));
 
     const articles = await Promise.all(
-      dbArticles.map(async (art) => {
+      dbArticles.map(async (art, index) => {
         const details = await getArticleDetails(art.articleId).catch((error) => {
           console.warn(`Could not fetch Reading Advantage details for article ${art.articleId}:`, error);
           return null;
@@ -760,7 +768,7 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
 
         return {
           id: art.articleId,
-          articleNumber: parseInt(art.articleId.replace(/\D/g, "")) || 1,
+          articleNumber: index + 1,
           title: details?.title || art.title || "Untitled Article",
           summary: thaiSummary || "ไม่มีสรุปเนื้อหาสำหรับบทความนี้",
           passage: details?.passage ? `${details.passage.substring(0, 120)}...` : "", // Return a snippet for passage display
@@ -769,8 +777,6 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
         };
       }),
     );
-
-    articles.sort((a, b) => a.articleNumber - b.articleNumber);
 
     return res.status(200).json({ articles });
   } catch (error: any) {
