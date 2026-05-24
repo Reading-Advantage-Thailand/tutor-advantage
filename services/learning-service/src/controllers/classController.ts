@@ -248,6 +248,8 @@ export async function getClasses(req: AuthenticatedRequest, res: Response) {
       tutorUserId: c.tutorUserId,
       tutorName: tutorMap.get(c.tutorUserId) || "Unknown Tutor",
       nextSession: c.scheduleDescription || "ยังไม่ได้กำหนด",
+      startsAt: c.startsAt ?? null,
+      endsAt: c.endsAt ?? null,
     }));
 
     return res.status(200).json({ classes: mappedClasses });

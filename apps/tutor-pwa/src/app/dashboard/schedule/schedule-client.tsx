@@ -41,9 +41,15 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
 
     initialClasses.forEach((cls) => {
       const { days, timeRange } = parseThaiSchedule(cls.nextSession || "");
-      
-      const loopDate = new Date(startDate);
-      while (loopDate <= endDate) {
+
+      // Respect class start/end dates — clamp to window bounds
+      const clsStart = cls.startsAt ? new Date(cls.startsAt) : startDate;
+      const clsEnd   = cls.endsAt   ? new Date(cls.endsAt)   : endDate;
+      const loopStart = clsStart > startDate ? clsStart : startDate;
+      const loopEnd   = clsEnd   < endDate   ? clsEnd   : endDate;
+
+      const loopDate = new Date(loopStart);
+      while (loopDate <= loopEnd) {
         if (days.includes(loopDate.getDay())) {
           const dStr = toLocalDateStr(loopDate);
           events.push({

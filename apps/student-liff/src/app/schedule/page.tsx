@@ -107,13 +107,21 @@ export default function SchedulePage() {
             name: string;
             tutorName: string;
             nextSession: string;
+            startsAt?: string | null;
+            endsAt?: string | null;
           }) => {
             const schedStr = cls.nextSession || "";
             const { days, timeRange } = parseThaiSchedule(schedStr);
 
+            // Respect class start/end dates — clamp to window bounds
+            const clsStart = cls.startsAt ? new Date(cls.startsAt) : startDate;
+            const clsEnd   = cls.endsAt   ? new Date(cls.endsAt)   : endDate;
+            const loopStart = clsStart > startDate ? clsStart : startDate;
+            const loopEnd   = clsEnd   < endDate   ? clsEnd   : endDate;
+
             // Generate occurrences
-            const loopDate = new Date(startDate);
-            while (loopDate <= endDate) {
+            const loopDate = new Date(loopStart);
+            while (loopDate <= loopEnd) {
               const dayOfWeek = loopDate.getDay();
               if (days.includes(dayOfWeek)) {
                 const dStr = toLocalDateStr(loopDate);
