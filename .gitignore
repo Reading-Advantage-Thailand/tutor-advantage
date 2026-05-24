@@ -26,6 +26,7 @@ apps/tutor-pwa/public/swe-worker-*.js
 .gha-key.json
 *.key.json
 
-# Claude Code local config
-.claude/
+# Claude Code — commit project settings, ignore personal overrides
+.claude/settings.local.json
+.claude/todos.json
 brain/
