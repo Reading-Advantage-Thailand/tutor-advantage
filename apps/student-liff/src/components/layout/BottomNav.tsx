@@ -20,21 +20,20 @@ export function BottomNav() {
       aria-label={t("app.navAria")}
       style={{
         position: "fixed",
-        bottom: 12,
-        left: "50%",
-        transform: "translateX(-50%)",
-        width: "calc(100% - 32px)",
-        maxWidth: "calc(var(--max-mobile) - 32px)",
+        bottom: 0,
+        left: 0,
+        width: "100%",
+        maxWidth: "var(--max-mobile)",
         zIndex: 100,
-        background: "var(--nav-glass-bg, rgba(255,255,255,0.82))",
+        background: "var(--nav-glass-bg, rgba(255,255,255,0.92))",
         backdropFilter: "blur(20px) saturate(180%)",
         WebkitBackdropFilter: "blur(20px) saturate(180%)",
-        borderRadius: 22,
-        border: "1px solid var(--nav-glass-border, rgba(255,255,255,0.5))",
-        boxShadow: "0 4px 30px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06)",
+        borderRadius: "20px 20px 0 0",
+        borderTop: "1px solid var(--nav-glass-border, rgba(0,0,0,0.08))",
+        boxShadow: "0 -2px 16px rgba(0,0,0,0.06)",
         display: "flex",
         padding: "6px 4px",
-        paddingBottom: "calc(6px + var(--safe-bottom))",
+        paddingBottom: "max(6px, env(safe-area-inset-bottom, 0px))",
       }}
     >
       {NAV_ITEMS.map((item) => {

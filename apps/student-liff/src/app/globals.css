@@ -482,7 +482,7 @@ p { line-height: 1.7; }
 /* Page content area with floating bottom nav padding */
 .page-content {
   flex: 1;
-  padding-bottom: calc(88px + var(--safe-bottom));
+  padding-bottom: calc(72px + max(0px, env(safe-area-inset-bottom, 0px)));
 }
 
 /* ─── Form Elements ───────────────────────────────────────────────────────── */
