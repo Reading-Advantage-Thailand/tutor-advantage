@@ -7,7 +7,15 @@ export async function GET(
 ) {
   const { provider } = await params;
   const reqUrl = new URL(request.url);
-  const baseUrl = `${reqUrl.protocol}//${reqUrl.host}`;
+  // Cloud Run terminates TLS at the load balancer — use forwarded headers for the real public host
+  const host =
+    request.headers.get("x-forwarded-host") ||
+    request.headers.get("host") ||
+    reqUrl.host;
+  const proto =
+    request.headers.get("x-forwarded-proto") ||
+    (reqUrl.protocol.replace(":", "") as string);
+  const baseUrl = `${proto}://${host}`;
   const redirectUri = `${baseUrl}/api/auth/callback/${provider}`;
 
   // Generate a random CSRF state token — sponsor info stays in its own cookie

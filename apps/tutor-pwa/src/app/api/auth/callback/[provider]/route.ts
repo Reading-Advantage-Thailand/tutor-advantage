@@ -7,6 +7,14 @@ export async function GET(
 ) {
   const { provider } = await params;
   const url = new URL(request.url);
+  // Use forwarded headers for the real public host (Cloud Run terminates TLS at load balancer)
+  const host =
+    request.headers.get("x-forwarded-host") ||
+    request.headers.get("host") ||
+    url.host;
+  const proto =
+    request.headers.get("x-forwarded-proto") ||
+    url.protocol.replace(":", "");
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
 
@@ -40,7 +48,7 @@ export async function GET(
         code,
         sponsorTutorId,
         codeVerifier,
-        redirectUri: `${url.protocol}//${url.host}/api/auth/callback/${provider}`,
+        redirectUri: `${proto}://${host}/api/auth/callback/${provider}`,
       }),
     });
 
