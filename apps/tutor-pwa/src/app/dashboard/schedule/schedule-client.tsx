@@ -135,9 +135,9 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-      
+
       {/* Left Column: Monthly Calendar View */}
-      <div className="lg:col-span-7 animate-fade-in">
+      <div className="lg:col-span-8 animate-fade-in">
         <Card className="border border-border/40 hover:shadow-md rounded-3xl shadow-sm bg-card bg-gradient-to-br from-card via-card to-brand-500/2 dark:to-brand-500/5 transition-all duration-300 overflow-hidden">
           <CardContent className="p-5 sm:p-6">
             <div className="flex items-center justify-between mb-6">
@@ -222,7 +222,7 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
       </div>
 
       {/* Right Column: Daily Summary view */}
-      <div className="lg:col-span-5 sticky top-28 animate-fade-in" style={{ animationDelay: '100ms' }}>
+      <div className="lg:col-span-4 sticky top-28 animate-fade-in" style={{ animationDelay: '100ms' }}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-foreground">
             {isSameDay(selectedDate, new Date()) ? t("dashboardSchedule.today") : `${selectedDate.getDate()} ${thaiMonths[selectedDate.getMonth()]}`}
