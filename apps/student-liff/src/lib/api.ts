@@ -78,6 +78,7 @@ export const studentApi = {
     return fetchWithAuth(`/classes/available${qs ? `?${qs}` : ""}`);
   },
   getClassDetails: (classId: string) => fetchWithAuth(`/classes/${classId}`),
+  getClassArticles: (classId: string) => fetchWithAuth(`/classes/${classId}/articles`),
   getClassReview: (classId: string) => fetchWithAuth(`/classes/${classId}/review`),
   submitClassReview: (classId: string, payload: { rating: number; comment?: string }) => fetchWithAuth(`/classes/${classId}/review`, {
     method: 'POST',
