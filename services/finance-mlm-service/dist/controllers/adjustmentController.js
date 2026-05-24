@@ -44,6 +44,7 @@ async function getAdjustments(req, res) {
             ...new Set([
                 ...adjustments.map((a) => a.tutorUserId),
                 ...adjustments.map((a) => a.createdBy),
+                ...adjustments.map((a) => a.approvedBy).filter(Boolean),
             ]),
         ].filter((id) => UUID_RE.test(id));
         const userMap = new Map();
@@ -75,6 +76,9 @@ async function getAdjustments(req, res) {
             createdByUserId: adj.createdBy,
             createdByName: getName(adj.createdBy),
             createdAt: adj.createdAt,
+            approvedByUserId: adj.approvedBy ?? null,
+            approvedByName: adj.approvedBy ? getName(adj.approvedBy) : null,
+            approvedAt: adj.approvedAt ?? null,
         }));
         return res.status(200).json({
             adjustments: mapped,
@@ -231,9 +235,10 @@ async function approveAdjustment(req, res) {
                 },
             });
         }
+        const now = new Date();
         await database_1.prisma.adjustment.update({
             where: { adjustmentId },
-            data: { status: "APPROVED" },
+            data: { status: "APPROVED", approvedBy: userId, approvedAt: now },
         });
         await database_1.prisma.auditEvent.create({
             data: {
@@ -243,6 +248,7 @@ async function approveAdjustment(req, res) {
                 entityId: adjustmentId,
                 payload: {
                     createdBy: adj.createdBy,
+                    approvedBy: userId,
                     amountSatang: adj.amountMinor.toString(),
                 },
             },
@@ -295,9 +301,10 @@ async function rejectAdjustment(req, res) {
                 },
             });
         }
+        const now = new Date();
         await database_1.prisma.adjustment.update({
             where: { adjustmentId },
-            data: { status: "REJECTED" },
+            data: { status: "REJECTED", approvedBy: userId, approvedAt: now },
         });
         await database_1.prisma.auditEvent.create({
             data: {
@@ -307,6 +314,7 @@ async function rejectAdjustment(req, res) {
                 entityId: adjustmentId,
                 payload: {
                     createdBy: adj.createdBy,
+                    rejectedBy: userId,
                     amountSatang: adj.amountMinor.toString(),
                 },
             },

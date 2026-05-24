@@ -2,6 +2,81 @@ import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 
+export async function getReferralDetails(req: AuthenticatedRequest, res: Response) {
+  try {
+    const { referralToken } = req.params;
+
+    if (!referralToken) {
+      return res.status(400).json({
+        error: {
+          code: "BAD_REQUEST",
+          message: "referralToken is required",
+          requestId: req.id,
+        },
+      });
+    }
+
+    const referral = await prisma.referral.findUnique({
+      where: { token: referralToken },
+      include: {
+        class: {
+          include: {
+            book: { include: { series: true } },
+          },
+        },
+      },
+    });
+
+    if (!referral || referral.status !== "ACTIVE") {
+      return res.status(404).json({
+        error: {
+          code: "REFERRAL_INVALID",
+          message: "The referral token is invalid or expired",
+          requestId: req.id,
+        },
+      });
+    }
+
+    const cls = referral.class;
+    const tutor = await prisma.user.findUnique({
+      where: { userId: cls.tutorUserId },
+      select: { displayName: true, profilePictureUrl: true },
+    });
+
+    return res.status(200).json({
+      class: {
+        id: cls.classId,
+        name: cls.title || cls.book?.title || "Untitled Class",
+        book: cls.book?.title || "Unknown Book",
+        status: cls.status.toLowerCase(),
+        students: cls.enrolledCount || 0,
+        maxStudents: cls.capacity,
+        price: Number(cls.packagePriceMinor) / 100,
+        packagePriceSatang: Number(cls.packagePriceMinor),
+        cefr: cls.book?.series?.cefrLevel || "A1",
+        schedule: cls.scheduleDescription || "ยังไม่ได้กำหนด",
+        startsAt: cls.startsAt,
+        endsAt: cls.endsAt,
+        tutor: {
+          name: tutor?.displayName || "Unknown Tutor",
+          pictureUrl: tutor?.profilePictureUrl || null,
+        },
+      },
+      referralToken: referral.token,
+    });
+  } catch (error: any) {
+    console.error("Get Referral Details Error:", error);
+    return res.status(500).json({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not fetch referral details",
+        details: error.message,
+        requestId: req.id,
+      },
+    });
+  }
+}
+
 export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
   try {
     const userId = req.user?.userId;

@@ -12,6 +12,11 @@ class SettlementService {
      */
     static async previewSettlement(periodMonth, createdBy) {
         const { start: startOfMonth, end: endOfMonth } = (0, commissionService_1.getIctMonthWindow)(periodMonth);
+        const existingDraft = await database_1.prisma.settlementRun.findFirst({
+            where: { periodMonth, status: "DRAFT" },
+        });
+        if (existingDraft)
+            throw new Error("DRAFT_EXISTS");
         const payments = await database_1.prisma.paymentIntent.findMany({
             where: {
                 status: "SUCCESS",
@@ -40,7 +45,7 @@ class SettlementService {
         for (const payment of payments) {
             const tutorId = enrollmentTutorMap.get(payment.enrollmentId);
             if (!tutorId)
-                continue; // Safety check
+                continue;
             const currentVol = tutorVolumes.get(tutorId) || 0n;
             tutorVolumes.set(tutorId, currentVol + payment.amountMinor);
         }
@@ -169,10 +174,32 @@ class SettlementService {
                 },
             },
         });
+        // Fetch badge bonuses for all tutors in this settlement
+        // Badge bonus amounts in Satang — must match BadgeService.BADGE_BONUS_SATANG
+        const BADGE_BONUS_SATANG = {
+            ELITE_EDUCATOR: 50000n,
+            TOP_RATED: 30000n,
+            CLASS_MASTER: 20000n,
+            NETWORK_BUILDER: 10000n,
+            RISING_STAR: 5000n,
+            FAST_RESPONDER: 5000n,
+            AI_PIONEER: 5000n,
+        };
+        const tutorIds = Array.from(nodes.keys());
+        const allBadges = await database_1.prisma.tutorBadge.findMany({
+            where: { tutorUserId: { in: tutorIds } },
+            select: { tutorUserId: true, badgeCode: true },
+        });
+        const badgeBonusMap = new Map();
+        for (const badge of allBadges) {
+            const bonus = BADGE_BONUS_SATANG[badge.badgeCode] ?? 0n;
+            badgeBonusMap.set(badge.tutorUserId, (badgeBonusMap.get(badge.tutorUserId) ?? 0n) + bonus);
+        }
         // Bulk insert payout lines
         for (const node of nodes.values()) {
             const adjustmentMinor = adjustmentTotals.get(node.userId) || 0n;
-            const adjustedPayoutMinor = node.payoutAmountMinor + adjustmentMinor;
+            const badgeBonusMinor = badgeBonusMap.get(node.userId) ?? 0n;
+            const adjustedPayoutMinor = node.payoutAmountMinor + adjustmentMinor + badgeBonusMinor;
             if (adjustedPayoutMinor !== 0n ||
                 node.groupVolumeMinor > 0n ||
                 adjustmentMinor !== 0n) {
@@ -192,7 +219,8 @@ class SettlementService {
                         payoutAmountMinor: adjustedPayoutMinor,
                         withholdingTaxMinor: tax.withholdingTaxMinor,
                         netPayoutMinor: tax.netPayoutMinor,
-                        eligibilityStatus: adjustmentMinor !== 0n
+                        badgeBonusMinor,
+                        eligibilityStatus: adjustmentMinor !== 0n || badgeBonusMinor !== 0n
                             ? `${node.eligibilityStatus}_ADJUSTED`
                             : node.eligibilityStatus,
                     },

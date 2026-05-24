@@ -15,9 +15,9 @@ import {
   Users,
   CreditCard,
   MessageCircle,
-  Sparkles,
   Info,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { studentApi } from "@/lib/api";
 import { t } from "@/lib/i18n";
@@ -37,9 +37,9 @@ interface ClassDetails {
 /* ─── Spinner used in multiple states ─── */
 function Spinner({ label }: { label: string }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: "var(--surface-bg)" }}>
       <div className="text-center">
-        <div className="w-14 h-14 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin mx-auto mb-4" />
+        <div className="w-14 h-14 rounded-full border-4 animate-spin mx-auto mb-4" style={{ borderColor: "var(--brand-100)", borderTopColor: "var(--brand-500)" }} />
         <p className="text-muted-foreground font-medium">{label}</p>
       </div>
     </div>
@@ -60,8 +60,8 @@ function DetailRow({
 }) {
   return (
     <div className="flex items-start gap-3 py-3 border-b border-border last:border-0">
-      <div className="w-8 h-8 rounded-xl bg-indigo-500/10 flex items-center justify-center shrink-0 mt-0.5">
-        <span className="text-indigo-500">{icon}</span>
+      <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style={{ background: "var(--brand-50)" }}>
+        <span style={{ color: "var(--brand-600)" }}>{icon}</span>
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-xs text-muted-foreground mb-0.5">{label}</p>
@@ -80,7 +80,7 @@ function EnrollContent() {
   const { profile, isReady } = useLiff();
 
   const classId = searchParams.get("classId");
-  const referralToken = searchParams.get("token");
+  const referralToken = searchParams.get("referralToken") ?? searchParams.get("token");
 
   const [classDetails, setClassDetails] = useState<ClassDetails | null>(null);
   const [loading, setLoading] = useState(true);
@@ -90,9 +90,12 @@ function EnrollContent() {
   useEffect(() => {
     if (!isReady) return;
 
-    if (classId) {
-      studentApi
-        .getClassDetails(classId)
+    if (classId || referralToken) {
+      const classDetailsRequest = classId
+        ? studentApi.getClassDetails(classId)
+        : studentApi.getReferralDetails(referralToken as string);
+
+      classDetailsRequest
         .then((data) => {
           const cls = data.class;
           setClassDetails({
@@ -117,11 +120,7 @@ function EnrollContent() {
       return;
     }
 
-    if (referralToken) {
-      setError(t("enroll.errors.referralMissingClassId"));
-    } else {
-      setError(t("enroll.errors.missingClass"));
-    }
+    setError(t("enroll.errors.missingClass"));
     setLoading(false);
   }, [isReady, classId, referralToken]);
 
@@ -136,9 +135,11 @@ function EnrollContent() {
   /* Redirect to payment page */
   useEffect(() => {
     if (step === "payment" && classDetails) {
-      router.push(`/payment?classId=${classDetails.classId}`);
+      const params = new URLSearchParams({ classId: classDetails.classId });
+      if (referralToken) params.set("referralToken", referralToken);
+      router.push(`/payment?${params.toString()}`);
     }
-  }, [step, classDetails, router]);
+  }, [step, classDetails, referralToken, router]);
 
   /* ── Loading / auth states ── */
   if (!isReady) return <Spinner label={t("enroll.loadingPreparing")} />;
@@ -148,13 +149,13 @@ function EnrollContent() {
 
   if (error || !classDetails) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <div className="min-h-screen flex items-center justify-center px-4" style={{ background: "var(--surface-bg)" }}>
         <div className="text-center space-y-4">
           <div className="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center mx-auto">
-            <span className="text-3xl">😕</span>
+            <Info className="text-rose-500" size={28} />
           </div>
           <p className="text-rose-500 font-semibold">{error ?? t("enroll.errors.loadClassFailed")}</p>
-          <Link href="/dashboard" className="text-indigo-500 text-sm font-medium hover:underline">
+          <Link href="/dashboard" className="text-sm font-medium hover:underline" style={{ color: "var(--brand-600)" }}>
             {t("enroll.backDashboard")}
           </Link>
         </div>
@@ -174,7 +175,7 @@ function EnrollContent() {
         <div className="max-w-sm mx-auto w-full space-y-5">
           {/* Success hero */}
           <div className="rounded-3xl overflow-hidden shadow-xl">
-            <div className="bg-gradient-to-br from-emerald-500 to-teal-600 px-6 pt-8 pb-6 text-center">
+            <div className="px-6 pt-8 pb-6 text-center" style={{ background: "linear-gradient(135deg, #06c755 0%, #049a42 55%, #037d36 100%)" }}>
               <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <CheckCircle2 className="h-10 w-10 text-white" />
               </div>
@@ -210,7 +211,7 @@ function EnrollContent() {
           </div>
 
           <Link href="/dashboard" className="block">
-            <button className="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-black text-base shadow-lg shadow-indigo-500/30 active:scale-[0.98] transition-all">
+            <button className="w-full py-4 rounded-2xl text-white font-black text-base active:scale-[0.98] transition-all" style={{ background: "var(--brand-500)", boxShadow: "var(--shadow-green)" }}>
               {t("enroll.dashboardCta")}
             </button>
           </Link>
@@ -225,9 +226,12 @@ function EnrollContent() {
   const spotsPercent = Math.round((classDetails.currentStudents / classDetails.maxStudents) * 100);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div style={{ background: "var(--surface-bg)", minHeight: "100dvh" }}>
       {/* ── Hero header ── */}
-      <div className="relative bg-gradient-to-br from-indigo-500 to-violet-600 px-5 pt-12 pb-8">
+      <div
+        className="curved-bottom relative px-5 pb-9 pt-12"
+        style={{ background: "linear-gradient(135deg, #06c755 0%, #049a42 55%, #037d36 100%)" }}
+      >
         {/* Back button */}
         <Link href="/dashboard" className="absolute top-5 left-4">
           <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
@@ -236,20 +240,20 @@ function EnrollContent() {
         </Link>
 
         {/* Title chip */}
-        <div className="flex justify-center mb-4">
+        <div className="mb-4 mt-4">
           <span className="bg-white/20 backdrop-blur text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1.5 uppercase tracking-wider">
-            <Sparkles size={11} />
+            <CheckCircle2 size={11} />
             {t("enroll.title")}
           </span>
         </div>
 
         {/* Class name */}
-        <h1 className="text-2xl font-black text-white text-center leading-tight mb-3">
+        <h1 className="text-2xl font-black text-white leading-tight mb-3">
           {classDetails.className}
         </h1>
 
         {/* Pill badges */}
-        <div className="flex items-center justify-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
           {classDetails.cefrLevel && (
             <span className="bg-white/25 text-white text-xs font-bold px-3 py-1 rounded-full">
               CEFR {classDetails.cefrLevel}
@@ -262,7 +266,7 @@ function EnrollContent() {
       </div>
 
       {/* ── Card body ── */}
-      <div className="px-4 -mt-4 pb-8 space-y-4 max-w-md mx-auto">
+      <div className="px-4 -mt-5 pb-[calc(112px+var(--safe-bottom))] space-y-3 max-w-md mx-auto">
 
         {/* Fallback banner — shown when class is full */}
         {isFull && (
@@ -280,7 +284,7 @@ function EnrollContent() {
         )}
 
         {/* Class details card */}
-        <div className="bg-card rounded-3xl border border-border shadow-xl overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border shadow-lg overflow-hidden">
           <div className="px-5 pt-5 pb-2">
             <DetailRow
               icon={<User size={14} />}
@@ -320,7 +324,7 @@ function EnrollContent() {
                     ? "bg-rose-500"
                     : spotsPercent >= 70
                     ? "bg-amber-400"
-                    : "bg-emerald-500"
+                    : "bg-[var(--brand-500)]"
                 }`}
                 style={{ width: `${spotsPercent}%` }}
               />
@@ -334,23 +338,27 @@ function EnrollContent() {
         </div>
 
         {/* Student info card */}
-        <div className="bg-card rounded-3xl border border-border shadow-lg overflow-hidden">
-          <div className="bg-indigo-500/5 border-b border-border px-5 py-3 flex items-center gap-2">
-            <User size={14} className="text-indigo-500" />
+        <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+          <div className="border-b border-border px-5 py-3 flex items-center gap-2" style={{ background: "var(--brand-50)" }}>
+            <User size={14} style={{ color: "var(--brand-600)" }} />
             <span className="text-xs font-bold text-foreground uppercase tracking-wider">
               {t("enroll.studentInfo")}
             </span>
           </div>
           <div className="px-5 py-4 flex items-center gap-4">
             {profile.pictureUrl ? (
-              <img
+              <Image
                 src={profile.pictureUrl}
                 alt={profile.displayName}
-                className="w-14 h-14 rounded-full border-2 border-indigo-500/30 shadow-md object-cover shrink-0"
+                width={56}
+                height={56}
+                unoptimized
+                className="w-14 h-14 rounded-full border-2 shadow-sm object-cover shrink-0"
+                style={{ borderColor: "var(--brand-200)" }}
               />
             ) : (
-              <div className="w-14 h-14 rounded-full bg-indigo-500/10 flex items-center justify-center shrink-0">
-                <User size={24} className="text-indigo-500" />
+              <div className="w-14 h-14 rounded-full flex items-center justify-center shrink-0" style={{ background: "var(--brand-50)" }}>
+                <User size={24} style={{ color: "var(--brand-600)" }} />
               </div>
             )}
             <div>
@@ -361,15 +369,15 @@ function EnrollContent() {
         </div>
 
         {/* Price card */}
-        <div className="bg-card rounded-3xl border border-indigo-500/30 shadow-lg overflow-hidden">
-          <div className="bg-gradient-to-r from-indigo-500/10 to-violet-500/10 border-b border-indigo-500/20 px-5 py-3 flex items-center gap-2">
-            <CreditCard size={14} className="text-indigo-500" />
+        <div className="bg-card rounded-2xl border shadow-sm overflow-hidden" style={{ borderColor: "var(--brand-200)" }}>
+          <div className="border-b px-5 py-3 flex items-center gap-2" style={{ background: "var(--brand-50)", borderColor: "var(--brand-100)" }}>
+            <CreditCard size={14} style={{ color: "var(--brand-600)" }} />
             <span className="text-xs font-bold text-foreground uppercase tracking-wider">
               {t("enroll.tuition")}
             </span>
           </div>
           <div className="px-5 py-5 text-center">
-            <p className="text-5xl font-black text-indigo-600 dark:text-indigo-400 mb-1">
+            <p className="text-5xl font-black mb-1" style={{ color: "var(--brand-600)" }}>
               {classDetails.price.toLocaleString()}
             </p>
             <p className="text-sm text-muted-foreground font-semibold">THB / {t("enroll.courseHoursNote")}</p>
@@ -379,12 +387,13 @@ function EnrollContent() {
         {/* Action buttons */}
         <div className="flex gap-3 pt-1">
           <Link href="/dashboard" className="flex-1">
-            <button className="w-full py-4 rounded-2xl border-2 border-border bg-card text-foreground font-bold text-sm active:scale-[0.98] transition-all">
+            <button className="w-full py-4 rounded-2xl border border-border bg-card text-foreground font-bold text-sm active:scale-[0.98] transition-all">
               {t("enroll.cancel")}
             </button>
           </Link>
           <button
-            className="flex-2 flex-[2] py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-black text-base shadow-lg shadow-indigo-500/30 flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
+            className="flex-2 flex-[2] py-4 rounded-2xl text-white font-black text-base flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
+            style={{ background: "var(--brand-500)", boxShadow: "var(--shadow-green)" }}
             onClick={() => setStep("payment")}
           >
             {t("enroll.continue")}
@@ -404,9 +413,9 @@ export default function EnrollPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--surface-bg)" }}>
           <div className="text-center">
-            <div className="w-14 h-14 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin mx-auto mb-4" />
+            <div className="w-14 h-14 rounded-full border-4 animate-spin mx-auto mb-4" style={{ borderColor: "var(--brand-100)", borderTopColor: "var(--brand-500)" }} />
             <p className="text-muted-foreground font-medium">{t("enroll.loadingPreparing")}</p>
           </div>
         </div>

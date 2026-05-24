@@ -44,6 +44,7 @@ const AIEvaluator_1 = require("../services/AIEvaluator");
 const ReadingAdvantageDB_1 = require("../services/ReadingAdvantageDB");
 const dbWriter = __importStar(require("../services/SessionDBWriter"));
 const LineNotificationService_1 = require("../services/LineNotificationService");
+const BadgeService_1 = require("../services/BadgeService");
 const database_1 = require("@tutor-advantage/database");
 function seededShuffle(array, seedInput) {
     const result = [...array];
@@ -189,6 +190,10 @@ const setupLessonSocket = (io) => {
                 // If changing to phase 14 (Finish/Leaderboard), mark ACTIVE DB ROUND as FINISHED
                 if (phase === 14) {
                     dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
+                    // Non-blocking badge unlock check for the tutor
+                    if (session.tutorId) {
+                        (0, BadgeService_1.checkAndUnlockBadges)(session.tutorId).catch((e) => console.error("[Socket] Badge check failed:", e));
+                    }
                     // Trigger LINE Notifications for final score
                     (async () => {
                         try {
@@ -197,7 +202,9 @@ const setupLessonSocket = (io) => {
                             for (const p of studentList) {
                                 // Get final score in current context
                                 const finalScore = p.score || 0;
-                                const pushMsg = `🎉 จบคาบเรียนแล้ว!\n\nคุณได้คะแนนรวม ${finalScore} คะแนน จากบทเรียน "${articleTitle}" \n\nเข้าเช็คประวัติการเรียนและเฉลยคำตอบได้ที่ Student LIFF ครับ`;
+                                const historyDeepLink = LineNotificationService_1.LineNotificationService.buildLiffDeepLink("/lesson/history");
+                                const deepLinkSuffix = historyDeepLink ? `\n\n${historyDeepLink}` : "\n\nเข้าเช็คประวัติการเรียนและเฉลยคำตอบได้ที่ Student LIFF ครับ";
+                                const pushMsg = `🎉 จบคาบเรียนแล้ว!\n\nคุณได้คะแนนรวม ${finalScore} คะแนน จากบทเรียน "${articleTitle}"${deepLinkSuffix}`;
                                 if (p.resolvedUserId) {
                                     await LineNotificationService_1.LineNotificationService.sendToUser(p.resolvedUserId, pushMsg, { type: "notifyScoreUpdates" });
                                 }

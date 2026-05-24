@@ -62,7 +62,13 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {},
 
 export const studentApi = {
   // Learning
-  getDashboard: () => fetchWithAuth('/dashboard/summary'),
+  getDashboard: (params?: { historyFrom?: string; historyTo?: string }) => {
+    const qp = new URLSearchParams();
+    if (params?.historyFrom) qp.append("historyFrom", params.historyFrom);
+    if (params?.historyTo) qp.append("historyTo", params.historyTo);
+    const qs = qp.toString();
+    return fetchWithAuth(`/dashboard/summary${qs ? `?${qs}` : ""}`);
+  },
   getStudentProgress: () => fetchWithAuth('/student/progress'),
   getStudentArticle: (articleId: string) => fetchWithAuth(`/student/articles/${articleId}`),
   generateShareLink: (classId?: string) => fetchWithAuth('/student/share-link', {
@@ -91,6 +97,7 @@ export const studentApi = {
   enrollByReferral: (referralToken: string) => fetchWithAuth(`/enroll/${referralToken}`, {
     method: 'POST',
   }),
+  getReferralDetails: (referralToken: string) => fetchWithAuth(`/enroll/${referralToken}/details`),
 
   // Lesson History
   getLessonHistory: () => fetchWithAuth('/lessons/history'),

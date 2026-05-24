@@ -1,8 +1,79 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getReferralDetails = getReferralDetails;
 exports.enrollStudent = enrollStudent;
 exports.directEnroll = directEnroll;
 const database_1 = require("@tutor-advantage/database");
+async function getReferralDetails(req, res) {
+    try {
+        const { referralToken } = req.params;
+        if (!referralToken) {
+            return res.status(400).json({
+                error: {
+                    code: "BAD_REQUEST",
+                    message: "referralToken is required",
+                    requestId: req.id,
+                },
+            });
+        }
+        const referral = await database_1.prisma.referral.findUnique({
+            where: { token: referralToken },
+            include: {
+                class: {
+                    include: {
+                        book: { include: { series: true } },
+                    },
+                },
+            },
+        });
+        if (!referral || referral.status !== "ACTIVE") {
+            return res.status(404).json({
+                error: {
+                    code: "REFERRAL_INVALID",
+                    message: "The referral token is invalid or expired",
+                    requestId: req.id,
+                },
+            });
+        }
+        const cls = referral.class;
+        const tutor = await database_1.prisma.user.findUnique({
+            where: { userId: cls.tutorUserId },
+            select: { displayName: true, profilePictureUrl: true },
+        });
+        return res.status(200).json({
+            class: {
+                id: cls.classId,
+                name: cls.title || cls.book?.title || "Untitled Class",
+                book: cls.book?.title || "Unknown Book",
+                status: cls.status.toLowerCase(),
+                students: cls.enrolledCount || 0,
+                maxStudents: cls.capacity,
+                price: Number(cls.packagePriceMinor) / 100,
+                packagePriceSatang: Number(cls.packagePriceMinor),
+                cefr: cls.book?.series?.cefrLevel || "A1",
+                schedule: cls.scheduleDescription || "ยังไม่ได้กำหนด",
+                startsAt: cls.startsAt,
+                endsAt: cls.endsAt,
+                tutor: {
+                    name: tutor?.displayName || "Unknown Tutor",
+                    pictureUrl: tutor?.profilePictureUrl || null,
+                },
+            },
+            referralToken: referral.token,
+        });
+    }
+    catch (error) {
+        console.error("Get Referral Details Error:", error);
+        return res.status(500).json({
+            error: {
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Could not fetch referral details",
+                details: error.message,
+                requestId: req.id,
+            },
+        });
+    }
+}
 async function enrollStudent(req, res) {
     try {
         const userId = req.user?.userId;

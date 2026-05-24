@@ -2,8 +2,73 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getDashboardSummary = getDashboardSummary;
 exports.getStudentProgress = getStudentProgress;
+exports.getStudentArticle = getStudentArticle;
+exports.generateStudentShareLink = generateStudentShareLink;
 const database_1 = require("@tutor-advantage/database");
 const LessonSessionService_1 = require("../services/LessonSessionService");
+const ReadingAdvantageDB_1 = require("../services/ReadingAdvantageDB");
+const uuid_1 = require("uuid");
+const STUDENT_APP_PROD_URL = "https://student-liff-1090865515742.asia-southeast1.run.app";
+const STUDENT_APP_DEV_URL = "https://resource-pushpin-tabby.ngrok-free.dev";
+function getStudentAppBaseUrl() {
+    return process.env.FRONTEND_APP_URL ||
+        (process.env.NODE_ENV === "production" ? STUDENT_APP_PROD_URL : STUDENT_APP_DEV_URL);
+}
+function getValidDateQuery(value) {
+    if (typeof value !== "string")
+        return null;
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+async function getUnreadMessageCount(userId) {
+    const rows = await database_1.prisma.$queryRaw `
+    SELECT COUNT(*)::bigint AS count
+    FROM learning.messages m
+    INNER JOIN learning.conversation_participants cp
+      ON cp.conversation_id = m.conversation_id
+    WHERE cp.user_id = CAST(${userId} AS uuid)
+      AND m.sender_id <> CAST(${userId} AS uuid)
+      AND (cp.last_read_at IS NULL OR m.created_at > cp.last_read_at)
+  `;
+    return Number(rows[0]?.count ?? 0);
+}
+async function getDashboardHistory(userId, from, to) {
+    const participations = await database_1.prisma.sessionParticipant.findMany({
+        where: {
+            studentUserId: userId,
+            joinedAt: { gte: from, lt: to },
+            session: { status: "FINISHED" },
+        },
+        include: {
+            session: {
+                include: {
+                    tutor: { select: { displayName: true } },
+                    participants: { select: { studentUserId: true, score: true } },
+                },
+            },
+        },
+        orderBy: { joinedAt: "desc" },
+        take: 20,
+    });
+    return Promise.all(participations.map(async (participation) => {
+        const session = participation.session;
+        const articleInfo = await (0, ReadingAdvantageDB_1.getArticleDetails)(session.articleId).catch(() => null);
+        const sortedPeers = [...session.participants].sort((a, b) => (b.score || 0) - (a.score || 0));
+        const myRank = sortedPeers.findIndex((peer) => peer.studentUserId === userId) + 1;
+        return {
+            sessionId: session.sessionId,
+            articleId: session.articleId,
+            articleTitle: articleInfo?.title || "บทเรียนไร้ชื่อ",
+            articleLevel: articleInfo?.cefr_level || "N/A",
+            tutorName: session.tutor.displayName || "Tutor",
+            score: participation.score,
+            rank: myRank,
+            totalParticipants: sortedPeers.length,
+            date: participation.joinedAt,
+            status: session.status,
+        };
+    }));
+}
 async function getDashboardSummary(req, res) {
     try {
         const userId = req.user?.userId;
@@ -30,7 +95,7 @@ async function getDashboardSummary(req, res) {
                 },
                 orderBy: { createdAt: "desc" }
             });
-            const tutorIds = enrollments.map((e) => e.class.tutorUserId).filter(Boolean);
+            const tutorIds = Array.from(new Set(enrollments.map((e) => e.class.tutorUserId).filter(Boolean)));
             const tutors = await database_1.prisma.user.findMany({
                 where: { userId: { in: tutorIds } },
                 select: { userId: true, displayName: true }
@@ -42,7 +107,8 @@ async function getDashboardSummary(req, res) {
                     studentUserId: userId,
                     session: { status: "FINISHED" }
                 },
-                include: {
+                select: {
+                    joinedAt: true,
                     session: { select: { articleId: true, createdAt: true } }
                 }
             });
@@ -55,7 +121,7 @@ async function getDashboardSummary(req, res) {
                 const firstJan = new Date(copy.getFullYear(), 0, 1);
                 return `${copy.getFullYear()}-W${Math.ceil((((copy.getTime() - firstJan.getTime()) / 86400000) + firstJan.getDay() + 1) / 7)}`;
             };
-            const activeWeeks = new Set(readParticipations.map((p) => getWeekId(new Date(p.joinedAt || p.session?.createdAt))));
+            const activeWeeks = new Set(readParticipations.map((p) => getWeekId(new Date(p.joinedAt || p.session.createdAt))));
             let streak = 0;
             let checkDate = new Date(today);
             while (true) {
@@ -68,17 +134,24 @@ async function getDashboardSummary(req, res) {
                     break;
                 }
             }
-            const classSummaries = await Promise.all(enrollments.map(async (e) => {
+            const bookIds = Array.from(new Set(enrollments.map((e) => e.class.bookId).filter(Boolean)));
+            const articles = await database_1.prisma.article.findMany({
+                where: { bookId: { in: bookIds } },
+                select: { bookId: true, articleId: true },
+            });
+            const articleIdsByBookId = new Map();
+            for (const article of articles) {
+                const bookArticles = articleIdsByBookId.get(article.bookId) ?? [];
+                bookArticles.push(article.articleId);
+                articleIdsByBookId.set(article.bookId, bookArticles);
+            }
+            const classSummaries = enrollments.map((e) => {
                 const session = LessonSessionService_1.lessonSessionService.getSessionByClassId(e.class.classId);
                 const tutorName = tutorMap.get(e.class.tutorUserId) || "Tutor";
                 // Calculate actual class progress based on current book articles read
-                const bookArticles = await database_1.prisma.article.findMany({
-                    where: { bookId: e.class.bookId },
-                    select: { articleId: true }
-                });
-                const bookArticleIds = bookArticles.map(a => a.articleId);
+                const bookArticleIds = articleIdsByBookId.get(e.class.bookId) ?? [];
                 const articlesCompletedInClass = bookArticleIds.filter(id => distinctArticlesRead.has(id)).length;
-                const totalArticlesInBook = bookArticles.length || 10; // Fallback if articles missing
+                const totalArticlesInBook = bookArticleIds.length || e.class.book?.articleCount || 10;
                 const actualProgress = Math.round((articlesCompletedInClass / totalArticlesInBook) * 100);
                 return {
                     id: e.class.classId,
@@ -91,32 +164,24 @@ async function getDashboardSummary(req, res) {
                     bookName: e.class.book?.title,
                     seriesCefr: e.class.book?.series?.cefrLevel || "A1",
                 };
-            }));
+            });
             const recentClasses = classSummaries
                 .sort((a, b) => Number(b.isLive) - Number(a.isLive))
                 .slice(0, 3);
-            // 4. Calculate total unread messages
-            const conversationParticipants = await database_1.prisma.conversationParticipant.findMany({
-                where: { userId },
-                select: { conversationId: true, lastReadAt: true }
-            });
-            let totalUnreadMessages = 0;
-            for (const cp of conversationParticipants) {
-                const unread = await database_1.prisma.message.count({
-                    where: {
-                        conversationId: cp.conversationId,
-                        senderId: { not: userId },
-                        ...(cp.lastReadAt ? { createdAt: { gt: cp.lastReadAt } } : {})
-                    }
-                });
-                totalUnreadMessages += unread;
-            }
+            const historyFrom = getValidDateQuery(req.query.historyFrom);
+            const historyTo = getValidDateQuery(req.query.historyTo);
+            const [totalUnreadMessages, todayHistory] = await Promise.all([
+                getUnreadMessageCount(userId),
+                historyFrom && historyTo ? getDashboardHistory(userId, historyFrom, historyTo) : Promise.resolve([]),
+            ]);
             return res.status(200).json({
                 activeEnrollments: enrollments.length,
                 totalArticlesRead: distinctArticlesRead.size,
                 weekStreak: streak,
                 recentClasses,
+                shareableClasses: classSummaries,
                 unreadMessages: totalUnreadMessages,
+                todayHistory,
             });
         }
         // 1. Fetch all classes owned by the tutor (Existing logic for TUTOR)
@@ -138,22 +203,7 @@ async function getDashboardSummary(req, res) {
             students: c.enrolledCount,
             nextSession: "ตามนัดหมาย", // Mock static text for now
         }));
-        // Calculate total unread messages for tutor
-        const conversationParticipants = await database_1.prisma.conversationParticipant.findMany({
-            where: { userId },
-            select: { conversationId: true, lastReadAt: true }
-        });
-        let unreadMessages = 0;
-        for (const cp of conversationParticipants) {
-            const unread = await database_1.prisma.message.count({
-                where: {
-                    conversationId: cp.conversationId,
-                    senderId: { not: userId },
-                    ...(cp.lastReadAt ? { createdAt: { gt: cp.lastReadAt } } : {})
-                }
-            });
-            unreadMessages += unread;
-        }
+        const unreadMessages = await getUnreadMessageCount(userId);
         const classesThisWeek = classes.length > 0 ? Math.min(classes.length, 5) : 0;
         return res.status(200).json({
             openClasses: openClassesCount,
@@ -202,11 +252,36 @@ async function getStudentProgress(req, res) {
             include: { session: true }
         });
         const distinctArticlesRead = new Set(participations.map(p => p.session.articleId));
-        const totalMinutes = participations.length * 25; // Estimate 25 min per read session
-        // 3. Get Book Articles
+        // Calculate real session durations from timestamps (cap at 90 min each)
+        const sessionDurations = new Map();
+        for (const p of participations) {
+            const sid = p.session.sessionId;
+            if (!sessionDurations.has(sid)) {
+                const start = new Date(p.session.createdAt).getTime();
+                const end = new Date(p.session.updatedAt).getTime();
+                const mins = Math.min(Math.round((end - start) / 60000), 90);
+                sessionDurations.set(sid, mins > 0 ? mins : 25);
+            }
+        }
+        const totalMinutes = Array.from(sessionDurations.values()).reduce((s, m) => s + m, 0);
+        // Per-article duration: use the session that covered it
+        const articleMinutes = new Map();
+        for (const p of participations) {
+            const aid = p.session.articleId;
+            if (!articleMinutes.has(aid)) {
+                articleMinutes.set(aid, sessionDurations.get(p.session.sessionId) ?? 25);
+            }
+        }
+        // 3. Get Book Articles — natural sort on trailing number in articleId
         const dbArticles = await database_1.prisma.article.findMany({
             where: { bookId: book.bookId },
-            orderBy: { articleId: 'asc' }
+        });
+        dbArticles.sort((a, b) => {
+            const num = (id) => {
+                const m = id.match(/(\d+)$/);
+                return m ? parseInt(m[1], 10) : 0;
+            };
+            return num(a.articleId) - num(b.articleId);
         });
         const articles = dbArticles.map((art, idx) => {
             const isRead = distinctArticlesRead.has(art.articleId);
@@ -215,7 +290,7 @@ async function getStudentProgress(req, res) {
                 no: idx + 1,
                 title: art.title || "Untitled",
                 done: isRead,
-                minutes: isRead ? 25 : 0 // Mock 25 mins for finished articles
+                minutes: isRead ? (articleMinutes.get(art.articleId) ?? 25) : 0,
             };
         });
         // 4. Weekly Activity & Streak
@@ -236,7 +311,7 @@ async function getStudentProgress(req, res) {
                 const joined = new Date(p.joinedAt);
                 return joined >= dayDateStart && joined < dayDateEnd;
             })
-                .length * 25;
+                .reduce((sum, p) => sum + (sessionDurations.get(p.session.sessionId) ?? 25), 0);
             return {
                 day: label,
                 minutes: minsForDay,
@@ -263,23 +338,36 @@ async function getStudentProgress(req, res) {
                 break;
             }
         }
+        const articlesRead = articles.filter(a => a.done).length;
+        const totalArticles = dbArticles.length || book.articleCount || 10;
+        // Color varies by CEFR level
+        const cefrColors = {
+            A1: "#06c755", A2: "#10b981",
+            B1: "#3b82f6", B2: "#8b5cf6",
+            C1: "#f59e0b", C2: "#ef4444",
+        };
+        const cefr = book.series?.cefrLevel || "A1";
+        const seriesColor = cefrColors[cefr] ?? "#06c755";
+        // Next milestone: every 5 articles, or the final article
+        const nextMilestoneAt = Math.min(Math.ceil((articlesRead + 1) / 5) * 5, totalArticles);
+        const isFinalStretch = nextMilestoneAt === totalArticles;
+        const nextMilestone = {
+            at: nextMilestoneAt,
+            reward: isFinalStretch ? "🎓 จบระดับ!" : `⭐ รางวัล Milestone บทที่ ${nextMilestoneAt}`,
+        };
         return res.status(200).json({
             stats: {
-                articlesRead: articles.filter(a => a.done).length,
-                totalArticles: dbArticles.length || book.articleCount || 10,
+                articlesRead,
+                totalArticles,
                 weekStreak: streak,
                 totalMinutes,
                 level: book.title || "Origins",
-                cefr: book.series?.cefrLevel || "A1",
-                seriesColor: "#06c755",
-                nextMilestone: {
-                    label: `บทที่ ${articles.length}`,
-                    at: articles.length,
-                    reward: "Graduate"
-                }
+                cefr,
+                seriesColor,
+                nextMilestone,
             },
             weeklyActivity,
-            articles
+            articles,
         });
     }
     catch (error) {
@@ -287,5 +375,120 @@ async function getStudentProgress(req, res) {
         return res.status(500).json({
             error: { code: "INTERNAL_SERVER_ERROR", message: "Could not fetch progress" },
         });
+    }
+}
+/**
+ * GET /v1/student/articles/:articleId
+ * Returns article content + session history (pre-class or review mode).
+ */
+async function getStudentArticle(req, res) {
+    try {
+        const userId = req.user?.userId;
+        if (!userId)
+            return res.status(401).json({ error: "Unauthorized" });
+        const { articleId } = req.params;
+        // Fetch article content from ReadingAdvantage DB
+        const articleData = await (0, ReadingAdvantageDB_1.getArticleDetails)(articleId).catch(() => null);
+        if (!articleData) {
+            return res.status(404).json({ error: "Article not found" });
+        }
+        // Check if the student has a FINISHED session for this article
+        const participant = await database_1.prisma.sessionParticipant.findFirst({
+            where: {
+                studentUserId: userId,
+                session: { articleId, status: "FINISHED" },
+            },
+            include: { session: true },
+            orderBy: { joinedAt: "desc" },
+        });
+        if (!participant) {
+            return res.status(200).json({
+                article: articleData,
+                mode: "pre-class",
+                session: null,
+            });
+        }
+        // Fetch the student's answers for the session (phases with questions)
+        const answers = await database_1.prisma.sessionAnswer.findMany({
+            where: { sessionId: participant.sessionId, studentUserId: userId },
+            orderBy: { phase: "asc" },
+        });
+        return res.status(200).json({
+            article: articleData,
+            mode: "review",
+            session: {
+                sessionId: participant.sessionId,
+                score: participant.score,
+                finishedAt: participant.session.updatedAt,
+                answers: answers.map((a) => ({
+                    phase: a.phase,
+                    questionText: a.questionText,
+                    answerText: a.answerText,
+                    correctAnswer: a.correctAnswer,
+                    isCorrect: a.isCorrect,
+                    score: a.score,
+                    aiFeedback: a.aiFeedback,
+                })),
+            },
+        });
+    }
+    catch (error) {
+        console.error("Get Student Article Error:", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+}
+/**
+ * POST /v1/student/share-link
+ * Returns (or creates) a shareable referral URL for the student's active class.
+ */
+async function generateStudentShareLink(req, res) {
+    try {
+        const userId = req.user?.userId;
+        if (!userId)
+            return res.status(401).json({ error: "Unauthorized" });
+        const { classId } = req.body;
+        // Find the enrollment to confirm the student is actually in this class
+        const enrollment = await database_1.prisma.enrollment.findFirst({
+            where: {
+                studentUserId: userId,
+                status: "ACTIVE",
+                ...(classId ? { classId } : {}),
+            },
+            include: { class: true },
+            orderBy: { createdAt: "desc" },
+        });
+        if (!enrollment) {
+            return res.status(404).json({ error: "No active enrollment found" });
+        }
+        const targetClass = enrollment.class;
+        // Reuse an existing ACTIVE referral for this class if one exists
+        let referral = await database_1.prisma.referral.findFirst({
+            where: { classId: targetClass.classId, status: "ACTIVE" },
+        });
+        if (!referral) {
+            referral = await database_1.prisma.referral.create({
+                data: {
+                    token: (0, uuid_1.v4)(),
+                    classId: targetClass.classId,
+                    tutorUserId: targetClass.tutorUserId,
+                    status: "ACTIVE",
+                },
+            });
+        }
+        const baseUrl = getStudentAppBaseUrl();
+        const params = new URLSearchParams({
+            classId: targetClass.classId,
+            referralToken: referral.token,
+        });
+        const url = `${baseUrl}/enroll?${params.toString()}`;
+        return res.status(200).json({
+            url,
+            token: referral.token,
+            className: targetClass.title,
+        });
+    }
+    catch (error) {
+        console.error("Generate Student Share Link Error:", error);
+        return res.status(500).json({ error: "Internal server error" });
     }
 }

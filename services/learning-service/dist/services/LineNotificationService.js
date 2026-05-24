@@ -4,7 +4,17 @@ exports.LineNotificationService = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
+const LIFF_URL = process.env.LIFF_URL ?? "";
 class LineNotificationService {
+    /**
+     * Builds a LIFF deep-link URL to a specific path inside the Student LIFF portal.
+     * e.g. buildLiffDeepLink("/chat/abc123") → "https://liff.line.me/xxxx?redirect=%2Fchat%2Fabc123"
+     */
+    static buildLiffDeepLink(path) {
+        if (!LIFF_URL)
+            return "";
+        return `${LIFF_URL}?redirect=${encodeURIComponent(path)}`;
+    }
     /**
      * Sends a push message to a user via LINE Messaging API if they have the preference enabled.
      */

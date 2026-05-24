@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import liff from "@line/liff";
 import { LiffMockPlugin } from "@line/liff-mock";
 import type { Liff } from "@line/liff";
@@ -77,15 +77,22 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
                   body: JSON.stringify({ idToken }),
                 });
                 if (!authRes.ok) {
-                  console.error("[LIFF] Backend login failed:", await authRes.json());
+                  const errorPayload = await authRes.json().catch(() => ({}));
+                  const message =
+                    (errorPayload as { error?: string }).error ||
+                    "Backend login failed";
+                  console.error("[LIFF] Backend login failed:", errorPayload);
+                  setError(message);
                 } else {
                   console.log("[LIFF] Backend session established");
                 }
               } catch (authErr) {
                 console.error("[LIFF] Backend login failed:", authErr);
+                setError(authErr instanceof Error ? authErr.message : "Backend login failed");
               }
             } else {
               console.warn("[LIFF] No ID Token found even though logged in");
+              setError("LINE did not return an ID token");
             }
           }
         }
@@ -93,7 +100,7 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
         setIsReady(true);
       } catch (err) {
         const errorObject = err instanceof Error ? err : new Error(String(err));
-        console.error("LIFF Provider: Init failed:", err);
+        console.warn("[LIFF] Init failed:", errorObject.message);
         setError(errorObject.message || "Failed to initialize LIFF");
         setIsReady(true);
       }
@@ -102,17 +109,22 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
     init();
   }, []);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     if (liff?.isLoggedIn()) {
       liff.logout();
       setProfile(null);
       fetch("/api/auth/logout", { method: "POST" }).catch(console.error);
       window.location.href = "/login";
     }
-  };
+  }, []);
+
+  const value = useMemo(
+    () => ({ liff, isReady, error, profile, logout }),
+    [isReady, error, profile, logout],
+  );
 
   return (
-    <LiffContext.Provider value={{ liff, isReady, error, profile, logout }}>
+    <LiffContext.Provider value={value}>
       {children}
     </LiffContext.Provider>
   );

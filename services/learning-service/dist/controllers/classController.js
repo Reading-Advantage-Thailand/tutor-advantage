@@ -15,7 +15,7 @@ async function createClass(req, res) {
     try {
         const userId = req.user?.userId;
         const role = req.user?.role;
-        const { bookId, title, capacity, scheduleDescription } = req.body;
+        const { bookId, title, capacity, scheduleDescription, startsAt, endsAt } = req.body;
         const packagePriceSatang = req.body.packagePriceSatang ?? 250000;
         if (!userId || role !== "TUTOR") {
             return res.status(401).json({
@@ -67,6 +67,8 @@ async function createClass(req, res) {
                 packagePriceMinor: BigInt(packagePriceSatang),
                 scheduleDescription,
                 meetingUrl: req.body.meetingUrl,
+                startsAt: startsAt ? new Date(startsAt) : undefined,
+                endsAt: endsAt ? new Date(endsAt) : undefined,
                 status: "OPEN",
             },
         });
@@ -228,6 +230,8 @@ async function getClasses(req, res) {
             tutorUserId: c.tutorUserId,
             tutorName: tutorMap.get(c.tutorUserId) || "Unknown Tutor",
             nextSession: c.scheduleDescription || "ยังไม่ได้กำหนด",
+            startsAt: c.startsAt ?? null,
+            endsAt: c.endsAt ?? null,
         }));
         return res.status(200).json({ classes: mappedClasses });
     }
@@ -271,7 +275,7 @@ async function getClassById(req, res) {
         // Fetch tutor manually
         const tutor = await database_1.prisma.user.findUnique({
             where: { userId: cls.tutorUserId },
-            select: { displayName: true },
+            select: { displayName: true, profilePictureUrl: true },
         });
         const tutorStudentCount = await database_1.prisma.enrollment.count({
             where: {
@@ -333,11 +337,13 @@ async function getClassById(req, res) {
             articleCount: bookArticleCount,
             nextSession: cls.scheduleDescription || "ยังไม่ได้กำหนด",
             startsAt: cls.startsAt,
+            endsAt: cls.endsAt,
             schedule: cls.scheduleDescription || "ยังไม่ได้กำหนด",
             meetingUrl: cls.tutorUserId === userId || isActiveEnrollment ? cls.meetingUrl || "" : "",
             tutor: {
                 name: tutor?.displayName || "Unknown Tutor",
                 initials: getInitials(tutor?.displayName),
+                pictureUrl: tutor?.profilePictureUrl || null,
                 students: tutorStudentCount,
             },
             articleId: firstArticle?.articleId || null,
@@ -638,8 +644,14 @@ async function getClassArticles(req, res) {
                 .status(404)
                 .json({ error: { code: "NOT_FOUND", message: "Class not found" } });
         }
-        const dbArticles = await database_1.prisma.article.findMany({
+        const dbArticlesRaw = await database_1.prisma.article.findMany({
             where: { bookId: cls.bookId },
+        });
+        // Sort articles by their numeric articleId so order is stable and sequential
+        const dbArticles = [...dbArticlesRaw].sort((a, b) => {
+            const aNum = parseInt(a.articleId.replace(/\D/g, ""), 10) || 0;
+            const bNum = parseInt(b.articleId.replace(/\D/g, ""), 10) || 0;
+            return aNum - bNum;
         });
         // Fetch completed sessions for this class to mark completed articles
         const completedSessions = await database_1.prisma.interactiveSession.findMany({
@@ -653,7 +665,7 @@ async function getClassArticles(req, res) {
             return [];
         });
         const completedArticleIds = new Set(completedSessions.map(s => s.articleId));
-        const articles = await Promise.all(dbArticles.map(async (art) => {
+        const articles = await Promise.all(dbArticles.map(async (art, index) => {
             const details = await (0, ReadingAdvantageDB_1.getArticleDetails)(art.articleId).catch((error) => {
                 console.warn(`Could not fetch Reading Advantage details for article ${art.articleId}:`, error);
                 return null;
@@ -686,7 +698,7 @@ async function getClassArticles(req, res) {
             displayCefr = displayCefr.replace(/[^a-zA-Z0-9]/g, '');
             return {
                 id: art.articleId,
-                articleNumber: parseInt(art.articleId.replace(/\D/g, "")) || 1,
+                articleNumber: index + 1,
                 title: details?.title || art.title || "Untitled Article",
                 summary: thaiSummary || "ไม่มีสรุปเนื้อหาสำหรับบทความนี้",
                 passage: details?.passage ? `${details.passage.substring(0, 120)}...` : "", // Return a snippet for passage display
@@ -694,7 +706,6 @@ async function getClassArticles(req, res) {
                 isCompleted: completedArticleIds.has(art.articleId)
             };
         }));
-        articles.sort((a, b) => a.articleNumber - b.articleNumber);
         return res.status(200).json({ articles });
     }
     catch (error) {

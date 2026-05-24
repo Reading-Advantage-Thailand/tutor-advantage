@@ -12,17 +12,45 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing idToken" }, { status: 400 });
   }
 
-  const response = await fetch(`${IDENTITY_URL}/v1/auth/callback`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ provider: "line", code: idToken }),
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(`${IDENTITY_URL}/v1/auth/callback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ provider: "line", code: idToken }),
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Failed to reach identity service";
+    console.error("[student-liff] /api/auth/line failed:", message);
+    return NextResponse.json(
+      {
+        error: "Cannot reach identity service",
+        details: message,
+        identityUrl: IDENTITY_URL,
+      },
+      { status: 502 },
+    );
+  }
 
   if (!response.ok) {
     const err = await response.json().catch(() => ({}));
+    const errorPayload = err as {
+      error?: string | { message?: string; details?: string };
+      message?: string;
+    };
+    const nestedError =
+      typeof errorPayload.error === "object" ? errorPayload.error : null;
+    const message =
+      nestedError?.details ||
+      nestedError?.message ||
+      (typeof errorPayload.error === "string" ? errorPayload.error : null) ||
+      errorPayload.message ||
+      "Auth failed";
+
     return NextResponse.json(
-      { error: (err as { message?: string }).message || "Auth failed" },
-      { status: response.status }
+      { error: message },
+      { status: response.status },
     );
   }
 

@@ -3,6 +3,14 @@ import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { v4 as uuidv4 } from "uuid";
 
+const STUDENT_APP_PROD_URL = "https://student-liff-1090865515742.asia-southeast1.run.app";
+const STUDENT_APP_DEV_URL = "https://resource-pushpin-tabby.ngrok-free.dev";
+
+function getStudentAppBaseUrl() {
+  return process.env.FRONTEND_APP_URL ||
+    (process.env.NODE_ENV === "production" ? STUDENT_APP_PROD_URL : STUDENT_APP_DEV_URL);
+}
+
 export async function generateReferral(
   req: AuthenticatedRequest,
   res: Response,
@@ -70,8 +78,9 @@ export async function generateReferral(
 
     // In a real scenario, this domain would be configurable via env vars
     // For now, aligning with the PWA/LIFF architecture plan
-    const baseUrl = process.env.FRONTEND_APP_URL || "http://localhost:3000";
-    const referralUrl = `${baseUrl}/enroll?token=${token}`;
+    const baseUrl = getStudentAppBaseUrl();
+    const params = new URLSearchParams({ classId, referralToken: token });
+    const referralUrl = `${baseUrl}/enroll?${params.toString()}`;
 
     const newReferral = await prisma.referral.create({
       data: {

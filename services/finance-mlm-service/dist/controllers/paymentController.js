@@ -421,7 +421,6 @@ async function fulfillPaymentIntent(paymentIntentId, providerRef) {
                 paymentTransactionId: providerRef,
             },
         });
-        const tax = (0, taxService_1.calculateVatInclusive)(intent.amountMinor);
         await tx.paymentReceipt.upsert({
             where: { paymentIntentId },
             update: {},
@@ -429,9 +428,9 @@ async function fulfillPaymentIntent(paymentIntentId, providerRef) {
                 paymentIntentId,
                 studentUserId: intent.studentUserId,
                 receiptNumber: (0, taxService_1.buildReceiptNumber)(paymentIntentId),
-                grossAmountMinor: tax.grossAmountMinor,
-                vatAmountMinor: tax.vatAmountMinor,
-                netAmountMinor: tax.netAmountMinor,
+                grossAmountMinor: intent.amountMinor,
+                vatAmountMinor: 0n,
+                netAmountMinor: intent.amountMinor,
                 currency: intent.currency,
             },
         });
@@ -717,9 +716,12 @@ function buildCheckoutDetailsFromCharge(charge) {
     };
 }
 function buildReturnUri(returnUri, paymentIntentId) {
+    const defaultStudentAppBaseUrl = process.env.NODE_ENV === "production"
+        ? "https://student-liff-1090865515742.asia-southeast1.run.app"
+        : "https://resource-pushpin-tabby.ngrok-free.dev";
     const fallbackBase = process.env.STUDENT_APP_BASE_URL ||
         process.env.NEXT_PUBLIC_BASE_URL ||
-        "http://localhost:3004";
+        defaultStudentAppBaseUrl;
     const fallback = `${fallbackBase.replace(/\/$/, "")}/payment`;
     const candidate = typeof returnUri === "string" && returnUri ? returnUri : fallback;
     try {

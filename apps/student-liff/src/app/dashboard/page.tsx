@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useLiff } from "@/components/providers/LiffProvider";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,15 +10,17 @@ import {
   Calendar,
   CreditCard,
   ChevronRight,
-  Copy,
   Flame,
   AlertCircle,
   Glasses,
   AlertTriangle,
   ArrowRight,
   BookOpen,
+  Check,
+  Copy,
   Sparkles,
   Users,
+  X,
 } from "lucide-react";
 import { studentApi } from "@/lib/api";
 import { t } from "@/lib/i18n";
@@ -64,6 +66,8 @@ interface DashboardData {
   weekStreak: number;
   activeEnrollments: number;
   recentClasses: Enrollment[];
+  shareableClasses?: Enrollment[];
+  todayHistory?: LessonHistoryItem[];
 }
 
 interface LessonHistoryItem {
@@ -245,12 +249,14 @@ function PendingPaymentBanner({ classes }: { classes: Enrollment[] }) {
 /* ─── Main Dashboard ─── */
 export default function DashboardPage() {
   const { profile, isReady } = useLiff();
+  const profileUserId = profile?.userId;
 
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
-  const [historyData, setHistoryData] = useState<LessonHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copyState, setCopyState] = useState<'idle' | 'loading' | 'copied'>('idle');
+  const [isClassPickerOpen, setIsClassPickerOpen] = useState(false);
+  const [copyingClassId, setCopyingClassId] = useState<string | null>(null);
 
   const prevUnreadRef = useRef<number | undefined>(undefined);
 
@@ -267,7 +273,7 @@ export default function DashboardPage() {
     let intervalId: NodeJS.Timeout;
     let isMounted = true;
 
-    if (isReady && profile) {
+    if (isReady && profileUserId) {
       const fetchData = async (showLoading = true) => {
         try {
           if (showLoading) setLoading(true);
@@ -283,14 +289,16 @@ export default function DashboardPage() {
           if (!token && isMounted) throw new Error(t("dashboard.sessionCreateFailed"));
           if (!isMounted) return;
 
-          const [data, hist] = await Promise.all([
-            studentApi.getDashboard() as Promise<DashboardData>,
-            studentApi.getLessonHistory().catch(() => ({ history: [] as LessonHistoryItem[] })),
-          ]);
+          const now = new Date();
+          const historyFrom = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          const historyTo = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+          const data = await studentApi.getDashboard({
+            historyFrom: historyFrom.toISOString(),
+            historyTo: historyTo.toISOString(),
+          }) as DashboardData;
 
           if (isMounted) {
             setDashboardData(data);
-            setHistoryData(hist.history || []);
             setError(null);
           }
         } catch (err: unknown) {
@@ -310,12 +318,17 @@ export default function DashboardPage() {
       isMounted = false;
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isReady, profile]);
+  }, [isReady, profileUserId]);
 
   /* ── Derived data ── */
-  const allClasses: Enrollment[] = dashboardData?.recentClasses ?? [];
-  const activeClasses = allClasses.filter((c) => !isPendingPayment(c.status));
-  const pendingClasses = allClasses.filter((c) => isPendingPayment(c.status));
+  const allClasses: Enrollment[] = useMemo(() => dashboardData?.recentClasses ?? [], [dashboardData?.recentClasses]);
+  const activeClasses = useMemo(() => allClasses.filter((c) => !isPendingPayment(c.status)), [allClasses]);
+  const pendingClasses = useMemo(() => allClasses.filter((c) => isPendingPayment(c.status)), [allClasses]);
+  const shareableClasses = useMemo(
+    () => (dashboardData?.shareableClasses ?? activeClasses).filter((c) => c.id && !isPendingPayment(c.status)),
+    [activeClasses, dashboardData?.shareableClasses],
+  );
+  const todaysHistory = dashboardData?.todayHistory ?? [];
 
   // Primary class for hero (live > first active)
   const primaryClass: Enrollment = allClasses.find((c) => c.isLive) ??
@@ -345,18 +358,30 @@ export default function DashboardPage() {
   };
 
   /* ── Referral copy handler ── */
-  const handleCopyReferral = async () => {
+  const copyReferralForClass = async (classId?: string) => {
     if (copyState !== 'idle') return;
     setCopyState('loading');
+    setCopyingClassId(classId ?? null);
     try {
-      const firstActiveClassId = activeClasses[0]?.id;
-      const data = await studentApi.generateShareLink(firstActiveClassId);
+      const data = await studentApi.generateShareLink(classId);
       await navigator.clipboard.writeText(data.url);
+      setIsClassPickerOpen(false);
       setCopyState('copied');
       setTimeout(() => setCopyState('idle'), 2500);
     } catch {
       setCopyState('idle');
+    } finally {
+      setCopyingClassId(null);
     }
+  };
+
+  const handleCopyReferral = async () => {
+    if (copyState !== 'idle') return;
+    if (shareableClasses.length > 1) {
+      setIsClassPickerOpen(true);
+      return;
+    }
+    await copyReferralForClass(shareableClasses[0]?.id);
   };
 
   /* ── Loading / Error ── */
@@ -518,7 +543,7 @@ export default function DashboardPage() {
             <button
               id="btn-copy-referral"
               onClick={handleCopyReferral}
-              disabled={copyState !== 'idle' || activeClasses.length === 0}
+              disabled={copyState !== 'idle' || shareableClasses.length === 0}
               style={{
                 flexShrink: 0,
                 fontSize: "0.75rem",
@@ -526,7 +551,7 @@ export default function DashboardPage() {
                 padding: "8px 14px",
                 borderRadius: 12,
                 border: "none",
-                cursor: activeClasses.length === 0 ? "not-allowed" : "pointer",
+                cursor: shareableClasses.length === 0 ? "not-allowed" : "pointer",
                 transition: "all 0.2s",
                 background: copyState === 'copied'
                   ? "var(--brand-500)"
@@ -537,7 +562,13 @@ export default function DashboardPage() {
                 opacity: copyState === 'loading' ? 0.6 : 1,
               }}
             >
-              {copyState === 'loading' ? "..." : copyState === 'copied' ? "✓ คัดลอกแล้ว" : t("dashboard.copyReferral")}
+              {copyState === 'loading'
+                ? "..."
+                : copyState === 'copied'
+                ? "✓ คัดลอกแล้ว"
+                : shareableClasses.length > 1
+                ? "เลือกคลาส"
+                : t("dashboard.copyReferral")}
             </button>
           </div>
         </section>
@@ -639,11 +670,6 @@ export default function DashboardPage() {
           </div>
 
           {(() => {
-            const todayStr = new Date().toDateString();
-            const todaysHistory = historyData.filter(
-              (hist) => new Date(hist.date).toDateString() === todayStr,
-            );
-
             if (todaysHistory.length === 0) {
               return (
                 <div
@@ -705,6 +731,79 @@ export default function DashboardPage() {
         {/* bottom padding for nav */}
         <div style={{ height: 16 }} />
       </div>
+
+      {isClassPickerOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="referral-class-picker-title"
+          className="fixed inset-0 z-50 flex items-end"
+        >
+          <button
+            type="button"
+            aria-label="ปิด"
+            onClick={() => setIsClassPickerOpen(false)}
+            className="absolute inset-0 bg-black/45"
+          />
+          <div className="relative w-full rounded-t-3xl border border-border bg-card shadow-2xl">
+            <div className="flex items-center justify-between px-5 pt-4 pb-3">
+              <div>
+                <h2 id="referral-class-picker-title" className="text-base font-black text-foreground">
+                  เลือกคลาสที่จะชวน
+                </h2>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  ระบบจะคัดลอกลิงก์สมัครของคลาสที่เลือก
+                </p>
+              </div>
+              <button
+                type="button"
+                aria-label="ปิด"
+                onClick={() => setIsClassPickerOpen(false)}
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground active:scale-95"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="max-h-[55dvh] overflow-y-auto px-4 pb-[calc(20px+env(safe-area-inset-bottom))]">
+              <div className="flex flex-col gap-2">
+                {shareableClasses.map((cls) => {
+                  const isCopyingThisClass = copyState === 'loading' && copyingClassId === cls.id;
+
+                  return (
+                    <button
+                      key={cls.id}
+                      type="button"
+                      onClick={() => copyReferralForClass(cls.id)}
+                      disabled={copyState !== 'idle'}
+                      className="flex w-full items-center gap-3 rounded-2xl border border-border bg-background px-4 py-3 text-left transition active:scale-[0.99] disabled:opacity-60"
+                    >
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                        <BookOpen size={18} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-black text-foreground">{cls.name}</p>
+                        <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                          {cls.tutorName}
+                          {cls.seriesCefr ? ` / ${cls.seriesCefr}` : ""}
+                        </p>
+                      </div>
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand-600">
+                        {isCopyingThisClass ? (
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-brand-200 border-t-brand-600" />
+                        ) : copyState === 'copied' && copyingClassId === cls.id ? (
+                          <Check size={16} />
+                        ) : (
+                          <Copy size={16} />
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

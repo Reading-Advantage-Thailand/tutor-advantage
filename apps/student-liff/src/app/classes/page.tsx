@@ -25,7 +25,7 @@ interface ClassItem {
 }
 
 export default function ClassesPage() {
-  const { liff, isReady } = useLiff();
+  const { liff, isReady, error: liffError } = useLiff();
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -70,6 +70,11 @@ export default function ClassesPage() {
     if (!isReady || !liff) return;
 
     try {
+      if (liffError) {
+        toast.error("LINE LIFF ยังเริ่มไม่สำเร็จ กรุณาเปิดผ่านแอป LINE แล้วลองใหม่");
+        return;
+      }
+
       if (!liff.isInClient()) {
         toast.info(t("classes.qrLineOnly"));
         return;

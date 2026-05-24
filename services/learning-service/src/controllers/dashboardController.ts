@@ -5,6 +5,74 @@ import { lessonSessionService } from "../services/LessonSessionService";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
 import { v4 as uuidv4 } from "uuid";
 
+const STUDENT_APP_PROD_URL = "https://student-liff-1090865515742.asia-southeast1.run.app";
+const STUDENT_APP_DEV_URL = "https://resource-pushpin-tabby.ngrok-free.dev";
+
+function getStudentAppBaseUrl() {
+  return process.env.FRONTEND_APP_URL ||
+    (process.env.NODE_ENV === "production" ? STUDENT_APP_PROD_URL : STUDENT_APP_DEV_URL);
+}
+
+function getValidDateQuery(value: unknown) {
+  if (typeof value !== "string") return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+async function getUnreadMessageCount(userId: string) {
+  const rows = await prisma.$queryRaw<{ count: bigint }[]>`
+    SELECT COUNT(*)::bigint AS count
+    FROM learning.messages m
+    INNER JOIN learning.conversation_participants cp
+      ON cp.conversation_id = m.conversation_id
+    WHERE cp.user_id = CAST(${userId} AS uuid)
+      AND m.sender_id <> CAST(${userId} AS uuid)
+      AND (cp.last_read_at IS NULL OR m.created_at > cp.last_read_at)
+  `;
+
+  return Number(rows[0]?.count ?? 0);
+}
+
+async function getDashboardHistory(userId: string, from: Date, to: Date) {
+  const participations = await prisma.sessionParticipant.findMany({
+    where: {
+      studentUserId: userId,
+      joinedAt: { gte: from, lt: to },
+      session: { status: "FINISHED" },
+    },
+    include: {
+      session: {
+        include: {
+          tutor: { select: { displayName: true } },
+          participants: { select: { studentUserId: true, score: true } },
+        },
+      },
+    },
+    orderBy: { joinedAt: "desc" },
+    take: 20,
+  });
+
+  return Promise.all(participations.map(async (participation) => {
+    const session = participation.session;
+    const articleInfo = await getArticleDetails(session.articleId).catch(() => null);
+    const sortedPeers = [...session.participants].sort((a, b) => (b.score || 0) - (a.score || 0));
+    const myRank = sortedPeers.findIndex((peer) => peer.studentUserId === userId) + 1;
+
+    return {
+      sessionId: session.sessionId,
+      articleId: session.articleId,
+      articleTitle: articleInfo?.title || "บทเรียนไร้ชื่อ",
+      articleLevel: articleInfo?.cefr_level || "N/A",
+      tutorName: session.tutor.displayName || "Tutor",
+      score: participation.score,
+      rank: myRank,
+      totalParticipants: sortedPeers.length,
+      date: participation.joinedAt,
+      status: session.status,
+    };
+  }));
+}
+
 export async function getDashboardSummary(
   req: AuthenticatedRequest,
   res: Response,
@@ -38,12 +106,12 @@ export async function getDashboardSummary(
         orderBy: { createdAt: "desc" }
       });
 
-      const tutorIds = enrollments.map((e: any) => e.class.tutorUserId).filter(Boolean);
+      const tutorIds = Array.from(new Set(enrollments.map((e) => e.class.tutorUserId).filter(Boolean)));
       const tutors = await prisma.user.findMany({
         where: { userId: { in: tutorIds } },
         select: { userId: true, displayName: true }
       });
-      const tutorMap = new Map(tutors.map((t: any) => [t.userId, t.displayName]));
+      const tutorMap = new Map(tutors.map((t) => [t.userId, t.displayName]));
 
       // 2. Calculate read articles
       const readParticipations = await prisma.sessionParticipant.findMany({
@@ -51,12 +119,13 @@ export async function getDashboardSummary(
           studentUserId: userId,
           session: { status: "FINISHED" }
         },
-        include: {
-          session: { select: { articleId: true, createdAt: true } as any }
+        select: {
+          joinedAt: true,
+          session: { select: { articleId: true, createdAt: true } }
         }
       });
 
-      const distinctArticlesRead = new Set(readParticipations.map((p: any) => p.session.articleId));
+      const distinctArticlesRead = new Set(readParticipations.map((p) => p.session.articleId));
       
       // 3. Calculate consecutive week streak (counting backwards from current week)
       const today = new Date();
@@ -67,7 +136,7 @@ export async function getDashboardSummary(
         return `${copy.getFullYear()}-W${Math.ceil((((copy.getTime() - firstJan.getTime()) / 86400000) + firstJan.getDay() + 1) / 7)}`;
       };
 
-      const activeWeeks = new Set(readParticipations.map((p: any) => getWeekId(new Date(p.joinedAt || (p as any).session?.createdAt))));
+      const activeWeeks = new Set(readParticipations.map((p) => getWeekId(new Date(p.joinedAt || p.session.createdAt))));
       
       let streak = 0;
       let checkDate = new Date(today);
@@ -81,19 +150,26 @@ export async function getDashboardSummary(
         }
       }
 
-      const classSummaries = await Promise.all(enrollments.map(async (e: any) => {
+      const bookIds = Array.from(new Set(enrollments.map((e) => e.class.bookId).filter(Boolean)));
+      const articles = await prisma.article.findMany({
+        where: { bookId: { in: bookIds } },
+        select: { bookId: true, articleId: true },
+      });
+      const articleIdsByBookId = new Map<string, string[]>();
+      for (const article of articles) {
+        const bookArticles = articleIdsByBookId.get(article.bookId) ?? [];
+        bookArticles.push(article.articleId);
+        articleIdsByBookId.set(article.bookId, bookArticles);
+      }
+
+      const classSummaries = enrollments.map((e) => {
         const session = lessonSessionService.getSessionByClassId(e.class.classId);
         const tutorName = tutorMap.get(e.class.tutorUserId) || "Tutor";
         
         // Calculate actual class progress based on current book articles read
-        const bookArticles = await prisma.article.findMany({
-          where: { bookId: e.class.bookId },
-          select: { articleId: true }
-        });
-        
-        const bookArticleIds = bookArticles.map(a => a.articleId);
+        const bookArticleIds = articleIdsByBookId.get(e.class.bookId) ?? [];
         const articlesCompletedInClass = bookArticleIds.filter(id => distinctArticlesRead.has(id)).length;
-        const totalArticlesInBook = bookArticles.length || 10; // Fallback if articles missing
+        const totalArticlesInBook = bookArticleIds.length || e.class.book?.articleCount || 10;
         const actualProgress = Math.round((articlesCompletedInClass / totalArticlesInBook) * 100);
 
         return {
@@ -107,35 +183,26 @@ export async function getDashboardSummary(
           bookName: e.class.book?.title,
           seriesCefr: e.class.book?.series?.cefrLevel || "A1",
         };
-      }));
+      });
       const recentClasses = classSummaries
         .sort((a, b) => Number(b.isLive) - Number(a.isLive))
         .slice(0, 3);
 
-      // 4. Calculate total unread messages
-      const conversationParticipants = await prisma.conversationParticipant.findMany({
-        where: { userId },
-        select: { conversationId: true, lastReadAt: true }
-      });
-
-      let totalUnreadMessages = 0;
-      for (const cp of conversationParticipants) {
-        const unread = await prisma.message.count({
-          where: {
-            conversationId: cp.conversationId,
-            senderId: { not: userId },
-            ...(cp.lastReadAt ? { createdAt: { gt: cp.lastReadAt } } : {})
-          }
-        });
-        totalUnreadMessages += unread;
-      }
+      const historyFrom = getValidDateQuery(req.query.historyFrom);
+      const historyTo = getValidDateQuery(req.query.historyTo);
+      const [totalUnreadMessages, todayHistory] = await Promise.all([
+        getUnreadMessageCount(userId),
+        historyFrom && historyTo ? getDashboardHistory(userId, historyFrom, historyTo) : Promise.resolve([]),
+      ]);
 
       return res.status(200).json({
         activeEnrollments: enrollments.length,
         totalArticlesRead: distinctArticlesRead.size,
         weekStreak: streak,
         recentClasses,
+        shareableClasses: classSummaries,
         unreadMessages: totalUnreadMessages,
+        todayHistory,
       });
     }
 
@@ -162,23 +229,7 @@ export async function getDashboardSummary(
       nextSession: "ตามนัดหมาย", // Mock static text for now
     }));
 
-    // Calculate total unread messages for tutor
-    const conversationParticipants = await prisma.conversationParticipant.findMany({
-      where: { userId },
-      select: { conversationId: true, lastReadAt: true }
-    });
-
-    let unreadMessages = 0;
-    for (const cp of conversationParticipants) {
-      const unread = await prisma.message.count({
-        where: {
-          conversationId: cp.conversationId,
-          senderId: { not: userId },
-          ...(cp.lastReadAt ? { createdAt: { gt: cp.lastReadAt } } : {})
-        }
-      });
-      unreadMessages += unread;
-    }
+    const unreadMessages = await getUnreadMessageCount(userId);
 
     const classesThisWeek = classes.length > 0 ? Math.min(classes.length, 5) : 0;
 
@@ -494,8 +545,12 @@ export async function generateStudentShareLink(
       });
     }
 
-    const baseUrl = process.env.FRONTEND_APP_URL || "http://localhost:3000";
-    const url = `${baseUrl}/enroll?token=${referral.token}`;
+    const baseUrl = getStudentAppBaseUrl();
+    const params = new URLSearchParams({
+      classId: targetClass.classId,
+      referralToken: referral.token,
+    });
+    const url = `${baseUrl}/enroll?${params.toString()}`;
 
     return res.status(200).json({
       url,

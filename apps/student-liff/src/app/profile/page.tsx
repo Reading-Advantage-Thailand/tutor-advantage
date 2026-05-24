@@ -16,11 +16,12 @@ import { studentApi } from "@/lib/api";
 export default function ProfilePage() {
   const { liff, profile, isReady } = useLiff();
   const router = useRouter();
+  const profileUserId = profile?.userId;
   const [levelDisplay, setLevelDisplay] = useState("Origins 1");
   const [cefrDisplay, setCefrDisplay] = useState("A1");
 
   useEffect(() => {
-    if (!isReady) return;
+    if (!isReady || !profileUserId) return;
     studentApi.getDashboard()
       .then((data: { recentClasses?: Array<{ bookName?: string | null; seriesCefr?: string | null }> }) => {
         const primary = data?.recentClasses?.[0];
@@ -30,7 +31,7 @@ export default function ProfilePage() {
       .catch(() => {
         // keep defaults on error
       });
-  }, [isReady]);
+  }, [isReady, profileUserId]);
 
   const student = {
     name: profile?.displayName || t("dashboard.loadingName"),

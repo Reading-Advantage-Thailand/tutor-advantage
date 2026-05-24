@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.claimAuctionClass = exports.getAuctionClasses = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
+const database_1 = require("@tutor-advantage/database");
 // Get open class transfer requests (auction)
 const getAuctionClasses = async (req, res) => {
     try {
@@ -11,7 +10,7 @@ const getAuctionClasses = async (req, res) => {
             res.status(401).json({ error: "Unauthorized" });
             return;
         }
-        const openRequests = await prisma.classTransferRequest.findMany({
+        const openRequests = await database_1.prisma.classTransferRequest.findMany({
             where: {
                 status: "OPEN",
                 OR: [
@@ -63,7 +62,7 @@ const claimAuctionClass = async (req, res) => {
             return;
         }
         // Use transaction to ensure thread-safety when claiming
-        const result = await prisma.$transaction(async (tx) => {
+        const result = await database_1.prisma.$transaction(async (tx) => {
             const transferRequest = await tx.classTransferRequest.findUnique({
                 where: { transferId },
                 include: { class: true }

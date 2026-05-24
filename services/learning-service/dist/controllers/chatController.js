@@ -1,9 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initiateChat = exports.sendMessage = exports.getMessages = exports.getConversations = void 0;
-const client_1 = require("@prisma/client");
+const database_1 = require("@tutor-advantage/database");
 const LineNotificationService_1 = require("../services/LineNotificationService");
-const prisma = new client_1.PrismaClient();
 // Get list of conversations for the current user
 const getConversations = async (req, res) => {
     try {
@@ -12,7 +11,7 @@ const getConversations = async (req, res) => {
             res.status(401).json({ error: "Unauthorized" });
             return;
         }
-        const conversations = await prisma.conversation.findMany({
+        const conversations = await database_1.prisma.conversation.findMany({
             where: {
                 participants: {
                     some: { userId },
@@ -67,7 +66,7 @@ const getConversations = async (req, res) => {
             const lastMessage = conv.messages.length > 0 ? conv.messages[0] : null;
             let unreadCount = 0;
             if (me) {
-                unreadCount = await prisma.message.count({
+                unreadCount = await database_1.prisma.message.count({
                     where: {
                         conversationId: conv.conversationId,
                         senderId: { not: userId },
@@ -107,7 +106,7 @@ const getMessages = async (req, res) => {
             return;
         }
         // Verify participation
-        const participant = await prisma.conversationParticipant.findUnique({
+        const participant = await database_1.prisma.conversationParticipant.findUnique({
             where: {
                 conversationId_userId: {
                     conversationId,
@@ -136,7 +135,7 @@ const getMessages = async (req, res) => {
             res.status(403).json({ error: "Not a participant in this conversation" });
             return;
         }
-        const messages = await prisma.message.findMany({
+        const messages = await database_1.prisma.message.findMany({
             where: { conversationId },
             orderBy: { createdAt: "asc" },
             include: {
@@ -150,7 +149,7 @@ const getMessages = async (req, res) => {
             },
         });
         // Mark as read
-        await prisma.conversationParticipant.update({
+        await database_1.prisma.conversationParticipant.update({
             where: { participantId: participant.participantId },
             data: { lastReadAt: new Date() },
         });
@@ -199,7 +198,7 @@ const sendMessage = async (req, res) => {
             return;
         }
         // Verify participation
-        const participant = await prisma.conversationParticipant.findUnique({
+        const participant = await database_1.prisma.conversationParticipant.findUnique({
             where: {
                 conversationId_userId: {
                     conversationId,
@@ -211,7 +210,7 @@ const sendMessage = async (req, res) => {
             res.status(403).json({ error: "Not a participant in this conversation" });
             return;
         }
-        const newMessage = await prisma.message.create({
+        const newMessage = await database_1.prisma.message.create({
             data: {
                 conversationId,
                 senderId: userId,
@@ -228,20 +227,23 @@ const sendMessage = async (req, res) => {
             },
         });
         // Update conversation timestamp
-        await prisma.conversation.update({
+        await database_1.prisma.conversation.update({
             where: { conversationId },
             data: { updatedAt: new Date() },
         });
         // Trigger async Line Push Notifications to other participants
         (async () => {
             try {
-                const allParticipants = await prisma.conversationParticipant.findMany({
+                const allParticipants = await database_1.prisma.conversationParticipant.findMany({
                     where: { conversationId, userId: { not: userId } },
                     select: { userId: true }
                 });
                 const senderName = newMessage.sender.displayName || "มีข้อความใหม่";
                 const shortContent = content.length > 100 ? content.substring(0, 97) + "..." : content;
-                const pushMessage = `💬 จาก ${senderName}:\n${shortContent}`;
+                const deepLink = LineNotificationService_1.LineNotificationService.buildLiffDeepLink(`/chat/${conversationId}`);
+                const pushMessage = deepLink
+                    ? `💬 จาก ${senderName}:\n${shortContent}\n\n${deepLink}`
+                    : `💬 จาก ${senderName}:\n${shortContent}`;
                 for (const p of allParticipants) {
                     await LineNotificationService_1.LineNotificationService.sendToUser(p.userId, pushMessage, { type: "notifyLineMessages" });
                 }
@@ -285,11 +287,11 @@ const initiateChat = async (req, res) => {
                 res.status(400).json({ error: "classId is required for group chats" });
                 return;
             }
-            let conversation = await prisma.conversation.findFirst({
+            let conversation = await database_1.prisma.conversation.findFirst({
                 where: { classId, type: 'GROUP' }
             });
             if (!conversation) {
-                conversation = await prisma.conversation.create({
+                conversation = await database_1.prisma.conversation.create({
                     data: {
                         classId,
                         type: 'GROUP'
@@ -297,7 +299,7 @@ const initiateChat = async (req, res) => {
                 });
             }
             // Ensure requester is a participant
-            await prisma.conversationParticipant.upsert({
+            await database_1.prisma.conversationParticipant.upsert({
                 where: {
                     conversationId_userId: {
                         conversationId: conversation.conversationId,
@@ -320,7 +322,7 @@ const initiateChat = async (req, res) => {
                 return;
             }
             // Find a conversation that contains exactly these two participants
-            const existingConversations = await prisma.conversation.findMany({
+            const existingConversations = await database_1.prisma.conversation.findMany({
                 where: {
                     type: 'DIRECT',
                     AND: [
@@ -337,7 +339,7 @@ const initiateChat = async (req, res) => {
                 return;
             }
             // Create new direct conversation
-            const newConv = await prisma.conversation.create({
+            const newConv = await database_1.prisma.conversation.create({
                 data: {
                     type: 'DIRECT',
                     classId: classId || null,

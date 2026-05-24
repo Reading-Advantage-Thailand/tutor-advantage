@@ -147,6 +147,7 @@ model Article {
   book Book @relation(fields: [bookId], references: [bookId])
 
   @@unique([articleId, bookId])
+  @@index([bookId], map: "articles_book_id_idx")
   @@map("articles")
   @@schema("learning")
 }
@@ -242,6 +243,7 @@ model SessionParticipant {
   student User               @relation(fields: [studentUserId], references: [userId])
 
   @@unique([sessionId, studentUserId])
+  @@index([studentUserId, joinedAt], map: "session_participants_student_joined_idx")
   @@map("session_participants")
   @@schema("learning")
 }
@@ -320,6 +322,7 @@ model ConversationParticipant {
   user         User         @relation(fields: [userId], references: [userId])
 
   @@unique([conversationId, userId])
+  @@index([userId], map: "conversation_participants_user_id_idx")
   @@map("conversation_participants")
   @@schema("learning")
 }
@@ -336,6 +339,7 @@ model Message {
   conversation Conversation @relation(fields: [conversationId], references: [conversationId])
   sender       User         @relation(fields: [senderId], references: [userId])
 
+  @@index([conversationId, createdAt], map: "messages_conversation_created_idx")
   @@map("messages")
   @@schema("learning")
 }

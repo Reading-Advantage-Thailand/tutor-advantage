@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { LineIcon } from "@/components/icons/LineIcon";
@@ -12,22 +12,37 @@ import { t } from "@/lib/i18n";
 export default function LoginPage() {
   const { liff, isReady, error } = useLiff();
   const router = useRouter();
+  const [sessionError, setSessionError] = useState<string | null>(null);
 
   const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
   const redirectPath = searchParams?.get("redirect") || "/dashboard";
 
   useEffect(() => {
-    if (isReady && liff?.isLoggedIn()) {
-      // Wait a tick to allow the LiffProvider's token-exchange fetch to complete
-      // and the cookie to be set before the middleware runs on navigation.
-      const timer = setTimeout(() => {
-        router.replace(redirectPath);
-      }, 300);
-      return () => clearTimeout(timer);
-    }
-  }, [isReady, liff, router, redirectPath]);
+    if (isReady && liff?.isLoggedIn() && !error) {
+      let attempts = 0;
+      const timer = setInterval(() => {
+        const hasSession = document.cookie
+          .split("; ")
+          .some((cookie) => cookie.startsWith("student-session="));
 
-  if (!isReady || (isReady && liff?.isLoggedIn())) {
+        if (hasSession) {
+          clearInterval(timer);
+          router.replace(redirectPath);
+          return;
+        }
+
+        attempts += 1;
+        if (attempts >= 20) {
+          clearInterval(timer);
+          setSessionError("LINE login สำเร็จแล้ว แต่ระบบยังสร้าง session ไม่สำเร็จ กรุณาลองเข้าสู่ระบบใหม่");
+        }
+      }, 250);
+
+      return () => clearInterval(timer);
+    }
+  }, [isReady, liff, error, router, redirectPath]);
+
+  if (!isReady || (isReady && liff?.isLoggedIn() && !error && !sessionError)) {
     return (
       <main className="page-shell" style={{ minHeight: "100dvh", background: "linear-gradient(160deg, #06c755 0%, #047d36 40%, #0f172a 100%)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
         <div className="animate-pulse" style={{ color: "#fff", fontWeight: 600, fontSize: "1.125rem" }}>
@@ -38,6 +53,12 @@ export default function LoginPage() {
   }
 
   const handleLogin = () => {
+    if (liff?.isLoggedIn() && (error || sessionError)) {
+      liff.logout();
+      window.location.reload();
+      return;
+    }
+
     if (liff && !liff.isLoggedIn()) {
       try {
         // Construct proper redirect destination
@@ -88,9 +109,9 @@ export default function LoginPage() {
         </p>
 
         {/* Error */}
-        {error && (
+        {(error || sessionError) && (
           <div style={{ color: "#ef4444", fontSize: "0.75rem", textAlign: "center", marginBottom: 12, padding: "10px 14px", background: "var(--accent-red-light)", borderRadius: 14, border: "1px solid #fee2e2" }}>
-            {error}
+            {error || sessionError}
           </div>
         )}
 
@@ -103,7 +124,7 @@ export default function LoginPage() {
           disabled={!isReady}
         >
           <LineIcon size={22} />
-          {isReady ? t("app.lineLogin") : t("app.loading")}
+          {error || sessionError ? "ลองเข้าสู่ระบบใหม่" : isReady ? t("app.lineLogin") : t("app.loading")}
         </Button>
 
         {/* PDPA notice */}

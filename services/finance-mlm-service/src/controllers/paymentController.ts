@@ -860,10 +860,13 @@ function buildCheckoutDetailsFromCharge(charge: {
 }
 
 function buildReturnUri(returnUri: unknown, paymentIntentId: string) {
+  const defaultStudentAppBaseUrl = process.env.NODE_ENV === "production"
+    ? "https://student-liff-1090865515742.asia-southeast1.run.app"
+    : "https://resource-pushpin-tabby.ngrok-free.dev";
   const fallbackBase =
     process.env.STUDENT_APP_BASE_URL ||
     process.env.NEXT_PUBLIC_BASE_URL ||
-    "http://localhost:3004";
+    defaultStudentAppBaseUrl;
   const fallback = `${fallbackBase.replace(/\/$/, "")}/payment`;
   const candidate = typeof returnUri === "string" && returnUri ? returnUri : fallback;
 
