@@ -16,7 +16,7 @@ import { ReferralLink, ArticleSelector, ClassStatusToggle, MeetingUrlEditor, Stu
 import { notFound } from "next/navigation";
 
 async function getClassData(classId: string, token: string) {
-  const res = await fetch(`http://localhost:3002/v1/classes/${classId}`, {
+  const res = await fetch(`${LEARNING_URL}/v1/classes/${classId}`, {
     headers: { Authorization: `Bearer ${token}` },
     next: { revalidate: 30 },
   });

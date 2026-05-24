@@ -10,7 +10,7 @@ async function getChatData(id: string) {
   if (!token) return { metadata: null, messages: [] };
 
   try {
-    const res = await fetch(`http://localhost:3002/v1/chat/conversations/${id}/messages`, {
+    const res = await fetch(`${LEARNING_URL}/v1/chat/conversations/${id}/messages`, {
       headers: {
         Authorization: `Bearer ${token}`
       },

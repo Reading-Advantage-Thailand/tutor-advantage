@@ -12,7 +12,7 @@ export async function sendMessage(conversationId: string, content: string) {
     throw new Error("Unauthorized");
   }
 
-  const res = await fetch(`http://localhost:3002/v1/chat/conversations/${conversationId}/messages`, {
+  const res = await fetch(`${LEARNING_URL}/v1/chat/conversations/${conversationId}/messages`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -39,7 +39,7 @@ export async function getConversationMessages(conversationId: string) {
     throw new Error("Unauthorized");
   }
 
-  const res = await fetch(`http://localhost:3002/v1/chat/conversations/${conversationId}/messages`, {
+  const res = await fetch(`${LEARNING_URL}/v1/chat/conversations/${conversationId}/messages`, {
     headers: {
       Authorization: `Bearer ${token}`
     },

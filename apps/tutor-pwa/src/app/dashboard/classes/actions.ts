@@ -46,7 +46,7 @@ export async function updateClassStatus(classId: string, status: "open" | "full"
     throw new Error("Unauthorized");
   }
 
-  const res = await fetch(`http://localhost:3002/v1/classes/${classId}/status`, {
+  const res = await fetch(`${LEARNING_URL}/v1/classes/${classId}/status`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -93,7 +93,7 @@ export async function deleteClass(classId: string) {
     throw new Error("Unauthorized");
   }
 
-  const res = await fetch(`http://localhost:3002/v1/classes/${classId}`, {
+  const res = await fetch(`${LEARNING_URL}/v1/classes/${classId}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`
@@ -116,7 +116,7 @@ export async function updateMeetingUrl(classId: string, meetingUrl: string) {
     throw new Error("Unauthorized");
   }
 
-  const res = await fetch(`http://localhost:3002/v1/classes/${classId}/meeting-url`, {
+  const res = await fetch(`${LEARNING_URL}/v1/classes/${classId}/meeting-url`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -143,7 +143,7 @@ export async function getClassArticles(classId: string) {
     throw new Error("Unauthorized");
   }
 
-  const res = await fetch(`http://localhost:3002/v1/classes/${classId}/articles`, {
+  const res = await fetch(`${LEARNING_URL}/v1/classes/${classId}/articles`, {
     headers: {
       Authorization: `Bearer ${token}`
     }

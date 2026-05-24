@@ -14,7 +14,7 @@ export async function claimClass(transferId: string) {
     throw new Error("Unauthorized");
   }
 
-  const res = await fetch(`http://localhost:3002/v1/classes/auction/${transferId}/claim`, {
+  const res = await fetch(`${LEARNING_URL}/v1/classes/auction/${transferId}/claim`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
