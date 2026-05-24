@@ -1,0 +1,44 @@
+# Google Cloud Scheduler — Monthly Settlement Auto-Run
+#
+# ตั้งเวลา: วันที่ 1 ของทุกเดือน เวลา 00:05 ICT (UTC+7)
+# Cron expression "5 0 1 * *" run at 00:05 UTC = 07:05 ICT
+# เพื่อให้ตรง 00:05 ICT ต้องใช้ "5 17 * * *" (UTC) — แต่ Cloud Scheduler
+# รองรับ timeZone จึงใช้ "5 0 1 * *" กับ Asia/Bangkok โดยตรง
+#
+# Deploy ด้วย:
+#   gcloud scheduler jobs create http monthly-settlement-trigger \
+#     --schedule="5 0 1 * *" \
+#     --time-zone="Asia/Bangkok" \
+#     --uri="https://<FINANCE_SERVICE_URL>/v1/internal/settlement/auto-run" \
+#     --http-method=POST \
+#     --headers="X-Internal-Key=<INTERNAL_API_KEY>,Content-Type=application/json" \
+#     --message-body="{}" \
+#     --location=asia-southeast1 \
+#     --project=<GCP_PROJECT_ID>
+#
+# หรือใช้ Terraform:
+#   google_cloud_scheduler_job (ดู infra/terraform/ สำหรับ resource definition)
+
+name: monthly-settlement-trigger
+description: "Triggers monthly settlement preview on the 1st of each month (ICT)"
+schedule: "5 0 1 * *"
+timeZone: "Asia/Bangkok"
+
+httpTarget:
+  uri: "https://<FINANCE_SERVICE_URL>/v1/internal/settlement/auto-run"
+  httpMethod: POST
+  headers:
+    Content-Type: "application/json"
+    X-Internal-Key: "<INTERNAL_API_KEY>"  # ดึงจาก Secret Manager ใน production
+  body: "{}"
+
+retryConfig:
+  retryCount: 3
+  minBackoffDuration: "5s"
+  maxBackoffDuration: "3600s"
+  maxDoublings: 5
+
+# แทนค่า placeholder ก่อน deploy:
+#   <FINANCE_SERVICE_URL> = Cloud Run service URL ของ finance-mlm-service
+#   <INTERNAL_API_KEY>    = ค่าจาก Secret Manager (ห้าม hardcode)
+#   <GCP_PROJECT_ID>      = GCP project ID

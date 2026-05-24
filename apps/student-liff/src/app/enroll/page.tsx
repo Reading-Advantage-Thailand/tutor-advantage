@@ -16,6 +16,7 @@ import {
   CreditCard,
   MessageCircle,
   Sparkles,
+  Info,
 } from "lucide-react";
 import Link from "next/link";
 import { studentApi } from "@/lib/api";
@@ -220,6 +221,7 @@ function EnrollContent() {
 
   /* ── Confirm step ── */
   const spotsLeft = classDetails.maxStudents - classDetails.currentStudents;
+  const isFull = spotsLeft <= 0;
   const spotsPercent = Math.round((classDetails.currentStudents / classDetails.maxStudents) * 100);
 
   return (
@@ -261,6 +263,21 @@ function EnrollContent() {
 
       {/* ── Card body ── */}
       <div className="px-4 -mt-4 pb-8 space-y-4 max-w-md mx-auto">
+
+        {/* Fallback banner — shown when class is full */}
+        {isFull && (
+          <div className="rounded-2xl bg-amber-500/10 border border-amber-500/30 px-4 py-4 flex gap-3">
+            <Info className="text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" size={18} />
+            <div>
+              <p className="text-sm font-bold text-amber-700 dark:text-amber-300 mb-0.5">
+                {t("enroll.fallbackBannerTitle")}
+              </p>
+              <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed">
+                {t("enroll.fallbackBannerDesc")}
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Class details card */}
         <div className="bg-card rounded-3xl border border-border shadow-xl overflow-hidden">

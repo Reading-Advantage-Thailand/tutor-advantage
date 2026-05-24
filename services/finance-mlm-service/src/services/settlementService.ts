@@ -220,10 +220,38 @@ export class SettlementService {
       },
     });
 
+    // Fetch badge bonuses for all tutors in this settlement
+    // Badge bonus amounts in Satang — must match BadgeService.BADGE_BONUS_SATANG
+    const BADGE_BONUS_SATANG: Record<string, bigint> = {
+      ELITE_EDUCATOR:  50000n,
+      TOP_RATED:       30000n,
+      CLASS_MASTER:    20000n,
+      NETWORK_BUILDER: 10000n,
+      RISING_STAR:      5000n,
+      FAST_RESPONDER:   5000n,
+      AI_PIONEER:       5000n,
+    };
+
+    const tutorIds = Array.from(nodes.keys());
+    const allBadges = await prisma.tutorBadge.findMany({
+      where: { tutorUserId: { in: tutorIds } },
+      select: { tutorUserId: true, badgeCode: true },
+    });
+
+    const badgeBonusMap = new Map<string, bigint>();
+    for (const badge of allBadges) {
+      const bonus = BADGE_BONUS_SATANG[badge.badgeCode] ?? 0n;
+      badgeBonusMap.set(
+        badge.tutorUserId,
+        (badgeBonusMap.get(badge.tutorUserId) ?? 0n) + bonus,
+      );
+    }
+
     // Bulk insert payout lines
     for (const node of nodes.values()) {
       const adjustmentMinor = adjustmentTotals.get(node.userId) || 0n;
-      const adjustedPayoutMinor = node.payoutAmountMinor + adjustmentMinor;
+      const badgeBonusMinor = badgeBonusMap.get(node.userId) ?? 0n;
+      const adjustedPayoutMinor = node.payoutAmountMinor + adjustmentMinor + badgeBonusMinor;
 
       if (
         adjustedPayoutMinor !== 0n ||
@@ -248,8 +276,9 @@ export class SettlementService {
             payoutAmountMinor: adjustedPayoutMinor,
             withholdingTaxMinor: tax.withholdingTaxMinor,
             netPayoutMinor: tax.netPayoutMinor,
+            badgeBonusMinor,
             eligibilityStatus:
-              adjustmentMinor !== 0n
+              adjustmentMinor !== 0n || badgeBonusMinor !== 0n
                 ? `${node.eligibilityStatus}_ADJUSTED`
                 : node.eligibilityStatus,
           },

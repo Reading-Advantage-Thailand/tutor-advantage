@@ -490,16 +490,17 @@ model SettlementRun {
 }
 
 model PayoutLine {
-  payoutLineId      String   @id @default(dbgenerated("gen_random_uuid()")) @map("payout_line_id") @db.Uuid
-  settlementRunId   String   @map("settlement_run_id") @db.Uuid
-  tutorUserId       String   @map("tutor_user_id") @db.Uuid
-  grossVolumeMinor  BigInt   @map("gross_volume_minor")
-  payoutRate        Decimal  @map("payout_rate") @db.Decimal(12, 8)
-  payoutAmountMinor BigInt   @map("payout_amount_minor")
-  withholdingTaxMinor BigInt @default(0) @map("withholding_tax_minor")
-  netPayoutMinor      BigInt @default(0) @map("net_payout_minor")
-  eligibilityStatus String   @map("eligibility_status")
-  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz
+  payoutLineId        String   @id @default(dbgenerated("gen_random_uuid()")) @map("payout_line_id") @db.Uuid
+  settlementRunId     String   @map("settlement_run_id") @db.Uuid
+  tutorUserId         String   @map("tutor_user_id") @db.Uuid
+  grossVolumeMinor    BigInt   @map("gross_volume_minor")
+  payoutRate          Decimal  @map("payout_rate") @db.Decimal(12, 8)
+  payoutAmountMinor   BigInt   @map("payout_amount_minor")
+  withholdingTaxMinor BigInt   @default(0) @map("withholding_tax_minor")
+  netPayoutMinor      BigInt   @default(0) @map("net_payout_minor")
+  badgeBonusMinor     BigInt   @default(0) @map("badge_bonus_minor")
+  eligibilityStatus   String   @map("eligibility_status")
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   settlementRun SettlementRun @relation(fields: [settlementRunId], references: [settlementRunId])
   payoutDocument PayoutDocument?
@@ -528,14 +529,16 @@ model PayoutDocument {
 }
 
 model Adjustment {
-  adjustmentId    String   @id @default(dbgenerated("gen_random_uuid()")) @map("adjustment_id") @db.Uuid
-  settlementRunId String   @map("settlement_run_id") @db.Uuid
-  tutorUserId     String   @map("tutor_user_id") @db.Uuid
-  amountMinor     BigInt   @map("amount_minor")
+  adjustmentId    String    @id @default(dbgenerated("gen_random_uuid()")) @map("adjustment_id") @db.Uuid
+  settlementRunId String    @map("settlement_run_id") @db.Uuid
+  tutorUserId     String    @map("tutor_user_id") @db.Uuid
+  amountMinor     BigInt    @map("amount_minor")
   reason          String
-  status          String   @default("PENDING")
-  createdBy       String   @map("created_by")
-  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+  status          String    @default("PENDING")
+  createdBy       String    @map("created_by")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  approvedBy      String?   @map("approved_by")
+  approvedAt      DateTime? @map("approved_at") @db.Timestamptz
 
   settlementRun SettlementRun @relation(fields: [settlementRunId], references: [settlementRunId])
 

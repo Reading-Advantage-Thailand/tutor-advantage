@@ -26,6 +26,9 @@ const prismaMock = vi.hoisted(() => ({
   payoutDocument: {
     upsert: vi.fn(),
   },
+  tutorBadge: {
+    findMany: vi.fn().mockResolvedValue([]), // default: no badges → no bonus
+  },
   $transaction: vi.fn(),
 }));
 

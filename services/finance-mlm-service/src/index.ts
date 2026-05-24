@@ -29,6 +29,7 @@ import {
   exportSettlementCsv,
   getSettlementSummary,
   getSettlements,
+  autoRunSettlement,
 } from "./controllers/settlementController";
 import { auditTrailMiddleware } from "./middlewares/auditMiddleware";
 import { getAuditLogs } from "./controllers/auditController";
@@ -121,6 +122,10 @@ app.post("/v1/payments/webhook", handleWebhook);
 app.get("/v1/tutors/earnings/summary", authMiddleware, getEarningsSummary);
 app.get("/v1/tutors/earnings/history", authMiddleware, getEarningsHistory);
 app.get("/v1/tutors/network", authMiddleware, getTutorNetwork);
+
+// ── Internal Routes (protected by X-Internal-Key, NOT JWT) ────────────────
+// Called by Google Cloud Scheduler — no authMiddleware
+app.post("/v1/internal/settlement/auto-run", autoRunSettlement);
 
 // ── Settlement Routes ──────────────────────────────────────────────────────
 // NOTE: /summary ต้องอยู่ก่อน /:snapshotId เพื่อไม่ให้ express match "summary" เป็น param

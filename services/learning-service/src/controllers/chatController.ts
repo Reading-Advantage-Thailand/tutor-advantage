@@ -262,7 +262,10 @@ export const sendMessage = async (req: AuthenticatedRequest, res: Response): Pro
         
         const senderName = newMessage.sender.displayName || "มีข้อความใหม่";
         const shortContent = content.length > 100 ? content.substring(0, 97) + "..." : content;
-        const pushMessage = `💬 จาก ${senderName}:\n${shortContent}`;
+        const deepLink = LineNotificationService.buildLiffDeepLink(`/chat/${conversationId}`);
+        const pushMessage = deepLink
+          ? `💬 จาก ${senderName}:\n${shortContent}\n\n${deepLink}`
+          : `💬 จาก ${senderName}:\n${shortContent}`;
 
         for (const p of allParticipants) {
           await LineNotificationService.sendToUser(p.userId, pushMessage, { type: "notifyLineMessages" });

@@ -500,6 +500,8 @@ export const th = {
     lineNoticeFirst: "📱 ติวเตอร์จะติดต่อคุณผ่าน LINE",
     lineNoticeSecond: "ตรวจสอบการแจ้งเตือนจาก LINE Official Account",
     dashboardCta: "ไปหน้า Dashboard",
+    fallbackBannerTitle: "คลาสนี้เต็มแล้ว",
+    fallbackBannerDesc: "ระบบจะจัดหาคลาสอื่นของติวเตอร์เดิมให้คุณโดยอัตโนมัติ คุณยังสามารถดำเนินการต่อได้",
   },
   classes: {
     allFilter: "ทั้งหมด",

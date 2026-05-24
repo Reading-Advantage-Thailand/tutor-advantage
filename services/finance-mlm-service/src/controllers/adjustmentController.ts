@@ -49,6 +49,7 @@ export async function getAdjustments(req: AuthenticatedRequest, res: Response) {
       ...new Set([
         ...adjustments.map((a) => a.tutorUserId),
         ...adjustments.map((a) => a.createdBy),
+        ...adjustments.map((a) => a.approvedBy).filter(Boolean) as string[],
       ]),
     ].filter((id) => UUID_RE.test(id));
 
@@ -85,6 +86,9 @@ export async function getAdjustments(req: AuthenticatedRequest, res: Response) {
       createdByUserId: adj.createdBy,
       createdByName: getName(adj.createdBy),
       createdAt: adj.createdAt,
+      approvedByUserId: adj.approvedBy ?? null,
+      approvedByName: adj.approvedBy ? getName(adj.approvedBy) : null,
+      approvedAt: adj.approvedAt ?? null,
     }));
 
     return res.status(200).json({
@@ -261,9 +265,10 @@ export async function approveAdjustment(
       });
     }
 
+    const now = new Date();
     await prisma.adjustment.update({
       where: { adjustmentId },
-      data: { status: "APPROVED" },
+      data: { status: "APPROVED", approvedBy: userId, approvedAt: now },
     });
 
     await prisma.auditEvent.create({
@@ -274,6 +279,7 @@ export async function approveAdjustment(
         entityId: adjustmentId,
         payload: {
           createdBy: adj.createdBy,
+          approvedBy: userId,
           amountSatang: adj.amountMinor.toString(),
         },
       },
@@ -335,9 +341,10 @@ export async function rejectAdjustment(
       });
     }
 
+    const now = new Date();
     await prisma.adjustment.update({
       where: { adjustmentId },
-      data: { status: "REJECTED" },
+      data: { status: "REJECTED", approvedBy: userId, approvedAt: now },
     });
 
     await prisma.auditEvent.create({
@@ -348,6 +355,7 @@ export async function rejectAdjustment(
         entityId: adjustmentId,
         payload: {
           createdBy: adj.createdBy,
+          rejectedBy: userId,
           amountSatang: adj.amountMinor.toString(),
         },
       },

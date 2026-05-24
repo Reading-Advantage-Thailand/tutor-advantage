@@ -1,7 +1,87 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { SettlementService } from "../services/settlementService";
 import { prisma } from "@tutor-advantage/database";
+
+/**
+ * Computes the previous calendar month in ICT (UTC+7) as "YYYY-MM".
+ * e.g. called in June 2026 → returns "2026-05"
+ */
+function getPreviousIctMonth(): string {
+  const nowUtc = new Date();
+  // Shift to ICT (UTC+7)
+  const nowIct = new Date(nowUtc.getTime() + 7 * 60 * 60 * 1000);
+  // Go to first moment of this ICT month, then subtract 1ms → previous month
+  const firstOfThisMonth = new Date(
+    Date.UTC(nowIct.getUTCFullYear(), nowIct.getUTCMonth(), 1),
+  );
+  const lastOfPrevMonth = new Date(firstOfThisMonth.getTime() - 1);
+  const y = lastOfPrevMonth.getUTCFullYear();
+  const m = String(lastOfPrevMonth.getUTCMonth() + 1).padStart(2, "0");
+  return `${y}-${m}`;
+}
+
+/**
+ * POST /v1/internal/settlement/auto-run
+ * Called by Google Cloud Scheduler on the 1st of each month.
+ * Protected by X-Internal-Key header (shared secret), NOT JWT.
+ */
+export async function autoRunSettlement(req: Request, res: Response) {
+  const internalKey = process.env.INTERNAL_API_KEY;
+  const providedKey = req.headers["x-internal-key"];
+
+  if (!internalKey || providedKey !== internalKey) {
+    return res.status(401).json({
+      error: { code: "UNAUTHORIZED", message: "Invalid internal key" },
+    });
+  }
+
+  const periodMonth = getPreviousIctMonth();
+
+  try {
+    // Idempotency: skip if a run already exists for this period
+    const existing = await prisma.settlementRun.findFirst({
+      where: { periodMonth },
+      orderBy: { createdAt: "desc" },
+    });
+    if (existing) {
+      console.log(
+        `[AutoSettlement] Run for ${periodMonth} already exists (${existing.settlementRunId}). Skipping.`,
+      );
+      return res.status(200).json({
+        message: "Settlement run already exists for this period — skipped",
+        periodMonth,
+        settlementRunId: existing.settlementRunId,
+        skipped: true,
+      });
+    }
+
+    const preview = await SettlementService.previewSettlement(
+      periodMonth,
+      "SYSTEM_SCHEDULER",
+    );
+
+    console.log(
+      `[AutoSettlement] Created settlement preview for ${periodMonth}: ${preview.snapshotId}`,
+    );
+
+    return res.status(201).json({
+      message: "Settlement preview created successfully",
+      periodMonth,
+      settlementRunId: preview.snapshotId,
+      skipped: false,
+    });
+  } catch (error: any) {
+    console.error("[AutoSettlement] Error:", error);
+    return res.status(500).json({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Auto-run settlement failed",
+        details: error.message,
+      },
+    });
+  }
+}
 
 export async function previewSettlement(
   req: AuthenticatedRequest,
@@ -166,13 +246,14 @@ export async function exportSettlementCsv(
 
     // สร้าง CSV
     const header =
-      "tutor_user_id,gross_volume_thb,payout_rate,gross_payout_thb,wht_3pct_thb,net_payout_thb,eligibility_status";
+      "tutor_user_id,gross_volume_thb,payout_rate,gross_payout_thb,badge_bonus_thb,wht_3pct_thb,net_payout_thb,eligibility_status";
     const rows = run.payoutLines.map((line) => {
       const grossTHB = (Number(line.grossVolumeMinor) / 100).toFixed(2);
       const payoutTHB = (Number(line.payoutAmountMinor) / 100).toFixed(2);
+      const badgeTHB = (Number(line.badgeBonusMinor) / 100).toFixed(2);
       const whtTHB = (Number(line.withholdingTaxMinor) / 100).toFixed(2);
       const netTHB = (Number(line.netPayoutMinor) / 100).toFixed(2);
-      return `${line.tutorUserId},${grossTHB},${line.payoutRate},${payoutTHB},${whtTHB},${netTHB},${line.eligibilityStatus}`;
+      return `${line.tutorUserId},${grossTHB},${line.payoutRate},${payoutTHB},${badgeTHB},${whtTHB},${netTHB},${line.eligibilityStatus}`;
     });
     const csv = [header, ...rows].join("\n");
 

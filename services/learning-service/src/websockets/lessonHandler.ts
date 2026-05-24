@@ -6,6 +6,7 @@ import { evaluateShortAnswer } from "../services/AIEvaluator";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
 import * as dbWriter from "../services/SessionDBWriter";
 import { LineNotificationService } from "../services/LineNotificationService";
+import { checkAndUnlockBadges } from "../services/BadgeService";
 import { prisma } from "@tutor-advantage/database";
 
 function seededShuffle<T>(array: T[], seedInput: string): T[] {
@@ -168,7 +169,14 @@ export const setupLessonSocket = (io: Server) => {
         // If changing to phase 14 (Finish/Leaderboard), mark ACTIVE DB ROUND as FINISHED
         if (phase === 14) {
           dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
-          
+
+          // Non-blocking badge unlock check for the tutor
+          if (session.tutorId) {
+            checkAndUnlockBadges(session.tutorId).catch((e) =>
+              console.error("[Socket] Badge check failed:", e),
+            );
+          }
+
           // Trigger LINE Notifications for final score
           (async () => {
             try {
@@ -178,8 +186,10 @@ export const setupLessonSocket = (io: Server) => {
               for (const p of studentList) {
                  // Get final score in current context
                  const finalScore = p.score || 0;
-                 const pushMsg = `🎉 จบคาบเรียนแล้ว!\n\nคุณได้คะแนนรวม ${finalScore} คะแนน จากบทเรียน "${articleTitle}" \n\nเข้าเช็คประวัติการเรียนและเฉลยคำตอบได้ที่ Student LIFF ครับ`;
-                 
+                 const historyDeepLink = LineNotificationService.buildLiffDeepLink("/lesson/history");
+                 const deepLinkSuffix = historyDeepLink ? `\n\n${historyDeepLink}` : "\n\nเข้าเช็คประวัติการเรียนและเฉลยคำตอบได้ที่ Student LIFF ครับ";
+                 const pushMsg = `🎉 จบคาบเรียนแล้ว!\n\nคุณได้คะแนนรวม ${finalScore} คะแนน จากบทเรียน "${articleTitle}"${deepLinkSuffix}`;
+
                  if (p.resolvedUserId) {
                    await LineNotificationService.sendToUser(p.resolvedUserId, pushMsg, { type: "notifyScoreUpdates" });
                  }
