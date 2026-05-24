@@ -7,7 +7,7 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
   try {
     const userId = req.user?.userId;
     const role = req.user?.role;
-    const { bookId, title, capacity, scheduleDescription } = req.body;
+    const { bookId, title, capacity, scheduleDescription, startsAt, endsAt } = req.body;
     const packagePriceSatang = req.body.packagePriceSatang ?? 250000;
 
     if (!userId || role !== "TUTOR") {
@@ -70,6 +70,8 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
         packagePriceMinor: BigInt(packagePriceSatang),
         scheduleDescription,
         meetingUrl: req.body.meetingUrl,
+        startsAt: startsAt ? new Date(startsAt) : undefined,
+        endsAt: endsAt ? new Date(endsAt) : undefined,
         status: "OPEN",
       },
     });
@@ -364,6 +366,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
       articleCount: bookArticleCount,
       nextSession: cls.scheduleDescription || "ยังไม่ได้กำหนด",
       startsAt: cls.startsAt,
+      endsAt: cls.endsAt,
       schedule: cls.scheduleDescription || "ยังไม่ได้กำหนด",
       meetingUrl:
         cls.tutorUserId === userId || isActiveEnrollment ? cls.meetingUrl || "" : "",

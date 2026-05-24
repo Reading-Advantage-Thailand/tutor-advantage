@@ -58,6 +58,7 @@ interface ClassDetail {
   isEnrolled?: boolean;
   enrollmentStatus?: string | null;
   articleId?: string | null;
+  endsAt?: string | null;
 }
 
 interface ClassArticleDetail {
@@ -723,6 +724,12 @@ export default function ClassDetailPage({ params }: PageProps) {
               <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", marginTop: 2 }}>
                 {t("classes.detail.nextLessonPrefix")} {cls.nextSession || "TBA"}
               </div>
+              {cls.endsAt && (
+                <div style={{ fontSize: "0.8125rem", color: "var(--text-tertiary)", marginTop: 4 }}>
+                  {t("classes.detail.classEndsPrefix")}{" "}
+                  {new Date(cls.endsAt).toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" })}
+                </div>
+              )}
             </div>
           </div>
         </div>

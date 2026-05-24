@@ -550,6 +550,7 @@ export const th = {
       studentsUnit: "นักเรียน",
       schedule: "ตารางเรียน",
       nextLessonPrefix: "คาบถัดไป:",
+      classEndsPrefix: "ปิดคลาส:",
       seats: "ที่นั่ง",
       from: "จาก",
       peopleUnit: "คน",

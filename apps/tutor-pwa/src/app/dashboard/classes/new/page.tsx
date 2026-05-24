@@ -27,6 +27,8 @@ export default function NewClassPage() {
     book: "",
     schedule: "",
     meetingUrl: "",
+    startsAt: "",
+    endsAt: "",
   });
   const [books, setBooks] = useState<any[]>([]);
 
@@ -218,6 +220,41 @@ export default function NewClassPage() {
                   </p>
                 )}
               </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-primary" />
+                {t("tutorClass.newClass.classDates")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="starts-at">{t("tutorClass.newClass.startsAt")}</Label>
+                  <Input
+                    id="starts-at"
+                    type="date"
+                    value={form.startsAt}
+                    onChange={(e) => setForm({ ...form, startsAt: e.target.value })}
+                    className="text-foreground"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="ends-at">{t("tutorClass.newClass.endsAt")}</Label>
+                  <Input
+                    id="ends-at"
+                    type="date"
+                    value={form.endsAt}
+                    min={form.startsAt || undefined}
+                    onChange={(e) => setForm({ ...form, endsAt: e.target.value })}
+                    className="text-foreground"
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">{t("tutorClass.newClass.datesHelp")}</p>
             </CardContent>
           </Card>
 

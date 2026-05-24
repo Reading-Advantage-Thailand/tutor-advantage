@@ -11,6 +11,8 @@ export type CreateClassForm = {
   book: string;
   schedule: string;
   meetingUrl?: string;
+  startsAt?: string;
+  endsAt?: string;
 };
 
 export type CreateClassRequest = {
@@ -19,6 +21,8 @@ export type CreateClassRequest = {
   capacity: number;
   scheduleDescription: string;
   meetingUrl?: string;
+  startsAt?: string;
+  endsAt?: string;
 };
 
 export const CLASS_DAYS: ClassDay[] = [
@@ -91,6 +95,8 @@ export function buildCreateClassRequest(
     capacity,
     scheduleDescription: data.schedule,
     meetingUrl: data.meetingUrl,
+    startsAt: data.startsAt || undefined,
+    endsAt: data.endsAt || undefined,
   };
 }
 
