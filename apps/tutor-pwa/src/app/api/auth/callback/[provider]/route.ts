@@ -22,12 +22,14 @@ export async function GET(
   const cookieStore = await cookies();
   const storedState = cookieStore.get("oauth_state")?.value;
 
+  const publicBase = `${proto}://${host}`;
+
   if (!state || !storedState || state !== storedState) {
-    return NextResponse.redirect(new URL("/?error=invalid_state", request.url));
+    return NextResponse.redirect(new URL("/?error=invalid_state", publicBase));
   }
 
   if (!code) {
-    return NextResponse.redirect(new URL("/?error=missing_code", request.url));
+    return NextResponse.redirect(new URL("/?error=missing_code", publicBase));
   }
 
   // Sponsor comes from the invite cookie, not the state param
@@ -56,7 +58,7 @@ export async function GET(
       const errorData = await response.json().catch(() => ({}));
       console.error("Identity Service Error:", errorData);
       return NextResponse.redirect(
-        new URL("/?error=identity_service_error", request.url)
+        new URL("/?error=identity_service_error", publicBase)
       );
     }
 
@@ -65,11 +67,11 @@ export async function GET(
 
     if (!sessionToken) {
       return NextResponse.redirect(
-        new URL("/?error=missing_session_token", request.url)
+        new URL("/?error=missing_session_token", publicBase)
       );
     }
 
-    const redirect = NextResponse.redirect(new URL("/dashboard", request.url));
+    const redirect = NextResponse.redirect(new URL("/dashboard", publicBase));
 
     redirect.cookies.set("tutor_session", sessionToken, {
       httpOnly: true,
@@ -87,6 +89,6 @@ export async function GET(
     return redirect;
   } catch (error) {
     console.error("OAuth Callback Handling Error:", error);
-    return NextResponse.redirect(new URL("/?error=server_error", request.url));
+    return NextResponse.redirect(new URL("/?error=server_error", publicBase));
   }
 }
