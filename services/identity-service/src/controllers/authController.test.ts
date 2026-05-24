@@ -89,7 +89,7 @@ describe("handleOAuthCallback", () => {
 
     await handleOAuthCallback(req as never, res as never);
 
-    expect(verifyGoogleToken).toHaveBeenCalledWith("code-1", "https://app.example.com/callback");
+    expect(verifyGoogleToken).toHaveBeenCalledWith("code-1", "https://app.example.com/callback", undefined);
     expect(processOAuthLogin).toHaveBeenCalledWith(
       "google",
       "google-subject",
