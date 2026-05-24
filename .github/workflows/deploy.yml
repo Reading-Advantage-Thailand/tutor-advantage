@@ -135,24 +135,18 @@ jobs:
 
       - name: Deploy to Cloud Run
         if: matrix.changed == 'true'
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DATABASE_URL_READING_ADVANTAGE: ${{ secrets.DATABASE_URL_READING_ADVANTAGE }}
         run: |
           CLOUDSQL_FLAG=""
-          ENV_VARS_FLAG=""
           if [[ "${{ matrix.needs_db }}" == "true" ]]; then
+            # DATABASE_URL is already set on Cloud Run as a Secret Manager reference — don't touch it.
+            # Only add the Cloud SQL Auth Proxy sidecar so 127.0.0.1:5432 is reachable.
             CLOUDSQL_FLAG="--add-cloudsql-instances=reading-advantage:asia-southeast1:cloud-sql"
-            # Use ^|^ delimiter so gcloud treats | as separator (safe: DB URLs contain no |)
-            # Referencing via ${VAR} is safe even if value has backticks — no re-evaluation
-            ENV_VARS_FLAG="--update-env-vars=^|^DATABASE_URL=${DATABASE_URL}|DATABASE_URL_READING_ADVANTAGE=${DATABASE_URL_READING_ADVANTAGE}"
           fi
 
           gcloud run deploy ${{ matrix.service }} \
             --image=${{ env.REGISTRY }}/${{ matrix.service }}:${{ github.sha }} \
             --region=${{ env.REGION }} \
             ${CLOUDSQL_FLAG} \
-            ${ENV_VARS_FLAG} \
             --quiet
 
       - name: Show service URL
