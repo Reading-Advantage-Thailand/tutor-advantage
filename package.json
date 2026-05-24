@@ -14,7 +14,8 @@
     "dev": "concurrently -n \"proxy,services,student-liff,ngrok,tutor-pwa,admin-console\" -c \"magenta,green,blue,cyan,yellow,red\" \"cloud-sql-proxy.exe reading-advantage:asia-southeast1:cloud-sql --credentials-file=service-account.json\" \"npm run dev:services\" \"npm run dev -w student-liff\" \"ngrok http 3004\" \"npm run dev -w tutor-pwa\" \"npm run dev -w admin-console\"",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:integration": "vitest run --config vitest.config.integration.ts"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^4.1.6",
