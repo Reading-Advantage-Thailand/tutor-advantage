@@ -4,8 +4,6 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import liff from "@line/liff";
 import { LiffMockPlugin } from "@line/liff-mock";
 import type { Liff } from "@line/liff";
-// @ts-expect-error: no type declarations for liff-inspector
-import { LIFFInspectorPlugin } from "@line/liff-inspector";
 
 interface LiffContextType {
   liff: Liff | null;
@@ -55,10 +53,9 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
           liff.use(new LiffMockPlugin());
         }
 
-        // LIFF Inspector — dev only, lets you debug LINE WebView via browser DevTools
-        if (process.env.NODE_ENV === "development") {
-          liff.use(new LIFFInspectorPlugin());
-        }
+        // LIFF Inspector — remove before go-live
+        const { LIFFInspectorPlugin } = await import("@line/liff-inspector");
+        liff.use(new LIFFInspectorPlugin());
 
         await liff.init({
           liffId,
