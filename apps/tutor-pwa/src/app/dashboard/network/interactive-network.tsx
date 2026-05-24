@@ -247,9 +247,15 @@ export function InteractiveNetwork({ tree }: { tree: NetworkTreeNode }) {
         proOptions={{ hideAttribution: true }}
       >
         <Background color="hsl(var(--muted-foreground))" variant={"dots" as any} gap={20} size={1} style={{ opacity: 0.2 }} />
-        <Controls 
-          showInteractive={false} 
-          className="shadow-md rounded-lg overflow-hidden border border-border/50 [&>button]:bg-card [&>button]:border-b [&>button]:border-border/50 [&>button:last-child]:border-b-0 [&>button>svg]:fill-foreground hover:[&>button]:bg-muted transition-all" 
+        <Controls
+          showInteractive={false}
+          style={{
+            "--xy-controls-button-background-color-default": "hsl(var(--card))",
+            "--xy-controls-button-background-color-hover-default": "hsl(var(--muted))",
+            "--xy-controls-button-border-color-default": "hsl(var(--border))",
+            "--xy-controls-button-color-default": "hsl(var(--foreground))",
+          } as React.CSSProperties}
+          className="shadow-md rounded-lg overflow-hidden border border-border/50"
         />
       </ReactFlow>
     </div>
