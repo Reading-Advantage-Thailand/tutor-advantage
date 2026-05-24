@@ -135,19 +135,32 @@ jobs:
 
       - name: Deploy to Cloud Run
         if: matrix.changed == 'true'
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL_READING_ADVANTAGE: ${{ secrets.DATABASE_URL_READING_ADVANTAGE }}
         run: |
           CLOUDSQL_FLAG=""
-          DB_ENV_FLAG=""
+          ENV_FILE_FLAG=""
           if [[ "${{ matrix.needs_db }}" == "true" ]]; then
             CLOUDSQL_FLAG="--add-cloudsql-instances=reading-advantage:asia-southeast1:cloud-sql"
-            DB_ENV_FLAG="--update-env-vars=DATABASE_URL=${{ secrets.DATABASE_URL }},DATABASE_URL_READING_ADVANTAGE=${{ secrets.DATABASE_URL_READING_ADVANTAGE }}"
+            # Write env vars to YAML file via Python to safely handle special chars in DB URLs
+            python3 -c "
+import os, yaml
+d = {
+  'DATABASE_URL': os.environ['DATABASE_URL'],
+  'DATABASE_URL_READING_ADVANTAGE': os.environ['DATABASE_URL_READING_ADVANTAGE'],
+}
+with open('/tmp/db-env.yaml', 'w') as f:
+  yaml.dump(d, f, default_flow_style=False)
+"
+            ENV_FILE_FLAG="--env-vars-file=/tmp/db-env.yaml"
           fi
 
           gcloud run deploy ${{ matrix.service }} \
             --image=${{ env.REGISTRY }}/${{ matrix.service }}:${{ github.sha }} \
             --region=${{ env.REGION }} \
             ${CLOUDSQL_FLAG} \
-            ${DB_ENV_FLAG} \
+            ${ENV_FILE_FLAG} \
             --quiet
 
       - name: Show service URL
