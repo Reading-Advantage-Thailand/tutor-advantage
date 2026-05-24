@@ -74,15 +74,20 @@ const ALLOWED_ORIGINS = (
   process.env.ALLOWED_ORIGINS || "http://localhost:3005"
 ).split(",").map((o) => o.trim());
 
+const ALLOWED_ORIGIN_PATTERNS = [
+  /^https?:\/\/.*\.ngrok-free\.app$/,
+  /^https?:\/\/.*\.ngrok-free\.dev$/,
+  /^https?:\/\/.*\.ngrok\.io$/,
+];
+
 app.use(
   cors({
     origin: (origin, callback) => {
       // Allow server-to-server calls (no origin header) and whitelisted origins
-      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error(`CORS: origin ${origin} not allowed`));
-      }
+      if (!origin) return callback(null, true);
+      if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+      if (ALLOWED_ORIGIN_PATTERNS.some((re) => re.test(origin))) return callback(null, true);
+      callback(new Error(`CORS: origin ${origin} not allowed`));
     },
     credentials: true,
   })
