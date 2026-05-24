@@ -18,7 +18,12 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isReady && liff?.isLoggedIn()) {
-      router.replace(redirectPath);
+      // Wait a tick to allow the LiffProvider's token-exchange fetch to complete
+      // and the cookie to be set before the middleware runs on navigation.
+      const timer = setTimeout(() => {
+        router.replace(redirectPath);
+      }, 300);
+      return () => clearTimeout(timer);
     }
   }, [isReady, liff, router, redirectPath]);
 

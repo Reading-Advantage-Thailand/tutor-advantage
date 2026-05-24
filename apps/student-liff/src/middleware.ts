@@ -47,7 +47,7 @@ export async function middleware(request: NextRequest) {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' blob: data: https://profile.line-scdn.net https://*.line-scdn.net https://api.dicebear.com https://lh3.googleusercontent.com https://*.googleusercontent.com",
     "font-src 'self' data: https://fonts.gstatic.com",
-    "connect-src 'self' https://*.line.me https://*.line-scdn.net http://localhost:3001 http://localhost:3002 ws://localhost:3001 ws://localhost:3002 https://*.ngrok-free.app wss://*.ngrok-free.app",
+    "connect-src 'self' https://*.line.me https://*.line-scdn.net http://localhost:3001 http://localhost:3002 ws://localhost:3001 ws://localhost:3002 https://*.ngrok-free.app wss://*.ngrok-free.app https://*.ngrok-free.dev wss://*.ngrok-free.dev",
     "frame-src 'self' https://*.line.me",
     "object-src 'none'",
     "base-uri 'self'",

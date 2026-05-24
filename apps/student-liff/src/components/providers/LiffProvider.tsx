@@ -63,13 +63,14 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
           const userProfile = await liff.getProfile();
           setProfile(userProfile);
 
-          if (process.env.NODE_ENV !== "production") {
-            console.log("[LIFF] Dev mode: skipping backend token exchange");
+          if (useMock) {
+            // Mock mode (localhost dev) — no real LINE token to exchange
+            console.log("[LIFF] Mock mode: skipping backend token exchange");
           } else {
+            // Real LIFF (ngrok or production) — exchange token for session cookie
             const idToken = liff.getIDToken();
             if (idToken) {
               try {
-                // Exchange LINE token via server route — stores JWT in cookie, not localStorage
                 const authRes = await fetch("/api/auth/line", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
