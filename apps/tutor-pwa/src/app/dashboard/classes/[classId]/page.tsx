@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
+import { LEARNING_URL } from "@/lib/service-urls";
 import { ReferralLink, ArticleSelector, ClassStatusToggle, MeetingUrlEditor, StudentAvatars } from "./client-components";
 import { notFound } from "next/navigation";
 

@@ -53,8 +53,8 @@ type NetworkResponse = {
 async function getNetworkData(token: string): Promise<NetworkResponse | null> {
   if (!token) return null;
 
-  const baseUrl = process.env.FINANCE_API_BASE_URL || "http://localhost:3003/v1";
-  const res = await fetch(`${baseUrl}/tutors/network`, {
+  const baseUrl = process.env.FINANCE_API_BASE_URL || "http://localhost:3003";
+  const res = await fetch(`${baseUrl}/v1/tutors/network`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
   });

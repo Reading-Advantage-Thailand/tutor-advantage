@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { cookies } from "next/headers";
+import { LEARNING_URL } from "@/lib/service-urls";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, ChevronRight, MessageSquare } from "lucide-react";
 import { t } from "@/lib/i18n";
@@ -13,7 +14,7 @@ async function getConversations() {
   if (!token) return [];
 
   try {
-    const res = await fetch("http://localhost:3002/v1/chat/conversations", {
+    const res = await fetch(`${LEARNING_URL}/v1/chat/conversations`, {
       headers: {
         Authorization: `Bearer ${token}`
       },

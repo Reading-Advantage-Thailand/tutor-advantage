@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { cookies } from "next/headers";
+import { IDENTITY_URL, LEARNING_URL } from "@/lib/service-urls";
+import { LEARNING_URL } from "@/lib/service-urls";
 
 export async function getNotificationsSummary() {
   const cookieStore = await cookies();
@@ -10,7 +12,7 @@ export async function getNotificationsSummary() {
   if (!token) return { unreadChat: 0, availableAuctions: 0 };
 
   try {
-    const res = await fetch("http://localhost:3002/v1/notifications/summary", {
+    const res = await fetch(`${LEARNING_URL}/v1/notifications/summary`, {
       headers: {
         Authorization: `Bearer ${token}`
       },
@@ -32,7 +34,7 @@ export async function updateSettingsAction(settings: any) {
   const token = cookieStore.get("tutor_session")?.value;
   if (!token) throw new Error("Unauthorized");
 
-  const res = await fetch("http://localhost:3001/v1/users/me/settings", {
+  const res = await fetch(`${IDENTITY_URL}/v1/users/me/settings`, {
     method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -59,7 +61,7 @@ export async function submitVerificationAction(
   const token = cookieStore.get("tutor_session")?.value;
   if (!token) throw new Error("Unauthorized");
 
-  const res = await fetch("http://localhost:3001/v1/users/me/verification", {
+  const res = await fetch(`${IDENTITY_URL}/v1/users/me/verification`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -84,7 +86,7 @@ export async function uploadFileAction(formData: FormData) {
   const token = cookieStore.get("tutor_session")?.value;
   if (!token) throw new Error("Unauthorized");
 
-  const res = await fetch("http://localhost:3001/v1/upload", {
+  const res = await fetch(`${IDENTITY_URL}/v1/upload`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -107,7 +109,7 @@ export async function getCurrentUserAction() {
   if (!token) return null;
 
   try {
-    const res = await fetch("http://localhost:3001/v1/users/me", {
+    const res = await fetch(`${IDENTITY_URL}/v1/users/me`, {
       headers: {
         Authorization: `Bearer ${token}`
       },

@@ -4,12 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Plus, ChevronRight, BookOpen, Users, Calendar } from "lucide-react";
 import { cookies } from "next/headers";
+import { LEARNING_URL } from "@/lib/service-urls";
 import { DeleteClassButton } from "./[classId]/client-components";
 import { t } from "@/lib/i18n";
 import { PageTransition } from "@/components/ui/page-transition";
 
 async function getClassesData(token: string) {
-  const res = await fetch("http://localhost:3002/v1/classes", {
+  const res = await fetch(`${LEARNING_URL}/v1/classes`, {
     headers: { Authorization: `Bearer ${token}` },
     next: { revalidate: 30 },
   });

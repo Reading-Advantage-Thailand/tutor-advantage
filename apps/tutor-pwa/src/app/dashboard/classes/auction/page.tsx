@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, Users, Calendar, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
+import { LEARNING_URL } from "@/lib/service-urls";
 import { ClaimButton } from "./claim-button";
 import { t } from "@/lib/i18n";
 
@@ -13,7 +14,7 @@ async function getAuctions() {
   if (!token) return [];
 
   try {
-    const res = await fetch("http://localhost:3002/v1/classes/auction", {
+    const res = await fetch(`${LEARNING_URL}/v1/classes/auction`, {
       headers: {
         Authorization: `Bearer ${token}`
       },

@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { cookies } from "next/headers";
+import { IDENTITY_URL } from "@/lib/service-urls";
 import {
   SettingsInteractiveElements,
   EditableSettingToggle,
@@ -22,7 +23,7 @@ import { PageTransition } from "@/components/ui/page-transition";
 import { t } from "@/lib/i18n";
 
 async function getUserProfile(token: string) {
-  const res = await fetch("http://localhost:3001/v1/users/me", {
+  const res = await fetch(`${IDENTITY_URL}/v1/users/me`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
   });

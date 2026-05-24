@@ -11,8 +11,8 @@ export async function GET() {
 
   try {
     const baseUrl =
-      process.env.LEARNING_API_BASE_URL || "http://localhost:3002/v1";
-    const response = await fetch(`${baseUrl}/notifications/summary`, {
+      process.env.LEARNING_API_BASE_URL || "http://localhost:3002";
+    const response = await fetch(`${baseUrl}/v1/notifications/summary`, {
       headers: { Authorization: `Bearer ${token}` },
       cache: "no-store",
     });

@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { LEARNING_URL } from "@/lib/service-urls";
 import ChatRoomClient from "./chat-room-client";
 import { t } from "@/lib/i18n";
 

@@ -98,8 +98,8 @@ async function getPerformanceData(
 ): Promise<PerformanceData | null> {
   try {
     const baseUrl =
-      process.env.LEARNING_API_BASE_URL || "http://localhost:3002/v1";
-    const res = await fetch(`${baseUrl}/tutors/performance`, {
+      process.env.LEARNING_API_BASE_URL || "http://localhost:3002";
+    const res = await fetch(`${baseUrl}/v1/tutors/performance`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -117,8 +117,8 @@ async function getPerformanceData(
 async function getEarningsSummary(token: string) {
   try {
     const baseUrl =
-      process.env.FINANCE_API_BASE_URL || "http://localhost:3003/v1";
-    const res = await fetch(`${baseUrl}/tutors/earnings/summary`, {
+      process.env.FINANCE_API_BASE_URL || "http://localhost:3003";
+    const res = await fetch(`${baseUrl}/v1/tutors/earnings/summary`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

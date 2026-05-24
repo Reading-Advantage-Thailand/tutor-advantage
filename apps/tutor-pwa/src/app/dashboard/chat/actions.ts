@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { LEARNING_URL } from "@/lib/service-urls";
 import { revalidatePath } from "next/cache";
 
 export async function sendMessage(conversationId: string, content: string) {

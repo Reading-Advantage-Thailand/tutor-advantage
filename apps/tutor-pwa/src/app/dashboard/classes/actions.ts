@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { LEARNING_URL } from "@/lib/service-urls";
 import { revalidatePath } from "next/cache";
 import {
   buildCreateClassRequest,
@@ -19,7 +20,7 @@ export async function createClass(data: CreateClassForm) {
 
   const requestBody = buildCreateClassRequest(data);
 
-  const res = await fetch("http://localhost:3002/v1/classes", {
+  const res = await fetch(`${LEARNING_URL}/v1/classes`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -71,7 +72,7 @@ export async function getBooks() {
     throw new Error("Unauthorized");
   }
  
-  const res = await fetch("http://localhost:3002/v1/books", {
+  const res = await fetch(`${LEARNING_URL}/v1/books`, {
     headers: {
       Authorization: `Bearer ${token}`
     }

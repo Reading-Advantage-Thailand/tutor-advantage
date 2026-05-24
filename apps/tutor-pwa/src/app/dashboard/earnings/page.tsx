@@ -49,8 +49,8 @@ type EarningsResponse = {
 async function getEarningsHistoryData(token: string): Promise<EarningsResponse | null> {
   if (!token) return null;
 
-  const baseUrl = process.env.FINANCE_API_BASE_URL || "http://localhost:3003/v1";
-  const res = await fetch(`${baseUrl}/tutors/earnings/history`, {
+  const baseUrl = process.env.FINANCE_API_BASE_URL || "http://localhost:3003";
+  const res = await fetch(`${baseUrl}/v1/tutors/earnings/history`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
   });
