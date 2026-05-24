@@ -1,6 +1,6 @@
 ﻿{
   "name": "identity-service",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Identity Service for Tutor Advantage",
   "main": "src/index.ts",
   "scripts": {
@@ -32,4 +32,5 @@
     "typescript": "^5.7.2"
   }
 }
+
 
