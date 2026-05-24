@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -10,19 +11,34 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { BookOpen, CreditCard, Calendar, Bell, Shield, Users, MessageCircle, FileText, ChevronRight, LogOut, Palette } from "lucide-react";
 import { t } from "@/lib/i18n";
+import { studentApi } from "@/lib/api";
 
 export default function ProfilePage() {
   const { liff, profile, isReady } = useLiff();
   const router = useRouter();
+  const [levelDisplay, setLevelDisplay] = useState("Origins 1");
+  const [cefrDisplay, setCefrDisplay] = useState("A1");
+
+  useEffect(() => {
+    if (!isReady) return;
+    studentApi.getDashboard()
+      .then((data: { recentClasses?: Array<{ bookName?: string | null; seriesCefr?: string | null }> }) => {
+        const primary = data?.recentClasses?.[0];
+        if (primary?.bookName) setLevelDisplay(primary.bookName);
+        if (primary?.seriesCefr) setCefrDisplay(primary.seriesCefr);
+      })
+      .catch(() => {
+        // keep defaults on error
+      });
+  }, [isReady]);
 
   const student = {
     name: profile?.displayName || t("dashboard.loadingName"),
     avatar: profile?.pictureUrl || null,
     initials: profile?.displayName?.charAt(0) || "TA",
     userId: profile?.userId || "...",
-    joinedAt: t("profile.joinedAt"),
-    level: "Origins 2",
-    cefr: "A1",
+    level: levelDisplay,
+    cefr: cefrDisplay,
     isMinor: false,
   };
 

@@ -303,7 +303,7 @@ export default function DashboardPage() {
       };
 
       fetchData(true);
-      intervalId = setInterval(() => fetchData(false), 5000);
+      intervalId = setInterval(() => fetchData(false), 30000);
     }
 
     return () => {
@@ -428,7 +428,7 @@ export default function DashboardPage() {
           {pendingClasses.length > 0 && (
             <div style={{ background: "rgba(251,191,36,0.25)", border: "1px solid rgba(251,191,36,0.4)", color: "#fbbf24", padding: "4px 12px", borderRadius: 14, fontSize: "0.75rem", fontWeight: 700, display: "flex", alignItems: "center", gap: 5 }}>
               <AlertTriangle size={12} />
-              ค้างชำระ {pendingClasses.length} รายการ
+              {t("dashboard.pendingBadgePrefix")} {pendingClasses.length} {t("dashboard.pendingBadgeSuffix")}
             </div>
           )}
         </div>

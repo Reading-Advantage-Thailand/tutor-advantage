@@ -278,9 +278,9 @@ export default function ClassesPage() {
         {!loading && !error && classes.length === 0 && (
           <div className="p-12 text-center">
             <p className="text-slate-500 font-medium">
-              {classes.length === 0
-                ? t("classes.emptyOpen")
-                : t("classes.emptySearch")}
+              {searchQuery || activeFilter !== t("classes.allFilter")
+                ? t("classes.emptySearch")
+                : t("classes.emptyOpen")}
             </p>
           </div>
         )}

@@ -63,7 +63,7 @@ interface TutorReview {
 
 export default function ClassDetailPage({ params }: PageProps) {
   const { id } = use(params);
-  const { isReady } = useLiff();
+  const { liff, isReady } = useLiff();
   const [cls, setCls] = useState<ClassDetail | null>(null);
   const [review, setReview] = useState<TutorReview | null>(null);
   const [reviewRating, setReviewRating] = useState(0);
@@ -107,6 +107,27 @@ export default function ClassDetailPage({ params }: PageProps) {
       })
       .finally(() => setReviewLoading(false));
   }, [isReady, id, canReview]);
+
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/classes/${id}`;
+    try {
+      if (liff?.isInClient() && liff.isApiAvailable("shareTargetPicker")) {
+        await liff.shareTargetPicker([
+          {
+            type: "text",
+            text: `${cls?.name ?? ""}\n${shareUrl}`,
+          },
+        ]);
+      } else if (navigator.share) {
+        await navigator.share({ title: cls?.name ?? "", url: shareUrl });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success(t("classes.detail.shareSuccess"));
+      }
+    } catch {
+      toast.error(t("classes.detail.shareFailed"));
+    }
+  };
 
   const handleSubmitReview = async () => {
     if (!reviewRating) {
@@ -166,10 +187,9 @@ export default function ClassDetailPage({ params }: PageProps) {
     t("classes.detail.parentReport"),
   ];
 
-  const fallbackArticles: ClassArticlePreview[] = [];
   const highlights = cls.highlights?.length ? cls.highlights : fallbackHighlights;
-  const articles = cls.articles?.length ? cls.articles : fallbackArticles;
-  const articleCount = cls.articleCount || articles.length;
+  const articles = cls.articles ?? [];
+  const articleCount = cls.articleCount ?? articles.length;
   const tutorBio =
     cls.tutor.bio ||
     `${t("classes.detail.tutorBioPrefix")} ${cls.tutor.name} ${t("classes.detail.tutorBioWithContent")} ${cls.book}${cls.seriesName ? ` ${t("classes.detail.tutorBioSeriesPrefix")} ${cls.seriesName}` : ""}`;
@@ -182,7 +202,7 @@ export default function ClassDetailPage({ params }: PageProps) {
           <ChevronLeft size={18} />
         </Link>
         <h1 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", flex: 1 }}>{t("classes.detail.title")}</h1>
-        <button id="btn-share-class" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, borderRadius: 12, background: "var(--neutral-100)", border: "none", cursor: "pointer", color: "var(--text-secondary)" }} aria-label={t("classes.detail.shareAria")}>
+        <button id="btn-share-class" onClick={handleShare} style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, borderRadius: 12, background: "var(--neutral-100)", border: "none", cursor: "pointer", color: "var(--text-secondary)" }} aria-label={t("classes.detail.shareAria")}>
           <Share2 size={16} />
         </button>
       </div>
@@ -259,23 +279,23 @@ export default function ClassDetailPage({ params }: PageProps) {
         {canReview && (
           <div className="glass-card" style={{ padding: "18px", border: "1px solid rgba(245,158,11,0.28)", background: "linear-gradient(135deg, rgba(245,158,11,0.10), var(--surface-card))" }}>
             <h3 style={{ fontSize: "0.9375rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: 6 }}>
-              ให้คะแนนคุณครู
+              {t("classes.detail.reviewTitle")}
             </h3>
             <p style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 14 }}>
-              คะแนนนี้จะถูกนำไปคำนวณเรตติ้งเฉลี่ยจริงบนหน้า Performance ของครู
+              {t("classes.detail.reviewDescription")}
             </p>
 
             {reviewLoading ? (
               <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--text-secondary)", fontSize: "0.8125rem", fontWeight: 700 }}>
                 <Loader2 size={16} className="animate-spin" />
-                กำลังโหลดรีวิวของคุณ...
+                {t("classes.detail.reviewLoading")}
               </div>
             ) : review && !reviewEditing ? (
               /* ── Read-only: already reviewed ── */
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <CheckCircle2 size={16} style={{ color: "#22c55e", flexShrink: 0 }} />
-                  <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "#22c55e" }}>รีวิวแล้ว</span>
+                  <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "#22c55e" }}>{t("classes.detail.reviewed")}</span>
                 </div>
                 <div style={{ display: "flex", gap: 6 }}>
                   {[1, 2, 3, 4, 5].map((value) => (
@@ -307,7 +327,7 @@ export default function ClassDetailPage({ params }: PageProps) {
                     cursor: "pointer",
                   }}
                 >
-                  แก้ไขรีวิว
+                  {t("classes.detail.editReview")}
                 </button>
               </div>
             ) : (
@@ -319,7 +339,7 @@ export default function ClassDetailPage({ params }: PageProps) {
                       key={value}
                       type="button"
                       onClick={() => setReviewRating(value)}
-                      aria-label={`ให้ ${value} ดาว`}
+                      aria-label={`${t("classes.detail.reviewStarPrefix")} ${value} ${t("classes.detail.reviewStarSuffix")}`}
                       style={{
                         width: 42,
                         height: 42,
@@ -340,7 +360,7 @@ export default function ClassDetailPage({ params }: PageProps) {
                 <textarea
                   value={reviewComment}
                   onChange={(event) => setReviewComment(event.target.value)}
-                  placeholder="เล่าความประทับใจหรือข้อเสนอแนะเพิ่มเติม"
+                  placeholder={t("classes.detail.reviewPlaceholder")}
                   maxLength={500}
                   style={{
                     width: "100%",
@@ -378,7 +398,7 @@ export default function ClassDetailPage({ params }: PageProps) {
                         cursor: "pointer",
                       }}
                     >
-                      ยกเลิก
+                      {t("classes.detail.reviewCancel")}
                     </button>
                   )}
                   <button
@@ -394,7 +414,11 @@ export default function ClassDetailPage({ params }: PageProps) {
                       opacity: reviewSubmitting || reviewRating === 0 ? 0.55 : 1,
                     }}
                   >
-                    {reviewSubmitting ? "กำลังบันทึก..." : reviewEditing ? "บันทึกการแก้ไข" : "ส่งรีวิว"}
+                    {reviewSubmitting
+                      ? t("classes.detail.reviewSaving")
+                      : reviewEditing
+                      ? t("classes.detail.reviewSaveEdits")
+                      : t("classes.detail.reviewSubmit")}
                   </button>
                 </div>
               </div>

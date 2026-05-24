@@ -75,7 +75,7 @@ function loadOmiseScript() {
 
 function PaymentFlow() {
   const searchParams = useSearchParams();
-  const classId = searchParams.get("classId") ?? "cls-001";
+  const classId = searchParams.get("classId") ?? "";
   const referralToken = searchParams.get("referralToken");
   const returnedPaymentIntentId = searchParams.get("paymentIntentId");
 
@@ -94,8 +94,18 @@ function PaymentFlow() {
 
   const [cls, setCls] = useState<OrderSummary>(createDefaultOrderSummary(classId));
 
+  // Guard: no classId in URL → redirect back to classes list
+  if (!classId && !referralToken) {
+    if (typeof window !== "undefined") {
+      window.location.href = "/classes";
+    }
+    return null;
+  }
+
   useEffect(() => {
     let isMounted = true;
+
+    if (!classId) return;
 
     studentApi
       .getClassDetails(classId)
@@ -1141,7 +1151,8 @@ function PaymentFlow() {
             color: "var(--text-primary)",
             flex: 1,
           }}
-        >          {t("payment.select.noExtraFee")}
+        >
+          {t("payment.select.title")}
         </h1>
       </div>
 
