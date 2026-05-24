@@ -54,8 +54,12 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
         }
 
         // LIFF Inspector — remove before go-live
-        const { LIFFInspectorPlugin } = await import("@line/liff-inspector");
-        liff.use(new LIFFInspectorPlugin());
+        // serverUrl: ngrok tunnel pointing to `npx @line/liff-inspector` (port 9222)
+        const inspectorUrl = process.env.NEXT_PUBLIC_LIFF_INSPECTOR_URL;
+        if (inspectorUrl) {
+          const { LIFFInspectorPlugin } = await import("@line/liff-inspector");
+          liff.use(new LIFFInspectorPlugin({ serverUrl: inspectorUrl }));
+        }
 
         await liff.init({
           liffId,
