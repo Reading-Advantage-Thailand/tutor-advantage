@@ -1,8 +1,6 @@
 import { Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
-
-const prisma = new PrismaClient();
 
 // Get open class transfer requests (auction)
 export const getAuctionClasses = async (req: AuthenticatedRequest, res: Response): Promise<void> => {

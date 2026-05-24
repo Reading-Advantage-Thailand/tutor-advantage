@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
+import { prisma } from "@tutor-advantage/database";
 
 // Load the monorepo .env file from both ts-node src/ and compiled dist/ starts.
 dotenv.config({
@@ -53,16 +54,37 @@ import { getStudentLessonHistory, getLessonSessionDetails } from "./controllers/
 const app = express();
 const port = process.env.PORT || 3002;
 
-app.use(cors());
+const ALLOWED_ORIGINS = (
+  process.env.ALLOWED_ORIGINS || "http://localhost:3004,http://localhost:3005,http://localhost:3006"
+).split(",").map((o) => o.trim());
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow server-to-server calls (no origin) and whitelisted origins
+      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS: origin ${origin} not allowed`));
+      }
+    },
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 // Apply shared middleware
 app.use(requestIdMiddleware);
 app.use(requestLoggerMiddleware);
 
-// Base endpoints
-app.get("/health", (_req: Request, res: Response) => {
-  res.status(200).json({ status: "ok", service: "learning-service" });
+// Base endpoints — health check verifies DB connectivity
+app.get("/health", async (_req: Request, res: Response) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.status(200).json({ status: "ok", service: "learning-service" });
+  } catch {
+    res.status(503).json({ status: "error", service: "learning-service", reason: "db_unreachable" });
+  }
 });
 
 app.get("/version", (_req: Request, res: Response) => {
@@ -141,8 +163,9 @@ const io = new Server(httpServer, {
   path: "/socket.io",
   addTrailingSlash: false,
   cors: {
-    origin: "*", // Allow all origins for now
+    origin: ALLOWED_ORIGINS,
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
@@ -153,3 +176,21 @@ setupLessonSocket(io);
 httpServer.listen(port, () => {
   console.log(`Learning Service running on port ${port}`);
 });
+
+// Graceful shutdown — drain HTTP + WebSocket connections then disconnect DB
+const shutdown = (signal: string) => async () => {
+  console.log(`[Learning] ${signal} received — shutting down gracefully`);
+  io.close(() => {
+    httpServer.close(async () => {
+      await prisma.$disconnect();
+      console.log("[Learning] Shutdown complete");
+      process.exit(0);
+    });
+  });
+  setTimeout(() => {
+    console.error("[Learning] Shutdown timeout — forcing exit");
+    process.exit(1);
+  }, 10_000).unref();
+};
+process.on("SIGTERM", shutdown("SIGTERM"));
+process.on("SIGINT", shutdown("SIGINT"));

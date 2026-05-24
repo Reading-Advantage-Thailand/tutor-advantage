@@ -1,9 +1,7 @@
 import { Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { LineNotificationService } from "../services/LineNotificationService";
-
-const prisma = new PrismaClient();
 
 // Get list of conversations for the current user
 export const getConversations = async (req: AuthenticatedRequest, res: Response): Promise<void> => {

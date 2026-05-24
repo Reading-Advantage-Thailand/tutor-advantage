@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
+import { prisma } from "@tutor-advantage/database";
 
 // Load root .env file
 dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
@@ -98,9 +99,14 @@ app.use(
 app.use(requestIdMiddleware);
 app.use(requestLoggerMiddleware);
 
-// Base endpoints
-app.get("/health", (_req: Request, res: Response) => {
-  res.status(200).json({ status: "ok", service: "finance-mlm-service" });
+// Base endpoints — health check verifies DB connectivity
+app.get("/health", async (_req: Request, res: Response) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.status(200).json({ status: "ok", service: "finance-mlm-service" });
+  } catch {
+    res.status(503).json({ status: "error", service: "finance-mlm-service", reason: "db_unreachable" });
+  }
 });
 
 app.get("/version", (_req: Request, res: Response) => {
@@ -208,6 +214,22 @@ app.post("/v1/fraud-flags/:id/action", authMiddleware, triggerFraudAction);
 // Apply error handler last
 app.use(errorHandlerMiddleware);
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Finance & MLM Service running on port ${port}`);
 });
+
+// Graceful shutdown — drain connections then disconnect DB
+const shutdown = (signal: string) => async () => {
+  console.log(`[Finance] ${signal} received — shutting down gracefully`);
+  server.close(async () => {
+    await prisma.$disconnect();
+    console.log("[Finance] Shutdown complete");
+    process.exit(0);
+  });
+  setTimeout(() => {
+    console.error("[Finance] Shutdown timeout — forcing exit");
+    process.exit(1);
+  }, 10_000).unref();
+};
+process.on("SIGTERM", shutdown("SIGTERM"));
+process.on("SIGINT", shutdown("SIGINT"));

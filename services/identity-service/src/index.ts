@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
+import { prisma } from "@tutor-advantage/database";
 
 // Load root .env file
 dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
@@ -30,16 +31,37 @@ const upload = multer({
 });
 
 const app = express();
-app.use(cors());
+
+const ALLOWED_ORIGINS = (
+  process.env.ALLOWED_ORIGINS || "http://localhost:3004,http://localhost:3005,http://localhost:3006"
+).split(",").map((o) => o.trim());
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS: origin ${origin} not allowed`));
+      }
+    },
+    credentials: true,
+  }),
+);
 app.use(express.json());
 
 // Apply shared middleware
 app.use(requestIdMiddleware);
 app.use(requestLoggerMiddleware);
 
-// Health Check Endpoint
-app.get("/health", (_req: Request, res: Response) => {
-  res.status(200).json({ status: "ok", service: "identity-service" });
+// Health Check Endpoint — verifies DB connectivity
+app.get("/health", async (_req: Request, res: Response) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.status(200).json({ status: "ok", service: "identity-service" });
+  } catch {
+    res.status(503).json({ status: "error", service: "identity-service", reason: "db_unreachable" });
+  }
 });
 
 // Version Endpoint
@@ -68,6 +90,23 @@ app.get("/", (_req: Request, res: Response) => {
 app.use(errorHandlerMiddleware);
 
 const port = process.env.PORT || 3001;
-app.listen(port, () => {
+const server = app.listen(port, () => {
   logger.info(`Identity Service running on port ${port}`);
 });
+
+// Graceful shutdown — close HTTP server then disconnect DB
+const shutdown = (signal: string) => async () => {
+  logger.info(`[Identity] ${signal} received — shutting down gracefully`);
+  server.close(async () => {
+    await prisma.$disconnect();
+    logger.info("[Identity] Shutdown complete");
+    process.exit(0);
+  });
+  // Force-exit after 10 s if connections don't drain
+  setTimeout(() => {
+    logger.error("[Identity] Shutdown timeout — forcing exit");
+    process.exit(1);
+  }, 10_000).unref();
+};
+process.on("SIGTERM", shutdown("SIGTERM"));
+process.on("SIGINT", shutdown("SIGINT"));
