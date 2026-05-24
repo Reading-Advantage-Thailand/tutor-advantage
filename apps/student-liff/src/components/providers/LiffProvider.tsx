@@ -54,12 +54,10 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
         }
 
         // LIFF Inspector — remove before go-live
-        // serverUrl: ngrok tunnel pointing to `npx @line/liff-inspector` (port 9222)
-        const inspectorUrl = process.env.NEXT_PUBLIC_LIFF_INSPECTOR_URL;
-        if (inspectorUrl) {
-          const { LIFFInspectorPlugin } = await import("@line/liff-inspector");
-          liff.use(new LIFFInspectorPlugin({ serverUrl: inspectorUrl }));
-        }
+        // To activate: add ?li.origin=wss://YOUR_NGROK_URL to LIFF Endpoint URL in LINE Developers Console
+        // e.g. https://student-liff-1090865515742.asia-southeast1.run.app?li.origin=wss://resource-pushpin-tabby.ngrok-free.dev
+        const { LIFFInspectorPlugin } = await import("@line/liff-inspector");
+        liff.use(new LIFFInspectorPlugin());
 
         await liff.init({
           liffId,
