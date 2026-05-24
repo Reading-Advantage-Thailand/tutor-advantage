@@ -4,8 +4,6 @@ import { getTutorSessionToken } from '../app/dashboard/actions';
 import { t } from '@/lib/i18n';
 
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_LEARNING_SERVICE_URL || 'http://localhost:3002';
-
 type TutorSessionData = {
   sessionId: string;
   currentPhase: number;
@@ -13,7 +11,8 @@ type TutorSessionData = {
   phaseSelectedIndices?: Record<number, number>;
 };
 
-export const useLessonSocket = (tutorId: string, articleId: string, classId?: string) => {
+export const useLessonSocket = (tutorId: string, articleId: string, classId?: string, socketUrl?: string) => {
+  const SOCKET_URL = socketUrl || 'http://localhost:3002';
   const [socket, setSocket] = useState<Socket | null>(null);
   const [sessionData, setSessionData] = useState<TutorSessionData | null>(null);
   const [participants, setParticipants] = useState<any[]>([]);
