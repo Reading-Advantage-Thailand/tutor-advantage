@@ -7,6 +7,7 @@ import {
   ChevronRight,
   ExternalLink,
   ArrowLeft,
+  Calendar,
 } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
@@ -70,6 +71,33 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
           <MeetingUrlEditor classId={classId} initialUrl={cls.meetingUrl} />
 
           <ReferralLink referralLink={cls.referralLink} />
+
+          {/* Schedule & Dates */}
+          <Card className="border-border/60">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-primary" />
+                {t("tutorClass.classes.scheduleLabel")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              <p className="text-foreground font-medium">{cls.schedule || t("tutorClass.classes.notSet")}</p>
+              <div className="flex gap-6 text-muted-foreground text-xs mt-1">
+                <span>
+                  <span className="font-medium text-foreground">{t("tutorClass.classes.startsAt")}: </span>
+                  {cls.startsAt
+                    ? new Date(cls.startsAt).toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" })
+                    : t("tutorClass.classes.notSet")}
+                </span>
+                <span>
+                  <span className="font-medium text-foreground">{t("tutorClass.classes.endsAt")}: </span>
+                  {cls.endsAt
+                    ? new Date(cls.endsAt).toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" })
+                    : t("tutorClass.classes.notSet")}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
 
 
           {/* Students */}

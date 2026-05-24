@@ -96,6 +96,10 @@ export const th = {
       peopleUnit: "คน",
       manage: "จัดการคลาส",
       studentsTitle: "นักเรียน",
+      scheduleLabel: "ตารางเรียน",
+      startsAt: "วันเริ่มเรียน",
+      endsAt: "วันสิ้นสุด",
+      notSet: "ยังไม่ได้กำหนด",
     },
     newClass: {
       scheduleRequired: "กรุณาเลือกวันและเวลาเรียน",

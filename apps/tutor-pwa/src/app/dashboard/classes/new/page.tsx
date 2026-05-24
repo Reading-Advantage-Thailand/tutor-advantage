@@ -22,6 +22,8 @@ export default function NewClassPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [errorText, setErrorText] = useState("");
+  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD for min attr (local TZ doesn't matter for date inputs)
+
   const [form, setForm] = useState({
     name: "",
     book: "",
@@ -238,7 +240,8 @@ export default function NewClassPage() {
                     id="starts-at"
                     type="date"
                     value={form.startsAt}
-                    onChange={(e) => setForm({ ...form, startsAt: e.target.value })}
+                    min={today}
+                    onChange={(e) => setForm({ ...form, startsAt: e.target.value, endsAt: form.endsAt && form.endsAt < e.target.value ? "" : form.endsAt })}
                     className="text-foreground"
                   />
                 </div>
