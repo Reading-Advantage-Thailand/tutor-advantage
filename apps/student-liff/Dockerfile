@@ -1,5 +1,6 @@
 # Build context: monorepo root
 # docker build -f apps/student-liff/Dockerfile .
+# Requires --build-arg NEXT_PUBLIC_LIFF_ID (set as GitHub secret NEXT_PUBLIC_LIFF_ID)
 FROM node:22-slim AS builder
 WORKDIR /app
 
