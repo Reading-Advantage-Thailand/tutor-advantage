@@ -225,6 +225,9 @@ export const th = {
     unsetSchedule: "ยังไม่ได้กำหนด",
     byAppointment: "ตามนัดหมาย",
     parserThuShort: "พฤหัส",
+    addToCalendar: "เพิ่มลงปฏิทิน",
+    addToCalendarICS: "บันทึก (.ics)",
+    addToCalendarGoogle: "Google Calendar",
   },
   dashboardSettings: {
     title: "ตั้งค่าบัญชี",

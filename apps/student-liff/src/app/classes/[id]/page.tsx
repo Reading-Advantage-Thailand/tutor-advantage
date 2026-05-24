@@ -4,7 +4,7 @@ import React, { useState, useEffect, use } from "react";
 import Link from "next/link";
 import {
   Star, Users, Calendar, CheckCircle2, Lock, Share2, ChevronLeft,
-  Loader2, AlertCircle, ChevronRight, BookOpen, Sparkles,
+  Loader2, AlertCircle, ChevronRight, BookOpen, Sparkles, CalendarPlus,
 } from "lucide-react";
 import { toast } from "sonner";
 import { studentApi } from "@/lib/api";
@@ -76,6 +76,55 @@ interface TutorReview {
   id: string;
   rating: number;
   comment?: string | null;
+}
+
+// ── ICS / calendar helpers ───────────────────────────────────────────────────
+const ICS_BYDAY: Record<number,string> = {0:"SU",1:"MO",2:"TU",3:"WE",4:"TH",5:"FR",6:"SA"};
+const ICS_DAY_MAP: Record<string,number> = {
+  "จันทร์":1,"อังคาร":2,"พุธ":3,"พฤหัสบดี":4,"พฤหัส":4,"ศุกร์":5,"เสาร์":6,"อาทิตย์":0,
+};
+function icsParseSchedule(schedStr: string) {
+  const days: number[] = [];
+  Object.entries(ICS_DAY_MAP).forEach(([name,val]) => {
+    if (schedStr.includes(name) && !days.includes(val)) days.push(val);
+  });
+  if (days.length===0) days.push(1);
+  const m = schedStr.match(/(\d{1,2}):(\d{2})\s*[-–]\s*(\d{1,2}):(\d{2})/);
+  return { days, sh:m?parseInt(m[1]):19, sm:m?parseInt(m[2]):0, eh:m?parseInt(m[3]):21, em:m?parseInt(m[4]):0 };
+}
+function downloadClassICS(cls: { id:string; name:string; schedule:string; startsAt?:string|null; endsAt?:string|null }) {
+  const { days, sh, sm, eh, em } = icsParseSchedule(cls.schedule);
+  const anchor = cls.startsAt ? new Date(cls.startsAt) : new Date();
+  const first = new Date(anchor); first.setHours(0,0,0,0);
+  for (let i=0;i<7;i++) { if (days.includes(first.getDay())) break; first.setDate(first.getDate()+1); }
+  const pad = (n:number) => String(n).padStart(2,"0");
+  const fmt = (d:Date,h:number,mi:number) => `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(h)}${pad(mi)}00`;
+  const byday = days.map(d=>ICS_BYDAY[d]).join(",");
+  const until = cls.endsAt ? `;UNTIL=${new Date(cls.endsAt).toISOString().replace(/[-:.]/g,"").slice(0,15)}Z` : "";
+  const dtstamp = new Date().toISOString().replace(/[-:.]/g,"").slice(0,15)+"Z";
+  const ics = [
+    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Tutor Advantage//TH",
+    "CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-TIMEZONE:Asia/Bangkok",
+    "BEGIN:VEVENT",
+    `UID:${cls.id}-${Date.now()}@ta.th`,`DTSTAMP:${dtstamp}`,
+    `DTSTART;TZID=Asia/Bangkok:${fmt(first,sh,sm)}`,`DTEND;TZID=Asia/Bangkok:${fmt(first,eh,em)}`,
+    `RRULE:FREQ=WEEKLY;BYDAY=${byday}${until}`,
+    `SUMMARY:${cls.name}`,`DESCRIPTION:${cls.schedule.replace(/\n/g,"\\n")}`,
+    "BEGIN:VALARM","TRIGGER:-PT30M","ACTION:DISPLAY",`DESCRIPTION:แจ้งเตือน: ${cls.name}`,
+    "END:VALARM","END:VEVENT","END:VCALENDAR",
+  ].join("\r\n");
+  const blob = new Blob([ics], { type:"text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href=url; a.download=`${cls.name.replace(/\s+/g,"-")}.ics`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+function googleCalClassUrl(cls: { name:string; schedule:string; startsAt?:string|null }): string {
+  const { days, sh, sm, eh, em } = icsParseSchedule(cls.schedule);
+  const anchor = cls.startsAt ? new Date(cls.startsAt) : new Date();
+  const pad = (n:number) => String(n).padStart(2,"0");
+  const fmt = (d:Date,h:number,mi:number) => `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(h)}${pad(mi)}00`;
+  const byday = days.map(d=>ICS_BYDAY[d]).join("%2C");
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(cls.name)}&dates=${fmt(anchor,sh,sm)}/${fmt(anchor,eh,em)}&recur=RRULE%3AFREQ%3DWEEKLY%3BBYDAY%3D${byday}&details=${encodeURIComponent(cls.schedule)}`;
 }
 
 // ── CEFR colour helper ──────────────────────────────────────────────────────
@@ -741,6 +790,37 @@ export default function ClassDetailPage({ params }: PageProps) {
                   )}
                 </div>
               )}
+              {/* Add to calendar */}
+              <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+                <button
+                  onClick={() => downloadClassICS({ id: cls.id, name: cls.name, schedule: cls.schedule, startsAt: cls.startsAt, endsAt: cls.endsAt })}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 6,
+                    fontSize: "0.75rem", fontWeight: 600,
+                    padding: "6px 12px", borderRadius: 10,
+                    background: "var(--brand-50)", color: "var(--brand-600)",
+                    border: "1px solid var(--brand-100)", cursor: "pointer",
+                  }}
+                >
+                  <CalendarPlus size={13} />
+                  {t("classes.detail.addToCalendar")}
+                </button>
+                <a
+                  href={googleCalClassUrl({ name: cls.name, schedule: cls.schedule, startsAt: cls.startsAt })}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "flex", alignItems: "center", gap: 6,
+                    fontSize: "0.75rem", fontWeight: 600,
+                    padding: "6px 12px", borderRadius: 10,
+                    background: "var(--neutral-50)", color: "var(--text-secondary)",
+                    border: "1px solid var(--surface-border)", textDecoration: "none",
+                  }}
+                >
+                  <CalendarPlus size={13} />
+                  {t("classes.detail.addToCalendarGoogle")}
+                </a>
+              </div>
             </div>
           </div>
         </div>

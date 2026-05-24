@@ -4,14 +4,15 @@ import React, { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Clock, 
-  Users, 
-  BookOpen, 
-  CalendarDays, 
-  ExternalLink 
+import {
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Users,
+  BookOpen,
+  CalendarDays,
+  ExternalLink,
+  CalendarPlus,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -25,6 +26,9 @@ interface ScheduledEvent {
   students: number;
   time: string;
   dateStr: string; // YYYY-MM-DD
+  schedule: string; // raw scheduleDescription for ICS
+  startsAt?: string | null;
+  endsAt?: string | null;
 }
 
 export default function ScheduleClient({ initialClasses }: { initialClasses: any[] }) {
@@ -60,6 +64,9 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
             students: cls.students,
             time: timeRange,
             dateStr: dStr,
+            schedule: cls.nextSession || "",
+            startsAt: cls.startsAt ?? null,
+            endsAt: cls.endsAt ?? null,
           });
         }
         loopDate.setDate(loopDate.getDate() + 1);
@@ -242,38 +249,60 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
             </div>
           ) : (
             selectedEvents.map((ev, idx) => (
-              <Link key={ev.id} href={`/dashboard/classes/${ev.classId}`} className="group block focus:outline-none rounded-2xl">
-                <Card className="hover-lift press-scale border border-border/40 hover:border-brand-500/30 hover:shadow-lg rounded-2xl cursor-pointer relative overflow-hidden group bg-card bg-gradient-to-br from-card via-card to-brand-500/2 dark:to-brand-500/5 transition-all duration-300">
-                  {/* Color accent strip */}
-                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-brand-400 to-brand-600 group-hover:w-2 transition-all duration-300" />
-                  <CardContent className="p-4 pl-5">
-                    <div className="flex items-start justify-between gap-2 mb-3">
-                      <h4 className="font-bold text-foreground leading-tight group-hover:text-brand-500 transition-colors">
+              <Card key={ev.id} className="border border-border/40 hover:border-brand-500/30 hover:shadow-lg rounded-2xl relative overflow-hidden bg-card bg-gradient-to-br from-card via-card to-brand-500/2 dark:to-brand-500/5 transition-all duration-300">
+                {/* Color accent strip */}
+                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-brand-400 to-brand-600" />
+                <CardContent className="p-4 pl-5">
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <Link href={`/dashboard/classes/${ev.classId}`} className="group flex-1 focus:outline-none">
+                      <h4 className="font-bold text-foreground leading-tight group-hover:text-brand-500 transition-colors flex items-center gap-1.5">
                         {ev.title}
+                        <ExternalLink className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-brand-500/70 shrink-0" />
                       </h4>
-                      <ExternalLink className="h-4 w-4 text-muted-foreground/40 group-hover:text-brand-500/70 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                    </Link>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-brand-400 bg-brand-500/10 dark:bg-brand-500/20 w-fit px-2.5 py-1 rounded-lg border border-brand-500/5">
+                      <Clock className="h-3.5 w-3.5" />
+                      {ev.time}
                     </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-xs font-bold text-brand-600 dark:text-brand-400 bg-brand-500/10 dark:bg-brand-500/20 w-fit px-2.5 py-1 rounded-lg border border-brand-500/5">
-                        <Clock className="h-3.5 w-3.5" />
-                        {ev.time}
+
+                    <div className="flex items-center gap-4 pt-1 text-xs text-muted-foreground font-medium">
+                      <div className="flex items-center gap-1.5">
+                        <BookOpen className="h-3.5 w-3.5 text-muted-foreground/60" />
+                        {ev.book}
                       </div>
-                      
-                      <div className="flex items-center gap-4 pt-1 text-xs text-muted-foreground font-medium">
-                        <div className="flex items-center gap-1.5">
-                          <BookOpen className="h-3.5 w-3.5 text-muted-foreground/60" />
-                          {ev.book}
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <Users className="h-3.5 w-3.5 text-muted-foreground/60" />
-                          {ev.students} {t("dashboardSchedule.peopleUnit")}
-                        </div>
+                      <div className="flex items-center gap-1.5">
+                        <Users className="h-3.5 w-3.5 text-muted-foreground/60" />
+                        {ev.students} {t("dashboardSchedule.peopleUnit")}
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              </Link>
+
+                    {/* Add to calendar buttons */}
+                    <div className="flex items-center gap-2 pt-2 border-t border-border/40">
+                      <button
+                        onClick={() => downloadICS(ev)}
+                        className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-muted hover:bg-brand-500/10 hover:text-brand-600 transition-colors"
+                        title={t("dashboardSchedule.addToCalendarICS")}
+                      >
+                        <CalendarPlus className="h-3.5 w-3.5" />
+                        {t("dashboardSchedule.addToCalendarICS")}
+                      </button>
+                      <a
+                        href={googleCalUrl(ev)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-muted hover:bg-blue-500/10 hover:text-blue-600 transition-colors"
+                        title={t("dashboardSchedule.addToCalendarGoogle")}
+                      >
+                        <CalendarPlus className="h-3.5 w-3.5" />
+                        {t("dashboardSchedule.addToCalendarGoogle")}
+                      </a>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             ))
           )}
         </div>
@@ -337,4 +366,61 @@ function extractTime(str: string) {
     return `${match[1].replace('.', ':')} - ${match[2].replace('.', ':')} ${t("tutorClass.scheduleSuffix")}`;
   }
   return t("dashboardSchedule.byAppointment");
+}
+
+/* ── ICS calendar helpers ─────────────────────────────────────────────────── */
+const BY_DAY: Record<number, string> = { 0:"SU",1:"MO",2:"TU",3:"WE",4:"TH",5:"FR",6:"SA" };
+const DAY_NAMES_MAP: Record<string, number> = {
+  "จันทร์":1,"อังคาร":2,"พุธ":3,"พฤหัสบดี":4,"พฤหัส":4,"ศุกร์":5,"เสาร์":6,"อาทิตย์":0,
+};
+
+function parseDaysAndTime(schedStr: string) {
+  const days: number[] = [];
+  Object.entries(DAY_NAMES_MAP).forEach(([name, val]) => {
+    if (schedStr.includes(name) && !days.includes(val)) days.push(val);
+  });
+  if (days.length === 0) days.push(1);
+  const m = schedStr.match(/(\d{1,2}):(\d{2})\s*[-–]\s*(\d{1,2}):(\d{2})/);
+  return { days, sh:m?parseInt(m[1]):19, sm:m?parseInt(m[2]):0, eh:m?parseInt(m[3]):21, em:m?parseInt(m[4]):0 };
+}
+
+function buildICSContent(ev: ScheduledEvent & { startsAt?:string|null; endsAt?:string|null; schedule?:string }): string {
+  const schedStr = ev.schedule || "";
+  const { days, sh, sm, eh, em } = parseDaysAndTime(schedStr);
+  const anchor = ev.startsAt ? new Date(ev.startsAt) : (ev.dateStr ? new Date(ev.dateStr) : new Date());
+  const first = new Date(anchor); first.setHours(0,0,0,0);
+  for (let i=0; i<7; i++) { if (days.includes(first.getDay())) break; first.setDate(first.getDate()+1); }
+  const pad = (n:number) => String(n).padStart(2,"0");
+  const fmt = (d:Date,h:number,mi:number) => `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(h)}${pad(mi)}00`;
+  const byday = days.map(d=>BY_DAY[d]).join(",");
+  const until = ev.endsAt ? `;UNTIL=${new Date(ev.endsAt).toISOString().replace(/[-:.]/g,"").slice(0,15)}Z` : "";
+  const dtstamp = new Date().toISOString().replace(/[-:.]/g,"").slice(0,15)+"Z";
+  return [
+    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Tutor Advantage//TH",
+    "CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-TIMEZONE:Asia/Bangkok",
+    "BEGIN:VEVENT",
+    `UID:${ev.classId}-${Date.now()}@ta.th`,`DTSTAMP:${dtstamp}`,
+    `DTSTART;TZID=Asia/Bangkok:${fmt(first,sh,sm)}`,`DTEND;TZID=Asia/Bangkok:${fmt(first,eh,em)}`,
+    `RRULE:FREQ=WEEKLY;BYDAY=${byday}${until}`,
+    `SUMMARY:${ev.title}`,`DESCRIPTION:${schedStr.replace(/\n/g,"\\n")}`,
+    "BEGIN:VALARM","TRIGGER:-PT30M","ACTION:DISPLAY",`DESCRIPTION:แจ้งเตือน: ${ev.title}`,
+    "END:VALARM","END:VEVENT","END:VCALENDAR",
+  ].join("\r\n");
+}
+
+function downloadICS(ev: ScheduledEvent & { startsAt?:string|null; endsAt?:string|null; schedule?:string }) {
+  const blob = new Blob([buildICSContent(ev)], { type:"text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href=url; a.download=`${ev.title.replace(/\s+/g,"-")}.ics`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+function googleCalUrl(ev: ScheduledEvent & { startsAt?:string|null; schedule?:string }): string {
+  const schedStr = ev.schedule || "";
+  const { days, sh, sm, eh, em } = parseDaysAndTime(schedStr);
+  const anchor = ev.startsAt ? new Date(ev.startsAt) : (ev.dateStr ? new Date(ev.dateStr) : new Date());
+  const pad = (n:number) => String(n).padStart(2,"0");
+  const fmt = (d:Date,h:number,mi:number) => `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(h)}${pad(mi)}00`;
+  const byday = days.map(d=>BY_DAY[d]).join("%2C");
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(ev.title)}&dates=${fmt(anchor,sh,sm)}/${fmt(anchor,eh,em)}&recur=RRULE%3AFREQ%3DWEEKLY%3BBYDAY%3D${byday}&details=${encodeURIComponent(schedStr)}`;
 }
