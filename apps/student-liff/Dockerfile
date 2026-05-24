@@ -1,6 +1,7 @@
 # Build context: monorepo root
 # docker build -f apps/student-liff/Dockerfile .
-# Requires --build-arg NEXT_PUBLIC_LIFF_ID and NEXT_PUBLIC_LIFF_INSPECTOR_URL (GitHub secrets)
+# Requires --build-arg NEXT_PUBLIC_LIFF_ID (GitHub secret)
+# Service URLs are baked at build time because Next.js rewrites() runs at build time.
 FROM node:22-slim AS builder
 WORKDIR /app
 
@@ -18,8 +19,15 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ARG NEXT_PUBLIC_LIFF_ID
 ENV NEXT_PUBLIC_LIFF_ID=$NEXT_PUBLIC_LIFF_ID
 
-ARG NEXT_PUBLIC_LIFF_INSPECTOR_URL
-ENV NEXT_PUBLIC_LIFF_INSPECTOR_URL=$NEXT_PUBLIC_LIFF_INSPECTOR_URL
+# Service URLs used in next.config.ts rewrites() — evaluated at build time, not runtime
+ARG LEARNING_SERVICE_URL=https://learning-service-1090865515742.asia-southeast1.run.app
+ENV LEARNING_SERVICE_URL=$LEARNING_SERVICE_URL
+
+ARG IDENTITY_SERVICE_URL=https://identity-service-1090865515742.asia-southeast1.run.app
+ENV IDENTITY_SERVICE_URL=$IDENTITY_SERVICE_URL
+
+ARG FINANCE_SERVICE_URL=https://finance-mlm-service-1090865515742.asia-southeast1.run.app
+ENV FINANCE_SERVICE_URL=$FINANCE_SERVICE_URL
 
 RUN npm run build -w student-liff
 
