@@ -24,7 +24,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/apps/tutor-pwa/public ./public
+COPY --from=builder /app/apps/tutor-pwa/public ./apps/tutor-pwa/public
 COPY --from=builder --chown=nextjs:nodejs /app/apps/tutor-pwa/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/tutor-pwa/.next/static ./apps/tutor-pwa/.next/static
 
