@@ -7,7 +7,7 @@ import { processOAuthLogin } from "../services/authService";
 export async function handleOAuthCallback(req: Request, res: Response) {
   try {
     // The request body matches the OpenAPI definition: { provider, code }
-    const { provider, code, sponsorTutorId } = req.body;
+    const { provider, code, sponsorTutorId, codeVerifier } = req.body;
 
     // Allow frontend to explicitly pass the exact redirectUri used, or fallback
     const baseUrl = process.env.OAUTH_REDIRECT_URI || "http://localhost:3000/api/auth/callback";
@@ -30,7 +30,7 @@ export async function handleOAuthCallback(req: Request, res: Response) {
 
     // Route to appropriate OAuth handler
     if (provider === "google") {
-      const profile = await verifyGoogleToken(code, redirectUri);
+      const profile = await verifyGoogleToken(code, redirectUri, codeVerifier ?? undefined);
       providerSubject = profile.id;
       email = profile.email;
       name = profile.name;

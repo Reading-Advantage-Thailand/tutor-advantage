@@ -25,6 +25,9 @@ export async function GET(
   // Sponsor comes from the invite cookie, not the state param
   const sponsorTutorId = cookieStore.get("tutor_invite_sponsor")?.value || null;
 
+  // PKCE: read stored verifier (only used for google)
+  const codeVerifier = cookieStore.get("pkce_verifier")?.value || null;
+
   try {
     const identityServiceUrl =
       process.env.IDENTITY_SERVICE_URL || "http://localhost:3001";
@@ -36,6 +39,7 @@ export async function GET(
         provider,
         code,
         sponsorTutorId,
+        codeVerifier,
         redirectUri: `${url.protocol}//${url.host}/api/auth/callback/${provider}`,
       }),
     });
@@ -69,6 +73,7 @@ export async function GET(
 
     // Consume one-time cookies
     redirect.cookies.delete("oauth_state");
+    redirect.cookies.delete("pkce_verifier");
     redirect.cookies.delete("tutor_invite_sponsor");
 
     return redirect;

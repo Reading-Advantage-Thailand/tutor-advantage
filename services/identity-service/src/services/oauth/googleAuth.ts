@@ -10,6 +10,7 @@ export interface GoogleProfile {
 export async function verifyGoogleToken(
   code: string,
   redirectUri: string,
+  codeVerifier?: string,
 ): Promise<GoogleProfile> {
   const clientId = process.env.AUTH_GOOGLE_ID;
   const clientSecret = process.env.AUTH_GOOGLE_SECRET;
@@ -18,16 +19,21 @@ export async function verifyGoogleToken(
     throw new Error("Google OAuth credentials not configured");
   }
 
-  // 1. Exchange code for access token and id token
+  // 1. Exchange code for access token and id token (include code_verifier for PKCE)
+  const tokenPayload: Record<string, string> = {
+    code,
+    client_id: clientId,
+    client_secret: clientSecret,
+    redirect_uri: redirectUri,
+    grant_type: "authorization_code",
+  };
+  if (codeVerifier) {
+    tokenPayload.code_verifier = codeVerifier;
+  }
+
   const tokenResponse = await axios.post(
     "https://oauth2.googleapis.com/token",
-    {
-      code,
-      client_id: clientId,
-      client_secret: clientSecret,
-      redirect_uri: redirectUri,
-      grant_type: "authorization_code",
-    },
+    tokenPayload,
   );
 
   const { access_token } = tokenResponse.data;

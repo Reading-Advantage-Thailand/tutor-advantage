@@ -22,6 +22,13 @@ export async function GET(
       );
     }
 
+    // PKCE: code_verifier → SHA-256 → base64url = code_challenge
+    const codeVerifier = crypto.randomBytes(32).toString("base64url");
+    const codeChallenge = crypto
+      .createHash("sha256")
+      .update(codeVerifier)
+      .digest("base64url");
+
     const googleAuthUrl = new URL(
       "https://accounts.google.com/o/oauth2/v2/auth"
     );
@@ -30,9 +37,18 @@ export async function GET(
     googleAuthUrl.searchParams.set("response_type", "code");
     googleAuthUrl.searchParams.set("scope", "openid email profile");
     googleAuthUrl.searchParams.set("state", csrfState);
+    googleAuthUrl.searchParams.set("code_challenge", codeChallenge);
+    googleAuthUrl.searchParams.set("code_challenge_method", "S256");
 
     const response = NextResponse.redirect(googleAuthUrl.toString());
     response.cookies.set("oauth_state", csrfState, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 10,
+      path: "/",
+    });
+    response.cookies.set("pkce_verifier", codeVerifier, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
