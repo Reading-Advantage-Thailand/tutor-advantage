@@ -72,21 +72,27 @@ jobs:
           - service: learning-service
             dockerfile: services/learning-service/Dockerfile
             changed: ${{ needs.changes.outputs.learning-service }}
+            needs_db: true
           - service: identity-service
             dockerfile: services/identity-service/Dockerfile
             changed: ${{ needs.changes.outputs.identity-service }}
+            needs_db: true
           - service: finance-mlm-service
             dockerfile: services/finance-mlm-service/Dockerfile
             changed: ${{ needs.changes.outputs.finance-mlm-service }}
+            needs_db: true
           - service: tutor-pwa
             dockerfile: apps/tutor-pwa/Dockerfile
             changed: ${{ needs.changes.outputs.tutor-pwa }}
+            needs_db: false
           - service: student-liff
             dockerfile: apps/student-liff/Dockerfile
             changed: ${{ needs.changes.outputs.student-liff }}
+            needs_db: false
           - service: admin-console
             dockerfile: apps/admin-console/Dockerfile
             changed: ${{ needs.changes.outputs.admin-console }}
+            needs_db: false
 
     steps:
       - name: Skip if unchanged
@@ -130,9 +136,18 @@ jobs:
       - name: Deploy to Cloud Run
         if: matrix.changed == 'true'
         run: |
+          CLOUDSQL_FLAG=""
+          DB_ENV_FLAG=""
+          if [[ "${{ matrix.needs_db }}" == "true" ]]; then
+            CLOUDSQL_FLAG="--add-cloudsql-instances=reading-advantage:asia-southeast1:cloud-sql"
+            DB_ENV_FLAG="--update-env-vars=DATABASE_URL=${{ secrets.DATABASE_URL }},DATABASE_URL_READING_ADVANTAGE=${{ secrets.DATABASE_URL_READING_ADVANTAGE }}"
+          fi
+
           gcloud run deploy ${{ matrix.service }} \
             --image=${{ env.REGISTRY }}/${{ matrix.service }}:${{ github.sha }} \
             --region=${{ env.REGION }} \
+            ${CLOUDSQL_FLAG} \
+            ${DB_ENV_FLAG} \
             --quiet
 
       - name: Show service URL
