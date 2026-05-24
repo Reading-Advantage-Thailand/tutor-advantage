@@ -45,7 +45,7 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
       const loopDate = new Date(startDate);
       while (loopDate <= endDate) {
         if (days.includes(loopDate.getDay())) {
-          const dStr = loopDate.toISOString().split('T')[0];
+          const dStr = toLocalDateStr(loopDate);
           events.push({
             id: `${cls.id}-${dStr}`,
             classId: cls.id,
@@ -117,11 +117,11 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
   const isSameDay = (d1: Date, d2: Date) => d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
 
   const eventsOnDate = (d: Date) => {
-    const dStr = d.toISOString().split('T')[0];
+    const dStr = toLocalDateStr(d);
     return allEvents.filter(ev => ev.dateStr === dStr);
   };
 
-  const selectedDateStr = selectedDate.toISOString().split('T')[0];
+  const selectedDateStr = toLocalDateStr(selectedDate);
   const selectedEvents = useMemo(() => 
     allEvents.filter(ev => ev.dateStr === selectedDateStr).sort((a, b) => a.time.localeCompare(b.time)),
     [allEvents, selectedDateStr]
@@ -277,7 +277,15 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
   );
 }
 
-/* 
+/* Helper: local YYYY-MM-DD without UTC shift */
+function toLocalDateStr(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+/*
   Helper: Smart parser from Thai schedule strings.
   Duplicated from shared logic or kept inline for performance isolation.
 */

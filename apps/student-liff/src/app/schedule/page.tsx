@@ -35,6 +35,13 @@ function extractTime(str: string) {
   return t("schedule.byAppointment");
 }
 
+function toLocalDateStr(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 function parseThaiSchedule(scheduleStr: string) {
   if (!scheduleStr || scheduleStr === t("schedule.unset")) {
     return { days: [1, 3, 5], timeRange: t("schedule.unset") };
@@ -109,7 +116,7 @@ export default function SchedulePage() {
             while (loopDate <= endDate) {
               const dayOfWeek = loopDate.getDay();
               if (days.includes(dayOfWeek)) {
-                const dStr = loopDate.toISOString().split("T")[0];
+                const dStr = toLocalDateStr(loopDate);
                 generatedEvents.push({
                   id: `${cls.id}-${dStr}`,
                   classId: cls.id,
@@ -208,13 +215,13 @@ export default function SchedulePage() {
     );
   };
 
-  const selectedDateStr = selectedDate.toISOString().split("T")[0];
+  const selectedDateStr = toLocalDateStr(selectedDate);
   const selectedEvents = events
     .filter((ev) => ev.dateStr === selectedDateStr)
     .sort((a, b) => a.time.localeCompare(b.time));
 
   const eventsOnDate = (d: Date) => {
-    const dStr = d.toISOString().split("T")[0];
+    const dStr = toLocalDateStr(d);
     return events.filter((ev) => ev.dateStr === dStr);
   };
 
