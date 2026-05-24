@@ -228,6 +228,7 @@ export const th = {
     addToCalendar: "เพิ่มลงปฏิทิน",
     addToCalendarICS: "บันทึก (.ics)",
     addToCalendarGoogle: "Google Calendar",
+    removeFromCalendar: "ลบออกจากปฏิทิน",
   },
   dashboardSettings: {
     title: "ตั้งค่าบัญชี",

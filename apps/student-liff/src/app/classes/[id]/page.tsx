@@ -106,7 +106,7 @@ function downloadClassICS(cls: { id:string; name:string; schedule:string; starts
     "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Tutor Advantage//TH",
     "CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-TIMEZONE:Asia/Bangkok",
     "BEGIN:VEVENT",
-    `UID:${cls.id}-${Date.now()}@ta.th`,`DTSTAMP:${dtstamp}`,
+    `UID:${cls.id}@ta.th`,`DTSTAMP:${dtstamp}`,
     `DTSTART;TZID=Asia/Bangkok:${fmt(first,sh,sm)}`,`DTEND;TZID=Asia/Bangkok:${fmt(first,eh,em)}`,
     `RRULE:FREQ=WEEKLY;BYDAY=${byday}${until}`,
     `SUMMARY:${cls.name}`,`DESCRIPTION:${cls.schedule.replace(/\n/g,"\\n")}`,
@@ -118,6 +118,22 @@ function downloadClassICS(cls: { id:string; name:string; schedule:string; starts
   const a = document.createElement("a"); a.href=url; a.download=`${cls.name.replace(/\s+/g,"-")}.ics`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
 }
+function cancelClassICS(cls: { id:string; name:string }) {
+  const dtstamp = new Date().toISOString().replace(/[-:.]/g,"").slice(0,15)+"Z";
+  const content = [
+    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Tutor Advantage//TH",
+    "CALSCALE:GREGORIAN","METHOD:CANCEL",
+    "BEGIN:VEVENT",
+    `UID:${cls.id}@ta.th`,`DTSTAMP:${dtstamp}`,
+    `SUMMARY:${cls.name}`,"STATUS:CANCELLED",
+    "END:VEVENT","END:VCALENDAR",
+  ].join("\r\n");
+  const blob = new Blob([content], { type:"text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href=url; a.download=`cancel-${cls.name.replace(/\s+/g,"-")}.ics`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
 function googleCalClassUrl(cls: { name:string; schedule:string; startsAt?:string|null }): string {
   const { days, sh, sm, eh, em } = icsParseSchedule(cls.schedule);
   const anchor = cls.startsAt ? new Date(cls.startsAt) : new Date();

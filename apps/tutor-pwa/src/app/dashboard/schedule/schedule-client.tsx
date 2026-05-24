@@ -279,12 +279,11 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
                       </div>
                     </div>
 
-                    {/* Add to calendar buttons */}
-                    <div className="flex items-center gap-2 pt-2 border-t border-border/40">
+                    {/* Calendar action buttons */}
+                    <div className="flex items-center gap-2 pt-2 border-t border-border/40 flex-wrap">
                       <button
                         onClick={() => downloadICS(ev)}
                         className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-muted hover:bg-brand-500/10 hover:text-brand-600 transition-colors"
-                        title={t("dashboardSchedule.addToCalendarICS")}
                       >
                         <CalendarPlus className="h-3.5 w-3.5" />
                         {t("dashboardSchedule.addToCalendarICS")}
@@ -294,11 +293,17 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-muted hover:bg-blue-500/10 hover:text-blue-600 transition-colors"
-                        title={t("dashboardSchedule.addToCalendarGoogle")}
                       >
                         <CalendarPlus className="h-3.5 w-3.5" />
                         {t("dashboardSchedule.addToCalendarGoogle")}
                       </a>
+                      <button
+                        onClick={() => cancelICS(ev)}
+                        className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-muted hover:bg-red-500/10 hover:text-red-600 transition-colors ml-auto"
+                      >
+                        <CalendarPlus className="h-3.5 w-3.5 rotate-45" />
+                        {t("dashboardSchedule.removeFromCalendar")}
+                      </button>
                     </div>
                   </div>
                 </CardContent>
@@ -399,7 +404,7 @@ function buildICSContent(ev: ScheduledEvent & { startsAt?:string|null; endsAt?:s
     "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Tutor Advantage//TH",
     "CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-TIMEZONE:Asia/Bangkok",
     "BEGIN:VEVENT",
-    `UID:${ev.classId}-${Date.now()}@ta.th`,`DTSTAMP:${dtstamp}`,
+    `UID:${ev.classId}@ta.th`,`DTSTAMP:${dtstamp}`,
     `DTSTART;TZID=Asia/Bangkok:${fmt(first,sh,sm)}`,`DTEND;TZID=Asia/Bangkok:${fmt(first,eh,em)}`,
     `RRULE:FREQ=WEEKLY;BYDAY=${byday}${until}`,
     `SUMMARY:${ev.title}`,`DESCRIPTION:${schedStr.replace(/\n/g,"\\n")}`,
@@ -412,6 +417,22 @@ function downloadICS(ev: ScheduledEvent & { startsAt?:string|null; endsAt?:strin
   const blob = new Blob([buildICSContent(ev)], { type:"text/calendar;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a"); a.href=url; a.download=`${ev.title.replace(/\s+/g,"-")}.ics`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+function cancelICS(ev: ScheduledEvent) {
+  const dtstamp = new Date().toISOString().replace(/[-:.]/g,"").slice(0,15)+"Z";
+  const content = [
+    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Tutor Advantage//TH",
+    "CALSCALE:GREGORIAN","METHOD:CANCEL",
+    "BEGIN:VEVENT",
+    `UID:${ev.classId}@ta.th`,`DTSTAMP:${dtstamp}`,
+    `SUMMARY:${ev.title}`,"STATUS:CANCELLED",
+    "END:VEVENT","END:VCALENDAR",
+  ].join("\r\n");
+  const blob = new Blob([content], { type:"text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href=url; a.download=`cancel-${ev.title.replace(/\s+/g,"-")}.ics`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
 }
 

@@ -554,6 +554,7 @@ export const th = {
       classEndsPrefix: "ปิดคลาส:",
       addToCalendar: "เพิ่มลงปฏิทิน",
       addToCalendarGoogle: "Google Calendar",
+      removeFromCalendar: "ลบออกจากปฏิทิน",
       seats: "ที่นั่ง",
       from: "จาก",
       peopleUnit: "คน",
