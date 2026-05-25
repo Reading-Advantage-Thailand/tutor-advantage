@@ -16,10 +16,24 @@ export async function GET() {
 
   const headers: HeadersInit = { Authorization: `Bearer ${token}` };
 
-  const [userRes, earningsRes, notifRes] = await Promise.allSettled([
+  // Decode JWT payload first (no verification — dev only) to get userId for badge fetch
+  let tokenInfo: { userId?: string; sub?: string; exp?: number; iat?: number; role?: string } = {};
+  try {
+    const b64 = token.split(".")[1];
+    tokenInfo = JSON.parse(Buffer.from(b64, "base64url").toString("utf8"));
+  } catch {
+    // ignore malformed token
+  }
+
+  const tutorUserId = tokenInfo.userId ?? tokenInfo.sub ?? null;
+
+  const [userRes, earningsRes, notifRes, badgesRes] = await Promise.allSettled([
     fetch(`${IDENTITY_URL}/v1/users/me`, { headers, cache: "no-store" }),
     fetch(`${FINANCE_URL}/v1/tutors/earnings/history`, { headers, cache: "no-store" }),
     fetch(`${LEARNING_URL}/v1/notifications/summary`, { headers, cache: "no-store" }),
+    tutorUserId
+      ? fetch(`${FINANCE_URL}/v1/dev/tutor-badges/${tutorUserId}`, { cache: "no-store" })
+      : Promise.resolve(null),
   ]);
 
   const user =
@@ -39,14 +53,14 @@ export async function GET() {
           .then((d: { notifications?: unknown }) => d.notifications)
       : null;
 
-  // Decode JWT payload (no verification — dev only)
-  let tokenInfo: { sub?: string; exp?: number; iat?: number; role?: string } = {};
-  try {
-    const b64 = token.split(".")[1];
-    tokenInfo = JSON.parse(Buffer.from(b64, "base64url").toString("utf8"));
-  } catch {
-    // ignore malformed token
-  }
+  const badges: string[] =
+    badgesRes.status === "fulfilled" &&
+    badgesRes.value !== null &&
+    badgesRes.value.ok
+      ? await badgesRes.value
+          .json()
+          .then((d: { badges?: string[] }) => d.badges ?? [])
+      : [];
 
   const nowSec = Math.floor(Date.now() / 1000);
   const expiresIn = tokenInfo.exp ? tokenInfo.exp - nowSec : null;
@@ -55,10 +69,11 @@ export async function GET() {
     user,
     earnings,
     notifications,
+    badges,
     tokenMasked: `${token.slice(0, 10)}…${token.slice(-8)}`,
     tokenExp: tokenInfo.exp ?? null,
     tokenExpiresInSec: expiresIn,
     tokenRole: tokenInfo.role ?? null,
-    tokenSub: tokenInfo.sub ?? null,
+    tokenSub: tutorUserId,
   });
 }

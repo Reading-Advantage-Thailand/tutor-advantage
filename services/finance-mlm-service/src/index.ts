@@ -76,6 +76,9 @@ import {
   devDeleteFraudFlag,
   devSeedAdjustment,
   devPurge,
+  devGetTutorBadges,
+  devAddVolume,
+  devToggleBadge,
 } from "./controllers/devController";
 import { getEarningsSummary, getEarningsHistory } from "./controllers/tutorEarningsController";
 import { getTutorNetwork } from "./controllers/tutorNetworkController";
@@ -276,6 +279,10 @@ app.post("/v1/dev/actions/fraud-flag", devOnly, devSeedFraudFlag);
 app.delete("/v1/dev/actions/fraud-flag/:id", devOnly, devDeleteFraudFlag);
 app.post("/v1/dev/actions/adjustment", devOnly, devSeedAdjustment);
 app.post("/v1/dev/actions/purge", devOnly, devPurge);
+// Tutor simulation
+app.get("/v1/dev/tutor-badges/:tutorUserId", devOnly, devGetTutorBadges);
+app.post("/v1/dev/actions/add-volume", devOnly, devAddVolume);
+app.post("/v1/dev/actions/toggle-badge", devOnly, devToggleBadge);
 
 // Apply error handler last
 app.use(errorHandlerMiddleware);

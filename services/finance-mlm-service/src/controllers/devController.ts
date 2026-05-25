@@ -356,9 +356,149 @@ export const devPurge = async (req: Request, res: Response) => {
         results.settlementRuns = r.count;
       }
     }
+    if (resource === "volume") {
+      // Delete all DEV payment intents (idempotencyKey starts with DEV_VOL_)
+      const r = await prisma.paymentIntent.deleteMany({
+        where: { idempotencyKey: { startsWith: "DEV_VOL_" } },
+      });
+      results.devPayments = r.count;
+    }
     res.json({ success: true, deleted: results });
   } catch (err: any) {
     console.error("devPurge error:", err);
     res.status(500).json({ error: "Could not purge data" });
+  }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TUTOR SIMULATION ENDPOINTS
+// ─────────────────────────────────────────────────────────────────────────────
+
+const VALID_BADGES = [
+  "ELITE_EDUCATOR",
+  "TOP_RATED",
+  "CLASS_MASTER",
+  "NETWORK_BUILDER",
+  "RISING_STAR",
+  "FAST_RESPONDER",
+  "AI_PIONEER",
+] as const;
+
+// GET /v1/dev/tutor-badges/:tutorUserId
+export const devGetTutorBadges = async (req: Request, res: Response) => {
+  const { tutorUserId } = req.params;
+  try {
+    const badges = await prisma.tutorBadge.findMany({
+      where: { tutorUserId },
+      select: { badgeCode: true },
+    });
+    res.json({ badges: badges.map((b) => b.badgeCode) });
+  } catch (err) {
+    console.error("devGetTutorBadges error:", err);
+    res.status(500).json({ error: "Could not fetch badges" });
+  }
+};
+
+// POST /v1/dev/actions/add-volume
+export const devAddVolume = async (req: Request, res: Response) => {
+  const { tutorUserId, amountTHB = 1000 } = req.body || {};
+  if (!tutorUserId) return res.status(400).json({ error: "tutorUserId required" });
+
+  const amount = Number(amountTHB);
+  if (!Number.isFinite(amount) || amount <= 0 || amount > 10_000_000) {
+    return res.status(400).json({ error: "amountTHB must be > 0 and ≤ 10,000,000" });
+  }
+
+  try {
+    // Verify tutor exists
+    const tutor = await prisma.user.findUnique({ where: { userId: tutorUserId } });
+    if (!tutor || tutor.role !== "TUTOR") {
+      return res.status(404).json({ error: "Tutor not found" });
+    }
+
+    // Find any book for DEV class
+    const book = await prisma.book.findFirst();
+    if (!book) return res.status(400).json({ error: "No books found — cannot create DEV class" });
+
+    // Find or create DEV class for this tutor
+    let devClass = await prisma.class.findFirst({
+      where: { tutorUserId, title: "[DEV] Test Class" },
+    });
+    if (!devClass) {
+      devClass = await prisma.class.create({
+        data: {
+          tutorUserId,
+          bookId: book.bookId,
+          title: "[DEV] Test Class",
+          capacity: 999,
+          packagePriceMinor: 250000n,
+          status: "ACTIVE",
+        },
+      });
+    }
+
+    // Find or create DEV enrollment (tutor acts as student)
+    let devEnrollment = await prisma.enrollment.findFirst({
+      where: { classId: devClass.classId, studentUserId: tutorUserId },
+    });
+    if (!devEnrollment) {
+      devEnrollment = await prisma.enrollment.create({
+        data: {
+          classId: devClass.classId,
+          studentUserId: tutorUserId,
+          status: "ACTIVE",
+        },
+      });
+    }
+
+    // Create SUCCESS payment intent tagged as DEV
+    const amountMinor = BigInt(Math.round(amount * 100));
+    const iKey = `DEV_VOL_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    const payment = await prisma.paymentIntent.create({
+      data: {
+        enrollmentId: devEnrollment.enrollmentId,
+        studentUserId: tutorUserId,
+        amountMinor,
+        currency: "THB",
+        method: "DEV",
+        status: "SUCCESS",
+        idempotencyKey: iKey,
+      },
+    });
+
+    return res.status(201).json({
+      paymentIntentId: payment.paymentIntentId,
+      amountTHB: Number(amountMinor) / 100,
+      message: `Added DEV volume ฿${amount.toLocaleString()}`,
+    });
+  } catch (err: any) {
+    console.error("devAddVolume error:", err);
+    res.status(500).json({ error: err.message || "Could not add volume" });
+  }
+};
+
+// POST /v1/dev/actions/toggle-badge
+export const devToggleBadge = async (req: Request, res: Response) => {
+  const { tutorUserId, badgeCode } = req.body || {};
+  if (!tutorUserId) return res.status(400).json({ error: "tutorUserId required" });
+  if (!badgeCode || !VALID_BADGES.includes(badgeCode)) {
+    return res.status(400).json({ error: `badgeCode must be one of: ${VALID_BADGES.join(", ")}` });
+  }
+
+  try {
+    const existing = await prisma.tutorBadge.findFirst({
+      where: { tutorUserId, badgeCode },
+    });
+
+    if (existing) {
+      await prisma.tutorBadge.delete({ where: { badgeId: existing.badgeId } });
+      return res.json({ action: "removed", badgeCode });
+    } else {
+      await prisma.tutorBadge.create({ data: { tutorUserId, badgeCode } });
+      return res.json({ action: "added", badgeCode });
+    }
+  } catch (err: any) {
+    console.error("devToggleBadge error:", err);
+    res.status(500).json({ error: err.message || "Could not toggle badge" });
   }
 };

@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   Terminal, X, RefreshCw, ChevronUp, ChevronDown,
   Copy, Check, AlertTriangle, Loader2, User,
   Wallet, Star, MessageCircle, BookOpen,
   LayoutDashboard, Calendar, Network, Settings,
-  GraduationCap, TrendingUp, Clock,
+  GraduationCap, TrendingUp, Clock, Zap, PlusCircle, Trash2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -57,6 +57,7 @@ interface DevState {
   user: DevUser | null;
   earnings: DevEarnings | null;
   notifications: DevNotifications | null;
+  badges: string[];
   tokenMasked: string | null;
   tokenExp: number | null;
   tokenExpiresInSec: number | null;
@@ -65,6 +66,20 @@ interface DevState {
 }
 
 type LogEntry = { id: number; type: "ok" | "err" | "info"; msg: string; ts: string };
+
+// ─── Badge config ─────────────────────────────────────────────────────────────
+
+const BADGES = [
+  { code: "ELITE_EDUCATOR",  label: "Elite",   bonusTHB: 500 },
+  { code: "TOP_RATED",       label: "Top",     bonusTHB: 300 },
+  { code: "CLASS_MASTER",    label: "Master",  bonusTHB: 200 },
+  { code: "NETWORK_BUILDER", label: "Network", bonusTHB: 100 },
+  { code: "RISING_STAR",     label: "Rising",  bonusTHB:  50 },
+  { code: "FAST_RESPONDER",  label: "Fast",    bonusTHB:  50 },
+  { code: "AI_PIONEER",      label: "AI",      bonusTHB:  50 },
+] as const;
+
+const VOLUME_PRESETS = [500, 1000, 5000, 10000, 50000] as const;
 
 // ─── Quick nav pages ──────────────────────────────────────────────────────────
 
@@ -123,10 +138,11 @@ function CopyBtn({ text }: { text: string }) {
 
 export function DevToolbar() {
   const pathname = usePathname();
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<DevState | null>(null);
   const [loading, setLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [customVolume, setCustomVolume] = useState("");
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const logIdRef = useRef(0);
 
@@ -151,6 +167,40 @@ export function DevToolbar() {
       setLoading(false);
     }
   }, []);
+
+  const runAction = useCallback(async (
+    key: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    body: any,
+    successMsg: string,
+  ) => {
+    setActionLoading(key);
+    try {
+      const res = await fetch("/api/dev/actions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || res.statusText);
+      log("ok", successMsg);
+      // Reload state to reflect changes
+      await loadState();
+    } catch (e: unknown) {
+      log("err", `action ล้มเหลว: ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      setActionLoading(null);
+    }
+  }, [loadState]);
+
+  const addVolume = (amountTHB: number) =>
+    runAction(`vol_${amountTHB}`, { action: "addVolume", amountTHB }, `+฿${amountTHB.toLocaleString()} volume เพิ่มแล้ว`);
+
+  const toggleBadge = (badgeCode: string) =>
+    runAction(`badge_${badgeCode}`, { action: "toggleBadge", badgeCode }, `Badge ${badgeCode} toggled`);
+
+  const clearVolume = () =>
+    runAction("clearVol", { action: "clearVolume" }, "ล้าง DEV volume แล้ว");
 
   const handleOpen = () => {
     const next = !open;
@@ -371,6 +421,101 @@ export function DevToolbar() {
               <code className="text-[11px] font-mono text-brand-500 bg-brand-500/5 px-2 py-1 rounded-lg block">
                 {pathname}
               </code>
+            </div>
+
+            {/* ── Simulate ─────────────────────────────────────────── */}
+            <div className="px-4 py-3 border-b border-border/50 bg-orange-500/3">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400 mb-3 flex items-center gap-1">
+                <Zap className="h-3 w-3" /> Simulate
+              </p>
+
+              {/* Volume */}
+              <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
+                Volume — Rate {earnings ? Math.round(earnings.rateInfo.rate * 100) : "—"}%
+                {earnings?.rateInfo.nextTarget ? ` · next ฿${earnings.rateInfo.nextTarget.toLocaleString()}` : " · max"}
+              </p>
+              <div className="flex flex-wrap gap-1 mb-2">
+                {VOLUME_PRESETS.map((amt) => (
+                  <button
+                    key={amt}
+                    onClick={() => addVolume(amt)}
+                    disabled={actionLoading !== null}
+                    className="px-2 py-1 rounded-lg text-[10px] font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 disabled:opacity-50 transition-colors"
+                  >
+                    {actionLoading === `vol_${amt}` ? (
+                      <Loader2 className="h-2.5 w-2.5 animate-spin inline" />
+                    ) : (
+                      `+฿${amt >= 1000 ? `${amt / 1000}K` : amt}`
+                    )}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-1.5">
+                <input
+                  type="number"
+                  placeholder="Custom ฿"
+                  value={customVolume}
+                  onChange={(e) => setCustomVolume(e.target.value)}
+                  className="flex-1 min-w-0 px-2 py-1 text-[10px] rounded-lg border border-border/50 bg-background text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-emerald-500/50"
+                />
+                <button
+                  onClick={() => {
+                    const v = Number(customVolume);
+                    if (v > 0) { addVolume(v); setCustomVolume(""); }
+                  }}
+                  disabled={!customVolume || Number(customVolume) <= 0 || actionLoading !== null}
+                  className="px-2 py-1 rounded-lg text-[10px] font-bold bg-emerald-500 text-white hover:bg-emerald-600 disabled:opacity-40 flex items-center gap-0.5 transition-colors"
+                >
+                  <PlusCircle className="h-3 w-3" />
+                  เพิ่ม
+                </button>
+                <button
+                  onClick={clearVolume}
+                  disabled={actionLoading !== null}
+                  className="px-2 py-1 rounded-lg text-[10px] font-bold bg-red-500/10 text-red-600 border border-red-500/20 hover:bg-red-500/20 disabled:opacity-50 flex items-center gap-0.5 transition-colors"
+                  title="ล้าง DEV payments ทั้งหมด"
+                >
+                  {actionLoading === "clearVol" ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : (
+                    <Trash2 className="h-3 w-3" />
+                  )}
+                </button>
+              </div>
+
+              {/* Badges */}
+              <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider mt-3 mb-1.5">
+                Badges
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {BADGES.map(({ code, label, bonusTHB }) => {
+                  const active = (state?.badges ?? []).includes(code);
+                  const isLoading = actionLoading === `badge_${code}`;
+                  return (
+                    <button
+                      key={code}
+                      onClick={() => toggleBadge(code)}
+                      disabled={actionLoading !== null}
+                      title={`${code} +฿${bonusTHB}`}
+                      className={`px-2 py-1 rounded-lg text-[10px] font-bold border transition-colors disabled:opacity-50 flex items-center gap-0.5 ${
+                        active
+                          ? "bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30"
+                          : "bg-muted text-muted-foreground border-border/40 hover:border-amber-500/30 hover:text-amber-600"
+                      }`}
+                    >
+                      {isLoading ? (
+                        <Loader2 className="h-2.5 w-2.5 animate-spin" />
+                      ) : (
+                        <Star className={`h-2.5 w-2.5 ${active ? "fill-amber-400" : ""}`} />
+                      )}
+                      {label}
+                      <span className={`text-[8px] ${active ? "text-amber-600" : "text-muted-foreground/60"}`}>
+                        +{bonusTHB}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* ── Nav shortcuts ──────────────────────────────────────── */}
