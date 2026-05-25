@@ -40,6 +40,7 @@ interface DevEarnings {
     date: string;
     direct: number;
     network: number;
+    badgeBonus?: number;
     clawback: number;
     withholdingTax?: number;
     netPayout?: number;

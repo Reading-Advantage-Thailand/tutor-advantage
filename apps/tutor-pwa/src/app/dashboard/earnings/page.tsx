@@ -11,6 +11,7 @@ type EarningsHistoryItem = {
   date: string;
   direct: number;
   network: number;
+  badgeBonus?: number;
   clawback: number;
   withholdingTax?: number;
   netPayout?: number;
@@ -321,6 +322,17 @@ export default async function EarningsPage() {
                               </span>
                             </div>
                           )}
+                          {(item.badgeBonus ?? 0) !== 0 && (
+                            <div className="flex justify-between px-3 py-2 text-muted-foreground">
+                              <span className="font-medium flex items-center gap-1">
+                                <Star className="h-3 w-3 text-amber-500 fill-amber-400" />
+                                {t("dashboardEarnings.badgeBonus")}
+                              </span>
+                              <span className="font-bold text-amber-600 dark:text-amber-400 flex items-center gap-0.5">
+                                +<AnimatedCurrencyCounter value={item.badgeBonus ?? 0} />
+                              </span>
+                            </div>
+                          )}
                           {item.clawback !== 0 && (
                             <div className="flex justify-between px-3 py-2 text-destructive/80">
                               <span className="font-medium flex items-center gap-1">
@@ -335,7 +347,7 @@ export default async function EarningsPage() {
                         <div className="flex justify-between px-3 py-2 bg-muted/40 border-t border-border/40 text-muted-foreground">
                           <span className="font-semibold">{t("dashboardEarnings.grossBeforeWHT")}</span>
                           <AnimatedCurrencyCounter
-                            value={item.direct + item.network + item.clawback}
+                            value={item.direct + item.network + (item.badgeBonus ?? 0) + item.clawback}
                             className="font-bold text-foreground"
                           />
                         </div>

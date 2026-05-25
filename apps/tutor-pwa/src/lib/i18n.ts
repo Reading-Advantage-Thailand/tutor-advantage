@@ -449,6 +449,7 @@ export const th = {
     payoutHistory: "ประวัติการจ่ายเงิน",
     emptyPayoutHistory: "ยังไม่มีประวัติการจ่ายเงิน",
     settlementPayout: "ค่าคอมมิชชัน",
+    badgeBonus: "โบนัส Badge",
     withholdingTax: "หัก ณ ที่จ่าย 3%",
     withholdingTaxEstimated: "หัก ณ ที่จ่าย 3% (ประมาณ)",
     grossBeforeWHT: "รวมก่อนหักภาษี",

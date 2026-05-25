@@ -135,10 +135,13 @@ export async function getEarningsHistory(
         Math.max(0, periodProjection.networkBonusTHB),
       );
       const clawback = clawbackByRun.get(line.settlementRunId) || 0;
+      const badgeBonus = Math.round(Number(line.badgeBonusMinor) / 100);
       return {
         date: line.settlementRun.periodMonth,
-        direct: Math.round(totalAmount - networkAmount),
+        // Separate badge bonus out of direct so the frontend can show it as its own line
+        direct: Math.round(totalAmount - networkAmount - badgeBonus),
         network: Math.round(networkAmount),
+        badgeBonus,
         clawback: Math.round(clawback),
         withholdingTax: Math.round(Number(line.withholdingTaxMinor) / 100),
         netPayout: Math.round(Number(line.netPayoutMinor) / 100),
