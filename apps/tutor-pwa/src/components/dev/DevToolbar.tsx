@@ -270,20 +270,7 @@ export function DevToolbar() {
                     {state.tokenMasked}
                   </span>
                   {state.tokenMasked && (
-                    <button
-                      onClick={async () => {
-                        try {
-                          const res = await fetch("/api/dev/state");
-                          const raw = await res.text();
-                          // copy the raw token by fetching cookie from server action (not possible client-side)
-                          // Just copy what we have
-                          navigator.clipboard.writeText(state.tokenMasked ?? "");
-                        } catch {}
-                      }}
-                      className="shrink-0"
-                    >
-                      <CopyBtn text={state.tokenMasked} />
-                    </button>
+                    <CopyBtn text={state.tokenMasked} />
                   )}
                 </div>
               </div>
