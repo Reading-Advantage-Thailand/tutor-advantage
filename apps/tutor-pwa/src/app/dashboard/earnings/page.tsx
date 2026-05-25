@@ -252,7 +252,9 @@ export default async function EarningsPage() {
                   </div>
                 )}
                 {history.map((item, idx) => {
-                  const total = item.direct + item.network + item.clawback;
+                  // Use netPayout (post-WHT, includes all adjustments) when available.
+                  // Fallback to gross sum only for legacy records without netPayout.
+                  const total = item.netPayout !== undefined ? item.netPayout : item.direct + item.network + item.clawback;
                   const status = statusMap[item.status] || {
                     label: item.status,
                     className: "bg-muted",
