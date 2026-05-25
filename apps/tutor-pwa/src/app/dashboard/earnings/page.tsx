@@ -111,6 +111,11 @@ export default async function EarningsPage() {
   const rateInfo = response?.rateInfo || emptyRateInfo;
   const commissionPercent = Math.round(rateInfo.rate * 100);
 
+  // Estimated WHT for current projection (3%, rounded)
+  const projectionGross = earnings.total;
+  const projectionEstimatedWHT = projectionGross > 0 ? Math.round(projectionGross * 0.03) : 0;
+  const projectionEstimatedNet = projectionGross - projectionEstimatedWHT;
+
   const progressPercent = Math.min(
     100,
     rateInfo.nextTarget > 0
@@ -153,13 +158,16 @@ export default async function EarningsPage() {
                 </h2>
               </div>
               
-              <div className="flex items-baseline gap-2 mb-6">
+              <div className="flex items-baseline gap-2 mb-1">
                 <AnimatedCurrencyCounter
-                  value={earnings.total}
+                  value={projectionEstimatedNet}
                   className="text-4xl lg:text-5xl font-black tracking-tight text-foreground"
                 />
                 <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest bg-muted px-2 py-0.5 rounded-md">THB</span>
               </div>
+              <p className="text-[10px] font-semibold text-muted-foreground mb-5">
+                {t("dashboardEarnings.estimatedNetPayout")} · {t("dashboardEarnings.projectionWHTNote")}
+              </p>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="rounded-2xl border border-border/40 bg-background/50 backdrop-blur-sm p-3 sm:p-4">
@@ -190,6 +198,27 @@ export default async function EarningsPage() {
                   />
                 </div>
               )}
+
+              {/* WHT breakdown strip */}
+              <div className="mt-4 rounded-2xl border border-border/30 bg-muted/30 divide-y divide-border/30 overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-2.5 text-xs text-muted-foreground">
+                  <span className="font-medium">{t("dashboardEarnings.grossBeforeWHT")}</span>
+                  <AnimatedCurrencyCounter value={projectionGross} className="font-semibold text-foreground" />
+                </div>
+                {projectionEstimatedWHT > 0 && (
+                  <div className="flex items-center justify-between px-4 py-2.5 text-xs text-destructive/80">
+                    <span className="font-medium">{t("dashboardEarnings.withholdingTaxEstimated")}</span>
+                    <span className="font-semibold flex items-center gap-0.5">
+                      <span>−</span>
+                      <AnimatedCurrencyCounter value={projectionEstimatedWHT} />
+                    </span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between px-4 py-3 bg-brand-500/5">
+                  <span className="text-xs font-bold text-foreground">{t("dashboardEarnings.estimatedNetPayout")}</span>
+                  <AnimatedCurrencyCounter value={projectionEstimatedNet} className="text-sm font-black text-brand-600 dark:text-brand-400" />
+                </div>
+              </div>
             </CardContent>
           </Card>
 
@@ -276,42 +305,62 @@ export default async function EarningsPage() {
                         className="text-xl font-black text-foreground block mb-3"
                       />
 
-                      <div className="space-y-1.5 text-xs font-medium">
-                        <div className="flex justify-between text-muted-foreground">
-                          <span>{t("dashboardEarnings.settlementPayout")}</span>
-                          <AnimatedCurrencyCounter value={item.direct} className="font-semibold text-foreground" />
-                        </div>
-                        <div className="flex justify-between text-muted-foreground">
-                          <span>{t("dashboardEarnings.networkBonus")}</span>
-                          <div className="flex items-center font-bold text-brand-600 dark:text-brand-400">
-                            <span>+</span>
-                            <AnimatedCurrencyCounter value={item.network} />
+                      {/* Breakdown: accounting-style formula */}
+                      <div className="rounded-xl border border-border/30 bg-muted/20 overflow-hidden text-xs">
+                        {/* Components */}
+                        <div className="divide-y divide-border/20">
+                          <div className="flex justify-between px-3 py-2 text-muted-foreground">
+                            <span className="font-medium">{t("dashboardEarnings.settlementPayout")}</span>
+                            <AnimatedCurrencyCounter value={item.direct} className="font-semibold text-foreground" />
                           </div>
+                          {item.network !== 0 && (
+                            <div className="flex justify-between px-3 py-2 text-muted-foreground">
+                              <span className="font-medium">{t("dashboardEarnings.networkBonus")}</span>
+                              <span className="font-bold text-brand-600 dark:text-brand-400 flex items-center gap-0.5">
+                                +<AnimatedCurrencyCounter value={item.network} />
+                              </span>
+                            </div>
+                          )}
+                          {item.clawback !== 0 && (
+                            <div className="flex justify-between px-3 py-2 text-destructive/80">
+                              <span className="font-medium flex items-center gap-1">
+                                <AlertCircle className="h-3 w-3" />
+                                {t("dashboardEarnings.clawback")}
+                              </span>
+                              <AnimatedCurrencyCounter value={item.clawback} className="font-bold text-destructive" />
+                            </div>
+                          )}
                         </div>
-                        {item.clawback !== 0 && (
-                          <div className="flex justify-between pt-1 border-t border-border/40 mt-1">
-                            <span className="text-destructive/80">{t("dashboardEarnings.clawback")}</span>
-                            <AnimatedCurrencyCounter value={item.clawback} className="font-bold text-destructive" />
+                        {/* Gross subtotal */}
+                        <div className="flex justify-between px-3 py-2 bg-muted/40 border-t border-border/40 text-muted-foreground">
+                          <span className="font-semibold">{t("dashboardEarnings.grossBeforeWHT")}</span>
+                          <AnimatedCurrencyCounter
+                            value={item.direct + item.network + item.clawback}
+                            className="font-bold text-foreground"
+                          />
+                        </div>
+                        {/* WHT */}
+                        {item.withholdingTax !== undefined && item.withholdingTax > 0 && (
+                          <div className="flex justify-between px-3 py-2 border-t border-border/40 text-destructive/80">
+                            <span className="font-medium">{t("dashboardEarnings.withholdingTax")}</span>
+                            <span className="font-semibold flex items-center gap-0.5">
+                              −<AnimatedCurrencyCounter value={item.withholdingTax} />
+                            </span>
                           </div>
                         )}
-                        {item.withholdingTax !== undefined && (
-                          <div className="flex justify-between text-muted-foreground">
-                            <span>{t("dashboardEarnings.withholdingTax")}</span>
-                            <AnimatedCurrencyCounter value={item.withholdingTax} className="font-semibold text-foreground" />
-                          </div>
-                        )}
+                        {/* Net payout — highlighted */}
                         {item.netPayout !== undefined && (
-                          <div className="flex justify-between pt-1 border-t border-border/40 mt-1 text-muted-foreground">
-                            <span className="font-bold">{t("dashboardEarnings.netPayout")}</span>
-                            <AnimatedCurrencyCounter value={item.netPayout} className="font-black text-foreground" />
-                          </div>
-                        )}
-                        {item.payoutDocument && (
-                          <div className="pt-1.5 text-[10px] font-bold text-muted-foreground/60 tracking-wider">
-                            {t("dashboardEarnings.documentPrefix")} {item.payoutDocument.documentNumber}
+                          <div className="flex justify-between px-3 py-2.5 bg-brand-500/5 border-t-2 border-brand-500/20">
+                            <span className="font-black text-foreground">{t("dashboardEarnings.netPayout")}</span>
+                            <AnimatedCurrencyCounter value={item.netPayout} className="font-black text-brand-600 dark:text-brand-400" />
                           </div>
                         )}
                       </div>
+                      {item.payoutDocument && (
+                        <div className="mt-2 text-[10px] font-bold text-muted-foreground/60 tracking-wider">
+                          {t("dashboardEarnings.documentPrefix")} {item.payoutDocument.documentNumber}
+                        </div>
+                      )}
                     </div>
                   );
                 })}

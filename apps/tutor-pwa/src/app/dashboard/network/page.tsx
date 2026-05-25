@@ -98,6 +98,10 @@ export default async function NetworkPage() {
   const response = await getNetworkData(token);
   const summary = response?.summary || emptySummary;
   const commissionPercent = Math.round(summary.currentRate * 100);
+  const networkEstimatedWHT = summary.estimatedPayoutTHB > 0
+    ? Math.round(summary.estimatedPayoutTHB * 0.03)
+    : 0;
+  const networkEstimatedNet = summary.estimatedPayoutTHB - networkEstimatedWHT;
 
   return (
     <PageTransition variant="slide-up" stagger className="max-w-5xl mx-auto space-y-6 lg:space-y-8 pb-24 sm:pb-12">
@@ -156,6 +160,8 @@ export default async function NetworkPage() {
               <AmountBlock
                 label={t("dashboardNetwork.estimatedPayout")}
                 value={summary.estimatedPayoutTHB}
+                estimatedWHT={networkEstimatedWHT}
+                estimatedNet={networkEstimatedNet}
                 isPayout
               />
             </CardContent>
@@ -267,7 +273,19 @@ function MetricCard({
   );
 }
 
-function AmountBlock({ label, value, isPayout }: { label: string; value: number; isPayout?: boolean }) {
+function AmountBlock({
+  label,
+  value,
+  isPayout,
+  estimatedWHT,
+  estimatedNet,
+}: {
+  label: string;
+  value: number;
+  isPayout?: boolean;
+  estimatedWHT?: number;
+  estimatedNet?: number;
+}) {
   return (
     <div className={`rounded-2xl border ${isPayout ? "border-brand-500/20 bg-brand-500/5 shadow-[0_0_15px_rgba(6,199,85,0.05)]" : "border-border/40 bg-background/50"} p-4 flex flex-col justify-between hover-lift transition-all duration-300`}>
       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{label}</p>
@@ -275,6 +293,20 @@ function AmountBlock({ label, value, isPayout }: { label: string; value: number;
         value={value}
         className={`text-lg sm:text-xl font-black ${isPayout ? "text-brand-600 dark:text-brand-400" : "text-foreground"}`}
       />
+      {isPayout && estimatedWHT !== undefined && estimatedNet !== undefined && (
+        <div className="mt-3 pt-3 border-t border-brand-500/15 space-y-1.5">
+          {estimatedWHT > 0 && (
+            <div className="flex items-center justify-between text-[10px] text-destructive/70">
+              <span className="font-medium">{t("dashboardNetwork.estimatedWHT")}</span>
+              <span className="font-semibold">−{estimatedWHT.toLocaleString("th-TH")}</span>
+            </div>
+          )}
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="font-bold text-foreground">{t("dashboardNetwork.estimatedNetPayout")}</span>
+            <AnimatedCurrencyCounter value={estimatedNet} className="font-black text-brand-600 dark:text-brand-400" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
