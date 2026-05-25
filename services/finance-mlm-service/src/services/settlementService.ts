@@ -262,41 +262,56 @@ export class SettlementService {
 
     // Bulk insert payout lines
     for (const node of nodes.values()) {
-      const adjustmentMinor = adjustmentTotals.get(node.userId) || 0n;
-      const badgeBonusMinor = badgeBonusMap.get(node.userId) ?? 0n;
-      const adjustedPayoutMinor = node.payoutAmountMinor + adjustmentMinor + badgeBonusMinor;
+      // Unverified tutors are blocked from ALL payouts — commission was already zeroed above.
+      // Also block badge bonuses and adjustments so unverified tutors receive nothing.
+      const effectiveAdjustment = node.verified
+        ? (adjustmentTotals.get(node.userId) || 0n)
+        : 0n;
+      const effectiveBadgeBonus = node.verified
+        ? (badgeBonusMap.get(node.userId) ?? 0n)
+        : 0n;
 
-      if (
+      const adjustedPayoutMinor =
+        node.payoutAmountMinor + effectiveAdjustment + effectiveBadgeBonus;
+
+      // Include in payout lines if: has volume, has actual payout,
+      // or had a BLOCKED adjustment (for audit visibility — shows adjustment was withheld)
+      const blockedAdjustment = !node.verified
+        ? (adjustmentTotals.get(node.userId) || 0n)
+        : 0n;
+      const hasActivity =
         adjustedPayoutMinor !== 0n ||
         node.groupVolumeMinor > 0n ||
-        adjustmentMinor !== 0n
-      ) {
-        const tax =
-          adjustedPayoutMinor > 0n
-            ? calculateWithholdingTax(adjustedPayoutMinor)
-            : {
-                withholdingTaxMinor: 0n,
-                netPayoutMinor: adjustedPayoutMinor,
-              };
-        totalPayoutSatang += adjustedPayoutMinor;
+        blockedAdjustment !== 0n;
 
-        await prisma.payoutLine.create({
-          data: {
-            settlementRunId: run.settlementRunId,
-            tutorUserId: node.userId,
-            grossVolumeMinor: node.groupVolumeMinor,
-            payoutRate: new Prisma.Decimal(node.payoutRate),
-            payoutAmountMinor: adjustedPayoutMinor,
-            withholdingTaxMinor: tax.withholdingTaxMinor,
-            netPayoutMinor: tax.netPayoutMinor,
-            badgeBonusMinor,
-            eligibilityStatus:
-              adjustmentMinor !== 0n || badgeBonusMinor !== 0n
-                ? `${node.eligibilityStatus}_ADJUSTED`
-                : node.eligibilityStatus,
-          },
-        });
-      }
+      if (!hasActivity) continue;
+
+      const tax =
+        adjustedPayoutMinor > 0n
+          ? calculateWithholdingTax(adjustedPayoutMinor)
+          : { withholdingTaxMinor: 0n, netPayoutMinor: 0n };
+
+      totalPayoutSatang += adjustedPayoutMinor;
+
+      // Only mark as _ADJUSTED if the tutor is verified and actually received extras
+      const eligibilityStatus =
+        node.verified && (effectiveAdjustment !== 0n || effectiveBadgeBonus !== 0n)
+          ? `${node.eligibilityStatus}_ADJUSTED`
+          : node.eligibilityStatus;
+
+      await prisma.payoutLine.create({
+        data: {
+          settlementRunId: run.settlementRunId,
+          tutorUserId: node.userId,
+          grossVolumeMinor: node.groupVolumeMinor,
+          payoutRate: new Prisma.Decimal(node.payoutRate),
+          payoutAmountMinor: adjustedPayoutMinor,
+          withholdingTaxMinor: tax.withholdingTaxMinor,
+          netPayoutMinor: tax.netPayoutMinor,
+          badgeBonusMinor: effectiveBadgeBonus,
+          eligibilityStatus,
+        },
+      });
     }
 
     return {
