@@ -31,11 +31,20 @@ async function handler(
     body = await request.arrayBuffer();
   }
 
-  const upstream = await fetch(targetUrl, {
-    method: request.method,
-    headers,
-    body,
-  });
+  let upstream: Response;
+  try {
+    upstream = await fetch(targetUrl, {
+      method: request.method,
+      headers,
+      body,
+    });
+  } catch (err: any) {
+    // Finance service unreachable (e.g. not started locally)
+    return NextResponse.json(
+      { error: `Finance service unreachable: ${err.message}`, target: targetUrl },
+      { status: 503 }
+    );
+  }
 
   const responseHeaders = new Headers();
   const upstreamType = upstream.headers.get("content-type");

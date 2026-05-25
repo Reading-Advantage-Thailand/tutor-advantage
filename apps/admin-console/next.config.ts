@@ -1,8 +1,13 @@
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV === "development";
+
 const nextConfig: NextConfig = {
   output: "standalone",
   async headers() {
+    // Skip security headers in development — they block Next.js HMR / Turbopack
+    if (isDev) return [];
+
     return [
       {
         source: "/(.*)",
