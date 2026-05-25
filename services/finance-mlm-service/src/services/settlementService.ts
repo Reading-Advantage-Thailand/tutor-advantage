@@ -262,6 +262,7 @@ export class SettlementService {
 
     // Bulk insert payout lines
     let payoutLineCount = 0;
+    let totalNetPayoutSatang = 0n;
     for (const node of nodes.values()) {
       // Unverified tutors are blocked from ALL payouts — commission was already zeroed above.
       // Also block badge bonuses and adjustments so unverified tutors receive nothing.
@@ -293,6 +294,7 @@ export class SettlementService {
           : { withholdingTaxMinor: 0n, netPayoutMinor: 0n };
 
       totalPayoutSatang += adjustedPayoutMinor;
+      totalNetPayoutSatang += tax.netPayoutMinor;
 
       // Only mark as _ADJUSTED if the tutor is verified and actually received extras
       const eligibilityStatus =
@@ -320,6 +322,7 @@ export class SettlementService {
       snapshotId: run.settlementRunId,
       periodMonth,
       totalPayoutSatang: Number(totalPayoutSatang),
+      totalNetPayoutSatang: Number(totalNetPayoutSatang),
       payoutLineCount,
       status: run.status,
     };

@@ -92,7 +92,8 @@ interface LinesData {
 export interface SettlementPreview {
   snapshotId: string;
   periodMonth: string;
-  totalPayoutSatang?: number; // Present only for preview / approve.
+  totalPayoutSatang?: number;    // gross before WHT
+  totalNetPayoutSatang?: number; // net after WHT — shown in result card
   status: string;
   createdBy?: string;
   createdAt?: string;
@@ -403,15 +404,21 @@ export default function SettlementsPage() {
           <CardContent className="px-8 py-12">
             <div className="flex flex-col items-center justify-center gap-6">
               <div className="text-center space-y-2">
-                <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em]">{t("settlements.totalPayout")}</p>
+                <p className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em]">ยอดสุทธิรวม (หลังหักภาษี ณ ที่จ่าย)</p>
                 <p className="text-6xl font-black text-foreground tabular-nums tracking-tighter">
-                  {((result.totalPayoutSatang ?? 0) / 100).toLocaleString(
+                  {((result.totalNetPayoutSatang ?? 0) / 100).toLocaleString(
                     "th-TH",
                     {
                       style: "currency",
                       currency: "THB",
                     },
                   )}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  ก่อนหักภาษี{" "}
+                  <span className="font-semibold">
+                    {((result.totalPayoutSatang ?? 0) / 100).toLocaleString("th-TH", { style: "currency", currency: "THB" })}
+                  </span>
                 </p>
               </div>
               
