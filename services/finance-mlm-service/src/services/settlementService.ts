@@ -261,6 +261,7 @@ export class SettlementService {
     }
 
     // Bulk insert payout lines
+    let payoutLineCount = 0;
     for (const node of nodes.values()) {
       // Unverified tutors are blocked from ALL payouts — commission was already zeroed above.
       // Also block badge bonuses and adjustments so unverified tutors receive nothing.
@@ -312,12 +313,14 @@ export class SettlementService {
           eligibilityStatus,
         },
       });
+      payoutLineCount++;
     }
 
     return {
       snapshotId: run.settlementRunId,
       periodMonth,
       totalPayoutSatang: Number(totalPayoutSatang),
+      payoutLineCount,
       status: run.status,
     };
   }
