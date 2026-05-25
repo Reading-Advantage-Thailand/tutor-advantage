@@ -3,7 +3,14 @@ import crypto from "crypto";
 
 export async function GET(request: Request) {
   const reqUrl = new URL(request.url);
-  const baseUrl = `${reqUrl.protocol}//${reqUrl.host}`;
+  const host =
+    request.headers.get("x-forwarded-host") ||
+    request.headers.get("host") ||
+    reqUrl.host;
+  const proto =
+    request.headers.get("x-forwarded-proto") ||
+    reqUrl.protocol.replace(":", "");
+  const baseUrl = `${proto}://${host}`;
   const redirectUri = `${baseUrl}/api/auth/callback/google`;
 
   const clientId =
@@ -16,8 +23,15 @@ export async function GET(request: Request) {
     );
   }
 
-  // Generate a random state token to prevent CSRF attacks on the OAuth callback
+  // CSRF state
   const state = crypto.randomBytes(32).toString("hex");
+
+  // PKCE
+  const codeVerifier = crypto.randomBytes(32).toString("base64url");
+  const codeChallenge = crypto
+    .createHash("sha256")
+    .update(codeVerifier)
+    .digest("base64url");
 
   const googleAuthUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
   googleAuthUrl.searchParams.set("client_id", clientId);
@@ -26,6 +40,8 @@ export async function GET(request: Request) {
   googleAuthUrl.searchParams.set("scope", "openid email profile");
   googleAuthUrl.searchParams.set("prompt", "select_account");
   googleAuthUrl.searchParams.set("state", state);
+  googleAuthUrl.searchParams.set("code_challenge", codeChallenge);
+  googleAuthUrl.searchParams.set("code_challenge_method", "S256");
 
   const response = NextResponse.redirect(googleAuthUrl.toString());
 
@@ -33,7 +49,15 @@ export async function GET(request: Request) {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 60 * 10, // 10 minutes — expires after OAuth round-trip
+    maxAge: 60 * 10,
+    path: "/",
+  });
+
+  response.cookies.set("pkce_verifier", codeVerifier, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 60 * 10,
     path: "/",
   });
 
