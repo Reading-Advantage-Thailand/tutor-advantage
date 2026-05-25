@@ -15,8 +15,10 @@ export function getIctMonthWindow(periodMonth: string) {
   }
 
   return {
+    // Start: 1st of month at 00:00:00 ICT = 17:00 prev-day UTC
     start: new Date(Date.UTC(year, month - 1, 1, -7, 0, 0, 0)),
-    end: new Date(Date.UTC(year, month, 1, -7, 0, 0, 0) - 1),
+    // End: last day of month at 12:00:00 ICT = 05:00:00 UTC same day
+    end: new Date(Date.UTC(year, month, 0, 5, 0, 0, 0)),
   };
 }
 

@@ -174,6 +174,8 @@ export async function getEarningsHistory(
               documentType: line.payoutDocument.documentType,
               status: line.payoutDocument.status,
               issuedAt: line.payoutDocument.issuedAt,
+              transferStatus: line.payoutDocument.transferStatus,
+              transferredAt: line.payoutDocument.transferredAt,
             }
           : null,
         status: line.settlementRun.status.toLowerCase(),

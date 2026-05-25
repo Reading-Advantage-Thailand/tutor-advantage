@@ -5,6 +5,7 @@ import {
   TrendingUp,
   UserRoundCheck,
   Users,
+  Star,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InviteLinkCard } from "./invite-link-card";
@@ -44,6 +45,7 @@ type NetworkResponse = {
     groupVolumeTHB: number;
     currentRate: number;
     estimatedPayoutTHB: number;
+    badgeBonusTHB?: number;
     level1Count: number;
     level2PlusCount: number;
   };
@@ -88,6 +90,7 @@ const emptySummary: NetworkResponse["summary"] = {
   groupVolumeTHB: 0,
   currentRate: 0,
   estimatedPayoutTHB: 0,
+  badgeBonusTHB: 0,
   level1Count: 0,
   level2PlusCount: 0,
 };
@@ -160,6 +163,7 @@ export default async function NetworkPage() {
               <AmountBlock
                 label={t("dashboardNetwork.estimatedPayout")}
                 value={summary.estimatedPayoutTHB}
+                badgeBonusTHB={summary.badgeBonusTHB}
                 estimatedWHT={networkEstimatedWHT}
                 estimatedNet={networkEstimatedNet}
                 isPayout
@@ -277,15 +281,19 @@ function AmountBlock({
   label,
   value,
   isPayout,
+  badgeBonusTHB,
   estimatedWHT,
   estimatedNet,
 }: {
   label: string;
   value: number;
   isPayout?: boolean;
+  badgeBonusTHB?: number;
   estimatedWHT?: number;
   estimatedNet?: number;
 }) {
+  const hasBadge = isPayout && (badgeBonusTHB ?? 0) > 0;
+
   return (
     <div className={`rounded-2xl border ${isPayout ? "border-brand-500/20 bg-brand-500/5 shadow-[0_0_15px_rgba(6,199,85,0.05)]" : "border-border/40 bg-background/50"} p-4 flex flex-col justify-between hover-lift transition-all duration-300`}>
       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{label}</p>
@@ -293,6 +301,15 @@ function AmountBlock({
         value={value}
         className={`text-lg sm:text-xl font-black ${isPayout ? "text-brand-600 dark:text-brand-400" : "text-foreground"}`}
       />
+      {hasBadge && (
+        <div className="mt-2 flex items-center justify-between text-[10px] text-amber-600 dark:text-amber-400">
+          <span className="font-medium flex items-center gap-1">
+            <Star className="h-3 w-3 fill-amber-400" />
+            {t("dashboardEarnings.badgeBonus")}
+          </span>
+          <span className="font-bold">+{(badgeBonusTHB ?? 0).toLocaleString("th-TH")}</span>
+        </div>
+      )}
       {isPayout && estimatedWHT !== undefined && estimatedNet !== undefined && (
         <div className="mt-3 pt-3 border-t border-brand-500/15 space-y-1.5">
           {estimatedWHT > 0 && (

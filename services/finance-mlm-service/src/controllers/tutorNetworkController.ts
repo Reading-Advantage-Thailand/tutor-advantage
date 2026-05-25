@@ -202,6 +202,7 @@ export async function getTutorNetwork(
         groupVolumeTHB: toTHB(me.groupVolumeMinor),
         currentRate: me.rate,
         estimatedPayoutTHB: toTHB(me.estimatedPayoutMinor) + badgeBonusTHB,
+        badgeBonusTHB,
         level1Count: depthCounts.get(1) || 0,
         level2PlusCount: Array.from(depthCounts.entries()).reduce(
           (sum, [level, count]) => (level >= 2 ? sum + count : sum),
