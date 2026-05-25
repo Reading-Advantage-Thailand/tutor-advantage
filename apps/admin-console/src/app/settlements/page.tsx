@@ -100,6 +100,7 @@ export interface SettlementPreview {
   approvedBy?: string;
   approvedAt?: string;
   payoutLineCount?: number;
+  pendingAdjustmentCount?: number;
 }
 
 const ELIGIBILITY_CONFIG: Record<string, { label: string; className: string }> = {
@@ -635,16 +636,26 @@ export default function SettlementsPage() {
                             >
                               {t("settlements.rejectAction")}
                             </Button>
-                            <Button
-                              size="sm"
-                              disabled={actionLoadingId === run.snapshotId}
-                              onClick={() => handleListAction(run.snapshotId, "approve")}
-                              className="h-10 px-4 rounded-xl font-bold bg-brand-600 shadow-md shadow-brand-500/10"
-                            >
-                              {actionLoadingId === run.snapshotId ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : t("settlements.approveAction")}
-                            </Button>
+                            <div className="flex flex-col items-end gap-1">
+                              <Button
+                                size="sm"
+                                disabled={
+                                  actionLoadingId === run.snapshotId ||
+                                  (run.pendingAdjustmentCount ?? 0) > 0
+                                }
+                                onClick={() => handleListAction(run.snapshotId, "approve")}
+                                className="h-10 px-4 rounded-xl font-bold bg-brand-600 shadow-md shadow-brand-500/10"
+                              >
+                                {actionLoadingId === run.snapshotId ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : t("settlements.approveAction")}
+                              </Button>
+                              {(run.pendingAdjustmentCount ?? 0) > 0 && (
+                                <span className="text-xs text-orange-600 font-medium whitespace-nowrap">
+                                  มีปรับยอดค้าง {run.pendingAdjustmentCount} รายการ
+                                </span>
+                              )}
+                            </div>
                           </>
                         )}
                       </div>

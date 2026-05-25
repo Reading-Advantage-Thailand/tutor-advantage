@@ -495,6 +495,44 @@ export async function approveSettlement(
       });
     }
 
+    // Pre-flight: verify run exists and is SUBMITTED before checking adjustments
+    const run = await prisma.settlementRun.findUnique({
+      where: { settlementRunId: snapshotId },
+      select: { periodMonth: true, status: true },
+    });
+    if (!run) {
+      return res.status(404).json({
+        error: { code: "NOT_FOUND", message: "Settlement run not found", requestId: req.id },
+      });
+    }
+    if (run.status !== "SUBMITTED") {
+      return res.status(400).json({
+        error: {
+          code: "INVALID_STATUS",
+          message: "Settlement run must be in SUBMITTED status to approve",
+          requestId: req.id,
+        },
+      });
+    }
+
+    // Block approval if there are pending adjustments for the same period
+    const pendingAdjCount = await prisma.adjustment.count({
+      where: {
+        status: "PENDING",
+        settlementRun: { periodMonth: run.periodMonth },
+      },
+    });
+    if (pendingAdjCount > 0) {
+      return res.status(409).json({
+        error: {
+          code: "PENDING_ADJUSTMENTS_EXIST",
+          message: `ไม่สามารถอนุมัติได้ — มีการปรับยอด ${pendingAdjCount} รายการที่ยังรออนุมัติสำหรับรอบนี้ กรุณา approve หรือ reject ก่อน`,
+          pendingCount: pendingAdjCount,
+          requestId: req.id,
+        },
+      });
+    }
+
     const approvedRun = await SettlementService.approveSettlement(
       snapshotId,
       userId,
@@ -562,6 +600,23 @@ export async function getSettlements(req: AuthenticatedRequest, res: Response) {
       },
     });
 
+    // Batch-count pending adjustments per periodMonth (single query, no N+1)
+    const periodMonths = [...new Set(runs.map((r) => r.periodMonth))];
+    const pendingAdjs = await prisma.adjustment.findMany({
+      where: {
+        status: "PENDING",
+        settlementRun: { periodMonth: { in: periodMonths } },
+      },
+      include: { settlementRun: { select: { periodMonth: true } } },
+    });
+    const pendingAdjByPeriod = new Map<string, number>();
+    for (const adj of pendingAdjs) {
+      if (adj.settlementRun) {
+        const pm = adj.settlementRun.periodMonth;
+        pendingAdjByPeriod.set(pm, (pendingAdjByPeriod.get(pm) ?? 0) + 1);
+      }
+    }
+
     const mapped = runs.map((r) => ({
       snapshotId: r.settlementRunId,
       periodMonth: r.periodMonth,
@@ -571,6 +626,7 @@ export async function getSettlements(req: AuthenticatedRequest, res: Response) {
       approvedBy: r.approvedBy,
       approvedAt: r.approvedAt,
       payoutLineCount: r._count.payoutLines,
+      pendingAdjustmentCount: pendingAdjByPeriod.get(r.periodMonth) ?? 0,
     }));
 
     return res.status(200).json({ settlements: mapped });
