@@ -35,6 +35,7 @@ type EarningsResponse = {
   currentProjection: {
     directSales: number;
     networkBonus: number;
+    badgeBonus?: number;
     clawback: number;
     total: number;
   };
@@ -82,6 +83,7 @@ const statusMap: Record<string, { label: string; className: string }> = {
 const emptyEarnings: EarningsResponse["currentProjection"] = {
   directSales: 0,
   networkBonus: 0,
+  badgeBonus: 0,
   clawback: 0,
   total: 0,
 };
@@ -186,6 +188,19 @@ export default async function EarningsPage() {
                   </div>
                 </div>
               </div>
+
+              {(earnings.badgeBonus ?? 0) > 0 && (
+                <div className="mt-4 flex items-center justify-between rounded-2xl border border-amber-500/20 bg-amber-500/5 backdrop-blur-sm px-4 py-3 animate-scale-in">
+                  <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-500" />
+                    {t("dashboardEarnings.badgeBonus")}
+                  </span>
+                  <div className="flex items-center text-lg font-black text-amber-600 dark:text-amber-400">
+                    <span>+</span>
+                    <AnimatedCurrencyCounter value={earnings.badgeBonus ?? 0} />
+                  </div>
+                </div>
+              )}
 
               {earnings.clawback !== 0 && (
                 <div className="mt-4 flex items-center justify-between rounded-2xl bg-destructive/5 border border-destructive/15 px-4 py-3 text-sm animate-scale-in">
