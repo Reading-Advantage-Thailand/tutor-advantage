@@ -40,12 +40,34 @@ import {
   Info,
   Eye,
   Loader2,
+  UserCircle,
 } from "lucide-react";
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      onClick={() => {
+        navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      }}
+      className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+      title="คัดลอก ID"
+    >
+      {copied
+        ? <Check className="h-3 w-3 text-emerald-500" />
+        : <Copy className="h-3 w-3" />}
+    </button>
+  );
+}
 import { t } from "@/lib/i18n";
 
 interface PayoutLineRow {
   payoutLineId: string;
   tutorUserId: string;
+  tutorName: string | null;
+  tutorEmail: string | null;
   grossVolumeTHB: number;
   payoutRate: number;
   grossPayoutTHB: number;
@@ -75,6 +97,15 @@ export interface SettlementPreview {
   approvedAt?: string;
   payoutLineCount?: number;
 }
+
+const ELIGIBILITY_CONFIG: Record<string, { label: string; className: string }> = {
+  ELIGIBLE:                  { label: "ผ่านเกณฑ์",               className: "bg-emerald-500/10 text-emerald-600 border border-emerald-500/30" },
+  ELIGIBLE_ADJUSTED:         { label: "ผ่าน + ปรับยอด",          className: "bg-teal-500/10 text-teal-600 border border-teal-500/30" },
+  ELIGIBLE_BASE:             { label: "ผ่าน (ค่าฐาน)",           className: "bg-emerald-500/10 text-emerald-600 border border-emerald-500/30" },
+  ELIGIBLE_BASE_ADJUSTED:    { label: "ผ่าน (ค่าฐาน+ปรับยอด)", className: "bg-teal-500/10 text-teal-600 border border-teal-500/30" },
+  INELIGIBLE_NO_PV:          { label: "ไม่ผ่าน (ไม่มียอดขาย)",  className: "bg-red-500/10 text-red-500 border border-red-500/30" },
+  ADJUSTMENT_ONLY:           { label: "ปรับยอดเท่านั้น",         className: "bg-amber-500/10 text-amber-600 border border-amber-500/30" },
+};
 
 const STATUS_CONFIG: Record<
   string,
@@ -696,8 +727,26 @@ export default function SettlementsPage() {
                           i % 2 === 0 ? "bg-background" : "bg-muted/10"
                         }`}
                       >
-                        <td className="px-4 py-3 font-mono text-[11px] text-muted-foreground">
-                          {row.tutorUserId.slice(0, 8)}…
+                        <td className="px-4 py-3">
+                          <div className="flex flex-col gap-0.5 min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <UserCircle className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                              <span className="font-medium text-xs text-foreground truncate max-w-[140px]">
+                                {row.tutorName ?? <span className="italic text-muted-foreground">ไม่มีชื่อ</span>}
+                              </span>
+                            </div>
+                            {row.tutorEmail && (
+                              <p className="text-[10px] text-muted-foreground truncate max-w-[160px] pl-5">
+                                {row.tutorEmail}
+                              </p>
+                            )}
+                            <div className="flex items-center gap-1 pl-5">
+                              <span className="font-mono text-[10px] text-muted-foreground/70">
+                                {row.tutorUserId.slice(0, 8)}…
+                              </span>
+                              <CopyButton text={row.tutorUserId} />
+                            </div>
+                          </div>
                         </td>
                         <td className="px-4 py-3 text-right tabular-nums">
                           {row.grossVolumeTHB.toLocaleString("th-TH", { minimumFractionDigits: 2 })}
@@ -722,13 +771,17 @@ export default function SettlementsPage() {
                           {row.netPayoutTHB.toLocaleString("th-TH", { minimumFractionDigits: 2 })}
                         </td>
                         <td className="px-4 py-3 text-center">
-                          <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                            row.eligibilityStatus === "ELIGIBLE"
-                              ? "bg-emerald-500/10 text-emerald-600"
-                              : "bg-red-500/10 text-red-500"
-                          }`}>
-                            {row.eligibilityStatus}
-                          </span>
+                          {(() => {
+                            const ec = ELIGIBILITY_CONFIG[row.eligibilityStatus] ?? {
+                              label: row.eligibilityStatus,
+                              className: "bg-muted text-muted-foreground border border-border",
+                            };
+                            return (
+                              <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap ${ec.className}`}>
+                                {ec.label}
+                              </span>
+                            );
+                          })()}
                         </td>
                         <td className="px-4 py-3 font-mono text-[11px] text-muted-foreground">
                           {row.documentNumber ?? "—"}

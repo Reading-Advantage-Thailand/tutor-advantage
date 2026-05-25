@@ -311,7 +311,6 @@ export async function getSettlementLines(
       include: {
         payoutLines: {
           include: {
-            settlementRun: false,
             payoutDocument: { select: { documentNumber: true, status: true } },
           },
           orderBy: { netPayoutMinor: "desc" },
@@ -323,18 +322,31 @@ export async function getSettlementLines(
       return res.status(404).json({ error: { code: "NOT_FOUND", message: "Settlement run not found" } });
     }
 
-    const lines = run.payoutLines.map((l) => ({
-      payoutLineId: l.payoutLineId,
-      tutorUserId: l.tutorUserId,
-      grossVolumeTHB: Number(l.grossVolumeMinor) / 100,
-      payoutRate: Number(l.payoutRate),
-      grossPayoutTHB: Number(l.payoutAmountMinor) / 100,
-      badgeBonusTHB: Number(l.badgeBonusMinor) / 100,
-      whtTHB: Number(l.withholdingTaxMinor) / 100,
-      netPayoutTHB: Number(l.netPayoutMinor) / 100,
-      eligibilityStatus: l.eligibilityStatus,
-      documentNumber: l.payoutDocument?.documentNumber ?? null,
-    }));
+    // Batch-fetch tutor user info
+    const tutorIds = [...new Set(run.payoutLines.map((l) => l.tutorUserId))];
+    const tutors = await prisma.user.findMany({
+      where: { userId: { in: tutorIds } },
+      select: { userId: true, displayName: true, email: true },
+    });
+    const tutorMap = new Map(tutors.map((t) => [t.userId, t]));
+
+    const lines = run.payoutLines.map((l) => {
+      const tutor = tutorMap.get(l.tutorUserId);
+      return {
+        payoutLineId: l.payoutLineId,
+        tutorUserId: l.tutorUserId,
+        tutorName: tutor?.displayName ?? null,
+        tutorEmail: tutor?.email ?? null,
+        grossVolumeTHB: Number(l.grossVolumeMinor) / 100,
+        payoutRate: Number(l.payoutRate),
+        grossPayoutTHB: Number(l.payoutAmountMinor) / 100,
+        badgeBonusTHB: Number(l.badgeBonusMinor) / 100,
+        whtTHB: Number(l.withholdingTaxMinor) / 100,
+        netPayoutTHB: Number(l.netPayoutMinor) / 100,
+        eligibilityStatus: l.eligibilityStatus,
+        documentNumber: l.payoutDocument?.documentNumber ?? null,
+      };
+    });
 
     return res.status(200).json({
       snapshotId,
