@@ -18,6 +18,7 @@ export interface PayoutNode {
   payoutRate: number;
   payoutAmountMinor: bigint;
   eligibilityStatus: string;
+  verified: boolean;
 }
 
 export class SettlementService {
@@ -98,9 +99,10 @@ export class SettlementService {
 
     // 3. Build the organizational tree to calculate Group Volume (GV) and Payouts
     // For a real MLM tree, we need the upline structure.
+    // Load all active tutors for tree structure — verification checked per-node below
     const allUsers = await prisma.user.findMany({
       where: { role: "TUTOR", isActive: true },
-      select: { userId: true, sponsorTutorId: true },
+      select: { userId: true, sponsorTutorId: true, verificationStatus: true },
     });
 
     const nodes = new Map<string, PayoutNode>();
@@ -113,6 +115,7 @@ export class SettlementService {
         payoutRate: 0,
         payoutAmountMinor: 0n,
         eligibilityStatus: "ELIGIBLE_BASE",
+        verified: u.verificationStatus === "VERIFIED",
       });
     }
 
@@ -126,6 +129,7 @@ export class SettlementService {
           payoutRate: 0,
           payoutAmountMinor: 0n,
           eligibilityStatus: "ADJUSTMENT_ONLY",
+          verified: false, // no user record → treat as unverified
         });
       }
     }
@@ -201,6 +205,14 @@ export class SettlementService {
     for (const node of nodes.values()) {
       if (!node.sponsorId) {
         calculatePayouts(node.userId);
+      }
+    }
+
+    // Override: unverified tutors cannot receive payout regardless of calculated amount
+    for (const node of nodes.values()) {
+      if (!node.verified) {
+        node.payoutAmountMinor = 0n;
+        node.eligibilityStatus = "INELIGIBLE_NOT_VERIFIED";
       }
     }
 

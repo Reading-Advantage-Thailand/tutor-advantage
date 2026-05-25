@@ -104,6 +104,7 @@ const ELIGIBILITY_CONFIG: Record<string, { label: string; className: string }> =
   ELIGIBLE_BASE:             { label: "ผ่าน (ค่าฐาน)",           className: "bg-emerald-500/10 text-emerald-600 border border-emerald-500/30" },
   ELIGIBLE_BASE_ADJUSTED:    { label: "ผ่าน (ค่าฐาน+ปรับยอด)", className: "bg-teal-500/10 text-teal-600 border border-teal-500/30" },
   INELIGIBLE_NO_PV:          { label: "ไม่ผ่าน (ไม่มียอดขาย)",  className: "bg-red-500/10 text-red-500 border border-red-500/30" },
+  INELIGIBLE_NOT_VERIFIED:   { label: "ไม่ผ่าน (ยังไม่ยืนยันตัวตน)", className: "bg-orange-500/10 text-orange-600 border border-orange-500/30" },
   ADJUSTMENT_ONLY:           { label: "ปรับยอดเท่านั้น",         className: "bg-amber-500/10 text-amber-600 border border-amber-500/30" },
 };
 
