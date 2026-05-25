@@ -80,18 +80,18 @@ export function DevToolbar() {
   };
 
   // PAGE-SPECIFIC quick actions
-  const pageActions: { key: string; label: string; icon: React.ReactNode; action: () => Promise<any> }[] = [];
+  const pageActions: { id: string; label: string; icon: React.ReactNode; action: () => Promise<any> }[] = [];
 
   if (pathname === "/" || pathname.startsWith("/settlements")) {
     pageActions.push(
       {
-        key: "settlement-current",
+        id: "settlement-current",
         label: `Settlement ${state?.currentMonth ?? "…"}`,
         icon: <ReceiptText className="h-3.5 w-3.5" />,
         action: () => devFetch("POST", "/v1/dev/actions/settlement", { periodMonth: state?.currentMonth }),
       },
       {
-        key: "settlement-prev",
+        id: "settlement-prev",
         label: `Settlement ${state?.prevMonth ?? "…"} (prev)`,
         icon: <ReceiptText className="h-3.5 w-3.5" />,
         action: () => devFetch("POST", "/v1/dev/actions/settlement", { periodMonth: state?.prevMonth }),
@@ -101,7 +101,7 @@ export function DevToolbar() {
 
   if (pathname.startsWith("/adjustments")) {
     pageActions.push({
-      key: "adj-seed",
+      id: "adj-seed",
       label: "Create test adjustment (฿100)",
       icon: <FilePenLine className="h-3.5 w-3.5" />,
       action: () => devFetch("POST", "/v1/dev/actions/adjustment", { amountTHB: 100 }),
@@ -110,7 +110,7 @@ export function DevToolbar() {
 
   if (pathname.startsWith("/fraud")) {
     pageActions.push({
-      key: "fraud-seed",
+      id: "fraud-seed",
       label: "Create fraud flag (HIGH)",
       icon: <ShieldAlert className="h-3.5 w-3.5" />,
       action: () => devFetch("POST", "/v1/dev/actions/fraud-flag", {}),
@@ -120,37 +120,37 @@ export function DevToolbar() {
   // GLOBAL actions
   const globalActions = [
     {
-      key: "settlement-current-g",
+      id: "settlement-current-g",
       label: `Run settlement ${state?.currentMonth ?? ""}`,
       icon: <ReceiptText className="h-3.5 w-3.5" />,
       action: () => devFetch("POST", "/v1/dev/actions/settlement", { periodMonth: state?.currentMonth }),
     },
     {
-      key: "adj-seed-g",
+      id: "adj-seed-g",
       label: "Seed adjustment",
       icon: <FilePenLine className="h-3.5 w-3.5" />,
       action: () => devFetch("POST", "/v1/dev/actions/adjustment", {}),
     },
     {
-      key: "fraud-seed-g",
+      id: "fraud-seed-g",
       label: "Seed fraud flag",
       icon: <ShieldAlert className="h-3.5 w-3.5" />,
       action: () => devFetch("POST", "/v1/dev/actions/fraud-flag", {}),
     },
     {
-      key: "purge-fraud",
+      id: "purge-fraud",
       label: "Purge [DEV] fraud flags",
       icon: <Trash2 className="h-3.5 w-3.5 text-red-500" />,
       action: () => devFetch("POST", "/v1/dev/actions/purge", { resource: "fraud" }),
     },
     {
-      key: "purge-adj",
+      id: "purge-adj",
       label: "Purge DEV_TOOL adjustments",
       icon: <Trash2 className="h-3.5 w-3.5 text-red-500" />,
       action: () => devFetch("POST", "/v1/dev/actions/purge", { resource: "adjustments" }),
     },
     {
-      key: "purge-settlements",
+      id: "purge-settlements",
       label: "Purge PENDING DEV settlements",
       icon: <Trash2 className="h-3.5 w-3.5 text-red-500" />,
       action: () => devFetch("POST", "/v1/dev/actions/purge", { resource: "settlements" }),
@@ -228,8 +228,8 @@ export function DevToolbar() {
                   <Zap className="h-3 w-3" /> Page Actions
                 </p>
                 <div className="space-y-1.5">
-                  {pageActions.map((a) => (
-                    <ActionBtn key={a.key} {...a} busy={busy} onRun={(k, l, fn) => run(k, l, fn)} />
+                  {pageActions.map(({ id, ...rest }) => (
+                    <ActionBtn key={id} id={id} {...rest} busy={busy} onRun={(k, l, fn) => run(k, l, fn)} />
                   ))}
                 </div>
               </div>
@@ -239,8 +239,8 @@ export function DevToolbar() {
             <div className="px-4 py-3 border-b border-border/50">
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Global Actions</p>
               <div className="space-y-1.5">
-                {globalActions.map((a) => (
-                  <ActionBtn key={a.key} {...a} busy={busy} onRun={(k, l, fn) => run(k, l, fn)} />
+                {globalActions.map(({ id, ...rest }) => (
+                  <ActionBtn key={id} id={id} {...rest} busy={busy} onRun={(k, l, fn) => run(k, l, fn)} />
                 ))}
               </div>
             </div>
@@ -305,25 +305,24 @@ export function DevToolbar() {
 }
 
 function ActionBtn({
-  key: _key,
+  id,
   label,
   icon,
   action,
   busy,
   onRun,
 }: {
-  key: string;
+  id: string;
   label: string;
   icon: React.ReactNode;
   action: () => Promise<any>;
   busy: string | null;
-  onRun: (key: string, label: string, fn: () => Promise<any>) => void;
+  onRun: (id: string, label: string, fn: () => Promise<any>) => void;
 }) {
-  const myKey = label; // use label as unique key for busy state
-  const isBusy = busy === myKey;
+  const isBusy = busy === id;
   return (
     <button
-      onClick={() => onRun(myKey, label, action)}
+      onClick={() => onRun(id, label, action)}
       disabled={busy !== null}
       className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-card border border-border/60 hover:border-orange-500/50 hover:bg-orange-500/5 text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left"
     >
