@@ -45,11 +45,18 @@ export function calculateCommissionRate(volumeTHB: number) {
   return 0.4 + volumeTHB / 200000;
 }
 
+// Tier breakpoints for nextTarget display — rate formula is unchanged.
+// Linear section (below ฿20K): steps every ฿2–5K.
+// Exponential section (฿20K+): ~1.5–2× steps for visible progress.
+const TIER_BREAKPOINTS = [
+  2_000, 5_000, 10_000, 15_000, 20_000,
+  30_000, 50_000, 70_000, 100_000,
+  150_000, 200_000, 300_000, 500_000,
+];
+
 export function calculateCommissionInfo(volumeTHB: number) {
-  let nextTarget = 20000;
-  if (volumeTHB >= 20000 && volumeTHB < 100000) nextTarget = 100000;
-  else if (volumeTHB >= 100000 && volumeTHB < 500000) nextTarget = 500000;
-  else if (volumeTHB >= 500000) nextTarget = 0;
+  const nextTarget =
+    TIER_BREAKPOINTS.find((t) => t > volumeTHB) ?? 0;
 
   return {
     rate: calculateCommissionRate(volumeTHB),
