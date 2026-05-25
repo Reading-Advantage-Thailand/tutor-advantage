@@ -29,7 +29,7 @@ export const devListUsers = async (_req: Request, res: Response) => {
         createdAt: true,
         updatedAt: true,
         oauthIdentities: {
-          select: { provider: true, providerUserId: true },
+          select: { provider: true, providerSubject: true },
         },
       },
       orderBy: { createdAt: "desc" },
@@ -214,11 +214,14 @@ export const devRunSettlement = async (req: Request, res: Response) => {
     }
 
     const preview = await SettlementService.previewSettlement(periodMonth, "DEV_TOOL");
+    const lineCount = await prisma.payoutLine.count({
+      where: { settlementRunId: preview.snapshotId },
+    });
     res.status(201).json({
       message: `Settlement preview created for ${periodMonth}`,
       settlementRunId: preview.snapshotId,
       periodMonth,
-      tutorCount: preview.lines?.length ?? 0,
+      tutorCount: lineCount,
       skipped: false,
     });
   } catch (err: any) {
