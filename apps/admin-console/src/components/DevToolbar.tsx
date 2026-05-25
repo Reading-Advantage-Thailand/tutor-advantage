@@ -154,6 +154,17 @@ export function DevToolbar() {
       icon: <Trash2 className="h-3.5 w-3.5 text-red-500" />,
       action: () => devFetch("POST", "/v1/dev/actions/purge", { resource: "settlements" }),
     },
+    {
+      id: "purge-all-settlements",
+      label: "⚠️ ล้างข้อมูล settlement ทั้งหมด",
+      icon: <Trash2 className="h-3.5 w-3.5 text-red-600" />,
+      action: () => {
+        if (!confirm("ล้างข้อมูล settlement ทั้งหมดจริงไหม? (PayoutLine + PayoutDocument จะถูกลบด้วย)")) {
+          return Promise.resolve(null);
+        }
+        return devFetch("POST", "/v1/dev/actions/purge", { resource: "all-settlements" });
+      },
+    },
   ];
 
   return (

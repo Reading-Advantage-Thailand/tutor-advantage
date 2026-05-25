@@ -340,6 +340,22 @@ export const devPurge = async (req: Request, res: Response) => {
         results.settlementRuns = r.count;
       }
     }
+    if (resource === "all-settlements") {
+      // Nuclear option — wipe ALL settlement data regardless of status/creator
+      const allRuns = await prisma.settlementRun.findMany({
+        select: { settlementRunId: true },
+      });
+      const ids = allRuns.map((r) => r.settlementRunId);
+      if (ids.length) {
+        await prisma.payoutDocument.deleteMany({ where: { payoutLine: { settlementRunId: { in: ids } } } });
+        await prisma.payoutLine.deleteMany({ where: { settlementRunId: { in: ids } } });
+        await prisma.adjustment.deleteMany({ where: { settlementRunId: { in: ids } } });
+        const r = await prisma.settlementRun.deleteMany({
+          where: { settlementRunId: { in: ids } },
+        });
+        results.settlementRuns = r.count;
+      }
+    }
     res.json({ success: true, deleted: results });
   } catch (err: any) {
     console.error("devPurge error:", err);
