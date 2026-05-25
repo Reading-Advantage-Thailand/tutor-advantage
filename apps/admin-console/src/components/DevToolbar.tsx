@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Terminal, X, ChevronUp, ChevronDown, RefreshCw,
@@ -41,11 +41,11 @@ export function DevToolbar() {
   const [state, setState] = useState<DevState | null>(null);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
-  let logId = 0;
+  const logIdRef = useRef(0);
 
   const log = (type: LogEntry["type"], msg: string) => {
     const ts = new Date().toLocaleTimeString("th-TH");
-    setLogs((prev) => [{ id: ++logId, type, msg, ts }, ...prev].slice(0, 30));
+    setLogs((prev) => [{ id: ++logIdRef.current, type, msg, ts }, ...prev].slice(0, 30));
   };
 
   const loadState = useCallback(async () => {

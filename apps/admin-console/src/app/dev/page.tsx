@@ -67,6 +67,74 @@ const BLANK_FORM = {
   sponsorTutorId: "",
 };
 
+// Defined OUTSIDE DevPage — prevents unmount/remount on every keystroke
+function FormFields({
+  form,
+  setForm,
+}: {
+  form: typeof BLANK_FORM;
+  setForm: (f: typeof BLANK_FORM) => void;
+}) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="space-y-1">
+        <Label className="text-xs">Role *</Label>
+        <Select value={form.role} onValueChange={(v) => setForm({ ...form, role: v as Role })}>
+          <SelectTrigger className="h-8 text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {ROLES.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-1">
+        <Label className="text-xs">Display Name</Label>
+        <Input className="h-8 text-xs" value={form.displayName} onChange={(e) => setForm({ ...form, displayName: e.target.value })} placeholder="e.g. John Doe" />
+      </div>
+      <div className="space-y-1">
+        <Label className="text-xs">Email</Label>
+        <Input className="h-8 text-xs" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="email@example.com" />
+      </div>
+      <div className="space-y-1">
+        <Label className="text-xs">Phone</Label>
+        <Input className="h-8 text-xs" value={form.phoneNumber} onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })} placeholder="+66812345678" />
+      </div>
+      <div className="space-y-1">
+        <Label className="text-xs">isActive</Label>
+        <Select value={form.isActive ? "true" : "false"} onValueChange={(v) => setForm({ ...form, isActive: v === "true" })}>
+          <SelectTrigger className="h-8 text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="true">Active</SelectItem>
+            <SelectItem value="false">Inactive</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-1">
+        <Label className="text-xs">Verification Status</Label>
+        <Select value={form.verificationStatus} onValueChange={(v) => setForm({ ...form, verificationStatus: v })}>
+          <SelectTrigger className="h-8 text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {VERIFICATION_STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-1 sm:col-span-2">
+        <Label className="text-xs">Verification Comment</Label>
+        <Input className="h-8 text-xs" value={form.verificationComment} onChange={(e) => setForm({ ...form, verificationComment: e.target.value })} placeholder="Rejection reason…" />
+      </div>
+      <div className="space-y-1 sm:col-span-2">
+        <Label className="text-xs">Sponsor Tutor ID (UUID)</Label>
+        <Input className="h-8 text-xs font-mono" value={form.sponsorTutorId} onChange={(e) => setForm({ ...form, sponsorTutorId: e.target.value })} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+      </div>
+    </div>
+  );
+}
+
 async function devFetch(url: string, options: RequestInit = {}) {
   const headers = new Headers(options.headers);
   if (!headers.has("Content-Type") && !(options.body instanceof FormData)) {
@@ -207,72 +275,6 @@ export default function DevPage() {
       (u.email || "").toLowerCase().includes(q)
     );
   });
-
-  // ── Shared form fields ─────────────────────────────────────────────────────
-  const FormFields = ({
-    form,
-    setForm,
-  }: {
-    form: typeof BLANK_FORM;
-    setForm: (f: typeof BLANK_FORM) => void;
-  }) => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      <div className="space-y-1">
-        <Label className="text-xs">Role *</Label>
-        <Select value={form.role} onValueChange={(v) => setForm({ ...form, role: v as Role })}>
-          <SelectTrigger className="h-8 text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {ROLES.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="space-y-1">
-        <Label className="text-xs">Display Name</Label>
-        <Input className="h-8 text-xs" value={form.displayName} onChange={(e) => setForm({ ...form, displayName: e.target.value })} placeholder="e.g. John Doe" />
-      </div>
-      <div className="space-y-1">
-        <Label className="text-xs">Email</Label>
-        <Input className="h-8 text-xs" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="email@example.com" />
-      </div>
-      <div className="space-y-1">
-        <Label className="text-xs">Phone</Label>
-        <Input className="h-8 text-xs" value={form.phoneNumber} onChange={(e) => setForm({ ...form, phoneNumber: e.target.value })} placeholder="+66812345678" />
-      </div>
-      <div className="space-y-1">
-        <Label className="text-xs">isActive</Label>
-        <Select value={form.isActive ? "true" : "false"} onValueChange={(v) => setForm({ ...form, isActive: v === "true" })}>
-          <SelectTrigger className="h-8 text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="true">Active</SelectItem>
-            <SelectItem value="false">Inactive</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="space-y-1">
-        <Label className="text-xs">Verification Status</Label>
-        <Select value={form.verificationStatus} onValueChange={(v) => setForm({ ...form, verificationStatus: v })}>
-          <SelectTrigger className="h-8 text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {VERIFICATION_STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="space-y-1 sm:col-span-2">
-        <Label className="text-xs">Verification Comment</Label>
-        <Input className="h-8 text-xs" value={form.verificationComment} onChange={(e) => setForm({ ...form, verificationComment: e.target.value })} placeholder="Rejection reason…" />
-      </div>
-      <div className="space-y-1 sm:col-span-2">
-        <Label className="text-xs">Sponsor Tutor ID (UUID)</Label>
-        <Input className="h-8 text-xs font-mono" value={form.sponsorTutorId} onChange={(e) => setForm({ ...form, sponsorTutorId: e.target.value })} placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
-      </div>
-    </div>
-  );
 
   if (process.env.NODE_ENV === "production") {
     return (
