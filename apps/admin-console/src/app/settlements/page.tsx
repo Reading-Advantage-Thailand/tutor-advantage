@@ -128,6 +128,13 @@ const STATUS_CONFIG: Record<
     className:
       "border-amber-500/40 text-amber-600 dark:text-amber-400 bg-amber-500/10",
   },
+  SUBMITTED: {
+    label: "รออนุมัติ Finance",
+    variant: "outline",
+    icon: ShieldCheck,
+    className:
+      "border-blue-500/40 text-blue-600 dark:text-blue-400 bg-blue-500/10",
+  },
   APPROVED: {
     label: t("settlements.approved"),
     variant: "outline",
@@ -200,26 +207,27 @@ export default function SettlementsPage() {
     }
   };
 
-  const handleApprove = async () => {
+  /** Admin: submit DRAFT → SUBMITTED (from result card) */
+  const handleSubmitForReview = async () => {
     if (!result?.snapshotId) return;
     setLoading(true);
     setError("");
     try {
-      await fetchWithAuth(`/v1/settlements/${result.snapshotId}/approve`, {
+      await fetchWithAuth(`/v1/settlements/${result.snapshotId}/submit`, {
         method: "POST",
       });
-      setSuccess(t("settlements.approveSuccess"));
-      setResult({ ...result, status: "APPROVED" });
+      setSuccess("ส่งรออนุมัติ Finance Checker เรียบร้อยแล้ว");
+      setResult({ ...result, status: "SUBMITTED" });
       loadSettlements();
     } catch (error) {
-      const err = error as Error;
-      setError(err.message);
+      setError((error as Error).message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleReject = async () => {
+  /** Admin: cancel own DRAFT (from result card) */
+  const handleCancelDraft = async () => {
     if (!result?.snapshotId) return;
     setLoading(true);
     setError("");
@@ -231,32 +239,33 @@ export default function SettlementsPage() {
       setResult({ ...result, status: "REJECTED" });
       loadSettlements();
     } catch (error) {
-      const err = error as Error;
-      setError(err.message);
+      setError((error as Error).message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleListAction = async (id: string, action: "approve" | "reject") => {
+  /** List item actions — covers submit (admin), approve/reject (finance checker) */
+  const handleListAction = async (
+    id: string,
+    action: "submit" | "approve" | "reject",
+  ) => {
     setActionLoadingId(id);
     try {
-      await fetchWithAuth(`/v1/settlements/${id}/${action}`, {
-        method: "POST",
-      });
+      await fetchWithAuth(`/v1/settlements/${id}/${action}`, { method: "POST" });
+      const newStatus =
+        action === "submit" ? "SUBMITTED" : action === "approve" ? "APPROVED" : "REJECTED";
       setSuccess(
-        `${t("settlements.actionSuccessPrefix")} ${action === "approve" ? t("settlements.approveAction") : t("settlements.rejectAction")} ${t("settlements.successSuffix")}`,
+        action === "submit"
+          ? "ส่งรออนุมัติ Finance Checker เรียบร้อยแล้ว"
+          : `${t("settlements.actionSuccessPrefix")} ${action === "approve" ? t("settlements.approveAction") : t("settlements.rejectAction")} ${t("settlements.successSuffix")}`,
       );
       loadSettlements();
       if (result?.snapshotId === id) {
-        setResult({
-          ...result,
-          status: action === "approve" ? "APPROVED" : "REJECTED",
-        });
+        setResult({ ...result, status: newStatus });
       }
     } catch (error) {
-      const err = error as Error;
-      setError(err.message);
+      setError((error as Error).message);
     } finally {
       setActionLoadingId(null);
     }
@@ -301,8 +310,10 @@ export default function SettlementsPage() {
     : null;
 
   const isDraft = result?.status === "DRAFT";
+  const isSubmitted = result?.status === "SUBMITTED";
   const isApproved = result?.status === "APPROVED";
   const isRejected = result?.status === "REJECTED";
+  const isFinanceChecker = userRole === "FINANCE_CHECKER";
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto w-full animate-in fade-in duration-500">
@@ -311,16 +322,16 @@ export default function SettlementsPage() {
         <p className="text-muted-foreground font-medium">{t("settlements.description")}</p>
       </div>
 
-      {/* FINANCE_CHECKER notice — รอ Admin preview ก่อน */}
-      {userRole === "FINANCE_CHECKER" && !listLoading && (
-        list.some((r) => r.status === "DRAFT") ? (
-          <Alert className="rounded-2xl border-2 border-brand-500/30 bg-brand-500/5 shadow-md">
-            <CheckCircle2 className="h-5 w-5 text-brand-600" />
-            <AlertTitle className="font-bold text-brand-700 dark:text-brand-400">
-              {t("settlements.checkerHasDraftTitle")}
+      {/* FINANCE_CHECKER notice — รอ Admin submit ก่อน */}
+      {isFinanceChecker && !listLoading && (
+        list.some((r) => r.status === "SUBMITTED") ? (
+          <Alert className="rounded-2xl border-2 border-blue-500/30 bg-blue-500/5 shadow-md">
+            <ShieldCheck className="h-5 w-5 text-blue-600" />
+            <AlertTitle className="font-bold text-blue-700 dark:text-blue-400">
+              มีรายการรออนุมัติจาก Admin
             </AlertTitle>
-            <AlertDescription className="font-medium text-brand-700/80 dark:text-brand-400/80">
-              {t("settlements.checkerHasDraftDescription")}
+            <AlertDescription className="font-medium text-blue-700/80 dark:text-blue-400/80">
+              ตรวจสอบรายละเอียดในรายการด้านล่าง แล้วกด "อนุมัติ & โอนเงิน" เพื่อดำเนินการ
             </AlertDescription>
           </Alert>
         ) : (
@@ -330,7 +341,7 @@ export default function SettlementsPage() {
               {t("settlements.checkerWaitTitle")}
             </AlertTitle>
             <AlertDescription className="font-medium text-amber-700/80 dark:text-amber-400/80">
-              {t("settlements.checkerWaitDescription")}
+              รอ Admin คำนวณและส่งรายการเพื่อตรวจสอบ
             </AlertDescription>
           </Alert>
         )
@@ -466,34 +477,37 @@ export default function SettlementsPage() {
             </div>
             
             <div className="flex items-center gap-3 w-full md:w-auto">
-               {/* Reject Button */}
-               <Button
-                onClick={handleReject}
-                disabled={loading || !isDraft}
-                variant="outline"
-                className="flex-1 md:flex-none h-12 rounded-xl font-bold border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-700"
-              >
-                <XCircle className="h-5 w-5 mr-2" />
-                {t("settlements.rejectAction")}
-              </Button>
-              {/* Approve Button */}
-              <Button
-                onClick={handleApprove}
-                disabled={loading || !isDraft}
-                className={`flex-1 md:flex-none h-12 px-8 rounded-xl font-bold shadow-lg transition-all ${isDraft ? 'bg-brand-600 hover:bg-brand-700 shadow-brand-500/20' : ''}`}
-              >
-                {isApproved ? (
-                   <>
-                    <CheckCircle2 className="h-5 w-5 mr-2" />
-                    {t("settlements.approved")}
-                  </>
-                ) : (
-                  <>
-                    <TrendingUp className="h-5 w-5 mr-2" />
-                    {t("settlements.approveAndTransfer")}
-                  </>
-                )}
-              </Button>
+              {/* ADMIN: ยกเลิก DRAFT + ส่งรออนุมัติ */}
+              {!isFinanceChecker && (
+                <>
+                  <Button
+                    onClick={handleCancelDraft}
+                    disabled={loading || !isDraft}
+                    variant="outline"
+                    className="flex-1 md:flex-none h-12 rounded-xl font-bold border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-700"
+                  >
+                    <XCircle className="h-5 w-5 mr-2" />
+                    ยกเลิก
+                  </Button>
+                  <Button
+                    onClick={handleSubmitForReview}
+                    disabled={loading || !isDraft}
+                    className="flex-1 md:flex-none h-12 px-8 rounded-xl font-bold shadow-lg bg-blue-600 hover:bg-blue-700 shadow-blue-500/20 disabled:opacity-50"
+                  >
+                    {isSubmitted ? (
+                      <>
+                        <ShieldCheck className="h-5 w-5 mr-2" />
+                        ส่งแล้ว
+                      </>
+                    ) : (
+                      <>
+                        <TrendingUp className="h-5 w-5 mr-2" />
+                        ส่งรออนุมัติ Finance
+                      </>
+                    )}
+                  </Button>
+                </>
+              )}
             </div>
           </CardFooter>
         </Card>
@@ -529,16 +543,17 @@ export default function SettlementsPage() {
           {list.map((run) => {
             const sc = STATUS_CONFIG[run.status] ?? STATUS_CONFIG.DRAFT;
             const isItemDraft = run.status === "DRAFT";
+            const isItemSubmitted = run.status === "SUBMITTED";
 
             return (
               <Card
                 key={run.snapshotId}
-                className={`group overflow-hidden border-none shadow-sm rounded-2xl transition-all hover:shadow-md hover:ring-1 hover:ring-brand-500/20 ${isItemDraft ? "bg-amber-50/20 dark:bg-amber-900/10" : "bg-card"}`}
+                className={`group overflow-hidden border-none shadow-sm rounded-2xl transition-all hover:shadow-md hover:ring-1 hover:ring-brand-500/20 ${isItemDraft ? "bg-amber-50/20 dark:bg-amber-900/10" : isItemSubmitted ? "bg-blue-50/20 dark:bg-blue-900/10" : "bg-card"}`}
               >
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-center gap-4">
-                      <div className={`p-3 rounded-2xl ${isItemDraft ? 'bg-amber-500/10 dark:bg-amber-900/20 text-amber-600' : 'bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400'}`}>
+                      <div className={`p-3 rounded-2xl ${isItemDraft ? 'bg-amber-500/10 dark:bg-amber-900/20 text-amber-600' : isItemSubmitted ? 'bg-blue-500/10 dark:bg-blue-900/20 text-blue-600' : 'bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400'}`}>
                         <FileText className="h-6 w-6" />
                       </div>
                       <div>
@@ -594,15 +609,42 @@ export default function SettlementsPage() {
                             CSV
                           </Button>
                         )}
-                        {isItemDraft && (
+                        {/* Admin: ส่งรออนุมัติ (DRAFT เท่านั้น) */}
+                        {isItemDraft && !isFinanceChecker && (
                           <Button
                             size="sm"
                             disabled={actionLoadingId === run.snapshotId}
-                            onClick={() => handleListAction(run.snapshotId, "approve")}
-                            className="h-10 px-4 rounded-xl font-bold bg-brand-600 shadow-md shadow-brand-500/10"
+                            onClick={() => handleListAction(run.snapshotId, "submit")}
+                            className="h-10 px-4 rounded-xl font-bold bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/10"
                           >
-                            {t("settlements.approveAction")}
+                            {actionLoadingId === run.snapshotId ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : "ส่งรออนุมัติ"}
                           </Button>
+                        )}
+                        {/* Finance Checker: อนุมัติ + ปฏิเสธ (SUBMITTED เท่านั้น) */}
+                        {isItemSubmitted && isFinanceChecker && (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled={actionLoadingId === run.snapshotId}
+                              onClick={() => handleListAction(run.snapshotId, "reject")}
+                              className="h-10 rounded-xl font-bold border-red-200 text-red-600 hover:bg-red-50"
+                            >
+                              {t("settlements.rejectAction")}
+                            </Button>
+                            <Button
+                              size="sm"
+                              disabled={actionLoadingId === run.snapshotId}
+                              onClick={() => handleListAction(run.snapshotId, "approve")}
+                              className="h-10 px-4 rounded-xl font-bold bg-brand-600 shadow-md shadow-brand-500/10"
+                            >
+                              {actionLoadingId === run.snapshotId ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : t("settlements.approveAction")}
+                            </Button>
+                          </>
                         )}
                       </div>
                     </div>

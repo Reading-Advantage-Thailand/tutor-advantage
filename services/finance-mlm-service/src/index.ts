@@ -25,6 +25,7 @@ import {
 } from "./controllers/paymentController";
 import {
   previewSettlement,
+  submitSettlement,
   approveSettlement,
   rejectSettlement,
   exportSettlementCsv,
@@ -161,6 +162,13 @@ app.post(
   authMiddleware,
   auditTrailMiddleware("PREVIEW_SETTLEMENT"),
   previewSettlement,
+);
+
+app.post(
+  "/v1/settlements/:snapshotId/submit",
+  authMiddleware,
+  auditTrailMiddleware("SUBMIT_SETTLEMENT"),
+  submitSettlement,
 );
 
 app.post(

@@ -144,9 +144,10 @@ export async function previewSettlement(
 }
 
 /**
- * POST /v1/settlements/:snapshotId/reject
+ * POST /v1/settlements/:snapshotId/submit
+ * Admin submits a DRAFT for Finance Checker review → SUBMITTED
  */
-export async function rejectSettlement(
+export async function submitSettlement(
   req: AuthenticatedRequest,
   res: Response,
 ) {
@@ -154,14 +155,11 @@ export async function rejectSettlement(
     const userId = req.user?.userId;
     const { snapshotId } = req.params;
 
-    if (
-      !userId ||
-      (req.user?.role !== "FINANCE_CHECKER" && req.user?.role !== "ADMIN")
-    ) {
+    if (!userId || req.user?.role !== "ADMIN") {
       return res.status(403).json({
         error: {
           code: "FORBIDDEN",
-          message: "Only authorized checkers can reject settlements",
+          message: "Only admins can submit settlements for review",
           requestId: req.id,
         },
       });
@@ -172,18 +170,81 @@ export async function rejectSettlement(
     });
     if (!run) {
       return res.status(404).json({
-        error: {
-          code: "NOT_FOUND",
-          message: "Settlement run not found",
-          requestId: req.id,
-        },
+        error: { code: "NOT_FOUND", message: "Settlement run not found", requestId: req.id },
       });
     }
     if (run.status !== "DRAFT") {
       return res.status(400).json({
         error: {
           code: "INVALID_STATUS",
-          message: "Settlement must be DRAFT to reject",
+          message: "Settlement must be DRAFT to submit",
+          requestId: req.id,
+        },
+      });
+    }
+
+    await prisma.settlementRun.update({
+      where: { settlementRunId: snapshotId },
+      data: { status: "SUBMITTED" },
+    });
+
+    await prisma.auditEvent.create({
+      data: {
+        actorId: userId,
+        action: "SUBMIT",
+        entityType: "SettlementRun",
+        entityId: snapshotId,
+        payload: { periodMonth: run.periodMonth },
+      },
+    });
+
+    return res.status(200).json({ message: "Settlement submitted for review" });
+  } catch (error: any) {
+    console.error("Submit Settlement Error:", error);
+    return res.status(500).json({
+      error: { code: "INTERNAL_SERVER_ERROR", message: "Could not submit settlement", requestId: req.id },
+    });
+  }
+}
+
+/**
+ * POST /v1/settlements/:snapshotId/reject
+ */
+export async function rejectSettlement(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  try {
+    const userId = req.user?.userId;
+    const { snapshotId } = req.params;
+
+    const role = req.user?.role;
+    if (!userId || (role !== "FINANCE_CHECKER" && role !== "ADMIN")) {
+      return res.status(403).json({
+        error: {
+          code: "FORBIDDEN",
+          message: "Only ADMIN or FINANCE_CHECKER can reject settlements",
+          requestId: req.id,
+        },
+      });
+    }
+
+    const run = await prisma.settlementRun.findUnique({
+      where: { settlementRunId: snapshotId },
+    });
+    if (!run) {
+      return res.status(404).json({
+        error: { code: "NOT_FOUND", message: "Settlement run not found", requestId: req.id },
+      });
+    }
+
+    // ADMIN can cancel their own DRAFT; FINANCE_CHECKER rejects SUBMITTED
+    const allowedStatus = role === "ADMIN" ? "DRAFT" : "SUBMITTED";
+    if (run.status !== allowedStatus) {
+      return res.status(400).json({
+        error: {
+          code: "INVALID_STATUS",
+          message: `Settlement must be ${allowedStatus} to reject`,
           requestId: req.id,
         },
       });
@@ -379,8 +440,9 @@ export async function getSettlementSummary(
       prisma.settlementRun.count({
         where: { createdAt: { gte: thirtyDaysAgo } },
       }),
+      // Count SUBMITTED — those awaiting Finance Checker approval
       prisma.settlementRun.count({
-        where: { status: "DRAFT" },
+        where: { status: "SUBMITTED" },
       }),
       prisma.adjustment.count({
         where: { status: "PENDING" },
@@ -412,15 +474,12 @@ export async function approveSettlement(
     const userId = req.user?.userId;
     const { snapshotId } = req.params;
 
-    // Simulate Checker Role - Maker-Checker workflow
-    if (
-      !userId ||
-      (req.user?.role !== "FINANCE_CHECKER" && req.user?.role !== "ADMIN")
-    ) {
+    // Only Finance Checker can approve (Maker-Checker: Admin submits, Checker approves)
+    if (!userId || req.user?.role !== "FINANCE_CHECKER") {
       return res.status(403).json({
         error: {
           code: "FORBIDDEN",
-          message: "Only authorized checkers can approve settlements",
+          message: "Only Finance Checkers can approve settlements",
           requestId: req.id,
         },
       });
@@ -460,17 +519,7 @@ export async function approveSettlement(
       return res.status(400).json({
         error: {
           code: "INVALID_STATUS",
-          message: "Settlement run must be in DRAFT to approve",
-          requestId: req.id,
-        },
-      });
-    }
-
-    if (error.message === "MAKER_CHECKER_VIOLATION") {
-      return res.status(403).json({
-        error: {
-          code: "MAKER_CHECKER_VIOLATION",
-          message: "Settlement approver must be different from creator",
+          message: "Settlement run must be in SUBMITTED status to approve",
           requestId: req.id,
         },
       });

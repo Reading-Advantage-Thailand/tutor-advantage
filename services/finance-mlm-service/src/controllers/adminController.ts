@@ -24,7 +24,7 @@ export async function getAdminOverview(
       prisma.settlementRun.count({
         where: { createdAt: { gte: thirtyDaysAgo } },
       }),
-      prisma.settlementRun.count({ where: { status: "DRAFT" } }),
+      prisma.settlementRun.count({ where: { status: "SUBMITTED" } }),
       prisma.adjustment.count({ where: { status: "PENDING" } }),
       prisma.user.count({ where: { verificationStatus: "PENDING" } }),
       prisma.exception.count({ where: { status: "UNRESOLVED" } }),

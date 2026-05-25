@@ -30,10 +30,11 @@ export class SettlementService {
     const { start: startOfMonth, end: endOfMonth } =
       getIctMonthWindow(periodMonth);
 
-    const existingDraft = await prisma.settlementRun.findFirst({
-      where: { periodMonth, status: "DRAFT" },
+    // Block if an active (DRAFT or SUBMITTED) run already exists for this period
+    const existingActive = await prisma.settlementRun.findFirst({
+      where: { periodMonth, status: { in: ["DRAFT", "SUBMITTED"] } },
     });
-    if (existingDraft) throw new Error("DRAFT_EXISTS");
+    if (existingActive) throw new Error("DRAFT_EXISTS");
 
     const payments = await prisma.paymentIntent.findMany({
       where: {
@@ -307,7 +308,7 @@ export class SettlementService {
   }
 
   /**
-   * Approves a DRAFT settlement run
+   * Approves a SUBMITTED settlement run (Finance Checker only).
    */
   static async approveSettlement(snapshotId: string, approvedBy: string) {
     const run = await prisma.settlementRun.findUnique({
@@ -315,8 +316,7 @@ export class SettlementService {
     });
 
     if (!run) throw new Error("NOT_FOUND");
-    if (run.status !== "DRAFT") throw new Error("INVALID_STATUS");
-    if (run.createdBy === approvedBy) throw new Error("MAKER_CHECKER_VIOLATION");
+    if (run.status !== "SUBMITTED") throw new Error("INVALID_STATUS");
 
     const updated = await prisma.$transaction(async (tx) => {
       const approvedRun = await tx.settlementRun.update({
