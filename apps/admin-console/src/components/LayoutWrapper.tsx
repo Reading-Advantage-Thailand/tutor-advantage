@@ -15,6 +15,7 @@ import {
   Link as LinkIcon,
   Users,
   ShieldAlert,
+  Terminal,
 } from "lucide-react";
 
 import {
@@ -267,6 +268,40 @@ function AppSidebar({
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        {/* Dev mode — development only */}
+        {process.env.NODE_ENV === "development" && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="px-2 text-[10px] font-bold uppercase tracking-wider text-orange-500/70">
+              Developer
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname.startsWith("/dev")}
+                    tooltip="Dev Mode"
+                    className={
+                      pathname.startsWith("/dev")
+                        ? "bg-orange-500/10 text-orange-600"
+                        : "hover:bg-orange-500/5 text-muted-foreground hover:text-orange-600"
+                    }
+                  >
+                    <Link href="/dev" className="flex items-center gap-3 w-full py-2">
+                      <Terminal className="h-4 w-4 shrink-0" />
+                      <span className="truncate font-medium group-data-[collapsible=icon]:hidden">
+                        Dev Mode
+                      </span>
+                      <span className="ml-auto text-[9px] font-bold text-orange-500 bg-orange-500/10 px-1.5 py-0.5 rounded group-data-[collapsible=icon]:hidden">
+                        DEV
+                      </span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
 
       <SidebarFooter className="p-4">

@@ -59,6 +59,12 @@ import {
   triggerFraudAction,
 } from "./controllers/fraudController";
 import { getAdminOverview } from "./controllers/adminController";
+import {
+  devListUsers,
+  devCreateUser,
+  devUpdateUser,
+  devDeleteUser,
+} from "./controllers/devController";
 import { getEarningsSummary, getEarningsHistory } from "./controllers/tutorEarningsController";
 import { getTutorNetwork } from "./controllers/tutorNetworkController";
 
@@ -215,6 +221,18 @@ app.post("/v1/users/:id/anonymize", authMiddleware, anonymizeUser);
 // ── Fraud Routes ───────────────────────────────────────────────────────────
 app.get("/v1/fraud-flags", authMiddleware, getFraudFlags);
 app.post("/v1/fraud-flags/:id/action", authMiddleware, triggerFraudAction);
+
+// ── Dev-only Routes (blocked in production) ────────────────────────────────
+const devOnly = (_req: Request, res: Response, next: () => void) => {
+  if (process.env.NODE_ENV === "production") {
+    return res.status(404).json({ error: "Not found" });
+  }
+  next();
+};
+app.get("/v1/dev/users", devOnly, devListUsers);
+app.post("/v1/dev/users", devOnly, devCreateUser);
+app.patch("/v1/dev/users/:id", devOnly, devUpdateUser);
+app.delete("/v1/dev/users/:id", devOnly, devDeleteUser);
 
 // Apply error handler last
 app.use(errorHandlerMiddleware);
