@@ -72,6 +72,9 @@ export default async function DashboardPage() {
     getFinanceData(token),
   ]);
 
+  const weeklyCount: number = learning?.classesThisWeek ?? 0;
+  const commissionRate = finance ? `${(finance.currentRate * 100).toFixed(0)}%` : "0%";
+
   const stats = [
     {
       label: t("dashboardHome.openClasses"),
@@ -82,8 +85,8 @@ export default async function DashboardPage() {
       iconColor: "text-indigo-600 dark:text-indigo-400",
       gradient: "from-indigo-500/5 to-indigo-500/0 dark:from-indigo-500/10 dark:to-indigo-500/2",
       border: "border-indigo-500/10 dark:border-indigo-500/20",
-      badgeText: "+12% this week",
-      badgeColor: "text-indigo-600 bg-indigo-500/10 dark:text-indigo-400 dark:bg-indigo-500/20",
+      badgeText: null,
+      badgeColor: "",
     },
     {
       label: t("dashboardHome.totalStudents"),
@@ -94,8 +97,8 @@ export default async function DashboardPage() {
       iconColor: "text-emerald-600 dark:text-emerald-400",
       gradient: "from-emerald-500/5 to-emerald-500/0 dark:from-emerald-500/10 dark:to-emerald-500/2",
       border: "border-emerald-500/10 dark:border-emerald-500/20",
-      badgeText: "+4 new",
-      badgeColor: "text-emerald-600 bg-emerald-500/10 dark:text-emerald-400 dark:bg-emerald-500/20",
+      badgeText: null,
+      badgeColor: "",
     },
     {
       label: t("dashboardHome.monthlyIncome"),
@@ -106,25 +109,28 @@ export default async function DashboardPage() {
       iconColor: "text-amber-600 dark:text-amber-400",
       gradient: "from-amber-500/5 to-amber-500/0 dark:from-amber-500/10 dark:to-amber-500/2",
       border: "border-amber-500/10 dark:border-amber-500/20",
-      badgeText: "+18.2%",
+      // Show real commission rate from API
+      badgeText: finance ? `Rate ${commissionRate}` : null,
       badgeColor: "text-amber-600 bg-amber-500/10 dark:text-amber-400 dark:bg-amber-500/20",
     },
     {
       label: t("dashboardHome.weeklyClasses"),
-      value: learning?.classesThisWeek ?? 0,
+      value: weeklyCount,
       isCurrency: false,
       icon: Calendar,
       bg: "bg-rose-500/10 dark:bg-rose-900/20",
       iconColor: "text-rose-600 dark:text-rose-400",
       gradient: "from-rose-500/5 to-rose-500/0 dark:from-rose-500/10 dark:to-rose-500/2",
       border: "border-rose-500/10 dark:border-rose-500/20",
-      badgeText: "On track",
-      badgeColor: "text-rose-600 bg-rose-500/10 dark:text-rose-400 dark:bg-rose-500/20",
+      // Derived from real data: any classes this week = active
+      badgeText: weeklyCount > 0 ? "กำลังสอน" : "ไม่มีคลาส",
+      badgeColor: weeklyCount > 0
+        ? "text-rose-600 bg-rose-500/10 dark:text-rose-400 dark:bg-rose-500/20"
+        : "text-muted-foreground bg-muted",
     },
   ];
 
   const recentClasses = learning?.recentClasses || [];
-  const commissionRate = finance ? `${(finance.currentRate * 100).toFixed(0)}%` : "0%";
   
   const targetGoal = finance?.nextTierTargetTHB ?? 20000;
 

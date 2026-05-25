@@ -32,8 +32,6 @@ interface BottomNavProps {
   };
 }
 
-// End audio helper removal
-
 export function BottomNav({ notifications: initialNotifications }: BottomNavProps) {
   const pathname = usePathname();
   const [notifications, setNotifications] = useState(initialNotifications);
@@ -45,9 +43,7 @@ export function BottomNav({ notifications: initialNotifications }: BottomNavProp
   useEffect(() => {
     const pollNotifications = async () => {
       try {
-        const response = await fetch("/api/notifications/summary", {
-          cache: "no-store",
-        });
+        const response = await fetch("/api/notifications/summary", { cache: "no-store" });
         if (!response.ok) return;
         const data = await response.json();
         setNotifications(data);
@@ -55,14 +51,13 @@ export function BottomNav({ notifications: initialNotifications }: BottomNavProp
         // Fail silently
       }
     };
-
     const timer = setInterval(pollNotifications, 10000);
     return () => clearInterval(timer);
   }, []);
 
   return (
     <nav
-      className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-4 right-4 z-50 flex items-center justify-around rounded-2xl border border-white/20 dark:border-white/5 shadow-xl backdrop-blur-xl bg-white/80 dark:bg-neutral-900/80 py-2 px-3 lg:hidden"
+      className="fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] left-3 right-3 z-50 flex items-center justify-around rounded-2xl border border-white/20 dark:border-white/5 shadow-xl backdrop-blur-xl bg-white/85 dark:bg-neutral-900/85 py-2 px-2 lg:hidden"
       aria-label="Main navigation"
     >
       {navItems.map((item) => {
@@ -72,46 +67,45 @@ export function BottomNav({ notifications: initialNotifications }: BottomNavProp
             ? pathname === item.href
             : pathname.startsWith(item.href);
 
+        const chatBadge = item.href === "/dashboard/chat" && (notifications?.unreadChat ?? 0) > 0;
+        const auctionBadge = item.href === "/dashboard/classes" && (notifications?.availableAuctions ?? 0) > 0;
+
         return (
           <Link
             key={item.href}
             href={item.href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "group flex flex-col items-center justify-center w-full py-2 px-2 rounded-xl text-xs font-medium transition-all duration-200",
+              "relative flex items-center justify-center transition-all duration-200 rounded-xl shrink-0",
               active
-                ? "bg-brand-50 dark:bg-brand-900/30 text-primary"
-                : "text-muted-foreground hover:text-foreground"
+                ? "gap-1.5 px-3 py-2 bg-brand-500/10 dark:bg-brand-500/15 text-brand-600 dark:text-brand-400"
+                : "p-2.5 text-muted-foreground hover:text-foreground hover:bg-muted/60",
             )}
           >
-            <div className="relative mb-1">
+            <div className="relative shrink-0">
               <Icon
                 className={cn(
-                  "h-5 w-5 transition-all duration-200 group-hover:scale-110",
-                  active && "scale-110 text-primary"
+                  "transition-all duration-200",
+                  active ? "h-4 w-4" : "h-5 w-5",
                 )}
               />
-
-              {/* Badges for Notifications */}
-              {item.href === "/dashboard/chat" && notifications?.unreadChat ? (
-                <span className="absolute -top-2 -right-2 animate-bounce bg-gradient-to-r from-red-500 to-rose-500 text-white text-[9px] font-bold px-1 rounded-full border-2 border-white dark:border-neutral-900 min-w-[16px] flex items-center justify-center shadow-md">
-                  {notifications.unreadChat}
+              {/* Notification dots */}
+              {chatBadge && (
+                <span className="absolute -top-1.5 -right-1.5 h-4 w-4 flex items-center justify-center bg-red-500 text-white text-[9px] font-bold rounded-full border-2 border-white dark:border-neutral-900 shadow-sm">
+                  {(notifications?.unreadChat ?? 0) > 9 ? "9+" : notifications?.unreadChat}
                 </span>
-              ) : null}
-              {item.href === "/dashboard/classes" && notifications?.availableAuctions ? (
-                <span className="absolute -top-2 -right-2 animate-bounce bg-gradient-to-r from-amber-400 to-amber-500 text-white text-[9px] font-bold px-1 rounded-full border-2 border-white dark:border-neutral-900 min-w-[16px] flex items-center justify-center shadow-md">
-                  {notifications.availableAuctions}
-                </span>
-              ) : null}
-            </div>
-            <span
-              className={cn(
-                "scale-90 origin-bottom transition-all duration-200",
-                active ? "font-bold text-primary" : ""
               )}
-            >
-              {item.label}
-            </span>
+              {auctionBadge && (
+                <span className="absolute -top-1.5 -right-1.5 h-4 w-4 flex items-center justify-center bg-amber-500 text-white text-[9px] font-bold rounded-full border-2 border-white dark:border-neutral-900 shadow-sm">
+                  {(notifications?.availableAuctions ?? 0) > 9 ? "9+" : notifications?.availableAuctions}
+                </span>
+              )}
+            </div>
+            {active && (
+              <span className="text-[11px] font-bold whitespace-nowrap leading-none">
+                {item.label}
+              </span>
+            )}
           </Link>
         );
       })}
