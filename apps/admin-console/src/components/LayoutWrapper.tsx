@@ -45,6 +45,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { DevToolbar } from "@/components/DevToolbar";
 import { t } from "@/lib/i18n";
 
 const FINANCE_ITEMS = [
@@ -437,6 +438,9 @@ export default function LayoutWrapper({
           </div>
         </div>
       </SidebarInset>
+
+      {/* Dev-only floating toolbar */}
+      {process.env.NODE_ENV === "development" && <DevToolbar />}
     </SidebarProvider>
   );
 }

@@ -64,6 +64,12 @@ import {
   devCreateUser,
   devUpdateUser,
   devDeleteUser,
+  devGetState,
+  devRunSettlement,
+  devSeedFraudFlag,
+  devDeleteFraudFlag,
+  devSeedAdjustment,
+  devPurge,
 } from "./controllers/devController";
 import { getEarningsSummary, getEarningsHistory } from "./controllers/tutorEarningsController";
 import { getTutorNetwork } from "./controllers/tutorNetworkController";
@@ -229,10 +235,18 @@ const devOnly = (_req: Request, res: Response, next: () => void) => {
   }
   next();
 };
+// User CRUD
 app.get("/v1/dev/users", devOnly, devListUsers);
 app.post("/v1/dev/users", devOnly, devCreateUser);
 app.patch("/v1/dev/users/:id", devOnly, devUpdateUser);
 app.delete("/v1/dev/users/:id", devOnly, devDeleteUser);
+// State & Actions
+app.get("/v1/dev/state", devOnly, devGetState);
+app.post("/v1/dev/actions/settlement", devOnly, devRunSettlement);
+app.post("/v1/dev/actions/fraud-flag", devOnly, devSeedFraudFlag);
+app.delete("/v1/dev/actions/fraud-flag/:id", devOnly, devDeleteFraudFlag);
+app.post("/v1/dev/actions/adjustment", devOnly, devSeedAdjustment);
+app.post("/v1/dev/actions/purge", devOnly, devPurge);
 
 // Apply error handler last
 app.use(errorHandlerMiddleware);
