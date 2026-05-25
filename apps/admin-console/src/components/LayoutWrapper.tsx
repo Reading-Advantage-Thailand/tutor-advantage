@@ -416,7 +416,7 @@ export default function LayoutWrapper({
         </header>
         {/* Page Content - Scrollable Area */}
         <div className="flex-1 overflow-auto">
-          <div className="p-4 sm:p-8 lg:p-10 max-w-[1600px] mx-auto w-full">
+          <div className="p-4 sm:p-8 lg:p-10 max-w-[1600px] mx-auto w-full items-center justify-center">
             {children}
           </div>
         </div>

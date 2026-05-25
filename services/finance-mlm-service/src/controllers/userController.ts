@@ -64,11 +64,13 @@ export const getUsers = async (req: AuthenticatedRequest, res: Response) => {
 
   try {
     const users = await prisma.user.findMany({
+      where: { role: { in: ["TUTOR", "STUDENT"] } },
       select: {
         userId: true,
         displayName: true,
         role: true,
         email: true,
+        profilePictureUrl: true,
         verificationStatus: true,
         settings: true,
         isActive: true,
@@ -104,6 +106,7 @@ export const getUsers = async (req: AuthenticatedRequest, res: Response) => {
         name: user.displayName || user.email || user.userId,
         role: user.role,
         email: user.email,
+        profilePictureUrl: user.profilePictureUrl ?? null,
         activeClasses,
         status: user.isActive ? "ACTIVE" : "INACTIVE",
         verificationStatus: user.verificationStatus,
@@ -181,6 +184,7 @@ export const getUserDetails = async (req: Request, res: Response) => {
         role: user.role,
         status: user.isActive ? "ACTIVE" : "INACTIVE",
         joinedAt: user.createdAt.toISOString(),
+        profilePictureUrl: user.profilePictureUrl ?? null,
         idCardImageUrl: user.idCardImageUrl,
         bankBookImageUrl: user.bankBookImageUrl,
         verificationStatus: user.verificationStatus,

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { fetchWithAuth } from "@/lib/api";
 import {
@@ -32,6 +32,7 @@ interface UserInfo {
   name: string;
   role: string;
   email: string;
+  profilePictureUrl?: string | null;
   activeClasses: number;
   status: string;
   joined: string;
@@ -203,6 +204,9 @@ export default function UsersPage() {
                   <CardContent className="p-5">
                     <div className="flex items-start gap-3">
                       <Avatar className="h-12 w-12 shrink-0 border-2 border-background shadow-sm ring-1 ring-border/50">
+                        {user.profilePictureUrl && (
+                          <AvatarImage src={user.profilePictureUrl} alt={user.name} className="object-cover" />
+                        )}
                         <AvatarFallback className={`text-sm font-bold ${user.role === "TUTOR" ? "bg-gradient-to-br from-purple-400 to-brand-600 text-white" : "bg-gradient-to-br from-blue-400 to-blue-600 text-white"}`}>
                           {initials || user.name[0]}
                         </AvatarFallback>

@@ -99,21 +99,40 @@ const verificationFieldLabels: Record<VerificationField, string> = {
   address: "ที่อยู่สำหรับส่งเอกสาร",
 };
 
-const VERIFICATION_STATUS_CONFIG: Record<string, { label: string; className: string; icon: React.ElementType }> = {
-  VERIFIED:   { label: "ยืนยันตัวตนแล้ว",   className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30", icon: CheckCircle2 },
-  PENDING:    { label: "รอตรวจสอบ",         className: "bg-amber-500/10 text-amber-600 border-amber-500/30",   icon: Clock },
-  REJECTED:   { label: "เอกสารถูกปฏิเสธ",  className: "bg-red-500/10 text-red-600 border-red-500/30",         icon: XCircle },
-  UNVERIFIED: { label: "ยังไม่ยืนยันตัวตน", className: "bg-muted text-muted-foreground border-transparent",    icon: AlertCircle },
+const VERIFICATION_STATUS_CONFIG: Record<
+  string,
+  { label: string; className: string; icon: React.ElementType }
+> = {
+  VERIFIED: {
+    label: "ยืนยันตัวตนแล้ว",
+    className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
+    icon: CheckCircle2,
+  },
+  PENDING: {
+    label: "รอตรวจสอบ",
+    className: "bg-amber-500/10 text-amber-600 border-amber-500/30",
+    icon: Clock,
+  },
+  REJECTED: {
+    label: "เอกสารถูกปฏิเสธ",
+    className: "bg-red-500/10 text-red-600 border-red-500/30",
+    icon: XCircle,
+  },
+  UNVERIFIED: {
+    label: "ยังไม่ยืนยันตัวตน",
+    className: "bg-muted text-muted-foreground border-transparent",
+    icon: AlertCircle,
+  },
 };
 
 const CLASS_STATUS_CONFIG: Record<string, string> = {
-  ACTIVE:     "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
-  OPEN:       "bg-blue-500/10 text-blue-600 border-blue-500/30",
-  PUBLISHED:  "bg-blue-500/10 text-blue-600 border-blue-500/30",
-  IN_PROGRESS:"bg-purple-500/10 text-purple-600 border-purple-500/30",
-  FULL:       "bg-amber-500/10 text-amber-600 border-amber-500/30",
-  COMPLETED:  "bg-muted text-muted-foreground border-transparent",
-  CANCELLED:  "bg-red-500/10 text-red-600 border-red-500/30",
+  ACTIVE: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
+  OPEN: "bg-blue-500/10 text-blue-600 border-blue-500/30",
+  PUBLISHED: "bg-blue-500/10 text-blue-600 border-blue-500/30",
+  IN_PROGRESS: "bg-purple-500/10 text-purple-600 border-purple-500/30",
+  FULL: "bg-amber-500/10 text-amber-600 border-amber-500/30",
+  COMPLETED: "bg-muted text-muted-foreground border-transparent",
+  CANCELLED: "bg-red-500/10 text-red-600 border-red-500/30",
 };
 
 export default function UserDetailPage() {
@@ -133,14 +152,19 @@ export default function UserDetailPage() {
   const [actionError, setActionError] = useState("");
 
   const [verificationComment, setVerificationComment] = useState("");
-  const [fieldComments, setFieldComments] = useState<Record<VerificationField, string>>({
+  const [fieldComments, setFieldComments] = useState<
+    Record<VerificationField, string>
+  >({
     idCard: "",
     bankBook: "",
     address: "",
   });
   const [isVerifying, setIsVerifying] = useState<string | null>(null);
   const [isSuspending, setIsSuspending] = useState(false);
-  const [imageViewer, setImageViewer] = useState<{ url: string; title: string } | null>(null);
+  const [imageViewer, setImageViewer] = useState<{
+    url: string;
+    title: string;
+  } | null>(null);
   const [imageZoom, setImageZoom] = useState(1);
 
   const loadUser = useCallback(async () => {
@@ -156,7 +180,9 @@ export default function UserDetailPage() {
         address: verification.address?.comment || "",
       });
     } catch (err) {
-      setLoadError(err instanceof Error ? err.message : "ไม่สามารถโหลดข้อมูลได้");
+      setLoadError(
+        err instanceof Error ? err.message : "ไม่สามารถโหลดข้อมูลได้",
+      );
     } finally {
       setLoading(false);
     }
@@ -202,7 +228,12 @@ export default function UserDetailPage() {
     try {
       await fetchWithAuth(`/v1/users/${user.id}/verify`, {
         method: "POST",
-        body: JSON.stringify({ status, comment: verificationComment, field, fieldComments }),
+        body: JSON.stringify({
+          status,
+          comment: verificationComment,
+          field,
+          fieldComments,
+        }),
       });
       setActionMessage("อัปเดตสถานะการยืนยันตัวตนเรียบร้อยแล้ว");
       await loadUser();
@@ -218,8 +249,14 @@ export default function UserDetailPage() {
     setIsSuspending(true);
     clearMessages();
     try {
-      const resp = await fetchWithAuth(`/v1/users/${user.id}/suspend`, { method: "POST" });
-      setActionMessage(resp.isActive ? "เปิดใช้งานบัญชีเรียบร้อยแล้ว" : "ระงับบัญชีเรียบร้อยแล้ว");
+      const resp = await fetchWithAuth(`/v1/users/${user.id}/suspend`, {
+        method: "POST",
+      });
+      setActionMessage(
+        resp.isActive
+          ? "เปิดใช้งานบัญชีเรียบร้อยแล้ว"
+          : "ระงับบัญชีเรียบร้อยแล้ว",
+      );
       await loadUser();
     } catch (err) {
       setActionError(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
@@ -250,15 +287,30 @@ export default function UserDetailPage() {
     getFieldStatus("address") === "VERIFIED";
 
   /** hasDocument: true if the document/data is present and can be reviewed */
-  const renderVerificationActions = (field: VerificationField, hasDocument: boolean) => {
+  const renderVerificationActions = (
+    field: VerificationField,
+    hasDocument: boolean,
+  ) => {
     const status = getFieldStatus(field);
     const reason = fieldComments[field] || "";
 
     const fieldStatusCfg = {
-      VERIFIED:   { label: "ยืนยันแล้ว",   cls: "bg-emerald-500/10 text-emerald-600 border-emerald-500/40" },
-      PENDING:    { label: "รอตรวจสอบ",   cls: "bg-amber-500/10 text-amber-600 border-amber-500/40" },
-      REJECTED:   { label: "ปฏิเสธแล้ว",  cls: "bg-red-500/10 text-red-600 border-red-500/40" },
-      UNVERIFIED: { label: "ยังไม่ตรวจ",  cls: "bg-muted text-muted-foreground" },
+      VERIFIED: {
+        label: "ยืนยันแล้ว",
+        cls: "bg-emerald-500/10 text-emerald-600 border-emerald-500/40",
+      },
+      PENDING: {
+        label: "รอตรวจสอบ",
+        cls: "bg-amber-500/10 text-amber-600 border-amber-500/40",
+      },
+      REJECTED: {
+        label: "ปฏิเสธแล้ว",
+        cls: "bg-red-500/10 text-red-600 border-red-500/40",
+      },
+      UNVERIFIED: {
+        label: "ยังไม่ตรวจ",
+        cls: "bg-muted text-muted-foreground",
+      },
     }[status] || { label: status, cls: "" };
 
     return (
@@ -273,10 +325,21 @@ export default function UserDetailPage() {
                 size="sm"
                 variant="ghost"
                 className="h-7 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20 px-2 text-xs"
-                disabled={!!isVerifying || !hasDocument || !reason.trim() && !verificationComment.trim()}
+                disabled={
+                  !!isVerifying ||
+                  !hasDocument ||
+                  (!reason.trim() && !verificationComment.trim())
+                }
                 onClick={() => handleVerify("REJECTED", field)}
               >
-                {isVerifying === field ? <Loader2 className="h-3 w-3 animate-spin" /> : <><XCircle className="h-3 w-3 mr-1" />ปฏิเสธ</>}
+                {isVerifying === field ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <>
+                    <XCircle className="h-3 w-3 mr-1" />
+                    ปฏิเสธ
+                  </>
+                )}
               </Button>
               <Button
                 size="sm"
@@ -285,7 +348,14 @@ export default function UserDetailPage() {
                 disabled={!!isVerifying || !hasDocument}
                 onClick={() => handleVerify("VERIFIED", field)}
               >
-                {isVerifying === field ? <Loader2 className="h-3 w-3 animate-spin" /> : <><CheckCircle2 className="h-3 w-3 mr-1" />อนุมัติ</>}
+                {isVerifying === field ? (
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                ) : (
+                  <>
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                    อนุมัติ
+                  </>
+                )}
               </Button>
             </div>
           )}
@@ -302,11 +372,15 @@ export default function UserDetailPage() {
           />
         )}
 
-        {status === "REJECTED" && user?.settings?.verification?.[field]?.updatedAt && (
-          <p className="text-[10px] text-muted-foreground">
-            อัปเดตล่าสุด: {new Date(user.settings.verification[field]!.updatedAt!).toLocaleString("th-TH")}
-          </p>
-        )}
+        {status === "REJECTED" &&
+          user?.settings?.verification?.[field]?.updatedAt && (
+            <p className="text-[10px] text-muted-foreground">
+              อัปเดตล่าสุด:{" "}
+              {new Date(
+                user.settings.verification[field]!.updatedAt!,
+              ).toLocaleString("th-TH")}
+            </p>
+          )}
       </div>
     );
   };
@@ -323,7 +397,11 @@ export default function UserDetailPage() {
   if (loadError || !user) {
     return (
       <div className="w-full max-w-3xl space-y-4">
-        <Button variant="ghost" className="gap-2" onClick={() => router.push("/users")}>
+        <Button
+          variant="ghost"
+          className="gap-2"
+          onClick={() => router.push("/users")}
+        >
           <ArrowLeft className="h-4 w-4" />
           กลับไปรายการผู้ใช้
         </Button>
@@ -332,20 +410,39 @@ export default function UserDetailPage() {
           <AlertTitle>โหลดข้อมูลไม่สำเร็จ</AlertTitle>
           <AlertDescription>{loadError || "ไม่พบผู้ใช้งาน"}</AlertDescription>
         </Alert>
-        <Button onClick={() => { setLoading(true); loadUser(); }}>ลองใหม่</Button>
+        <Button
+          onClick={() => {
+            setLoading(true);
+            loadUser();
+          }}
+        >
+          ลองใหม่
+        </Button>
       </div>
     );
   }
 
-  const vCfg = VERIFICATION_STATUS_CONFIG[user.verificationStatus] ?? VERIFICATION_STATUS_CONFIG.UNVERIFIED;
+  const vCfg =
+    VERIFICATION_STATUS_CONFIG[user.verificationStatus] ??
+    VERIFICATION_STATUS_CONFIG.UNVERIFIED;
   const VIcon = vCfg.icon;
-  const initials = user.name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+  const initials = user.name
+    .split(" ")
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
   const isAdmin = adminRole === "ADMIN";
 
   return (
-    <div className="space-y-6 w-full max-w-5xl animate-in fade-in duration-300">
+    <div className="space-y-6 w-full max-w-5xl animate-in fade-in duration-300 items-center justify-center">
       {/* Back */}
-      <Button variant="ghost" size="sm" className="gap-2 -ml-2 text-muted-foreground hover:text-foreground" onClick={() => router.push("/users")}>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="gap-2 -ml-2 text-muted-foreground hover:text-foreground"
+        onClick={() => router.push("/users")}
+      >
         <ArrowLeft className="h-4 w-4" />
         ย้อนกลับ
       </Button>
@@ -361,7 +458,9 @@ export default function UserDetailPage() {
       {actionMessage && (
         <Alert className="rounded-2xl border-emerald-500/30 bg-emerald-500/5">
           <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-          <AlertDescription className="text-emerald-700 font-medium">{actionMessage}</AlertDescription>
+          <AlertDescription className="text-emerald-700 font-medium">
+            {actionMessage}
+          </AlertDescription>
         </Alert>
       )}
 
@@ -370,7 +469,9 @@ export default function UserDetailPage() {
         <CardContent className="p-6">
           <div className="flex gap-4 items-start">
             <Avatar className="h-16 w-16 shrink-0 border-4 border-background shadow-lg ring-1 ring-border/30 mt-0.5">
-              <AvatarFallback className={`text-xl font-black ${user.role === "TUTOR" ? "bg-gradient-to-br from-purple-400 to-brand-600 text-white" : "bg-gradient-to-br from-blue-400 to-blue-600 text-white"}`}>
+              <AvatarFallback
+                className={`text-xl font-black ${user.role === "TUTOR" ? "bg-gradient-to-br from-purple-400 to-brand-600 text-white" : "bg-gradient-to-br from-blue-400 to-blue-600 text-white"}`}
+              >
                 {initials || user.name[0]}
               </AvatarFallback>
             </Avatar>
@@ -378,17 +479,28 @@ export default function UserDetailPage() {
             <div className="flex-1 min-w-0 space-y-1.5">
               {/* Name + badges + button — all in one flex-wrap row; button uses ml-auto */}
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-xl font-black text-foreground leading-tight">{user.name}</h1>
+                <h1 className="text-xl font-black text-foreground leading-tight">
+                  {user.name}
+                </h1>
                 {user.status === "INACTIVE" && (
-                  <Badge variant="outline" className="border-red-300 text-red-600 bg-red-50 dark:bg-red-950/20 font-bold text-[10px]">
+                  <Badge
+                    variant="outline"
+                    className="border-red-300 text-red-600 bg-red-50 dark:bg-red-950/20 font-bold text-[10px]"
+                  >
                     ถูกระงับ
                   </Badge>
                 )}
-                <Badge variant="outline" className={`font-bold text-[10px] ${user.role === "TUTOR" ? "border-purple-300 text-purple-700 bg-purple-50 dark:bg-purple-950/20" : "border-blue-300 text-blue-700 bg-blue-50 dark:bg-blue-950/20"}`}>
+                <Badge
+                  variant="outline"
+                  className={`font-bold text-[10px] ${user.role === "TUTOR" ? "border-purple-300 text-purple-700 bg-purple-50 dark:bg-purple-950/20" : "border-blue-300 text-blue-700 bg-blue-50 dark:bg-blue-950/20"}`}
+                >
                   {user.role === "TUTOR" ? "ติวเตอร์" : "นักเรียน"}
                 </Badge>
                 {user.role === "TUTOR" && (
-                  <Badge variant="outline" className={`font-bold text-[10px] ${vCfg.className}`}>
+                  <Badge
+                    variant="outline"
+                    className={`font-bold text-[10px] ${vCfg.className}`}
+                  >
                     <VIcon className="h-3 w-3 mr-1" />
                     {vCfg.label}
                   </Badge>
@@ -405,33 +517,53 @@ export default function UserDetailPage() {
                         : "border-amber-300 text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/20"
                     }`}
                   >
-                    {isSuspending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Power className="h-4 w-4" />}
+                    {isSuspending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Power className="h-4 w-4" />
+                    )}
                     {user.status === "INACTIVE" ? "เปิดใช้งาน" : "ระงับบัญชี"}
                   </Button>
                 )}
               </div>
 
               <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5 shrink-0" />{user.email}</span>
-                {user.phone && <span className="flex items-center gap-1.5"><Phone className="h-3.5 w-3.5 shrink-0" />{user.phone}</span>}
+                <span className="flex items-center gap-1.5">
+                  <Mail className="h-3.5 w-3.5 shrink-0" />
+                  {user.email}
+                </span>
+                {user.phone && (
+                  <span className="flex items-center gap-1.5">
+                    <Phone className="h-3.5 w-3.5 shrink-0" />
+                    {user.phone}
+                  </span>
+                )}
                 <span className="flex items-center gap-1.5">
                   <CalendarDays className="h-3.5 w-3.5 shrink-0" />
-                  {new Date(user.joinedAt).toLocaleDateString("th-TH", { year: "numeric", month: "short", day: "numeric" })}
+                  {new Date(user.joinedAt).toLocaleDateString("th-TH", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
                 </span>
               </div>
 
               <div className="flex flex-wrap gap-3 text-xs text-muted-foreground font-medium">
                 <span className="flex items-center gap-1">
                   <BookOpen className="h-3.5 w-3.5" />
-                  {user.classes.length} {user.role === "TUTOR" ? "คลาสที่สอน" : "คลาสที่เรียน"}
+                  {user.classes.length}{" "}
+                  {user.role === "TUTOR" ? "คลาสที่สอน" : "คลาสที่เรียน"}
                 </span>
                 <span className="flex items-center gap-1">
                   <FileText className="h-3.5 w-3.5" />
                   {user.consentLogs.length} consent log
                 </span>
-              </div>{/* end: stats row */}
-            </div>{/* end: flex-1 min-w-0 */}
-          </div>{/* end: flex gap-4 items-start */}
+              </div>
+              {/* end: stats row */}
+            </div>
+            {/* end: flex-1 min-w-0 */}
+          </div>
+          {/* end: flex gap-4 items-start */}
         </CardContent>
       </Card>
 
@@ -448,16 +580,33 @@ export default function UserDetailPage() {
             </CardHeader>
             <CardContent className="px-5 pb-5 space-y-3">
               {[
-                { label: "User ID", value: <span className="font-mono text-xs break-all">{user.id}</span> },
+                {
+                  label: "User ID",
+                  value: (
+                    <span className="font-mono text-xs break-all">
+                      {user.id}
+                    </span>
+                  ),
+                },
                 { label: "ชื่อ-นามสกุล", value: user.name },
                 { label: "อีเมล", value: user.email },
                 { label: "เบอร์โทรศัพท์", value: user.phone || "—" },
-                { label: "บทบาท", value: user.role === "TUTOR" ? "ติวเตอร์" : "นักเรียน" },
-                { label: "สถานะบัญชี", value: user.status === "ACTIVE" ? "ใช้งานอยู่" : "ถูกระงับ" },
+                {
+                  label: "บทบาท",
+                  value: user.role === "TUTOR" ? "ติวเตอร์" : "นักเรียน",
+                },
+                {
+                  label: "สถานะบัญชี",
+                  value: user.status === "ACTIVE" ? "ใช้งานอยู่" : "ถูกระงับ",
+                },
               ].map(({ label, value }) => (
                 <div key={label}>
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{label}</p>
-                  <p className="text-sm font-medium text-foreground mt-0.5">{value}</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    {label}
+                  </p>
+                  <p className="text-sm font-medium text-foreground mt-0.5">
+                    {value}
+                  </p>
                 </div>
               ))}
             </CardContent>
@@ -473,25 +622,45 @@ export default function UserDetailPage() {
             </CardHeader>
             <CardContent className="px-5 pb-5 space-y-3">
               {user.role === "STUDENT" && (
-                <div className={`flex items-start gap-2 p-3 rounded-xl border text-xs font-medium ${user.guardianSetup ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-700" : "border-amber-500/30 bg-amber-500/5 text-amber-700"}`}>
+                <div
+                  className={`flex items-start gap-2 p-3 rounded-xl border text-xs font-medium ${user.guardianSetup ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-700" : "border-amber-500/30 bg-amber-500/5 text-amber-700"}`}
+                >
                   <ShieldCheck className="h-4 w-4 shrink-0 mt-0.5" />
-                  <span>{user.guardianSetup ? "ผู้ปกครองยืนยันตัวตนและให้ความยินยอมแล้ว" : "รอการยืนยันจากผู้ปกครอง"}</span>
+                  <span>
+                    {user.guardianSetup
+                      ? "ผู้ปกครองยืนยันตัวตนและให้ความยินยอมแล้ว"
+                      : "รอการยืนยันจากผู้ปกครอง"}
+                  </span>
                 </div>
               )}
 
               {user.consentLogs.length === 0 ? (
-                <p className="text-xs text-muted-foreground text-center py-3">ยังไม่มีประวัติ Consent</p>
+                <p className="text-xs text-muted-foreground text-center py-3">
+                  ยังไม่มีประวัติ Consent
+                </p>
               ) : (
                 <div className="space-y-2">
                   {user.consentLogs.map((log) => (
-                    <div key={log.id} className="flex items-center justify-between p-3 rounded-xl bg-muted/40 text-xs">
+                    <div
+                      key={log.id}
+                      className="flex items-center justify-between p-3 rounded-xl bg-muted/40 text-xs"
+                    >
                       <div>
-                        <p className="font-semibold text-foreground">{log.type}</p>
+                        <p className="font-semibold text-foreground">
+                          {log.type}
+                        </p>
                         <p className="text-muted-foreground mt-0.5">
-                          {new Date(log.timestamp).toLocaleDateString("th-TH", { year: "numeric", month: "short", day: "numeric" })}
+                          {new Date(log.timestamp).toLocaleDateString("th-TH", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })}
                         </p>
                       </div>
-                      <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 border-none text-[10px]">
+                      <Badge
+                        variant="secondary"
+                        className="bg-emerald-500/10 text-emerald-600 border-none text-[10px]"
+                      >
                         <CheckCircle2 className="h-3 w-3 mr-1" />
                         ยอมรับแล้ว
                       </Badge>
@@ -507,7 +676,9 @@ export default function UserDetailPage() {
         <div className="md:col-span-2 space-y-6">
           {/* Identity Verification (Tutors only) */}
           {user.role === "TUTOR" && (
-            <Card className={`border-none shadow-sm rounded-2xl bg-card ${user.verificationStatus === "PENDING" ? "ring-2 ring-amber-500/40" : ""}`}>
+            <Card
+              className={`border-none shadow-sm rounded-2xl bg-card ${user.verificationStatus === "PENDING" ? "ring-2 ring-amber-500/40" : ""}`}
+            >
               <CardHeader className="px-6 pt-6 pb-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -515,9 +686,14 @@ export default function UserDetailPage() {
                       <FileText className="h-4 w-4 text-brand-600" />
                       การยืนยันตัวตน
                     </CardTitle>
-                    <CardDescription className="mt-1">ตรวจสอบเอกสารประจำตัวและบัญชีธนาคาร</CardDescription>
+                    <CardDescription className="mt-1">
+                      ตรวจสอบเอกสารประจำตัวและบัญชีธนาคาร
+                    </CardDescription>
                   </div>
-                  <Badge variant="outline" className={`shrink-0 font-bold ${vCfg.className}`}>
+                  <Badge
+                    variant="outline"
+                    className={`shrink-0 font-bold ${vCfg.className}`}
+                  >
                     <VIcon className="h-3 w-3 mr-1.5" />
                     {vCfg.label}
                   </Badge>
@@ -535,14 +711,33 @@ export default function UserDetailPage() {
                       <button
                         type="button"
                         className="block h-full w-full cursor-zoom-in"
-                        onClick={() => openImageViewer(user.idCardImageUrl!, "สำเนาบัตรประชาชน")}
+                        onClick={() =>
+                          openImageViewer(
+                            user.idCardImageUrl!,
+                            "สำเนาบัตรประชาชน",
+                          )
+                        }
                       >
-                        <img src={user.idCardImageUrl} alt="ID Card" className="object-cover w-full h-full" />
+                        <img
+                          src={user.idCardImageUrl}
+                          alt="ID Card"
+                          className="object-cover w-full h-full"
+                        />
                       </button>
                       <div className="pointer-events-none absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <Button size="sm" variant="secondary" className="pointer-events-auto gap-1.5" asChild>
-                          <a href={user.idCardImageUrl} target="_blank" rel="noreferrer">
-                            <ExternalLink className="h-3 w-3" />ดูรูปเต็ม
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="pointer-events-auto gap-1.5"
+                          asChild
+                        >
+                          <a
+                            href={user.idCardImageUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            ดูรูปเต็ม
                           </a>
                         </Button>
                       </div>
@@ -565,9 +760,15 @@ export default function UserDetailPage() {
                     หน้าสมุดบัญชีธนาคาร
                   </Label>
                   <div className="p-3 rounded-xl bg-muted/40 text-sm">
-                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">เลขบัญชี</p>
+                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
+                      เลขบัญชี
+                    </p>
                     <p className="font-mono font-semibold mt-0.5">
-                      {user.settings?.bankAccountNumber || <span className="text-muted-foreground">ไม่ได้ระบุ</span>}
+                      {user.settings?.bankAccountNumber || (
+                        <span className="text-muted-foreground">
+                          ไม่ได้ระบุ
+                        </span>
+                      )}
                     </p>
                   </div>
                   {user.bankBookImageUrl ? (
@@ -575,14 +776,33 @@ export default function UserDetailPage() {
                       <button
                         type="button"
                         className="block h-full w-full cursor-zoom-in"
-                        onClick={() => openImageViewer(user.bankBookImageUrl!, "หน้าสมุดบัญชี")}
+                        onClick={() =>
+                          openImageViewer(
+                            user.bankBookImageUrl!,
+                            "หน้าสมุดบัญชี",
+                          )
+                        }
                       >
-                        <img src={user.bankBookImageUrl} alt="Bank Book" className="object-cover w-full h-full" />
+                        <img
+                          src={user.bankBookImageUrl}
+                          alt="Bank Book"
+                          className="object-cover w-full h-full"
+                        />
                       </button>
                       <div className="pointer-events-none absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <Button size="sm" variant="secondary" className="pointer-events-auto gap-1.5" asChild>
-                          <a href={user.bankBookImageUrl} target="_blank" rel="noreferrer">
-                            <ExternalLink className="h-3 w-3" />ดูรูปเต็ม
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="pointer-events-auto gap-1.5"
+                          asChild
+                        >
+                          <a
+                            href={user.bankBookImageUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            ดูรูปเต็ม
                           </a>
                         </Button>
                       </div>
@@ -593,7 +813,10 @@ export default function UserDetailPage() {
                       <p className="text-xs">ยังไม่ได้อัปโหลด</p>
                     </div>
                   )}
-                  {renderVerificationActions("bankBook", !!user.bankBookImageUrl)}
+                  {renderVerificationActions(
+                    "bankBook",
+                    !!user.bankBookImageUrl,
+                  )}
                 </div>
 
                 <Separator />
@@ -605,9 +828,16 @@ export default function UserDetailPage() {
                     ที่อยู่สำหรับส่งเอกสาร
                   </Label>
                   <div className="p-3 rounded-xl bg-muted/40 text-sm min-h-[48px]">
-                    {user.settings?.address || <span className="text-muted-foreground text-xs">ไม่ได้ระบุที่อยู่</span>}
+                    {user.settings?.address || (
+                      <span className="text-muted-foreground text-xs">
+                        ไม่ได้ระบุที่อยู่
+                      </span>
+                    )}
                   </div>
-                  {renderVerificationActions("address", !!user.settings?.address)}
+                  {renderVerificationActions(
+                    "address",
+                    !!user.settings?.address,
+                  )}
                 </div>
 
                 {/* Global action */}
@@ -616,14 +846,19 @@ export default function UserDetailPage() {
                     <Separator />
                     <div className="space-y-3">
                       <div>
-                        <Label htmlFor="globalComment" className="text-xs font-semibold text-muted-foreground">
+                        <Label
+                          htmlFor="globalComment"
+                          className="text-xs font-semibold text-muted-foreground"
+                        >
                           ความเห็นรวม (สำหรับ Approve/Reject ทั้งหมดพร้อมกัน)
                         </Label>
                         <Textarea
                           id="globalComment"
                           placeholder="ระบุเหตุผลรวมสำหรับผลการตรวจสอบ..."
                           value={verificationComment}
-                          onChange={(e) => setVerificationComment(e.target.value)}
+                          onChange={(e) =>
+                            setVerificationComment(e.target.value)
+                          }
                           className="min-h-[72px] mt-1.5 resize-none"
                         />
                       </div>
@@ -632,10 +867,19 @@ export default function UserDetailPage() {
                           variant="outline"
                           size="sm"
                           className="border-red-200 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 font-bold rounded-xl"
-                          disabled={!!isVerifying || !verificationComment.trim()}
+                          disabled={
+                            !!isVerifying || !verificationComment.trim()
+                          }
                           onClick={() => handleVerify("REJECTED", "ALL")}
                         >
-                          {isVerifying === "ALL" ? <Loader2 className="h-4 w-4 animate-spin" /> : <><XCircle className="h-4 w-4 mr-1.5" />ปฏิเสธทั้งหมด</>}
+                          {isVerifying === "ALL" ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <XCircle className="h-4 w-4 mr-1.5" />
+                              ปฏิเสธทั้งหมด
+                            </>
+                          )}
                         </Button>
                         <Button
                           size="sm"
@@ -643,7 +887,14 @@ export default function UserDetailPage() {
                           disabled={!!isVerifying}
                           onClick={() => handleVerify("VERIFIED", "ALL")}
                         >
-                          {isVerifying === "ALL" ? <Loader2 className="h-4 w-4 animate-spin" /> : <><CheckCircle2 className="h-4 w-4 mr-1.5" />อนุมัติทั้งหมด</>}
+                          {isVerifying === "ALL" ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <CheckCircle2 className="h-4 w-4 mr-1.5" />
+                              อนุมัติทั้งหมด
+                            </>
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -659,7 +910,12 @@ export default function UserDetailPage() {
               <CardTitle className="text-base font-bold flex items-center gap-2">
                 <BookOpen className="h-4 w-4 text-brand-600" />
                 {user.role === "TUTOR" ? "คลาสที่รับผิดชอบ" : "คลาสที่ลงเรียน"}
-                <Badge variant="secondary" className="ml-auto rounded-full font-bold">{user.classes.length}</Badge>
+                <Badge
+                  variant="secondary"
+                  className="ml-auto rounded-full font-bold"
+                >
+                  {user.classes.length}
+                </Badge>
               </CardTitle>
             </CardHeader>
             <CardContent className="px-6 pb-6">
@@ -671,15 +927,27 @@ export default function UserDetailPage() {
               ) : (
                 <div className="space-y-2">
                   {user.classes.map((cls) => (
-                    <div key={cls.id} className="flex items-center justify-between p-3 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors">
+                    <div
+                      key={cls.id}
+                      className="flex items-center justify-between p-3 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors"
+                    >
                       <div className="min-w-0 flex-1">
-                        <p className="font-semibold text-sm truncate text-foreground">{cls.name}</p>
+                        <p className="font-semibold text-sm truncate text-foreground">
+                          {cls.name}
+                        </p>
                         <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground">
                           {cls.bookTitle && <span>{cls.bookTitle}</span>}
                           {cls.startsAt && (
                             <span className="flex items-center gap-1">
                               <CalendarDays className="h-3 w-3" />
-                              {new Date(cls.startsAt).toLocaleDateString("th-TH", { month: "short", day: "numeric", year: "numeric" })}
+                              {new Date(cls.startsAt).toLocaleDateString(
+                                "th-TH",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                },
+                              )}
                             </span>
                           )}
                           <span className="flex items-center gap-1">
@@ -710,7 +978,8 @@ export default function UserDetailPage() {
                   Right to be Forgotten
                 </CardTitle>
                 <CardDescription>
-                  ลบข้อมูลส่วนตัว (PII) ตามคำขอของเจ้าของข้อมูล — ข้อมูลธุรกรรมยังคงอยู่เพื่อการตรวจสอบบัญชี
+                  ลบข้อมูลส่วนตัว (PII) ตามคำขอของเจ้าของข้อมูล —
+                  ข้อมูลธุรกรรมยังคงอยู่เพื่อการตรวจสอบบัญชี
                 </CardDescription>
               </CardHeader>
               <CardContent className="px-6 pb-6">
@@ -725,7 +994,10 @@ export default function UserDetailPage() {
                   </Button>
                 ) : (
                   <div className="space-y-4 p-4 border border-red-500/30 rounded-2xl bg-red-500/5">
-                    <Alert variant="destructive" className="bg-transparent border-none p-0">
+                    <Alert
+                      variant="destructive"
+                      className="bg-transparent border-none p-0"
+                    >
                       <AlertTriangle className="h-4 w-4" />
                       <AlertTitle>ยืนยันการทำ Data Anonymization</AlertTitle>
                       <AlertDescription>
@@ -744,7 +1016,10 @@ export default function UserDetailPage() {
                       <Button
                         variant="outline"
                         className="rounded-xl"
-                        onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(""); }}
+                        onClick={() => {
+                          setShowDeleteConfirm(false);
+                          setDeleteConfirmText("");
+                        }}
                       >
                         ยกเลิก
                       </Button>
@@ -754,7 +1029,9 @@ export default function UserDetailPage() {
                         disabled={deleteConfirmText !== user.id || isDeleting}
                         onClick={handleDelete}
                       >
-                        {isDeleting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                        {isDeleting ? (
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        ) : null}
                         ยืนยันการลบข้อมูล
                       </Button>
                     </div>
@@ -777,19 +1054,41 @@ export default function UserDetailPage() {
           <div className="flex items-center justify-between gap-3 border-b border-white/10 bg-black/70 px-4 py-3">
             <div className="min-w-0">
               <p className="truncate text-sm font-bold">{imageViewer.title}</p>
-              <p className="text-xs text-white/50">{Math.round(imageZoom * 100)}%</p>
+              <p className="text-xs text-white/50">
+                {Math.round(imageZoom * 100)}%
+              </p>
             </div>
             <div className="flex items-center gap-2">
-              <Button type="button" size="icon" variant="secondary" onClick={() => setImageZoom((z) => Math.max(0.5, z - 0.25))}>
+              <Button
+                type="button"
+                size="icon"
+                variant="secondary"
+                onClick={() => setImageZoom((z) => Math.max(0.5, z - 0.25))}
+              >
                 <ZoomOut className="h-4 w-4" />
               </Button>
-              <Button type="button" size="icon" variant="secondary" onClick={() => setImageZoom(1)}>
+              <Button
+                type="button"
+                size="icon"
+                variant="secondary"
+                onClick={() => setImageZoom(1)}
+              >
                 <RotateCcw className="h-4 w-4" />
               </Button>
-              <Button type="button" size="icon" variant="secondary" onClick={() => setImageZoom((z) => Math.min(4, z + 0.25))}>
+              <Button
+                type="button"
+                size="icon"
+                variant="secondary"
+                onClick={() => setImageZoom((z) => Math.min(4, z + 0.25))}
+              >
                 <ZoomIn className="h-4 w-4" />
               </Button>
-              <Button type="button" size="icon" variant="secondary" onClick={closeImageViewer}>
+              <Button
+                type="button"
+                size="icon"
+                variant="secondary"
+                onClick={closeImageViewer}
+              >
                 <X className="h-4 w-4" />
               </Button>
             </div>
@@ -799,7 +1098,10 @@ export default function UserDetailPage() {
               src={imageViewer.url}
               alt={imageViewer.title}
               className="max-h-[80vh] max-w-full rounded-lg bg-white object-contain shadow-2xl transition-transform duration-150"
-              style={{ transform: `scale(${imageZoom})`, transformOrigin: "center center" }}
+              style={{
+                transform: `scale(${imageZoom})`,
+                transformOrigin: "center center",
+              }}
             />
           </div>
         </div>
