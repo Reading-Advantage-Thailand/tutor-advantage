@@ -54,6 +54,7 @@ import {
   getUsers,
   getUserDetails,
   verifyUser,
+  suspendUser,
   anonymizeUser,
 } from "./controllers/userController";
 import {
@@ -237,6 +238,7 @@ app.delete(
 app.get("/v1/users", authMiddleware, getUsers);
 app.get("/v1/users/:id", authMiddleware, getUserDetails);
 app.post("/v1/users/:id/verify", authMiddleware, verifyUser);
+app.post("/v1/users/:id/suspend", authMiddleware, suspendUser);
 app.post("/v1/users/:id/anonymize", authMiddleware, anonymizeUser);
 
 // ── Fraud Routes ───────────────────────────────────────────────────────────
