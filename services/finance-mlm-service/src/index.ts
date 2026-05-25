@@ -23,6 +23,7 @@ import {
   getPaymentStatus,
   getPromptPayQrCode,
 } from "./controllers/paymentController";
+import { handleTransferWebhook } from "./controllers/transferWebhookController";
 import {
   previewSettlement,
   submitSettlement,
@@ -145,6 +146,7 @@ app.get("/v1/payments/:paymentIntentId/qr-code", authMiddleware, getPromptPayQrC
 app.get("/v1/payments/:paymentIntentId/status", authMiddleware, getPaymentStatus);
 app.get("/v1/payments/history", authMiddleware, getPaymentHistory);
 app.post("/v1/payments/webhook", handleWebhook);
+app.post("/v1/webhooks/omise-transfer", handleTransferWebhook);
 
 // ── Tutor Dashboard Routes ─────────────────────────────────────────────────
 app.get("/v1/tutors/earnings/summary", authMiddleware, getEarningsSummary);
