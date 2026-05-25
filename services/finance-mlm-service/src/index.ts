@@ -28,6 +28,7 @@ import {
   approveSettlement,
   rejectSettlement,
   exportSettlementCsv,
+  getSettlementLines,
   getSettlementSummary,
   getSettlements,
   autoRunSettlement,
@@ -173,6 +174,12 @@ app.post(
   "/v1/settlements/:snapshotId/reject",
   authMiddleware,
   rejectSettlement,
+);
+
+app.get(
+  "/v1/settlements/:snapshotId/lines",
+  authMiddleware,
+  getSettlementLines,
 );
 
 app.get(

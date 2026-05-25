@@ -3,12 +3,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Terminal, X, ChevronUp, ChevronDown, RefreshCw, CheckCircle2,
-  AlertTriangle, Zap, Trash2, Plus, Users, ReceiptText,
-  ShieldAlert, FilePenLine, ExternalLink, Loader2,
+  Terminal, X, ChevronUp, ChevronDown, RefreshCw,
+  Zap, Trash2, Users, ReceiptText,
+  ShieldAlert, FilePenLine, Loader2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 
 interface DevState {
   currentMonth: string;
@@ -54,7 +53,7 @@ export function DevToolbar() {
       const data = await devFetch("GET", "/v1/dev/state");
       setState(data);
     } catch (e: any) {
-      log("err", `State load: ${e.message}`);
+      log("err", `โหลด state ไม่ได้: ${e.message}`);
     }
   }, []);
 
@@ -79,20 +78,20 @@ export function DevToolbar() {
     }
   };
 
-  // PAGE-SPECIFIC quick actions
+  // ACTION เฉพาะหน้า
   const pageActions: { id: string; label: string; icon: React.ReactNode; action: () => Promise<any> }[] = [];
 
   if (pathname === "/" || pathname.startsWith("/settlements")) {
     pageActions.push(
       {
         id: "settlement-current",
-        label: `Settlement ${state?.currentMonth ?? "…"}`,
+        label: `รัน Settlement ${state?.currentMonth ?? "…"}`,
         icon: <ReceiptText className="h-3.5 w-3.5" />,
         action: () => devFetch("POST", "/v1/dev/actions/settlement", { periodMonth: state?.currentMonth }),
       },
       {
         id: "settlement-prev",
-        label: `Settlement ${state?.prevMonth ?? "…"} (prev)`,
+        label: `รัน Settlement ${state?.prevMonth ?? "…"} (เดือนก่อน)`,
         icon: <ReceiptText className="h-3.5 w-3.5" />,
         action: () => devFetch("POST", "/v1/dev/actions/settlement", { periodMonth: state?.prevMonth }),
       },
@@ -102,7 +101,7 @@ export function DevToolbar() {
   if (pathname.startsWith("/adjustments")) {
     pageActions.push({
       id: "adj-seed",
-      label: "Create test adjustment (฿100)",
+      label: "สร้าง adjustment ทดสอบ (฿100)",
       icon: <FilePenLine className="h-3.5 w-3.5" />,
       action: () => devFetch("POST", "/v1/dev/actions/adjustment", { amountTHB: 100 }),
     });
@@ -111,56 +110,55 @@ export function DevToolbar() {
   if (pathname.startsWith("/fraud")) {
     pageActions.push({
       id: "fraud-seed",
-      label: "Create fraud flag (HIGH)",
+      label: "สร้าง fraud flag (HIGH)",
       icon: <ShieldAlert className="h-3.5 w-3.5" />,
       action: () => devFetch("POST", "/v1/dev/actions/fraud-flag", {}),
     });
   }
 
-  // GLOBAL actions
+  // ACTION ทั่วไป
   const globalActions = [
     {
       id: "settlement-current-g",
-      label: `Run settlement ${state?.currentMonth ?? ""}`,
+      label: `รัน Settlement ${state?.currentMonth ?? ""}`,
       icon: <ReceiptText className="h-3.5 w-3.5" />,
       action: () => devFetch("POST", "/v1/dev/actions/settlement", { periodMonth: state?.currentMonth }),
     },
     {
       id: "adj-seed-g",
-      label: "Seed adjustment",
+      label: "สร้าง adjustment ทดสอบ",
       icon: <FilePenLine className="h-3.5 w-3.5" />,
       action: () => devFetch("POST", "/v1/dev/actions/adjustment", {}),
     },
     {
       id: "fraud-seed-g",
-      label: "Seed fraud flag",
+      label: "สร้าง fraud flag ทดสอบ",
       icon: <ShieldAlert className="h-3.5 w-3.5" />,
       action: () => devFetch("POST", "/v1/dev/actions/fraud-flag", {}),
     },
     {
       id: "purge-fraud",
-      label: "Purge [DEV] fraud flags",
+      label: "ลบ fraud flag [DEV] ทั้งหมด",
       icon: <Trash2 className="h-3.5 w-3.5 text-red-500" />,
       action: () => devFetch("POST", "/v1/dev/actions/purge", { resource: "fraud" }),
     },
     {
       id: "purge-adj",
-      label: "Purge DEV_TOOL adjustments",
+      label: "ลบ adjustment DEV_TOOL ทั้งหมด",
       icon: <Trash2 className="h-3.5 w-3.5 text-red-500" />,
       action: () => devFetch("POST", "/v1/dev/actions/purge", { resource: "adjustments" }),
     },
     {
       id: "purge-settlements",
-      label: "Purge PENDING DEV settlements",
+      label: "ลบ settlement PENDING (DEV) ทั้งหมด",
       icon: <Trash2 className="h-3.5 w-3.5 text-red-500" />,
       action: () => devFetch("POST", "/v1/dev/actions/purge", { resource: "settlements" }),
     },
   ];
 
-  // Floating button always visible in dev
   return (
     <>
-      {/* Floating toggle button */}
+      {/* ปุ่มลอย */}
       <button
         onClick={() => setOpen((v) => !v)}
         className="fixed bottom-5 right-5 z-[9999] flex items-center gap-1.5 rounded-full bg-orange-500 text-white shadow-lg shadow-orange-500/30 px-3 py-2 text-xs font-bold hover:bg-orange-600 transition-all active:scale-95"
@@ -171,21 +169,21 @@ export function DevToolbar() {
         {open ? <ChevronDown className="h-3 w-3" /> : <ChevronUp className="h-3 w-3" />}
       </button>
 
-      {/* Panel */}
+      {/* แผง */}
       {open && (
         <div className="fixed bottom-16 right-5 z-[9998] w-[360px] max-h-[80vh] flex flex-col rounded-2xl border border-orange-500/30 bg-background shadow-2xl shadow-black/20 overflow-hidden">
-          {/* Header */}
+          {/* หัว */}
           <div className="flex items-center justify-between px-4 py-3 bg-orange-500/10 border-b border-orange-500/20 shrink-0">
             <div className="flex items-center gap-2">
               <Terminal className="h-4 w-4 text-orange-500" />
-              <span className="text-sm font-bold text-foreground">Dev Toolbar</span>
+              <span className="text-sm font-bold text-foreground">เครื่องมือ Dev</span>
               <Badge className="bg-orange-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">DEV</Badge>
             </div>
             <div className="flex items-center gap-1">
               <button
                 onClick={loadState}
                 className="p-1 rounded-lg hover:bg-orange-500/10 text-muted-foreground hover:text-orange-500 transition-colors"
-                title="Refresh state"
+                title="รีเฟรช"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
               </button>
@@ -199,18 +197,18 @@ export function DevToolbar() {
           </div>
 
           <div className="overflow-y-auto flex-1">
-            {/* State snapshot */}
+            {/* สถานะระบบ */}
             {state && (
               <div className="px-4 py-3 border-b border-border/50 bg-muted/20">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">System State</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">สถานะระบบ</p>
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    { label: "Users", value: state.userCount },
-                    { label: "Tutors", value: state.tutorCount },
-                    { label: "Pending adj.", value: state.pendingAdjustments },
-                    { label: "Open fraud", value: state.openFraudFlags },
-                    { label: "Latest run", value: state.latestRun?.period ?? "—" },
-                    { label: "Run status", value: state.latestRun?.status ?? "—" },
+                    { label: "ผู้ใช้", value: state.userCount },
+                    { label: "ครูพิเศษ", value: state.tutorCount },
+                    { label: "Adj. รอ", value: state.pendingAdjustments },
+                    { label: "Fraud เปิด", value: state.openFraudFlags },
+                    { label: "Run ล่าสุด", value: state.latestRun?.period ?? "—" },
+                    { label: "สถานะ Run", value: state.latestRun?.status ?? "—" },
                   ].map(({ label, value }) => (
                     <div key={label} className="bg-card rounded-lg p-2 border border-border/50">
                       <p className="text-[9px] text-muted-foreground font-medium">{label}</p>
@@ -221,11 +219,11 @@ export function DevToolbar() {
               </div>
             )}
 
-            {/* Page-specific actions */}
+            {/* Action เฉพาะหน้า */}
             {pageActions.length > 0 && (
               <div className="px-4 py-3 border-b border-border/50">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-orange-500 mb-2 flex items-center gap-1">
-                  <Zap className="h-3 w-3" /> Page Actions
+                  <Zap className="h-3 w-3" /> Action หน้านี้
                 </p>
                 <div className="space-y-1.5">
                   {pageActions.map(({ id, ...rest }) => (
@@ -235,9 +233,9 @@ export function DevToolbar() {
               </div>
             )}
 
-            {/* Global actions */}
+            {/* Action ทั่วไป */}
             <div className="px-4 py-3 border-b border-border/50">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Global Actions</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Action ทั่วไป</p>
               <div className="space-y-1.5">
                 {globalActions.map(({ id, ...rest }) => (
                   <ActionBtn key={id} id={id} {...rest} busy={busy} onRun={(k, l, fn) => run(k, l, fn)} />
@@ -245,14 +243,14 @@ export function DevToolbar() {
               </div>
             </div>
 
-            {/* Quick nav */}
+            {/* ไปหน้า */}
             <div className="px-4 py-3 border-b border-border/50">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Quick Nav</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">ไปที่หน้า</p>
               <div className="flex flex-wrap gap-1.5">
                 {[
-                  { href: "/dev", label: "User CRUD", icon: <Users className="h-3 w-3" /> },
-                  { href: "/settlements", label: "Settlements", icon: <ReceiptText className="h-3 w-3" /> },
-                  { href: "/adjustments", label: "Adjustments", icon: <FilePenLine className="h-3 w-3" /> },
+                  { href: "/dev", label: "จัดการผู้ใช้", icon: <Users className="h-3 w-3" /> },
+                  { href: "/settlements", label: "Settlement", icon: <ReceiptText className="h-3 w-3" /> },
+                  { href: "/adjustments", label: "Adjustment", icon: <FilePenLine className="h-3 w-3" /> },
                   { href: "/fraud", label: "Fraud", icon: <ShieldAlert className="h-3 w-3" /> },
                 ].map(({ href, label, icon }) => (
                   <a
@@ -266,21 +264,21 @@ export function DevToolbar() {
               </div>
             </div>
 
-            {/* Log */}
+            {/* ประวัติ */}
             <div className="px-4 py-3">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Log</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">ประวัติ</p>
                 {logs.length > 0 && (
                   <button
                     onClick={() => setLogs([])}
                     className="text-[9px] text-muted-foreground hover:text-foreground"
                   >
-                    Clear
+                    ล้าง
                   </button>
                 )}
               </div>
               {logs.length === 0 ? (
-                <p className="text-[10px] text-muted-foreground italic">No actions yet</p>
+                <p className="text-[10px] text-muted-foreground italic">ยังไม่มีการทดสอบ</p>
               ) : (
                 <div className="space-y-1 max-h-40 overflow-y-auto">
                   {logs.map((l) => (

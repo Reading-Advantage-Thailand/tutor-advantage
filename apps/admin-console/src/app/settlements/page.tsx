@@ -3,6 +3,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { downloadBlob, fetchBlobWithAuth, fetchWithAuth } from "../../lib/api";
 import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -30,8 +37,32 @@ import {
   RefreshCw,
   TrendingUp,
   FileText,
+  Info,
+  Eye,
+  Loader2,
 } from "lucide-react";
 import { t } from "@/lib/i18n";
+
+interface PayoutLineRow {
+  payoutLineId: string;
+  tutorUserId: string;
+  grossVolumeTHB: number;
+  payoutRate: number;
+  grossPayoutTHB: number;
+  badgeBonusTHB: number;
+  whtTHB: number;
+  netPayoutTHB: number;
+  eligibilityStatus: string;
+  documentNumber: string | null;
+}
+
+interface LinesData {
+  snapshotId: string;
+  periodMonth: string;
+  status: string;
+  totalNetPayoutTHB: number;
+  lines: PayoutLineRow[];
+}
 
 export interface SettlementPreview {
   snapshotId: string;
@@ -120,6 +151,11 @@ export default function SettlementsPage() {
   const [listLoading, setListLoading] = useState(false);
   const [userRole, setUserRole] = useState<string>("");
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+
+  // CSV viewer state
+  const [linesOpen, setLinesOpen] = useState(false);
+  const [linesData, setLinesData] = useState<LinesData | null>(null);
+  const [linesLoadingId, setLinesLoadingId] = useState<string | null>(null);
 
   useEffect(() => {
     const match = document.cookie.match(/(?:^|; )admin_role=([^;]*)/);
@@ -237,6 +273,20 @@ export default function SettlementsPage() {
     }
   };
 
+  const handleViewLines = async (id: string) => {
+    setLinesLoadingId(id);
+    try {
+      const data = await fetchWithAuth(`/v1/settlements/${id}/lines`);
+      setLinesData(data);
+      setLinesOpen(true);
+    } catch (err) {
+      const e = err as Error;
+      setError(e.message);
+    } finally {
+      setLinesLoadingId(null);
+    }
+  };
+
   const handleExportCsv = async () => {
     if (!result?.snapshotId) return;
     setExportLoading(true);
@@ -272,6 +322,31 @@ export default function SettlementsPage() {
         <h2 className="text-3xl font-black tracking-tight text-foreground">{t("settlements.title")}</h2>
         <p className="text-muted-foreground font-medium">{t("settlements.description")}</p>
       </div>
+
+      {/* FINANCE_CHECKER notice — รอ Admin preview ก่อน */}
+      {userRole === "FINANCE_CHECKER" && !listLoading && (
+        list.some((r) => r.status === "DRAFT") ? (
+          <Alert className="rounded-2xl border-2 border-brand-500/30 bg-brand-500/5 shadow-md">
+            <CheckCircle2 className="h-5 w-5 text-brand-600" />
+            <AlertTitle className="font-bold text-brand-700 dark:text-brand-400">
+              {t("settlements.checkerHasDraftTitle")}
+            </AlertTitle>
+            <AlertDescription className="font-medium text-brand-700/80 dark:text-brand-400/80">
+              {t("settlements.checkerHasDraftDescription")}
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <Alert className="rounded-2xl border-2 border-amber-500/30 bg-amber-500/5 shadow-md">
+            <Info className="h-5 w-5 text-amber-600" />
+            <AlertTitle className="font-bold text-amber-700 dark:text-amber-400">
+              {t("settlements.checkerWaitTitle")}
+            </AlertTitle>
+            <AlertDescription className="font-medium text-amber-700/80 dark:text-amber-400/80">
+              {t("settlements.checkerWaitDescription")}
+            </AlertDescription>
+          </Alert>
+        )
+      )}
 
       {/* Run Preview Card */}
       {userRole !== "FINANCE_CHECKER" && (
@@ -502,7 +577,24 @@ export default function SettlementsPage() {
                     <div className="flex items-center gap-6">
                       <CopyableId name="Snapshot ID" id={run.snapshotId} />
                       <div className="flex items-center gap-2">
-                         {run.status === "APPROVED" && (
+                        {/* ดูรายการในหน้าเว็บ */}
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          disabled={linesLoadingId === run.snapshotId}
+                          onClick={() => handleViewLines(run.snapshotId)}
+                          className="h-10 rounded-xl font-bold hover:bg-muted"
+                        >
+                          {linesLoadingId === run.snapshotId ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <Eye className="h-4 w-4 mr-2" />
+                              ดูรายการ
+                            </>
+                          )}
+                        </Button>
+                        {run.status === "APPROVED" && (
                           <Button
                             size="sm"
                             variant="ghost"
@@ -533,6 +625,137 @@ export default function SettlementsPage() {
           })}
         </div>
       </div>
+
+      {/* Payout Lines Viewer — bottom sheet */}
+      <Sheet open={linesOpen} onOpenChange={setLinesOpen}>
+        <SheetContent
+          side="bottom"
+          className="h-[80vh] flex flex-col p-0 rounded-t-3xl"
+        >
+          <SheetHeader className="px-6 py-4 border-b bg-muted/20 shrink-0">
+            <div className="flex items-center justify-between">
+              <div>
+                <SheetTitle className="text-lg font-bold">
+                  รายการจ่ายเงิน — {linesData?.periodMonth}
+                </SheetTitle>
+                <SheetDescription className="mt-0.5">
+                  {linesData?.lines.length ?? 0} รายการ &nbsp;·&nbsp; ยอดสุทธิรวม{" "}
+                  <span className="font-bold text-foreground">
+                    {(linesData?.totalNetPayoutTHB ?? 0).toLocaleString("th-TH", {
+                      style: "currency",
+                      currency: "THB",
+                    })}
+                  </span>
+                  &nbsp;·&nbsp; สถานะ{" "}
+                  <span className="font-bold text-foreground">{linesData?.status}</span>
+                </SheetDescription>
+              </div>
+              {linesData && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="rounded-xl font-bold"
+                  onClick={() =>
+                    handleListExport(linesData.snapshotId, linesData.periodMonth)
+                  }
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  ดาวน์โหลด CSV
+                </Button>
+              )}
+            </div>
+          </SheetHeader>
+
+          <div className="flex-1 overflow-auto px-6 py-4">
+            {!linesData || linesData.lines.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full gap-3 text-muted-foreground">
+                <ReceiptText className="h-12 w-12 opacity-20" />
+                <p className="font-medium">ไม่มีรายการในรอบนี้</p>
+              </div>
+            ) : (
+              <div className="rounded-2xl border overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/50 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    <tr>
+                      <th className="px-4 py-3 text-left">รหัสครู</th>
+                      <th className="px-4 py-3 text-right">ยอดขายรวม</th>
+                      <th className="px-4 py-3 text-right">อัตราจ่าย</th>
+                      <th className="px-4 py-3 text-right">ค่าตอบแทน</th>
+                      <th className="px-4 py-3 text-right">โบนัส Badge</th>
+                      <th className="px-4 py-3 text-right">ภาษีหัก ณ ที่จ่าย</th>
+                      <th className="px-4 py-3 text-right font-black text-foreground">สุทธิ</th>
+                      <th className="px-4 py-3 text-center">สถานะ</th>
+                      <th className="px-4 py-3 text-left">เลขที่เอกสาร</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/50">
+                    {linesData.lines.map((row, i) => (
+                      <tr
+                        key={row.payoutLineId}
+                        className={`transition-colors hover:bg-muted/30 ${
+                          i % 2 === 0 ? "bg-background" : "bg-muted/10"
+                        }`}
+                      >
+                        <td className="px-4 py-3 font-mono text-[11px] text-muted-foreground">
+                          {row.tutorUserId.slice(0, 8)}…
+                        </td>
+                        <td className="px-4 py-3 text-right tabular-nums">
+                          {row.grossVolumeTHB.toLocaleString("th-TH", { minimumFractionDigits: 2 })}
+                        </td>
+                        <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">
+                          {(row.payoutRate * 100).toFixed(1)}%
+                        </td>
+                        <td className="px-4 py-3 text-right tabular-nums">
+                          {row.grossPayoutTHB.toLocaleString("th-TH", { minimumFractionDigits: 2 })}
+                        </td>
+                        <td className="px-4 py-3 text-right tabular-nums text-emerald-600">
+                          {row.badgeBonusTHB > 0
+                            ? `+${row.badgeBonusTHB.toLocaleString("th-TH", { minimumFractionDigits: 2 })}`
+                            : "—"}
+                        </td>
+                        <td className="px-4 py-3 text-right tabular-nums text-red-500">
+                          {row.whtTHB > 0
+                            ? `-${row.whtTHB.toLocaleString("th-TH", { minimumFractionDigits: 2 })}`
+                            : "—"}
+                        </td>
+                        <td className="px-4 py-3 text-right tabular-nums font-bold text-foreground">
+                          {row.netPayoutTHB.toLocaleString("th-TH", { minimumFractionDigits: 2 })}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            row.eligibilityStatus === "ELIGIBLE"
+                              ? "bg-emerald-500/10 text-emerald-600"
+                              : "bg-red-500/10 text-red-500"
+                          }`}>
+                            {row.eligibilityStatus}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 font-mono text-[11px] text-muted-foreground">
+                          {row.documentNumber ?? "—"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot className="bg-muted/30 border-t-2 border-border font-bold">
+                    <tr>
+                      <td className="px-4 py-3 text-xs uppercase tracking-wider" colSpan={6}>
+                        รวมทั้งหมด ({linesData.lines.length} ราย)
+                      </td>
+                      <td className="px-4 py-3 text-right tabular-nums text-brand-600">
+                        {linesData.totalNetPayoutTHB.toLocaleString("th-TH", {
+                          style: "currency",
+                          currency: "THB",
+                        })}
+                      </td>
+                      <td colSpan={2} />
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

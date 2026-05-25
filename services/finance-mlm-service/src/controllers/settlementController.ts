@@ -291,6 +291,67 @@ export async function exportSettlementCsv(
 }
 
 /**
+ * GET /v1/settlements/:snapshotId/lines — return payout lines as JSON for in-browser viewing
+ * No audit trail created (view-only, not an export action)
+ */
+export async function getSettlementLines(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  try {
+    const { snapshotId } = req.params;
+    const { role } = req.user ?? {};
+
+    if (role !== "ADMIN" && role !== "FINANCE_CHECKER") {
+      return res.status(403).json({ error: { code: "FORBIDDEN", message: "Access denied" } });
+    }
+
+    const run = await prisma.settlementRun.findUnique({
+      where: { settlementRunId: snapshotId },
+      include: {
+        payoutLines: {
+          include: {
+            settlementRun: false,
+            payoutDocument: { select: { documentNumber: true, status: true } },
+          },
+          orderBy: { netPayoutMinor: "desc" },
+        },
+      },
+    });
+
+    if (!run) {
+      return res.status(404).json({ error: { code: "NOT_FOUND", message: "Settlement run not found" } });
+    }
+
+    const lines = run.payoutLines.map((l) => ({
+      payoutLineId: l.payoutLineId,
+      tutorUserId: l.tutorUserId,
+      grossVolumeTHB: Number(l.grossVolumeMinor) / 100,
+      payoutRate: Number(l.payoutRate),
+      grossPayoutTHB: Number(l.payoutAmountMinor) / 100,
+      badgeBonusTHB: Number(l.badgeBonusMinor) / 100,
+      whtTHB: Number(l.withholdingTaxMinor) / 100,
+      netPayoutTHB: Number(l.netPayoutMinor) / 100,
+      eligibilityStatus: l.eligibilityStatus,
+      documentNumber: l.payoutDocument?.documentNumber ?? null,
+    }));
+
+    return res.status(200).json({
+      snapshotId,
+      periodMonth: run.periodMonth,
+      status: run.status,
+      totalNetPayoutTHB: lines.reduce((s, l) => s + l.netPayoutTHB, 0),
+      lines,
+    });
+  } catch (error: any) {
+    console.error("getSettlementLines error:", error);
+    return res.status(500).json({
+      error: { code: "INTERNAL_SERVER_ERROR", message: "Could not fetch lines" },
+    });
+  }
+}
+
+/**
  * GET /v1/settlements/summary
  * สำหรับ Dashboard StatCards
  */
