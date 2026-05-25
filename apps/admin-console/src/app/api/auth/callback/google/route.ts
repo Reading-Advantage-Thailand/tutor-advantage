@@ -136,6 +136,14 @@ export async function GET(request: Request) {
       path: "/",
     });
 
+    response.cookies.set("admin_email", email, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 12,
+      path: "/",
+    });
+
     // Consume one-time cookies
     response.cookies.delete("oauth_state");
     response.cookies.delete("pkce_verifier");

@@ -113,3 +113,9 @@ export function getAdminRole(): string {
   const match = document.cookie.match(/(?:^|; )admin_role=([^;]*)/);
   return match ? decodeURIComponent(match[1]) : "";
 }
+
+export function getAdminEmail(): string {
+  if (typeof document === "undefined") return "";
+  const match = document.cookie.match(/(?:^|; )admin_email=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : "";
+}

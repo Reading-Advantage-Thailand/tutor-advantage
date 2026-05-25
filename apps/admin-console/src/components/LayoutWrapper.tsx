@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
-import { fetchWithAuth } from "../lib/api";
+import { fetchWithAuth, getAdminRole, getAdminEmail } from "../lib/api";
 import {
   LayoutDashboard,
   ReceiptText,
@@ -75,9 +75,11 @@ const USER_RISK_ITEMS = [
 
 function AppSidebar({
   role,
+  email,
   onLogout,
 }: {
   role: string | null;
+  email: string;
   onLogout: () => void;
 }) {
   const pathname = usePathname();
@@ -158,20 +160,13 @@ function AppSidebar({
                           : "hover:bg-brand-50/50 dark:hover:bg-brand-900/10"
                       }
                     >
-                      <Link
-                        href={href}
-                        className="flex justify-between items-center w-full py-2"
-                      >
-                        <div className="flex items-center gap-3 overflow-hidden">
-                          <Icon className={`h-4.5 w-4.5 shrink-0 ${active ? "text-brand-600" : "text-muted-foreground"}`} />
-                          <span className={`truncate font-medium group-data-[collapsible=icon]:hidden ${active ? "font-semibold" : ""}`}>
-                            {label}
-                          </span>
-                        </div>
+                      <Link href={href}>
+                        <Icon className={`shrink-0 ${active ? "text-brand-600" : "text-muted-foreground"}`} />
+                        <span className={`truncate ${active ? "font-semibold" : "font-medium"}`}>
+                          {label}
+                        </span>
                         {badgeCount > 0 && (
-                          <Badge
-                            className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden bg-brand-500 hover:bg-brand-600 text-white border-none shadow-sm"
-                          >
+                          <Badge className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden bg-brand-500 hover:bg-brand-600 text-white border-none shadow-sm">
                             {badgeCount}
                           </Badge>
                         )}
@@ -204,16 +199,11 @@ function AppSidebar({
                           : "hover:bg-brand-50/50 dark:hover:bg-brand-900/10"
                       }
                     >
-                      <Link
-                        href={href}
-                        className="flex justify-between items-center w-full py-2"
-                      >
-                        <div className="flex items-center gap-3 overflow-hidden">
-                          <Icon className={`h-4.5 w-4.5 shrink-0 ${active ? "text-brand-600" : "text-muted-foreground"}`} />
-                          <span className={`truncate font-medium group-data-[collapsible=icon]:hidden ${active ? "font-semibold" : ""}`}>
-                            {label}
-                          </span>
-                        </div>
+                      <Link href={href}>
+                        <Icon className={`shrink-0 ${active ? "text-brand-600" : "text-muted-foreground"}`} />
+                        <span className={`truncate ${active ? "font-semibold" : "font-medium"}`}>
+                          {label}
+                        </span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -244,20 +234,13 @@ function AppSidebar({
                           : "hover:bg-brand-50/50 dark:hover:bg-brand-900/10"
                       }
                     >
-                      <Link
-                        href={href}
-                        className="flex justify-between items-center w-full py-2"
-                      >
-                        <div className="flex items-center gap-3 overflow-hidden">
-                          <Icon className={`h-4.5 w-4.5 shrink-0 ${active ? "text-brand-600" : "text-muted-foreground"}`} />
-                          <span className={`truncate font-medium group-data-[collapsible=icon]:hidden ${active ? "font-semibold" : ""}`}>
-                            {label}
-                          </span>
-                        </div>
+                      <Link href={href}>
+                        <Icon className={`shrink-0 ${active ? "text-brand-600" : "text-muted-foreground"}`} />
+                        <span className={`truncate ${active ? "font-semibold" : "font-medium"}`}>
+                          {label}
+                        </span>
                         {badgeCount > 0 && (
-                          <Badge
-                            className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden bg-brand-500 hover:bg-brand-600 text-white border-none shadow-sm"
-                          >
+                          <Badge className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden bg-brand-500 hover:bg-brand-600 text-white border-none shadow-sm">
                             {badgeCount}
                           </Badge>
                         )}
@@ -288,11 +271,9 @@ function AppSidebar({
                         : "hover:bg-orange-500/5 text-muted-foreground hover:text-orange-600"
                     }
                   >
-                    <Link href="/dev" className="flex items-center gap-3 w-full py-2">
-                      <Terminal className="h-4 w-4 shrink-0" />
-                      <span className="truncate font-medium group-data-[collapsible=icon]:hidden">
-                        Dev Mode
-                      </span>
+                    <Link href="/dev">
+                      <Terminal className="shrink-0" />
+                      <span className="truncate font-medium">Dev Mode</span>
                       <span className="ml-auto text-[9px] font-bold text-orange-500 bg-orange-500/10 px-1.5 py-0.5 rounded group-data-[collapsible=icon]:hidden">
                         DEV
                       </span>
@@ -348,7 +329,7 @@ function AppSidebar({
                         {role || t("layout.defaultRole")}
                       </span>
                       <p className="text-xs text-muted-foreground truncate">
-                        admin@tutor-advantage.com
+                        {email || "—"}
                       </p>
                     </div>
                   </div>
@@ -378,17 +359,19 @@ export default function LayoutWrapper({
   const pathname = usePathname();
   const router = useRouter();
   const [role, setRole] = useState<string | null>(null);
+  const [email, setEmail] = useState<string>("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const match = document.cookie.match(/(?:^|; )admin_role=([^;]*)/);
-      const savedRole = match ? decodeURIComponent(match[1]) : null;
+      const savedRole = getAdminRole();
+      const savedEmail = getAdminEmail();
       const isPublicPage = pathname === "/login" || pathname === "/unauthorized";
 
       if (!savedRole && !isPublicPage) {
         router.push("/login");
       } else {
         setRole(savedRole);
+        setEmail(savedEmail);
       }
     }
   }, [pathname, router]);
@@ -414,7 +397,7 @@ export default function LayoutWrapper({
 
   return (
     <SidebarProvider>
-      <AppSidebar role={role} onLogout={handleLogout} />
+      <AppSidebar role={role} email={email} onLogout={handleLogout} />
       <SidebarInset className="bg-background/50 flex flex-col h-screen overflow-hidden">
         {/* Top Header */}
         <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2 border-b bg-background/95 px-6 backdrop-blur-md">

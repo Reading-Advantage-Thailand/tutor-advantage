@@ -39,6 +39,12 @@ export default function UsersPage() {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState<UserInfo[]>([]);
   const [loading, setLoading] = useState(false);
+  const [filterParam, setFilterParam] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setFilterParam(params.get("filter"));
+  }, []);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -56,12 +62,20 @@ export default function UsersPage() {
     loadData();
   }, [loadData]);
 
-  const filteredUsers = users.filter(
+  const searchFiltered = users.filter(
     (u) =>
       u.name.toLowerCase().includes(search.toLowerCase()) ||
       u.id.toLowerCase().includes(search.toLowerCase()),
   );
-  
+
+  // Apply ?filter=pending from query string (used by the "Review Documents" CTA)
+  const filteredUsers =
+    filterParam === "pending"
+      ? searchFiltered.filter(
+          (u) => u.role === "TUTOR" && (u.pendingVerificationCount || 0) > 0,
+        )
+      : searchFiltered;
+
   const pendingVerificationUsers = users.filter(
     (user) => user.role === "TUTOR" && (user.pendingVerificationCount || 0) > 0,
   );
@@ -138,6 +152,19 @@ export default function UsersPage() {
           </Card>
         )}
       </div>
+
+      {filterParam === "pending" && (
+        <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-sm font-semibold text-amber-700 dark:text-amber-400">
+          <Bell className="h-4 w-4 shrink-0" />
+          {t("users.pendingVerificationPrefix")} {pendingVerificationItems} {t("users.pendingVerificationSuffix")}
+          <button
+            className="ml-auto text-xs underline hover:no-underline"
+            onClick={() => setFilterParam(null)}
+          >
+            ดูทั้งหมด
+          </button>
+        </div>
+      )}
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">

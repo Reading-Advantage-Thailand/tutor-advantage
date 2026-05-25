@@ -5,9 +5,15 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   Terminal, X, ChevronUp, ChevronDown, RefreshCw,
   Zap, Trash2, Users, ReceiptText,
-  ShieldAlert, FilePenLine, Loader2,
+  ShieldAlert, FilePenLine, Loader2, AlertTriangle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+  DialogDescription, DialogFooter,
+} from "@/components/ui/dialog";
+import { fetchWithAuth } from "@/lib/api";
 
 interface DevState {
   currentMonth: string;
@@ -21,17 +27,11 @@ interface DevState {
 
 type LogEntry = { id: number; type: "ok" | "err" | "info"; msg: string; ts: string };
 
-async function devFetch(method: string, path: string, body?: unknown) {
-  const opts: RequestInit = { method };
-  if (body !== undefined) {
-    opts.headers = { "Content-Type": "application/json" };
-    opts.body = JSON.stringify(body);
-  }
-  const res = await fetch(`/api/proxy${path}`, opts);
-  const ct = res.headers.get("content-type") || "";
-  const data = ct.includes("application/json") ? await res.json() : await res.text();
-  if (!res.ok) throw new Error((data as any)?.error || JSON.stringify(data));
-  return data;
+function devFetch(method: string, path: string, body?: unknown) {
+  return fetchWithAuth(path, {
+    method,
+    ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+  });
 }
 
 export function DevToolbar() {
@@ -42,6 +42,7 @@ export function DevToolbar() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const logIdRef = useRef(0);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const log = (type: LogEntry["type"], msg: string) => {
     const ts = new Date().toLocaleTimeString("th-TH");
@@ -116,7 +117,9 @@ export function DevToolbar() {
     });
   }
 
-  // ACTION ทั่วไป
+  // ACTION ทั่วไป — ไม่รวม purge-all-settlements (มี dialog confirm แยก)
+  // กรอง action ที่ซ้ำกับ pageActions ออก (เช่น settlement บน /settlements page)
+  const pageActionIds = new Set(pageActions.map((a) => a.id));
   const globalActions = [
     {
       id: "settlement-current-g",
@@ -154,18 +157,7 @@ export function DevToolbar() {
       icon: <Trash2 className="h-3.5 w-3.5 text-red-500" />,
       action: () => devFetch("POST", "/v1/dev/actions/purge", { resource: "settlements" }),
     },
-    {
-      id: "purge-all-settlements",
-      label: "⚠️ ล้างข้อมูล settlement ทั้งหมด",
-      icon: <Trash2 className="h-3.5 w-3.5 text-red-600" />,
-      action: () => {
-        if (!confirm("ล้างข้อมูล settlement ทั้งหมดจริงไหม? (PayoutLine + PayoutDocument จะถูกลบด้วย)")) {
-          return Promise.resolve(null);
-        }
-        return devFetch("POST", "/v1/dev/actions/purge", { resource: "all-settlements" });
-      },
-    },
-  ];
+  ].filter((ga) => !pageActionIds.has(ga.id.replace(/-g$/, "")));
 
   return (
     <>
@@ -251,6 +243,15 @@ export function DevToolbar() {
                 {globalActions.map(({ id, ...rest }) => (
                   <ActionBtn key={id} id={id} {...rest} busy={busy} onRun={(k, l, fn) => run(k, l, fn)} />
                 ))}
+                {/* purge-all แยกออกมา — เปิด confirm dialog โดยตรง ไม่ผ่าน run() */}
+                <button
+                  onClick={() => setConfirmOpen(true)}
+                  disabled={busy !== null}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-card border border-red-500/30 hover:border-red-500/60 hover:bg-red-500/5 text-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left"
+                >
+                  <Trash2 className="h-3.5 w-3.5 shrink-0" />
+                  <span className="truncate">⚠️ ล้างข้อมูล settlement ทั้งหมด</span>
+                </button>
               </div>
             </div>
 
@@ -309,6 +310,56 @@ export function DevToolbar() {
           </div>
         </div>
       )}
+      {/* Confirm dialog — ล้าง settlement ทั้งหมด */}
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className="max-w-sm" showCloseButton={false}>
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-1">
+              <div className="p-2 bg-red-500/10 rounded-xl shrink-0">
+                <AlertTriangle className="h-5 w-5 text-red-500" />
+              </div>
+              <DialogTitle className="text-base">ล้างข้อมูล Settlement ทั้งหมด</DialogTitle>
+            </div>
+            <DialogDescription className="text-sm leading-relaxed">
+              ข้อมูลต่อไปนี้จะถูกลบถาวร และ<span className="font-bold text-foreground">ไม่สามารถกู้คืนได้</span>
+            </DialogDescription>
+            <ul className="mt-1 space-y-1 text-xs list-disc list-inside text-muted-foreground">
+              <li>Settlement Run ทั้งหมด (ทุกสถานะ)</li>
+              <li>Payout Lines ทั้งหมด</li>
+              <li>Payout Documents ทั้งหมด</li>
+              <li>Adjustments ที่ผูกกับ Settlement</li>
+            </ul>
+          </DialogHeader>
+          <DialogFooter className="mt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-xl"
+              onClick={() => setConfirmOpen(false)}
+              disabled={busy === "purge-all-settlements"}
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              size="sm"
+              className="rounded-xl bg-red-600 hover:bg-red-700 text-white"
+              disabled={busy === "purge-all-settlements"}
+              onClick={() => {
+                setConfirmOpen(false);
+                run(
+                  "purge-all-settlements",
+                  "ล้างข้อมูล settlement ทั้งหมด",
+                  () => devFetch("POST", "/v1/dev/actions/purge", { resource: "all-settlements" }),
+                );
+              }}
+            >
+              {busy === "purge-all-settlements"
+                ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                : "ยืนยัน ลบทั้งหมด"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

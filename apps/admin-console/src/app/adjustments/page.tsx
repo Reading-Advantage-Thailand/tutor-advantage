@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { fetchWithAuth } from "../../lib/api";
+import { fetchWithAuth, getAdminRole } from "../../lib/api";
+import { CopyableId } from "@/components/ui/copyable-id";
 import {
   Card,
   CardContent,
@@ -23,11 +24,9 @@ import {
   FilePenLine,
   RefreshCw,
   ShieldAlert,
-  Copy,
-  Check,
   Scale,
   PlusCircle,
-  MinusCircle
+  MinusCircle,
 } from "lucide-react";
 import { t } from "@/lib/i18n";
 
@@ -42,38 +41,6 @@ interface Adjustment {
   createdByUserId: string;
   createdByName: string;
   createdAt: string;
-}
-
-function CopyableId({ name, id }: { name: string; id: string }) {
-  const [copied, setCopied] = useState(false);
-  const handleCopy = () => {
-    navigator.clipboard.writeText(id);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
-  const truncated =
-    id.length > 20 ? `${id.slice(0, 8)}\u2026${id.slice(-4)}` : id;
-  return (
-    <div>
-      <p className="font-bold text-foreground text-xs">{name}</p>
-      <div className="flex items-center gap-1 mt-0.5 bg-muted/50 w-fit px-2 py-0.5 rounded-md border border-border/50">
-        <p className="font-mono text-[10px] text-muted-foreground">
-          {truncated}
-        </p>
-        <button
-          onClick={handleCopy}
-          className="text-muted-foreground hover:text-brand-600 transition-colors"
-          title="Copy full ID"
-        >
-          {copied ? (
-            <Check className="h-3 w-3 text-emerald-500" />
-          ) : (
-            <Copy className="h-3 w-3" />
-          )}
-        </button>
-      </div>
-    </div>
-  );
 }
 
 export default function AdjustmentsPage() {
@@ -96,8 +63,7 @@ export default function AdjustmentsPage() {
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    const match = document.cookie.match(/(?:^|; )admin_role=([^;]*)/);
-    if (match) setUserRole(decodeURIComponent(match[1]));
+    setUserRole(getAdminRole());
   }, []);
 
   const loadPending = useCallback(async () => {
@@ -359,7 +325,7 @@ export default function AdjustmentsPage() {
                     <div className="flex-1 space-y-4">
                       <div className="flex items-start justify-between">
                         <div>
-                          <CopyableId name={adj.tutorName} id={adj.tutorUserId} />
+                          <CopyableId name={adj.tutorName} id={adj.tutorUserId} variant="name" />
                         </div>
                         <Badge variant="outline" className="border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 rounded-full px-3 py-0.5 font-bold uppercase tracking-wider">
                           {t("adjustments.pending")}
@@ -388,7 +354,7 @@ export default function AdjustmentsPage() {
                     <div className="flex flex-col justify-between border-t md:border-t-0 md:border-l border-border/50 pt-4 md:pt-0 md:pl-6 min-w-[200px]">
                       <div>
                         <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("adjustments.requestor")}</p>
-                        <CopyableId name={adj.createdByName} id={adj.createdByUserId} />
+                        <CopyableId name={adj.createdByName} id={adj.createdByUserId} variant="name" />
                       </div>
                       
                       <div className="flex flex-col gap-2 mt-4">

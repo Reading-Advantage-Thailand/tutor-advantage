@@ -13,6 +13,8 @@ import {
   ShieldCheck, User, GraduationCap, CircleDollarSign, AlertTriangle,
 } from "lucide-react";
 
+import { fetchWithAuth } from "@/lib/api";
+
 const ROLES = ["ADMIN", "TUTOR", "STUDENT", "FINANCE_CHECKER"] as const;
 const VERIFICATION_STATUSES = ["UNVERIFIED", "PENDING", "VERIFIED", "REJECTED"] as const;
 
@@ -135,19 +137,6 @@ function FormFields({
   );
 }
 
-async function devFetch(url: string, options: RequestInit = {}) {
-  const headers = new Headers(options.headers);
-  if (!headers.has("Content-Type") && !(options.body instanceof FormData)) {
-    headers.set("Content-Type", "application/json");
-  }
-  const res = await fetch(`/api/proxy${url}`, { ...options, headers });
-  const data = res.headers.get("content-type")?.includes("application/json")
-    ? await res.json()
-    : await res.text();
-  if (!res.ok) throw new Error((data as any)?.error || "Request failed");
-  return data;
-}
-
 export default function DevPage() {
   const [users, setUsers] = useState<DevUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -169,7 +158,7 @@ export default function DevPage() {
     setLoading(true);
     setError(null);
     try {
-      const data = await devFetch("/v1/dev/users");
+      const data = await fetchWithAuth("/v1/dev/users");
       setUsers(data.users || []);
     } catch (e: any) {
       setError(e.message);
@@ -205,7 +194,7 @@ export default function DevPage() {
     if (!editingId) return;
     setSaving(true);
     try {
-      await devFetch(`/v1/dev/users/${editingId}`, {
+      await fetchWithAuth(`/v1/dev/users/${editingId}`, {
         method: "PATCH",
         body: JSON.stringify({
           ...editForm,
@@ -230,7 +219,7 @@ export default function DevPage() {
   const saveCreate = async () => {
     setSaving(true);
     try {
-      await devFetch("/v1/dev/users", {
+      await fetchWithAuth("/v1/dev/users", {
         method: "POST",
         body: JSON.stringify({
           ...createForm,
@@ -255,7 +244,7 @@ export default function DevPage() {
     if (!confirm(`Hard delete user ${userId}? This is irreversible.`)) return;
     setDeleting(userId);
     try {
-      await devFetch(`/v1/dev/users/${userId}`, { method: "DELETE" });
+      await fetchWithAuth(`/v1/dev/users/${userId}`, { method: "DELETE" });
       flash("ok", "User deleted");
       await load();
     } catch (e: any) {

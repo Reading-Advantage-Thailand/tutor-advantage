@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { downloadBlob, fetchBlobWithAuth, fetchWithAuth } from "../../lib/api";
+import { downloadBlob, fetchBlobWithAuth, fetchWithAuth, getAdminRole } from "../../lib/api";
+import { CopyableId } from "@/components/ui/copyable-id";
 import {
   Sheet,
   SheetContent,
@@ -20,7 +21,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -43,6 +43,9 @@ import {
   UserCircle,
 } from "lucide-react";
 
+import { t } from "@/lib/i18n";
+
+/** Icon-only copy button used inside the payout lines table */
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
   return (
@@ -55,13 +58,14 @@ function CopyButton({ text }: { text: string }) {
       className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
       title="คัดลอก ID"
     >
-      {copied
-        ? <Check className="h-3 w-3 text-emerald-500" />
-        : <Copy className="h-3 w-3" />}
+      {copied ? (
+        <Check className="h-3 w-3 text-emerald-500" />
+      ) : (
+        <Copy className="h-3 w-3" />
+      )}
     </button>
   );
 }
-import { t } from "@/lib/i18n";
 
 interface PayoutLineRow {
   payoutLineId: string;
@@ -139,38 +143,6 @@ const STATUS_CONFIG: Record<
   },
 };
 
-function CopyableId({ name, id }: { name: string; id: string }) {
-  const [copied, setCopied] = useState(false);
-  const handleCopy = () => {
-    navigator.clipboard.writeText(id);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
-  const truncated =
-    id.length > 20 ? `${id.slice(0, 8)}\u2026${id.slice(-4)}` : id;
-  return (
-    <div>
-      {name && <p className="font-bold text-foreground text-[10px] uppercase tracking-wider mb-1 opacity-60">{name}</p>}
-      <div className="flex items-center gap-2 bg-muted/50 px-2 py-1 rounded-md border border-border/50">
-        <p className="font-mono text-[10px] text-muted-foreground">
-          {truncated}
-        </p>
-        <button
-          onClick={handleCopy}
-          className="text-muted-foreground hover:text-brand-600 transition-colors"
-          title={t("settlements.copyId")}
-        >
-          {copied ? (
-            <Check className="h-3 w-3 text-emerald-500" />
-          ) : (
-            <Copy className="h-3 w-3" />
-          )}
-        </button>
-      </div>
-    </div>
-  );
-}
-
 export default function SettlementsPage() {
   const [period, setPeriod] = useState(new Date().toISOString().slice(0, 7));
   const [loading, setLoading] = useState(false);
@@ -190,8 +162,7 @@ export default function SettlementsPage() {
   const [linesLoadingId, setLinesLoadingId] = useState<string | null>(null);
 
   useEffect(() => {
-    const match = document.cookie.match(/(?:^|; )admin_role=([^;]*)/);
-    if (match) setUserRole(decodeURIComponent(match[1]));
+    setUserRole(getAdminRole());
   }, []);
 
   const loadSettlements = useCallback(async () => {
@@ -291,8 +262,9 @@ export default function SettlementsPage() {
     }
   };
 
-  const handleListExport = async (id: string, periodMonth: string) => {
+  const handleExport = async (id: string, periodMonth: string) => {
     setExportLoading(true);
+    setError("");
     try {
       const blob = await fetchBlobWithAuth(`/v1/settlements/${id}/export`);
       downloadBlob(blob, `settlement-${periodMonth}-${id.slice(0, 8)}.csv`);
@@ -319,25 +291,9 @@ export default function SettlementsPage() {
     }
   };
 
-  const handleExportCsv = async () => {
+  const handleExportCsv = () => {
     if (!result?.snapshotId) return;
-    setExportLoading(true);
-    setError("");
-    try {
-      const blob = await fetchBlobWithAuth(
-        `/v1/settlements/${result.snapshotId}/export`,
-      );
-      downloadBlob(
-        blob,
-        `settlement-${result.periodMonth}-${result.snapshotId.slice(0, 8)}.csv`,
-      );
-      setSuccess(t("settlements.exportSuccess"));
-    } catch (error) {
-      const err = error as Error;
-      setError(err.message);
-    } finally {
-      setExportLoading(false);
-    }
+    handleExport(result.snapshotId, result.periodMonth);
   };
 
   const statusConfig = result
@@ -631,7 +587,7 @@ export default function SettlementsPage() {
                             size="sm"
                             variant="ghost"
                             disabled={exportLoading}
-                            onClick={() => handleListExport(run.snapshotId, run.periodMonth)}
+                            onClick={() => handleExport(run.snapshotId, run.periodMonth)}
                             className="h-10 rounded-xl font-bold hover:bg-emerald-50 hover:text-emerald-600"
                           >
                             <Download className="h-4 w-4 mr-2" />
@@ -688,7 +644,7 @@ export default function SettlementsPage() {
                   variant="outline"
                   className="rounded-xl font-bold"
                   onClick={() =>
-                    handleListExport(linesData.snapshotId, linesData.periodMonth)
+                    handleExport(linesData.snapshotId, linesData.periodMonth)
                   }
                 >
                   <Download className="h-4 w-4 mr-2" />

@@ -26,7 +26,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fetchWithAuth } from "@/lib/api";
+import { fetchWithAuth, getAdminRole } from "@/lib/api";
 import { t } from "@/lib/i18n";
 
 interface Overview {
@@ -121,8 +121,8 @@ export default function DashboardPage() {
   const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
-    const match = document.cookie.match(/(?:^|; )admin_role=([^;]*)/);
-    setRole(match ? decodeURIComponent(match[1]) : null);
+    const r = getAdminRole();
+    setRole(r || null);
   }, []);
 
   useEffect(() => {
@@ -155,15 +155,22 @@ export default function DashboardPage() {
               {t("dashboard.welcomeBase")} {loading ? t("dashboard.loadingSummary") : t("dashboard.systemNormal")}
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          {!loading && overview && (
             <div className="rounded-2xl bg-white/10 p-4 backdrop-blur-md border border-white/10 text-center min-w-[120px]">
               <p className="text-[10px] font-bold uppercase tracking-widest text-brand-200">{t("dashboard.systemStatus")}</p>
-              <div className="mt-1 flex items-center justify-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-                <span className="text-xl font-bold">100%</span>
-              </div>
+              {overview.health.api === "ok" && overview.health.database === "ok" ? (
+                <div className="mt-1 flex items-center justify-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                  <span className="text-xl font-bold">OK</span>
+                </div>
+              ) : (
+                <div className="mt-1 flex items-center justify-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
+                  <span className="text-xl font-bold text-amber-300">Degraded</span>
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </div>
         {/* Background Decorations */}
         <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/5 blur-3xl" />
@@ -311,10 +318,6 @@ export default function DashboardPage() {
                   <p className="text-4xl font-black text-brand-900 dark:text-brand-50 tabular-nums">
                     {overview?.stats.totalSettlementsLast30Days ?? "--"}
                   </p>
-                  <div className="flex items-center gap-1 text-emerald-600 font-bold text-xs bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 px-2 py-0.5 rounded-full mb-1">
-                    <TrendingUp className="h-3 w-3" />
-                    +12%
-                  </div>
                 </div>
               </div>
 

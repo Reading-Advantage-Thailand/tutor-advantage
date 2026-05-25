@@ -43,6 +43,14 @@ export async function POST(req: Request) {
       path: "/",
     });
 
+    response.cookies.set("admin_email", `dev-${role.toLowerCase()}@localhost`, {
+      httpOnly: false,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 60 * 60 * 12,
+      path: "/",
+    });
+
     return response;
   } catch (error) {
     console.error("Dev login error:", error);
