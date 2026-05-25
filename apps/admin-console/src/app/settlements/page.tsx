@@ -35,7 +35,6 @@ import {
   Copy,
   Check,
   RefreshCw,
-  TrendingUp,
   FileText,
   Info,
   Eye,
@@ -201,47 +200,10 @@ export default function SettlementsPage() {
         body: JSON.stringify({ periodMonth: period }),
       });
       setResult(data.preview);
+      loadSettlements();
     } catch (error) {
       const err = error as Error;
       setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /** Admin: submit DRAFT → SUBMITTED (from result card) */
-  const handleSubmitForReview = async () => {
-    if (!result?.snapshotId) return;
-    setLoading(true);
-    setError("");
-    try {
-      await fetchWithAuth(`/v1/settlements/${result.snapshotId}/submit`, {
-        method: "POST",
-      });
-      setSuccess("ส่งรออนุมัติ Finance Checker เรียบร้อยแล้ว");
-      setResult({ ...result, status: "SUBMITTED" });
-      loadSettlements();
-    } catch (error) {
-      setError((error as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /** Admin: cancel own DRAFT (from result card) */
-  const handleCancelDraft = async () => {
-    if (!result?.snapshotId) return;
-    setLoading(true);
-    setError("");
-    try {
-      await fetchWithAuth(`/v1/settlements/${result.snapshotId}/reject`, {
-        method: "POST",
-      });
-      setSuccess(t("settlements.rejectSuccess"));
-      setResult({ ...result, status: "REJECTED" });
-      loadSettlements();
-    } catch (error) {
-      setError((error as Error).message);
     } finally {
       setLoading(false);
     }
@@ -311,10 +273,6 @@ export default function SettlementsPage() {
     ? (STATUS_CONFIG[result.status] ?? STATUS_CONFIG.DRAFT)
     : null;
 
-  const isDraft = result?.status === "DRAFT";
-  const isSubmitted = result?.status === "SUBMITTED";
-  const isApproved = result?.status === "APPROVED";
-  const isRejected = result?.status === "REJECTED";
   const isFinanceChecker = userRole === "FINANCE_CHECKER";
 
   return (
@@ -470,46 +428,12 @@ export default function SettlementsPage() {
             </div>
           </CardContent>
 
-          <CardFooter className="bg-muted/10 px-8 py-6 border-t flex flex-col md:flex-row items-center justify-between gap-6">
+          <CardFooter className="bg-muted/10 px-8 py-6 border-t">
             <div className="flex items-start gap-3 max-w-sm">
               <ShieldCheck className="h-5 w-5 text-brand-600 dark:text-brand-400 shrink-0 mt-0.5" />
               <p className="text-xs font-medium text-muted-foreground leading-relaxed">
                 {t("settlements.securityNotice")}
               </p>
-            </div>
-            
-            <div className="flex items-center gap-3 w-full md:w-auto">
-              {/* ADMIN: ยกเลิก DRAFT + ส่งรออนุมัติ */}
-              {!isFinanceChecker && (
-                <>
-                  <Button
-                    onClick={handleCancelDraft}
-                    disabled={loading || !isDraft}
-                    variant="outline"
-                    className="flex-1 md:flex-none h-12 rounded-xl font-bold border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-700"
-                  >
-                    <XCircle className="h-5 w-5 mr-2" />
-                    ยกเลิก
-                  </Button>
-                  <Button
-                    onClick={handleSubmitForReview}
-                    disabled={loading || !isDraft}
-                    className="flex-1 md:flex-none h-12 px-8 rounded-xl font-bold shadow-lg bg-blue-600 hover:bg-blue-700 shadow-blue-500/20 disabled:opacity-50"
-                  >
-                    {isSubmitted ? (
-                      <>
-                        <ShieldCheck className="h-5 w-5 mr-2" />
-                        ส่งแล้ว
-                      </>
-                    ) : (
-                      <>
-                        <TrendingUp className="h-5 w-5 mr-2" />
-                        ส่งรออนุมัติ Finance
-                      </>
-                    )}
-                  </Button>
-                </>
-              )}
             </div>
           </CardFooter>
         </Card>
