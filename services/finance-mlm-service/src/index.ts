@@ -33,6 +33,7 @@ import {
   getSettlementSummary,
   getSettlements,
   autoRunSettlement,
+  retryPayoutTransfer,
 } from "./controllers/settlementController";
 import { auditTrailMiddleware } from "./middlewares/auditMiddleware";
 import { getAuditLogs } from "./controllers/auditController";
@@ -56,6 +57,7 @@ import {
   verifyUser,
   suspendUser,
   anonymizeUser,
+  updateOmiseRecipient,
 } from "./controllers/userController";
 import {
   getFraudFlags,
@@ -191,6 +193,13 @@ app.get(
   getSettlementLines,
 );
 
+app.post(
+  "/v1/settlements/:snapshotId/lines/:payoutLineId/transfer",
+  authMiddleware,
+  auditTrailMiddleware("RETRY_PAYOUT_TRANSFER"),
+  retryPayoutTransfer,
+);
+
 app.get(
   "/v1/settlements/:snapshotId/export",
   authMiddleware,
@@ -240,6 +249,7 @@ app.get("/v1/users/:id", authMiddleware, getUserDetails);
 app.post("/v1/users/:id/verify", authMiddleware, verifyUser);
 app.post("/v1/users/:id/suspend", authMiddleware, suspendUser);
 app.post("/v1/users/:id/anonymize", authMiddleware, anonymizeUser);
+app.patch("/v1/users/:id/omise-recipient", authMiddleware, updateOmiseRecipient);
 
 // ── Fraud Routes ───────────────────────────────────────────────────────────
 app.get("/v1/fraud-flags", authMiddleware, getFraudFlags);

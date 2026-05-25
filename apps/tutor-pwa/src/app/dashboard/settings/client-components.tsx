@@ -410,6 +410,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
   const [submittedBankBookUrl, setSubmittedBankBookUrl] = useState<string | null>(user?.bankBookImageUrl || null);
   const [address, setAddress] = useState<string>(user?.settings?.address || "");
   const [bankAccountNumber, setBankAccountNumber] = useState<string>(user?.settings?.bankAccountNumber || "");
+  const [bankBrand, setBankBrand] = useState<string>(user?.settings?.bankBrand || "");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -420,6 +421,9 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
     }
     if (user?.settings?.bankAccountNumber) {
       setBankAccountNumber(user.settings.bankAccountNumber);
+    }
+    if (user?.settings?.bankBrand) {
+      setBankBrand(user.settings.bankBrand);
     }
   }, [user]);
 
@@ -470,6 +474,10 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
       setError(t("dashboardSettings.bankAccountRequired"));
       return;
     }
+    if (field === 'bankBook' && !bankBrand) {
+      setError("กรุณาเลือกธนาคาร");
+      return;
+    }
     if (field === 'address' && !address.trim()) {
       setError(t("dashboardSettings.addressRequired"));
       return;
@@ -499,6 +507,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
           bankBookUrl,
           addr,
           field === 'bankBook' ? bankAccountNumber.replace(/\D/g, "") : undefined,
+          field === 'bankBook' ? bankBrand : undefined,
         );
         
         // Success cleanup
@@ -641,6 +650,32 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="bank-brand" className="text-xs text-muted-foreground">
+                ธนาคาร
+              </Label>
+              <select
+                id="bank-brand"
+                value={bankBrand}
+                onChange={(e) => setBankBrand(e.target.value)}
+                disabled={isPending || getFieldStatus("bankBook") === "VERIFIED"}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="">-- เลือกธนาคาร --</option>
+                <option value="kbank">กสิกรไทย (KBank)</option>
+                <option value="scb">ไทยพาณิชย์ (SCB)</option>
+                <option value="bbl">กรุงเทพ (BBL)</option>
+                <option value="bay">กรุงศรีอยุธยา (BAY)</option>
+                <option value="ttb">ทีทีบี (TTB)</option>
+                <option value="kiatnakin">เกียรตินาคินภัทร (KKP)</option>
+                <option value="cimb">ซีไอเอ็มบี (CIMB)</option>
+                <option value="gsb">ออมสิน (GSB)</option>
+                <option value="baac">ธ.ก.ส. (BAAC)</option>
+                <option value="uob">ยูโอบี (UOB)</option>
+                <option value="lhb">แลนด์แอนด์เฮ้าส์ (LH Bank)</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="bank-account-number" className="text-xs text-muted-foreground">
                 {t("dashboardSettings.bankAccountNumber")}
               </Label>
@@ -711,7 +746,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
               <Button 
                 size="sm" 
                 className="w-full gap-2" 
-                disabled={!bankBookFile || !bankAccountNumber.replace(/\D/g, "") || (isPending && activeField === 'bankBook')}
+                disabled={!bankBookFile || !bankAccountNumber.replace(/\D/g, "") || !bankBrand || (isPending && activeField === 'bankBook')}
                 onClick={() => handleSubmitField('bankBook')}
               >
                 {activeField === 'bankBook' ? t("dashboardSettings.uploading") : t("dashboardSettings.uploadBankBook")}

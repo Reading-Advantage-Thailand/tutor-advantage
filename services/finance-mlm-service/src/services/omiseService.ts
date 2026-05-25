@@ -22,6 +22,19 @@ export type OmiseCharge = {
   } | null;
 };
 
+export type OmiseTransfer = {
+  id: string;
+  amount: number;
+  paid: boolean;
+  paid_at?: string | null;
+  sent: boolean;
+  sent_at?: string | null;
+  sendable: boolean;
+  failure_code?: string | null;
+  failure_message?: string | null;
+  recipient?: string | null;
+};
+
 type CreateChargeInput = {
   amount: number;
   currency: string;
@@ -33,6 +46,13 @@ type CreateChargeInput = {
   method: "promptpay" | "card";
   cardToken?: string;
   ip?: string;
+};
+
+type CreateTransferInput = {
+  amount: number;
+  recipient: string;
+  metadata?: Record<string, string>;
+  failFast?: boolean;
 };
 
 const OMISE_API_BASE_URL = process.env.OMISE_API_BASE_URL || "https://api.omise.co";
@@ -81,6 +101,57 @@ export async function createOmiseCharge(input: CreateChargeInput) {
 export async function retrieveOmiseCharge(chargeId: string) {
   return omiseRequest<OmiseCharge>(`/charges/${encodeURIComponent(chargeId)}`, {
     method: "GET",
+  });
+}
+
+type CreateRecipientInput = {
+  name: string;
+  email?: string;
+  bankAccountBrand: string;
+  bankAccountNumber: string;
+  bankAccountName: string;
+};
+
+export type OmiseRecipient = {
+  id: string;
+  name: string;
+  verified: boolean;
+  active: boolean;
+  bank_account?: {
+    brand: string;
+    last_digits: string;
+    name: string;
+  };
+};
+
+export async function createOmiseRecipient(input: CreateRecipientInput): Promise<OmiseRecipient> {
+  const params = new URLSearchParams();
+  params.set("name", input.name);
+  if (input.email) params.set("email", input.email);
+  params.set("type", "individual");
+  params.set("bank_account[brand]", input.bankAccountBrand);
+  params.set("bank_account[number]", input.bankAccountNumber);
+  params.set("bank_account[name]", input.bankAccountName);
+
+  return omiseRequest<OmiseRecipient>("/recipients", {
+    method: "POST",
+    body: params,
+  });
+}
+
+export async function createOmiseTransfer(input: CreateTransferInput) {
+  const params = new URLSearchParams();
+  params.set("amount", String(input.amount));
+  params.set("recipient", input.recipient);
+  params.set("fail_fast", String(input.failFast ?? true));
+
+  for (const [key, value] of Object.entries(input.metadata ?? {})) {
+    params.set(`metadata[${key}]`, value);
+  }
+
+  return omiseRequest<OmiseTransfer>("/transfers", {
+    method: "POST",
+    body: params,
   });
 }
 

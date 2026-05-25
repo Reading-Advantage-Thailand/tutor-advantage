@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+import { createOmiseRecipient, isOmiseConfigured } from "../services/omiseService";
 
 const ACTIVE_CLASS_STATUSES = ["ACTIVE", "OPEN", "IN_PROGRESS", "PUBLISHED"];
 const ACTIVE_ENROLLMENT_STATUSES = ["ACTIVE", "CONFIRMED", "PAID"];
@@ -241,7 +242,7 @@ export const verifyUser = async (req: Request, res: Response) => {
   try {
     const user = await prisma.user.findUnique({
       where: { userId: id },
-      select: { settings: true },
+      select: { settings: true, displayName: true, email: true },
     });
 
     if (!user) {
@@ -308,6 +309,44 @@ export const verifyUser = async (req: Request, res: Response) => {
       data,
     });
 
+    // Auto-create Omise recipient when bankBook is verified and not yet created
+    const bankBookNowVerified =
+      status === "VERIFIED" &&
+      (normalizedField === "bankBook" || normalizedField === "ALL");
+
+    if (bankBookNowVerified && isOmiseConfigured()) {
+      const accountNumber = currentSettings.bankAccountNumber as string | undefined;
+      const bankBrand = currentSettings.bankBrand as string | undefined;
+      const existingRecipientId = currentSettings.omiseRecipientId as string | undefined;
+
+      if (accountNumber && bankBrand && !existingRecipientId) {
+        try {
+          const recipient = await createOmiseRecipient({
+            name: user.displayName || `Tutor ${id}`,
+            email: user.email || undefined,
+            bankAccountBrand: bankBrand,
+            bankAccountNumber: accountNumber,
+            bankAccountName: user.displayName || `Tutor ${id}`,
+          });
+
+          await prisma.user.update({
+            where: { userId: id },
+            data: {
+              settings: {
+                ...((data.settings as Record<string, unknown>) ?? currentSettings),
+                omiseRecipientId: recipient.id,
+              },
+            },
+          });
+
+          console.log(`[verifyUser] Created Omise recipient ${recipient.id} for tutor ${id}`);
+        } catch (omiseError: any) {
+          // Non-fatal: log and continue — admin can set recipient ID manually
+          console.error(`[verifyUser] Failed to auto-create Omise recipient for ${id}:`, omiseError.message);
+        }
+      }
+    }
+
     res.status(200).json({
       success: true,
       message: `User ${id} ${field || "all"} verification status updated to ${status}`,
@@ -345,6 +384,54 @@ export const suspendUser = async (req: AuthenticatedRequest, res: Response) => {
   } catch (error) {
     console.error("Suspend User Error:", error);
     return res.status(500).json({ error: "Could not update user status" });
+  }
+};
+
+export const updateOmiseRecipient = async (req: AuthenticatedRequest, res: Response) => {
+  if (req.user?.role !== "ADMIN") {
+    return res.status(403).json({ error: "Forbidden: Requires Admin privileges" });
+  }
+
+  const { id } = req.params;
+  const { omiseRecipientId } = req.body;
+
+  if (typeof omiseRecipientId !== "string") {
+    return res.status(400).json({ error: "omiseRecipientId must be a string" });
+  }
+
+  const trimmed = omiseRecipientId.trim();
+  if (trimmed && !trimmed.startsWith("recp_")) {
+    return res.status(400).json({ error: "Invalid Omise recipient ID format (must start with recp_)" });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { userId: id },
+      select: { settings: true, role: true },
+    });
+    if (!user) return res.status(404).json({ error: "User not found" });
+    if (user.role !== "TUTOR") return res.status(400).json({ error: "User is not a TUTOR" });
+
+    const currentSettings = asSettings(user.settings);
+    const updatedSettings = { ...currentSettings };
+    if (trimmed) {
+      updatedSettings.omiseRecipientId = trimmed;
+    } else {
+      delete updatedSettings.omiseRecipientId;
+    }
+
+    await prisma.user.update({
+      where: { userId: id },
+      data: { settings: updatedSettings },
+    });
+
+    return res.status(200).json({
+      message: "Omise recipient ID updated",
+      omiseRecipientId: trimmed || null,
+    });
+  } catch (error) {
+    console.error("Update Omise Recipient Error:", error);
+    return res.status(500).json({ error: "Could not update Omise recipient ID" });
   }
 };
 

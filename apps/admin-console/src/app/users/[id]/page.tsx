@@ -40,6 +40,9 @@ import {
   CreditCard,
   Loader2,
   Users,
+  Pencil,
+  Save,
+  X as XIcon,
 } from "lucide-react";
 
 import { fetchWithAuth, getAdminRole } from "@/lib/api";
@@ -88,6 +91,7 @@ interface UserDetail {
   settings?: {
     address?: string;
     bankAccountNumber?: string;
+    omiseRecipientId?: string;
     verification?: Partial<Record<VerificationField, VerificationItem>>;
   };
   consentLogs: ConsentLog[];
@@ -162,6 +166,12 @@ export default function UserDetailPage() {
   });
   const [isVerifying, setIsVerifying] = useState<string | null>(null);
   const [isSuspending, setIsSuspending] = useState(false);
+
+  // Omise recipient ID editing state
+  const [isEditingOmise, setIsEditingOmise] = useState(false);
+  const [omiseRecipientInput, setOmiseRecipientInput] = useState("");
+  const [isSavingOmise, setIsSavingOmise] = useState(false);
+
   const [imageViewer, setImageViewer] = useState<{
     url: string;
     title: string;
@@ -276,6 +286,25 @@ export default function UserDetailPage() {
     } catch (err) {
       setActionError(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
       setIsDeleting(false);
+    }
+  };
+
+  const handleSaveOmiseRecipient = async () => {
+    if (!user) return;
+    setIsSavingOmise(true);
+    clearMessages();
+    try {
+      await fetchWithAuth(`/v1/users/${user.id}/omise-recipient`, {
+        method: "PATCH",
+        body: JSON.stringify({ omiseRecipientId: omiseRecipientInput }),
+      });
+      setActionMessage("บันทึก Omise Recipient ID แล้ว");
+      setIsEditingOmise(false);
+      await loadUser();
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
+    } finally {
+      setIsSavingOmise(false);
     }
   };
 
@@ -845,6 +874,71 @@ export default function UserDetailPage() {
                   {renderVerificationActions(
                     "address",
                     !!user.settings?.address,
+                  )}
+                </div>
+
+                <Separator />
+
+                {/* Omise Recipient ID */}
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                    <CreditCard className="h-3.5 w-3.5" />
+                    Omise Recipient ID
+                  </Label>
+                  {isEditingOmise ? (
+                    <div className="flex gap-2">
+                      <Input
+                        value={omiseRecipientInput}
+                        onChange={(e) => setOmiseRecipientInput(e.target.value)}
+                        placeholder="recp_xxxxxxxxxxxxxxxxxxxxxxxx"
+                        className="font-mono text-xs h-9"
+                        autoFocus
+                      />
+                      <Button
+                        size="sm"
+                        className="h-9 shrink-0"
+                        disabled={isSavingOmise}
+                        onClick={handleSaveOmiseRecipient}
+                      >
+                        {isSavingOmise ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <Save className="h-3.5 w-3.5" />
+                        )}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-9 shrink-0"
+                        disabled={isSavingOmise}
+                        onClick={() => setIsEditingOmise(false)}
+                      >
+                        <XIcon className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 p-2.5 rounded-xl bg-muted/40 text-sm font-mono min-h-[36px] flex items-center">
+                        {user.settings?.omiseRecipientId ? (
+                          <span className="text-foreground">{user.settings.omiseRecipientId}</span>
+                        ) : (
+                          <span className="text-muted-foreground text-xs font-sans">ยังไม่ได้ตั้งค่า</span>
+                        )}
+                      </div>
+                      {adminRole === "ADMIN" && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-9 shrink-0"
+                          onClick={() => {
+                            setOmiseRecipientInput(user.settings?.omiseRecipientId ?? "");
+                            setIsEditingOmise(true);
+                          }}
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
+                    </div>
                   )}
                 </div>
 

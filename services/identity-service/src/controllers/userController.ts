@@ -59,11 +59,20 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
       });
     }
 
-    const { idCardImageUrl, bankBookImageUrl, address, bankAccountNumber } = req.body;
+    const { idCardImageUrl, bankBookImageUrl, address, bankAccountNumber, bankBrand } = req.body;
     const normalizedBankAccountNumber =
       typeof bankAccountNumber === "string"
         ? bankAccountNumber.replace(/\D/g, "")
         : "";
+
+    const VALID_BANK_BRANDS = [
+      "kbank", "scb", "bbl", "bay", "tmb", "ttb",
+      "kiatnakin", "cimb", "gsb", "baac", "mhcb", "uob", "lhb",
+    ];
+    const normalizedBankBrand =
+      typeof bankBrand === "string" && VALID_BANK_BRANDS.includes(bankBrand.toLowerCase())
+        ? bankBrand.toLowerCase()
+        : null;
 
     if (!idCardImageUrl && !bankBookImageUrl && !address && !normalizedBankAccountNumber) {
       return res.status(400).json({
@@ -120,6 +129,9 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
     if (bankBookImageUrl || normalizedBankAccountNumber) {
       if (normalizedBankAccountNumber) {
         currentSettings.bankAccountNumber = normalizedBankAccountNumber;
+      }
+      if (normalizedBankBrand) {
+        currentSettings.bankBrand = normalizedBankBrand;
       }
       updatedData.bankBookImageUrl = bankBookImageUrl;
       newVerification.bankBook = { status: "PENDING", comment: "", updatedAt: now };

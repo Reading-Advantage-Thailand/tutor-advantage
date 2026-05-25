@@ -55,6 +55,7 @@ export async function submitVerificationAction(
   bankBookImageUrl?: string,
   address?: string,
   bankAccountNumber?: string,
+  bankBrand?: string,
 ) {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value;
@@ -66,7 +67,7 @@ export async function submitVerificationAction(
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ idCardImageUrl, bankBookImageUrl, address, bankAccountNumber }),
+    body: JSON.stringify({ idCardImageUrl, bankBookImageUrl, address, bankAccountNumber, bankBrand }),
   });
 
   if (!res.ok) {
