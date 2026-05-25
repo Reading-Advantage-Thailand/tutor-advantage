@@ -2,6 +2,16 @@ import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
+const DEV_IDENTITIES = {
+  ADMIN: {
+    userId: "00000000-0000-4000-8000-000000000001",
+    email: "dev-admin@localhost",
+  },
+  FINANCE_CHECKER: {
+    userId: "00000000-0000-4000-8000-000000000002",
+    email: "dev-finance-checker@localhost",
+  },
+} as const;
 
 export async function POST(req: Request) {
   if (process.env.NODE_ENV !== "development") {
@@ -18,8 +28,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid mock role" }, { status: 400 });
     }
 
+    const identity = DEV_IDENTITIES[role as keyof typeof DEV_IDENTITIES];
     const token = jwt.sign(
-      { userId: "mock-admin-uuid-0000", role, iss: "admin-console" },
+      { userId: identity.userId, email: identity.email, role, iss: "admin-console" },
       JWT_SECRET,
       { expiresIn: "12h" }
     );
@@ -43,7 +54,7 @@ export async function POST(req: Request) {
       path: "/",
     });
 
-    response.cookies.set("admin_email", `dev-${role.toLowerCase()}@localhost`, {
+    response.cookies.set("admin_email", identity.email, {
       httpOnly: false,
       secure: false,
       sameSite: "lax",

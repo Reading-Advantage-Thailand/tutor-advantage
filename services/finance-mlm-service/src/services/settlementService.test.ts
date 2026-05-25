@@ -67,6 +67,7 @@ describe("SettlementService", () => {
       {
         userId: "tutor-1",
         sponsorTutorId: null,
+        verificationStatus: "VERIFIED",
       },
     ]);
     prismaMock.settlementRun.create.mockResolvedValue({
@@ -104,7 +105,7 @@ describe("SettlementService", () => {
         tutorUserId: "tutor-1",
         payoutAmountMinor: -250000n,
         withholdingTaxMinor: 0n,
-        netPayoutMinor: -250000n,
+        netPayoutMinor: 0n,
         eligibilityStatus: "ELIGIBLE_BASE_ADJUSTED",
       }),
     });
@@ -125,6 +126,7 @@ describe("SettlementService", () => {
       {
         userId: "tutor-1",
         sponsorTutorId: null,
+        verificationStatus: "VERIFIED",
       },
     ]);
     prismaMock.settlementRun.create.mockResolvedValue({

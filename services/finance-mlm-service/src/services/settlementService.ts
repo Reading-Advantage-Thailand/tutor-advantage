@@ -9,6 +9,11 @@ import {
   buildPayoutDocumentNumber,
   calculateWithholdingTax,
 } from "./taxService";
+import {
+  createOmiseTransfer,
+  isOmiseConfigured,
+  type OmiseTransfer,
+} from "./omiseService";
 
 export interface PayoutNode {
   userId: string;
@@ -21,20 +26,76 @@ export interface PayoutNode {
   verified: boolean;
 }
 
+const payoutsEnabled = () => process.env.OMISE_PAYOUTS_ENABLED === "true";
+
+function getOmiseRecipientId(settings: unknown) {
+  if (!settings || typeof settings !== "object" || Array.isArray(settings)) {
+    return null;
+  }
+  const recipientId = (settings as { omiseRecipientId?: unknown }).omiseRecipientId;
+  return typeof recipientId === "string" && recipientId.trim()
+    ? recipientId.trim()
+    : null;
+}
+
+function transferStatusFromOmise(transfer: OmiseTransfer) {
+  if (transfer.failure_code) return "TRANSFER_FAILED";
+  if (transfer.paid) return "PAID";
+  if (transfer.sent) return "SENT";
+  if (transfer.sendable) return "SENT_PENDING";
+  return "CREATED";
+}
+
+function hasActiveTransferStatus(status?: string | null) {
+  return ["PENDING_TRANSFER", "CREATED", "SENT_PENDING", "SENT", "PAID"].includes(
+    status ?? "",
+  );
+}
+
+async function updatePayoutTransferTracking(
+  payoutLineId: string,
+  data: {
+    provider?: string | null;
+    providerTransferId?: string | null;
+    transferStatus: string;
+    transferFailureCode?: string | null;
+    transferFailureMessage?: string | null;
+    transferredAt?: Date | null;
+  },
+) {
+  await prisma.$executeRaw`
+    UPDATE "finance_mlm"."payout_documents"
+    SET
+      "provider" = ${data.provider ?? null},
+      "provider_transfer_id" = ${data.providerTransferId ?? null},
+      "transfer_status" = ${data.transferStatus},
+      "transfer_failure_code" = ${data.transferFailureCode ?? null},
+      "transfer_failure_message" = ${data.transferFailureMessage ?? null},
+      "transferred_at" = ${data.transferredAt ?? null}
+    WHERE "payout_line_id" = ${payoutLineId}::uuid
+  `;
+}
+
 export class SettlementService {
   /**
    * Generates a preview for a settlement period.
    * This calculation uses a Bottom-Up approach for a unilevel or differential tree.
    */
-  static async previewSettlement(periodMonth: string, createdBy: string) {
+  static async previewSettlement(
+    periodMonth: string,
+    createdBy: string,
+    options?: { refreshRunId?: string },
+  ) {
     const { start: startOfMonth, end: endOfMonth } =
       getIctMonthWindow(periodMonth);
 
     // Block if an active (DRAFT or SUBMITTED) run already exists for this period
-    const existingActive = await prisma.settlementRun.findFirst({
-      where: { periodMonth, status: { in: ["DRAFT", "SUBMITTED"] } },
-    });
-    if (existingActive) throw new Error("DRAFT_EXISTS");
+    if (!options?.refreshRunId) {
+      const existingActive = await prisma.settlementRun.findFirst({
+        where: { periodMonth, status: { in: ["DRAFT", "SUBMITTED"] } },
+      });
+      if (existingActive) throw new Error("DRAFT_EXISTS");
+    }
 
     const payments = await prisma.paymentIntent.findMany({
       where: {
@@ -217,21 +278,49 @@ export class SettlementService {
       }
     }
 
-    // 6. Persist Draft Settlement Run
-    const run = await prisma.settlementRun.create({
-      data: {
-        periodMonth,
-        status: "DRAFT",
-        createdBy,
-        previewPayload: {
-          paymentCount: payments.length,
-          approvedAdjustmentCount: approvedAdjustments.length,
-          approvedAdjustmentTotalSatang: approvedAdjustments
-            .reduce((sum, adjustment) => sum + adjustment.amountMinor, 0n)
-            .toString(),
-        },
-      },
-    });
+    const previewPayload = {
+      paymentCount: payments.length,
+      approvedAdjustmentCount: approvedAdjustments.length,
+      approvedAdjustmentTotalSatang: approvedAdjustments
+        .reduce((sum, adjustment) => sum + adjustment.amountMinor, 0n)
+        .toString(),
+      ...(options?.refreshRunId
+        ? { refreshedAt: new Date().toISOString() }
+        : {}),
+    };
+
+    // 6. Persist Draft Settlement Run, or refresh an existing active run.
+    const run = options?.refreshRunId
+      ? await prisma.settlementRun.update({
+          where: { settlementRunId: options.refreshRunId },
+          data: { previewPayload },
+        })
+      : await prisma.settlementRun.create({
+          data: {
+            periodMonth,
+            status: "DRAFT",
+            createdBy,
+            previewPayload,
+          },
+        });
+
+    if (options?.refreshRunId) {
+      const existingLines = await prisma.payoutLine.findMany({
+        where: { settlementRunId: options.refreshRunId },
+        select: { payoutLineId: true },
+      });
+      const existingLineIds = existingLines.map((line) => line.payoutLineId);
+
+      if (existingLineIds.length > 0) {
+        await prisma.payoutDocument.deleteMany({
+          where: { payoutLineId: { in: existingLineIds } },
+        });
+      }
+
+      await prisma.payoutLine.deleteMany({
+        where: { settlementRunId: options.refreshRunId },
+      });
+    }
 
     // Fetch badge bonuses for all tutors in this settlement
     // Badge bonus amounts in Satang — must match BadgeService.BADGE_BONUS_SATANG
@@ -328,6 +417,37 @@ export class SettlementService {
     };
   }
 
+  static async refreshSettlementRun(snapshotId: string) {
+    const run = await prisma.settlementRun.findUnique({
+      where: { settlementRunId: snapshotId },
+    });
+
+    if (!run) throw new Error("NOT_FOUND");
+    if (!["DRAFT", "SUBMITTED"].includes(run.status)) {
+      return {
+        refreshed: false,
+        status: run.status,
+        totalPayoutSatang: null,
+        totalNetPayoutSatang: null,
+        payoutLineCount: null,
+      };
+    }
+
+    const preview = await SettlementService.previewSettlement(
+      run.periodMonth,
+      run.createdBy ?? "SYSTEM",
+      { refreshRunId: snapshotId },
+    );
+
+    return {
+      refreshed: true,
+      status: run.status,
+      totalPayoutSatang: preview.totalPayoutSatang,
+      totalNetPayoutSatang: preview.totalNetPayoutSatang,
+      payoutLineCount: preview.payoutLineCount,
+    };
+  }
+
   /**
    * Approves a SUBMITTED settlement run (Finance Checker only).
    */
@@ -338,6 +458,41 @@ export class SettlementService {
 
     if (!run) throw new Error("NOT_FOUND");
     if (run.status !== "SUBMITTED") throw new Error("INVALID_STATUS");
+
+    const positivePayoutLines = await prisma.payoutLine.findMany({
+      where: {
+        settlementRunId: snapshotId,
+        netPayoutMinor: { gt: 0n },
+      },
+      select: {
+        payoutLineId: true,
+        tutorUserId: true,
+      },
+    });
+    const shouldSendPayouts = payoutsEnabled() && positivePayoutLines.length > 0;
+    const recipientByTutor = new Map<string, string>();
+
+    if (shouldSendPayouts) {
+      if (!isOmiseConfigured()) {
+        throw new Error("OMISE_PAYOUTS_NOT_CONFIGURED");
+      }
+
+      const tutorIds = [...new Set(positivePayoutLines.map((line) => line.tutorUserId))];
+      const tutors = await prisma.user.findMany({
+        where: { userId: { in: tutorIds } },
+        select: { userId: true, settings: true },
+      });
+
+      for (const tutor of tutors) {
+        const recipientId = getOmiseRecipientId(tutor.settings);
+        if (recipientId) recipientByTutor.set(tutor.userId, recipientId);
+      }
+
+      const missingTutorIds = tutorIds.filter((id) => !recipientByTutor.has(id));
+      if (missingTutorIds.length > 0) {
+        throw new Error(`MISSING_OMISE_RECIPIENT:${missingTutorIds.join(",")}`);
+      }
+    }
 
     const updated = await prisma.$transaction(async (tx) => {
       const approvedRun = await tx.settlementRun.update({
@@ -350,8 +505,9 @@ export class SettlementService {
         include: { payoutLines: true },
       });
 
+      const payoutDocumentByLineId = new Map<string, Awaited<ReturnType<typeof tx.payoutDocument.upsert>>>();
       for (const line of approvedRun.payoutLines) {
-        await tx.payoutDocument.upsert({
+        const payoutDocument = await tx.payoutDocument.upsert({
           where: { payoutLineId: line.payoutLineId },
           update: {},
           create: {
@@ -364,11 +520,161 @@ export class SettlementService {
             netAmountMinor: line.netPayoutMinor,
           },
         });
+        payoutDocumentByLineId.set(line.payoutLineId, payoutDocument);
       }
 
-      return approvedRun;
+      return {
+        ...approvedRun,
+        payoutLines: approvedRun.payoutLines.map((line) => ({
+          ...line,
+          payoutDocument: payoutDocumentByLineId.get(line.payoutLineId) ?? null,
+        })),
+      };
     });
 
+    for (const line of updated.payoutLines) {
+      await updatePayoutTransferTracking(line.payoutLineId, {
+        transferStatus:
+          line.netPayoutMinor > 0n
+            ? shouldSendPayouts
+              ? "PENDING_TRANSFER"
+              : "NOT_SENT"
+            : "NO_TRANSFER_REQUIRED",
+      });
+    }
+
+    if (shouldSendPayouts) {
+      for (const line of updated.payoutLines) {
+        if (line.netPayoutMinor <= 0n || !line.payoutDocument) continue;
+
+        const recipient = recipientByTutor.get(line.tutorUserId);
+        if (!recipient) continue;
+
+        try {
+          const transfer = await createOmiseTransfer({
+            amount: Number(line.netPayoutMinor),
+            recipient,
+            failFast: true,
+            metadata: {
+              settlementRunId: snapshotId,
+              payoutLineId: line.payoutLineId,
+              payoutDocumentId: line.payoutDocument.payoutDocumentId,
+              documentNumber: line.payoutDocument.documentNumber,
+              tutorUserId: line.tutorUserId,
+            },
+          });
+
+          const transferStatus = transferStatusFromOmise(transfer);
+          await updatePayoutTransferTracking(line.payoutLineId, {
+            provider: "omise",
+            providerTransferId: transfer.id,
+            transferStatus,
+            transferFailureCode: transfer.failure_code ?? null,
+            transferFailureMessage: transfer.failure_message ?? null,
+            transferredAt: transfer.sent_at ? new Date(transfer.sent_at) : null,
+          });
+        } catch (error: any) {
+          await updatePayoutTransferTracking(line.payoutLineId, {
+            provider: "omise",
+            transferStatus: "TRANSFER_FAILED",
+            transferFailureMessage: error.message,
+          });
+          throw new Error(`OMISE_TRANSFER_FAILED:${line.payoutLineId}:${error.message}`);
+        }
+      }
+    }
+
     return updated;
+  }
+
+  static async retryPayoutTransfer(payoutLineId: string, snapshotId?: string) {
+    if (!isOmiseConfigured()) {
+      throw new Error("OMISE_PAYOUTS_NOT_CONFIGURED");
+    }
+
+    const line = await prisma.payoutLine.findUnique({
+      where: { payoutLineId },
+      include: {
+        settlementRun: true,
+        payoutDocument: true,
+      },
+    });
+
+    if (!line) throw new Error("PAYOUT_LINE_NOT_FOUND");
+    if (snapshotId && line.settlementRunId !== snapshotId) {
+      throw new Error("PAYOUT_LINE_NOT_IN_SETTLEMENT");
+    }
+    if (line.settlementRun.status !== "APPROVED") {
+      throw new Error("SETTLEMENT_NOT_APPROVED");
+    }
+    if (line.netPayoutMinor <= 0n) {
+      throw new Error("NO_TRANSFER_REQUIRED");
+    }
+    if (!line.payoutDocument) {
+      throw new Error("PAYOUT_DOCUMENT_NOT_FOUND");
+    }
+    if (hasActiveTransferStatus(line.payoutDocument.transferStatus)) {
+      throw new Error("TRANSFER_ALREADY_ACTIVE");
+    }
+
+    const tutor = await prisma.user.findUnique({
+      where: { userId: line.tutorUserId },
+      select: { settings: true },
+    });
+    const recipient = getOmiseRecipientId(tutor?.settings);
+    if (!recipient) {
+      throw new Error(`MISSING_OMISE_RECIPIENT:${line.tutorUserId}`);
+    }
+
+    await updatePayoutTransferTracking(line.payoutLineId, {
+      provider: "omise",
+      transferStatus: "PENDING_TRANSFER",
+      transferFailureCode: null,
+      transferFailureMessage: null,
+      transferredAt: null,
+    });
+
+    try {
+      const transfer = await createOmiseTransfer({
+        amount: Number(line.netPayoutMinor),
+        recipient,
+        failFast: true,
+        metadata: {
+          settlementRunId: line.settlementRunId,
+          payoutLineId: line.payoutLineId,
+          payoutDocumentId: line.payoutDocument.payoutDocumentId,
+          documentNumber: line.payoutDocument.documentNumber,
+          tutorUserId: line.tutorUserId,
+          retry: "true",
+        },
+      });
+
+      const transferStatus = transferStatusFromOmise(transfer);
+      await updatePayoutTransferTracking(line.payoutLineId, {
+        provider: "omise",
+        providerTransferId: transfer.id,
+        transferStatus,
+        transferFailureCode: transfer.failure_code ?? null,
+        transferFailureMessage: transfer.failure_message ?? null,
+        transferredAt: transfer.sent_at ? new Date(transfer.sent_at) : null,
+      });
+
+      return {
+        payoutLineId: line.payoutLineId,
+        provider: "omise",
+        providerTransferId: transfer.id,
+        transferStatus,
+        transferFailureCode: transfer.failure_code ?? null,
+        transferFailureMessage: transfer.failure_message ?? null,
+        transferredAt: transfer.sent_at ?? null,
+      };
+    } catch (error: any) {
+      await updatePayoutTransferTracking(line.payoutLineId, {
+        provider: "omise",
+        transferStatus: "TRANSFER_FAILED",
+        transferFailureMessage: error.message,
+      });
+      throw new Error(`OMISE_TRANSFER_FAILED:${line.payoutLineId}:${error.message}`);
+    }
   }
 }

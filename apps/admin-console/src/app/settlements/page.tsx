@@ -40,6 +40,7 @@ import {
   Eye,
   Loader2,
   UserCircle,
+  Send,
 } from "lucide-react";
 
 import { t } from "@/lib/i18n";
@@ -73,12 +74,23 @@ interface PayoutLineRow {
   tutorEmail: string | null;
   grossVolumeTHB: number;
   payoutRate: number;
+  basePayoutTHB: number;
+  adjustmentTHB: number;
   grossPayoutTHB: number;
   badgeBonusTHB: number;
   whtTHB: number;
   netPayoutTHB: number;
   eligibilityStatus: string;
   documentNumber: string | null;
+  documentStatus: string | null;
+  transferProvider: string | null;
+  transferId: string | null;
+  transferStatus: string | null;
+  transferFailureCode: string | null;
+  transferFailureMessage: string | null;
+  transferredAt: string | null;
+  canSendTransfer?: boolean;
+  transferBlockedReason?: string | null;
 }
 
 interface LinesData {
@@ -112,6 +124,45 @@ const ELIGIBILITY_CONFIG: Record<string, { label: string; className: string }> =
   INELIGIBLE_NOT_VERIFIED:          { label: "ไม่ผ่าน (ยังไม่ยืนยันตัวตน)",           className: "bg-orange-500/10 text-orange-600 border border-orange-500/30" },
   INELIGIBLE_NOT_VERIFIED_ADJUSTED: { label: "ไม่ผ่าน (ยังไม่ยืนยัน — ปรับยอดถูกระงับ)", className: "bg-orange-500/10 text-orange-600 border border-orange-500/30" },
   ADJUSTMENT_ONLY:                  { label: "ปรับยอดเท่านั้น",                          className: "bg-amber-500/10 text-amber-600 border border-amber-500/30" },
+};
+
+const TRANSFER_STATUS_CONFIG: Record<string, { label: string; className: string }> = {
+  NOT_SENT: {
+    label: "ยังไม่ได้โอน",
+    className: "bg-muted text-muted-foreground border border-border",
+  },
+  PENDING_TRANSFER: {
+    label: "รอส่งโอน",
+    className: "bg-amber-500/10 text-amber-600 border border-amber-500/30",
+  },
+  CREATED: {
+    label: "สร้างรายการโอนแล้ว",
+    className: "bg-blue-500/10 text-blue-600 border border-blue-500/30",
+  },
+  SENT_PENDING: {
+    label: "ส่งรายการโอนแล้ว",
+    className: "bg-blue-500/10 text-blue-600 border border-blue-500/30",
+  },
+  SENT: {
+    label: "ส่งโอนแล้ว",
+    className: "bg-blue-500/10 text-blue-600 border border-blue-500/30",
+  },
+  PAID: {
+    label: "โอนสำเร็จ",
+    className: "bg-emerald-500/10 text-emerald-600 border border-emerald-500/30",
+  },
+  TRANSFER_FAILED: {
+    label: "โอนไม่สำเร็จ",
+    className: "bg-red-500/10 text-red-500 border border-red-500/30",
+  },
+  NO_TRANSFER_REQUIRED: {
+    label: "ไม่ต้องโอน",
+    className: "bg-muted text-muted-foreground border border-border",
+  },
+};
+
+const DOCUMENT_STATUS_CONFIG: Record<string, string> = {
+  ISSUED: "ออกเอกสารแล้ว",
 };
 
 const STATUS_CONFIG: Record<
@@ -169,6 +220,7 @@ export default function SettlementsPage() {
   const [linesOpen, setLinesOpen] = useState(false);
   const [linesData, setLinesData] = useState<LinesData | null>(null);
   const [linesLoadingId, setLinesLoadingId] = useState<string | null>(null);
+  const [transferLoadingId, setTransferLoadingId] = useState<string | null>(null);
 
   useEffect(() => {
     setUserRole(getAdminRole());
@@ -265,6 +317,26 @@ export default function SettlementsPage() {
     }
   };
 
+  const handleRetryTransfer = async (row: PayoutLineRow) => {
+    if (!linesData) return;
+    setTransferLoadingId(row.payoutLineId);
+    setError("");
+    setSuccess("");
+    try {
+      await fetchWithAuth(
+        `/v1/settlements/${linesData.snapshotId}/lines/${row.payoutLineId}/transfer`,
+        { method: "POST" },
+      );
+      setSuccess("ส่งรายการโอนให้ Omise แล้ว");
+      await handleViewLines(linesData.snapshotId);
+      await loadSettlements();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setTransferLoadingId(null);
+    }
+  };
+
   const handleExportCsv = () => {
     if (!result?.snapshotId) return;
     handleExport(result.snapshotId, result.periodMonth);
@@ -292,7 +364,7 @@ export default function SettlementsPage() {
               มีรายการรออนุมัติจาก Admin
             </AlertTitle>
             <AlertDescription className="font-medium text-blue-700/80 dark:text-blue-400/80">
-              ตรวจสอบรายละเอียดในรายการด้านล่าง แล้วกด "อนุมัติ & โอนเงิน" เพื่อดำเนินการ
+              ตรวจสอบรายละเอียดในรายการด้านล่าง แล้วกด &quot;อนุมัติ & โอนเงิน&quot; เพื่อดำเนินการ
             </AlertDescription>
           </Alert>
         ) : (
@@ -481,13 +553,14 @@ export default function SettlementsPage() {
             return (
               <Card
                 key={run.snapshotId}
-                className={`group overflow-hidden border-none shadow-sm rounded-2xl transition-all hover:shadow-md hover:ring-1 hover:ring-brand-500/20 ${isItemDraft ? "bg-amber-50/20 dark:bg-amber-900/10" : isItemSubmitted ? "bg-blue-50/20 dark:bg-blue-900/10" : "bg-card"}`}
+                className="group overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm transition-all hover:border-brand-500/30 hover:shadow-md"
               >
-                <CardContent className="p-6">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div className="flex items-center gap-4">
-                      <div className={`p-3 rounded-2xl ${isItemDraft ? 'bg-amber-500/10 dark:bg-amber-900/20 text-amber-600' : isItemSubmitted ? 'bg-blue-500/10 dark:bg-blue-900/20 text-blue-600' : 'bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400'}`}>
-                        <FileText className="h-6 w-6" />
+                <CardContent className="p-0">
+                  <div className={`h-1 w-full ${isItemDraft ? "bg-amber-500" : isItemSubmitted ? "bg-blue-500" : "bg-brand-500"}`} />
+                  <div className="grid gap-0 xl:grid-cols-[1fr_340px]">
+                    <div className="flex min-w-0 items-center gap-4 p-5">
+                      <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${isItemDraft ? 'bg-amber-500/10 dark:bg-amber-900/20 text-amber-600' : isItemSubmitted ? 'bg-blue-500/10 dark:bg-blue-900/20 text-blue-600' : 'bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400'}`}>
+                        <FileText className="h-5 w-5" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
@@ -508,18 +581,29 @@ export default function SettlementsPage() {
                           </p>
                         </div>
                       </div>
+                      <div className="ml-auto hidden min-w-[150px] rounded-xl border border-border/60 bg-muted/20 px-3 py-2.5 text-right sm:block">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                          Net payout
+                        </p>
+                        <p className="mt-1 text-base font-black tabular-nums text-foreground">
+                          {((run.totalNetPayoutSatang ?? 0) / 100).toLocaleString("th-TH", {
+                            style: "currency",
+                            currency: "THB",
+                          })}
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-6">
+                    <div className="border-t border-border/70 bg-muted/15 p-5 xl:border-l xl:border-t-0">
                       <CopyableId name="Snapshot ID" id={run.snapshotId} />
-                      <div className="flex items-center gap-2">
+                      <div className="mt-3 grid grid-cols-2 gap-2">
                         {/* ดูรายการในหน้าเว็บ */}
                         <Button
                           size="sm"
                           variant="ghost"
                           disabled={linesLoadingId === run.snapshotId}
                           onClick={() => handleViewLines(run.snapshotId)}
-                          className="h-10 rounded-xl font-bold hover:bg-muted"
+                          className="col-span-2 h-10 w-full rounded-xl font-bold hover:bg-background"
                         >
                           {linesLoadingId === run.snapshotId ? (
                             <Loader2 className="h-4 w-4 animate-spin" />
@@ -536,7 +620,7 @@ export default function SettlementsPage() {
                             variant="ghost"
                             disabled={exportLoading}
                             onClick={() => handleExport(run.snapshotId, run.periodMonth)}
-                            className="h-10 rounded-xl font-bold hover:bg-emerald-50 hover:text-emerald-600"
+                            className="col-span-2 h-10 w-full rounded-xl font-bold hover:bg-emerald-50 hover:text-emerald-600"
                           >
                             <Download className="h-4 w-4 mr-2" />
                             CSV
@@ -548,7 +632,7 @@ export default function SettlementsPage() {
                             size="sm"
                             disabled={actionLoadingId === run.snapshotId}
                             onClick={() => handleListAction(run.snapshotId, "submit")}
-                            className="h-10 px-4 rounded-xl font-bold bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/10"
+                            className="col-span-2 h-10 w-full rounded-xl bg-blue-600 font-bold shadow-md shadow-blue-500/10 hover:bg-blue-700"
                           >
                             {actionLoadingId === run.snapshotId ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
@@ -563,30 +647,28 @@ export default function SettlementsPage() {
                               variant="outline"
                               disabled={actionLoadingId === run.snapshotId}
                               onClick={() => handleListAction(run.snapshotId, "reject")}
-                              className="h-10 rounded-xl font-bold border-red-200 text-red-600 hover:bg-red-50"
+                              className="h-10 w-full rounded-xl font-bold border-red-200 text-red-600 hover:bg-red-50"
                             >
                               {t("settlements.rejectAction")}
                             </Button>
-                            <div className="flex flex-col items-end gap-1">
-                              <Button
+                            <Button
                                 size="sm"
                                 disabled={
                                   actionLoadingId === run.snapshotId ||
                                   (run.pendingAdjustmentCount ?? 0) > 0
                                 }
                                 onClick={() => handleListAction(run.snapshotId, "approve")}
-                                className="h-10 px-4 rounded-xl font-bold bg-brand-600 shadow-md shadow-brand-500/10"
+                                className="h-10 w-full rounded-xl font-bold bg-brand-600 shadow-md shadow-brand-500/10"
                               >
                                 {actionLoadingId === run.snapshotId ? (
                                   <Loader2 className="h-4 w-4 animate-spin" />
                                 ) : t("settlements.approveAction")}
                               </Button>
                               {(run.pendingAdjustmentCount ?? 0) > 0 && (
-                                <span className="text-xs text-orange-600 font-medium whitespace-nowrap">
+                                <span className="col-span-full rounded-xl border border-orange-500/20 bg-orange-500/10 px-3 py-2 text-xs font-semibold text-orange-600">
                                   มีปรับยอดค้าง {run.pendingAdjustmentCount} รายการ
                                 </span>
                               )}
-                            </div>
                           </>
                         )}
                       </div>
@@ -654,11 +736,14 @@ export default function SettlementsPage() {
                       <th className="px-4 py-3 text-right">ยอดขายรวม</th>
                       <th className="px-4 py-3 text-right">อัตราจ่าย</th>
                       <th className="px-4 py-3 text-right">ค่าตอบแทน</th>
+                      <th className="px-4 py-3 text-right">ปรับยอด</th>
                       <th className="px-4 py-3 text-right">โบนัส Badge</th>
+                      <th className="px-4 py-3 text-right">รวมก่อนภาษี</th>
                       <th className="px-4 py-3 text-right">ภาษีหัก ณ ที่จ่าย</th>
                       <th className="px-4 py-3 text-right font-black text-foreground">สุทธิ</th>
                       <th className="px-4 py-3 text-center">สถานะ</th>
-                      <th className="px-4 py-3 text-left">เลขที่เอกสาร</th>
+                      <th className="px-4 py-3 text-left">50 Tawi</th>
+                      <th className="px-4 py-3 text-left">Transfer</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/50">
@@ -697,12 +782,26 @@ export default function SettlementsPage() {
                           {(row.payoutRate * 100).toFixed(1)}%
                         </td>
                         <td className="px-4 py-3 text-right tabular-nums">
-                          {row.grossPayoutTHB.toLocaleString("th-TH", { minimumFractionDigits: 2 })}
+                          {(row.basePayoutTHB ?? row.grossPayoutTHB - row.badgeBonusTHB - (row.adjustmentTHB ?? 0)).toLocaleString("th-TH", { minimumFractionDigits: 2 })}
+                        </td>
+                        <td className={`px-4 py-3 text-right tabular-nums ${
+                          (row.adjustmentTHB ?? 0) > 0
+                            ? "text-blue-500"
+                            : (row.adjustmentTHB ?? 0) < 0
+                              ? "text-red-500"
+                              : "text-muted-foreground"
+                        }`}>
+                          {(row.adjustmentTHB ?? 0) !== 0
+                            ? `${(row.adjustmentTHB ?? 0) > 0 ? "+" : ""}${(row.adjustmentTHB ?? 0).toLocaleString("th-TH", { minimumFractionDigits: 2 })}`
+                            : "—"}
                         </td>
                         <td className="px-4 py-3 text-right tabular-nums text-emerald-600">
                           {row.badgeBonusTHB > 0
                             ? `+${row.badgeBonusTHB.toLocaleString("th-TH", { minimumFractionDigits: 2 })}`
                             : "—"}
+                        </td>
+                        <td className="px-4 py-3 text-right tabular-nums font-semibold">
+                          {row.grossPayoutTHB.toLocaleString("th-TH", { minimumFractionDigits: 2 })}
                         </td>
                         <td className="px-4 py-3 text-right tabular-nums text-red-500">
                           {row.whtTHB > 0
@@ -726,14 +825,85 @@ export default function SettlementsPage() {
                           })()}
                         </td>
                         <td className="px-4 py-3 font-mono text-[11px] text-muted-foreground">
-                          {row.documentNumber ?? "—"}
+                          <div className="flex flex-col gap-1">
+                            <span>{row.documentNumber ?? "—"}</span>
+                            {row.documentStatus && (
+                              <span className="font-sans text-[10px] uppercase">
+                                {DOCUMENT_STATUS_CONFIG[row.documentStatus] ?? row.documentStatus}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-[11px]">
+                          <div className="flex flex-col items-start gap-1">
+                            <span
+                              className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                                TRANSFER_STATUS_CONFIG[row.transferStatus ?? "NOT_SENT"]?.className ??
+                                "bg-muted text-muted-foreground border border-border"
+                              }`}
+                            >
+                              {TRANSFER_STATUS_CONFIG[row.transferStatus ?? "NOT_SENT"]?.label ??
+                                row.transferStatus ??
+                                "ยังไม่ได้โอน"}
+                            </span>
+                            {row.transferId && (
+                              <span className="font-mono text-muted-foreground">
+                                {row.transferId}
+                              </span>
+                            )}
+                            {row.transferFailureMessage && (
+                              <span className="text-red-500">
+                                {row.transferFailureMessage}
+                              </span>
+                            )}
+                            {(() => {
+                              const activeTransferStatuses = [
+                                "PENDING_TRANSFER",
+                                "CREATED",
+                                "SENT_PENDING",
+                                "SENT",
+                                "PAID",
+                              ];
+                              const canRetryTransfer =
+                                userRole === "FINANCE_CHECKER" &&
+                                linesData.status === "APPROVED" &&
+                                row.netPayoutTHB > 0 &&
+                                (row.canSendTransfer ??
+                                  !activeTransferStatuses.includes(row.transferStatus ?? "NOT_SENT"));
+
+                              if (!canRetryTransfer) {
+                                return row.transferBlockedReason ? (
+                                  <span className="text-[10px] font-medium text-amber-500">
+                                    {row.transferBlockedReason}
+                                  </span>
+                                ) : null;
+                              }
+
+                              return (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  disabled={transferLoadingId === row.payoutLineId}
+                                  onClick={() => handleRetryTransfer(row)}
+                                  className="mt-1 h-7 rounded-lg px-2 text-[10px] font-bold"
+                                >
+                                  {transferLoadingId === row.payoutLineId ? (
+                                    <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                                  ) : (
+                                    <Send className="mr-1 h-3 w-3" />
+                                  )}
+                                  ส่งโอนอีกครั้ง
+                                </Button>
+                              );
+                            })()}
+                          </div>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                   <tfoot className="bg-muted/30 border-t-2 border-border font-bold">
                     <tr>
-                      <td className="px-4 py-3 text-xs uppercase tracking-wider" colSpan={6}>
+                      <td className="px-4 py-3 text-xs uppercase tracking-wider" colSpan={8}>
                         รวมทั้งหมด ({linesData.lines.length} ราย)
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums text-brand-600">
@@ -742,7 +912,7 @@ export default function SettlementsPage() {
                           currency: "THB",
                         })}
                       </td>
-                      <td colSpan={2} />
+                      <td colSpan={3} />
                     </tr>
                   </tfoot>
                 </table>

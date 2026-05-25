@@ -22,6 +22,7 @@ const operationsController_1 = require("./controllers/operationsController");
 const userController_1 = require("./controllers/userController");
 const fraudController_1 = require("./controllers/fraudController");
 const adminController_1 = require("./controllers/adminController");
+const devController_1 = require("./controllers/devController");
 const tutorEarningsController_1 = require("./controllers/tutorEarningsController");
 const tutorNetworkController_1 = require("./controllers/tutorNetworkController");
 if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
@@ -91,8 +92,11 @@ app.post("/v1/internal/settlement/auto-run", settlementController_1.autoRunSettl
 app.get("/v1/settlements/summary", authMiddleware_1.authMiddleware, settlementController_1.getSettlementSummary);
 app.get("/v1/settlements", authMiddleware_1.authMiddleware, settlementController_1.getSettlements);
 app.post("/v1/settlements/preview", authMiddleware_1.authMiddleware, (0, auditMiddleware_1.auditTrailMiddleware)("PREVIEW_SETTLEMENT"), settlementController_1.previewSettlement);
+app.post("/v1/settlements/:snapshotId/submit", authMiddleware_1.authMiddleware, (0, auditMiddleware_1.auditTrailMiddleware)("SUBMIT_SETTLEMENT"), settlementController_1.submitSettlement);
 app.post("/v1/settlements/:snapshotId/approve", authMiddleware_1.authMiddleware, (0, auditMiddleware_1.auditTrailMiddleware)("APPROVE_SETTLEMENT"), settlementController_1.approveSettlement);
 app.post("/v1/settlements/:snapshotId/reject", authMiddleware_1.authMiddleware, settlementController_1.rejectSettlement);
+app.get("/v1/settlements/:snapshotId/lines", authMiddleware_1.authMiddleware, settlementController_1.getSettlementLines);
+app.post("/v1/settlements/:snapshotId/lines/:payoutLineId/transfer", authMiddleware_1.authMiddleware, (0, auditMiddleware_1.auditTrailMiddleware)("RETRY_PAYOUT_TRANSFER"), settlementController_1.retryPayoutTransfer);
 app.get("/v1/settlements/:snapshotId/export", authMiddleware_1.authMiddleware, settlementController_1.exportSettlementCsv);
 // ── Adjustment Routes ──────────────────────────────────────────────────────
 app.get("/v1/adjustments", authMiddleware_1.authMiddleware, adjustmentController_1.getAdjustments);
@@ -111,10 +115,30 @@ app.delete("/v1/operations/legacy-links/mappings/:id", authMiddleware_1.authMidd
 app.get("/v1/users", authMiddleware_1.authMiddleware, userController_1.getUsers);
 app.get("/v1/users/:id", authMiddleware_1.authMiddleware, userController_1.getUserDetails);
 app.post("/v1/users/:id/verify", authMiddleware_1.authMiddleware, userController_1.verifyUser);
+app.post("/v1/users/:id/suspend", authMiddleware_1.authMiddleware, userController_1.suspendUser);
 app.post("/v1/users/:id/anonymize", authMiddleware_1.authMiddleware, userController_1.anonymizeUser);
 // ── Fraud Routes ───────────────────────────────────────────────────────────
 app.get("/v1/fraud-flags", authMiddleware_1.authMiddleware, fraudController_1.getFraudFlags);
 app.post("/v1/fraud-flags/:id/action", authMiddleware_1.authMiddleware, fraudController_1.triggerFraudAction);
+// ── Dev-only Routes (blocked in production) ────────────────────────────────
+const devOnly = (_req, res, next) => {
+    if (process.env.NODE_ENV === "production") {
+        return res.status(404).json({ error: "Not found" });
+    }
+    next();
+};
+// User CRUD
+app.get("/v1/dev/users", devOnly, devController_1.devListUsers);
+app.post("/v1/dev/users", devOnly, devController_1.devCreateUser);
+app.patch("/v1/dev/users/:id", devOnly, devController_1.devUpdateUser);
+app.delete("/v1/dev/users/:id", devOnly, devController_1.devDeleteUser);
+// State & Actions
+app.get("/v1/dev/state", devOnly, devController_1.devGetState);
+app.post("/v1/dev/actions/settlement", devOnly, devController_1.devRunSettlement);
+app.post("/v1/dev/actions/fraud-flag", devOnly, devController_1.devSeedFraudFlag);
+app.delete("/v1/dev/actions/fraud-flag/:id", devOnly, devController_1.devDeleteFraudFlag);
+app.post("/v1/dev/actions/adjustment", devOnly, devController_1.devSeedAdjustment);
+app.post("/v1/dev/actions/purge", devOnly, devController_1.devPurge);
 // Apply error handler last
 app.use(shared_config_1.errorHandlerMiddleware);
 const server = app.listen(port, () => {

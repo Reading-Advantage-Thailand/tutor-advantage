@@ -5,6 +5,7 @@ exports.createAdjustment = createAdjustment;
 exports.approveAdjustment = approveAdjustment;
 exports.rejectAdjustment = rejectAdjustment;
 const database_1 = require("@tutor-advantage/database");
+const settlementService_1 = require("../services/settlementService");
 function canCreateAdjustment(role) {
     return role === "ADMIN" || role === "FINANCE_MAKER";
 }
@@ -240,6 +241,7 @@ async function approveAdjustment(req, res) {
             where: { adjustmentId },
             data: { status: "APPROVED", approvedBy: userId, approvedAt: now },
         });
+        const settlementRefresh = await settlementService_1.SettlementService.refreshSettlementRun(adj.settlementRunId);
         await database_1.prisma.auditEvent.create({
             data: {
                 actorId: userId,
@@ -253,7 +255,10 @@ async function approveAdjustment(req, res) {
                 },
             },
         });
-        return res.status(200).json({ message: "Adjustment approved" });
+        return res.status(200).json({
+            message: "Adjustment approved",
+            settlementRefresh,
+        });
     }
     catch (error) {
         console.error("ApproveAdjustment Error:", error);
@@ -306,6 +311,7 @@ async function rejectAdjustment(req, res) {
             where: { adjustmentId },
             data: { status: "REJECTED", approvedBy: userId, approvedAt: now },
         });
+        const settlementRefresh = await settlementService_1.SettlementService.refreshSettlementRun(adj.settlementRunId);
         await database_1.prisma.auditEvent.create({
             data: {
                 actorId: userId,
@@ -319,7 +325,10 @@ async function rejectAdjustment(req, res) {
                 },
             },
         });
-        return res.status(200).json({ message: "Adjustment rejected" });
+        return res.status(200).json({
+            message: "Adjustment rejected",
+            settlementRefresh,
+        });
     }
     catch (error) {
         console.error("RejectAdjustment Error:", error);

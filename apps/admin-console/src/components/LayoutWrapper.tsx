@@ -84,6 +84,7 @@ function AppSidebar({
 }) {
   const pathname = usePathname();
   const initial = role ? role[0].toUpperCase() : "A";
+  const canAccessUserRisk = role === "ADMIN";
 
   const [pendingSettlements, setPendingSettlements] = useState(0);
   const [pendingAdjustments, setPendingAdjustments] = useState(0);
@@ -213,45 +214,47 @@ function AppSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
-          <SidebarGroupLabel className="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
-            Users & Compliance
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {USER_RISK_ITEMS.map(({ href, label, icon: Icon }) => {
-                const active = pathname.startsWith(href);
-                const badgeCount = href === "/users" ? pendingVerifications : 0;
-                return (
-                  <SidebarMenuItem key={href}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={active}
-                      tooltip={label}
-                      className={
-                        active
-                          ? "bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400"
-                          : "hover:bg-brand-50/50 dark:hover:bg-brand-900/10"
-                      }
-                    >
-                      <Link href={href}>
-                        <Icon className={`shrink-0 ${active ? "text-brand-600" : "text-muted-foreground"}`} />
-                        <span className={`truncate ${active ? "font-semibold" : "font-medium"}`}>
-                          {label}
-                        </span>
-                        {badgeCount > 0 && (
-                          <Badge className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden bg-brand-500 hover:bg-brand-600 text-white border-none shadow-sm">
-                            {badgeCount}
-                          </Badge>
-                        )}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {canAccessUserRisk && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+              Users & Compliance
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {USER_RISK_ITEMS.map(({ href, label, icon: Icon }) => {
+                  const active = pathname.startsWith(href);
+                  const badgeCount = href === "/users" ? pendingVerifications : 0;
+                  return (
+                    <SidebarMenuItem key={href}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={active}
+                        tooltip={label}
+                        className={
+                          active
+                            ? "bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400"
+                            : "hover:bg-brand-50/50 dark:hover:bg-brand-900/10"
+                        }
+                      >
+                        <Link href={href}>
+                          <Icon className={`shrink-0 ${active ? "text-brand-600" : "text-muted-foreground"}`} />
+                          <span className={`truncate ${active ? "font-semibold" : "font-medium"}`}>
+                            {label}
+                          </span>
+                          {badgeCount > 0 && (
+                            <Badge className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden bg-brand-500 hover:bg-brand-600 text-white border-none shadow-sm">
+                              {badgeCount}
+                            </Badge>
+                          )}
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
         {/* Dev mode — development only */}
         {process.env.NODE_ENV === "development" && (
           <SidebarGroup>
@@ -416,7 +419,7 @@ export default function LayoutWrapper({
         </header>
         {/* Page Content - Scrollable Area */}
         <div className="flex-1 overflow-auto">
-          <div className="p-4 sm:p-8 lg:p-10 max-w-[1600px] mx-auto w-full items-center justify-center">
+          <div className="p-4 sm:p-8 lg:p-10 max-w-[1600px] mx-auto w-full">
             {children}
           </div>
         </div>

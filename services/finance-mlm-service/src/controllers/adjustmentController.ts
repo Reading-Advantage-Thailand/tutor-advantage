@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+import { SettlementService } from "../services/settlementService";
 
 function canCreateAdjustment(role?: string) {
   return role === "ADMIN" || role === "FINANCE_MAKER";
@@ -270,6 +271,9 @@ export async function approveAdjustment(
       where: { adjustmentId },
       data: { status: "APPROVED", approvedBy: userId, approvedAt: now },
     });
+    const settlementRefresh = await SettlementService.refreshSettlementRun(
+      adj.settlementRunId,
+    );
 
     await prisma.auditEvent.create({
       data: {
@@ -285,7 +289,10 @@ export async function approveAdjustment(
       },
     });
 
-    return res.status(200).json({ message: "Adjustment approved" });
+    return res.status(200).json({
+      message: "Adjustment approved",
+      settlementRefresh,
+    });
   } catch (error: any) {
     console.error("ApproveAdjustment Error:", error);
     return res.status(500).json({
@@ -346,6 +353,9 @@ export async function rejectAdjustment(
       where: { adjustmentId },
       data: { status: "REJECTED", approvedBy: userId, approvedAt: now },
     });
+    const settlementRefresh = await SettlementService.refreshSettlementRun(
+      adj.settlementRunId,
+    );
 
     await prisma.auditEvent.create({
       data: {
@@ -361,7 +371,10 @@ export async function rejectAdjustment(
       },
     });
 
-    return res.status(200).json({ message: "Adjustment rejected" });
+    return res.status(200).json({
+      message: "Adjustment rejected",
+      settlementRefresh,
+    });
   } catch (error: any) {
     console.error("RejectAdjustment Error:", error);
     return res.status(500).json({

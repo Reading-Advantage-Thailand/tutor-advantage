@@ -306,15 +306,33 @@ export async function exportSettlementCsv(
     }
 
     // สร้าง CSV
+    const approvedAdjustments = await prisma.adjustment.findMany({
+      where: { settlementRunId: snapshotId, status: "APPROVED" },
+      select: { tutorUserId: true, amountMinor: true },
+    });
+    const adjustmentMap = new Map<string, bigint>();
+    for (const adjustment of approvedAdjustments) {
+      adjustmentMap.set(
+        adjustment.tutorUserId,
+        (adjustmentMap.get(adjustment.tutorUserId) ?? 0n) +
+          adjustment.amountMinor,
+      );
+    }
+
     const header =
-      "tutor_user_id,gross_volume_thb,payout_rate,gross_payout_thb,badge_bonus_thb,wht_3pct_thb,net_payout_thb,eligibility_status";
+      "tutor_user_id,gross_volume_thb,payout_rate,base_payout_thb,adjustment_thb,badge_bonus_thb,gross_payout_thb,wht_3pct_thb,net_payout_thb,eligibility_status";
     const rows = run.payoutLines.map((line) => {
       const grossTHB = (Number(line.grossVolumeMinor) / 100).toFixed(2);
+      const adjustmentMinor = adjustmentMap.get(line.tutorUserId) ?? 0n;
+      const basePayoutMinor =
+        line.payoutAmountMinor - line.badgeBonusMinor - adjustmentMinor;
+      const basePayoutTHB = (Number(basePayoutMinor) / 100).toFixed(2);
+      const adjustmentTHB = (Number(adjustmentMinor) / 100).toFixed(2);
       const payoutTHB = (Number(line.payoutAmountMinor) / 100).toFixed(2);
       const badgeTHB = (Number(line.badgeBonusMinor) / 100).toFixed(2);
       const whtTHB = (Number(line.withholdingTaxMinor) / 100).toFixed(2);
       const netTHB = (Number(line.netPayoutMinor) / 100).toFixed(2);
-      return `${line.tutorUserId},${grossTHB},${line.payoutRate},${payoutTHB},${badgeTHB},${whtTHB},${netTHB},${line.eligibilityStatus}`;
+      return `${line.tutorUserId},${grossTHB},${line.payoutRate},${basePayoutTHB},${adjustmentTHB},${badgeTHB},${payoutTHB},${whtTHB},${netTHB},${line.eligibilityStatus}`;
     });
     const csv = [header, ...rows].join("\n");
 
@@ -387,12 +405,71 @@ export async function getSettlementLines(
     const tutorIds = [...new Set(run.payoutLines.map((l) => l.tutorUserId))];
     const tutors = await prisma.user.findMany({
       where: { userId: { in: tutorIds } },
-      select: { userId: true, displayName: true, email: true },
+      select: { userId: true, displayName: true, email: true, settings: true },
     });
     const tutorMap = new Map(tutors.map((t) => [t.userId, t]));
+    const payoutLineIds = run.payoutLines.map((l) => l.payoutLineId);
+    const transferRows =
+      payoutLineIds.length > 0
+        ? await prisma.$queryRaw<
+            Array<{
+              payout_line_id: string;
+              provider: string | null;
+              provider_transfer_id: string | null;
+              transfer_status: string;
+              transfer_failure_code: string | null;
+              transfer_failure_message: string | null;
+              transferred_at: Date | null;
+            }>
+          >`
+            SELECT
+              "payout_line_id",
+              "provider",
+              "provider_transfer_id",
+              "transfer_status",
+              "transfer_failure_code",
+              "transfer_failure_message",
+              "transferred_at"
+            FROM "finance_mlm"."payout_documents"
+            WHERE "payout_line_id" = ANY(${payoutLineIds}::uuid[])
+          `
+        : [];
+    const transferMap = new Map(
+      transferRows.map((row) => [row.payout_line_id, row]),
+    );
+    const approvedAdjustments = await prisma.adjustment.findMany({
+      where: {
+        settlementRunId: snapshotId,
+        status: "APPROVED",
+        tutorUserId: { in: tutorIds },
+      },
+      select: {
+        tutorUserId: true,
+        amountMinor: true,
+      },
+    });
+    const adjustmentMap = new Map<string, bigint>();
+    for (const adjustment of approvedAdjustments) {
+      adjustmentMap.set(
+        adjustment.tutorUserId,
+        (adjustmentMap.get(adjustment.tutorUserId) ?? 0n) +
+          adjustment.amountMinor,
+      );
+    }
 
     const lines = run.payoutLines.map((l) => {
       const tutor = tutorMap.get(l.tutorUserId);
+      const transfer = transferMap.get(l.payoutLineId);
+      const adjustmentMinor = adjustmentMap.get(l.tutorUserId) ?? 0n;
+      const basePayoutMinor =
+        l.payoutAmountMinor - l.badgeBonusMinor - adjustmentMinor;
+      const hasOmiseRecipientId =
+        tutor?.settings &&
+        typeof tutor.settings === "object" &&
+        !Array.isArray(tutor.settings) &&
+        typeof (tutor.settings as { omiseRecipientId?: unknown }).omiseRecipientId ===
+          "string" &&
+        Boolean((tutor.settings as { omiseRecipientId?: string }).omiseRecipientId?.trim());
       return {
         payoutLineId: l.payoutLineId,
         tutorUserId: l.tutorUserId,
@@ -400,12 +477,31 @@ export async function getSettlementLines(
         tutorEmail: tutor?.email ?? null,
         grossVolumeTHB: Number(l.grossVolumeMinor) / 100,
         payoutRate: Number(l.payoutRate),
+        basePayoutTHB: Number(basePayoutMinor) / 100,
+        adjustmentTHB: Number(adjustmentMinor) / 100,
         grossPayoutTHB: Number(l.payoutAmountMinor) / 100,
         badgeBonusTHB: Number(l.badgeBonusMinor) / 100,
         whtTHB: Number(l.withholdingTaxMinor) / 100,
         netPayoutTHB: Number(l.netPayoutMinor) / 100,
         eligibilityStatus: l.eligibilityStatus,
         documentNumber: l.payoutDocument?.documentNumber ?? null,
+        documentStatus: l.payoutDocument?.status ?? null,
+        transferProvider: transfer?.provider ?? null,
+        transferId: transfer?.provider_transfer_id ?? null,
+        transferStatus: transfer?.transfer_status ?? null,
+        transferFailureCode: transfer?.transfer_failure_code ?? null,
+        transferFailureMessage: transfer?.transfer_failure_message ?? null,
+        transferredAt: transfer?.transferred_at?.toISOString() ?? null,
+        canSendTransfer:
+          run.status === "APPROVED" &&
+          l.netPayoutMinor > 0n &&
+          hasOmiseRecipientId &&
+          !["PENDING_TRANSFER", "CREATED", "SENT_PENDING", "SENT", "PAID"].includes(
+            transfer?.transfer_status ?? "NOT_SENT",
+          ),
+        transferBlockedReason: !hasOmiseRecipientId
+          ? "ยังไม่มี Omise recipient"
+          : null,
       };
     });
 
@@ -540,7 +636,7 @@ export async function approveSettlement(
 
     return res.status(200).json({
       message: "Settlement run approved",
-      run: approvedRun,
+      run: serializeSettlementRun(approvedRun),
     });
   } catch (error: any) {
     if (error.message === "NOT_FOUND") {
@@ -563,6 +659,40 @@ export async function approveSettlement(
       });
     }
 
+    if (error.message === "OMISE_PAYOUTS_NOT_CONFIGURED") {
+      return res.status(502).json({
+        error: {
+          code: "OMISE_PAYOUTS_NOT_CONFIGURED",
+          message:
+            "Omise payouts are enabled but Omise keys are not configured",
+          requestId: req.id,
+        },
+      });
+    }
+
+    if (error.message?.startsWith("MISSING_OMISE_RECIPIENT:")) {
+      return res.status(409).json({
+        error: {
+          code: "MISSING_OMISE_RECIPIENT",
+          message:
+            "Some tutors do not have settings.omiseRecipientId configured",
+          tutorUserIds: error.message.replace("MISSING_OMISE_RECIPIENT:", "").split(","),
+          requestId: req.id,
+        },
+      });
+    }
+
+    if (error.message?.startsWith("OMISE_TRANSFER_FAILED:")) {
+      return res.status(502).json({
+        error: {
+          code: "OMISE_TRANSFER_FAILED",
+          message: "Omise transfer failed after settlement approval",
+          details: error.message,
+          requestId: req.id,
+        },
+      });
+    }
+
     console.error("Approve Settlement Error:", error);
     return res.status(500).json({
       error: {
@@ -573,6 +703,185 @@ export async function approveSettlement(
       },
     });
   }
+}
+
+export async function retryPayoutTransfer(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  try {
+    const { snapshotId, payoutLineId } = req.params;
+
+    if (req.user?.role !== "FINANCE_CHECKER") {
+      return res.status(403).json({
+        error: {
+          code: "FORBIDDEN",
+          message: "Only Finance Checkers can send payout transfers",
+          requestId: req.id,
+        },
+      });
+    }
+
+    if (!payoutLineId) {
+      return res.status(400).json({
+        error: {
+          code: "BAD_REQUEST",
+          message: "payoutLineId is required in the path",
+          requestId: req.id,
+        },
+      });
+    }
+
+    const transfer = await SettlementService.retryPayoutTransfer(
+      payoutLineId,
+      snapshotId,
+    );
+
+    return res.status(200).json({
+      message: "Payout transfer sent",
+      transfer,
+    });
+  } catch (error: any) {
+    const errorMap: Record<string, { status: number; message: string }> = {
+      PAYOUT_LINE_NOT_FOUND: {
+        status: 404,
+        message: "Payout line not found",
+      },
+      PAYOUT_LINE_NOT_IN_SETTLEMENT: {
+        status: 404,
+        message: "Payout line does not belong to this settlement",
+      },
+      SETTLEMENT_NOT_APPROVED: {
+        status: 400,
+        message: "Settlement must be approved before sending a transfer",
+      },
+      NO_TRANSFER_REQUIRED: {
+        status: 400,
+        message: "This payout line has no positive net payout to transfer",
+      },
+      PAYOUT_DOCUMENT_NOT_FOUND: {
+        status: 409,
+        message: "Payout document must exist before sending a transfer",
+      },
+      TRANSFER_ALREADY_ACTIVE: {
+        status: 409,
+        message:
+          "This payout already has an active or successful transfer. Refusing to send a duplicate transfer.",
+      },
+      OMISE_PAYOUTS_NOT_CONFIGURED: {
+        status: 502,
+        message: "Omise keys are not configured",
+      },
+    };
+
+    if (error.message?.startsWith("MISSING_OMISE_RECIPIENT:")) {
+      return res.status(409).json({
+        error: {
+          code: "MISSING_OMISE_RECIPIENT",
+          message: "Tutor does not have settings.omiseRecipientId configured",
+          tutorUserId: error.message.replace("MISSING_OMISE_RECIPIENT:", ""),
+          requestId: req.id,
+        },
+      });
+    }
+
+    if (error.message?.startsWith("OMISE_TRANSFER_FAILED:")) {
+      return res.status(502).json({
+        error: {
+          code: "OMISE_TRANSFER_FAILED",
+          message: "Omise transfer failed",
+          details: error.message,
+          requestId: req.id,
+        },
+      });
+    }
+
+    const mapped = errorMap[error.message];
+    if (mapped) {
+      return res.status(mapped.status).json({
+        error: {
+          code: error.message,
+          message: mapped.message,
+          requestId: req.id,
+        },
+      });
+    }
+
+    console.error("Retry Payout Transfer Error:", error);
+    return res.status(500).json({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not send payout transfer",
+        requestId: req.id,
+      },
+    });
+  }
+}
+
+function serializeSettlementRun(run: {
+  settlementRunId: string;
+  periodMonth: string;
+  timezone: string;
+  status: string;
+  previewPayload: unknown;
+  createdBy: string | null;
+  createdAt: Date;
+  approvedBy: string | null;
+  approvedAt: Date | null;
+  payoutLines?: Array<{
+    payoutLineId: string;
+    settlementRunId: string;
+    tutorUserId: string;
+    grossVolumeMinor: bigint;
+    payoutRate: unknown;
+    payoutAmountMinor: bigint;
+    withholdingTaxMinor: bigint;
+    netPayoutMinor: bigint;
+    badgeBonusMinor: bigint;
+    eligibilityStatus: string;
+    createdAt: Date;
+    payoutDocument?: {
+      payoutDocumentId: string;
+      payoutLineId: string;
+      tutorUserId: string;
+      documentNumber: string;
+      documentType: string;
+      grossAmountMinor: bigint;
+      withholdingTaxMinor: bigint;
+      netAmountMinor: bigint;
+      status: string;
+      issuedAt: Date;
+      createdAt: Date;
+    } | null;
+  }>;
+}) {
+  return {
+    ...run,
+    createdAt: run.createdAt.toISOString(),
+    approvedAt: run.approvedAt?.toISOString() ?? null,
+    payoutLines: run.payoutLines?.map((line) => ({
+      ...line,
+      grossVolumeMinor: Number(line.grossVolumeMinor),
+      payoutRate: String(line.payoutRate),
+      payoutAmountMinor: Number(line.payoutAmountMinor),
+      withholdingTaxMinor: Number(line.withholdingTaxMinor),
+      netPayoutMinor: Number(line.netPayoutMinor),
+      badgeBonusMinor: Number(line.badgeBonusMinor),
+      createdAt: line.createdAt.toISOString(),
+      payoutDocument: line.payoutDocument
+        ? {
+            ...line.payoutDocument,
+            grossAmountMinor: Number(line.payoutDocument.grossAmountMinor),
+            withholdingTaxMinor: Number(
+              line.payoutDocument.withholdingTaxMinor,
+            ),
+            netAmountMinor: Number(line.payoutDocument.netAmountMinor),
+            issuedAt: line.payoutDocument.issuedAt.toISOString(),
+            createdAt: line.payoutDocument.createdAt.toISOString(),
+          }
+        : null,
+    })),
+  };
 }
 
 /**
@@ -597,6 +906,12 @@ export async function getSettlements(req: AuthenticatedRequest, res: Response) {
       orderBy: { createdAt: "desc" },
       include: {
         _count: { select: { payoutLines: true } },
+        payoutLines: {
+          select: {
+            payoutAmountMinor: true,
+            netPayoutMinor: true,
+          },
+        },
       },
     });
 
@@ -626,6 +941,12 @@ export async function getSettlements(req: AuthenticatedRequest, res: Response) {
       approvedBy: r.approvedBy,
       approvedAt: r.approvedAt,
       payoutLineCount: r._count.payoutLines,
+      totalPayoutSatang: Number(
+        r.payoutLines.reduce((sum, line) => sum + line.payoutAmountMinor, 0n),
+      ),
+      totalNetPayoutSatang: Number(
+        r.payoutLines.reduce((sum, line) => sum + line.netPayoutMinor, 0n),
+      ),
       pendingAdjustmentCount: pendingAdjByPeriod.get(r.periodMonth) ?? 0,
     }));
 

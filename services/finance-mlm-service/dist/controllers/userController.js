@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.anonymizeUser = exports.verifyUser = exports.getUserDetails = exports.getUsers = void 0;
+exports.anonymizeUser = exports.suspendUser = exports.verifyUser = exports.getUserDetails = exports.getUsers = void 0;
 const database_1 = require("@tutor-advantage/database");
 const ACTIVE_CLASS_STATUSES = ["ACTIVE", "OPEN", "IN_PROGRESS", "PUBLISHED"];
 const ACTIVE_ENROLLMENT_STATUSES = ["ACTIVE", "CONFIRMED", "PAID"];
@@ -52,11 +52,13 @@ const getUsers = async (req, res) => {
     }
     try {
         const users = await database_1.prisma.user.findMany({
+            where: { role: { in: ["TUTOR", "STUDENT"] } },
             select: {
                 userId: true,
                 displayName: true,
                 role: true,
                 email: true,
+                profilePictureUrl: true,
                 verificationStatus: true,
                 settings: true,
                 isActive: true,
@@ -84,6 +86,7 @@ const getUsers = async (req, res) => {
                 name: user.displayName || user.email || user.userId,
                 role: user.role,
                 email: user.email,
+                profilePictureUrl: user.profilePictureUrl ?? null,
                 activeClasses,
                 status: user.isActive ? "ACTIVE" : "INACTIVE",
                 verificationStatus: user.verificationStatus,
@@ -154,6 +157,7 @@ const getUserDetails = async (req, res) => {
                 role: user.role,
                 status: user.isActive ? "ACTIVE" : "INACTIVE",
                 joinedAt: user.createdAt.toISOString(),
+                profilePictureUrl: user.profilePictureUrl ?? null,
                 idCardImageUrl: user.idCardImageUrl,
                 bankBookImageUrl: user.bankBookImageUrl,
                 verificationStatus: user.verificationStatus,
@@ -266,6 +270,35 @@ const verifyUser = async (req, res) => {
     }
 };
 exports.verifyUser = verifyUser;
+const suspendUser = async (req, res) => {
+    if (req.user?.role !== "ADMIN") {
+        return res.status(403).json({ error: "Forbidden: Requires Admin privileges" });
+    }
+    const { id } = req.params;
+    try {
+        const user = await database_1.prisma.user.findUnique({
+            where: { userId: id },
+            select: { isActive: true },
+        });
+        if (!user)
+            return res.status(404).json({ error: "User not found" });
+        const updated = await database_1.prisma.user.update({
+            where: { userId: id },
+            data: { isActive: !user.isActive },
+            select: { userId: true, isActive: true },
+        });
+        return res.status(200).json({
+            success: true,
+            isActive: updated.isActive,
+            message: `User ${id} has been ${updated.isActive ? "unsuspended" : "suspended"}`,
+        });
+    }
+    catch (error) {
+        console.error("Suspend User Error:", error);
+        return res.status(500).json({ error: "Could not update user status" });
+    }
+};
+exports.suspendUser = suspendUser;
 const anonymizeUser = async (req, res) => {
     if (req.user?.role !== "ADMIN") {
         return res.status(403).json({ error: "Forbidden: Requires Super Admin privileges" });
