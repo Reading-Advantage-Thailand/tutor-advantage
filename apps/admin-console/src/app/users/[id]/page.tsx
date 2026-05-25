@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import {
   User as UserIcon,
@@ -79,6 +79,7 @@ interface UserDetail {
   role: string;
   status: string;
   joinedAt: string;
+  profilePictureUrl?: string | null;
   guardianSetup: boolean;
   idCardImageUrl?: string | null;
   bankBookImageUrl?: string | null;
@@ -396,7 +397,7 @@ export default function UserDetailPage() {
 
   if (loadError || !user) {
     return (
-      <div className="w-full max-w-3xl space-y-4">
+      <div className="w-full max-w-3xl mx-auto space-y-4">
         <Button
           variant="ghost"
           className="gap-2"
@@ -435,7 +436,7 @@ export default function UserDetailPage() {
   const isAdmin = adminRole === "ADMIN";
 
   return (
-    <div className="space-y-6 w-full max-w-5xl animate-in fade-in duration-300 items-center justify-center">
+    <div className="space-y-6 w-full max-w-5xl mx-auto animate-in fade-in duration-300">
       {/* Back */}
       <Button
         variant="ghost"
@@ -469,6 +470,13 @@ export default function UserDetailPage() {
         <CardContent className="p-6">
           <div className="flex gap-4 items-start">
             <Avatar className="h-16 w-16 shrink-0 border-4 border-background shadow-lg ring-1 ring-border/30 mt-0.5">
+              {user.profilePictureUrl && (
+                <AvatarImage
+                  src={user.profilePictureUrl}
+                  alt={user.name}
+                  className="object-cover"
+                />
+              )}
               <AvatarFallback
                 className={`text-xl font-black ${user.role === "TUTOR" ? "bg-gradient-to-br from-purple-400 to-brand-600 text-white" : "bg-gradient-to-br from-blue-400 to-blue-600 text-white"}`}
               >
@@ -926,9 +934,9 @@ export default function UserDetailPage() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {user.classes.map((cls) => (
+                  {user.classes.map((cls, index) => (
                     <div
-                      key={cls.id}
+                      key={`${cls.id}-${index}`}
                       className="flex items-center justify-between p-3 rounded-xl bg-muted/40 hover:bg-muted/60 transition-colors"
                     >
                       <div className="min-w-0 flex-1">
