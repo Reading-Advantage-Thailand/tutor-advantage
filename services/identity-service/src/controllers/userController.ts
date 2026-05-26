@@ -59,11 +59,14 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
       });
     }
 
-    const { idCardImageUrl, bankBookImageUrl, address, bankAccountNumber, bankBrand } = req.body;
+    const { idCardImageUrl, bankBookImageUrl, address, bankAccountNumber, bankBrand, taxName, nationalId } = req.body;
     const normalizedBankAccountNumber =
       typeof bankAccountNumber === "string"
         ? bankAccountNumber.replace(/\D/g, "")
         : "";
+    const normalizedTaxName = typeof taxName === "string" ? taxName.trim() : "";
+    const normalizedNationalId =
+      typeof nationalId === "string" ? nationalId.replace(/\D/g, "") : "";
 
     const VALID_BANK_BRANDS = [
       "kbank", "scb", "bbl", "bay", "tmb", "ttb",
@@ -74,7 +77,7 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
         ? bankBrand.toLowerCase()
         : null;
 
-    if (!idCardImageUrl && !bankBookImageUrl && !address && !normalizedBankAccountNumber) {
+    if (!idCardImageUrl && !bankBookImageUrl && !address && !normalizedBankAccountNumber && !normalizedTaxName && !normalizedNationalId) {
       return res.status(400).json({
         error: { code: "BAD_REQUEST", message: "At least one verification field must be provided" },
       });
@@ -98,6 +101,15 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
         error: {
           code: "BAD_REQUEST",
           message: "Bank account number is required with bank book verification",
+        },
+      });
+    }
+
+    if ((normalizedTaxName || normalizedNationalId) && (!normalizedTaxName || normalizedNationalId.length !== 13)) {
+      return res.status(400).json({
+        error: {
+          code: "BAD_REQUEST",
+          message: "Tax name and 13-digit national ID are required for tax info verification",
         },
       });
     }
@@ -126,9 +138,15 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
       newVerification.bankBook = { status: "PENDING", comment: "", updatedAt: now };
     }
 
+    if (normalizedTaxName || normalizedNationalId) {
+      currentSettings.taxName = normalizedTaxName;
+      currentSettings.nationalId = normalizedNationalId;
+      newVerification.taxInfo = { status: "PENDING", comment: "", updatedAt: now };
+    }
+
     updatedData.settings = { ...currentSettings, verification: newVerification };
 
-    const verificationFields = ["idCard", "bankBook", "address"];
+    const verificationFields = ["idCard", "bankBook", "address", "taxInfo"];
     const allVerified = verificationFields.every(
       (field) => newVerification[field]?.status === "VERIFIED",
     );

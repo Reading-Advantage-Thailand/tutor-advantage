@@ -17,9 +17,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { renderToBuffer, Document } from "@react-pdf/renderer";
-import React, { type JSX } from "react";
-import { Tawi50Document } from "@/components/documents/Tawi50Document";
+import { generateTawi50Pdf } from "@/lib/tawi50Pdf";
+import { getMissingTawi50Fields } from "@/lib/tawi50Requirements";
 import { IDENTITY_URL } from "@/lib/service-urls";
 
 export const dynamic = "force-dynamic";
@@ -32,20 +31,6 @@ async function getUserProfile(token: string) {
   if (!res.ok) return null;
   const data = await res.json();
   return data?.user ?? null;
-}
-
-function formatThaiDate(isoDate: string): string {
-  if (!isoDate) return "–";
-  try {
-    const d = new Date(isoDate);
-    return d.toLocaleDateString("th-TH", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  } catch {
-    return isoDate;
-  }
 }
 
 export async function GET(req: NextRequest) {
@@ -67,14 +52,12 @@ export async function GET(req: NextRequest) {
   const documentNumber = searchParams.get("documentNumber") ?? "";
   const grossStr       = searchParams.get("gross") ?? "0";
   const whtStr         = searchParams.get("wht") ?? "0";
-  const netStr         = searchParams.get("net") ?? "0";
   const period         = searchParams.get("period") ?? "";
   const issuedAtStr    = searchParams.get("issuedAt") ?? "";
   const paidDateStr    = searchParams.get("paidDate") ?? "";
 
   const grossAmount    = Math.max(0, parseInt(grossStr, 10) || 0);
   const withholdingTax = Math.max(0, parseInt(whtStr, 10) || 0);
-  const netPayout      = Math.max(0, parseInt(netStr, 10) || 0);
 
   if (!documentNumber || !period) {
     return NextResponse.json(
@@ -95,14 +78,22 @@ export async function GET(req: NextRequest) {
   const tutorName      = (settings.taxName as string) || (user.displayName as string) || "";
   const tutorNationalId = (settings.nationalId as string) ?? "";
   const tutorAddress   = (settings.address as string) ?? "";
+  const missingFields = getMissingTawi50Fields(settings);
 
-  // ── Dates ─────────────────────────────────────────────────────────────
-  const issuedDate  = issuedAtStr ? formatThaiDate(issuedAtStr) : formatThaiDate(new Date().toISOString());
-  const paymentDate = paidDateStr ? formatThaiDate(paidDateStr) : "–";
+  if (missingFields.length > 0) {
+    return NextResponse.json(
+      {
+        error: "MISSING_TAWI50_FIELDS",
+        message: "Please complete account and finance information before downloading Form 50 Tawi",
+        missingFields,
+      },
+      { status: 400 },
+    );
+  }
 
   // ── Generate PDF ──────────────────────────────────────────────────────
   try {
-    const element = React.createElement(Tawi50Document, {
+    const pdfBytes = await generateTawi50Pdf({
       companyName,
       companyTaxId,
       companyAddress,
@@ -112,22 +103,22 @@ export async function GET(req: NextRequest) {
       tutorAddress,
       documentNumber,
       periodMonth: period,
-      issuedDate,
-      paymentDate,
+      issuedAt: issuedAtStr || new Date().toISOString(),
+      paidDate: paidDateStr,
       grossAmount,
       withholdingTax,
-      netPayout,
-    }) as JSX.Element as React.ReactElement<React.ComponentProps<typeof Document>>;
-
-    const pdfBuffer = await renderToBuffer(element);
+    });
     const filename  = `tawi50-${documentNumber}.pdf`;
+    const responseBuffer = new ArrayBuffer(pdfBytes.byteLength);
+    new Uint8Array(responseBuffer).set(pdfBytes);
+    const body = new Blob([responseBuffer], { type: "application/pdf" });
 
-    return new NextResponse(new Uint8Array(pdfBuffer), {
+    return new NextResponse(body, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="${filename}"`,
-        "Content-Length": pdfBuffer.byteLength.toString(),
+        "Content-Length": pdfBytes.byteLength.toString(),
       },
     });
   } catch (err) {

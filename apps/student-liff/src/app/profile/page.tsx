@@ -110,7 +110,16 @@ export default function ProfilePage() {
         <div style={{ position: "relative", marginBottom: 16 }}>
           <div style={{ position: "absolute", inset: -4, borderRadius: "50%", background: "linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.1))", filter: "blur(1px)" }} />
           <Avatar className="w-24 h-24 border-4 border-white/30 shadow-xl relative">
-            {student.avatar && <AvatarImage src={student.avatar} alt={student.name} className="object-cover" />}
+            {student.avatar && (
+              <AvatarImage
+                src={student.avatar}
+                alt={student.name}
+                className="object-cover"
+                loading="eager"
+                decoding="async"
+                referrerPolicy="no-referrer"
+              />
+            )}
             <AvatarFallback className="bg-white/20 text-white text-2xl font-bold">{student.initials}</AvatarFallback>
           </Avatar>
         </div>

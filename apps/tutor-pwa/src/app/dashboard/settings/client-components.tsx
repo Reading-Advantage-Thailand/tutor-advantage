@@ -20,6 +20,7 @@ const verificationFieldLabels: Record<string, string> = {
   idCard: t("dashboardSettings.idCard"),
   bankBook: t("dashboardSettings.bankBook"),
   address: t("dashboardSettings.address"),
+  taxInfo: t("dashboardSettings.taxInfoStep"),
 };
 
 export function SettingsInteractiveElements({ type, status }: { type: string; status?: string }) {
@@ -164,6 +165,7 @@ export function VerificationRow({ user }: { user: any }) {
             onClick={() => setShowVerification(true)}
             className={cn(
               "h-8 text-xs font-bold px-4 rounded-xl whitespace-nowrap shadow-sm hover-lift press-scale",
+              isHighlighted && "ring-4 ring-amber-300/80 ring-offset-2 ring-offset-background shadow-lg shadow-amber-500/25 animate-pulse",
               status === "VERIFIED" && "bg-emerald-500 hover:bg-emerald-600 text-white",
               status !== "REJECTED" && status !== "PENDING" && status !== "VERIFIED" && "bg-orange-500 hover:bg-orange-600 text-white"
             )}
@@ -172,6 +174,11 @@ export function VerificationRow({ user }: { user: any }) {
           </Button>
         </div>
         </div>
+        {isHighlighted && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs font-bold text-amber-700 dark:text-amber-300 animate-scale-in">
+            กดปุ่มด้านขวาเพื่อกรอก/แก้ไขข้อมูลบัญชีและการเงิน
+          </div>
+        )}
         {rejectedFields.length > 0 && (
           <div className="space-y-1 rounded-xl border border-destructive/20 bg-destructive/5 p-3 sm:mx-2 animate-scale-in">
             {rejectedFields.map((item) => (
@@ -584,7 +591,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
   };
 
   const handleSaveTaxInfo = async () => {
-    if (!taxName.trim() && !nationalId.replace(/\D/g, "")) return;
+    if (!taxName.trim() || nationalId.replace(/\D/g, "").length !== 13) return;
     setTaxInfoPending(true);
     try {
       await saveTaxInfoAction(taxName, nationalId);
@@ -678,7 +685,10 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
 
             {/* Tax Info */}
             <div className="space-y-2 p-4 border rounded-xl bg-blue-50/50 dark:bg-blue-950/20 border-blue-200/60 dark:border-blue-800/40">
-              <Label className="font-semibold text-blue-700 dark:text-blue-400">{t("dashboardSettings.taxInfoStep")}</Label>
+              <div className="flex items-center justify-between">
+                <Label className="font-semibold text-blue-700 dark:text-blue-400">{t("dashboardSettings.taxInfoStep")}</Label>
+                {renderStatusBadge("taxInfo")}
+              </div>
               <div className="space-y-1">
                 <p className="text-[11px] text-muted-foreground font-medium">{t("dashboardSettings.taxNameLabel")}</p>
                 <p className="text-sm text-foreground font-semibold">
@@ -924,7 +934,10 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
 
           {/* TAX INFO SECTION */}
           <div className="space-y-3 p-4 border rounded-xl bg-blue-50/50 dark:bg-blue-950/20 border-blue-200/60 dark:border-blue-800/40">
-            <Label className="font-semibold text-blue-700 dark:text-blue-400">{t("dashboardSettings.taxInfoStep")}</Label>
+            {renderFieldFeedback("taxInfo")}
+            <Label className="font-semibold text-blue-700 dark:text-blue-400 flex items-center gap-2">
+              {t("dashboardSettings.taxInfoStep")} {renderStatusBadge("taxInfo")}
+            </Label>
             <p className="text-xs text-muted-foreground">ใช้สำหรับออกใบ 50 ทวิ — กรอกตามบัตรประชาชน</p>
             <div className="space-y-2">
               <Label htmlFor="tax-name" className="text-xs text-muted-foreground">
@@ -954,13 +967,13 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
             <Button
               size="sm"
               className={cn("w-full gap-2", taxInfoSaved && "bg-emerald-500 hover:bg-emerald-600 text-white")}
-              disabled={(!taxName.trim() && !nationalId.replace(/\D/g, "")) || taxInfoPending}
+              disabled={!taxName.trim() || nationalId.replace(/\D/g, "").length !== 13 || taxInfoPending}
               onClick={handleSaveTaxInfo}
             >
               {taxInfoPending
                 ? t("dashboardSettings.savingTaxInfo")
                 : taxInfoSaved
-                  ? t("dashboardSettings.taxInfoSaved")
+                  ? "ส่งข้อมูลให้แอดมินตรวจสอบแล้ว"
                   : t("dashboardSettings.saveTaxInfo")}
             </Button>
           </div>

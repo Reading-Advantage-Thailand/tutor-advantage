@@ -59,6 +59,9 @@ export default async function SettingsPage() {
                   src={user.profilePictureUrl}
                   alt={user.displayName || "Profile"}
                   fill
+                  priority
+                  sizes="80px"
+                  referrerPolicy="no-referrer"
                   className="object-cover"
                   unoptimized
                 />

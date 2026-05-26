@@ -56,6 +56,8 @@ export async function submitVerificationAction(
   address?: string,
   bankAccountNumber?: string,
   bankBrand?: string,
+  taxName?: string,
+  nationalId?: string,
 ) {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value;
@@ -67,7 +69,7 @@ export async function submitVerificationAction(
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ idCardImageUrl, bankBookImageUrl, address, bankAccountNumber, bankBrand }),
+    body: JSON.stringify({ idCardImageUrl, bankBookImageUrl, address, bankAccountNumber, bankBrand, taxName, nationalId }),
   });
 
   if (!res.ok) {
@@ -109,19 +111,22 @@ export async function saveTaxInfoAction(taxName: string, nationalId: string) {
   if (!token) throw new Error("Unauthorized");
 
   const normalizedId = nationalId.replace(/\D/g, "");
-  const res = await fetch(`${IDENTITY_URL}/v1/users/me/settings`, {
-    method: "PATCH",
+  const res = await fetch(`${IDENTITY_URL}/v1/users/me/verification`, {
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      ...(taxName.trim() ? { taxName: taxName.trim() } : {}),
-      ...(normalizedId ? { nationalId: normalizedId } : {}),
+      taxName: taxName.trim(),
+      nationalId: normalizedId,
     }),
   });
 
-  if (!res.ok) throw new Error("Failed to save tax info");
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error?.message || "Failed to submit tax info verification");
+  }
   const { revalidatePath } = await import("next/cache");
   revalidatePath("/dashboard/settings");
   return res.json();

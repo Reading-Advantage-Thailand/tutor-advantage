@@ -1,11 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, FileDown, AlertCircle, Wallet, Star, BanknoteIcon, Clock, CheckCircle2, XCircle, Send } from "lucide-react";
+import { Download, AlertCircle, Wallet, Star, BanknoteIcon, Clock, CheckCircle2, XCircle, Send } from "lucide-react";
 import { cookies } from "next/headers";
 import VerificationBanner from "@/components/dashboard/verification-banner";
 import { t } from "@/lib/i18n";
 import { PageTransition } from "@/components/ui/page-transition";
 import { AnimatedCurrencyCounter, AnimatedCounter } from "@/components/ui/animated-counter";
+import { IDENTITY_URL } from "@/lib/service-urls";
+import { Tawi50DownloadButton } from "./tawi50-download-button";
 
 type EarningsHistoryItem = {
   date: string;
@@ -50,6 +52,16 @@ type EarningsResponse = {
   };
 };
 
+type UserProfileResponse = {
+  user?: {
+    settings?: {
+      taxName?: string;
+      nationalId?: string;
+      address?: string;
+    };
+  };
+};
+
 async function getEarningsHistoryData(token: string): Promise<EarningsResponse | null> {
   if (!token) return null;
 
@@ -61,6 +73,19 @@ async function getEarningsHistoryData(token: string): Promise<EarningsResponse |
 
   if (!res.ok) return null;
   return res.json();
+}
+
+async function getUserProfile(token: string): Promise<UserProfileResponse["user"] | null> {
+  if (!token) return null;
+
+  const res = await fetch(`${IDENTITY_URL}/v1/users/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
+
+  if (!res.ok) return null;
+  const data = (await res.json()) as UserProfileResponse;
+  return data.user ?? null;
 }
 
 const statusMap: Record<string, { label: string; className: string }> = {
@@ -157,7 +182,10 @@ export default async function EarningsPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value || "";
 
-  const response = await getEarningsHistoryData(token);
+  const [response, user] = await Promise.all([
+    getEarningsHistoryData(token),
+    getUserProfile(token),
+  ]);
 
   const earnings = response?.currentProjection || emptyEarnings;
   const history = response?.history || [];
@@ -457,14 +485,11 @@ export default async function EarningsPage() {
                             {t("dashboardEarnings.documentPrefix")} {item.payoutDocument.documentNumber}
                           </div>
                           {item.status === "approved" && (item.withholdingTax ?? 0) > 0 && (
-                            <a
+                            <Tawi50DownloadButton
                               href={`/api/documents/tawi50?documentNumber=${encodeURIComponent(item.payoutDocument.documentNumber)}&gross=${Math.round(item.direct + item.network + (item.badgeBonus ?? 0) + item.clawback)}&wht=${Math.round(item.withholdingTax ?? 0)}&net=${Math.round(item.netPayout ?? 0)}&period=${encodeURIComponent(item.date)}&issuedAt=${encodeURIComponent(item.payoutDocument.issuedAt ?? "")}&paidDate=${encodeURIComponent(item.payoutDocument.transferredAt ?? "")}`}
-                              download={`tawi50-${item.payoutDocument.documentNumber}.pdf`}
-                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 text-[10px] font-bold transition-colors border border-brand-500/20 hover:border-brand-500/40 press-scale"
-                            >
-                              <FileDown className="h-3 w-3" />
-                              {t("dashboardEarnings.downloadTawi50")}
-                            </a>
+                              filename={`tawi50-${item.payoutDocument.documentNumber}.pdf`}
+                              settings={user?.settings ?? null}
+                            />
                           )}
                         </div>
                       )}

@@ -5,12 +5,13 @@ import { createOmiseRecipient, isOmiseConfigured } from "../services/omiseServic
 
 const ACTIVE_CLASS_STATUSES = ["ACTIVE", "OPEN", "IN_PROGRESS", "PUBLISHED"];
 const ACTIVE_ENROLLMENT_STATUSES = ["ACTIVE", "CONFIRMED", "PAID"];
-const VERIFICATION_FIELDS = ["idCard", "bankBook", "address"];
+const VERIFICATION_FIELDS = ["idCard", "bankBook", "address", "taxInfo"];
 
 const fieldLabels: Record<string, string> = {
   idCard: "ID card",
   bankBook: "Bank book",
   address: "Address",
+  taxInfo: "Tax info",
 };
 
 const asSettings = (value: unknown) => (value as Record<string, any>) || {};

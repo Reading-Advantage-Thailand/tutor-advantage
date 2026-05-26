@@ -66,7 +66,7 @@ interface UserClass {
   startsAt?: string | null;
 }
 
-type VerificationField = "idCard" | "bankBook" | "address";
+type VerificationField = "idCard" | "bankBook" | "address" | "taxInfo";
 
 interface VerificationItem {
   status?: string;
@@ -92,6 +92,8 @@ interface UserDetail {
     address?: string;
     bankAccountNumber?: string;
     bankBrand?: string;
+    taxName?: string;
+    nationalId?: string;
     omiseRecipientId?: string;
     verification?: Partial<Record<VerificationField, VerificationItem>>;
   };
@@ -103,6 +105,7 @@ const verificationFieldLabels: Record<VerificationField, string> = {
   idCard: "สำเนาบัตรประชาชน",
   bankBook: "หน้าสมุดบัญชี",
   address: "ที่อยู่สำหรับส่งเอกสาร",
+  taxInfo: "ข้อมูลภาษีสำหรับใบ 50 ทวิ",
 };
 
 const BANK_BRAND_LABELS: Record<string, string> = {
@@ -178,6 +181,7 @@ export default function UserDetailPage() {
     idCard: "",
     bankBook: "",
     address: "",
+    taxInfo: "",
   });
   const [isVerifying, setIsVerifying] = useState<string | null>(null);
   const [isSuspending, setIsSuspending] = useState(false);
@@ -204,6 +208,7 @@ export default function UserDetailPage() {
         idCard: verification.idCard?.comment || "",
         bankBook: verification.bankBook?.comment || "",
         address: verification.address?.comment || "",
+        taxInfo: verification.taxInfo?.comment || "",
       });
     } catch (err) {
       setLoadError(
@@ -329,7 +334,8 @@ export default function UserDetailPage() {
   const allVerified =
     getFieldStatus("idCard") === "VERIFIED" &&
     getFieldStatus("bankBook") === "VERIFIED" &&
-    getFieldStatus("address") === "VERIFIED";
+    getFieldStatus("address") === "VERIFIED" &&
+    getFieldStatus("taxInfo") === "VERIFIED";
 
   /** hasDocument: true if the document/data is present and can be reviewed */
   const renderVerificationActions = (
@@ -901,6 +907,47 @@ export default function UserDetailPage() {
                   {renderVerificationActions(
                     "address",
                     !!user.settings?.address,
+                  )}
+                </div>
+
+                <Separator />
+
+                {/* Tax Info */}
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                    <FileText className="h-3.5 w-3.5" />
+                    ข้อมูลภาษีสำหรับใบ 50 ทวิ
+                  </Label>
+                  <div className="p-3 rounded-xl bg-muted/40 text-sm space-y-2">
+                    <div>
+                      <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
+                        ชื่อผู้มีเงินได้
+                      </p>
+                      <p className="font-semibold mt-0.5">
+                        {user.settings?.taxName || (
+                          <span className="text-muted-foreground">
+                            ไม่ได้ระบุ
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
+                        เลขประจำตัวผู้เสียภาษี
+                      </p>
+                      <p className="font-mono font-semibold mt-0.5">
+                        {user.settings?.nationalId || (
+                          <span className="text-muted-foreground">
+                            ไม่ได้ระบุ
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  {renderVerificationActions(
+                    "taxInfo",
+                    !!user.settings?.taxName &&
+                      (user.settings?.nationalId?.replace(/\D/g, "").length ?? 0) === 13,
                   )}
                 </div>
 
