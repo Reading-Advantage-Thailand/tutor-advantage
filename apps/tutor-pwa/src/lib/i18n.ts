@@ -477,6 +477,7 @@ export const th = {
       NO_TRANSFER_REQUIRED: "ไม่มียอดโอน",
     },
     documentPrefix: "เอกสาร:",
+    downloadTawi50: "ดาวน์โหลดใบ 50 ทวิ",
     clawbackDetails: "รายละเอียดการปรับยอดหักคืน",
     billingPeriodPrefix: "รอบบิล:",
     clawbackNote: "* ยอดปรับหักคืนจะแสดงเฉพาะรายการที่ได้รับการอนุมัติแล้วและถูกนำไปคำนวณกับรายได้ในรอบที่เกี่ยวข้อง",

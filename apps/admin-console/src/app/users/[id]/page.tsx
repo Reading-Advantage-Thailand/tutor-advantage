@@ -91,6 +91,7 @@ interface UserDetail {
   settings?: {
     address?: string;
     bankAccountNumber?: string;
+    bankBrand?: string;
     omiseRecipientId?: string;
     verification?: Partial<Record<VerificationField, VerificationItem>>;
   };
@@ -102,6 +103,20 @@ const verificationFieldLabels: Record<VerificationField, string> = {
   idCard: "สำเนาบัตรประชาชน",
   bankBook: "หน้าสมุดบัญชี",
   address: "ที่อยู่สำหรับส่งเอกสาร",
+};
+
+const BANK_BRAND_LABELS: Record<string, string> = {
+  kbank: "กสิกรไทย (KBank)",
+  scb: "ไทยพาณิชย์ (SCB)",
+  bbl: "กรุงเทพ (BBL)",
+  bay: "กรุงศรีอยุธยา (BAY)",
+  ttb: "ทีทีบี (TTB)",
+  kiatnakin: "เกียรตินาคินภัทร (KKP)",
+  cimb: "ซีไอเอ็มบี (CIMB)",
+  gsb: "ออมสิน (GSB)",
+  baac: "ธ.ก.ส. (BAAC)",
+  uob: "ยูโอบี (UOB)",
+  lhb: "แลนด์แอนด์เฮ้าส์ (LH Bank)",
 };
 
 const VERIFICATION_STATUS_CONFIG: Record<
@@ -796,17 +811,29 @@ export default function UserDetailPage() {
                     <CreditCard className="h-3.5 w-3.5" />
                     หน้าสมุดบัญชีธนาคาร
                   </Label>
-                  <div className="p-3 rounded-xl bg-muted/40 text-sm">
-                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
-                      เลขบัญชี
-                    </p>
-                    <p className="font-mono font-semibold mt-0.5">
-                      {user.settings?.bankAccountNumber || (
-                        <span className="text-muted-foreground">
-                          ไม่ได้ระบุ
-                        </span>
-                      )}
-                    </p>
+                  <div className="p-3 rounded-xl bg-muted/40 text-sm space-y-2">
+                    {user.settings?.bankBrand && (
+                      <div>
+                        <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
+                          ธนาคาร
+                        </p>
+                        <p className="font-semibold mt-0.5">
+                          {BANK_BRAND_LABELS[user.settings.bankBrand] ?? user.settings.bankBrand}
+                        </p>
+                      </div>
+                    )}
+                    <div>
+                      <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
+                        เลขบัญชี
+                      </p>
+                      <p className="font-mono font-semibold mt-0.5">
+                        {user.settings?.bankAccountNumber || (
+                          <span className="text-muted-foreground">
+                            ไม่ได้ระบุ
+                          </span>
+                        )}
+                      </p>
+                    </div>
                   </div>
                   {user.bankBookImageUrl ? (
                     <div className="relative aspect-video rounded-xl border overflow-hidden bg-muted group">

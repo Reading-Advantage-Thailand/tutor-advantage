@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, AlertCircle, Wallet, Star, BanknoteIcon, Clock, CheckCircle2, XCircle, Send } from "lucide-react";
+import { Download, FileDown, AlertCircle, Wallet, Star, BanknoteIcon, Clock, CheckCircle2, XCircle, Send } from "lucide-react";
 import { cookies } from "next/headers";
 import VerificationBanner from "@/components/dashboard/verification-banner";
 import { t } from "@/lib/i18n";
@@ -452,8 +452,20 @@ export default async function EarningsPage() {
                         );
                       })()}
                       {item.payoutDocument && (
-                        <div className="mt-2 text-[10px] font-bold text-muted-foreground/60 tracking-wider">
-                          {t("dashboardEarnings.documentPrefix")} {item.payoutDocument.documentNumber}
+                        <div className="mt-2 flex items-center justify-between flex-wrap gap-2">
+                          <div className="text-[10px] font-bold text-muted-foreground/60 tracking-wider">
+                            {t("dashboardEarnings.documentPrefix")} {item.payoutDocument.documentNumber}
+                          </div>
+                          {item.status === "approved" && (item.withholdingTax ?? 0) > 0 && (
+                            <a
+                              href={`/api/documents/tawi50?documentNumber=${encodeURIComponent(item.payoutDocument.documentNumber)}&gross=${Math.round((item.direct + item.network + (item.badgeBonus ?? 0) + item.clawback))}&wht=${Math.round(item.withholdingTax ?? 0)}&net=${Math.round(item.netPayout ?? 0)}&period=${encodeURIComponent(item.date)}&paidDate=${encodeURIComponent(item.payoutDocument.transferredAt ?? "")}`}
+                              download={`tawi50-${item.payoutDocument.documentNumber}.pdf`}
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 text-[10px] font-bold transition-colors border border-brand-500/20 hover:border-brand-500/40 press-scale"
+                            >
+                              <FileDown className="h-3 w-3" />
+                              {t("dashboardEarnings.downloadTawi50")}
+                            </a>
+                          )}
                         </div>
                       )}
                     </div>
