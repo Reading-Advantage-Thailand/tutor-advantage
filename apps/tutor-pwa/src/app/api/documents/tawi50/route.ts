@@ -3,13 +3,14 @@
  *
  * Generates a Thai withholding tax certificate (ใบ 50 ทวิ) as a PDF file.
  *
- * Query params (all required):
- *   documentNumber  — payout document number (e.g. DOC-2025-001)
+ * Query params:
+ *   documentNumber  — payout document identifier
  *   gross           — gross income before WHT in THB (integer)
  *   wht             — withholding tax amount in THB (integer)
  *   net             — net payout after WHT in THB (integer)
  *   period          — billing period month (e.g. "2025-05")
- *   paidDate        — ISO date string of transfer (may be empty)
+ *   issuedAt        — ISO date of payout document approval
+ *   paidDate        — ISO date of money transfer (may be empty)
  *
  * Authentication: reads tutor_session cookie, fetches user profile from identity-service.
  */
@@ -64,15 +65,16 @@ export async function GET(req: NextRequest) {
   // ── Query params ──────────────────────────────────────────────────────
   const { searchParams } = req.nextUrl;
   const documentNumber = searchParams.get("documentNumber") ?? "";
-  const grossStr = searchParams.get("gross") ?? "0";
-  const whtStr = searchParams.get("wht") ?? "0";
-  const netStr = searchParams.get("net") ?? "0";
-  const period = searchParams.get("period") ?? "";
-  const paidDateStr = searchParams.get("paidDate") ?? "";
+  const grossStr       = searchParams.get("gross") ?? "0";
+  const whtStr         = searchParams.get("wht") ?? "0";
+  const netStr         = searchParams.get("net") ?? "0";
+  const period         = searchParams.get("period") ?? "";
+  const issuedAtStr    = searchParams.get("issuedAt") ?? "";
+  const paidDateStr    = searchParams.get("paidDate") ?? "";
 
-  const grossAmount = Math.max(0, parseInt(grossStr, 10) || 0);
+  const grossAmount    = Math.max(0, parseInt(grossStr, 10) || 0);
   const withholdingTax = Math.max(0, parseInt(whtStr, 10) || 0);
-  const netPayout = Math.max(0, parseInt(netStr, 10) || 0);
+  const netPayout      = Math.max(0, parseInt(netStr, 10) || 0);
 
   if (!documentNumber || !period) {
     return NextResponse.json(
@@ -82,17 +84,20 @@ export async function GET(req: NextRequest) {
   }
 
   // ── Company info from env ─────────────────────────────────────────────
-  const companyName = process.env.TAWI50_COMPANY_NAME ?? "บริษัท ทิวเตอร์ แอดวานเทจ จำกัด";
-  const companyTaxId = process.env.TAWI50_COMPANY_TAX_ID ?? "0000000000000";
-  const companyAddress = process.env.TAWI50_COMPANY_ADDRESS ?? "";
+  const companyName    = process.env.TAWI50_COMPANY_NAME    ?? "บริษัท รีดิ้งแอดแวนเทจ(ไทยแลนด์) จำกัด";
+  const companyTaxId   = process.env.TAWI50_COMPANY_TAX_ID  ?? "0405567001165";
+  const companyAddress = process.env.TAWI50_COMPANY_ADDRESS ?? "322/132 หมู่ที่ 20 ตำบลบ้านเป็ด อำเภอเมืองขอนแก่น จ.ขอนแก่น 40000";
+  const signatoryName  = process.env.TAWI50_SIGNATORY_NAME  ?? "พิกุล ภูกะฐิน";
 
   // ── Tutor info from profile ───────────────────────────────────────────
-  const tutorName = user.displayName ?? "";
-  const settings = (user.settings as Record<string, unknown>) ?? {};
+  const settings       = (user.settings as Record<string, unknown>) ?? {};
+  // taxName = legal name as on ID card for tax purposes; fallback to displayName
+  const tutorName      = (settings.taxName as string) || (user.displayName as string) || "";
   const tutorNationalId = (settings.nationalId as string) ?? "";
-  const tutorAddress = (settings.address as string) ?? "";
+  const tutorAddress   = (settings.address as string) ?? "";
 
-  // ── Payment date ──────────────────────────────────────────────────────
+  // ── Dates ─────────────────────────────────────────────────────────────
+  const issuedDate  = issuedAtStr ? formatThaiDate(issuedAtStr) : formatThaiDate(new Date().toISOString());
   const paymentDate = paidDateStr ? formatThaiDate(paidDateStr) : "–";
 
   // ── Generate PDF ──────────────────────────────────────────────────────
@@ -101,11 +106,13 @@ export async function GET(req: NextRequest) {
       companyName,
       companyTaxId,
       companyAddress,
+      signatoryName,
       tutorName,
       tutorNationalId,
       tutorAddress,
       documentNumber,
       periodMonth: period,
+      issuedDate,
       paymentDate,
       grossAmount,
       withholdingTax,
@@ -113,7 +120,7 @@ export async function GET(req: NextRequest) {
     }) as JSX.Element as React.ReactElement<React.ComponentProps<typeof Document>>;
 
     const pdfBuffer = await renderToBuffer(element);
-    const filename = `tawi50-${documentNumber}.pdf`;
+    const filename  = `tawi50-${documentNumber}.pdf`;
 
     return new NextResponse(new Uint8Array(pdfBuffer), {
       status: 200,

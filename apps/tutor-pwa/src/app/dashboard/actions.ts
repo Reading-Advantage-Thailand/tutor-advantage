@@ -103,6 +103,30 @@ export async function uploadFileAction(formData: FormData) {
   return data.url;
 }
 
+export async function saveTaxInfoAction(taxName: string, nationalId: string) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("tutor_session")?.value;
+  if (!token) throw new Error("Unauthorized");
+
+  const normalizedId = nationalId.replace(/\D/g, "");
+  const res = await fetch(`${IDENTITY_URL}/v1/users/me/settings`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      ...(taxName.trim() ? { taxName: taxName.trim() } : {}),
+      ...(normalizedId ? { nationalId: normalizedId } : {}),
+    }),
+  });
+
+  if (!res.ok) throw new Error("Failed to save tax info");
+  const { revalidatePath } = await import("next/cache");
+  revalidatePath("/dashboard/settings");
+  return res.json();
+}
+
 export async function getCurrentUserAction() {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value;

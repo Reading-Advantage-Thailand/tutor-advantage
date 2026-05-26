@@ -7,7 +7,7 @@ import { LogOut, Save, X, ChevronRight, Bell, Wallet, MapPin, Moon, Sun, Trendin
 import { useState, useEffect, useTransition } from "react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
-import { updateSettingsAction, submitVerificationAction, uploadFileAction } from "../actions";
+import { updateSettingsAction, submitVerificationAction, uploadFileAction, saveTaxInfoAction } from "../actions";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -435,6 +435,10 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
   const [idCardError, setIdCardError] = useState<string | null>(null);
   const [bankBookError, setBankBookError] = useState<string | null>(null);
   const [addressError, setAddressError] = useState<string | null>(null);
+  const [taxName, setTaxName] = useState<string>(user?.settings?.taxName || "");
+  const [nationalId, setNationalId] = useState<string>(user?.settings?.nationalId || "");
+  const [taxInfoSaved, setTaxInfoSaved] = useState(false);
+  const [taxInfoPending, setTaxInfoPending] = useState(false);
 
   // Reset view mode whenever modal is opened
   useEffect(() => {
@@ -443,6 +447,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
       setIdCardError(null);
       setBankBookError(null);
       setAddressError(null);
+      setTaxInfoSaved(false);
     }
   }, [open, user?.verificationStatus]);
 
@@ -458,6 +463,8 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
     if (user?.settings?.bankBrand) {
       setBankBrand(user.settings.bankBrand);
     }
+    if (user?.settings?.taxName) setTaxName(user.settings.taxName);
+    if (user?.settings?.nationalId) setNationalId(user.settings.nationalId);
   }, [user]);
 
   const getFieldStatus = (field: string) => {
@@ -576,6 +583,19 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
     });
   };
 
+  const handleSaveTaxInfo = async () => {
+    if (!taxName.trim() && !nationalId.replace(/\D/g, "")) return;
+    setTaxInfoPending(true);
+    try {
+      await saveTaxInfoAction(taxName, nationalId);
+      setTaxInfoSaved(true);
+    } catch {
+      // silently fail — keep inputs open
+    } finally {
+      setTaxInfoPending(false);
+    }
+  };
+
   const renderStatusBadge = (field: string) => {
     const status = getFieldStatus(field);
     if (status === "UNVERIFIED") return null;
@@ -654,6 +674,23 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
               <p className="text-sm text-foreground leading-relaxed">
                 {user?.settings?.address || <span className="text-muted-foreground">{t("dashboardSettings.notUploaded")}</span>}
               </p>
+            </div>
+
+            {/* Tax Info */}
+            <div className="space-y-2 p-4 border rounded-xl bg-blue-50/50 dark:bg-blue-950/20 border-blue-200/60 dark:border-blue-800/40">
+              <Label className="font-semibold text-blue-700 dark:text-blue-400">{t("dashboardSettings.taxInfoStep")}</Label>
+              <div className="space-y-1">
+                <p className="text-[11px] text-muted-foreground font-medium">{t("dashboardSettings.taxNameLabel")}</p>
+                <p className="text-sm text-foreground font-semibold">
+                  {user?.settings?.taxName || <span className="text-muted-foreground italic">–</span>}
+                </p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-[11px] text-muted-foreground font-medium">{t("dashboardSettings.nationalIdLabel")}</p>
+                <p className="text-sm text-foreground font-mono font-semibold">
+                  {user?.settings?.nationalId || <span className="text-muted-foreground italic">–</span>}
+                </p>
+              </div>
             </div>
           </div>
 
@@ -882,6 +919,49 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
               onClick={() => handleSubmitField('address')}
             >
               {activeField === 'address' ? t("dashboardSettings.saving") : t("dashboardSettings.saveAddress")}
+            </Button>
+          </div>
+
+          {/* TAX INFO SECTION */}
+          <div className="space-y-3 p-4 border rounded-xl bg-blue-50/50 dark:bg-blue-950/20 border-blue-200/60 dark:border-blue-800/40">
+            <Label className="font-semibold text-blue-700 dark:text-blue-400">{t("dashboardSettings.taxInfoStep")}</Label>
+            <p className="text-xs text-muted-foreground">ใช้สำหรับออกใบ 50 ทวิ — กรอกตามบัตรประชาชน</p>
+            <div className="space-y-2">
+              <Label htmlFor="tax-name" className="text-xs text-muted-foreground">
+                {t("dashboardSettings.taxNameLabel")}
+              </Label>
+              <Input
+                id="tax-name"
+                placeholder={t("dashboardSettings.taxNamePlaceholder")}
+                value={taxName}
+                onChange={(e) => { setTaxName(e.target.value); setTaxInfoSaved(false); }}
+                disabled={taxInfoPending}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="national-id" className="text-xs text-muted-foreground">
+                {t("dashboardSettings.nationalIdLabel")}
+              </Label>
+              <Input
+                id="national-id"
+                inputMode="numeric"
+                placeholder={t("dashboardSettings.nationalIdPlaceholder")}
+                value={nationalId}
+                onChange={(e) => { setNationalId(e.target.value.replace(/[^\d-]/g, "")); setTaxInfoSaved(false); }}
+                disabled={taxInfoPending}
+              />
+            </div>
+            <Button
+              size="sm"
+              className={cn("w-full gap-2", taxInfoSaved && "bg-emerald-500 hover:bg-emerald-600 text-white")}
+              disabled={(!taxName.trim() && !nationalId.replace(/\D/g, "")) || taxInfoPending}
+              onClick={handleSaveTaxInfo}
+            >
+              {taxInfoPending
+                ? t("dashboardSettings.savingTaxInfo")
+                : taxInfoSaved
+                  ? t("dashboardSettings.taxInfoSaved")
+                  : t("dashboardSettings.saveTaxInfo")}
             </Button>
           </div>
         </div>

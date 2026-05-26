@@ -458,7 +458,7 @@ export default async function EarningsPage() {
                           </div>
                           {item.status === "approved" && (item.withholdingTax ?? 0) > 0 && (
                             <a
-                              href={`/api/documents/tawi50?documentNumber=${encodeURIComponent(item.payoutDocument.documentNumber)}&gross=${Math.round((item.direct + item.network + (item.badgeBonus ?? 0) + item.clawback))}&wht=${Math.round(item.withholdingTax ?? 0)}&net=${Math.round(item.netPayout ?? 0)}&period=${encodeURIComponent(item.date)}&paidDate=${encodeURIComponent(item.payoutDocument.transferredAt ?? "")}`}
+                              href={`/api/documents/tawi50?documentNumber=${encodeURIComponent(item.payoutDocument.documentNumber)}&gross=${Math.round(item.direct + item.network + (item.badgeBonus ?? 0) + item.clawback)}&wht=${Math.round(item.withholdingTax ?? 0)}&net=${Math.round(item.netPayout ?? 0)}&period=${encodeURIComponent(item.date)}&issuedAt=${encodeURIComponent(item.payoutDocument.issuedAt ?? "")}&paidDate=${encodeURIComponent(item.payoutDocument.transferredAt ?? "")}`}
                               download={`tawi50-${item.payoutDocument.documentNumber}.pdf`}
                               className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-brand-500/10 hover:bg-brand-500/20 text-brand-600 dark:text-brand-400 text-[10px] font-bold transition-colors border border-brand-500/20 hover:border-brand-500/40 press-scale"
                             >
