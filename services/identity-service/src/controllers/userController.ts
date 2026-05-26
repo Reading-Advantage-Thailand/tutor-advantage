@@ -92,7 +92,6 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
     const updatedData: any = {};
     const newVerification = { ...verification };
     const now = new Date().toISOString();
-    const lockedFields: string[] = [];
 
     if ((bankBookImageUrl || normalizedBankAccountNumber) && !normalizedBankAccountNumber) {
       return res.status(400).json({
@@ -103,18 +102,8 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
       });
     }
 
-    if (address && verification.address?.status === "VERIFIED") lockedFields.push("address");
-    if (idCardImageUrl && verification.idCard?.status === "VERIFIED") lockedFields.push("idCard");
-    if ((bankBookImageUrl || normalizedBankAccountNumber) && verification.bankBook?.status === "VERIFIED") lockedFields.push("bankBook");
-
-    if (lockedFields.length > 0) {
-      return res.status(409).json({
-        error: {
-          code: "VERIFICATION_LOCKED",
-          message: `Verified fields cannot be edited: ${lockedFields.join(", ")}`,
-        },
-      });
-    }
+    // Previously verified fields can be re-submitted — they will be reset to PENDING
+    // and require admin re-approval before payouts resume.
 
     if (address) {
       currentSettings.address = address;

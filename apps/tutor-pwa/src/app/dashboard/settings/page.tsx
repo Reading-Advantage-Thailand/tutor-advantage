@@ -2,11 +2,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   User,
-  MapPin,
   ShieldCheck,
   ChevronRight,
   Bell,
-  Wallet,
   FileText,
 } from "lucide-react";
 import Link from "next/link";
@@ -16,7 +14,6 @@ import { IDENTITY_URL } from "@/lib/service-urls";
 import {
   SettingsInteractiveElements,
   EditableSettingToggle,
-  EditableSettingText,
   VerificationRow,
 } from "./client-components";
 import { PageTransition } from "@/components/ui/page-transition";
@@ -140,31 +137,7 @@ export default async function SettingsPage() {
 
         <Card className="border border-border/40 hover:shadow-md rounded-3xl shadow-sm bg-card overflow-hidden transition-all duration-300 relative border-l-4 border-l-brand-500">
           <div className="divide-y divide-border/30">
-            {user.verificationStatus !== "VERIFIED" ? (
-              <VerificationRow user={user} />
-            ) : (
-              <EditableSettingText
-                title={t("dashboardSettings.bankAccountTitle")}
-                description={t("dashboardSettings.notSpecified")}
-                placeholder={t("dashboardSettings.bankAccountPlaceholder")}
-                iconName="Wallet"
-                value={user.settings?.promptPay}
-                settingKey="promptPay"
-                iconBgClass="bg-emerald-500/10"
-                iconColorClass="text-emerald-600 dark:text-emerald-400"
-              />
-            )}
-
-            <EditableSettingText
-              title={t("dashboardSettings.taxAddressTitle")}
-              description={t("dashboardSettings.notSpecified")}
-              placeholder={t("dashboardSettings.taxAddressPlaceholder")}
-              iconName="MapPin"
-              value={user.settings?.address}
-              settingKey="address"
-              iconBgClass="bg-blue-500/10"
-              iconColorClass="text-blue-500"
-            />
+            <VerificationRow user={user} />
           </div>
         </Card>
       </div>

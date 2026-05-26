@@ -110,12 +110,14 @@ export function VerificationRow({ user }: { user: any }) {
   }, []);
 
   const getStatusText = () => {
+    if (status === "VERIFIED") return t("dashboardSettings.verifiedStatusRow");
     if (status === "PENDING") return t("dashboardSettings.payoutPending");
     if (status === "REJECTED") return t("dashboardSettings.payoutRejected");
     return t("dashboardSettings.payoutUnverified");
   };
 
   const getButtonText = () => {
+    if (status === "VERIFIED") return t("dashboardSettings.viewVerification");
     if (status === "PENDING") return t("dashboardSettings.viewProgress");
     if (status === "REJECTED") return t("dashboardSettings.resubmitShort");
     return t("dashboardSettings.verify");
@@ -135,10 +137,12 @@ export function VerificationRow({ user }: { user: any }) {
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <div className={cn(
             "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300",
+            status === "VERIFIED" ? "bg-emerald-500/10" :
             status === "REJECTED" ? "bg-destructive/10" : "bg-orange-500/10"
           )}>
             <ShieldCheck className={cn(
               "h-5 w-5",
+              status === "VERIFIED" ? "text-emerald-500" :
               status === "REJECTED" ? "text-destructive" : "text-orange-500"
             )} />
           </div>
@@ -146,6 +150,7 @@ export function VerificationRow({ user }: { user: any }) {
             <p className="text-sm font-bold text-foreground">{t("dashboardSettings.payoutStatusTitle")}</p>
             <p className={cn(
               "text-xs font-semibold truncate mt-0.5",
+              status === "VERIFIED" ? "text-emerald-600 dark:text-emerald-400" :
               status === "REJECTED" ? "text-destructive" : "text-muted-foreground"
             )}>
               {getStatusText()}
@@ -153,13 +158,14 @@ export function VerificationRow({ user }: { user: any }) {
           </div>
         </div>
         <div className="ml-3">
-          <Button 
-            size="sm" 
+          <Button
+            size="sm"
             variant={status === "REJECTED" ? "destructive" : "default"}
             onClick={() => setShowVerification(true)}
             className={cn(
               "h-8 text-xs font-bold px-4 rounded-xl whitespace-nowrap shadow-sm hover-lift press-scale",
-              status !== "REJECTED" && status !== "PENDING" && "bg-orange-500 hover:bg-orange-600 text-white"
+              status === "VERIFIED" && "bg-emerald-500 hover:bg-emerald-600 text-white",
+              status !== "REJECTED" && status !== "PENDING" && status !== "VERIFIED" && "bg-orange-500 hover:bg-orange-600 text-white"
             )}
           >
             {getButtonText()}
@@ -397,11 +403,26 @@ export function EditableSettingText({ title, description, iconName, value, setti
   );
 }
 
+const BANK_BRAND_LABELS: Record<string, string> = {
+  kbank: "กสิกรไทย (KBank)",
+  scb: "ไทยพาณิชย์ (SCB)",
+  bbl: "กรุงเทพ (BBL)",
+  bay: "กรุงศรีอยุธยา (BAY)",
+  ttb: "ทีทีบี (TTB)",
+  kiatnakin: "เกียรตินาคินภัทร (KKP)",
+  cimb: "ซีไอเอ็มบี (CIMB)",
+  gsb: "ออมสิน (GSB)",
+  baac: "ธ.ก.ส. (BAAC)",
+  uob: "ยูโอบี (UOB)",
+  lhb: "แลนด์แอนด์เฮ้าส์ (LH Bank)",
+};
+
 function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpenChange: (open: boolean) => void; user: any }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [activeField, setActiveField] = useState<string | null>(null);
-  
+  const [isViewMode, setIsViewMode] = useState(user?.verificationStatus === "VERIFIED");
+
   const [idCardFile, setIdCardFile] = useState<File | null>(null);
   const [bankBookFile, setBankBookFile] = useState<File | null>(null);
   const [idCardPreview, setIdCardPreview] = useState<string | null>(null);
@@ -411,7 +432,19 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
   const [address, setAddress] = useState<string>(user?.settings?.address || "");
   const [bankAccountNumber, setBankAccountNumber] = useState<string>(user?.settings?.bankAccountNumber || "");
   const [bankBrand, setBankBrand] = useState<string>(user?.settings?.bankBrand || "");
-  const [error, setError] = useState<string | null>(null);
+  const [idCardError, setIdCardError] = useState<string | null>(null);
+  const [bankBookError, setBankBookError] = useState<string | null>(null);
+  const [addressError, setAddressError] = useState<string | null>(null);
+
+  // Reset view mode whenever modal is opened
+  useEffect(() => {
+    if (open) {
+      setIsViewMode(user?.verificationStatus === "VERIFIED");
+      setIdCardError(null);
+      setBankBookError(null);
+      setAddressError(null);
+    }
+  }, [open, user?.verificationStatus]);
 
   useEffect(() => {
     setSubmittedIdCardUrl(user?.idCardImageUrl || null);
@@ -460,26 +493,38 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
     }
   };
 
+  const clearFieldError = (field: 'idCard' | 'bankBook' | 'address') => {
+    if (field === 'idCard') setIdCardError(null);
+    else if (field === 'bankBook') setBankBookError(null);
+    else setAddressError(null);
+  };
+
+  const setFieldError = (field: 'idCard' | 'bankBook' | 'address', msg: string) => {
+    if (field === 'idCard') setIdCardError(msg);
+    else if (field === 'bankBook') setBankBookError(msg);
+    else setAddressError(msg);
+  };
+
   const handleSubmitField = (field: 'idCard' | 'bankBook' | 'address') => {
-    setError(null);
+    clearFieldError(field);
     if (field === 'idCard' && !idCardFile) {
-      setError(t("dashboardSettings.selectIdCardFile"));
+      setIdCardError(t("dashboardSettings.selectIdCardFile"));
       return;
     }
     if (field === 'bankBook' && !bankBookFile) {
-      setError(t("dashboardSettings.selectBankBookFile"));
+      setBankBookError(t("dashboardSettings.selectBankBookFile"));
       return;
     }
     if (field === 'bankBook' && !bankAccountNumber.replace(/\D/g, "")) {
-      setError(t("dashboardSettings.bankAccountRequired"));
+      setBankBookError(t("dashboardSettings.bankAccountRequired"));
       return;
     }
     if (field === 'bankBook' && !bankBrand) {
-      setError("กรุณาเลือกธนาคาร");
+      setBankBookError("กรุณาเลือกธนาคาร");
       return;
     }
     if (field === 'address' && !address.trim()) {
-      setError(t("dashboardSettings.addressRequired"));
+      setAddressError(t("dashboardSettings.addressRequired"));
       return;
     }
 
@@ -509,7 +554,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
           field === 'bankBook' ? bankAccountNumber.replace(/\D/g, "") : undefined,
           field === 'bankBook' ? bankBrand : undefined,
         );
-        
+
         // Success cleanup
         if (field === 'idCard') {
           if (idCardUrl) setSubmittedIdCardUrl(idCardUrl);
@@ -522,10 +567,10 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
           setBankBookPreview(null);
         }
         router.refresh();
-        
+
         setActiveField(null);
       } catch (err: any) {
-        setError(err.message || t("dashboardSettings.submitDocumentsFailed"));
+        setFieldError(field, err.message || t("dashboardSettings.submitDocumentsFailed"));
         setActiveField(null);
       }
     });
@@ -550,6 +595,85 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
     );
   };
 
+  // VIEW MODE: read-only summary for verified users
+  if (isViewMode) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-lg">
+              <ShieldCheck className="h-5 w-5 text-emerald-500" />
+              {t("dashboardSettings.viewTitle")}
+            </DialogTitle>
+            <DialogDescription>{t("dashboardSettings.viewDescription")}</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {/* ID Card */}
+            <div className="space-y-2 p-4 border rounded-xl bg-muted/20">
+              <div className="flex items-center justify-between">
+                <Label className="font-semibold">{t("dashboardSettings.idCardStep")}</Label>
+                {renderStatusBadge("idCard")}
+              </div>
+              {submittedIdCardUrl ? (
+                <img src={submittedIdCardUrl} alt="ID Card" className="w-full aspect-video object-contain rounded-md" />
+              ) : (
+                <p className="text-xs text-muted-foreground">{t("dashboardSettings.notUploaded")}</p>
+              )}
+            </div>
+
+            {/* Bank Book */}
+            <div className="space-y-2 p-4 border rounded-xl bg-muted/20">
+              <div className="flex items-center justify-between">
+                <Label className="font-semibold">{t("dashboardSettings.bankBookStep")}</Label>
+                {renderStatusBadge("bankBook")}
+              </div>
+              {user?.settings?.bankBrand && (
+                <p className="text-xs font-medium text-foreground">
+                  {t("dashboardSettings.bankBrandLabel")} {BANK_BRAND_LABELS[user.settings.bankBrand] || user.settings.bankBrand}
+                </p>
+              )}
+              {user?.settings?.bankAccountNumber && (
+                <p className="text-xs font-semibold text-foreground">
+                  {t("dashboardSettings.bankAccountLabel")} {user.settings.bankAccountNumber}
+                </p>
+              )}
+              {submittedBankBookUrl ? (
+                <img src={submittedBankBookUrl} alt="Bank Book" className="w-full aspect-video object-contain rounded-md" />
+              ) : (
+                <p className="text-xs text-muted-foreground">{t("dashboardSettings.notUploaded")}</p>
+              )}
+            </div>
+
+            {/* Address */}
+            <div className="space-y-2 p-4 border rounded-xl bg-muted/20">
+              <div className="flex items-center justify-between">
+                <Label className="font-semibold">{t("dashboardSettings.addressStep")}</Label>
+                {renderStatusBadge("address")}
+              </div>
+              <p className="text-sm text-foreground leading-relaxed">
+                {user?.settings?.address || <span className="text-muted-foreground">{t("dashboardSettings.notUploaded")}</span>}
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:justify-between flex-col sm:flex-row">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              {t("dashboardSettings.closeDialog")}
+            </Button>
+            <Button
+              className="bg-emerald-500 hover:bg-emerald-600 text-white"
+              onClick={() => setIsViewMode(false)}
+            >
+              {t("dashboardSettings.editVerification")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  // EDIT MODE
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
@@ -564,29 +688,35 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {error && (
-            <div className="bg-destructive/10 text-destructive text-xs p-3 rounded-md flex items-center gap-2">
-              <AlertCircle className="h-4 w-4 shrink-0" />
-              {error}
+          {/* Warning banner when editing previously verified data */}
+          {user?.verificationStatus === "VERIFIED" && (
+            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 text-amber-700 dark:text-amber-400 text-xs p-3 rounded-xl flex items-start gap-2">
+              <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+              <p>{t("dashboardSettings.editVerificationWarning")}</p>
             </div>
           )}
 
           {/* ID CARD SECTION */}
           <div className="space-y-3 p-4 border rounded-xl bg-muted/20 relative">
             {renderFieldFeedback("idCard")}
+            {idCardError && (
+              <div className="flex items-center gap-2 text-xs text-destructive bg-destructive/8 border border-destructive/20 rounded-lg px-3 py-2">
+                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                {idCardError}
+              </div>
+            )}
             <div className="flex items-center justify-between">
               <Label htmlFor="id-card" className="font-semibold flex items-center gap-2">
                 {t("dashboardSettings.idCardStep")} {renderStatusBadge("idCard")}
               </Label>
             </div>
             
-            <div 
+            <div
               className={cn(
                 "border-2 border-dashed rounded-lg p-4 transition-colors flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-muted/50",
                 idCardPreview ? 'border-primary/50 bg-primary/5' : 'border-border',
-                getFieldStatus("idCard") === "VERIFIED" && "opacity-60 cursor-not-allowed hover:bg-transparent"
               )}
-              onClick={() => getFieldStatus("idCard") !== "VERIFIED" && document.getElementById('id-card-input')?.click()}
+              onClick={() => document.getElementById('id-card-input')?.click()}
             >
               {idCardPreview ? (
                 <div className="relative w-full">
@@ -595,21 +725,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
                 </div>
               ) : submittedIdCardUrl ? (
                 <div className="relative w-full">
-                  <div className="relative">
-                    <img
-                      src={submittedIdCardUrl}
-                      alt="Uploaded ID card"
-                      className={cn(
-                        "w-full aspect-video object-contain rounded-md",
-                        getFieldStatus("idCard") === "VERIFIED" && "grayscale-[50%]",
-                      )}
-                    />
-                    {getFieldStatus("idCard") === "VERIFIED" && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-background/20 backdrop-blur-[1px]">
-                        <ShieldCheck className="h-10 w-10 text-emerald-500" />
-                      </div>
-                    )}
-                    </div>
+                  <img src={submittedIdCardUrl} alt="Uploaded ID card" className="w-full aspect-video object-contain rounded-md" />
                   <p className="mt-2 text-center text-xs text-muted-foreground">{t("dashboardSettings.uploadedImage")}</p>
                 </div>
               ) : (
@@ -618,31 +734,35 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
                   <p className="text-xs text-muted-foreground text-center">{t("dashboardSettings.fileDropHint")}</p>
                 </>
               )}
-              <input 
-                id="id-card-input" 
-                type="file" 
-                className="hidden" 
+              <input
+                id="id-card-input"
+                type="file"
+                className="hidden"
                 accept="image/*"
                 onChange={(e) => handleFileChange(e, 'idCard')}
-                disabled={isPending || getFieldStatus("idCard") === "VERIFIED"}
+                disabled={isPending}
               />
             </div>
-            
-            {getFieldStatus("idCard") !== "VERIFIED" && (
-              <Button 
-                size="sm" 
-                className="w-full gap-2" 
-                disabled={!idCardFile || (isPending && activeField === 'idCard')}
-                onClick={() => handleSubmitField('idCard')}
-              >
-                {activeField === 'idCard' ? t("dashboardSettings.uploading") : t("dashboardSettings.uploadIdCard")}
-              </Button>
-            )}
+
+            <Button
+              size="sm"
+              className="w-full gap-2"
+              disabled={!idCardFile || (isPending && activeField === 'idCard')}
+              onClick={() => handleSubmitField('idCard')}
+            >
+              {activeField === 'idCard' ? t("dashboardSettings.uploading") : t("dashboardSettings.uploadIdCard")}
+            </Button>
           </div>
 
           {/* BANK BOOK SECTION */}
           <div className="space-y-3 p-4 border rounded-xl bg-muted/20">
             {renderFieldFeedback("bankBook")}
+            {bankBookError && (
+              <div className="flex items-center gap-2 text-xs text-destructive bg-destructive/8 border border-destructive/20 rounded-lg px-3 py-2">
+                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                {bankBookError}
+              </div>
+            )}
             <div className="flex items-center justify-between">
               <Label htmlFor="bank-book" className="font-semibold flex items-center gap-2">
                 {t("dashboardSettings.bankBookStep")} {renderStatusBadge("bankBook")}
@@ -657,7 +777,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
                 id="bank-brand"
                 value={bankBrand}
                 onChange={(e) => setBankBrand(e.target.value)}
-                disabled={isPending || getFieldStatus("bankBook") === "VERIFIED"}
+                disabled={isPending}
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <option value="">-- เลือกธนาคาร --</option>
@@ -687,20 +807,16 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
                 onChange={(event) =>
                   setBankAccountNumber(event.target.value.replace(/[^\d-]/g, ""))
                 }
-                disabled={isPending || getFieldStatus("bankBook") === "VERIFIED"}
+                disabled={isPending}
               />
-              {getFieldStatus("bankBook") === "VERIFIED" && bankAccountNumber && (
-                <p className="text-xs text-muted-foreground">{t("dashboardSettings.bankAccountLocked")}</p>
-              )}
             </div>
             
-            <div 
+            <div
               className={cn(
                 "border-2 border-dashed rounded-lg p-4 transition-colors flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-muted/50",
                 bankBookPreview ? 'border-primary/50 bg-primary/5' : 'border-border',
-                getFieldStatus("bankBook") === "VERIFIED" && "opacity-60 cursor-not-allowed hover:bg-transparent"
               )}
-              onClick={() => getFieldStatus("bankBook") !== "VERIFIED" && document.getElementById('bank-book-input')?.click()}
+              onClick={() => document.getElementById('bank-book-input')?.click()}
             >
               {bankBookPreview ? (
                 <div className="relative w-full">
@@ -709,21 +825,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
                 </div>
               ) : submittedBankBookUrl ? (
                 <div className="relative w-full">
-                  <div className="relative">
-                    <img
-                      src={submittedBankBookUrl}
-                      alt="Uploaded bank book"
-                      className={cn(
-                        "w-full aspect-video object-contain rounded-md",
-                        getFieldStatus("bankBook") === "VERIFIED" && "grayscale-[50%]",
-                      )}
-                    />
-                    {getFieldStatus("bankBook") === "VERIFIED" && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-background/20 backdrop-blur-[1px]">
-                        <ShieldCheck className="h-10 w-10 text-emerald-500" />
-                      </div>
-                    )}
-                    </div>
+                  <img src={submittedBankBookUrl} alt="Uploaded bank book" className="w-full aspect-video object-contain rounded-md" />
                   <p className="mt-2 text-center text-xs text-muted-foreground">{t("dashboardSettings.uploadedImage")}</p>
                 </div>
               ) : (
@@ -732,60 +834,67 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
                   <p className="text-xs text-muted-foreground text-center">{t("dashboardSettings.fileDropHint")}</p>
                 </>
               )}
-              <input 
-                id="bank-book-input" 
-                type="file" 
-                className="hidden" 
+              <input
+                id="bank-book-input"
+                type="file"
+                className="hidden"
                 accept="image/*"
                 onChange={(e) => handleFileChange(e, 'bankBook')}
-                disabled={isPending || getFieldStatus("bankBook") === "VERIFIED"}
+                disabled={isPending}
               />
             </div>
 
-            {getFieldStatus("bankBook") !== "VERIFIED" && (
-              <Button 
-                size="sm" 
-                className="w-full gap-2" 
-                disabled={!bankBookFile || !bankAccountNumber.replace(/\D/g, "") || !bankBrand || (isPending && activeField === 'bankBook')}
-                onClick={() => handleSubmitField('bankBook')}
-              >
-                {activeField === 'bankBook' ? t("dashboardSettings.uploading") : t("dashboardSettings.uploadBankBook")}
-              </Button>
-            )}
+            <Button
+              size="sm"
+              className="w-full gap-2"
+              disabled={!bankBookFile || !bankAccountNumber.replace(/\D/g, "") || !bankBrand || (isPending && activeField === 'bankBook')}
+              onClick={() => handleSubmitField('bankBook')}
+            >
+              {activeField === 'bankBook' ? t("dashboardSettings.uploading") : t("dashboardSettings.uploadBankBook")}
+            </Button>
           </div>
 
           {/* ADDRESS SECTION */}
           <div className="space-y-3 p-4 border rounded-xl bg-muted/20">
             {renderFieldFeedback("address")}
+            {addressError && (
+              <div className="flex items-center gap-2 text-xs text-destructive bg-destructive/8 border border-destructive/20 rounded-lg px-3 py-2">
+                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                {addressError}
+              </div>
+            )}
             <Label htmlFor="address" className="font-semibold flex items-center gap-2">
               {t("dashboardSettings.addressStep")} {renderStatusBadge("address")}
             </Label>
-            <textarea 
+            <textarea
               id="address"
               placeholder={t("dashboardSettings.fullAddressPlaceholder")}
               className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              disabled={isPending || getFieldStatus("address") === "VERIFIED"}
+              disabled={isPending}
             />
-            
-            {getFieldStatus("address") !== "VERIFIED" && (
-              <Button 
-                size="sm" 
-                className="w-full gap-2" 
-                disabled={!address.trim() || address === user?.settings?.address || (isPending && activeField === 'address')}
-                onClick={() => handleSubmitField('address')}
-              >
-                {activeField === 'address' ? t("dashboardSettings.saving") : t("dashboardSettings.saveAddress")}
-              </Button>
-            )}
+
+            <Button
+              size="sm"
+              className="w-full gap-2"
+              disabled={!address.trim() || address === user?.settings?.address || (isPending && activeField === 'address')}
+              onClick={() => handleSubmitField('address')}
+            >
+              {activeField === 'address' ? t("dashboardSettings.saving") : t("dashboardSettings.saveAddress")}
+            </Button>
           </div>
         </div>
 
-        <DialogFooter className="sm:justify-start">
+        <DialogFooter className="gap-2 sm:justify-between flex-col sm:flex-row">
           <Button variant="outline" className="w-full sm:w-auto" onClick={() => onOpenChange(false)} disabled={isPending}>
             {t("dashboardSettings.closeDialog")}
           </Button>
+          {user?.verificationStatus === "VERIFIED" && (
+            <Button variant="ghost" className="w-full sm:w-auto" onClick={() => setIsViewMode(true)} disabled={isPending}>
+              {t("dashboardSettings.cancelEdit")}
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
