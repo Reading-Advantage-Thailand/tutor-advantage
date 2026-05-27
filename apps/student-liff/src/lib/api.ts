@@ -110,6 +110,7 @@ export const studentApi = {
   getLessonSessionDetails: (sessionId: string) => fetchWithAuth(`/lessons/history/${sessionId}`),
 
   // Consent
+  checkGuardianConsent: () => fetchWithAuth('/guardian/consent', {}, IDENTITY_API_BASE),
   submitGuardianConsent: (guardianName: string, relation: string) => fetchWithAuth('/guardian/consent', {
     method: 'POST',
     body: JSON.stringify({ guardianName, guardianContact: relation, consentGiven: true }),

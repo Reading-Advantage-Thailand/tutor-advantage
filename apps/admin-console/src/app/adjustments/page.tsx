@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { fetchWithAuth, getAdminRole } from "../../lib/api";
+import { fetchWithAuth, getAdminRole, getAdminUserId } from "../../lib/api";
 import { CopyableId } from "@/components/ui/copyable-id";
 import {
   Card,
@@ -28,7 +28,15 @@ import {
   PlusCircle,
   MinusCircle,
 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { t } from "@/lib/i18n";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Adjustment {
   adjustmentId: string;
@@ -48,7 +56,7 @@ export default function AdjustmentsPage() {
   const [periodMonth, setPeriodMonth] = useState(
     new Date().toISOString().slice(0, 7),
   );
-  const [amountSatang, setAmountSatang] = useState("");
+  const [amountBaht, setAmountBaht] = useState("");
   const [reason, setReason] = useState("");
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -59,20 +67,27 @@ export default function AdjustmentsPage() {
   const [listError, setListError] = useState("");
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string>("");
+  const [currentUserId, setCurrentUserId] = useState<string>("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [statusFilter, setStatusFilter] = useState<string>("PENDING");
+  const [confirmAction, setConfirmAction] = useState<{
+    id: string;
+    action: "approve" | "reject";
+  } | null>(null);
 
   useEffect(() => {
     setUserRole(getAdminRole());
+    setCurrentUserId(getAdminUserId());
   }, []);
 
   const loadPending = useCallback(async () => {
     setListLoading(true);
     setListError("");
     try {
-      const data = await fetchWithAuth(
-        `/v1/adjustments?status=PENDING&page=${page}&pageSize=50`,
-      );
+      const params = new URLSearchParams({ page: page.toString(), pageSize: "50" });
+      if (statusFilter !== "ALL") params.set("status", statusFilter);
+      const data = await fetchWithAuth(`/v1/adjustments?${params.toString()}`);
       setPendingList(data.adjustments ?? []);
       setTotalPages(data.pagination?.totalPages ?? 1);
     } catch (err) {
@@ -81,7 +96,7 @@ export default function AdjustmentsPage() {
     } finally {
       setListLoading(false);
     }
-  }, [page]);
+  }, [page, statusFilter]);
 
   useEffect(() => {
     loadPending();
@@ -89,6 +104,11 @@ export default function AdjustmentsPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const bahtValue = parseFloat(amountBaht);
+    if (isNaN(bahtValue) || bahtValue === 0) {
+      setSubmitError("จำนวนเงินต้องไม่เป็น 0");
+      return;
+    }
     setSubmitLoading(true);
     setSubmitError("");
     setSubmitSuccess("");
@@ -98,13 +118,13 @@ export default function AdjustmentsPage() {
         body: JSON.stringify({
           tutorUserId,
           periodMonth,
-          amountSatang: parseInt(amountSatang, 10),
+          amountSatang: Math.round(bahtValue * 100),
           reason,
         }),
       });
       setSubmitSuccess(t("adjustments.submitSuccess"));
       setTutorUserId("");
-      setAmountSatang("");
+      setAmountBaht("");
       setReason("");
       loadPending();
     } catch (err) {
@@ -115,8 +135,9 @@ export default function AdjustmentsPage() {
     }
   };
 
-  const handleAction = async (id: string, action: "approve" | "reject") => {
+  const executeAction = async (id: string, action: "approve" | "reject") => {
     setActionLoadingId(id);
+    setListError("");
     try {
       await fetchWithAuth(`/v1/adjustments/${id}/${action}`, {
         method: "POST",
@@ -136,8 +157,8 @@ export default function AdjustmentsPage() {
       currency: "THB",
     });
 
-  const parsedAmount = parseInt(amountSatang, 10);
-  const isPositive = !isNaN(parsedAmount) && parsedAmount >= 0;
+  const parsedBaht = parseFloat(amountBaht);
+  const isPositive = !isNaN(parsedBaht) && parsedBaht > 0;
 
   return (
     <div className="space-y-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
@@ -192,20 +213,21 @@ export default function AdjustmentsPage() {
                   
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="amountSatang" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("adjustments.amountSatang")}</Label>
-                      {amountSatang && !isNaN(parsedAmount) && (
+                      <Label htmlFor="amountBaht" className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t("adjustments.amountBaht")}</Label>
+                      {amountBaht && !isNaN(parsedBaht) && parsedBaht !== 0 && (
                         <Badge variant="outline" className={`font-bold border-none px-2 py-0.5 ${isPositive ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"}`}>
                           {isPositive ? <PlusCircle className="h-3 w-3 mr-1" /> : <MinusCircle className="h-3 w-3 mr-1" />}
-                          {formatTHB(Math.abs(parsedAmount))}
+                          {formatTHB(Math.round(Math.abs(parsedBaht) * 100))}
                         </Badge>
                       )}
                     </div>
                     <Input
-                      id="amountSatang"
+                      id="amountBaht"
                       type="number"
-                      placeholder={t("adjustments.amountPlaceholder")}
-                      value={amountSatang}
-                      onChange={(e) => setAmountSatang(e.target.value)}
+                      step="0.01"
+                      placeholder={t("adjustments.amountBahtPlaceholder")}
+                      value={amountBaht}
+                      onChange={(e) => setAmountBaht(e.target.value)}
                       required
                       className="rounded-xl border-2 focus-visible:ring-brand-500 h-12"
                     />
@@ -287,16 +309,29 @@ export default function AdjustmentsPage() {
                 {t("adjustments.pendingDescription")}
               </p>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={loadPending}
-              disabled={listLoading}
-              className="rounded-full font-bold shadow-sm"
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${listLoading ? "animate-spin" : ""}`} />
-              {t("adjustments.refresh")}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+                <SelectTrigger className="w-[140px] rounded-full font-bold h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ALL">{t("adjustments.allStatus")}</SelectItem>
+                  <SelectItem value="PENDING">{t("adjustments.pending")}</SelectItem>
+                  <SelectItem value="APPROVED">{t("adjustments.statusApproved")}</SelectItem>
+                  <SelectItem value="REJECTED">{t("adjustments.statusRejected")}</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={loadPending}
+                disabled={listLoading}
+                className="rounded-full font-bold shadow-sm"
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${listLoading ? "animate-spin" : ""}`} />
+                {t("adjustments.refresh")}
+              </Button>
+            </div>
           </div>
 
           {listError && (
@@ -327,8 +362,14 @@ export default function AdjustmentsPage() {
                         <div>
                           <CopyableId name={adj.tutorName} id={adj.tutorUserId} variant="name" />
                         </div>
-                        <Badge variant="outline" className="border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 rounded-full px-3 py-0.5 font-bold uppercase tracking-wider">
-                          {t("adjustments.pending")}
+                        <Badge variant="outline" className={`rounded-full px-3 py-0.5 font-bold uppercase tracking-wider ${
+                          adj.status === "APPROVED"
+                            ? "border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30"
+                            : adj.status === "REJECTED"
+                            ? "border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30"
+                            : "border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30"
+                        }`}>
+                          {adj.status === "APPROVED" ? t("adjustments.statusApproved") : adj.status === "REJECTED" ? t("adjustments.statusRejected") : t("adjustments.pending")}
                         </Badge>
                       </div>
 
@@ -357,29 +398,36 @@ export default function AdjustmentsPage() {
                         <CopyableId name={adj.createdByName} id={adj.createdByUserId} variant="name" />
                       </div>
                       
-                      <div className="flex flex-col gap-2 mt-4">
-                        <Button
-                          disabled={actionLoadingId === adj.adjustmentId}
-                          onClick={() => handleAction(adj.adjustmentId, "approve")}
-                          className="w-full rounded-xl font-bold bg-foreground text-background hover:bg-foreground/90 h-10"
-                        >
-                          {actionLoadingId === adj.adjustmentId ? (
-                            <span className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />
-                          ) : (
-                            <CheckCircle2 className="h-4 w-4 mr-2" />
+                      {adj.status === "PENDING" && (
+                        <div className="flex flex-col gap-2 mt-4">
+                          {adj.createdByUserId === currentUserId && (
+                            <p className="text-xs font-medium text-muted-foreground text-center bg-muted/50 rounded-xl p-2">
+                              {t("adjustments.selfApproveBlocked")}
+                            </p>
                           )}
-                          {t("adjustments.approve")}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          disabled={actionLoadingId === adj.adjustmentId}
-                          onClick={() => handleAction(adj.adjustmentId, "reject")}
-                          className="w-full rounded-xl font-bold border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-700 h-10"
-                        >
-                          <XCircle className="h-4 w-4 mr-2" />
-                          {t("adjustments.reject")}
-                        </Button>
-                      </div>
+                          <Button
+                            disabled={actionLoadingId === adj.adjustmentId || adj.createdByUserId === currentUserId}
+                            onClick={() => setConfirmAction({ id: adj.adjustmentId, action: "approve" })}
+                            className="w-full rounded-xl font-bold bg-foreground text-background hover:bg-foreground/90 h-10"
+                          >
+                            {actionLoadingId === adj.adjustmentId ? (
+                              <span className="w-4 h-4 border-2 border-background/30 border-t-background rounded-full animate-spin" />
+                            ) : (
+                              <CheckCircle2 className="h-4 w-4 mr-2" />
+                            )}
+                            {t("adjustments.approve")}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            disabled={actionLoadingId === adj.adjustmentId || adj.createdByUserId === currentUserId}
+                            onClick={() => setConfirmAction({ id: adj.adjustmentId, action: "reject" })}
+                            className="w-full rounded-xl font-bold border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 hover:text-red-700 h-10"
+                          >
+                            <XCircle className="h-4 w-4 mr-2" />
+                            {t("adjustments.reject")}
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -413,6 +461,18 @@ export default function AdjustmentsPage() {
           )}
         </div>
       </div>
+      <ConfirmDialog
+        open={!!confirmAction}
+        onOpenChange={(open) => { if (!open) setConfirmAction(null); }}
+        title={confirmAction?.action === "approve" ? t("adjustments.confirmApproveTitle") : t("adjustments.confirmRejectTitle")}
+        description={confirmAction?.action === "approve" ? t("adjustments.confirmApproveDescription") : t("adjustments.confirmRejectDescription")}
+        variant={confirmAction?.action === "reject" ? "destructive" : "default"}
+        confirmLabel={confirmAction?.action === "approve" ? t("adjustments.approve") : t("adjustments.reject")}
+        cancelLabel={t("confirm.cancelLabel")}
+        onConfirm={async () => {
+          if (confirmAction) await executeAction(confirmAction.id, confirmAction.action);
+        }}
+      />
     </div>
   );
 }

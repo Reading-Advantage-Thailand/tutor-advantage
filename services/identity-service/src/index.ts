@@ -16,7 +16,7 @@ import {
 } from "@tutor-advantage/shared-config";
 import { handleOAuthCallback } from "./controllers/authController";
 import { getSession } from "./controllers/sessionController";
-import { submitGuardianConsent } from "./controllers/consentController";
+import { getGuardianConsentStatus, submitGuardianConsent } from "./controllers/consentController";
 import { getCurrentUser, submitVerification } from "./controllers/userController";
 import { getSettings, updateSettings } from "./controllers/settingController";
 import { uploadFile } from "./controllers/uploadController";
@@ -84,6 +84,7 @@ app.get("/v1/users/me/settings", authMiddleware, getSettings);
 app.patch("/v1/users/me/settings", authMiddleware, updateSettings);
 app.post("/v1/users/me/verification", authMiddleware, submitVerification);
 app.post("/v1/upload", authMiddleware, upload.single("file"), uploadFile);
+app.get("/v1/guardian/consent", authMiddleware, getGuardianConsentStatus);
 app.post("/v1/guardian/consent", authMiddleware, submitGuardianConsent);
 
 // Root API

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { fetchWithAuth } from "../../lib/api";
+import { CopyableId } from "@/components/ui/copyable-id";
 import {
   Card,
   CardContent,
@@ -31,8 +32,6 @@ import {
   FilePenLine,
   Download,
   Eye,
-  Copy,
-  Check,
   Clock,
   ArrowRight
 } from "lucide-react";
@@ -109,40 +108,6 @@ const ACTION_CONFIG: Record<
 };
 
 const ALL_ACTIONS = "ALL";
-
-function CopyableId({ name, id }: { name: string; id: string }) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(id);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
-
-  const truncated = id.length > 20 ? `${id.slice(0, 8)}\u2026${id.slice(-4)}` : id;
-
-  return (
-    <div>
-      <p className="font-bold text-foreground text-xs">{name}</p>
-      <div className="flex items-center gap-1 mt-0.5 bg-muted/50 px-2 py-0.5 rounded border border-border/50 w-fit">
-        <p className="font-mono text-[10px] text-muted-foreground">
-          {truncated}
-        </p>
-        <button
-          onClick={handleCopy}
-          className="text-muted-foreground hover:text-brand-600 transition-colors"
-          title="Copy full ID"
-        >
-          {copied ? (
-            <Check className="h-3 w-3 text-emerald-500" />
-          ) : (
-            <Copy className="h-3 w-3" />
-          )}
-        </button>
-      </div>
-    </div>
-  );
-}
 
 export default function AuditPage() {
   const [logs, setLogs] = useState<AuditLog[]>([]);
@@ -327,11 +292,12 @@ export default function AuditPage() {
                             <CopyableId
                               name={log.displayName ?? log.actorUserId}
                               id={log.actorUserId}
+                              variant="name"
                             />
                           </div>
                           <div className="bg-muted/30 p-3 rounded-xl border border-border/50">
                             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("audit.targetEntity")}</p>
-                            <CopyableId name={log.actionType} id={log.targetId} />
+                            <CopyableId name={log.targetId} id={log.targetId} variant="name" />
                           </div>
                         </div>
 

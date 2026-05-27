@@ -119,3 +119,9 @@ export function getAdminEmail(): string {
   const match = document.cookie.match(/(?:^|; )admin_email=([^;]*)/);
   return match ? decodeURIComponent(match[1]) : "";
 }
+
+export function getAdminUserId(): string {
+  if (typeof document === "undefined") return "";
+  const match = document.cookie.match(/(?:^|; )admin_user_id=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : "";
+}

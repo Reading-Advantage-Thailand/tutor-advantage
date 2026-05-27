@@ -30,7 +30,7 @@ export default function ClassesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState(t("classes.allFilter"));
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isReady) return;
@@ -41,7 +41,7 @@ export default function ClassesPage() {
       studentApi
         .getAvailableClasses({
           q: searchQuery || undefined,
-          cefr: activeFilter !== t("classes.allFilter") ? activeFilter : undefined,
+          cefr: activeFilter ?? undefined,
         })
         .then((data) => {
           if (isMounted) {
@@ -71,7 +71,7 @@ export default function ClassesPage() {
 
     try {
       if (liffError) {
-        toast.error("LINE LIFF ยังเริ่มไม่สำเร็จ กรุณาเปิดผ่านแอป LINE แล้วลองใหม่");
+        toast.error(t("classes.liffNotReady"));
         return;
       }
 
@@ -218,13 +218,17 @@ export default function ClassesPage() {
             paddingBottom: 2,
           }}
         >
-          {[t("classes.allFilter"), "Origins A1", "Quest A2", "Adventure B1"].map(
-            (label, i) => {
-              const isActive = activeFilter === label;
+          {([
+              { label: t("classes.allFilter"), value: null },
+              { label: "Origins A1", value: "A1" },
+              { label: "Quest A2", value: "A2" },
+              { label: "Adventure B1", value: "B1" },
+            ] as { label: string; value: string | null }[]).map(({ label, value }) => {
+              const isActive = activeFilter === value;
               return (
                 <button
-                  key={i}
-                  onClick={() => setActiveFilter(label)}
+                  key={label}
+                  onClick={() => setActiveFilter(value)}
                   id={`chip-filter-${label.toLowerCase().replace(/\s+/g, "-")}`}
                   style={{
                     padding: "8px 16px",
@@ -283,7 +287,7 @@ export default function ClassesPage() {
         {!loading && !error && classes.length === 0 && (
           <div className="p-12 text-center">
             <p className="text-slate-500 font-medium">
-              {searchQuery || activeFilter !== t("classes.allFilter")
+              {searchQuery || activeFilter !== null
                 ? t("classes.emptySearch")
                 : t("classes.emptyOpen")}
             </p>

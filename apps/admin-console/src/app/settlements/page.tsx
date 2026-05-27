@@ -44,6 +44,7 @@ import {
 } from "lucide-react";
 
 import { t } from "@/lib/i18n";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 /** Icon-only copy button used inside the payout lines table */
 function CopyButton({ text }: { text: string }) {
@@ -203,8 +204,14 @@ const STATUS_CONFIG: Record<
   },
 };
 
+function getPreviousMonth() {
+  const d = new Date();
+  d.setMonth(d.getMonth() - 1);
+  return d.toISOString().slice(0, 7);
+}
+
 export default function SettlementsPage() {
-  const [period, setPeriod] = useState(new Date().toISOString().slice(0, 7));
+  const [period, setPeriod] = useState(getPreviousMonth);
   const [loading, setLoading] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
   const [result, setResult] = useState<SettlementPreview | null>(null);
@@ -221,6 +228,12 @@ export default function SettlementsPage() {
   const [linesData, setLinesData] = useState<LinesData | null>(null);
   const [linesLoadingId, setLinesLoadingId] = useState<string | null>(null);
   const [transferLoadingId, setTransferLoadingId] = useState<string | null>(null);
+
+  // Confirm dialog state
+  const [confirmAction, setConfirmAction] = useState<{
+    id: string;
+    action: "submit" | "approve" | "reject";
+  } | null>(null);
 
   useEffect(() => {
     setUserRole(getAdminRole());
@@ -268,6 +281,8 @@ export default function SettlementsPage() {
     action: "submit" | "approve" | "reject",
   ) => {
     setActionLoadingId(id);
+    setError("");
+    setSuccess("");
     try {
       await fetchWithAuth(`/v1/settlements/${id}/${action}`, { method: "POST" });
       const newStatus =
@@ -355,6 +370,38 @@ export default function SettlementsPage() {
         <p className="text-muted-foreground font-medium">{t("settlements.description")}</p>
       </div>
 
+      {/* Cron Job Info */}
+      <Card className="overflow-hidden border-none shadow-sm rounded-2xl bg-gradient-to-r from-indigo-500/5 to-purple-500/5">
+        <CardContent className="p-5">
+          <div className="flex items-start gap-4">
+            <div className="p-2.5 bg-indigo-500/10 rounded-xl text-indigo-600 dark:text-indigo-400 shrink-0">
+              <ClockIcon className="h-5 w-5" />
+            </div>
+            <div className="space-y-2 flex-1">
+              <h3 className="text-sm font-bold text-foreground">{t("settlements.cronInfoTitle")}</h3>
+              <p className="text-xs text-muted-foreground font-medium">{t("settlements.cronInfoDescription")}</p>
+              <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
+                  {t("settlements.cronInfoDetail1")}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
+                  {t("settlements.cronInfoDetail2")}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
+                  {t("settlements.cronInfoDetail3")}
+                </span>
+              </div>
+              <p className="text-[10px] font-mono text-indigo-600/60 dark:text-indigo-400/60 bg-indigo-500/5 px-2 py-1 rounded-lg w-fit">
+                {t("settlements.cronInfoSchedule")}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* FINANCE_CHECKER notice — รอ Admin submit ก่อน */}
       {isFinanceChecker && !listLoading && (
         list.some((r) => r.status === "SUBMITTED") ? (
@@ -391,7 +438,7 @@ export default function SettlementsPage() {
               <div>
                 <CardTitle className="text-xl font-bold">{t("settlements.calculatePeriod")}</CardTitle>
                 <CardDescription className="font-medium">
-                  {t("settlements.calculateDescription")}
+                  {t("settlements.manualPreviewNote")}
                 </CardDescription>
               </div>
             </div>
@@ -631,7 +678,7 @@ export default function SettlementsPage() {
                           <Button
                             size="sm"
                             disabled={actionLoadingId === run.snapshotId}
-                            onClick={() => handleListAction(run.snapshotId, "submit")}
+                            onClick={() => setConfirmAction({ id: run.snapshotId, action: "submit" })}
                             className="col-span-2 h-10 w-full rounded-xl bg-blue-600 font-bold shadow-md shadow-blue-500/10 hover:bg-blue-700"
                           >
                             {actionLoadingId === run.snapshotId ? (
@@ -646,7 +693,7 @@ export default function SettlementsPage() {
                               size="sm"
                               variant="outline"
                               disabled={actionLoadingId === run.snapshotId}
-                              onClick={() => handleListAction(run.snapshotId, "reject")}
+                              onClick={() => setConfirmAction({ id: run.snapshotId, action: "reject" })}
                               className="h-10 w-full rounded-xl font-bold border-red-200 text-red-600 hover:bg-red-50"
                             >
                               {t("settlements.rejectAction")}
@@ -657,7 +704,7 @@ export default function SettlementsPage() {
                                   actionLoadingId === run.snapshotId ||
                                   (run.pendingAdjustmentCount ?? 0) > 0
                                 }
-                                onClick={() => handleListAction(run.snapshotId, "approve")}
+                                onClick={() => setConfirmAction({ id: run.snapshotId, action: "approve" })}
                                 className="h-10 w-full rounded-xl font-bold bg-brand-600 shadow-md shadow-brand-500/10"
                               >
                                 {actionLoadingId === run.snapshotId ? (
@@ -705,7 +752,7 @@ export default function SettlementsPage() {
                   <span className="font-bold text-foreground">{linesData?.status}</span>
                 </SheetDescription>
               </div>
-              {linesData && (
+              {linesData && linesData.status === "APPROVED" && (
                 <Button
                   size="sm"
                   variant="outline"
@@ -921,6 +968,44 @@ export default function SettlementsPage() {
           </div>
         </SheetContent>
       </Sheet>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        open={!!confirmAction}
+        onOpenChange={(open) => { if (!open) setConfirmAction(null); }}
+        title={
+          confirmAction?.action === "submit"
+            ? t("settlements.confirmSubmitTitle")
+            : confirmAction?.action === "approve"
+              ? t("settlements.confirmApproveTitle")
+              : t("settlements.confirmRejectTitle")
+        }
+        description={
+          confirmAction?.action === "submit"
+            ? t("settlements.confirmSubmitDescription")
+            : confirmAction?.action === "approve"
+              ? t("settlements.confirmApproveDescription")
+              : t("settlements.confirmRejectDescription")
+        }
+        variant={confirmAction?.action === "reject" ? "destructive" : "default"}
+        confirmLabel={
+          confirmAction?.action === "submit"
+            ? "ส่งรออนุมัติ"
+            : confirmAction?.action === "approve"
+              ? t("settlements.approveAction")
+              : t("settlements.rejectAction")
+        }
+        onConfirm={async () => {
+          if (confirmAction) {
+            await handleListAction(confirmAction.id, confirmAction.action);
+          }
+        }}
+        icon={
+          confirmAction?.action === "reject"
+            ? <XCircle className="h-5 w-5 text-red-500" />
+            : <ShieldCheck className="h-5 w-5 text-brand-600" />
+        }
+      />
     </div>
   );
 }

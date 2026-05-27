@@ -271,7 +271,6 @@ export default function DashboardPage() {
   }, [dashboardData]);
 
   useEffect(() => {
-    let intervalId: NodeJS.Timeout;
     let isMounted = true;
     let cleanupVisibility: (() => void) | undefined;
 
@@ -307,22 +306,17 @@ export default function DashboardPage() {
 
       fetchData(true);
 
-      // Pause polling when tab is hidden to save battery
-      const startPolling = () => { intervalId = setInterval(() => fetchData(false), 30000); };
-      const stopPolling = () => { if (intervalId) clearInterval(intervalId); };
+      // Refresh on tab focus only — dashboard data is mostly static
       const onVisibility = () => {
-        if (document.hidden) stopPolling();
-        else { fetchData(false); startPolling(); }
+        if (!document.hidden) fetchData(false);
       };
       document.addEventListener("visibilitychange", onVisibility);
-      startPolling();
 
       cleanupVisibility = () => document.removeEventListener("visibilitychange", onVisibility);
     }
 
     return () => {
       isMounted = false;
-      if (intervalId) clearInterval(intervalId);
       if (cleanupVisibility) cleanupVisibility();
     };
   }, [isReady, profileUserId]);

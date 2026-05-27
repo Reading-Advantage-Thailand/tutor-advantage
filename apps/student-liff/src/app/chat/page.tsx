@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Search, ChevronRight, MessageCircle, BookOpen, User, Users, Loader2 } from "lucide-react";
+import { Search, ChevronRight, MessageCircle, BookOpen, User, Users, Loader2 } from "lucide-react";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { studentApi } from "@/lib/api";
 import { t } from "@/lib/i18n";
@@ -204,23 +204,10 @@ export default function ChatListPage() {
   );
 
   return (
-    <div className="page-shell" style={{ background: "var(--surface-bg)", minHeight: "100dvh" }}>
-      
+    <div style={{ background: "var(--surface-bg)", minHeight: "100dvh" }}>
+
       <div className="top-bar" style={{ background: "var(--surface-card)", backdropFilter: "blur(12px)", borderBottom: "1px solid var(--surface-border)" }}>
-        <Link
-          href="/dashboard"
-          style={{
-            background: "var(--neutral-100)",
-            border: "none",
-            borderRadius: 12,
-            width: 36, height: 36,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            color: "var(--text-secondary)", textDecoration: "none",
-          }}
-        >
-          <ChevronLeft size={18} />
-        </Link>
-        <h1 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", flex: 1, textAlign: "center", marginRight: 36 }}>
+        <h1 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)" }}>
           {t("chat.title")}
         </h1>
       </div>

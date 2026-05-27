@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
   AlertTriangle,
@@ -26,6 +26,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchWithAuth } from "@/lib/api";
 import { t } from "@/lib/i18n";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface FraudFlag {
   id: string;
@@ -52,17 +53,25 @@ export default function FraudFlagsPage() {
     autoSuspensions: 0,
   });
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [confirmFreeze, setConfirmFreeze] = useState<{ id: string; targetName: string } | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    debounceRef.current = setTimeout(() => setDebouncedSearch(search), 400);
+    return () => clearTimeout(debounceRef.current);
+  }, [search]);
 
   const loadData = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
       const params = new URLSearchParams();
-      if (search.trim()) params.set("q", search.trim());
+      if (debouncedSearch.trim()) params.set("q", debouncedSearch.trim());
       const resp = await fetchWithAuth(`/v1/fraud-flags?${params.toString()}`);
       setFlags(resp.flags ?? []);
       setStats(
@@ -77,7 +86,7 @@ export default function FraudFlagsPage() {
     } finally {
       setLoading(false);
     }
-  }, [search]);
+  }, [debouncedSearch]);
 
   useEffect(() => {
     loadData();
@@ -97,7 +106,7 @@ export default function FraudFlagsPage() {
         method: "POST",
         body: JSON.stringify({ action: actionName }),
       });
-      setSuccess(`Flag ${id} updated with ${actionName}.`);
+      setSuccess(t("fraud.actionSuccess"));
       await loadData();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not update flag");
@@ -280,7 +289,7 @@ export default function FraudFlagsPage() {
                       variant="destructive"
                       className="w-full rounded-xl font-bold border-none shadow-sm"
                       disabled={loadingAction !== null}
-                      onClick={() => handleAction(flag.id, "FREEZE")}
+                      onClick={() => setConfirmFreeze({ id: flag.id, targetName: flag.targetName })}
                     >
                       <Lock className="mr-2 h-4 w-4" />
                       {t("fraud.freeze")}
@@ -292,6 +301,18 @@ export default function FraudFlagsPage() {
           </div>
         </CardContent>
       </Card>
+      <ConfirmDialog
+        open={!!confirmFreeze}
+        onOpenChange={(open) => { if (!open) setConfirmFreeze(null); }}
+        title={t("fraud.confirmFreezeTitle")}
+        description={`${t("fraud.confirmFreezeDescription")} (${confirmFreeze?.targetName ?? ""})`}
+        variant="destructive"
+        confirmLabel={t("fraud.freeze")}
+        cancelLabel={t("confirm.cancelLabel")}
+        onConfirm={async () => {
+          if (confirmFreeze) await handleAction(confirmFreeze.id, "FREEZE");
+        }}
+      />
     </div>
   );
 }

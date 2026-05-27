@@ -149,7 +149,7 @@ export default function DashboardPage() {
         <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              {t("dashboard.welcomePrefix")} {role || t("layout.defaultRole")}{t("dashboard.welcomeSuffix")}
+              {t("dashboard.welcomePrefix")} {role === "ADMIN" ? t("layout.roleAdmin") : role === "FINANCE_CHECKER" ? t("layout.roleFinanceChecker") : role || t("layout.defaultRole")}{t("dashboard.welcomeSuffix")}
             </h2>
             <p className="mt-2 text-brand-100/90 font-medium">
               {t("dashboard.welcomeBase")} {loading ? t("dashboard.loadingSummary") : t("dashboard.systemNormal")}
@@ -188,8 +188,8 @@ export default function DashboardPage() {
       {/* Main Stats Grid */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
         {loading
-          ? QUEUES.map((queue) => <StatSkeleton key={queue.key} />)
-          : QUEUES.map((queue) => {
+          ? QUEUES.filter((q) => role !== "FINANCE_CHECKER" || !["verifications", "fraudFlags"].includes(q.key)).map((queue) => <StatSkeleton key={queue.key} />)
+          : QUEUES.filter((q) => role !== "FINANCE_CHECKER" || !["verifications", "fraudFlags"].includes(q.key)).map((queue) => {
               const Icon = queue.icon;
               const count = overview?.workQueues?.[queue.key] ?? 0;
               return (

@@ -77,14 +77,14 @@ const JOURNEY_DECORATIONS: Array<{ emoji: string; top: string; delay: string; le
 ];
 
 const mapCopy = {
-  title: "แผนที่การเรียน",
-  subtitle: "เดินทางผ่านบทเรียนทีละ checkpoint",
-  current: "บทปัจจุบัน",
-  completed: "ผ่านแล้ว",
-  locked: "รอปลดล็อก",
-  milestone: "Milestone",
-  finalGoal: "ปลายทาง",
-  tapToRead: "แตะเพื่ออ่าน",
+  get title() { return t("progress.map.title"); },
+  get subtitle() { return t("progress.map.subtitle"); },
+  get current() { return t("progress.map.current"); },
+  get completed() { return t("progress.map.completed"); },
+  get locked() { return t("progress.map.locked"); },
+  get milestone() { return t("progress.map.milestone"); },
+  get finalGoal() { return t("progress.map.finalGoal"); },
+  get tapToRead() { return t("progress.map.tapToRead"); },
 };
 
 function clamp(value: number, min: number, max: number) {

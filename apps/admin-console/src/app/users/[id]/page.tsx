@@ -48,6 +48,7 @@ import {
 import { fetchWithAuth, getAdminRole } from "@/lib/api";
 import { useEffect, useState, useCallback } from "react";
 import { Textarea } from "@/components/ui/textarea";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface ConsentLog {
   id: string;
@@ -185,6 +186,7 @@ export default function UserDetailPage() {
   });
   const [isVerifying, setIsVerifying] = useState<string | null>(null);
   const [isSuspending, setIsSuspending] = useState(false);
+  const [confirmSuspend, setConfirmSuspend] = useState(false);
 
   // Omise recipient ID editing state
   const [isEditingOmise, setIsEditingOmise] = useState(false);
@@ -237,6 +239,15 @@ export default function UserDetailPage() {
     setImageViewer(null);
     setImageZoom(1);
   };
+
+  useEffect(() => {
+    if (!imageViewer) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeImageViewer();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [imageViewer]);
 
   const handleVerify = async (
     status: "VERIFIED" | "REJECTED",
@@ -568,7 +579,7 @@ export default function UserDetailPage() {
                     variant="outline"
                     size="sm"
                     disabled={isSuspending}
-                    onClick={handleSuspend}
+                    onClick={() => setConfirmSuspend(true)}
                     className={`ml-auto shrink-0 gap-2 font-bold rounded-xl ${
                       user.status === "INACTIVE"
                         ? "border-emerald-300 text-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/20"
@@ -717,10 +728,17 @@ export default function UserDetailPage() {
                       </div>
                       <Badge
                         variant="secondary"
-                        className="bg-emerald-500/10 text-emerald-600 border-none text-[10px]"
+                        className={`border-none text-[10px] ${
+                          log.status === "REVOKED"
+                            ? "bg-red-500/10 text-red-600"
+                            : "bg-emerald-500/10 text-emerald-600"
+                        }`}
                       >
-                        <CheckCircle2 className="h-3 w-3 mr-1" />
-                        ยอมรับแล้ว
+                        {log.status === "REVOKED" ? (
+                          <><XCircle className="h-3 w-3 mr-1" />เพิกถอนแล้ว</>
+                        ) : (
+                          <><CheckCircle2 className="h-3 w-3 mr-1" />ยอมรับแล้ว</>
+                        )}
                       </Badge>
                     </div>
                   ))}
@@ -1282,6 +1300,20 @@ export default function UserDetailPage() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={confirmSuspend}
+        onOpenChange={setConfirmSuspend}
+        title={user.status === "INACTIVE" ? "ยืนยันเปิดใช้งานบัญชี" : "ยืนยันระงับบัญชี"}
+        description={user.status === "INACTIVE"
+          ? `เปิดใช้งานบัญชีของ ${user.name} อีกครั้ง?`
+          : `ระงับบัญชีของ ${user.name}? ผู้ใช้จะไม่สามารถเข้าใช้งานได้จนกว่าจะเปิดใช้งานอีกครั้ง`
+        }
+        variant={user.status === "INACTIVE" ? "default" : "destructive"}
+        confirmLabel={user.status === "INACTIVE" ? "เปิดใช้งาน" : "ระงับบัญชี"}
+        cancelLabel="ยกเลิก"
+        onConfirm={handleSuspend}
+      />
     </div>
   );
 }

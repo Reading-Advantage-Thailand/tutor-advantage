@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchWithAuth } from "@/lib/api";
 import { t } from "@/lib/i18n";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface ExceptionEvent {
   id: string;
@@ -39,17 +40,25 @@ interface ExceptionEvent {
 export default function ExceptionsPage() {
   const [data, setData] = useState<ExceptionEvent[]>([]);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [resolvingId, setResolvingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [confirmAction, setConfirmAction] = useState<{ id: string; action: string } | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    debounceRef.current = setTimeout(() => setDebouncedSearch(search), 400);
+    return () => clearTimeout(debounceRef.current);
+  }, [search]);
 
   const loadData = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
       const params = new URLSearchParams();
-      if (search.trim()) params.set("q", search.trim());
+      if (debouncedSearch.trim()) params.set("q", debouncedSearch.trim());
       params.set("status", "UNRESOLVED");
       const resp = await fetchWithAuth(
         `/v1/operations/exceptions?${params.toString()}`,
@@ -60,13 +69,13 @@ export default function ExceptionsPage() {
     } finally {
       setLoading(false);
     }
-  }, [search]);
+  }, [debouncedSearch]);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
 
-  const totalAmount = useMemo(() => data.length, [data]);
+  const totalCount = useMemo(() => data.length, [data]);
 
   const handleResolve = async (id: string, action: string) => {
     setResolvingId(id);
@@ -129,7 +138,7 @@ export default function ExceptionsPage() {
               <div>
                 <CardTitle className="text-lg font-bold flex items-center gap-2">
                   {t("operations.pendingResolution")}
-                  <Badge variant="secondary" className="bg-amber-500 text-white border-none">{totalAmount}</Badge>
+                  <Badge variant="secondary" className="bg-amber-500 text-white border-none">{totalCount}</Badge>
                 </CardTitle>
                 <CardDescription className="font-medium text-xs">
                   {t("operations.exceptionsQueueDescription")}
@@ -222,7 +231,7 @@ export default function ExceptionsPage() {
                     <Button
                       variant="outline"
                       disabled={resolvingId === item.id}
-                      onClick={() => handleResolve(item.id, "Void Cancel")}
+                      onClick={() => setConfirmAction({ id: item.id, action: "Void Cancel" })}
                       className="w-full rounded-xl font-bold border-red-200 text-red-600 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/30 h-11"
                     >
                       <XCircle className="mr-2 h-4 w-4" />
@@ -230,7 +239,7 @@ export default function ExceptionsPage() {
                     </Button>
                     <Button
                       disabled={resolvingId === item.id}
-                      onClick={() => handleResolve(item.id, "Force Active")}
+                      onClick={() => setConfirmAction({ id: item.id, action: "Force Active" })}
                       className="w-full rounded-xl font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-500/20 h-11"
                     >
                       <CheckCircle2 className="mr-2 h-4 w-4" />
@@ -243,6 +252,18 @@ export default function ExceptionsPage() {
           </div>
         </CardContent>
       </Card>
+      <ConfirmDialog
+        open={!!confirmAction}
+        onOpenChange={(open) => { if (!open) setConfirmAction(null); }}
+        title={confirmAction?.action === "Force Active" ? t("operations.confirmForceActiveTitle") : t("operations.confirmVoidTitle")}
+        description={confirmAction?.action === "Force Active" ? t("operations.confirmForceActiveDescription") : t("operations.confirmVoidDescription")}
+        variant={confirmAction?.action === "Void Cancel" ? "destructive" : "default"}
+        confirmLabel={confirmAction?.action === "Force Active" ? t("operations.forceActive") : t("operations.voidCancel")}
+        cancelLabel={t("confirm.cancelLabel")}
+        onConfirm={async () => {
+          if (confirmAction) await handleResolve(confirmAction.id, confirmAction.action);
+        }}
+      />
     </div>
   );
 }

@@ -247,7 +247,7 @@ function FeaturedArticleCard({
           {t("classes.detail.lessonSampleBadge")}
         </span>
         <span style={{ color: "rgba(255,255,255,0.85)", fontSize: "0.75rem", fontWeight: 600 }}>
-          บทที่ {article.articleNumber}
+          {t("classes.detail.lessonNumberPrefix")} {article.articleNumber}
         </span>
         <span style={{
           marginLeft: "auto",
@@ -575,7 +575,7 @@ export default function ClassDetailPage({ params }: PageProps) {
 
   const handleSubmitReview = async () => {
     if (!reviewRating) {
-      toast.error("กรุณาเลือกจำนวนดาวก่อนส่งรีวิว");
+      toast.error(t("classes.detail.reviewSelectStarFirst"));
       return;
     }
     setReviewSubmitting(true);
@@ -586,9 +586,9 @@ export default function ClassDetailPage({ params }: PageProps) {
       });
       setReview(data.review);
       setReviewEditing(false);
-      toast.success("บันทึกรีวิวเรียบร้อยแล้ว");
+      toast.success(t("classes.detail.reviewSaveSuccess"));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "บันทึกรีวิวไม่สำเร็จ");
+      toast.error(err instanceof Error ? err.message : t("classes.detail.reviewSaveFailed"));
     } finally {
       setReviewSubmitting(false);
     }
@@ -914,7 +914,7 @@ export default function ClassDetailPage({ params }: PageProps) {
             <div className="glass-card" style={{ padding: "20px", textAlign: "center" }}>
               <Loader2 size={20} className="animate-spin mx-auto" style={{ color: seriesColor }} />
               <p style={{ fontSize: "0.8125rem", color: "var(--text-tertiary)", marginTop: 8 }}>
-                กำลังโหลดบทเรียน...
+                {t("classes.detail.loadingLesson")}
               </p>
             </div>
           ) : featuredArticle ? (
@@ -1193,7 +1193,7 @@ export default function ClassDetailPage({ params }: PageProps) {
               boxShadow: "0 8px 20px rgba(6,199,85,0.3)",
             }}
           >
-            เรียนต่อเล่ม {activeCycle.sequence}
+            {t("classes.detail.upgradeNextBookPrefix")} {activeCycle.sequence}
           </Link>
         ) : cls.isEnrolled ? (
           <div

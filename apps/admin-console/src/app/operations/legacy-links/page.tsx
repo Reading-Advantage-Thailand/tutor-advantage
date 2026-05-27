@@ -28,6 +28,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchWithAuth } from "@/lib/api";
 import { t } from "@/lib/i18n";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface UnresolvedLink {
   url: string;
@@ -51,6 +52,7 @@ export default function LegacyLinksPage() {
   const [newTarget, setNewTarget] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -301,7 +303,7 @@ export default function LegacyLinksPage() {
                     variant="ghost"
                     size="icon"
                     className="shrink-0 rounded-xl h-10 w-10 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600"
-                    onClick={() => handleDeleteMapping(mapping.id)}
+                    onClick={() => setConfirmDeleteId(mapping.id)}
                     title={t("operations.deleteMappingTitle")}
                   >
                     <Trash2 className="h-5 w-5" />
@@ -312,6 +314,18 @@ export default function LegacyLinksPage() {
           </CardContent>
         </Card>
       </div>
+      <ConfirmDialog
+        open={!!confirmDeleteId}
+        onOpenChange={(open) => { if (!open) setConfirmDeleteId(null); }}
+        title={t("layout.confirmDeleteMappingTitle")}
+        description={t("layout.confirmDeleteMappingDescription")}
+        variant="destructive"
+        confirmLabel={t("confirm.confirmLabel")}
+        cancelLabel={t("confirm.cancelLabel")}
+        onConfirm={async () => {
+          if (confirmDeleteId) await handleDeleteMapping(confirmDeleteId);
+        }}
+      />
     </div>
   );
 }

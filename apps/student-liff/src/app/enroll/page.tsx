@@ -7,15 +7,14 @@ import { useLiff } from "@/components/providers/LiffProvider";
 import {
   ArrowLeft,
   ArrowRight,
-  CheckCircle2,
   User,
   BookOpen,
   BarChart2,
   Calendar,
   Users,
   CreditCard,
-  MessageCircle,
   Info,
+  CheckCircle2,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -84,7 +83,6 @@ function EnrollContent() {
 
   const [classDetails, setClassDetails] = useState<ClassDetails | null>(null);
   const [loading, setLoading] = useState(true);
-  const [step, setStep] = useState<"confirm" | "payment" | "success">("confirm");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -132,14 +130,12 @@ function EnrollContent() {
     }
   }, [isReady, profile, router, searchParams]);
 
-  /* Redirect to payment page */
-  useEffect(() => {
-    if (step === "payment" && classDetails) {
-      const params = new URLSearchParams({ classId: classDetails.classId });
-      if (referralToken) params.set("referralToken", referralToken);
-      router.push(`/payment?${params.toString()}`);
-    }
-  }, [step, classDetails, referralToken, router]);
+  const goToPayment = () => {
+    if (!classDetails) return;
+    const params = new URLSearchParams({ classId: classDetails.classId });
+    if (referralToken) params.set("referralToken", referralToken);
+    router.push(`/payment?${params.toString()}`);
+  };
 
   /* ── Loading / auth states ── */
   if (!isReady) return <Spinner label={t("enroll.loadingPreparing")} />;
@@ -157,63 +153,6 @@ function EnrollContent() {
           <p className="text-rose-500 font-semibold">{error ?? t("enroll.errors.loadClassFailed")}</p>
           <Link href="/dashboard" className="text-sm font-medium hover:underline" style={{ color: "var(--brand-600)" }}>
             {t("enroll.backDashboard")}
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  /* ── Payment redirect waiting ── */
-  if (step === "payment") {
-    return <Spinner label={t("enroll.redirectingPayment")} />;
-  }
-
-  /* ── Success ── */
-  if (step === "success") {
-    return (
-      <div className="min-h-screen bg-background px-4 py-8 flex items-center">
-        <div className="max-w-sm mx-auto w-full space-y-5">
-          {/* Success hero */}
-          <div className="rounded-3xl overflow-hidden shadow-xl">
-            <div className="px-6 pt-8 pb-6 text-center" style={{ background: "linear-gradient(135deg, #06c755 0%, #049a42 55%, #037d36 100%)" }}>
-              <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <CheckCircle2 className="h-10 w-10 text-white" />
-              </div>
-              <h1 className="text-2xl font-black text-white mb-1">{t("enroll.successTitle")}</h1>
-              <p className="text-emerald-100 text-sm">
-                {t("enroll.successPrefix")} {classDetails.className} {t("enroll.successSuffix")}
-              </p>
-            </div>
-
-            {/* Details */}
-            <div className="bg-card px-5 py-4 space-y-1">
-              <DetailRow
-                icon={<User size={14} />}
-                label={t("enroll.tutor")}
-                value={classDetails.tutorName}
-              />
-              <DetailRow
-                icon={<Calendar size={14} />}
-                label={t("enroll.firstLesson")}
-                value={classDetails.schedule}
-              />
-            </div>
-          </div>
-
-          {/* LINE notice */}
-          <div className="rounded-2xl bg-emerald-500/10 border border-emerald-500/30 px-4 py-4 flex gap-3">
-            <MessageCircle className="text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" size={18} />
-            <p className="text-sm text-emerald-700 dark:text-emerald-300 leading-relaxed">
-              {t("enroll.lineNoticeFirst")}
-              <br />
-              {t("enroll.lineNoticeSecond")}
-            </p>
-          </div>
-
-          <Link href="/dashboard" className="block">
-            <button className="w-full py-4 rounded-2xl text-white font-black text-base active:scale-[0.98] transition-all" style={{ background: "var(--brand-500)", boxShadow: "var(--shadow-green)" }}>
-              {t("enroll.dashboardCta")}
-            </button>
           </Link>
         </div>
       </div>
@@ -331,7 +270,7 @@ function EnrollContent() {
             </div>
             {spotsLeft <= 3 && (
               <p className="text-xs text-rose-500 font-semibold mt-1.5">
-                ⚠️ เหลือเพียง {spotsLeft} ที่นั่ง!
+                {t("enroll.urgentSeatsPrefix")} {spotsLeft} {t("enroll.urgentSeatsSuffix")}
               </p>
             )}
           </div>
@@ -394,7 +333,7 @@ function EnrollContent() {
           <button
             className="flex-2 flex-[2] py-4 rounded-2xl text-white font-black text-base flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
             style={{ background: "var(--brand-500)", boxShadow: "var(--shadow-green)" }}
-            onClick={() => setStep("payment")}
+            onClick={goToPayment}
           >
             {t("enroll.continue")}
             <ArrowRight size={18} />

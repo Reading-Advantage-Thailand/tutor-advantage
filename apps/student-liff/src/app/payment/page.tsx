@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -92,6 +92,7 @@ function PaymentFlow() {
     returnedPaymentIntentId,
   );
   const [checkout, setCheckout] = useState<CheckoutDetails | null>(null);
+  const qrPollRef = useRef<NodeJS.Timeout | null>(null);
 
   const [cls, setCls] = useState<OrderSummary>(createDefaultOrderSummary(classId));
 
@@ -169,9 +170,26 @@ function PaymentFlow() {
   const [isAdult, setIsAdult] = useState<boolean | null>(null);
   const [guardianName, setGuardianName] = useState("");
   const [guardianRelation, setGuardianRelation] = useState("");
+  const [consentAlreadyGiven, setConsentAlreadyGiven] = useState(false);
+
+  // Check if guardian consent was already submitted in a previous purchase
+  useEffect(() => {
+    studentApi.checkGuardianConsent()
+      .then((data: { hasConsent: boolean }) => {
+        if (data.hasConsent) setConsentAlreadyGiven(true);
+      })
+      .catch(() => {
+        // Non-critical: if check fails, fall through to age-check as normal
+      });
+  }, []);
 
   const handleProceed = () => {
-    setStep("age-check");
+    if (consentAlreadyGiven) {
+      // Skip age-check — consent on file, go straight to payment method
+      setStep(method === "promptpay" ? "qr" : "card-form");
+    } else {
+      setStep("age-check");
+    }
   };
 
   const handleAgeCheckSubmit = async () => {
@@ -251,6 +269,32 @@ function PaymentFlow() {
     toast.info(t("payment.errors.paymentPending"));
   };
 
+  const stopQrPoll = () => {
+    if (qrPollRef.current) {
+      clearInterval(qrPollRef.current);
+      qrPollRef.current = null;
+    }
+  };
+
+  const startQrAutoPoll = (intentId: string) => {
+    stopQrPoll();
+    qrPollRef.current = setInterval(async () => {
+      try {
+        const status = await studentApi.getPaymentStatus(intentId);
+        mergeCheckout(status.checkout);
+        if (status.intent.status === "SUCCESS") {
+          stopQrPoll();
+          setStep("success");
+        } else if (status.intent.status === "FAILED") {
+          stopQrPoll();
+          toast.error(status.checkout?.failureMessage || t("payment.errors.paymentFailedPrefix"));
+        }
+      } catch {
+        // ignore transient errors during polling
+      }
+    }, 5000);
+  };
+
   const loadPromptPayQrCode = async (intentId: string) => {
     setQrLoading(true);
     try {
@@ -269,12 +313,18 @@ function PaymentFlow() {
               failureMessage: null,
             },
       );
+      // Start auto-polling after QR is loaded
+      startQrAutoPoll(intentId);
     } finally {
       setQrLoading(false);
     }
   };
 
+  // Cleanup poll on unmount
+  useEffect(() => () => { stopQrPoll(); }, []);
+
   const handleConfirmPayment = async () => {
+    stopQrPoll(); // stop auto-poll while manually checking
     setLoading(true);
     try {
       if (method === "promptpay" && paymentIntentId) {
@@ -300,7 +350,15 @@ function PaymentFlow() {
         amountSatang: enrollment.amountSatang || cls.priceSatang,
         method,
         omiseToken,
-        returnUri: window.location.href.split("?")[0],
+        // Include classId/cycleId so 3DS card redirect can resume payment correctly
+        returnUri: (() => {
+          const base = window.location.href.split("?")[0];
+          const rp = new URLSearchParams();
+          if (classId) rp.set("classId", classId);
+          if (cycleId) rp.set("cycleId", cycleId);
+          if (referralToken) rp.set("referralToken", referralToken);
+          return `${base}?${rp.toString()}`;
+        })(),
       });
 
       setPaymentIntentId(payment.intent.paymentIntentId);
@@ -334,6 +392,10 @@ function PaymentFlow() {
       );
     } finally {
       setLoading(false);
+      // Resume auto-poll if still on QR step and intent exists
+      if (step === "qr" && paymentIntentId && !qrPollRef.current) {
+        startQrAutoPoll(paymentIntentId);
+      }
     }
   };
 

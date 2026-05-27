@@ -135,7 +135,7 @@ function AppSidebar({
       <SidebarContent className="px-2">
         <SidebarGroup>
           <SidebarGroupLabel className="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
-            Finance Management
+            {t("layout.financeGroup")}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -182,7 +182,7 @@ function AppSidebar({
 
         <SidebarGroup>
           <SidebarGroupLabel className="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
-            System Operations
+            {t("layout.opsGroup")}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -217,7 +217,7 @@ function AppSidebar({
         {canAccessUserRisk && (
           <SidebarGroup>
             <SidebarGroupLabel className="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
-              Users & Compliance
+              {t("layout.usersGroup")}
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -259,7 +259,7 @@ function AppSidebar({
         {process.env.NODE_ENV === "development" && (
           <SidebarGroup>
             <SidebarGroupLabel className="px-2 text-[10px] font-bold uppercase tracking-wider text-orange-500/70">
-              Developer
+              {t("layout.developerGroup")}
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -305,7 +305,7 @@ function AppSidebar({
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight ml-1">
                     <span className="truncate font-semibold text-foreground">
-                      {role || t("layout.defaultRole")}
+                      {role === "ADMIN" ? t("layout.roleAdmin") : role === "FINANCE_CHECKER" ? t("layout.roleFinanceChecker") : role || t("layout.defaultRole")}
                     </span>
                     <span className="flex items-center gap-1.5 truncate text-[10px] font-medium text-muted-foreground uppercase tracking-tight">
                       <span className="h-1.5 w-1.5 rounded-full bg-brand-500 animate-pulse" /> {t("layout.online")}
@@ -329,7 +329,7 @@ function AppSidebar({
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-bold text-foreground">
-                        {role || t("layout.defaultRole")}
+                        {role === "ADMIN" ? t("layout.roleAdmin") : role === "FINANCE_CHECKER" ? t("layout.roleFinanceChecker") : role || t("layout.defaultRole")}
                       </span>
                       <p className="text-xs text-muted-foreground truncate">
                         {email || "—"}
@@ -392,11 +392,21 @@ export default function LayoutWrapper({
     return <>{children}</>;
   }
 
+  const PAGE_TITLES: Record<string, string> = {
+    "/": t("layout.systemOverview"),
+    "/settlements": t("layout.settlements"),
+    "/adjustments": t("layout.adjustments"),
+    "/audit": t("layout.audit"),
+    "/operations/exceptions": t("layout.exceptions"),
+    "/operations/legacy-links": t("layout.legacyLinks"),
+    "/users": t("layout.usersConsent"),
+    "/fraud": t("layout.fraud"),
+    "/dev": t("layout.developerGroup"),
+  };
   const pageTitle =
-    pathname === "/"
-      ? t("layout.systemOverview")
-      : pathname.split("/")[1]?.charAt(0).toUpperCase() +
-        (pathname.split("/")[1]?.slice(1) ?? "");
+    PAGE_TITLES[pathname] ??
+    Object.entries(PAGE_TITLES).find(([k]) => k !== "/" && pathname.startsWith(k))?.[1] ??
+    t("layout.systemOverview");
 
   return (
     <SidebarProvider>
