@@ -146,6 +146,128 @@ export async function devSeedLessonHistory(req: AuthenticatedRequest, res: Respo
   });
 }
 
+// ─── POST /v1/dev/seed/full-progress ─────────────────────────────────────────
+// Seeds FINISHED sessions for EVERY article in the student's enrolled book,
+// spread over multiple weeks so streak/progress/weekly-activity all reflect
+// a "fully completed" state.
+
+export async function devSeedFullProgress(req: AuthenticatedRequest, res: Response) {
+  const userId = req.user?.userId;
+  if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+  // 1. Find first ACTIVE enrollment
+  const enrollment = await prisma.enrollment.findFirst({
+    where: { studentUserId: userId, status: { in: ["ACTIVE", "PENDING_PAYMENT"] } },
+    include: {
+      class: {
+        include: {
+          book: {
+            include: {
+              articles: { orderBy: { articleId: "asc" } }, // ALL articles
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!enrollment) {
+    return res.status(404).json({ error: "No active enrollment found" });
+  }
+
+  const { class: cls } = enrollment;
+  const articles = cls.book.articles;
+
+  if (articles.length === 0) {
+    return res.status(404).json({ error: "No articles found for this class's book" });
+  }
+
+  // 2. Find peers for realistic ranking
+  const peers = await prisma.user.findMany({
+    where: { role: "STUDENT", isActive: true, userId: { not: userId } },
+    select: { userId: true },
+    take: 3,
+  });
+  const peerScores = [78, 65, 88];
+
+  const now = Date.now();
+  const DAY_MS = 86_400_000;
+  // Spread sessions backwards — one per article, ~1 per day
+  // This ensures multiple weeks are covered → streak grows naturally
+  const seededSessionIds: string[] = [];
+
+  for (let i = 0; i < articles.length; i++) {
+    const article = articles[i];
+
+    // Place sessions from furthest-past to most recent
+    const daysAgo = articles.length - 1 - i;
+    const sessionDate = new Date(now - daysAgo * DAY_MS);
+
+    // Skip if session for this article already exists for this student
+    const existing = await prisma.sessionParticipant.findFirst({
+      where: {
+        studentUserId: userId,
+        session: { articleId: article.articleId, status: "FINISHED", classId: cls.classId },
+      },
+    });
+    if (existing) continue;
+
+    const session = await prisma.interactiveSession.create({
+      data: {
+        classId: cls.classId,
+        bookId: cls.bookId,
+        tutorUserId: cls.tutorUserId,
+        articleId: article.articleId,
+        status: "FINISHED",
+        createdAt: sessionDate,
+        updatedAt: new Date(sessionDate.getTime() + 30 * 60 * 1000), // +30 min duration
+      },
+    });
+
+    const myScore = 60 + Math.floor(Math.random() * 40);
+
+    await prisma.sessionParticipant.create({
+      data: { sessionId: session.sessionId, studentUserId: userId, score: myScore, joinedAt: sessionDate },
+    });
+
+    for (let p = 0; p < peers.length; p++) {
+      await prisma.sessionParticipant.upsert({
+        where: { sessionId_studentUserId: { sessionId: session.sessionId, studentUserId: peers[p].userId } },
+        create: { sessionId: session.sessionId, studentUserId: peers[p].userId, score: peerScores[p] ?? 50, joinedAt: sessionDate },
+        update: {},
+      });
+    }
+
+    await prisma.sessionAnswer.createMany({
+      data: [
+        {
+          sessionId: session.sessionId, studentUserId: userId, phase: 1,
+          questionText: "[DEV] Vocabulary question", answerText: "Dev seeded answer",
+          correctAnswer: "Dev seeded answer", isCorrect: true,
+          score: Math.floor(myScore * 0.5), answeredAt: sessionDate,
+        },
+        {
+          sessionId: session.sessionId, studentUserId: userId, phase: 2,
+          questionText: "[DEV] Comprehension question", answerText: "Dev seeded answer",
+          correctAnswer: "Dev seeded answer", isCorrect: myScore >= 70,
+          score: Math.floor(myScore * 0.5), answeredAt: sessionDate,
+        },
+      ],
+      skipDuplicates: true,
+    });
+
+    seededSessionIds.push(session.sessionId);
+  }
+
+  return res.status(201).json({
+    seeded: seededSessionIds.length,
+    skipped: articles.length - seededSessionIds.length,
+    totalArticles: articles.length,
+    class: cls.title,
+    book: cls.book.title,
+  });
+}
+
 // ─── DELETE /v1/dev/seed/lesson-history ──────────────────────────────────────
 // Removes all FINISHED sessions where the current student participated.
 

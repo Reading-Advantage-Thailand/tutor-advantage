@@ -58,6 +58,7 @@ import {
   devSeedLessonHistory,
   devPurgeLessonHistory,
   devActivateEnrollments,
+  devSeedFullProgress,
 } from "./controllers/devController";
 
 const app = express();
@@ -175,6 +176,7 @@ app.get("/v1/notifications/summary", authMiddleware, getNotificationSummary);
 // Dev-only routes (blocked in production by devOnly middleware)
 app.post("/v1/dev/seed/lesson-history", devOnly, authMiddleware, devSeedLessonHistory);
 app.delete("/v1/dev/seed/lesson-history", devOnly, authMiddleware, devPurgeLessonHistory);
+app.post("/v1/dev/seed/full-progress", devOnly, authMiddleware, devSeedFullProgress);
 app.post("/v1/dev/seed/enrollments/activate", devOnly, authMiddleware, devActivateEnrollments);
 
 // Apply error handler last

@@ -7,6 +7,7 @@ type DevAction =
   | { action: "confirmAllPending" }
   | { action: "seedLessonHistory" }
   | { action: "purgeLessonHistory" }
+  | { action: "seedFullProgress" }
   | { action: "activateEnrollments" }
   | { action: "clearSession" };
 
@@ -88,6 +89,18 @@ export async function POST(req: NextRequest) {
   if (body.action === "purgeLessonHistory") {
     const res = await fetch(`${LEARNING_URL}/v1/dev/seed/lesson-history`, {
       method: "DELETE",
+      headers: authHeaders,
+    });
+    const data = await res.json().catch(() => ({}));
+    return NextResponse.json(data, { status: res.status });
+  }
+
+  // ── Seed full progress ─────────────────────────────────────────────────────
+  // Seeds FINISHED sessions for ALL articles in the enrolled book,
+  // spread over multiple weeks → progress 100%, streak counts up naturally
+  if (body.action === "seedFullProgress") {
+    const res = await fetch(`${LEARNING_URL}/v1/dev/seed/full-progress`, {
+      method: "POST",
       headers: authHeaders,
     });
     const data = await res.json().catch(() => ({}));

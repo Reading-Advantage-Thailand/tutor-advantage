@@ -202,6 +202,9 @@ export function DevToolbar() {
   const purgeLessonHistory = () =>
     runAction("purgeHistory", { action: "purgeLessonHistory" }, "Lesson history purged");
 
+  const seedFullProgress = () =>
+    runAction("seedFullProgress", { action: "seedFullProgress" }, "Full progress seeded — all articles completed ✓");
+
   const activateEnrollments = () =>
     runAction("activateEnroll", { action: "activateEnrollments" }, "Enrollments activated ✓");
 
@@ -496,11 +499,25 @@ export function DevToolbar() {
                 </button>
               </div>
 
-              {/* Lesson history */}
+              {/* Lesson history & progress */}
               <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">
-                Lesson history
+                Lesson history &amp; progress
               </p>
               <div className="flex flex-wrap gap-1.5 mb-3">
+                <button
+                  onClick={seedFullProgress}
+                  disabled={actionLoading !== null}
+                  title="Seeds FINISHED sessions for ALL book articles — progress hits 100% and streak builds"
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-violet-500/10 text-violet-700 dark:text-violet-400 border border-violet-500/20 hover:bg-violet-500/20 disabled:opacity-40 transition-colors"
+                >
+                  {actionLoading === "seedFullProgress" ? (
+                    <Loader2 className="h-2.5 w-2.5 animate-spin" />
+                  ) : (
+                    <TrendingUp className="h-3 w-3" />
+                  )}
+                  Complete all lessons
+                </button>
+
                 <button
                   onClick={seedLessonHistory}
                   disabled={actionLoading !== null}
@@ -512,7 +529,7 @@ export function DevToolbar() {
                   ) : (
                     <PlusCircle className="h-3 w-3" />
                   )}
-                  Seed history
+                  Seed 5 lessons
                 </button>
 
                 <button
@@ -535,6 +552,14 @@ export function DevToolbar() {
                 >
                   <History className="h-3 w-3" />
                   View history
+                </a>
+
+                <a
+                  href="/progress"
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-muted text-foreground border border-border/50 hover:bg-muted/80 transition-colors"
+                >
+                  <TrendingUp className="h-3 w-3" />
+                  View progress
                 </a>
               </div>
 
