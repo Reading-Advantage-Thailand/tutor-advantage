@@ -69,7 +69,10 @@ export const studentApi = {
     const qs = qp.toString();
     return fetchWithAuth(`/dashboard/summary${qs ? `?${qs}` : ""}`);
   },
-  getStudentProgress: () => fetchWithAuth('/student/progress'),
+  getStudentProgress: (classId?: string) => {
+    const qs = classId ? `?classId=${encodeURIComponent(classId)}` : "";
+    return fetchWithAuth(`/student/progress${qs}`);
+  },
   getStudentArticle: (articleId: string) => fetchWithAuth(`/student/articles/${articleId}`),
   generateShareLink: (classId?: string) => fetchWithAuth('/student/share-link', {
     method: 'POST',

@@ -262,8 +262,10 @@ export async function getStudentProgress(
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    // 1. Find main enrollment
-    const enrollment = await prisma.enrollment.findFirst({
+    const requestedClassId = typeof req.query.classId === "string" ? req.query.classId : null;
+
+    // 1. Fetch ALL active enrollments so the frontend can show a class picker
+    const allEnrollments = await prisma.enrollment.findMany({
       where: { studentUserId: userId, status: "ACTIVE" },
       include: {
         class: {
@@ -273,15 +275,33 @@ export async function getStudentProgress(
         }
       },
       orderBy: { createdAt: "desc" }
-    }) as any;
+    }) as any[];
 
-    if (!enrollment) {
+    const enrolledClasses = allEnrollments.map((e: any) => ({
+      classId: e.class.classId,
+      name: e.class.title || e.class.book?.title || "Untitled Class",
+      cefr: e.class.book?.series?.cefrLevel || "A1",
+      bookTitle: e.class.book?.title || null,
+      seriesColor: (() => {
+        const c: Record<string, string> = { A1: "#06c755", A2: "#10b981", B1: "#3b82f6", B2: "#8b5cf6", C1: "#f59e0b", C2: "#ef4444" };
+        return c[e.class.book?.series?.cefrLevel || "A1"] ?? "#06c755";
+      })(),
+    }));
+
+    if (allEnrollments.length === 0) {
       return res.status(200).json({
-        stats: { articlesRead: 0, totalArticles: 0, totalMinutes: 0, weekStreak: 0, level: "N/A", cefr: "N/A", seriesColor: "#06c755" },
+        enrolledClasses: [],
+        selectedClassId: null,
+        stats: { articlesRead: 0, totalArticles: 0, totalMinutes: 0, weekStreak: 0, level: "N/A", cefr: "N/A", seriesColor: "#06c755", nextMilestone: { at: 5, reward: "⭐ Milestone" } },
         weeklyActivity: [],
         articles: []
       });
     }
+
+    // Pick the requested class, or fall back to the most recent enrollment
+    const enrollment = requestedClassId
+      ? allEnrollments.find((e: any) => e.class.classId === requestedClassId) || allEnrollments[0]
+      : allEnrollments[0];
 
     const book = enrollment.class.book;
 
@@ -417,6 +437,8 @@ export async function getStudentProgress(
     };
 
     return res.status(200).json({
+      enrolledClasses,
+      selectedClassId: enrollment.class.classId,
       stats: {
         articlesRead,
         totalArticles,

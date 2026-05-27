@@ -49,7 +49,17 @@ interface ProgressArticle {
   done: boolean;
 }
 
+interface EnrolledClassOption {
+  classId: string;
+  name: string;
+  cefr: string;
+  bookTitle: string | null;
+  seriesColor: string;
+}
+
 interface ProgressData {
+  enrolledClasses?: EnrolledClassOption[];
+  selectedClassId?: string | null;
   stats: ProgressStats;
   weeklyActivity: WeeklyActivity[];
   articles: ProgressArticle[];
@@ -441,16 +451,19 @@ export default function ProgressPage() {
   const [data, setData] = useState<ProgressData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
+  const [switching, setSwitching] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
 
     async function fetchData() {
       if (!isReady) return;
-      
+
       try {
-        setLoading(true);
-        // Wait for session token
+        if (!selectedClassId) setLoading(true);
+        else setSwitching(true);
+
         let token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
         let retries = 0;
         while (!token && retries < 10 && isMounted) {
@@ -463,9 +476,12 @@ export default function ProgressPage() {
           throw new Error("Session unavailable");
         }
 
-        const result = await studentApi.getStudentProgress() as ProgressData;
+        const result = await studentApi.getStudentProgress(selectedClassId || undefined) as ProgressData;
         if (isMounted) {
           setData(result);
+          if (!selectedClassId && result.selectedClassId) {
+            setSelectedClassId(result.selectedClassId);
+          }
         }
       } catch (err) {
         console.error(err);
@@ -473,13 +489,13 @@ export default function ProgressPage() {
           setError(t("progress.loadFailed"));
         }
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) { setLoading(false); setSwitching(false); }
       }
     }
 
     fetchData();
     return () => { isMounted = false; };
-  }, [isReady]);
+  }, [isReady, selectedClassId]);
 
   if (!isReady || loading) {
     return (
@@ -514,7 +530,66 @@ export default function ProgressPage() {
         </span>
       </div>
 
-      <div style={{ padding: "16px 16px", display: "flex", flexDirection: "column", gap: 16 }}>
+      {/* Class selector */}
+      {data.enrolledClasses && data.enrolledClasses.length > 1 && (
+        <div style={{ padding: "0 16px", paddingTop: 8 }}>
+          <div className="scrollbar-hide" style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4 }}>
+            {data.enrolledClasses.map((cls) => {
+              const isActive = cls.classId === (data.selectedClassId ?? selectedClassId);
+              return (
+                <button
+                  key={cls.classId}
+                  onClick={() => { if (!isActive && !switching) setSelectedClassId(cls.classId); }}
+                  disabled={switching}
+                  style={{
+                    flex: "0 0 auto",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    padding: "6px 14px",
+                    borderRadius: "var(--radius-full, 9999px)",
+                    border: isActive ? `2px solid ${cls.seriesColor}` : "1.5px solid var(--surface-border)",
+                    background: isActive ? `${cls.seriesColor}12` : "var(--surface-card)",
+                    color: isActive ? cls.seriesColor : "var(--text-secondary)",
+                    fontSize: "0.8125rem",
+                    fontWeight: isActive ? 700 : 500,
+                    cursor: switching ? "wait" : "pointer",
+                    opacity: switching && !isActive ? 0.5 : 1,
+                    transition: "all 0.2s ease",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <span style={{
+                    width: 8, height: 8, borderRadius: "50%",
+                    background: cls.seriesColor,
+                    flexShrink: 0,
+                  }} />
+                  {cls.name}
+                  <span style={{
+                    fontSize: "0.625rem",
+                    fontWeight: 700,
+                    background: isActive ? cls.seriesColor : "var(--neutral-200)",
+                    color: isActive ? "#fff" : "var(--text-tertiary)",
+                    padding: "1px 6px",
+                    borderRadius: "var(--radius-full, 9999px)",
+                  }}>
+                    {cls.cefr}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Switching overlay */}
+      {switching && (
+        <div style={{ display: "flex", justifyContent: "center", padding: "8px 0" }}>
+          <div className="animate-spin" style={{ width: 20, height: 20, border: "2px solid var(--neutral-200)", borderTopColor: "var(--brand-500)", borderRadius: "50%" }} />
+        </div>
+      )}
+
+      <div style={{ padding: "16px 16px", display: "flex", flexDirection: "column", gap: 16, opacity: switching ? 0.5 : 1, transition: "opacity 0.2s" }}>
 
         {/* Main progress card */}
         <div className="curved-bottom" style={{ background: `linear-gradient(135deg, ${stats.seriesColor} 0%, #037d36 100%)`, borderRadius: 24, overflow: "hidden", position: "relative" }}>
