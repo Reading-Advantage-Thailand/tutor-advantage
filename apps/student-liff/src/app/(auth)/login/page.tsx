@@ -15,7 +15,9 @@ export default function LoginPage() {
   const [sessionError, setSessionError] = useState<string | null>(null);
 
   const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
-  const redirectPath = searchParams?.get("redirect") || "/dashboard";
+  const rawRedirect = searchParams?.get("redirect") || "/dashboard";
+  // Prevent open redirect — only allow relative paths starting with /
+  const redirectPath = rawRedirect.startsWith("/") && !rawRedirect.startsWith("//") ? rawRedirect : "/dashboard";
 
   useEffect(() => {
     if (isReady && liff?.isLoggedIn() && !error) {
@@ -34,7 +36,7 @@ export default function LoginPage() {
         attempts += 1;
         if (attempts >= 20) {
           clearInterval(timer);
-          setSessionError("LINE login สำเร็จแล้ว แต่ระบบยังสร้าง session ไม่สำเร็จ กรุณาลองเข้าสู่ระบบใหม่");
+          setSessionError(t("app.sessionCreationFailed"));
         }
       }, 250);
 
@@ -124,7 +126,7 @@ export default function LoginPage() {
           disabled={!isReady}
         >
           <LineIcon size={22} />
-          {error || sessionError ? "ลองเข้าสู่ระบบใหม่" : isReady ? t("app.lineLogin") : t("app.loading")}
+          {error || sessionError ? t("app.retryLogin") : isReady ? t("app.lineLogin") : t("app.loading")}
         </Button>
 
         {/* PDPA notice */}

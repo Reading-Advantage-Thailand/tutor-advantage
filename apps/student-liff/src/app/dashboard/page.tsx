@@ -25,6 +25,7 @@ import {
 import { studentApi } from "@/lib/api";
 import { t } from "@/lib/i18n";
 import { playSound } from "@/lib/sounds";
+import { waitForSessionCookie } from "@/lib/cookieUtils";
 
 /* ─── Sound helper ─── */
 const playNotificationSound = () => {
@@ -272,20 +273,14 @@ export default function DashboardPage() {
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
     let isMounted = true;
+    let cleanupVisibility: (() => void) | undefined;
 
     if (isReady && profileUserId) {
       const fetchData = async (showLoading = true) => {
         try {
           if (showLoading) setLoading(true);
 
-          let token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
-          let retries = 0;
-          while (!token && retries < 10 && isMounted) {
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
-            retries++;
-          }
-
+          const token = await waitForSessionCookie();
           if (!token && isMounted) throw new Error(t("dashboard.sessionCreateFailed"));
           if (!isMounted) return;
 
@@ -311,12 +306,24 @@ export default function DashboardPage() {
       };
 
       fetchData(true);
-      intervalId = setInterval(() => fetchData(false), 30000);
+
+      // Pause polling when tab is hidden to save battery
+      const startPolling = () => { intervalId = setInterval(() => fetchData(false), 30000); };
+      const stopPolling = () => { if (intervalId) clearInterval(intervalId); };
+      const onVisibility = () => {
+        if (document.hidden) stopPolling();
+        else { fetchData(false); startPolling(); }
+      };
+      document.addEventListener("visibilitychange", onVisibility);
+      startPolling();
+
+      cleanupVisibility = () => document.removeEventListener("visibilitychange", onVisibility);
     }
 
     return () => {
       isMounted = false;
       if (intervalId) clearInterval(intervalId);
+      if (cleanupVisibility) cleanupVisibility();
     };
   }, [isReady, profileUserId]);
 
@@ -364,7 +371,19 @@ export default function DashboardPage() {
     setCopyingClassId(classId ?? null);
     try {
       const data = await studentApi.generateShareLink(classId);
-      await navigator.clipboard.writeText(data.url);
+      // Use clipboard API with fallback for LINE WebView (WKWebView may not support it)
+      try {
+        await navigator.clipboard.writeText(data.url);
+      } catch {
+        const ta = document.createElement("textarea");
+        ta.value = data.url;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
       setIsClassPickerOpen(false);
       setCopyState('copied');
       setTimeout(() => setCopyState('idle'), 2500);
@@ -565,9 +584,9 @@ export default function DashboardPage() {
               {copyState === 'loading'
                 ? "..."
                 : copyState === 'copied'
-                ? "✓ คัดลอกแล้ว"
+                ? t("dashboard.referralCopied")
                 : shareableClasses.length > 1
-                ? "เลือกคลาส"
+                ? t("dashboard.selectClass")
                 : t("dashboard.copyReferral")}
             </button>
           </div>
@@ -741,7 +760,7 @@ export default function DashboardPage() {
         >
           <button
             type="button"
-            aria-label="ปิด"
+            aria-label={t("app.close")}
             onClick={() => setIsClassPickerOpen(false)}
             className="absolute inset-0 bg-black/45"
           />
@@ -749,15 +768,15 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between px-5 pt-4 pb-3">
               <div>
                 <h2 id="referral-class-picker-title" className="text-base font-black text-foreground">
-                  เลือกคลาสที่จะชวน
+                  {t("dashboard.referralPickerTitle")}
                 </h2>
                 <p className="mt-0.5 text-xs text-muted-foreground">
-                  ระบบจะคัดลอกลิงก์สมัครของคลาสที่เลือก
+                  {t("dashboard.referralPickerSubtitle")}
                 </p>
               </div>
               <button
                 type="button"
-                aria-label="ปิด"
+                aria-label={t("app.close")}
                 onClick={() => setIsClassPickerOpen(false)}
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground active:scale-95"
               >

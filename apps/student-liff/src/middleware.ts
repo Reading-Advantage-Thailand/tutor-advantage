@@ -1,9 +1,11 @@
 import { NextResponse, NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "secret-for-dev-only-change-me"
-);
+const jwtSecretRaw = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
+if (jwtSecretRaw === "secret-for-dev-only-change-me" && process.env.NODE_ENV === "production") {
+  console.error("[SECURITY] JWT_SECRET is using the default dev fallback in production! Set a strong secret via environment variables.");
+}
+const JWT_SECRET = new TextEncoder().encode(jwtSecretRaw);
 
 const PRIVATE_ROUTES = [
   "/dashboard",
@@ -12,6 +14,12 @@ const PRIVATE_ROUTES = [
   "/profile",
   "/progress",
   "/student",
+  "/chat",
+  "/consent",
+  "/guardian",
+  "/enroll",
+  "/study",
+  "/lesson",
 ];
 
 export async function middleware(request: NextRequest) {

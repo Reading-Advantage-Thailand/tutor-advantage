@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { studentApi } from "@/lib/api";
+import { waitForSessionCookie } from "@/lib/cookieUtils";
 import {
   AlertCircle,
   BookOpen,
@@ -464,14 +465,7 @@ export default function ProgressPage() {
         if (!selectedClassId) setLoading(true);
         else setSwitching(true);
 
-        let token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
-        let retries = 0;
-        while (!token && retries < 10 && isMounted) {
-          await new Promise(resolve => setTimeout(resolve, 500));
-          token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
-          retries++;
-        }
-
+        const token = await waitForSessionCookie();
         if (!token) {
           throw new Error("Session unavailable");
         }

@@ -44,11 +44,17 @@ export default function ProfilePage() {
   };
 
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    // Clear server session cookie first, then LIFF logout
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // proceed with client-side logout even if server call fails
+    }
     if (liff && liff.isLoggedIn()) {
       liff.logout();
-      router.push("/");
     }
+    router.push("/login");
   };
 
   const menuGroups = [

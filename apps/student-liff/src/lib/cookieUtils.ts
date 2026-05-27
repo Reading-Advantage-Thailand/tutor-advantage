@@ -49,3 +49,19 @@ export const Cookies = {
     this.set(name, "", { expires: -1, path });
   },
 };
+
+/**
+ * Wait for the student-session cookie to appear (e.g. after LIFF auth).
+ * Returns the token string, or null if it doesn't appear within maxRetries * intervalMs.
+ */
+export async function waitForSessionCookie(
+  maxRetries = 10,
+  intervalMs = 500,
+): Promise<string | null> {
+  for (let i = 0; i < maxRetries; i++) {
+    const token = Cookies.get("student-session");
+    if (token) return token;
+    await new Promise((r) => setTimeout(r, intervalMs));
+  }
+  return null;
+}

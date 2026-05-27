@@ -9,6 +9,7 @@ import { useLiff } from "@/components/providers/LiffProvider";
 import { studentApi } from "@/lib/api";
 import { t } from "@/lib/i18n";
 import { toast } from "sonner";
+import { waitForSessionCookie } from "@/lib/cookieUtils";
 
 const ChatAvatar = ({ src, title, size = 48 }: { src?: string | null, title: string, size?: number }) => {
   const [hasError, setHasError] = useState(false);
@@ -109,19 +110,14 @@ export default function ChatListPage() {
   useEffect(() => {
     let isMounted = true;
     let pollingId: NodeJS.Timeout;
+    let handleVisibility: (() => void) | undefined;
 
     if (isReady && profile) {
       const fetchData = async (showLoading = true) => {
         try {
           if (showLoading) setLoading(true);
-          
-          let token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
-          let retries = 0;
-          while (!token && retries < 10 && isMounted) {
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
-            retries++;
-          }
+
+          const token = await waitForSessionCookie();
           if (!token && isMounted) throw new Error(t("chat.sessionUnavailable"));
 
           if (!isMounted) return;
@@ -144,16 +140,27 @@ export default function ChatListPage() {
       };
 
       fetchData(true);
-      
-      // Poll conversations every 5 seconds for realtime updates
-      pollingId = setInterval(() => {
-        fetchData(false);
-      }, 5000);
+
+      // Poll conversations — 15s when visible, pause when hidden (saves battery)
+      const POLL_INTERVAL = 15000;
+      const startPolling = () => {
+        if (pollingId) clearInterval(pollingId);
+        pollingId = setInterval(() => fetchData(false), POLL_INTERVAL);
+      };
+      const stopPolling = () => { if (pollingId) clearInterval(pollingId); };
+
+      handleVisibility = () => {
+        if (document.hidden) stopPolling();
+        else { fetchData(false); startPolling(); }
+      };
+      document.addEventListener("visibilitychange", handleVisibility);
+      startPolling();
     }
 
-    return () => { 
-      isMounted = false; 
+    return () => {
+      isMounted = false;
       if (pollingId) clearInterval(pollingId);
+      if (handleVisibility) document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, [isReady, profile]);
 
