@@ -15,6 +15,8 @@ export interface SessionParticipant {
 export interface LessonSession {
   sessionId: string;
   classId?: string; // Added classId
+  classBookCycleId?: string;
+  bookId?: string;
   tutorId: string;
   tutorSocketId: string;
   articleId: string;
@@ -54,7 +56,15 @@ class LessonSessionService {
   private sessions: Map<string, LessonSession> = new Map();
   private classToSessionId: Map<string, string> = new Map(); // Map classId to active session
 
-  createSession(tutorId: string, tutorSocketId: string, articleId: string, articleData: any, classId?: string): LessonSession {
+  createSession(
+    tutorId: string,
+    tutorSocketId: string,
+    articleId: string,
+    articleData: any,
+    classId?: string,
+    classBookCycleId?: string,
+    bookId?: string,
+  ): LessonSession {
     // ATTEMPT RECOVERY: If an active session already exists for this class, REUSE it!
     if (classId) {
       const existingSessionId = this.classToSessionId.get(classId);
@@ -132,6 +142,8 @@ class LessonSessionService {
     const session: LessonSession = {
       sessionId,
       classId,
+      classBookCycleId,
+      bookId,
       tutorId,
       tutorSocketId,
       articleId,

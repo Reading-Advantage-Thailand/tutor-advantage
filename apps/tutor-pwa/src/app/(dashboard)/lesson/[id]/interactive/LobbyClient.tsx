@@ -18,10 +18,14 @@ import { t } from "@/lib/i18n";
 export default function TutorLobbyClient({
   classId,
   articleId,
+  classBookCycleId,
+  bookId,
   socketUrl,
 }: {
   classId: string;
   articleId: string;
+  classBookCycleId?: string;
+  bookId?: string;
   socketUrl: string;
 }) {
   const router = useRouter();
@@ -39,7 +43,7 @@ export default function TutorLobbyClient({
     nudgeStudent,
     kickStudent,
     deleteSession,
-  } = useLessonSocket(tutorId, articleId, classId, socketUrl);
+  } = useLessonSocket(tutorId, articleId, classId, socketUrl, classBookCycleId, bookId);
 
   const readyCount = participants.filter((participant) => participant.isReady).length;
   const totalCount = participants.length;

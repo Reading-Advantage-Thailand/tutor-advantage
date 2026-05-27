@@ -20,6 +20,8 @@ import {
   deleteClass,
   updateMeetingUrl,
   getClassArticles,
+  createClassBookCycle,
+  getBooks,
 } from "./../actions";
 import { useRouter } from "next/navigation";
 import {
@@ -204,19 +206,38 @@ export function ReferralLink({ referralLink }: { referralLink: string }) {
   );
 }
 
-export function ArticleSelector({ classId }: { classId: string }) {
+export function ArticleSelector({
+  classId,
+  bookCycles = [],
+}: {
+  classId: string;
+  bookCycles?: Array<{
+    id: string;
+    bookId: string;
+    sequence: number;
+    title: string;
+    status: string;
+    packagePriceSatang: number;
+  }>;
+}) {
   const router = useRouter();
+  const initialCycleId = bookCycles.find((cycle) => cycle.status === "open")?.id || bookCycles[0]?.id || "";
+  const [selectedCycleId, setSelectedCycleId] = useState(initialCycleId);
   const [selectedArticle, setSelectedArticle] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [articles, setArticles] = useState<any[]>([]);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [books, setBooks] = useState<any[]>([]);
+  const [newBookId, setNewBookId] = useState("");
+  const [newBookPrice, setNewBookPrice] = useState(250000);
+  const [creatingCycle, setCreatingCycle] = useState(false);
 
   useEffect(() => {
     async function loadArticles() {
       try {
         setFetching(true);
-        const data = await getClassArticles(classId);
+        const data = await getClassArticles(classId, selectedCycleId || undefined);
         setArticles(data.articles || []);
         if (data.articles && data.articles.length > 0) {
           setSelectedArticle(data.articles[0].id);
@@ -229,12 +250,39 @@ export function ArticleSelector({ classId }: { classId: string }) {
       }
     }
     loadArticles();
-  }, [classId]);
+  }, [classId, selectedCycleId]);
+
+  useEffect(() => {
+    getBooks()
+      .then((data) => setBooks(data.books || []))
+      .catch((err) => console.error("Could not fetch books", err));
+  }, []);
 
   const handleStartLesson = () => {
     if (!selectedArticle) return;
     setLoading(true);
-    router.push(`/lesson/${classId}/interactive?articleId=${selectedArticle}`);
+    const selectedCycle = bookCycles.find((cycle) => cycle.id === selectedCycleId);
+    const params = new URLSearchParams({ articleId: selectedArticle });
+    if (selectedCycleId) params.set("cycleId", selectedCycleId);
+    if (selectedCycle?.bookId) params.set("bookId", selectedCycle.bookId);
+    router.push(`/lesson/${classId}/interactive?${params.toString()}`);
+  };
+
+  const handleCreateCycle = async () => {
+    if (!newBookId) return;
+    setCreatingCycle(true);
+    try {
+      const result = await createClassBookCycle(classId, {
+        bookId: newBookId,
+        packagePriceSatang: newBookPrice,
+      });
+      setSelectedCycleId(result.cycle.id);
+      router.refresh();
+    } catch (error: any) {
+      alert(error.message || "Could not open the selected book");
+    } finally {
+      setCreatingCycle(false);
+    }
   };
 
   return (
@@ -249,6 +297,70 @@ export function ArticleSelector({ classId }: { classId: string }) {
         <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
           {t("tutorClass.detail.articleDescription")}
         </p>
+        <div className="mt-3 flex flex-col gap-2">
+          <div className="flex gap-2">
+            <select
+              value={selectedCycleId}
+              onChange={(event) => setSelectedCycleId(event.target.value)}
+              className="flex-1 h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground"
+            >
+              {bookCycles.map((cycle) => (
+                <option key={cycle.id} value={cycle.id}>
+                  เล่ม {cycle.sequence}: {cycle.title}
+                </option>
+              ))}
+            </select>
+            <Dialog>
+              <DialogTrigger
+                render={
+                  <Button variant="outline" size="sm" className="h-10 shrink-0">
+                    เปิดเล่มใหม่
+                  </Button>
+                }
+              />
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>เปิดเล่มใหม่ในคลาสนี้</DialogTitle>
+                  <DialogDescription>
+                    นักเรียนเดิมจะยังอยู่ในคลาส แต่ต้องชำระเพิ่มเพื่อเข้า live lesson ของเล่มใหม่
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="book-cycle-book">หนังสือ</Label>
+                    <select
+                      id="book-cycle-book"
+                      value={newBookId}
+                      onChange={(event) => setNewBookId(event.target.value)}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground"
+                    >
+                      <option value="">เลือกหนังสือ</option>
+                      {books.map((book) => (
+                        <option key={book.bookId} value={book.bookId}>
+                          {book.title} ({book.bookCode})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="book-cycle-price">ราคา (สตางค์)</Label>
+                    <Input
+                      id="book-cycle-price"
+                      type="number"
+                      value={newBookPrice}
+                      onChange={(event) => setNewBookPrice(Number(event.target.value))}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button onClick={handleCreateCycle} disabled={!newBookId || creatingCycle}>
+                    {creatingCycle ? "กำลังเปิด..." : "เปิดเล่ม"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
       </CardHeader>
 
       <CardContent className="pb-6 flex-1 flex flex-col overflow-hidden">

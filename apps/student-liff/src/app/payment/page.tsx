@@ -76,6 +76,7 @@ function loadOmiseScript() {
 function PaymentFlow() {
   const searchParams = useSearchParams();
   const classId = searchParams.get("classId") ?? "";
+  const cycleId = searchParams.get("cycleId") ?? "";
   const referralToken = searchParams.get("referralToken");
   const returnedPaymentIntentId = searchParams.get("paymentIntentId");
 
@@ -111,6 +112,20 @@ function PaymentFlow() {
       .getClassDetails(classId)
       .then((data) => {
         if (!isMounted || !data?.class) return;
+        const cycle = cycleId
+          ? data.class.bookCycles?.find((item: any) => item.id === cycleId)
+          : null;
+        if (cycle) {
+          setCls({
+            id: classId,
+            name: `${data.class.name} / ${cycle.title}`,
+            price: cycle.price,
+            priceSatang: cycle.packagePriceSatang,
+            tutor: data.class.tutor?.name || t("payment.defaultTutor"),
+            cefr: cycle.cefr || data.class.cefr || t("payment.defaultCefr"),
+          });
+          return;
+        }
         setCls(buildOrderSummaryFromClass(data.class, classId));
       })
       .catch((error) => {
@@ -120,7 +135,7 @@ function PaymentFlow() {
     return () => {
       isMounted = false;
     };
-  }, [classId]);
+  }, [classId, cycleId]);
 
   useEffect(() => {
     if (!returnedPaymentIntentId) return;
@@ -267,7 +282,9 @@ function PaymentFlow() {
         return;
       }
 
-      const enrollment = referralToken
+      const enrollment = cycleId
+        ? await studentApi.prepareClassBookCycleAccess(classId, cycleId)
+        : referralToken
         ? await studentApi.enrollByReferral(referralToken)
         : await studentApi.enrollClass(classId);
       if (enrollment.status === "ACTIVE") {
@@ -279,7 +296,8 @@ function PaymentFlow() {
         method === "card" ? await ensureOmiseToken() : undefined;
       const payment = await studentApi.createPaymentIntent({
         enrollmentId: enrollment.enrollmentId,
-        amountSatang: cls.priceSatang,
+        enrollmentPackageId: enrollment.enrollmentPackageId,
+        amountSatang: enrollment.amountSatang || cls.priceSatang,
         method,
         omiseToken,
         returnUri: window.location.href.split("?")[0],

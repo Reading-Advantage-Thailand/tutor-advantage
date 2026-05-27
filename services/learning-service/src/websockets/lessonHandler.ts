@@ -48,20 +48,45 @@ export const setupLessonSocket = (io: Server) => {
     console.log(`Socket connected: ${socket.id}`);
 
     // Tutor creates a new session
-    socket.on("create_session", async ({ tutorId, articleId, classId }) => {
+    socket.on("create_session", async ({ tutorId, articleId, classId, classBookCycleId, bookId }) => {
       console.log(`[Socket] Tutor ${tutorId} creating session for class: ${classId}`);
       try {
+        let resolvedCycleId = classBookCycleId;
+        let resolvedBookId = bookId;
+
+        if (classId && (!resolvedCycleId || !resolvedBookId)) {
+          const cycle = resolvedCycleId
+            ? await prisma.classBookCycle.findFirst({
+                where: { classBookCycleId: resolvedCycleId, classId },
+              })
+            : await prisma.classBookCycle.findFirst({
+                where: { classId, status: "OPEN" },
+                orderBy: { sequence: "desc" },
+              });
+
+          resolvedCycleId = cycle?.classBookCycleId || resolvedCycleId;
+          resolvedBookId = cycle?.bookId || resolvedBookId;
+        }
+
         const articleData = await getArticleDetails(articleId);
         console.log(`================= QUESTIONS LIST =================`);
         console.log(`Available MCQ questions:`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
         console.log(`Available SAQ questions:`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
         console.log(`==================================================`);
-        const session = lessonSessionService.createSession(tutorId, socket.id, articleId, articleData, classId);
+        const session = lessonSessionService.createSession(
+          tutorId,
+          socket.id,
+          articleId,
+          articleData,
+          classId,
+          resolvedCycleId,
+          resolvedBookId,
+        );
         // Keep currentDbSessionId undefined initially, so the first cycle defaults to the standard sessionId!
         socket.join(session.sessionId);
 
         // PERSIST START OF SESSION TO DB (This creates initial Cycle 1 record)
-        dbWriter.persistSessionStart(session.sessionId, tutorId, articleId, classId);
+        dbWriter.persistSessionStart(session.sessionId, tutorId, articleId, classId, resolvedCycleId, resolvedBookId);
 
         socket.emit("session_created", {
           sessionId: session.sessionId,
@@ -94,6 +119,50 @@ export const setupLessonSocket = (io: Server) => {
         console.warn(`[Socket] Join denied: student ${studentId} has no ACTIVE enrollment for class ${classId}`);
         socket.emit("error", { message: "Please complete payment before joining class." });
         return;
+      }
+
+      const activeSession = lessonSessionService.getSessionByClassId(classId);
+      if (activeSession?.classBookCycleId) {
+        let activeAccess = await prisma.enrollmentPackage.findFirst({
+          where: {
+            enrollmentId: activeEnrollment.enrollmentId,
+            classBookCycleId: activeSession.classBookCycleId,
+            status: "ACTIVE",
+          },
+        });
+
+        if (!activeAccess) {
+          const cycle = await prisma.classBookCycle.findUnique({
+            where: { classBookCycleId: activeSession.classBookCycleId },
+            include: { class: true },
+          });
+
+          if (cycle?.sequence === 1 && cycle.bookId === cycle.class.bookId) {
+            activeAccess = await prisma.enrollmentPackage.upsert({
+              where: {
+                enrollmentId_classBookCycleId: {
+                  enrollmentId: activeEnrollment.enrollmentId,
+                  classBookCycleId: activeSession.classBookCycleId,
+                },
+              },
+              create: {
+                enrollmentId: activeEnrollment.enrollmentId,
+                classBookCycleId: activeSession.classBookCycleId,
+                studentUserId: resolvedStudentId,
+                status: "ACTIVE",
+              },
+              update: {
+                status: "ACTIVE",
+              },
+            });
+          }
+        }
+
+        if (!activeAccess) {
+          console.warn(`[Socket] Join denied: student ${studentId} has no ACTIVE access for cycle ${activeSession.classBookCycleId}`);
+          socket.emit("error", { message: "Please complete upgrade payment before joining this book." });
+          return;
+        }
       }
 
       const session = lessonSessionService.joinSessionByClassId(classId, studentId, name, socket.id, pictureUrl, resolvedStudentId);
@@ -149,7 +218,14 @@ export const setupLessonSocket = (io: Server) => {
             console.log(`[Socket] RECYCLE: Starting fresh learning loop for room ${sessionId}. New DB Session: ${newDbId}`);
             
             // 1. Create NEW DB header record
-            dbWriter.persistSessionStart(newDbId, session.tutorId, session.articleId, session.classId);
+            dbWriter.persistSessionStart(
+              newDbId,
+              session.tutorId,
+              session.articleId,
+              session.classId,
+              session.classBookCycleId,
+              session.bookId,
+            );
             
             // 2. Automatically enroll all existing students in the NEW round immediately
             const activePeers = Array.from(session.participants.keys());

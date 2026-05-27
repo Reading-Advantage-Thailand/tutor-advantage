@@ -9,6 +9,8 @@ exports.getBooks = getBooks;
 exports.deleteClass = deleteClass;
 exports.updateMeetingUrl = updateMeetingUrl;
 exports.getClassArticles = getClassArticles;
+exports.createClassBookCycle = createClassBookCycle;
+exports.prepareClassBookCycleAccess = prepareClassBookCycleAccess;
 const database_1 = require("@tutor-advantage/database");
 const ReadingAdvantageDB_1 = require("../services/ReadingAdvantageDB");
 async function createClass(req, res) {
@@ -58,19 +60,31 @@ async function createClass(req, res) {
                 },
             });
         }
-        const newClass = await database_1.prisma.class.create({
-            data: {
-                tutorUserId: userId,
-                bookId: book.bookId,
-                title,
-                capacity,
-                packagePriceMinor: BigInt(packagePriceSatang),
-                scheduleDescription,
-                meetingUrl: req.body.meetingUrl,
-                startsAt: startsAt ? new Date(startsAt) : undefined,
-                endsAt: endsAt ? new Date(endsAt) : undefined,
-                status: "OPEN",
-            },
+        const newClass = await database_1.prisma.$transaction(async (tx) => {
+            const cls = await tx.class.create({
+                data: {
+                    tutorUserId: userId,
+                    bookId: book.bookId,
+                    title,
+                    capacity,
+                    packagePriceMinor: BigInt(packagePriceSatang),
+                    scheduleDescription,
+                    meetingUrl: req.body.meetingUrl,
+                    startsAt: startsAt ? new Date(startsAt) : undefined,
+                    endsAt: endsAt ? new Date(endsAt) : undefined,
+                    status: "OPEN",
+                },
+            });
+            await tx.classBookCycle.create({
+                data: {
+                    classId: cls.classId,
+                    bookId: book.bookId,
+                    sequence: 1,
+                    status: "OPEN",
+                    packagePriceMinor: BigInt(packagePriceSatang),
+                },
+            });
+            return cls;
         });
         return res.status(201).json({
             message: "Class created successfully",
@@ -126,6 +140,46 @@ function getInitials(name) {
         .map((part) => part[0])
         .join("")
         .toUpperCase();
+}
+async function getCycleProgress(classId, bookIds) {
+    if (bookIds.length === 0)
+        return new Map();
+    const [articles, sessions] = await Promise.all([
+        database_1.prisma.article.findMany({
+            where: { bookId: { in: bookIds } },
+            select: { bookId: true, articleId: true },
+        }),
+        database_1.prisma.interactiveSession.findMany({
+            where: {
+                classId,
+                status: "FINISHED",
+                bookId: { in: bookIds },
+            },
+            select: { bookId: true, articleId: true },
+        }).catch(() => []),
+    ]);
+    const totals = new Map();
+    for (const article of articles) {
+        const set = totals.get(article.bookId) ?? new Set();
+        set.add(article.articleId);
+        totals.set(article.bookId, set);
+    }
+    const completed = new Map();
+    for (const session of sessions) {
+        if (!session.bookId)
+            continue;
+        const set = completed.get(session.bookId) ?? new Set();
+        set.add(session.articleId);
+        completed.set(session.bookId, set);
+    }
+    const result = new Map();
+    for (const bookId of bookIds) {
+        result.set(bookId, {
+            completed: completed.get(bookId)?.size ?? 0,
+            total: totals.get(bookId)?.size ?? 0,
+        });
+    }
+    return result;
 }
 async function closeClass(req, res) {
     try {
@@ -263,7 +317,17 @@ async function getClassById(req, res) {
                         articles: { orderBy: { articleId: "asc" }, take: 3 },
                     },
                 },
-                enrollments: true,
+                bookCycles: {
+                    include: {
+                        book: { include: { series: true } },
+                    },
+                    orderBy: { sequence: "asc" },
+                },
+                enrollments: {
+                    include: {
+                        packageAccess: true,
+                    },
+                },
                 _count: { select: { enrollments: true } },
             },
         }));
@@ -309,6 +373,28 @@ async function getClassById(req, res) {
         const userMap = new Map();
         users.forEach((u) => userMap.set(u.userId, { name: u.displayName, avatar: u.profilePictureUrl }));
         const activeOrPendingStudents = cls.enrolledCount || 0;
+        let bookCycles = cls.bookCycles || [];
+        if (bookCycles.length === 0) {
+            const defaultCycle = await database_1.prisma.classBookCycle.create({
+                data: {
+                    classId: cls.classId,
+                    bookId: cls.bookId,
+                    sequence: 1,
+                    status: "OPEN",
+                    packagePriceMinor: cls.packagePriceMinor,
+                },
+                include: { book: { include: { series: true } } },
+            }).catch(() => null);
+            bookCycles = defaultCycle ? [defaultCycle] : [];
+        }
+        const accessByCycleId = new Map((currentEnrollment?.packageAccess || []).map((access) => [
+            access.classBookCycleId,
+            access,
+        ]));
+        const cycleProgressByBookId = await getCycleProgress(cls.classId, bookCycles.map((cycle) => cycle.bookId));
+        const activeCycle = [...bookCycles].reverse().find((cycle) => cycle.status === "OPEN") ||
+            bookCycles[bookCycles.length - 1] ||
+            null;
         const series = cls.book?.series;
         const cefr = series?.cefrLevel || "A1";
         const totalHours = cls.book?.classHours || 0;
@@ -335,6 +421,40 @@ async function getClassById(req, res) {
             totalHours,
             independentHours: cls.book?.independentHours || 0,
             articleCount: bookArticleCount,
+            activeBookCycleId: activeCycle?.classBookCycleId || null,
+            activeBookId: activeCycle?.bookId || cls.bookId,
+            bookCycles: bookCycles.map((cycle) => {
+                const access = accessByCycleId.get(cycle.classBookCycleId);
+                const progress = cycleProgressByBookId.get(cycle.bookId) || {
+                    completed: 0,
+                    total: cycle.book?.articleCount || 0,
+                };
+                const isOriginalBook = cycle.bookId === cls.bookId && cycle.sequence === 1;
+                const hasAccess = cls.tutorUserId === userId ||
+                    role === "ADMIN" ||
+                    access?.status === "ACTIVE" ||
+                    (isActiveEnrollment && isOriginalBook && !access);
+                const totalArticles = progress.total || cycle.book?.articleCount || 0;
+                return {
+                    id: cycle.classBookCycleId,
+                    bookId: cycle.bookId,
+                    sequence: cycle.sequence,
+                    status: cycle.status.toLowerCase(),
+                    title: cycle.book?.title || "Unknown Book",
+                    bookCode: cycle.book?.bookCode || null,
+                    cefr: cycle.book?.series?.cefrLevel || null,
+                    level: cycle.book?.levelNumber || null,
+                    packagePriceSatang: Number(cycle.packagePriceMinor),
+                    price: Number(cycle.packagePriceMinor) / 100,
+                    accessStatus: access?.status || (hasAccess ? "ACTIVE" : "LOCKED"),
+                    hasAccess,
+                    progress: {
+                        completedArticles: progress.completed,
+                        totalArticles,
+                        percent: totalArticles ? Math.round((progress.completed / totalArticles) * 100) : 0,
+                    },
+                };
+            }),
             nextSession: cls.scheduleDescription || "ยังไม่ได้กำหนด",
             startsAt: cls.startsAt,
             endsAt: cls.endsAt,
@@ -557,9 +677,13 @@ async function deleteClass(req, res) {
                 });
             }
             console.log(`[DELETE_CLASS] Step 3: Cleaning up Learning relations...`);
+            await database_1.prisma.enrollmentPackage.deleteMany({
+                where: { enrollmentId: { in: enrollmentIds } },
+            });
             await database_1.prisma.enrollment.deleteMany({ where: { classId } });
             await database_1.prisma.referral.deleteMany({ where: { classId } });
             await database_1.prisma.classTransferRequest.deleteMany({ where: { classId } });
+            await database_1.prisma.classBookCycle.deleteMany({ where: { classId } });
             console.log(`[DELETE_CLASS] Step 4: Deleting the Class record itself...`);
             await database_1.prisma.class.delete({
                 where: { classId },
@@ -635,17 +759,40 @@ async function translateToThai(text) {
 async function getClassArticles(req, res) {
     try {
         const { classId } = req.params;
+        const requestedCycleId = typeof req.query.cycleId === "string" ? req.query.cycleId : null;
         const cls = await database_1.prisma.class.findUnique({
             where: { classId },
-            include: { book: true },
+            include: {
+                book: true,
+                bookCycles: { orderBy: { sequence: "asc" } },
+            },
         });
         if (!cls) {
             return res
                 .status(404)
                 .json({ error: { code: "NOT_FOUND", message: "Class not found" } });
         }
+        let cycle = requestedCycleId
+            ? cls.bookCycles.find((item) => item.classBookCycleId === requestedCycleId)
+            : [...cls.bookCycles].reverse().find((item) => item.status === "OPEN") || cls.bookCycles[0];
+        if (requestedCycleId && !cycle) {
+            return res
+                .status(404)
+                .json({ error: { code: "NOT_FOUND", message: "Book cycle not found" } });
+        }
+        if (!cycle) {
+            cycle = await database_1.prisma.classBookCycle.create({
+                data: {
+                    classId: cls.classId,
+                    bookId: cls.bookId,
+                    sequence: 1,
+                    status: "OPEN",
+                    packagePriceMinor: cls.packagePriceMinor,
+                },
+            });
+        }
         const dbArticlesRaw = await database_1.prisma.article.findMany({
-            where: { bookId: cls.bookId },
+            where: { bookId: cycle.bookId },
         });
         // Sort articles by their numeric articleId so order is stable and sequential
         const dbArticles = [...dbArticlesRaw].sort((a, b) => {
@@ -657,6 +804,7 @@ async function getClassArticles(req, res) {
         const completedSessions = await database_1.prisma.interactiveSession.findMany({
             where: {
                 classId: classId,
+                bookId: cycle.bookId,
                 status: "FINISHED"
             },
             select: { articleId: true }
@@ -698,6 +846,8 @@ async function getClassArticles(req, res) {
             displayCefr = displayCefr.replace(/[^a-zA-Z0-9]/g, '');
             return {
                 id: art.articleId,
+                bookId: cycle.bookId,
+                classBookCycleId: cycle.classBookCycleId,
                 articleNumber: index + 1,
                 title: details?.title || art.title || "Untitled Article",
                 summary: thaiSummary || "ไม่มีสรุปเนื้อหาสำหรับบทความนี้",
@@ -706,7 +856,16 @@ async function getClassArticles(req, res) {
                 isCompleted: completedArticleIds.has(art.articleId)
             };
         }));
-        return res.status(200).json({ articles });
+        return res.status(200).json({
+            cycle: {
+                id: cycle.classBookCycleId,
+                bookId: cycle.bookId,
+                sequence: cycle.sequence,
+                status: cycle.status.toLowerCase(),
+                packagePriceSatang: Number(cycle.packagePriceMinor),
+            },
+            articles,
+        });
     }
     catch (error) {
         console.error("Get Class Articles Error:", error);
@@ -717,6 +876,175 @@ async function getClassArticles(req, res) {
                 details: process.env.NODE_ENV === "production" ? undefined : error.message,
                 prismaCode: error.code,
             },
+        });
+    }
+}
+async function createClassBookCycle(req, res) {
+    try {
+        const userId = req.user?.userId;
+        const { classId } = req.params;
+        const { bookId } = req.body;
+        const packagePriceSatang = req.body.packagePriceSatang ?? 250000;
+        if (!userId || req.user?.role !== "TUTOR") {
+            return res.status(401).json({
+                error: { code: "UNAUTHORIZED_ROLE", message: "Only tutors can open a new class book" },
+            });
+        }
+        if (!bookId || !Number.isInteger(packagePriceSatang) || packagePriceSatang <= 0) {
+            return res.status(400).json({
+                error: { code: "BAD_REQUEST", message: "bookId and positive packagePriceSatang are required" },
+            });
+        }
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{12}$/i.test(bookId);
+        const book = await database_1.prisma.book.findFirst({
+            where: isUuid ? { bookId } : { bookCode: bookId },
+            include: { series: true },
+        });
+        if (!book) {
+            return res.status(404).json({
+                error: { code: "NOT_FOUND", message: "Book not found" },
+            });
+        }
+        const cycle = await database_1.prisma.$transaction(async (tx) => {
+            const cls = await tx.class.findUnique({
+                where: { classId },
+                include: {
+                    bookCycles: true,
+                    enrollments: { where: { status: "ACTIVE" } },
+                },
+            });
+            if (!cls || cls.tutorUserId !== userId) {
+                throw new Error("CLASS_NOT_FOUND");
+            }
+            const existing = cls.bookCycles.find((item) => item.bookId === book.bookId);
+            if (existing)
+                return existing;
+            const nextSequence = cls.bookCycles.reduce((max, item) => Math.max(max, item.sequence || 0), 0) + 1;
+            const created = await tx.classBookCycle.create({
+                data: {
+                    classId,
+                    bookId: book.bookId,
+                    sequence: nextSequence,
+                    status: "OPEN",
+                    packagePriceMinor: BigInt(packagePriceSatang),
+                },
+            });
+            if (cls.enrollments.length > 0) {
+                await tx.enrollmentPackage.createMany({
+                    data: cls.enrollments.map((enrollment) => ({
+                        enrollmentId: enrollment.enrollmentId,
+                        classBookCycleId: created.classBookCycleId,
+                        studentUserId: enrollment.studentUserId,
+                        status: "PENDING_PAYMENT",
+                    })),
+                    skipDuplicates: true,
+                });
+            }
+            return created;
+        });
+        return res.status(201).json({
+            cycle: {
+                id: cycle.classBookCycleId,
+                classId: cycle.classId,
+                bookId: cycle.bookId,
+                title: book.title,
+                cefr: book.series?.cefrLevel || null,
+                sequence: cycle.sequence,
+                status: cycle.status.toLowerCase(),
+                packagePriceSatang: Number(cycle.packagePriceMinor),
+            },
+        });
+    }
+    catch (error) {
+        if (error.message === "CLASS_NOT_FOUND") {
+            return res.status(404).json({
+                error: { code: "NOT_FOUND", message: "Class not found or unauthorized" },
+            });
+        }
+        console.error("Create Class Book Cycle Error:", error);
+        return res.status(500).json({
+            error: { code: "INTERNAL_SERVER_ERROR", message: "Could not open class book" },
+        });
+    }
+}
+async function prepareClassBookCycleAccess(req, res) {
+    try {
+        const userId = req.user?.userId;
+        const { classId, cycleId } = req.params;
+        if (!userId) {
+            return res.status(401).json({
+                error: { code: "UNAUTHORIZED", message: "User ID missing" },
+            });
+        }
+        const result = await database_1.prisma.$transaction(async (tx) => {
+            const enrollment = await tx.enrollment.findFirst({
+                where: { classId, studentUserId: userId, status: "ACTIVE" },
+                include: { class: true },
+            });
+            if (!enrollment) {
+                throw new Error("ACTIVE_ENROLLMENT_REQUIRED");
+            }
+            const cycle = await tx.classBookCycle.findFirst({
+                where: { classBookCycleId: cycleId, classId },
+                include: { book: { include: { series: true } } },
+            });
+            if (!cycle) {
+                throw new Error("CYCLE_NOT_FOUND");
+            }
+            const existing = await tx.enrollmentPackage.findUnique({
+                where: {
+                    enrollmentId_classBookCycleId: {
+                        enrollmentId: enrollment.enrollmentId,
+                        classBookCycleId: cycle.classBookCycleId,
+                    },
+                },
+            });
+            if (existing?.status === "ACTIVE") {
+                return { enrollment, cycle, access: existing };
+            }
+            const access = existing
+                ? await tx.enrollmentPackage.update({
+                    where: { enrollmentPackageId: existing.enrollmentPackageId },
+                    data: { status: "PENDING_PAYMENT" },
+                })
+                : await tx.enrollmentPackage.create({
+                    data: {
+                        enrollmentId: enrollment.enrollmentId,
+                        classBookCycleId: cycle.classBookCycleId,
+                        studentUserId: userId,
+                        status: "PENDING_PAYMENT",
+                    },
+                });
+            return { enrollment, cycle, access };
+        });
+        return res.status(200).json({
+            enrollmentId: result.enrollment.enrollmentId,
+            enrollmentPackageId: result.access.enrollmentPackageId,
+            status: result.access.status,
+            amountSatang: Number(result.cycle.packagePriceMinor),
+            cycle: {
+                id: result.cycle.classBookCycleId,
+                bookId: result.cycle.bookId,
+                title: result.cycle.book?.title || "Unknown Book",
+                cefr: result.cycle.book?.series?.cefrLevel || null,
+                sequence: result.cycle.sequence,
+            },
+        });
+    }
+    catch (error) {
+        if (error.message === "ACTIVE_ENROLLMENT_REQUIRED") {
+            return res.status(403).json({
+                error: { code: "ACTIVE_ENROLLMENT_REQUIRED", message: "Please enroll in the class before upgrading" },
+            });
+        }
+        if (error.message === "CYCLE_NOT_FOUND") {
+            return res.status(404).json({
+                error: { code: "NOT_FOUND", message: "Book cycle not found" },
+            });
+        }
+        console.error("Prepare Class Book Cycle Access Error:", error);
+        return res.status(500).json({
+            error: { code: "INTERNAL_SERVER_ERROR", message: "Could not prepare upgrade access" },
         });
     }
 }

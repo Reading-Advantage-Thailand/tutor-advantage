@@ -4,6 +4,7 @@ exports.getOmisePublicKey = getOmisePublicKey;
 exports.isOmiseConfigured = isOmiseConfigured;
 exports.createOmiseCharge = createOmiseCharge;
 exports.retrieveOmiseCharge = retrieveOmiseCharge;
+exports.createOmiseRecipient = createOmiseRecipient;
 exports.createOmiseTransfer = createOmiseTransfer;
 exports.downloadOmiseDocumentAsDataUri = downloadOmiseDocumentAsDataUri;
 const OMISE_API_BASE_URL = process.env.OMISE_API_BASE_URL || "https://api.omise.co";
@@ -46,6 +47,20 @@ async function createOmiseCharge(input) {
 async function retrieveOmiseCharge(chargeId) {
     return omiseRequest(`/charges/${encodeURIComponent(chargeId)}`, {
         method: "GET",
+    });
+}
+async function createOmiseRecipient(input) {
+    const params = new URLSearchParams();
+    params.set("name", input.name);
+    if (input.email)
+        params.set("email", input.email);
+    params.set("type", "individual");
+    params.set("bank_account[brand]", input.bankAccountBrand);
+    params.set("bank_account[number]", input.bankAccountNumber);
+    params.set("bank_account[name]", input.bankAccountName);
+    return omiseRequest("/recipients", {
+        method: "POST",
+        body: params,
     });
 }
 async function createOmiseTransfer(input) {

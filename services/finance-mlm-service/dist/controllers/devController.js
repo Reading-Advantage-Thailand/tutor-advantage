@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.devPurge = exports.devSeedAdjustment = exports.devDeleteFraudFlag = exports.devSeedFraudFlag = exports.devRunSettlement = exports.devGetState = exports.devDeleteUser = exports.devUpdateUser = exports.devCreateUser = exports.devListUsers = void 0;
+exports.devToggleBadge = exports.devAddVolume = exports.devGetTutorBadges = exports.devPurge = exports.devSeedAdjustment = exports.devDeleteFraudFlag = exports.devSeedFraudFlag = exports.devRunSettlement = exports.devGetState = exports.devDeleteUser = exports.devUpdateUser = exports.devCreateUser = exports.devListUsers = void 0;
 const database_1 = require("@tutor-advantage/database");
 const settlementService_1 = require("../services/settlementService");
 const ALLOWED_ROLES = ["ADMIN", "TUTOR", "STUDENT", "FINANCE_CHECKER"];
@@ -329,6 +329,13 @@ const devPurge = async (req, res) => {
                 results.settlementRuns = r.count;
             }
         }
+        if (resource === "volume") {
+            // Delete all DEV payment intents (idempotencyKey starts with DEV_VOL_)
+            const r = await database_1.prisma.paymentIntent.deleteMany({
+                where: { idempotencyKey: { startsWith: "DEV_VOL_" } },
+            });
+            results.devPayments = r.count;
+        }
         res.json({ success: true, deleted: results });
     }
     catch (err) {
@@ -337,3 +344,132 @@ const devPurge = async (req, res) => {
     }
 };
 exports.devPurge = devPurge;
+// ─────────────────────────────────────────────────────────────────────────────
+// TUTOR SIMULATION ENDPOINTS
+// ─────────────────────────────────────────────────────────────────────────────
+const VALID_BADGES = [
+    "ELITE_EDUCATOR",
+    "TOP_RATED",
+    "CLASS_MASTER",
+    "NETWORK_BUILDER",
+    "RISING_STAR",
+    "FAST_RESPONDER",
+    "AI_PIONEER",
+];
+// GET /v1/dev/tutor-badges/:tutorUserId
+const devGetTutorBadges = async (req, res) => {
+    const { tutorUserId } = req.params;
+    try {
+        const badges = await database_1.prisma.tutorBadge.findMany({
+            where: { tutorUserId },
+            select: { badgeCode: true },
+        });
+        res.json({ badges: badges.map((b) => b.badgeCode) });
+    }
+    catch (err) {
+        console.error("devGetTutorBadges error:", err);
+        res.status(500).json({ error: "Could not fetch badges" });
+    }
+};
+exports.devGetTutorBadges = devGetTutorBadges;
+// POST /v1/dev/actions/add-volume
+const devAddVolume = async (req, res) => {
+    const { tutorUserId, amountTHB = 1000 } = req.body || {};
+    if (!tutorUserId)
+        return res.status(400).json({ error: "tutorUserId required" });
+    const amount = Number(amountTHB);
+    if (!Number.isFinite(amount) || amount <= 0 || amount > 10_000_000) {
+        return res.status(400).json({ error: "amountTHB must be > 0 and ≤ 10,000,000" });
+    }
+    try {
+        // Verify tutor exists
+        const tutor = await database_1.prisma.user.findUnique({ where: { userId: tutorUserId } });
+        if (!tutor || tutor.role !== "TUTOR") {
+            return res.status(404).json({ error: "Tutor not found" });
+        }
+        // Find any book for DEV class
+        const book = await database_1.prisma.book.findFirst();
+        if (!book)
+            return res.status(400).json({ error: "No books found — cannot create DEV class" });
+        // Find or create DEV class for this tutor
+        let devClass = await database_1.prisma.class.findFirst({
+            where: { tutorUserId, title: "[DEV] Test Class" },
+        });
+        if (!devClass) {
+            devClass = await database_1.prisma.class.create({
+                data: {
+                    tutorUserId,
+                    bookId: book.bookId,
+                    title: "[DEV] Test Class",
+                    capacity: 999,
+                    packagePriceMinor: 250000n,
+                    status: "ACTIVE",
+                },
+            });
+        }
+        // Find or create DEV enrollment (tutor acts as student)
+        let devEnrollment = await database_1.prisma.enrollment.findFirst({
+            where: { classId: devClass.classId, studentUserId: tutorUserId },
+        });
+        if (!devEnrollment) {
+            devEnrollment = await database_1.prisma.enrollment.create({
+                data: {
+                    classId: devClass.classId,
+                    studentUserId: tutorUserId,
+                    status: "ACTIVE",
+                },
+            });
+        }
+        // Create SUCCESS payment intent tagged as DEV
+        const amountMinor = BigInt(Math.round(amount * 100));
+        const iKey = `DEV_VOL_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        const payment = await database_1.prisma.paymentIntent.create({
+            data: {
+                enrollmentId: devEnrollment.enrollmentId,
+                studentUserId: tutorUserId,
+                amountMinor,
+                currency: "THB",
+                method: "DEV",
+                status: "SUCCESS",
+                idempotencyKey: iKey,
+            },
+        });
+        return res.status(201).json({
+            paymentIntentId: payment.paymentIntentId,
+            amountTHB: Number(amountMinor) / 100,
+            message: `Added DEV volume ฿${amount.toLocaleString()}`,
+        });
+    }
+    catch (err) {
+        console.error("devAddVolume error:", err);
+        res.status(500).json({ error: err.message || "Could not add volume" });
+    }
+};
+exports.devAddVolume = devAddVolume;
+// POST /v1/dev/actions/toggle-badge
+const devToggleBadge = async (req, res) => {
+    const { tutorUserId, badgeCode } = req.body || {};
+    if (!tutorUserId)
+        return res.status(400).json({ error: "tutorUserId required" });
+    if (!badgeCode || !VALID_BADGES.includes(badgeCode)) {
+        return res.status(400).json({ error: `badgeCode must be one of: ${VALID_BADGES.join(", ")}` });
+    }
+    try {
+        const existing = await database_1.prisma.tutorBadge.findFirst({
+            where: { tutorUserId, badgeCode },
+        });
+        if (existing) {
+            await database_1.prisma.tutorBadge.delete({ where: { badgeId: existing.badgeId } });
+            return res.json({ action: "removed", badgeCode });
+        }
+        else {
+            await database_1.prisma.tutorBadge.create({ data: { tutorUserId, badgeCode } });
+            return res.json({ action: "added", badgeCode });
+        }
+    }
+    catch (err) {
+        console.error("devToggleBadge error:", err);
+        res.status(500).json({ error: err.message || "Could not toggle badge" });
+    }
+};
+exports.devToggleBadge = devToggleBadge;

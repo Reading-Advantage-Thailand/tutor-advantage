@@ -25,7 +25,7 @@ const resolveUserId = async (inputId) => {
     return null;
 };
 exports.resolveUserId = resolveUserId;
-const persistSessionStart = async (sessionId, tutorId, articleId, classId) => {
+const persistSessionStart = async (sessionId, tutorId, articleId, classId, classBookCycleId, bookId) => {
     try {
         let resolvedTutorId = await (0, exports.resolveUserId)(tutorId);
         // If placeholder ID (like tutor-123) fails, try to resolve via Class owner!
@@ -53,6 +53,8 @@ const persistSessionStart = async (sessionId, tutorId, articleId, classId) => {
         }
         // Validate classId format before inserting into DB (must be UUID)
         const dbClassId = (classId && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(classId)) ? classId : null;
+        const dbClassBookCycleId = (classBookCycleId && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(classBookCycleId)) ? classBookCycleId : null;
+        const dbBookId = (bookId && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(bookId)) ? bookId : null;
         // Ensure InteractiveSession entry exists
         await database_1.prisma.interactiveSession.upsert({
             where: { sessionId },
@@ -61,10 +63,14 @@ const persistSessionStart = async (sessionId, tutorId, articleId, classId) => {
                 tutorUserId: resolvedTutorId,
                 articleId,
                 classId: dbClassId,
+                classBookCycleId: dbClassBookCycleId,
+                bookId: dbBookId,
                 status: "ACTIVE"
             },
             update: {
-                status: "ACTIVE" // reopen if needed
+                status: "ACTIVE", // reopen if needed
+                classBookCycleId: dbClassBookCycleId,
+                bookId: dbBookId,
             }
         });
     }

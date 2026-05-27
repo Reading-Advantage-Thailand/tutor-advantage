@@ -27,7 +27,7 @@ function getRandomIndex(count, excludedIndex) {
 class LessonSessionService {
     sessions = new Map();
     classToSessionId = new Map(); // Map classId to active session
-    createSession(tutorId, tutorSocketId, articleId, articleData, classId) {
+    createSession(tutorId, tutorSocketId, articleId, articleData, classId, classBookCycleId, bookId) {
         // ATTEMPT RECOVERY: If an active session already exists for this class, REUSE it!
         if (classId) {
             const existingSessionId = this.classToSessionId.get(classId);
@@ -92,6 +92,8 @@ class LessonSessionService {
         const session = {
             sessionId,
             classId,
+            classBookCycleId,
+            bookId,
             tutorId,
             tutorSocketId,
             articleId,

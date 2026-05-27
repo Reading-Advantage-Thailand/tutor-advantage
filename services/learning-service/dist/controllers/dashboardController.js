@@ -109,10 +109,10 @@ async function getDashboardSummary(req, res) {
                 },
                 select: {
                     joinedAt: true,
-                    session: { select: { articleId: true, createdAt: true } }
+                    session: { select: { articleId: true, bookId: true, createdAt: true } }
                 }
             });
-            const distinctArticlesRead = new Set(readParticipations.map((p) => p.session.articleId));
+            const distinctArticlesRead = new Set(readParticipations.map((p) => `${p.session.bookId || "legacy"}:${p.session.articleId}`));
             // 3. Calculate consecutive week streak (counting backwards from current week)
             const today = new Date();
             const getWeekId = (d) => {
@@ -150,7 +150,8 @@ async function getDashboardSummary(req, res) {
                 const tutorName = tutorMap.get(e.class.tutorUserId) || "Tutor";
                 // Calculate actual class progress based on current book articles read
                 const bookArticleIds = articleIdsByBookId.get(e.class.bookId) ?? [];
-                const articlesCompletedInClass = bookArticleIds.filter(id => distinctArticlesRead.has(id)).length;
+                const articlesCompletedInClass = bookArticleIds.filter(id => distinctArticlesRead.has(`${e.class.bookId}:${id}`) ||
+                    distinctArticlesRead.has(`legacy:${id}`)).length;
                 const totalArticlesInBook = bookArticleIds.length || e.class.book?.articleCount || 10;
                 const actualProgress = Math.round((articlesCompletedInClass / totalArticlesInBook) * 100);
                 return {
@@ -251,7 +252,7 @@ async function getStudentProgress(req, res) {
             where: { studentUserId: userId, session: { status: "FINISHED" } },
             include: { session: true }
         });
-        const distinctArticlesRead = new Set(participations.map(p => p.session.articleId));
+        const distinctArticlesRead = new Set(participations.map(p => `${p.session.bookId || "legacy"}:${p.session.articleId}`));
         // Calculate real session durations from timestamps (cap at 90 min each)
         const sessionDurations = new Map();
         for (const p of participations) {
@@ -284,7 +285,8 @@ async function getStudentProgress(req, res) {
             return num(a.articleId) - num(b.articleId);
         });
         const articles = dbArticles.map((art, idx) => {
-            const isRead = distinctArticlesRead.has(art.articleId);
+            const isRead = distinctArticlesRead.has(`${book.bookId}:${art.articleId}`) ||
+                distinctArticlesRead.has(`legacy:${art.articleId}`);
             return {
                 id: art.articleId,
                 no: idx + 1,

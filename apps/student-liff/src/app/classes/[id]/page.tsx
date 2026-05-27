@@ -60,6 +60,16 @@ interface ClassDetail {
   articleId?: string | null;
   startsAt?: string | null;
   endsAt?: string | null;
+  activeBookCycleId?: string | null;
+  bookCycles?: Array<{
+    id: string;
+    title: string;
+    price: number;
+    packagePriceSatang: number;
+    accessStatus: string;
+    hasAccess: boolean;
+    sequence: number;
+  }>;
 }
 
 interface ClassArticleDetail {
@@ -529,6 +539,9 @@ export default function ClassDetailPage({ params }: PageProps) {
   }, [isReady, id, cls]);
 
   const canReview = Boolean(cls?.isEnrolled && cls.status === "closed");
+  const activeCycle = cls?.bookCycles?.find((cycle) => cycle.id === cls.activeBookCycleId);
+  const needsUpgrade = Boolean(cls?.isEnrolled && activeCycle && !activeCycle.hasAccess);
+  const footerPrice = needsUpgrade && activeCycle ? activeCycle.price : cls?.price ?? 0;
 
   useEffect(() => {
     if (!isReady || !id || !canReview) return;
@@ -1163,12 +1176,26 @@ export default function ClassDetailPage({ params }: PageProps) {
           </div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
             <span style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
-              THB {cls.price.toLocaleString()}
+              THB {footerPrice.toLocaleString()}
             </span>
           </div>
         </div>
 
-        {cls.isEnrolled ? (
+        {needsUpgrade && activeCycle ? (
+          <Link
+            href={`/payment?classId=${cls.id}&cycleId=${activeCycle.id}`}
+            id="btn-upgrade-class"
+            className="btn btn-primary shine-effect"
+            style={{
+              borderRadius: 20, flexShrink: 0, padding: "0 24px", height: 56,
+              fontSize: "0.9375rem", fontWeight: 700,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              boxShadow: "0 8px 20px rgba(6,199,85,0.3)",
+            }}
+          >
+            เรียนต่อเล่ม {activeCycle.sequence}
+          </Link>
+        ) : cls.isEnrolled ? (
           <div
             className="btn"
             style={{

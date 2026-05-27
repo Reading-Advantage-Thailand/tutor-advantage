@@ -131,6 +131,7 @@ model Book {
   series  Series  @relation(fields: [seriesId], references: [seriesId])
   classes Class[]
   articles Article[]
+  classBookCycles ClassBookCycle[]
 
   @@map("books")
   @@schema("learning")
@@ -169,6 +170,7 @@ model Class {
   createdAt     DateTime               @default(now()) @map("created_at") @db.Timestamptz
   updatedAt     DateTime               @default(now()) @map("updated_at") @db.Timestamptz
   book          Book                   @relation(fields: [bookId], references: [bookId])
+  bookCycles    ClassBookCycle[]
   referrals     Referral[]
   enrollments   Enrollment[]
   conversations Conversation[]
@@ -177,6 +179,29 @@ model Class {
 
   @@index([tutorUserId, status])
   @@map("classes")
+  @@schema("learning")
+}
+
+model ClassBookCycle {
+  classBookCycleId  String    @id @default(dbgenerated("gen_random_uuid()")) @map("class_book_cycle_id") @db.Uuid
+  classId           String    @map("class_id") @db.Uuid
+  bookId            String    @map("book_id") @db.Uuid
+  sequence          Int
+  status            String    @default("OPEN")
+  packagePriceMinor BigInt    @default(250000) @map("package_price_minor")
+  openedAt          DateTime  @default(now()) @map("opened_at") @db.Timestamptz
+  closedAt          DateTime? @map("closed_at") @db.Timestamptz
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime  @default(now()) @map("updated_at") @db.Timestamptz
+
+  class   Class   @relation(fields: [classId], references: [classId])
+  book    Book    @relation(fields: [bookId], references: [bookId])
+  access  EnrollmentPackage[]
+
+  @@unique([classId, bookId])
+  @@unique([classId, sequence])
+  @@index([classId, status])
+  @@map("class_book_cycles")
   @@schema("learning")
 }
 
@@ -207,9 +232,30 @@ model Enrollment {
   updatedAt            DateTime @default(now()) @map("updated_at") @db.Timestamptz
 
   class Class @relation(fields: [classId], references: [classId])
+  packageAccess EnrollmentPackage[]
 
   @@index([studentUserId, status])
   @@map("enrollments")
+  @@schema("learning")
+}
+
+model EnrollmentPackage {
+  enrollmentPackageId  String   @id @default(dbgenerated("gen_random_uuid()")) @map("enrollment_package_id") @db.Uuid
+  enrollmentId         String   @map("enrollment_id") @db.Uuid
+  classBookCycleId     String   @map("class_book_cycle_id") @db.Uuid
+  studentUserId        String   @map("student_user_id") @db.Uuid
+  status               String
+  paymentTransactionId String?  @map("payment_transaction_id")
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt            DateTime @default(now()) @map("updated_at") @db.Timestamptz
+
+  enrollment     Enrollment     @relation(fields: [enrollmentId], references: [enrollmentId])
+  classBookCycle ClassBookCycle @relation(fields: [classBookCycleId], references: [classBookCycleId])
+
+  @@unique([enrollmentId, classBookCycleId])
+  @@index([studentUserId, status])
+  @@index([classBookCycleId, status])
+  @@map("enrollment_packages")
   @@schema("learning")
 }
 // ----------------------------------------------------------------------
@@ -219,6 +265,8 @@ model Enrollment {
 model InteractiveSession {
   sessionId   String   @id @default(dbgenerated("gen_random_uuid()")) @map("session_id") @db.Uuid
   classId     String?  @map("class_id") @db.Uuid
+  classBookCycleId String? @map("class_book_cycle_id") @db.Uuid
+  bookId      String?  @map("book_id") @db.Uuid
   tutorUserId String   @map("tutor_user_id") @db.Uuid
   articleId   String   @map("article_id")
   status      String   
@@ -425,6 +473,7 @@ model TutorBadge {
 model PaymentIntent {
   paymentIntentId String   @id @default(dbgenerated("gen_random_uuid()")) @map("payment_intent_id") @db.Uuid
   enrollmentId    String   @map("enrollment_id") @db.Uuid
+  enrollmentPackageId String? @map("enrollment_package_id") @db.Uuid
   studentUserId   String   @map("student_user_id") @db.Uuid
   amountMinor     BigInt   @map("amount_minor")
   currency        String

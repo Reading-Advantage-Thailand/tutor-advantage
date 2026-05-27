@@ -14,6 +14,7 @@ console.log(`[Finance] Loaded DATABASE_URL starting with: ${process.env.DATABASE
 const shared_config_1 = require("@tutor-advantage/shared-config");
 const authMiddleware_1 = require("./middlewares/authMiddleware");
 const paymentController_1 = require("./controllers/paymentController");
+const transferWebhookController_1 = require("./controllers/transferWebhookController");
 const settlementController_1 = require("./controllers/settlementController");
 const auditMiddleware_1 = require("./middlewares/auditMiddleware");
 const auditController_1 = require("./controllers/auditController");
@@ -80,6 +81,7 @@ app.get("/v1/payments/:paymentIntentId/qr-code", authMiddleware_1.authMiddleware
 app.get("/v1/payments/:paymentIntentId/status", authMiddleware_1.authMiddleware, paymentController_1.getPaymentStatus);
 app.get("/v1/payments/history", authMiddleware_1.authMiddleware, paymentController_1.getPaymentHistory);
 app.post("/v1/payments/webhook", paymentController_1.handleWebhook);
+app.post("/v1/webhooks/omise-transfer", transferWebhookController_1.handleTransferWebhook);
 // ── Tutor Dashboard Routes ─────────────────────────────────────────────────
 app.get("/v1/tutors/earnings/summary", authMiddleware_1.authMiddleware, tutorEarningsController_1.getEarningsSummary);
 app.get("/v1/tutors/earnings/history", authMiddleware_1.authMiddleware, tutorEarningsController_1.getEarningsHistory);
@@ -117,6 +119,7 @@ app.get("/v1/users/:id", authMiddleware_1.authMiddleware, userController_1.getUs
 app.post("/v1/users/:id/verify", authMiddleware_1.authMiddleware, userController_1.verifyUser);
 app.post("/v1/users/:id/suspend", authMiddleware_1.authMiddleware, userController_1.suspendUser);
 app.post("/v1/users/:id/anonymize", authMiddleware_1.authMiddleware, userController_1.anonymizeUser);
+app.patch("/v1/users/:id/omise-recipient", authMiddleware_1.authMiddleware, userController_1.updateOmiseRecipient);
 // ── Fraud Routes ───────────────────────────────────────────────────────────
 app.get("/v1/fraud-flags", authMiddleware_1.authMiddleware, fraudController_1.getFraudFlags);
 app.post("/v1/fraud-flags/:id/action", authMiddleware_1.authMiddleware, fraudController_1.triggerFraudAction);
@@ -139,6 +142,10 @@ app.post("/v1/dev/actions/fraud-flag", devOnly, devController_1.devSeedFraudFlag
 app.delete("/v1/dev/actions/fraud-flag/:id", devOnly, devController_1.devDeleteFraudFlag);
 app.post("/v1/dev/actions/adjustment", devOnly, devController_1.devSeedAdjustment);
 app.post("/v1/dev/actions/purge", devOnly, devController_1.devPurge);
+// Tutor simulation
+app.get("/v1/dev/tutor-badges/:tutorUserId", devOnly, devController_1.devGetTutorBadges);
+app.post("/v1/dev/actions/add-volume", devOnly, devController_1.devAddVolume);
+app.post("/v1/dev/actions/toggle-badge", devOnly, devController_1.devToggleBadge);
 // Apply error handler last
 app.use(shared_config_1.errorHandlerMiddleware);
 const server = app.listen(port, () => {

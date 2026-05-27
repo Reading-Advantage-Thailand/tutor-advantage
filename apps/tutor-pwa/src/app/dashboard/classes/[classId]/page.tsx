@@ -117,7 +117,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
 
         {/* Right Column (Article Selector) */}
         <div className="lg:col-span-7">
-          <ArticleSelector classId={classId} />
+          <ArticleSelector classId={classId} bookCycles={cls.bookCycles || []} />
         </div>
       </div>
     </div>

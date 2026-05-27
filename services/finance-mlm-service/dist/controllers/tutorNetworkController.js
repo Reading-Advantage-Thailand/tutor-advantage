@@ -107,6 +107,21 @@ async function getTutorNetwork(req, res) {
                 calculateDifferentialPayout(node);
             }
         }
+        // Badge bonus for the current tutor — must match settlementService.BADGE_BONUS_SATANG
+        const BADGE_BONUS_SATANG = {
+            ELITE_EDUCATOR: 50000,
+            TOP_RATED: 30000,
+            CLASS_MASTER: 20000,
+            NETWORK_BUILDER: 10000,
+            RISING_STAR: 5000,
+            FAST_RESPONDER: 5000,
+            AI_PIONEER: 5000,
+        };
+        const myBadges = await database_1.prisma.tutorBadge.findMany({
+            where: { tutorUserId: userId },
+            select: { badgeCode: true },
+        });
+        const badgeBonusTHB = myBadges.reduce((sum, b) => sum + (BADGE_BONUS_SATANG[b.badgeCode] ?? 0), 0) / 100;
         const me = nodes.get(userId);
         const sponsor = me.sponsorTutorId ? nodes.get(me.sponsorTutorId) : null;
         const upline = buildUpline(me, nodes);
@@ -129,7 +144,8 @@ async function getTutorNetwork(req, res) {
                 personalVolumeTHB: toTHB(me.personalVolumeMinor),
                 groupVolumeTHB: toTHB(me.groupVolumeMinor),
                 currentRate: me.rate,
-                estimatedPayoutTHB: toTHB(me.estimatedPayoutMinor),
+                estimatedPayoutTHB: toTHB(me.estimatedPayoutMinor) + badgeBonusTHB,
+                badgeBonusTHB,
                 level1Count: depthCounts.get(1) || 0,
                 level2PlusCount: Array.from(depthCounts.entries()).reduce((sum, [level, count]) => (level >= 2 ? sum + count : sum), 0),
             },

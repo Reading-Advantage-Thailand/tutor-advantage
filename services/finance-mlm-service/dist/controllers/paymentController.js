@@ -18,7 +18,7 @@ const omiseService_1 = require("../services/omiseService");
 async function createPaymentIntent(req, res) {
     try {
         const userId = req.user?.userId;
-        const { enrollmentId, amountSatang, method = "promptpay", omiseToken, returnUri, } = req.body;
+        const { enrollmentId, enrollmentPackageId, amountSatang, method = "promptpay", omiseToken, returnUri, } = req.body;
         const idempotencyKey = req.body.idempotencyKey ||
             req.headers["idempotency-key"] ||
             req.headers["x-idempotency-key"];
@@ -62,11 +62,46 @@ async function createPaymentIntent(req, res) {
                 },
             });
         }
-        if (enrollment.status !== "PENDING_PAYMENT") {
+        const enrollmentPackage = enrollmentPackageId
+            ? await database_1.prisma.enrollmentPackage.findUnique({
+                where: { enrollmentPackageId },
+                include: { classBookCycle: true },
+            })
+            : null;
+        if (enrollmentPackageId && !enrollmentPackage) {
+            return res.status(404).json({
+                error: {
+                    code: "NOT_FOUND",
+                    message: "Enrollment package not found",
+                    requestId: req.id,
+                },
+            });
+        }
+        if (enrollmentPackage &&
+            (enrollmentPackage.enrollmentId !== enrollment.enrollmentId ||
+                enrollmentPackage.studentUserId !== userId)) {
+            return res.status(403).json({
+                error: {
+                    code: "FORBIDDEN",
+                    message: "Cannot create payment intent for someone else's package",
+                    requestId: req.id,
+                },
+            });
+        }
+        if (!enrollmentPackage && enrollment.status !== "PENDING_PAYMENT") {
             return res.status(400).json({
                 error: {
                     code: "INVALID_STATUS",
                     message: "Enrollment is not in PENDING_PAYMENT status",
+                    requestId: req.id,
+                },
+            });
+        }
+        if (enrollmentPackage && enrollmentPackage.status !== "PENDING_PAYMENT") {
+            return res.status(400).json({
+                error: {
+                    code: "INVALID_STATUS",
+                    message: "Enrollment package is not in PENDING_PAYMENT status",
                     requestId: req.id,
                 },
             });
@@ -81,11 +116,14 @@ async function createPaymentIntent(req, res) {
                 },
             });
         }
-        if (BigInt(amountSatang) !== enrollment.class.packagePriceMinor) {
+        const expectedAmount = enrollmentPackage
+            ? enrollmentPackage.classBookCycle.packagePriceMinor
+            : enrollment.class.packagePriceMinor;
+        if (BigInt(amountSatang) !== expectedAmount) {
             return res.status(400).json({
                 error: {
                     code: "INVALID_AMOUNT",
-                    message: "amountSatang must match the class package price",
+                    message: "amountSatang must match the package price",
                     requestId: req.id,
                 },
             });
@@ -173,6 +211,7 @@ async function createPaymentIntent(req, res) {
         const existingIntent = await database_1.prisma.paymentIntent.findFirst({
             where: {
                 enrollmentId,
+                enrollmentPackageId: enrollmentPackageId || null,
                 studentUserId: userId,
                 method,
                 status: "PENDING",
@@ -191,6 +230,7 @@ async function createPaymentIntent(req, res) {
             (await database_1.prisma.paymentIntent.create({
                 data: {
                     enrollmentId,
+                    enrollmentPackageId: enrollmentPackageId || undefined,
                     studentUserId: userId,
                     amountMinor: BigInt(amountSatang), // using BigInt as specified in schema
                     currency: "THB",
@@ -414,13 +454,34 @@ async function fulfillPaymentIntent(paymentIntentId, providerRef) {
                 providerRef,
             },
         });
-        await tx.enrollment.update({
-            where: { enrollmentId: intent.enrollmentId },
-            data: {
-                status: "ACTIVE",
-                paymentTransactionId: providerRef,
-            },
-        });
+        if (intent.enrollmentPackageId) {
+            await tx.enrollmentPackage.update({
+                where: { enrollmentPackageId: intent.enrollmentPackageId },
+                data: {
+                    status: "ACTIVE",
+                    paymentTransactionId: providerRef,
+                },
+            });
+        }
+        else {
+            await tx.enrollment.update({
+                where: { enrollmentId: intent.enrollmentId },
+                data: {
+                    status: "ACTIVE",
+                    paymentTransactionId: providerRef,
+                },
+            });
+            await tx.enrollmentPackage.updateMany({
+                where: {
+                    enrollmentId: intent.enrollmentId,
+                    status: "PENDING_PAYMENT",
+                },
+                data: {
+                    status: "ACTIVE",
+                    paymentTransactionId: providerRef,
+                },
+            });
+        }
         await tx.paymentReceipt.upsert({
             where: { paymentIntentId },
             update: {},
@@ -600,6 +661,18 @@ async function recordNegativePaymentOutcome(paymentIntentId, providerRef, eventT
                 where: { paymentIntentId },
                 data: { status: "FAILED", providerRef },
             });
+            if (intent.enrollmentPackageId) {
+                await tx.enrollmentPackage.updateMany({
+                    where: {
+                        enrollmentPackageId: intent.enrollmentPackageId,
+                        status: "PENDING_PAYMENT",
+                    },
+                    data: {
+                        status: "CANCELLED",
+                    },
+                });
+                return failedIntent;
+            }
             const cancelled = await tx.enrollment.updateMany({
                 where: {
                     enrollmentId: intent.enrollmentId,

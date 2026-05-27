@@ -17,8 +17,10 @@ function getIctMonthWindow(periodMonth) {
         throw new Error("INVALID_PERIOD_MONTH");
     }
     return {
+        // Start: 1st of month at 00:00:00 ICT = 17:00 prev-day UTC
         start: new Date(Date.UTC(year, month - 1, 1, -7, 0, 0, 0)),
-        end: new Date(Date.UTC(year, month, 1, -7, 0, 0, 0) - 1),
+        // End: last day of month at 12:00:00 ICT = 05:00:00 UTC same day
+        end: new Date(Date.UTC(year, month, 0, 5, 0, 0, 0)),
     };
 }
 function formatIctPeriodMonth(date = new Date()) {
@@ -37,14 +39,16 @@ function calculateCommissionRate(volumeTHB) {
     }
     return 0.4 + volumeTHB / 200000;
 }
+// Tier breakpoints for nextTarget display — rate formula is unchanged.
+// Linear section (below ฿20K): steps every ฿2–5K.
+// Exponential section (฿20K+): ~1.5–2× steps for visible progress.
+const TIER_BREAKPOINTS = [
+    2_000, 5_000, 10_000, 15_000, 20_000,
+    30_000, 50_000, 70_000, 100_000,
+    150_000, 200_000, 300_000, 500_000,
+];
 function calculateCommissionInfo(volumeTHB) {
-    let nextTarget = 20000;
-    if (volumeTHB >= 20000 && volumeTHB < 100000)
-        nextTarget = 100000;
-    else if (volumeTHB >= 100000 && volumeTHB < 500000)
-        nextTarget = 500000;
-    else if (volumeTHB >= 500000)
-        nextTarget = 0;
+    const nextTarget = TIER_BREAKPOINTS.find((t) => t > volumeTHB) ?? 0;
     return {
         rate: calculateCommissionRate(volumeTHB),
         nextTarget,

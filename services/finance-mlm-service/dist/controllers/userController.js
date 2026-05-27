@@ -1,14 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.anonymizeUser = exports.suspendUser = exports.verifyUser = exports.getUserDetails = exports.getUsers = void 0;
+exports.anonymizeUser = exports.updateOmiseRecipient = exports.suspendUser = exports.verifyUser = exports.getUserDetails = exports.getUsers = void 0;
 const database_1 = require("@tutor-advantage/database");
+const omiseService_1 = require("../services/omiseService");
 const ACTIVE_CLASS_STATUSES = ["ACTIVE", "OPEN", "IN_PROGRESS", "PUBLISHED"];
 const ACTIVE_ENROLLMENT_STATUSES = ["ACTIVE", "CONFIRMED", "PAID"];
-const VERIFICATION_FIELDS = ["idCard", "bankBook", "address"];
+const VERIFICATION_FIELDS = ["idCard", "bankBook", "address", "taxInfo"];
 const fieldLabels = {
     idCard: "ID card",
     bankBook: "Bank book",
     address: "Address",
+    taxInfo: "Tax info",
 };
 const asSettings = (value) => value || {};
 function getSubmittedVerificationFields(settingsValue) {
@@ -206,7 +208,7 @@ const verifyUser = async (req, res) => {
     try {
         const user = await database_1.prisma.user.findUnique({
             where: { userId: id },
-            select: { settings: true },
+            select: { settings: true, displayName: true, email: true },
         });
         if (!user) {
             return res.status(404).json({ error: "User not found" });
@@ -258,6 +260,39 @@ const verifyUser = async (req, res) => {
             where: { userId: id },
             data,
         });
+        // Auto-create Omise recipient when bankBook is verified and not yet created
+        const bankBookNowVerified = status === "VERIFIED" &&
+            (normalizedField === "bankBook" || normalizedField === "ALL");
+        if (bankBookNowVerified && (0, omiseService_1.isOmiseConfigured)()) {
+            const accountNumber = currentSettings.bankAccountNumber;
+            const bankBrand = currentSettings.bankBrand;
+            const existingRecipientId = currentSettings.omiseRecipientId;
+            if (accountNumber && bankBrand && !existingRecipientId) {
+                try {
+                    const recipient = await (0, omiseService_1.createOmiseRecipient)({
+                        name: user.displayName || `Tutor ${id}`,
+                        email: user.email || undefined,
+                        bankAccountBrand: bankBrand,
+                        bankAccountNumber: accountNumber,
+                        bankAccountName: user.displayName || `Tutor ${id}`,
+                    });
+                    await database_1.prisma.user.update({
+                        where: { userId: id },
+                        data: {
+                            settings: {
+                                ...(data.settings ?? currentSettings),
+                                omiseRecipientId: recipient.id,
+                            },
+                        },
+                    });
+                    console.log(`[verifyUser] Created Omise recipient ${recipient.id} for tutor ${id}`);
+                }
+                catch (omiseError) {
+                    // Non-fatal: log and continue — admin can set recipient ID manually
+                    console.error(`[verifyUser] Failed to auto-create Omise recipient for ${id}:`, omiseError.message);
+                }
+            }
+        }
         res.status(200).json({
             success: true,
             message: `User ${id} ${field || "all"} verification status updated to ${status}`,
@@ -299,6 +334,51 @@ const suspendUser = async (req, res) => {
     }
 };
 exports.suspendUser = suspendUser;
+const updateOmiseRecipient = async (req, res) => {
+    if (req.user?.role !== "ADMIN") {
+        return res.status(403).json({ error: "Forbidden: Requires Admin privileges" });
+    }
+    const { id } = req.params;
+    const { omiseRecipientId } = req.body;
+    if (typeof omiseRecipientId !== "string") {
+        return res.status(400).json({ error: "omiseRecipientId must be a string" });
+    }
+    const trimmed = omiseRecipientId.trim();
+    if (trimmed && !trimmed.startsWith("recp_")) {
+        return res.status(400).json({ error: "Invalid Omise recipient ID format (must start with recp_)" });
+    }
+    try {
+        const user = await database_1.prisma.user.findUnique({
+            where: { userId: id },
+            select: { settings: true, role: true },
+        });
+        if (!user)
+            return res.status(404).json({ error: "User not found" });
+        if (user.role !== "TUTOR")
+            return res.status(400).json({ error: "User is not a TUTOR" });
+        const currentSettings = asSettings(user.settings);
+        const updatedSettings = { ...currentSettings };
+        if (trimmed) {
+            updatedSettings.omiseRecipientId = trimmed;
+        }
+        else {
+            delete updatedSettings.omiseRecipientId;
+        }
+        await database_1.prisma.user.update({
+            where: { userId: id },
+            data: { settings: updatedSettings },
+        });
+        return res.status(200).json({
+            message: "Omise recipient ID updated",
+            omiseRecipientId: trimmed || null,
+        });
+    }
+    catch (error) {
+        console.error("Update Omise Recipient Error:", error);
+        return res.status(500).json({ error: "Could not update Omise recipient ID" });
+    }
+};
+exports.updateOmiseRecipient = updateOmiseRecipient;
 const anonymizeUser = async (req, res) => {
     if (req.user?.role !== "ADMIN") {
         return res.status(403).json({ error: "Forbidden: Requires Super Admin privileges" });

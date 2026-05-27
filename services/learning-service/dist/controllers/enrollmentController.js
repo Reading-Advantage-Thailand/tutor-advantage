@@ -4,6 +4,45 @@ exports.getReferralDetails = getReferralDetails;
 exports.enrollStudent = enrollStudent;
 exports.directEnroll = directEnroll;
 const database_1 = require("@tutor-advantage/database");
+async function ensureEnrollmentPackageForClass(tx, enrollment) {
+    const cls = await tx.class.findUnique({
+        where: { classId: enrollment.classId },
+        select: { classId: true, bookId: true, packagePriceMinor: true },
+    });
+    if (!cls)
+        return null;
+    let cycle = await tx.classBookCycle.findFirst({
+        where: { classId: cls.classId, bookId: cls.bookId },
+        orderBy: { sequence: "asc" },
+    });
+    if (!cycle) {
+        cycle = await tx.classBookCycle.create({
+            data: {
+                classId: cls.classId,
+                bookId: cls.bookId,
+                sequence: 1,
+                status: "OPEN",
+                packagePriceMinor: cls.packagePriceMinor,
+            },
+        });
+    }
+    return tx.enrollmentPackage.upsert({
+        where: {
+            enrollmentId_classBookCycleId: {
+                enrollmentId: enrollment.enrollmentId,
+                classBookCycleId: cycle.classBookCycleId,
+            },
+        },
+        create: {
+            enrollmentId: enrollment.enrollmentId,
+            classBookCycleId: cycle.classBookCycleId,
+            studentUserId: enrollment.studentUserId,
+            status: enrollment.status,
+            paymentTransactionId: enrollment.paymentTransactionId,
+        },
+        update: {},
+    });
+}
 async function getReferralDetails(req, res) {
     try {
         const { referralToken } = req.params;
@@ -136,6 +175,7 @@ async function enrollStudent(req, res) {
                 orderBy: { createdAt: "desc" },
             });
             if (existing) {
+                await ensureEnrollmentPackageForClass(tx, existing);
                 return {
                     enrollmentId: existing.enrollmentId,
                     classId: existing.classId,
@@ -160,6 +200,7 @@ async function enrollStudent(req, res) {
                     },
                 },
             });
+            await ensureEnrollmentPackageForClass(tx, enrollment);
             return {
                 enrollmentId: enrollment.enrollmentId,
                 classId: enrollment.classId,
@@ -252,6 +293,7 @@ async function directEnroll(req, res) {
                 orderBy: { createdAt: "desc" },
             });
             if (existing) {
+                await ensureEnrollmentPackageForClass(tx, existing);
                 return { ...existing, placedByFallback };
             }
             // 3. Create enrollment
@@ -267,6 +309,7 @@ async function directEnroll(req, res) {
                 where: { classId: targetClassId },
                 data: { enrolledCount: { increment: 1 } }
             });
+            await ensureEnrollmentPackageForClass(tx, enrollment);
             return { ...enrollment, placedByFallback };
         });
         return res.status(200).json({

@@ -50,20 +50,39 @@ async function getEarningsHistory(req, res) {
         const periodMonth = (0, commissionService_1.formatIctPeriodMonth)();
         const { start: monthStart, end: monthEnd } = (0, commissionService_1.getIctMonthWindow)(periodMonth);
         const projection = await calculateTutorPeriodProjection(userId, periodMonth);
-        const currentAdjustments = await database_1.prisma.adjustment.findMany({
-            where: {
-                tutorUserId: userId,
-                status: "APPROVED",
-                amountMinor: { lt: 0 },
-                createdAt: { gte: monthStart, lte: monthEnd },
-            },
-        });
+        const [currentAdjustments, currentBadges] = await Promise.all([
+            database_1.prisma.adjustment.findMany({
+                where: {
+                    tutorUserId: userId,
+                    status: "APPROVED",
+                    amountMinor: { lt: 0 },
+                    createdAt: { gte: monthStart, lte: monthEnd },
+                },
+            }),
+            database_1.prisma.tutorBadge.findMany({
+                where: { tutorUserId: userId },
+                select: { badgeCode: true },
+            }),
+        ]);
         const currentClawbackTHB = currentAdjustments.reduce((sum, adj) => sum + Number(adj.amountMinor) / 100, 0);
+        // Badge bonus amounts in satang — must match settlementService.BADGE_BONUS_SATANG
+        const BADGE_BONUS_SATANG = {
+            ELITE_EDUCATOR: 50000,
+            TOP_RATED: 30000,
+            CLASS_MASTER: 20000,
+            NETWORK_BUILDER: 10000,
+            RISING_STAR: 5000,
+            FAST_RESPONDER: 5000,
+            AI_PIONEER: 5000,
+        };
+        const badgeBonusSatang = currentBadges.reduce((sum, b) => sum + (BADGE_BONUS_SATANG[b.badgeCode] ?? 0), 0);
+        const badgeBonusTHB = badgeBonusSatang / 100;
         const currentProjection = {
             directSales: Math.round(projection.directSalesTHB),
             networkBonus: Math.round(projection.networkBonusTHB),
+            badgeBonus: Math.round(badgeBonusTHB),
             clawback: Math.round(currentClawbackTHB),
-            total: Math.round(projection.totalPayoutTHB + currentClawbackTHB),
+            total: Math.round(projection.totalPayoutTHB + badgeBonusTHB + currentClawbackTHB),
         };
         // 2. Past History
         const pastLines = await database_1.prisma.payoutLine.findMany({
@@ -85,10 +104,13 @@ async function getEarningsHistory(req, res) {
             const periodProjection = await calculateTutorPeriodProjection(userId, line.settlementRun.periodMonth);
             const networkAmount = Math.min(totalAmount, Math.max(0, periodProjection.networkBonusTHB));
             const clawback = clawbackByRun.get(line.settlementRunId) || 0;
+            const badgeBonus = Math.round(Number(line.badgeBonusMinor) / 100);
             return {
                 date: line.settlementRun.periodMonth,
-                direct: Math.round(totalAmount - networkAmount),
+                // Separate badge bonus out of direct so the frontend can show it as its own line
+                direct: Math.round(totalAmount - networkAmount - badgeBonus),
                 network: Math.round(networkAmount),
+                badgeBonus,
                 clawback: Math.round(clawback),
                 withholdingTax: Math.round(Number(line.withholdingTaxMinor) / 100),
                 netPayout: Math.round(Number(line.netPayoutMinor) / 100),
@@ -98,6 +120,8 @@ async function getEarningsHistory(req, res) {
                         documentType: line.payoutDocument.documentType,
                         status: line.payoutDocument.status,
                         issuedAt: line.payoutDocument.issuedAt,
+                        transferStatus: line.payoutDocument.transferStatus,
+                        transferredAt: line.payoutDocument.transferredAt,
                     }
                     : null,
                 status: line.settlementRun.status.toLowerCase(),

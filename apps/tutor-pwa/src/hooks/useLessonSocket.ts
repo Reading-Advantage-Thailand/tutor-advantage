@@ -11,7 +11,14 @@ type TutorSessionData = {
   phaseSelectedIndices?: Record<number, number>;
 };
 
-export const useLessonSocket = (tutorId: string, articleId: string, classId?: string, socketUrl?: string) => {
+export const useLessonSocket = (
+  tutorId: string,
+  articleId: string,
+  classId?: string,
+  socketUrl?: string,
+  classBookCycleId?: string,
+  bookId?: string,
+) => {
   const SOCKET_URL = socketUrl || 'http://localhost:3002';
   const [socket, setSocket] = useState<Socket | null>(null);
   const [sessionData, setSessionData] = useState<TutorSessionData | null>(null);
@@ -59,7 +66,7 @@ export const useLessonSocket = (tutorId: string, articleId: string, classId?: st
         socketInstance.on('connect', () => {
           console.log('Connected to Learning Service WebSocket');
           // Auto create session on connect for Tutor with the selected article and classId
-          socketInstance.emit('create_session', { tutorId, articleId, classId });
+          socketInstance.emit('create_session', { tutorId, articleId, classId, classBookCycleId, bookId });
         });
 
         socketInstance.on('connect_error', (err) => {
@@ -137,7 +144,7 @@ export const useLessonSocket = (tutorId: string, articleId: string, classId?: st
         socketRef.current = null;
       }
     };
-  }, [tutorId, articleId, classId]);
+  }, [tutorId, articleId, classId, classBookCycleId, bookId]);
 
   const changePhase = (phase: number) => {
     if (socketRef.current && sessionData) {

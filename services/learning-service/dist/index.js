@@ -76,6 +76,8 @@ app.get("/v1/classes/:classId", authMiddleware_1.authMiddleware, classController
 app.delete("/v1/classes/:classId", authMiddleware_1.authMiddleware, classController_1.deleteClass);
 app.patch("/v1/classes/:classId/meeting-url", authMiddleware_1.authMiddleware, classController_1.updateMeetingUrl);
 app.get("/v1/classes/:classId/articles", authMiddleware_1.authMiddleware, classController_1.getClassArticles);
+app.post("/v1/classes/:classId/book-cycles", authMiddleware_1.authMiddleware, classController_1.createClassBookCycle);
+app.post("/v1/classes/:classId/book-cycles/:cycleId/access", authMiddleware_1.authMiddleware, classController_1.prepareClassBookCycleAccess);
 // Protected Referral Routes
 app.post("/v1/referrals/generate", authMiddleware_1.authMiddleware, referralController_1.generateReferral);
 // Protected Enrollment Route

@@ -85,6 +85,9 @@ export const studentApi = {
   },
   getClassDetails: (classId: string) => fetchWithAuth(`/classes/${classId}`),
   getClassArticles: (classId: string) => fetchWithAuth(`/classes/${classId}/articles`),
+  prepareClassBookCycleAccess: (classId: string, cycleId: string) => fetchWithAuth(`/classes/${classId}/book-cycles/${cycleId}/access`, {
+    method: 'POST',
+  }),
   getClassReview: (classId: string) => fetchWithAuth(`/classes/${classId}/review`),
   submitClassReview: (classId: string, payload: { rating: number; comment?: string }) => fetchWithAuth(`/classes/${classId}/review`, {
     method: 'POST',
@@ -116,6 +119,7 @@ export const studentApi = {
   getPaymentQrCode: (paymentIntentId: string) => fetchWithAuth(`/payments/${paymentIntentId}/qr-code`, {}, FINANCE_API_BASE),
   createPaymentIntent: (payload: {
     enrollmentId: string;
+    enrollmentPackageId?: string;
     amountSatang: number;
     method: 'promptpay' | 'card';
     omiseToken?: string;

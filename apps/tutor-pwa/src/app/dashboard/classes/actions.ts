@@ -135,7 +135,7 @@ export async function updateMeetingUrl(classId: string, meetingUrl: string) {
   return res.json();
 }
 
-export async function getClassArticles(classId: string) {
+export async function getClassArticles(classId: string, cycleId?: string) {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value;
   
@@ -143,7 +143,8 @@ export async function getClassArticles(classId: string) {
     throw new Error("Unauthorized");
   }
 
-  const res = await fetch(`${LEARNING_URL}/v1/classes/${classId}/articles`, {
+  const query = cycleId ? `?cycleId=${encodeURIComponent(cycleId)}` : "";
+  const res = await fetch(`${LEARNING_URL}/v1/classes/${classId}/articles${query}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -155,5 +156,32 @@ export async function getClassArticles(classId: string) {
     throw new Error(`Failed to fetch class articles: ${errText || res.statusText}`);
   }
  
+  return res.json();
+}
+
+export async function createClassBookCycle(classId: string, payload: { bookId: string; packagePriceSatang: number }) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("tutor_session")?.value;
+  
+  if (!token) {
+    throw new Error("Unauthorized");
+  }
+
+  const res = await fetch(`${LEARNING_URL}/v1/classes/${classId}/book-cycles`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(payload)
+  });
+  
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(getClassActionErrorMessage(err, t("tutorClass.errors.createClass")));
+  }
+
+  revalidatePath("/dashboard/classes");
+  revalidatePath(`/dashboard/classes/${classId}`);
   return res.json();
 }

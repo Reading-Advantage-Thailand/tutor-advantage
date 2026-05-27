@@ -25,7 +25,14 @@ export const resolveUserId = async (inputId: string): Promise<string | null> => 
   return null;
 };
 
-export const persistSessionStart = async (sessionId: string, tutorId: string, articleId: string, classId?: string) => {
+export const persistSessionStart = async (
+  sessionId: string,
+  tutorId: string,
+  articleId: string,
+  classId?: string,
+  classBookCycleId?: string,
+  bookId?: string,
+) => {
   try {
     let resolvedTutorId = await resolveUserId(tutorId);
     
@@ -57,6 +64,8 @@ export const persistSessionStart = async (sessionId: string, tutorId: string, ar
 
     // Validate classId format before inserting into DB (must be UUID)
     const dbClassId = (classId && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(classId)) ? classId : null;
+    const dbClassBookCycleId = (classBookCycleId && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(classBookCycleId)) ? classBookCycleId : null;
+    const dbBookId = (bookId && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(bookId)) ? bookId : null;
 
     // Ensure InteractiveSession entry exists
     await prisma.interactiveSession.upsert({
@@ -66,10 +75,14 @@ export const persistSessionStart = async (sessionId: string, tutorId: string, ar
         tutorUserId: resolvedTutorId,
         articleId,
         classId: dbClassId,
+        classBookCycleId: dbClassBookCycleId,
+        bookId: dbBookId,
         status: "ACTIVE"
       },
       update: {
-        status: "ACTIVE" // reopen if needed
+        status: "ACTIVE", // reopen if needed
+        classBookCycleId: dbClassBookCycleId,
+        bookId: dbBookId,
       }
     });
   } catch (error) {
