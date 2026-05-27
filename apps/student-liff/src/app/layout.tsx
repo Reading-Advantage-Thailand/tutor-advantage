@@ -6,6 +6,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { t } from "@/lib/i18n";
+import { DevToolbar } from "@/components/dev/DevToolbar";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -65,6 +66,7 @@ export default function RootLayout({
           <LiffProvider>
             <div className="liff-root">{children}</div>
             <Toaster position="top-center" richColors />
+            {process.env.NODE_ENV === "development" && <DevToolbar />}
           </LiffProvider>
         </ThemeProvider>
       </body>

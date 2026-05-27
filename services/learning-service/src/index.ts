@@ -29,6 +29,8 @@ import {
   updateMeetingUrl,
   getAvailableClasses,
   getClassArticles,
+  createClassBookCycle,
+  prepareClassBookCycleAccess,
 } from "./controllers/classController";
 import { generateReferral } from "./controllers/referralController";
 import {
@@ -51,6 +53,12 @@ import { getPerformanceSummary } from "./controllers/performanceController";
 import { getMyTutorReviewForClass, submitTutorReview } from "./controllers/reviewController";
 import { getNotificationSummary } from "./controllers/notificationsController";
 import { getStudentLessonHistory, getLessonSessionDetails } from "./controllers/lessonHistoryController";
+import {
+  devOnly,
+  devSeedLessonHistory,
+  devPurgeLessonHistory,
+  devActivateEnrollments,
+} from "./controllers/devController";
 
 const app = express();
 const port = process.env.PORT || 3002;
@@ -107,6 +115,8 @@ app.get("/v1/classes/:classId", authMiddleware, getClassById);
 app.delete("/v1/classes/:classId", authMiddleware, deleteClass);
 app.patch("/v1/classes/:classId/meeting-url", authMiddleware, updateMeetingUrl);
 app.get("/v1/classes/:classId/articles", authMiddleware, getClassArticles);
+app.post("/v1/classes/:classId/book-cycles", authMiddleware, createClassBookCycle);
+app.post("/v1/classes/:classId/book-cycles/:cycleId/access", authMiddleware, prepareClassBookCycleAccess);
 
 // Protected Referral Routes
 app.post("/v1/referrals/generate", authMiddleware, generateReferral);
@@ -161,6 +171,11 @@ app.post("/v1/classes/:classId/review", authMiddleware, submitTutorReview);
 
 // Protected Notifications Summary
 app.get("/v1/notifications/summary", authMiddleware, getNotificationSummary);
+
+// Dev-only routes (blocked in production by devOnly middleware)
+app.post("/v1/dev/seed/lesson-history", devOnly, authMiddleware, devSeedLessonHistory);
+app.delete("/v1/dev/seed/lesson-history", devOnly, authMiddleware, devPurgeLessonHistory);
+app.post("/v1/dev/seed/enrollments/activate", devOnly, authMiddleware, devActivateEnrollments);
 
 // Apply error handler last
 app.use(errorHandlerMiddleware);
