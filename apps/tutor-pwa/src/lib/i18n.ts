@@ -588,6 +588,8 @@ export const th = {
       finishLesson: "จบคาบเรียน (เสร็จสิ้น)",
       startNewRound: "เริ่มรอบใหม่ต่อเนื่อง",
       studentsInClass: "นักเรียนในคลาส",
+      enterFullscreen: "เต็มหน้าจอ",
+      exitFullscreen: "ออกเต็มจอ",
       processing: "กำลังประมวลผล...",
       waitingAnswers: "รอคำตอบจากนักเรียน...",
       nextPhase: "Phase ถัดไป",

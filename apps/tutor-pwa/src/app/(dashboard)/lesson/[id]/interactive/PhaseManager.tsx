@@ -1,7 +1,7 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { ArticleDisplay } from './ArticleDisplay';
-import { ChevronRight, Check } from 'lucide-react';
+import { ChevronRight, Check, Maximize2, Minimize2 } from 'lucide-react';
 import { playSound } from '@/lib/sounds';
 import { t } from '@/lib/i18n';
 import confetti from 'canvas-confetti';
@@ -128,6 +128,73 @@ function LiveLeaderboard({ participants }: { participants: any[] }) {
   );
 }
 
+function FitToViewport({
+  enabled,
+  children,
+}: {
+  enabled: boolean;
+  children: React.ReactNode;
+}) {
+  const frameRef = React.useRef<HTMLDivElement>(null);
+  const contentRef = React.useRef<HTMLDivElement>(null);
+  const [scale, setScale] = React.useState(1);
+
+  React.useLayoutEffect(() => {
+    if (!enabled) {
+      setScale(1);
+      return;
+    }
+
+    let frame = 0;
+    const measure = () => {
+      frame = window.requestAnimationFrame(() => {
+        const frameEl = frameRef.current;
+        const contentEl = contentRef.current;
+        if (!frameEl || !contentEl) return;
+
+        const availableWidth = frameEl.clientWidth;
+        const availableHeight = frameEl.clientHeight;
+        const contentWidth = contentEl.scrollWidth;
+        const contentHeight = contentEl.scrollHeight;
+
+        if (!availableWidth || !availableHeight || !contentWidth || !contentHeight) {
+          setScale(1);
+          return;
+        }
+
+        setScale(Math.min(1, availableWidth / contentWidth, availableHeight / contentHeight));
+      });
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    if (frameRef.current) observer.observe(frameRef.current);
+    if (contentRef.current) observer.observe(contentRef.current);
+    window.addEventListener('resize', measure);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [enabled, children]);
+
+  return (
+    <div ref={frameRef} className={`flex-1 min-h-0 ${enabled ? 'overflow-hidden' : 'overflow-visible'}`}>
+      <div
+        ref={contentRef}
+        className="flex h-full min-h-0 w-full flex-col"
+        style={{
+          transform: enabled ? `scale(${scale})` : undefined,
+          transformOrigin: 'top center',
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export const PhaseManager: React.FC<PhaseManagerProps> = ({
   currentPhase,
   participants,
@@ -140,6 +207,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 }) => {
   const [isChangingPhase, setIsChangingPhase] = React.useState(false);
   const [canProceedDelayed, setCanProceedDelayed] = React.useState(false);
+  const [isFullscreen, setIsFullscreen] = React.useState(false);
+  const fullscreenRef = React.useRef<HTMLDivElement>(null);
   
   // Reset loading state when phase actually changes
   React.useEffect(() => {
@@ -183,13 +252,61 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullscreen && !document.fullscreenElement) {
+        setIsFullscreen(false);
+        return;
+      }
+
       if (e.key === 'ArrowRight' && canProceedDelayed && !isChangingPhase) {
         handleNextPhase();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleNextPhase, canProceedDelayed, isChangingPhase, currentPhase]);
+  }, [handleNextPhase, canProceedDelayed, isChangingPhase, currentPhase, isFullscreen]);
+
+  React.useEffect(() => {
+    const fullscreenElement = fullscreenRef.current;
+    const handleFullscreenChange = () => {
+      setIsFullscreen(document.fullscreenElement === fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      if (document.fullscreenElement === fullscreenElement) {
+        document.exitFullscreen().catch(() => undefined);
+      }
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (!isFullscreen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isFullscreen]);
+
+  const toggleFullscreen = React.useCallback(async () => {
+    const fullscreenElement = fullscreenRef.current;
+
+    if (isFullscreen) {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen().catch(() => undefined);
+      }
+      setIsFullscreen(false);
+      return;
+    }
+
+    setIsFullscreen(true);
+    if (fullscreenElement?.requestFullscreen) {
+      await fullscreenElement.requestFullscreen().catch(() => undefined);
+    }
+  }, [isFullscreen]);
 
   // Confetti effect when results are ready
   React.useEffect(() => {
@@ -897,7 +1014,14 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col relative">
+    <div
+      ref={fullscreenRef}
+      className={`flex flex-col relative bg-background ${
+        isFullscreen
+          ? 'fixed inset-0 z-[100] h-dvh w-screen overflow-hidden p-3 md:p-5'
+          : 'flex-1'
+      }`}
+    >
       {/* Warning Overlay when everyone left */}
       {currentPhase > 0 && participants.length === 0 && (
         <div className="absolute inset-0 z-50 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl animate-in fade-in">
@@ -917,19 +1041,32 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         </div>
       )}
 
-      {renderPhaseProgressBar()}
-      {renderPhaseContent()}
+      <div className={isFullscreen ? 'shrink-0 [&>div]:mb-3 [&>div]:rounded-xl [&>div]:p-3' : 'shrink-0'}>
+        {renderPhaseProgressBar()}
+      </div>
+      <FitToViewport enabled={isFullscreen}>
+        {renderPhaseContent()}
+      </FitToViewport>
       
-      <div className="mt-auto pt-6 border-t border-border flex justify-between items-center">
-        <div className="flex items-center gap-4">
+      <div className={`${isFullscreen ? 'mt-3 pt-3' : 'mt-auto pt-6'} shrink-0 border-t border-border flex flex-col gap-3 lg:flex-row lg:justify-between lg:items-center`}>
+        <div className="flex flex-wrap items-center gap-3">
           <div className="text-sm text-muted-foreground font-medium">
             {totalParticipants} {t("lesson.interactive.studentsInClass")}
           </div>
 
+          <button
+            onClick={toggleFullscreen}
+            title={isFullscreen ? t("lesson.interactive.exitFullscreen") : t("lesson.interactive.enterFullscreen")}
+            className="px-3 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-lg hover:bg-primary/20 transition-colors flex items-center gap-1.5"
+          >
+            {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+            {isFullscreen ? t("lesson.interactive.exitFullscreen") : t("lesson.interactive.enterFullscreen")}
+          </button>
+
           {/* Always Available Return to Lobby */}
           <button 
             onClick={() => changePhase(0)}
-            className="px-3 py-1.5 bg-destructive/10 text-destructive text-sm font-semibold rounded-lg hover:bg-destructive/20 transition-colors ml-2"
+            className="px-3 py-1.5 bg-destructive/10 text-destructive text-sm font-semibold rounded-lg hover:bg-destructive/20 transition-colors"
           >
             {t("lesson.interactive.returnLobby")}
           </button>
@@ -967,7 +1104,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         <button
           onClick={handleNextPhase}
           disabled={!canProceedDelayed || isChangingPhase}
-          className={`px-8 py-3 rounded-xl font-bold text-lg transition-all duration-200 flex items-center gap-2 ${
+          className={`px-8 py-3 rounded-xl font-bold text-lg transition-all duration-200 flex items-center justify-center gap-2 ${
             !canProceedDelayed || isChangingPhase
               ? 'bg-muted text-muted-foreground cursor-not-allowed'
               : 'bg-primary text-primary-foreground hover:opacity-90 shadow-lg active:scale-95'
