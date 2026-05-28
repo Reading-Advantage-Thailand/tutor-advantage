@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { LEARNING_URL } from "@/lib/service-urls";
-import { ReferralLink, ArticleSelector, ClassStatusToggle, MeetingUrlEditor, StudentAvatars } from "./client-components";
+import { ReferralLink, ArticleSelector, ClassStatusToggle, MeetingUrlEditor, StudentAvatars, DevClassSimulator } from "./client-components";
 import { notFound } from "next/navigation";
 
 async function getClassData(classId: string, token: string) {
@@ -116,8 +116,11 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
         </div>
 
         {/* Right Column (Article Selector) */}
-        <div className="lg:col-span-7">
+        <div className="lg:col-span-7 space-y-4 lg:space-y-6">
           <ArticleSelector classId={classId} bookCycles={cls.bookCycles || []} />
+          {process.env.NODE_ENV === "development" && (
+            <DevClassSimulator classId={classId} />
+          )}
         </div>
       </div>
     </div>

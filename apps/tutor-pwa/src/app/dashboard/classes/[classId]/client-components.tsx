@@ -14,6 +14,9 @@ import {
   ChevronRight,
   Video,
   ExternalLink,
+  FlaskConical,
+  Users2,
+  Loader2,
 } from "lucide-react";
 import {
   updateClassStatus,
@@ -22,6 +25,7 @@ import {
   getClassArticles,
   createClassBookCycle,
   getBooks,
+  devSeedClassAllProgress,
 } from "./../actions";
 import { useRouter } from "next/navigation";
 import {
@@ -748,5 +752,97 @@ export function StudentAvatars({
         </div>
       ))}
     </div>
+  );
+}
+
+// ─── DEV ONLY ─────────────────────────────────────────────────────────────────
+// DevClassSimulator: appears only in development. Completes all lessons for
+// every enrolled student in one click — useful for testing the upclass flow.
+
+type SeedResult = {
+  className: string;
+  bookTitle: string;
+  studentsProcessed: number;
+  articlesTotal: number;
+  sessionsCreated: number;
+  skipped: number;
+};
+
+export function DevClassSimulator({ classId }: { classId: string }) {
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<SeedResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSeed = async () => {
+    setLoading(true);
+    setResult(null);
+    setError(null);
+    try {
+      const data = await devSeedClassAllProgress(classId);
+      setResult(data);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unknown error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Card className="border-2 border-dashed border-amber-400/60 bg-amber-50/40 dark:bg-amber-950/20">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm font-semibold flex items-center gap-2 text-amber-700 dark:text-amber-400">
+          <FlaskConical className="h-4 w-4" />
+          DEV — Simulate Class Completion
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <p className="text-xs text-muted-foreground">
+          Seeds FINISHED sessions for <strong>all enrolled students</strong> across every article in this book.
+          Use this to set up an "upclass" test scenario.
+        </p>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleSeed}
+          disabled={loading}
+          className="gap-2 border-amber-400 text-amber-700 hover:bg-amber-100 dark:text-amber-400 dark:hover:bg-amber-950/40"
+        >
+          {loading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Users2 className="h-4 w-4" />
+          )}
+          {loading ? "Seeding…" : "Complete all lessons for all students"}
+        </Button>
+
+        {result && (
+          <div className="rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 p-3 text-xs space-y-1">
+            <p className="font-semibold text-green-700 dark:text-green-400">✓ Done — {result.className}</p>
+            <p className="text-muted-foreground">Book: {result.bookTitle}</p>
+            <div className="grid grid-cols-3 gap-2 pt-1">
+              <div className="text-center">
+                <p className="text-lg font-bold text-foreground">{result.studentsProcessed}</p>
+                <p className="text-muted-foreground">students</p>
+              </div>
+              <div className="text-center">
+                <p className="text-lg font-bold text-foreground">{result.sessionsCreated}</p>
+                <p className="text-muted-foreground">sessions created</p>
+              </div>
+              <div className="text-center">
+                <p className="text-lg font-bold text-foreground">{result.skipped}</p>
+                <p className="text-muted-foreground">skipped</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 p-3 text-xs text-red-700 dark:text-red-400">
+            ✗ {error}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

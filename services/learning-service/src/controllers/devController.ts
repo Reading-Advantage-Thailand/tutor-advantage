@@ -312,6 +312,107 @@ export async function devActivateEnrollments(req: AuthenticatedRequest, res: Res
   return res.status(200).json({ activated: result.count });
 }
 
+// ─── POST /v1/dev/seed/class-all-progress ────────────────────────────────────
+// Seeds FINISHED InteractiveSessions + participations for EVERY enrolled student
+// in a given class. Useful for simulating a fully-completed classroom before
+// testing the upclass / book-cycle progression flow.
+
+export async function devSeedClassAllProgress(req: AuthenticatedRequest, res: Response) {
+  const { classId } = req.body as { classId?: string };
+  if (!classId) return res.status(400).json({ error: "classId is required" });
+
+  // 1. Fetch class with its book + all articles
+  const cls = await prisma.class.findUnique({
+    where: { classId },
+    include: {
+      book: { include: { articles: { orderBy: { articleId: "asc" } } } },
+    },
+  });
+  if (!cls) return res.status(404).json({ error: "Class not found" });
+
+  // 2. Get all ACTIVE enrolled students
+  const enrollments = await prisma.enrollment.findMany({
+    where: { classId, status: "ACTIVE" },
+    select: { studentUserId: true },
+  });
+  if (enrollments.length === 0) {
+    return res.status(404).json({ error: "No active enrollments — activate enrollments first" });
+  }
+
+  const studentIds = enrollments.map((e) => e.studentUserId);
+  const articles = cls.book.articles;
+  const now = Date.now();
+  const DAY_MS = 86_400_000;
+  let sessionsCreated = 0;
+  let skipped = 0;
+
+  // 3. For each article, create one FINISHED session with all students as participants
+  for (let i = 0; i < articles.length; i++) {
+    const article = articles[i];
+    const daysAgo = articles.length - 1 - i;
+    const sessionDate = new Date(now - daysAgo * DAY_MS);
+
+    // Skip if a FINISHED session already exists for this article in this class
+    const existing = await prisma.interactiveSession.findFirst({
+      where: { classId, articleId: article.articleId, status: "FINISHED" },
+    });
+    if (existing) { skipped++; continue; }
+
+    const session = await prisma.interactiveSession.create({
+      data: {
+        classId,
+        bookId: cls.bookId,
+        tutorUserId: cls.tutorUserId,
+        articleId: article.articleId,
+        status: "FINISHED",
+        createdAt: sessionDate,
+        updatedAt: new Date(sessionDate.getTime() + 30 * 60_000),
+      },
+    });
+
+    // Create participant + answer records for every enrolled student
+    for (const studentId of studentIds) {
+      const score = 60 + Math.floor(Math.random() * 40); // 60–100
+
+      await prisma.sessionParticipant.upsert({
+        where: { sessionId_studentUserId: { sessionId: session.sessionId, studentUserId: studentId } },
+        create: { sessionId: session.sessionId, studentUserId: studentId, score, joinedAt: sessionDate },
+        update: {},
+      });
+
+      await prisma.sessionAnswer.createMany({
+        data: [
+          {
+            sessionId: session.sessionId, studentUserId: studentId, phase: 1,
+            questionText: "[DEV] Vocabulary question", answerText: "Dev seeded answer",
+            correctAnswer: "Dev seeded answer", isCorrect: true,
+            score: Math.floor(score * 0.5), answeredAt: sessionDate,
+          },
+          {
+            sessionId: session.sessionId, studentUserId: studentId, phase: 2,
+            questionText: "[DEV] Comprehension question", answerText: "Dev seeded answer",
+            correctAnswer: "Dev seeded answer", isCorrect: score >= 70,
+            score: Math.floor(score * 0.5), answeredAt: sessionDate,
+          },
+        ],
+        skipDuplicates: true,
+      });
+    }
+
+    sessionsCreated++;
+  }
+
+  return res.status(201).json({
+    classId,
+    className: cls.title,
+    bookTitle: cls.book.title,
+    studentsProcessed: studentIds.length,
+    articlesTotal: articles.length,
+    sessionsCreated,
+    skipped,
+  });
+}
+
 // ─── Dev-only middleware ──────────────────────────────────────────────────────
 
 export function devOnly(_req: Request, res: Response, next: () => void) {

@@ -185,3 +185,33 @@ export async function createClassBookCycle(classId: string, payload: { bookId: s
   revalidatePath(`/dashboard/classes/${classId}`);
   return res.json();
 }
+
+
+export async function devSeedClassAllProgress(classId: string) {
+  if (process.env.NODE_ENV !== "development") {
+    throw new Error("Dev only");
+  }
+  const cookieStore = await cookies();
+  const token = cookieStore.get("tutor_session")?.value;
+  if (!token) throw new Error("Unauthorized");
+
+  const res = await fetch(`${LEARNING_URL}/v1/dev/seed/class-all-progress`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ classId }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error((err as { error?: string }).error ?? "Failed to seed class progress");
+  }
+  revalidatePath(`/dashboard/classes/${classId}`);
+  return res.json() as Promise<{
+    classId: string;
+    className: string;
+    bookTitle: string;
+    studentsProcessed: number;
+    articlesTotal: number;
+    sessionsCreated: number;
+    skipped: number;
+  }>;
+}

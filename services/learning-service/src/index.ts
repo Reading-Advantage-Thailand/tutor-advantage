@@ -59,6 +59,7 @@ import {
   devPurgeLessonHistory,
   devActivateEnrollments,
   devSeedFullProgress,
+  devSeedClassAllProgress,
 } from "./controllers/devController";
 
 const app = express();
@@ -178,6 +179,7 @@ app.post("/v1/dev/seed/lesson-history", devOnly, authMiddleware, devSeedLessonHi
 app.delete("/v1/dev/seed/lesson-history", devOnly, authMiddleware, devPurgeLessonHistory);
 app.post("/v1/dev/seed/full-progress", devOnly, authMiddleware, devSeedFullProgress);
 app.post("/v1/dev/seed/enrollments/activate", devOnly, authMiddleware, devActivateEnrollments);
+app.post("/v1/dev/seed/class-all-progress", devOnly, authMiddleware, devSeedClassAllProgress);
 
 // Apply error handler last
 app.use(errorHandlerMiddleware);
