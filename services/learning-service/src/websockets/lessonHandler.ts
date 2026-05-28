@@ -130,11 +130,18 @@ export const setupLessonSocket = (io: Server) => {
             status: "ACTIVE",
           },
         });
+        let cycle: {
+          sequence: number;
+          bookId: string;
+          packagePriceMinor: bigint | number | null;
+          book?: { title: string; bookCode: string } | null;
+          class: { bookId: string };
+        } | null = null;
 
         if (!activeAccess) {
-          const cycle = await prisma.classBookCycle.findUnique({
+          cycle = await prisma.classBookCycle.findUnique({
             where: { classBookCycleId: activeSession.classBookCycleId },
-            include: { class: true },
+            include: { book: true, class: true },
           });
 
           if (cycle?.sequence === 1 && cycle.bookId === cycle.class.bookId) {
@@ -160,7 +167,20 @@ export const setupLessonSocket = (io: Server) => {
 
         if (!activeAccess) {
           console.warn(`[Socket] Join denied: student ${studentId} has no ACTIVE access for cycle ${activeSession.classBookCycleId}`);
-          socket.emit("error", { message: "Please complete upgrade payment before joining this book." });
+          const paymentUrl = `/payment?classId=${classId}&cycleId=${activeSession.classBookCycleId}`;
+          socket.emit("payment_required", {
+            classId,
+            cycleId: activeSession.classBookCycleId,
+            bookId: activeSession.bookId,
+            bookTitle: cycle?.book?.title || "this book",
+            bookCode: cycle?.book?.bookCode || null,
+            packagePriceSatang:
+              cycle?.packagePriceMinor === undefined || cycle?.packagePriceMinor === null
+                ? null
+                : Number(cycle.packagePriceMinor),
+            paymentUrl,
+            message: "Please complete payment before joining this book.",
+          });
           return;
         }
       }

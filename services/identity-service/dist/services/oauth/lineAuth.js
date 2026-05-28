@@ -1,6 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyLineToken = verifyLineToken;
+function decodeLineTokenDebug(idToken) {
+    const [, payload] = idToken.split(".");
+    if (!payload) {
+        return null;
+    }
+    try {
+        const normalizedPayload = payload.replace(/-/g, "+").replace(/_/g, "/");
+        const paddedPayload = normalizedPayload.padEnd(normalizedPayload.length + ((4 - (normalizedPayload.length % 4)) % 4), "=");
+        const decoded = JSON.parse(Buffer.from(paddedPayload, "base64").toString("utf8"));
+        return {
+            aud: decoded.aud,
+            iss: decoded.iss,
+            exp: decoded.exp,
+            iat: decoded.iat,
+        };
+    }
+    catch {
+        return null;
+    }
+}
 /**
  * Verifies a LINE ID token with LINE's official endpoint.
  */
@@ -8,8 +28,20 @@ async function verifyLineToken(idToken) {
     try {
         const liffId = process.env.NEXT_PUBLIC_LIFF_ID;
         const clientId = process.env.LINE_CHANNEL_ID || liffId?.split("-")[0];
+        const tokenDebug = decodeLineTokenDebug(idToken);
         if (!clientId) {
             throw new Error("LINE_CHANNEL_ID or NEXT_PUBLIC_LIFF_ID is not configured");
+        }
+        if (process.env.NODE_ENV !== "production") {
+            console.info("[LINE] Verifying ID token", {
+                expectedClientId: clientId,
+                configuredLiffId: liffId,
+                tokenAudience: tokenDebug?.aud,
+                tokenIssuer: tokenDebug?.iss,
+                tokenExpiresAt: tokenDebug?.exp
+                    ? new Date(tokenDebug.exp * 1000).toISOString()
+                    : undefined,
+            });
         }
         const params = new URLSearchParams({
             id_token: idToken,
@@ -25,7 +57,7 @@ async function verifyLineToken(idToken) {
         const decoded = (await response.json());
         if (!response.ok || !decoded.sub) {
             const reason = decoded.error_description || decoded.error || "Invalid LINE ID Token";
-            throw new Error(reason);
+            throw new Error(`${reason} (expected client_id: ${clientId}, token aud: ${JSON.stringify(tokenDebug?.aud ?? null)})`);
         }
         if (!decoded.sub) {
             throw new Error("Invalid LINE ID Token");
@@ -39,6 +71,9 @@ async function verifyLineToken(idToken) {
     }
     catch (err) {
         console.error("LINE Token Verification Error:", err);
+        if (process.env.NODE_ENV !== "production" && err instanceof Error) {
+            throw new Error(err.message);
+        }
         throw new Error("Failed to verify LINE token");
     }
 }

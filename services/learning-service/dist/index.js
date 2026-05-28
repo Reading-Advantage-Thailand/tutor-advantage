@@ -7,13 +7,13 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
-const database_1 = require("@tutor-advantage/database");
 // Load the monorepo .env file from both ts-node src/ and compiled dist/ starts.
 dotenv_1.default.config({
     path: path_1.default.resolve(__dirname, "../../../.env"),
     override: true,
 });
 console.log(`[Learning] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
+const { prisma } = require("@tutor-advantage/database");
 const http_1 = require("http");
 const socket_io_1 = require("socket.io");
 const shared_config_1 = require("@tutor-advantage/shared-config");
@@ -28,6 +28,7 @@ const performanceController_1 = require("./controllers/performanceController");
 const reviewController_1 = require("./controllers/reviewController");
 const notificationsController_1 = require("./controllers/notificationsController");
 const lessonHistoryController_1 = require("./controllers/lessonHistoryController");
+const devController_1 = require("./controllers/devController");
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3002;
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "https://student-liff-1090865515742.asia-southeast1.run.app,https://resource-pushpin-tabby.ngrok-free.dev,http://localhost:3004,http://localhost:3005,http://localhost:3006").split(",").map((o) => o.trim());
@@ -56,7 +57,7 @@ app.use(shared_config_1.requestLoggerMiddleware);
 // Base endpoints — health check verifies DB connectivity
 app.get("/health", async (_req, res) => {
     try {
-        await database_1.prisma.$queryRaw `SELECT 1`;
+        await prisma.$queryRaw `SELECT 1`;
         res.status(200).json({ status: "ok", service: "learning-service" });
     }
     catch {
@@ -107,6 +108,12 @@ app.get("/v1/classes/:classId/review", authMiddleware_1.authMiddleware, reviewCo
 app.post("/v1/classes/:classId/review", authMiddleware_1.authMiddleware, reviewController_1.submitTutorReview);
 // Protected Notifications Summary
 app.get("/v1/notifications/summary", authMiddleware_1.authMiddleware, notificationsController_1.getNotificationSummary);
+// Dev-only routes (blocked in production by devOnly middleware)
+app.post("/v1/dev/seed/lesson-history", devController_1.devOnly, authMiddleware_1.authMiddleware, devController_1.devSeedLessonHistory);
+app.delete("/v1/dev/seed/lesson-history", devController_1.devOnly, authMiddleware_1.authMiddleware, devController_1.devPurgeLessonHistory);
+app.post("/v1/dev/seed/full-progress", devController_1.devOnly, authMiddleware_1.authMiddleware, devController_1.devSeedFullProgress);
+app.post("/v1/dev/seed/enrollments/activate", devController_1.devOnly, authMiddleware_1.authMiddleware, devController_1.devActivateEnrollments);
+app.post("/v1/dev/seed/class-all-progress", devController_1.devOnly, authMiddleware_1.authMiddleware, devController_1.devSeedClassAllProgress);
 // Apply error handler last
 app.use(shared_config_1.errorHandlerMiddleware);
 const httpServer = (0, http_1.createServer)(app);
@@ -138,7 +145,7 @@ const shutdown = (signal) => async () => {
     console.log(`[Learning] ${signal} received — shutting down gracefully`);
     io.close(() => {
         httpServer.close(async () => {
-            await database_1.prisma.$disconnect();
+            await prisma.$disconnect();
             console.log("[Learning] Shutdown complete");
             process.exit(0);
         });

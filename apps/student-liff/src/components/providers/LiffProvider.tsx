@@ -28,6 +28,29 @@ const LiffContext = createContext<LiffContextType>({
 
 export const useLiff = () => useContext(LiffContext);
 
+const ID_TOKEN_REFRESH_BUFFER_MS = 60_000;
+
+function getIdTokenExpiresAt(idToken: string): number | null {
+  const [, payload] = idToken.split(".");
+  if (!payload) return null;
+
+  try {
+    const normalizedPayload = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const paddedPayload = normalizedPayload.padEnd(
+      normalizedPayload.length + ((4 - (normalizedPayload.length % 4)) % 4),
+      "=",
+    );
+    const decoded = JSON.parse(window.atob(paddedPayload)) as { exp?: number };
+    return typeof decoded.exp === "number" ? decoded.exp * 1000 : null;
+  } catch {
+    return null;
+  }
+}
+
+function clearStudentSessionCookie() {
+  document.cookie = "student-session=; path=/; max-age=0; SameSite=Lax";
+}
+
 export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -80,6 +103,14 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
             // Real LIFF (ngrok or production) — exchange token for session cookie
             const idToken = liff.getIDToken();
             if (idToken) {
+              const expiresAt = getIdTokenExpiresAt(idToken);
+              if (expiresAt && Date.now() + ID_TOKEN_REFRESH_BUFFER_MS >= expiresAt) {
+                clearStudentSessionCookie();
+                liff.logout();
+                liff.login({ redirectUri: window.location.href });
+                return;
+              }
+
               try {
                 const authRes = await fetch("/api/auth/line", {
                   method: "POST",
@@ -92,6 +123,12 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
                     (errorPayload as { error?: string }).error ||
                     "Backend login failed";
                   console.error("[LIFF] Backend login failed:", errorPayload);
+                  if ((errorPayload as { code?: string }).code === "LINE_ID_TOKEN_EXPIRED") {
+                    clearStudentSessionCookie();
+                    liff.logout();
+                    liff.login({ redirectUri: window.location.href });
+                    return;
+                  }
                   setError(message);
                 } else {
                   // Parse response to get sessionToken for manual cookie fallback.

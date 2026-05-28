@@ -1,7 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getGuardianConsentStatus = getGuardianConsentStatus;
 exports.submitGuardianConsent = submitGuardianConsent;
 const database_1 = require("@tutor-advantage/database");
+async function getGuardianConsentStatus(req, res) {
+    try {
+        const userId = req.user?.userId;
+        if (!userId) {
+            return res.status(401).json({ error: { code: "UNAUTHORIZED", message: "User ID missing from token" } });
+        }
+        const existing = await database_1.prisma.guardianConsent.findFirst({
+            where: { studentUserId: userId },
+            select: { consentId: true },
+        });
+        return res.status(200).json({ hasConsent: !!existing });
+    }
+    catch (error) {
+        console.error("Get Guardian Consent Status Error:", error);
+        return res.status(500).json({ error: { code: "INTERNAL_SERVER_ERROR", message: "Could not fetch consent status" } });
+    }
+}
 async function submitGuardianConsent(req, res) {
     try {
         const userId = req.user?.userId;

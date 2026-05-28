@@ -106,7 +106,23 @@ export async function getDashboardSummary(
         orderBy: { createdAt: "desc" }
       });
 
-      const tutorIds = Array.from(new Set(enrollments.map((e) => e.class.tutorUserId).filter(Boolean)));
+      const pendingPackages = await prisma.enrollmentPackage.findMany({
+        where: { studentUserId: userId, status: "PENDING_PAYMENT" },
+        include: {
+          classBookCycle: {
+            include: {
+              book: { include: { series: true } },
+              class: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      const tutorIds = Array.from(new Set([
+        ...enrollments.map((e) => e.class.tutorUserId).filter(Boolean),
+        ...pendingPackages.map((p) => p.classBookCycle.class.tutorUserId).filter(Boolean),
+      ]));
       const tutors = await prisma.user.findMany({
         where: { userId: { in: tutorIds } },
         select: { userId: true, displayName: true }
@@ -189,9 +205,31 @@ export async function getDashboardSummary(
           seriesCefr: e.class.book?.series?.cefrLevel || "A1",
         };
       });
-      const recentClasses = classSummaries
-        .sort((a, b) => Number(b.isLive) - Number(a.isLive))
-        .slice(0, 3);
+      const pendingPackageSummaries = pendingPackages.map((pkg) => {
+        const cycle = pkg.classBookCycle;
+        const cls = cycle.class;
+        const tutorName = tutorMap.get(cls.tutorUserId) || "Tutor";
+
+        return {
+          id: cls.classId,
+          cycleId: cycle.classBookCycleId,
+          name: `${cls.title || cycle.book?.title || "Untitled Class"} / ${cycle.book?.title || "New Book"}`,
+          status: pkg.status,
+          tutorName,
+          nextSession: cls.scheduleDescription || "ตามนัดหมาย",
+          progress: 0,
+          isLive: false,
+          bookName: cycle.book?.title,
+          seriesCefr: cycle.book?.series?.cefrLevel || "A1",
+          price: Number(cycle.packagePriceMinor) / 100,
+        };
+      });
+      const sortedClassSummaries = classSummaries
+        .sort((a, b) => Number(b.isLive) - Number(a.isLive));
+      const recentClasses = [
+        ...pendingPackageSummaries,
+        ...sortedClassSummaries.slice(0, Math.max(0, 3 - pendingPackageSummaries.length)),
+      ];
 
       const historyFrom = getValidDateQuery(req.query.historyFrom);
       const historyTo = getValidDateQuery(req.query.historyTo);

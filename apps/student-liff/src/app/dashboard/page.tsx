@@ -51,6 +51,7 @@ function isPendingPayment(status: string): boolean {
 /* ─── Types ─── */
 interface Enrollment {
   id?: string;
+  cycleId?: string;
   name: string;
   tutorName: string;
   status: string;
@@ -81,14 +82,27 @@ interface LessonHistoryItem {
   score: number;
 }
 
+function getEnrollmentKey(enrollment: Enrollment, index: number): string {
+  return [
+    enrollment.id ?? "class",
+    enrollment.cycleId ?? "base",
+    enrollment.status ?? "status",
+    enrollment.bookName ?? enrollment.name ?? "enrollment",
+    index,
+  ].join(":");
+}
+
 /* ─── Class Card ─── */
 function ClassCard({ enrollment }: { enrollment: Enrollment }) {
   const isLive = enrollment.isLive;
   const isPending = isPendingPayment(enrollment.status);
+  const href = isPending && enrollment.id
+    ? `/payment?classId=${enrollment.id}${enrollment.cycleId ? `&cycleId=${enrollment.cycleId}` : ""}`
+    : enrollment.id ? `/lesson/${enrollment.id}` : "/classes";
 
   return (
     <Link
-      href={enrollment.id ? `/lesson/${enrollment.id}` : "/classes"}
+      href={href}
       className="block no-underline active:scale-[0.98] transition-transform min-w-[260px] max-w-[280px]"
     >
       <div
@@ -215,9 +229,9 @@ function PendingPaymentBanner({ classes }: { classes: Enrollment[] }) {
 
         {/* Class list */}
         <div className="px-4 pb-4 flex flex-col gap-2">
-          {classes.map((cls) => (
+          {classes.map((cls, index) => (
             <div
-              key={cls.id ?? cls.name}
+              key={getEnrollmentKey(cls, index)}
               className="flex items-center gap-3 bg-card rounded-xl px-3 py-3 border border-amber-400/30"
             >
               <div className="flex-1 min-w-0">
@@ -233,7 +247,7 @@ function PendingPaymentBanner({ classes }: { classes: Enrollment[] }) {
                   )}
                 </p>
               </div>
-              <Link href={cls.id ? `/payment?classId=${cls.id}` : "/payment"}>
+              <Link href={cls.id ? `/payment?classId=${cls.id}${cls.cycleId ? `&cycleId=${cls.cycleId}` : ""}` : "/payment"}>
                 <button className="shrink-0 flex items-center gap-1.5 bg-gradient-to-r from-amber-400 to-orange-400 text-white text-xs font-black px-3 py-2 rounded-xl shadow-sm active:scale-95 transition-transform">
                   {t("dashboard.pendingPaymentCta")}
                   <ArrowRight size={12} />
@@ -523,7 +537,7 @@ export default function DashboardPage() {
               style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}
             >
               {allClasses.map((cls, i) => (
-                <div key={cls.id ?? i} style={{ scrollSnapAlign: "start", flexShrink: 0 }}>
+                <div key={getEnrollmentKey(cls, i)} style={{ scrollSnapAlign: "start", flexShrink: 0 }}>
                   <ClassCard enrollment={cls} />
                 </div>
               ))}
@@ -779,12 +793,12 @@ export default function DashboardPage() {
             </div>
             <div className="max-h-[55dvh] overflow-y-auto px-4 pb-[calc(20px+env(safe-area-inset-bottom))]">
               <div className="flex flex-col gap-2">
-                {shareableClasses.map((cls) => {
+                {shareableClasses.map((cls, index) => {
                   const isCopyingThisClass = copyState === 'loading' && copyingClassId === cls.id;
 
                   return (
                     <button
-                      key={cls.id}
+                      key={getEnrollmentKey(cls, index)}
                       type="button"
                       onClick={() => copyReferralForClass(cls.id)}
                       disabled={copyState !== 'idle'}

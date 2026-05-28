@@ -87,7 +87,10 @@ export const studentApi = {
     return fetchWithAuth(`/classes/available${qs ? `?${qs}` : ""}`);
   },
   getClassDetails: (classId: string) => fetchWithAuth(`/classes/${classId}`),
-  getClassArticles: (classId: string) => fetchWithAuth(`/classes/${classId}/articles`),
+  getClassArticles: (classId: string, cycleId?: string) => {
+    const qs = cycleId ? `?cycleId=${encodeURIComponent(cycleId)}` : "";
+    return fetchWithAuth(`/classes/${classId}/articles${qs}`);
+  },
   prepareClassBookCycleAccess: (classId: string, cycleId: string) => fetchWithAuth(`/classes/${classId}/book-cycles/${cycleId}/access`, {
     method: 'POST',
   }),

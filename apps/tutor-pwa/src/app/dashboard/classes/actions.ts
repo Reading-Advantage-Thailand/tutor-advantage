@@ -73,6 +73,7 @@ export async function getBooks() {
   }
  
   const res = await fetch(`${LEARNING_URL}/v1/books`, {
+    cache: "no-store",
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -178,7 +179,7 @@ export async function createClassBookCycle(classId: string, payload: { bookId: s
   
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(getClassActionErrorMessage(err, t("tutorClass.errors.createClass")));
+    throw new Error(getClassActionErrorMessage(err, "Could not open the selected book"));
   }
 
   revalidatePath("/dashboard/classes");

@@ -13,6 +13,7 @@ exports.createClassBookCycle = createClassBookCycle;
 exports.prepareClassBookCycleAccess = prepareClassBookCycleAccess;
 const database_1 = require("@tutor-advantage/database");
 const ReadingAdvantageDB_1 = require("../services/ReadingAdvantageDB");
+const LineNotificationService_1 = require("../services/LineNotificationService");
 async function createClass(req, res) {
     try {
         const userId = req.user?.userId;
@@ -759,6 +760,8 @@ async function translateToThai(text) {
 async function getClassArticles(req, res) {
     try {
         const { classId } = req.params;
+        const userId = req.user?.userId;
+        const role = req.user?.role;
         const requestedCycleId = typeof req.query.cycleId === "string" ? req.query.cycleId : null;
         const cls = await database_1.prisma.class.findUnique({
             where: { classId },
@@ -772,13 +775,36 @@ async function getClassArticles(req, res) {
                 .status(404)
                 .json({ error: { code: "NOT_FOUND", message: "Class not found" } });
         }
+        const enrollment = userId && role === "STUDENT"
+            ? await database_1.prisma.enrollment.findFirst({
+                where: { classId, studentUserId: userId, status: "ACTIVE" },
+                include: { packageAccess: true },
+            })
+            : null;
+        const activeAccessCycleIds = new Set((enrollment?.packageAccess || [])
+            .filter((access) => access.status === "ACTIVE")
+            .map((access) => access.classBookCycleId));
+        const canAccessCycle = (item) => role === "TUTOR" ||
+            role === "ADMIN" ||
+            activeAccessCycleIds.has(item.classBookCycleId) ||
+            Boolean(enrollment && item.sequence === 1 && item.bookId === cls.bookId);
         let cycle = requestedCycleId
             ? cls.bookCycles.find((item) => item.classBookCycleId === requestedCycleId)
-            : [...cls.bookCycles].reverse().find((item) => item.status === "OPEN") || cls.bookCycles[0];
+            : role === "STUDENT" && enrollment
+                ? [...cls.bookCycles].reverse().find((item) => canAccessCycle(item)) || cls.bookCycles[0]
+                : [...cls.bookCycles].reverse().find((item) => item.status === "OPEN") || cls.bookCycles[0];
         if (requestedCycleId && !cycle) {
             return res
                 .status(404)
                 .json({ error: { code: "NOT_FOUND", message: "Book cycle not found" } });
+        }
+        if (cycle && requestedCycleId && role === "STUDENT" && !canAccessCycle(cycle)) {
+            return res.status(402).json({
+                error: {
+                    code: "PAYMENT_REQUIRED",
+                    message: "Payment is required to access this book",
+                },
+            });
         }
         if (!cycle) {
             cycle = await database_1.prisma.classBookCycle.create({
@@ -895,7 +921,7 @@ async function createClassBookCycle(req, res) {
                 error: { code: "BAD_REQUEST", message: "bookId and positive packagePriceSatang are required" },
             });
         }
-        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{12}$/i.test(bookId);
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(bookId);
         const book = await database_1.prisma.book.findFirst({
             where: isUuid ? { bookId } : { bookCode: bookId },
             include: { series: true },
@@ -905,7 +931,7 @@ async function createClassBookCycle(req, res) {
                 error: { code: "NOT_FOUND", message: "Book not found" },
             });
         }
-        const cycle = await database_1.prisma.$transaction(async (tx) => {
+        const result = await database_1.prisma.$transaction(async (tx) => {
             const cls = await tx.class.findUnique({
                 where: { classId },
                 include: {
@@ -917,8 +943,28 @@ async function createClassBookCycle(req, res) {
                 throw new Error("CLASS_NOT_FOUND");
             }
             const existing = cls.bookCycles.find((item) => item.bookId === book.bookId);
-            if (existing)
-                return existing;
+            if (existing) {
+                throw new Error("BOOK_ALREADY_OPEN");
+            }
+            const orderedBooks = await tx.book.findMany({
+                select: { bookId: true },
+                orderBy: [
+                    { series: { raLevelStart: "asc" } },
+                    { levelNumber: "asc" },
+                    { bookCode: "asc" },
+                ],
+            });
+            const selectedBookIndex = orderedBooks.findIndex((item) => item.bookId === book.bookId);
+            const openedBookIndexes = cls.bookCycles
+                .map((cycle) => orderedBooks.findIndex((item) => item.bookId === cycle.bookId))
+                .filter((index) => index >= 0);
+            const highestOpenedBookIndex = openedBookIndexes.length > 0 ? Math.max(...openedBookIndexes) : -1;
+            if (selectedBookIndex >= 0 && selectedBookIndex < highestOpenedBookIndex) {
+                throw new Error("BOOK_BELOW_OPENED");
+            }
+            if (selectedBookIndex > highestOpenedBookIndex + 1) {
+                throw new Error("BOOK_SEQUENCE_SKIPPED");
+            }
             const nextSequence = cls.bookCycles.reduce((max, item) => Math.max(max, item.sequence || 0), 0) + 1;
             const created = await tx.classBookCycle.create({
                 data: {
@@ -940,8 +986,25 @@ async function createClassBookCycle(req, res) {
                     skipDuplicates: true,
                 });
             }
-            return created;
+            return {
+                cycle: created,
+                studentUserIds: cls.enrollments.map((enrollment) => enrollment.studentUserId),
+            };
         });
+        const cycle = result.cycle;
+        if (result.studentUserIds.length > 0) {
+            const paymentLink = LineNotificationService_1.LineNotificationService.buildLiffDeepLink(`/payment?classId=${classId}&cycleId=${cycle.classBookCycleId}`);
+            const message = [
+                `เล่มใหม่เปิดแล้ว: ${book.title}`,
+                "กรุณาชำระเงินเพื่อเข้าเรียน live lesson ของเล่มนี้",
+                paymentLink ? `ชำระเงิน: ${paymentLink}` : "",
+            ].filter(Boolean).join("\n");
+            Promise.allSettled(result.studentUserIds.map((studentUserId) => LineNotificationService_1.LineNotificationService.sendToUser(studentUserId, message, {
+                type: "notifyClassReminders",
+            }))).catch((notifyError) => {
+                console.error("Class Book Cycle Notification Error:", notifyError);
+            });
+        }
         return res.status(201).json({
             cycle: {
                 id: cycle.classBookCycleId,
@@ -959,6 +1022,16 @@ async function createClassBookCycle(req, res) {
         if (error.message === "CLASS_NOT_FOUND") {
             return res.status(404).json({
                 error: { code: "NOT_FOUND", message: "Class not found or unauthorized" },
+            });
+        }
+        const bookCycleMessages = {
+            BOOK_ALREADY_OPEN: "This book is already open for this class",
+            BOOK_BELOW_OPENED: "Cannot open a book below the latest opened book",
+            BOOK_SEQUENCE_SKIPPED: "Open the previous book before skipping ahead",
+        };
+        if (bookCycleMessages[error.message]) {
+            return res.status(409).json({
+                error: { code: error.message, message: bookCycleMessages[error.message] },
             });
         }
         console.error("Create Class Book Cycle Error:", error);

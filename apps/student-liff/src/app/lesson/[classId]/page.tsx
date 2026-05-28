@@ -43,6 +43,7 @@ export default function LessonLobbyPage({ params }: PageProps) {
     sessionData,
     participants,
     error,
+    paymentRequired,
     toggleReady,
     nudgeMessage,
     kicked
@@ -149,6 +150,66 @@ export default function LessonLobbyPage({ params }: PageProps) {
         <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: 8 }}>{accessDenied}</h2>
         <p style={{ color: "var(--text-tertiary)", marginBottom: 24 }}>{t("lessonLobby.enrollmentInactive")}</p>
         <Link href={`/payment?classId=${classId}`} className="btn btn-primary" style={{ padding: "0 24px", height: 48, borderRadius: 12 }}>{t("lessonLobby.goPayment")}</Link>
+      </div>
+    );
+  }
+
+  if (paymentRequired) {
+    const bookLabel = [paymentRequired.bookCode, paymentRequired.bookTitle].filter(Boolean).join(": ") || "เล่มนี้";
+    const paymentAmountText =
+      paymentRequired.packagePriceSatang != null
+        ? new Intl.NumberFormat("th-TH", {
+            style: "currency",
+            currency: "THB",
+            maximumFractionDigits: 0,
+          }).format(paymentRequired.packagePriceSatang / 100)
+        : null;
+    const paymentUrl =
+      paymentRequired.paymentUrl ||
+      `/payment?classId=${classId}${paymentRequired.cycleId ? `&cycleId=${paymentRequired.cycleId}` : ""}`;
+
+    return (
+      <div style={{ minHeight: "100dvh", background: "var(--surface-bg)", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)" }} aria-hidden="true" />
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: "relative",
+            zIndex: 1,
+            width: "100%",
+            maxWidth: 380,
+            borderRadius: 24,
+            background: "var(--surface-card)",
+            border: "1px solid rgba(245,158,11,0.35)",
+            boxShadow: "0 24px 60px rgba(15,23,42,0.25)",
+            padding: 24,
+            textAlign: "center",
+          }}
+        >
+          <div style={{ width: 56, height: 56, margin: "0 auto 16px", borderRadius: 18, background: "rgba(245,158,11,0.14)", color: "#d97706", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 30, fontWeight: 900 }}>
+            ฿
+          </div>
+          <p style={{ color: "#d97706", fontSize: 11, fontWeight: 900, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 8 }}>Payment required</p>
+          <h2 style={{ color: "var(--text-primary)", fontSize: 22, fontWeight: 900, marginBottom: 10 }}>ต้องชำระเงินก่อนเข้าเล่มนี้</h2>
+          <p style={{ color: "var(--text-tertiary)", fontSize: 14, fontWeight: 600, lineHeight: 1.6, marginBottom: 16 }}>
+            คุณครูเปิดสอน {bookLabel} แล้ว แต่บัญชีของคุณยังไม่มีสิทธิ์เข้าเล่มนี้
+          </p>
+          {paymentAmountText && (
+            <div style={{ border: "1px solid var(--surface-border)", background: "var(--surface-muted)", borderRadius: 18, padding: "12px 16px", marginBottom: 16 }}>
+              <p style={{ color: "var(--text-tertiary)", fontSize: 11, fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase" }}>ยอดชำระ</p>
+              <p style={{ color: "var(--text-primary)", fontSize: 26, fontWeight: 900, marginTop: 4 }}>{paymentAmountText}</p>
+            </div>
+          )}
+          <div style={{ display: "grid", gap: 10 }}>
+            <button type="button" onClick={() => router.push(paymentUrl)} className="btn btn-primary btn-lg btn-full">
+              ไปชำระเงิน
+            </button>
+            <button type="button" onClick={() => router.push(`/classes/${classId}`)} className="btn btn-secondary btn-lg btn-full">
+              กลับไปดูเล่มที่เรียนได้
+            </button>
+          </div>
+        </div>
       </div>
     );
   }

@@ -2,7 +2,6 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
-import { prisma } from "@tutor-advantage/database";
 
 // Load the monorepo .env file from both ts-node src/ and compiled dist/ starts.
 dotenv.config({
@@ -10,6 +9,8 @@ dotenv.config({
   override: true,
 });
 console.log(`[Learning] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
+
+const { prisma } = require("@tutor-advantage/database") as typeof import("@tutor-advantage/database");
 
 import { createServer } from "http";
 import { Server } from "socket.io";

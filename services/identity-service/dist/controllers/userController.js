@@ -56,11 +56,20 @@ async function submitVerification(req, res) {
                 error: { code: "UNAUTHORIZED", message: "User not identified" },
             });
         }
-        const { idCardImageUrl, bankBookImageUrl, address, bankAccountNumber } = req.body;
+        const { idCardImageUrl, bankBookImageUrl, address, bankAccountNumber, bankBrand, taxName, nationalId } = req.body;
         const normalizedBankAccountNumber = typeof bankAccountNumber === "string"
             ? bankAccountNumber.replace(/\D/g, "")
             : "";
-        if (!idCardImageUrl && !bankBookImageUrl && !address && !normalizedBankAccountNumber) {
+        const normalizedTaxName = typeof taxName === "string" ? taxName.trim() : "";
+        const normalizedNationalId = typeof nationalId === "string" ? nationalId.replace(/\D/g, "") : "";
+        const VALID_BANK_BRANDS = [
+            "kbank", "scb", "bbl", "bay", "tmb", "ttb",
+            "kiatnakin", "cimb", "gsb", "baac", "mhcb", "uob", "lhb",
+        ];
+        const normalizedBankBrand = typeof bankBrand === "string" && VALID_BANK_BRANDS.includes(bankBrand.toLowerCase())
+            ? bankBrand.toLowerCase()
+            : null;
+        if (!idCardImageUrl && !bankBookImageUrl && !address && !normalizedBankAccountNumber && !normalizedTaxName && !normalizedNationalId) {
             return res.status(400).json({
                 error: { code: "BAD_REQUEST", message: "At least one verification field must be provided" },
             });
@@ -75,7 +84,6 @@ async function submitVerification(req, res) {
         const updatedData = {};
         const newVerification = { ...verification };
         const now = new Date().toISOString();
-        const lockedFields = [];
         if ((bankBookImageUrl || normalizedBankAccountNumber) && !normalizedBankAccountNumber) {
             return res.status(400).json({
                 error: {
@@ -84,20 +92,16 @@ async function submitVerification(req, res) {
                 },
             });
         }
-        if (address && verification.address?.status === "VERIFIED")
-            lockedFields.push("address");
-        if (idCardImageUrl && verification.idCard?.status === "VERIFIED")
-            lockedFields.push("idCard");
-        if ((bankBookImageUrl || normalizedBankAccountNumber) && verification.bankBook?.status === "VERIFIED")
-            lockedFields.push("bankBook");
-        if (lockedFields.length > 0) {
-            return res.status(409).json({
+        if ((normalizedTaxName || normalizedNationalId) && (!normalizedTaxName || normalizedNationalId.length !== 13)) {
+            return res.status(400).json({
                 error: {
-                    code: "VERIFICATION_LOCKED",
-                    message: `Verified fields cannot be edited: ${lockedFields.join(", ")}`,
+                    code: "BAD_REQUEST",
+                    message: "Tax name and 13-digit national ID are required for tax info verification",
                 },
             });
         }
+        // Previously verified fields can be re-submitted — they will be reset to PENDING
+        // and require admin re-approval before payouts resume.
         if (address) {
             currentSettings.address = address;
             newVerification.address = { status: "PENDING", comment: "", updatedAt: now };
@@ -110,11 +114,19 @@ async function submitVerification(req, res) {
             if (normalizedBankAccountNumber) {
                 currentSettings.bankAccountNumber = normalizedBankAccountNumber;
             }
+            if (normalizedBankBrand) {
+                currentSettings.bankBrand = normalizedBankBrand;
+            }
             updatedData.bankBookImageUrl = bankBookImageUrl;
             newVerification.bankBook = { status: "PENDING", comment: "", updatedAt: now };
         }
+        if (normalizedTaxName || normalizedNationalId) {
+            currentSettings.taxName = normalizedTaxName;
+            currentSettings.nationalId = normalizedNationalId;
+            newVerification.taxInfo = { status: "PENDING", comment: "", updatedAt: now };
+        }
         updatedData.settings = { ...currentSettings, verification: newVerification };
-        const verificationFields = ["idCard", "bankBook", "address"];
+        const verificationFields = ["idCard", "bankBook", "address", "taxInfo"];
         const allVerified = verificationFields.every((field) => newVerification[field]?.status === "VERIFIED");
         const hasRejected = verificationFields.some((field) => newVerification[field]?.status === "REJECTED");
         const hasPending = verificationFields.some((field) => newVerification[field]?.status === "PENDING");

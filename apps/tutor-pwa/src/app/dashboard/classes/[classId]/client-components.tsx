@@ -17,6 +17,8 @@ import {
   FlaskConical,
   Users2,
   Loader2,
+  XCircle,
+  AlertTriangle,
 } from "lucide-react";
 import {
   updateClassStatus,
@@ -223,6 +225,17 @@ export function ArticleSelector({
     packagePriceSatang: number;
   }>;
 }) {
+  type BookOption = {
+    bookId: string;
+    bookCode?: string;
+    title?: string;
+  };
+  type ToastState = {
+    type: "success" | "warning" | "error";
+    title: string;
+    message: string;
+  };
+
   const router = useRouter();
   const initialCycleId = bookCycles.find((cycle) => cycle.status === "open")?.id || bookCycles[0]?.id || "";
   const [selectedCycleId, setSelectedCycleId] = useState(initialCycleId);
@@ -231,10 +244,66 @@ export function ArticleSelector({
   const [articles, setArticles] = useState<any[]>([]);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [books, setBooks] = useState<any[]>([]);
+  const [books, setBooks] = useState<BookOption[]>([]);
   const [newBookId, setNewBookId] = useState("");
   const [newBookPrice, setNewBookPrice] = useState(250000);
   const [creatingCycle, setCreatingCycle] = useState(false);
+  const [openBookDialogOpen, setOpenBookDialogOpen] = useState(false);
+  const [toast, setToast] = useState<ToastState | null>(null);
+
+  const showToast = (nextToast: ToastState) => {
+    setToast(nextToast);
+    window.setTimeout(() => setToast(null), 4500);
+  };
+
+  const getBookLabel = (book?: BookOption) =>
+    book ? `${book.title || "Untitled book"}${book.bookCode ? ` (${book.bookCode})` : ""}` : "the selected book";
+
+  const validateNewBookSelection = () => {
+    const selectedBookIndex = books.findIndex((book) => book.bookId === newBookId);
+    const selectedBook = books[selectedBookIndex];
+
+    if (!selectedBook) {
+      return {
+        type: "error" as const,
+        title: "Book not found",
+        message: "Refresh the page and select a book from the list again.",
+      };
+    }
+
+    if (bookCycles.some((cycle) => cycle.bookId === newBookId)) {
+      return {
+        type: "warning" as const,
+        title: "Book already open",
+        message: `${getBookLabel(selectedBook)} is already open for this class.`,
+      };
+    }
+
+    const openedBookIndexes = bookCycles
+      .map((cycle) => books.findIndex((book) => book.bookId === cycle.bookId))
+      .filter((index) => index >= 0);
+    const highestOpenedBookIndex =
+      openedBookIndexes.length > 0 ? Math.max(...openedBookIndexes) : -1;
+
+    if (selectedBookIndex < highestOpenedBookIndex) {
+      return {
+        type: "warning" as const,
+        title: "Book is below current progress",
+        message: `This class has already opened a later book than ${getBookLabel(selectedBook)}.`,
+      };
+    }
+
+    if (selectedBookIndex > highestOpenedBookIndex + 1) {
+      const nextBook = books[highestOpenedBookIndex + 1];
+      return {
+        type: "warning" as const,
+        title: "Cannot skip books",
+        message: `Open ${getBookLabel(nextBook)} before opening ${getBookLabel(selectedBook)}.`,
+      };
+    }
+
+    return null;
+  };
 
   useEffect(() => {
     async function loadArticles() {
@@ -273,6 +342,12 @@ export function ArticleSelector({
 
   const handleCreateCycle = async () => {
     if (!newBookId) return;
+    const validationToast = validateNewBookSelection();
+    if (validationToast) {
+      showToast(validationToast);
+      return;
+    }
+
     setCreatingCycle(true);
     try {
       const result = await createClassBookCycle(classId, {
@@ -280,16 +355,48 @@ export function ArticleSelector({
         packagePriceSatang: newBookPrice,
       });
       setSelectedCycleId(result.cycle.id);
+      setOpenBookDialogOpen(false);
+      showToast({
+        type: "success",
+        title: "Book opened",
+        message: `${result.cycle.title || "The selected book"} is now open for this class.`,
+      });
       router.refresh();
     } catch (error: any) {
-      alert(error.message || "Could not open the selected book");
+      showToast({
+        type: "error",
+        title: "Could not open book",
+        message: error.message || "Could not open the selected book",
+      });
     } finally {
       setCreatingCycle(false);
     }
   };
 
+  const toastIcon =
+    toast?.type === "success" ? (
+      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+    ) : toast?.type === "warning" ? (
+      <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+    ) : (
+      <XCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+    );
+
   return (
     <Card className="border-border/60 bg-gradient-to-br from-background via-background to-primary/5 min-h-[400px] max-h-[80vh] overflow-hidden shadow-sm flex flex-col">
+      {toast && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed right-4 top-4 z-50 flex max-w-sm items-start gap-3 rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground shadow-lg"
+        >
+          {toastIcon}
+          <div className="min-w-0">
+            <p className="font-semibold">{toast.title}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">{toast.message}</p>
+          </div>
+        </div>
+      )}
       <CardHeader className="pb-4 shrink-0">
         <CardTitle className="text-base font-bold flex items-center gap-2.5 text-foreground">
           <span className="p-1.5 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
@@ -313,7 +420,7 @@ export function ArticleSelector({
                 </option>
               ))}
             </select>
-            <Dialog>
+            <Dialog open={openBookDialogOpen} onOpenChange={setOpenBookDialogOpen}>
               <DialogTrigger
                 render={
                   <Button variant="outline" size="sm" className="h-10 shrink-0">

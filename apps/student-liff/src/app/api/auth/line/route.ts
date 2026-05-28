@@ -47,9 +47,12 @@ export async function POST(req: NextRequest) {
       (typeof errorPayload.error === "string" ? errorPayload.error : null) ||
       errorPayload.message ||
       "Auth failed";
+    const code = /idtoken expired/i.test(message)
+      ? "LINE_ID_TOKEN_EXPIRED"
+      : undefined;
 
     return NextResponse.json(
-      { error: message },
+      { error: message, ...(code ? { code } : {}) },
       { status: response.status },
     );
   }

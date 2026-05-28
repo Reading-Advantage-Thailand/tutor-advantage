@@ -146,10 +146,11 @@ const setupLessonSocket = (io) => {
                         status: "ACTIVE",
                     },
                 });
+                let cycle = null;
                 if (!activeAccess) {
-                    const cycle = await database_1.prisma.classBookCycle.findUnique({
+                    cycle = await database_1.prisma.classBookCycle.findUnique({
                         where: { classBookCycleId: activeSession.classBookCycleId },
-                        include: { class: true },
+                        include: { book: true, class: true },
                     });
                     if (cycle?.sequence === 1 && cycle.bookId === cycle.class.bookId) {
                         activeAccess = await database_1.prisma.enrollmentPackage.upsert({
@@ -173,7 +174,19 @@ const setupLessonSocket = (io) => {
                 }
                 if (!activeAccess) {
                     console.warn(`[Socket] Join denied: student ${studentId} has no ACTIVE access for cycle ${activeSession.classBookCycleId}`);
-                    socket.emit("error", { message: "Please complete upgrade payment before joining this book." });
+                    const paymentUrl = `/payment?classId=${classId}&cycleId=${activeSession.classBookCycleId}`;
+                    socket.emit("payment_required", {
+                        classId,
+                        cycleId: activeSession.classBookCycleId,
+                        bookId: activeSession.bookId,
+                        bookTitle: cycle?.book?.title || "this book",
+                        bookCode: cycle?.book?.bookCode || null,
+                        packagePriceSatang: cycle?.packagePriceMinor === undefined || cycle?.packagePriceMinor === null
+                            ? null
+                            : Number(cycle.packagePriceMinor),
+                        paymentUrl,
+                        message: "Please complete payment before joining this book.",
+                    });
                     return;
                 }
             }

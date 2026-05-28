@@ -106,6 +106,7 @@ function PlayLessonContent() {
     articleData,
     participants,
     error,
+    paymentRequired,
     hasAnswered,
     isEveryoneReady,
     aiFeedback,
@@ -189,6 +190,18 @@ function PlayLessonContent() {
     if (!hasAnswered && !isSubmitting) setSelectedChoice(null);
   }, [hasAnswered, isSubmitting]);
 
+  const paymentAmountText =
+    paymentRequired?.packagePriceSatang != null
+      ? new Intl.NumberFormat("th-TH", {
+          style: "currency",
+          currency: "THB",
+          maximumFractionDigits: 0,
+        }).format(paymentRequired.packagePriceSatang / 100)
+      : null;
+  const paymentUrl =
+    paymentRequired?.paymentUrl ||
+    (classId ? `/payment?classId=${classId}${paymentRequired?.cycleId ? `&cycleId=${paymentRequired.cycleId}` : ""}` : "/payment");
+
   // ─── Loading / Error States ────────────────────────────────────────────────
 
   if (!liffReady) {
@@ -216,6 +229,56 @@ function PlayLessonContent() {
         <button onClick={() => router.push('/dashboard')} className="bg-gradient-to-r from-indigo-500 to-violet-600 text-white font-black py-4 px-10 rounded-2xl shadow-lg active:scale-95 transition-all">
           {t("interactivePlay.backHome")}
         </button>
+      </div>
+    );
+  }
+
+  if (paymentRequired) {
+    const bookLabel = [paymentRequired.bookCode, paymentRequired.bookTitle].filter(Boolean).join(": ") || "เล่มนี้";
+
+    return (
+      <div className="min-h-[100dvh] bg-background flex items-center justify-center p-5">
+        <div className="fixed inset-0 bg-black/45" aria-hidden="true" />
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="relative z-10 w-full max-w-sm rounded-3xl border border-amber-400/40 bg-card p-6 text-center shadow-2xl"
+        >
+          <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-amber-500/15 text-3xl">
+            ฿
+          </div>
+          <p className="text-[10px] font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">
+            Payment required
+          </p>
+          <h2 className="mt-2 text-xl font-black text-foreground">
+            ต้องชำระเงินก่อนเข้าเล่มนี้
+          </h2>
+          <p className="mt-3 text-sm font-semibold leading-relaxed text-muted-foreground">
+            คุณครูเปิดสอน {bookLabel} แล้ว แต่บัญชีของคุณยังไม่มีสิทธิ์เข้าเล่มนี้
+          </p>
+          {paymentAmountText && (
+            <div className="mt-4 rounded-2xl border border-border bg-muted/50 px-4 py-3">
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">ยอดชำระ</p>
+              <p className="mt-1 text-2xl font-black text-foreground">{paymentAmountText}</p>
+            </div>
+          )}
+          <div className="mt-5 grid gap-2">
+            <button
+              type="button"
+              onClick={() => router.push(paymentUrl)}
+              className="w-full rounded-2xl bg-gradient-to-r from-indigo-500 to-violet-600 py-4 text-sm font-black text-white shadow-lg active:scale-95 transition-all"
+            >
+              ไปชำระเงิน
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push(classId ? `/classes/${classId}` : "/dashboard")}
+              className="w-full rounded-2xl border border-border bg-background py-3.5 text-sm font-black text-foreground active:scale-95 transition-all"
+            >
+              กลับไปดูเล่มที่เรียนได้
+            </button>
+          </div>
+        </div>
       </div>
     );
   }

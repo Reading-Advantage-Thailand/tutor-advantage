@@ -8,7 +8,7 @@ const authService_1 = require("../services/authService");
 async function handleOAuthCallback(req, res) {
     try {
         // The request body matches the OpenAPI definition: { provider, code }
-        const { provider, code, sponsorTutorId } = req.body;
+        const { provider, code, sponsorTutorId, codeVerifier } = req.body;
         // Allow frontend to explicitly pass the exact redirectUri used, or fallback
         const baseUrl = process.env.OAUTH_REDIRECT_URI || "http://localhost:3000/api/auth/callback";
         const redirectUri = req.body.redirectUri || `${baseUrl}/${provider}`;
@@ -27,7 +27,7 @@ async function handleOAuthCallback(req, res) {
         let picture = "";
         // Route to appropriate OAuth handler
         if (provider === "google") {
-            const profile = await (0, googleAuth_1.verifyGoogleToken)(code, redirectUri);
+            const profile = await (0, googleAuth_1.verifyGoogleToken)(code, redirectUri, codeVerifier ?? undefined);
             providerSubject = profile.id;
             email = profile.email;
             name = profile.name;

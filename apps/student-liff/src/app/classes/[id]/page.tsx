@@ -64,6 +64,7 @@ interface ClassDetail {
   bookCycles?: Array<{
     id: string;
     title: string;
+    bookCode?: string | null;
     price: number;
     packagePriceSatang: number;
     accessStatus: string;
@@ -510,12 +511,20 @@ export default function ClassDetailPage({ params }: PageProps) {
   const [reviewEditing, setReviewEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCycleId, setSelectedCycleId] = useState<string>("");
 
   useEffect(() => {
     if (!isReady || !id) return;
     studentApi.getClassDetails(id)
       .then(data => {
-        setCls(data.class);
+        const nextClass = data.class as ClassDetail;
+        const cycles = nextClass.bookCycles ?? [];
+        const defaultCycle =
+          [...cycles].reverse().find((cycle) => cycle.hasAccess) ||
+          cycles.find((cycle) => cycle.id === nextClass.activeBookCycleId) ||
+          cycles[0];
+        setCls(nextClass);
+        setSelectedCycleId(defaultCycle?.id || "");
         setLoading(false);
       })
       .catch(err => {
@@ -527,8 +536,14 @@ export default function ClassDetailPage({ params }: PageProps) {
   // Fetch detailed articles once class loads
   useEffect(() => {
     if (!isReady || !id || !cls) return;
+    const selectedCycle = cls.bookCycles?.find((cycle) => cycle.id === selectedCycleId);
+    if (cls.isEnrolled && selectedCycle && !selectedCycle.hasAccess) {
+      setArticles([]);
+      setArticlesLoading(false);
+      return;
+    }
     setArticlesLoading(true);
-    studentApi.getClassArticles(id)
+    studentApi.getClassArticles(id, selectedCycleId || undefined)
       .then(data => {
         setArticles(data.articles || []);
       })
@@ -536,11 +551,13 @@ export default function ClassDetailPage({ params }: PageProps) {
         // silently fallback — basic preview still shows from cls.articles
       })
       .finally(() => setArticlesLoading(false));
-  }, [isReady, id, cls]);
+  }, [isReady, id, cls, selectedCycleId]);
 
   const canReview = Boolean(cls?.isEnrolled && cls.status === "closed");
   const activeCycle = cls?.bookCycles?.find((cycle) => cycle.id === cls.activeBookCycleId);
   const needsUpgrade = Boolean(cls?.isEnrolled && activeCycle && !activeCycle.hasAccess);
+  const selectedCycle = cls?.bookCycles?.find((cycle) => cycle.id === selectedCycleId);
+  const canReadSelectedCycle = Boolean(cls?.isEnrolled && (!selectedCycle || selectedCycle.hasAccess));
   const footerPrice = needsUpgrade && activeCycle ? activeCycle.price : cls?.price ?? 0;
 
   useEffect(() => {
@@ -885,6 +902,87 @@ export default function ClassDetailPage({ params }: PageProps) {
 
         {/* ─── LESSON PREVIEW SECTION ─────────────────────────────────────── */}
         <div>
+          {needsUpgrade && activeCycle && (
+            <div
+              className="glass-card"
+              style={{
+                padding: "14px 16px",
+                marginBottom: 14,
+                border: "1px solid rgba(245,158,11,0.35)",
+                background: "linear-gradient(135deg, rgba(245,158,11,0.12), var(--surface-card))",
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+              }}
+            >
+              <AlertCircle size={18} style={{ color: "#f59e0b", flexShrink: 0 }} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ fontSize: "0.875rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
+                  New book is ready
+                </p>
+                <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.5, marginTop: 2 }}>
+                  {activeCycle.title} is waiting for payment. You can still study books you already have access to.
+                </p>
+              </div>
+              <Link
+                href={`/payment?classId=${cls.id}&cycleId=${activeCycle.id}`}
+                style={{
+                  flexShrink: 0,
+                  borderRadius: 12,
+                  background: "#f59e0b",
+                  color: "#fff",
+                  padding: "8px 12px",
+                  fontSize: "0.75rem",
+                  fontWeight: 800,
+                  textDecoration: "none",
+                }}
+              >
+                Pay
+              </Link>
+            </div>
+          )}
+
+          {(cls.bookCycles?.length ?? 0) > 1 && (
+            <div className="glass-card" style={{ padding: "12px 14px", marginBottom: 14 }}>
+              <label
+                htmlFor="class-book-cycle"
+                style={{
+                  display: "block",
+                  fontSize: "0.75rem",
+                  fontWeight: 800,
+                  color: "var(--text-tertiary)",
+                  marginBottom: 8,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                Book
+              </label>
+              <select
+                id="class-book-cycle"
+                value={selectedCycleId}
+                onChange={(event) => setSelectedCycleId(event.target.value)}
+                style={{
+                  width: "100%",
+                  height: 44,
+                  borderRadius: 14,
+                  border: "1px solid var(--surface-border)",
+                  background: "var(--surface-card)",
+                  color: "var(--text-primary)",
+                  padding: "0 12px",
+                  fontSize: "0.875rem",
+                  fontWeight: 700,
+                }}
+              >
+                {cls.bookCycles?.map((cycle) => (
+                  <option key={cycle.id} value={cycle.id}>
+                    Book {cycle.sequence}: {cycle.title}{cycle.hasAccess ? "" : " - payment required"}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div style={{
             display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14,
           }}>
@@ -921,9 +1019,19 @@ export default function ClassDetailPage({ params }: PageProps) {
             <FeaturedArticleCard
               article={featuredArticle}
               accent={seriesColor}
-              isEnrolled={Boolean(cls.isEnrolled)}
+              isEnrolled={canReadSelectedCycle}
               classId={cls.id}
             />
+          ) : selectedCycle && !selectedCycle.hasAccess ? (
+            <div className="glass-card" style={{ padding: "20px", textAlign: "center" }}>
+              <Lock size={22} style={{ color: "var(--text-tertiary)", margin: "0 auto 8px" }} />
+              <p style={{ fontSize: "0.875rem", fontWeight: 800, color: "var(--text-primary)" }}>
+                Payment required for this book
+              </p>
+              <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: 4 }}>
+                Switch to a previous book to keep studying, or pay to unlock this one.
+              </p>
+            </div>
           ) : null}
 
           {/* Remaining articles list */}
@@ -949,7 +1057,7 @@ export default function ClassDetailPage({ params }: PageProps) {
                     <ArticleRow
                       key={art.id}
                       article={art}
-                      isEnrolled={Boolean(cls.isEnrolled)}
+                      isEnrolled={canReadSelectedCycle}
                       accent={seriesColor}
                       index={idx}
                     />

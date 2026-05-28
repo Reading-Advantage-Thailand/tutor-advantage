@@ -61,12 +61,24 @@ interface LessonArticleData {
   sentences?: Array<string | LessonSentence>;
 }
 
+export interface PaymentRequiredData {
+  classId: string;
+  cycleId?: string | null;
+  bookId?: string | null;
+  bookTitle?: string | null;
+  bookCode?: string | null;
+  packagePriceSatang?: number | null;
+  paymentUrl: string;
+  message?: string;
+}
+
 export const useLessonSocket = (classId: string | undefined, studentId: string, name: string, pictureUrl?: string) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [sessionData, setSessionData] = useState<LessonSessionData | null>(null);
   const [articleData, setArticleData] = useState<LessonArticleData | null>(null);
   const [participants, setParticipants] = useState<LessonParticipant[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [paymentRequired, setPaymentRequired] = useState<PaymentRequiredData | null>(null);
   const [aiFeedback, setAiFeedback] = useState<{ score: number; feedback: string } | null>(null);
   const [hasAnswered, setHasAnswered] = useState(false);
   const [isEveryoneReady, setIsEveryoneReady] = useState(false);
@@ -101,6 +113,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     });
 
     newSocket.on('join_success', (data: LessonSessionData) => {
+      setPaymentRequired(null);
       setSessionData(data);
       setArticleData(data.articleData ?? null);
     });
@@ -131,6 +144,11 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
 
     newSocket.on('error', (data: { message: string }) => {
       setError(data.message);
+    });
+
+    newSocket.on('payment_required', (data: PaymentRequiredData) => {
+      setError(null);
+      setPaymentRequired(data);
     });
 
     newSocket.on('phase_changed', (data: { phase: number; phaseSelectedIndices?: Record<number, number> }) => {
@@ -183,6 +201,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     articleData,
     participants,
     error,
+    paymentRequired,
     hasAnswered,
     isEveryoneReady,
     aiFeedback,

@@ -9,7 +9,10 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
 const database_1 = require("@tutor-advantage/database");
 // Load root .env file
-dotenv_1.default.config({ path: path_1.default.resolve(__dirname, "../../../.env") });
+dotenv_1.default.config({
+    path: path_1.default.resolve(__dirname, "../../../.env"),
+    override: process.env.NODE_ENV !== "production",
+});
 console.log(`[Identity] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
 const shared_config_1 = require("@tutor-advantage/shared-config");
 const authController_1 = require("./controllers/authController");
@@ -72,6 +75,7 @@ app.get("/v1/users/me/settings", authMiddleware_1.authMiddleware, settingControl
 app.patch("/v1/users/me/settings", authMiddleware_1.authMiddleware, settingController_1.updateSettings);
 app.post("/v1/users/me/verification", authMiddleware_1.authMiddleware, userController_1.submitVerification);
 app.post("/v1/upload", authMiddleware_1.authMiddleware, upload.single("file"), uploadController_1.uploadFile);
+app.get("/v1/guardian/consent", authMiddleware_1.authMiddleware, consentController_1.getGuardianConsentStatus);
 app.post("/v1/guardian/consent", authMiddleware_1.authMiddleware, consentController_1.submitGuardianConsent);
 // Root API
 app.get("/", (_req, res) => {

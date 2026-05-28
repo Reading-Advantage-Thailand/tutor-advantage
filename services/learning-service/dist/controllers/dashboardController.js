@@ -95,7 +95,22 @@ async function getDashboardSummary(req, res) {
                 },
                 orderBy: { createdAt: "desc" }
             });
-            const tutorIds = Array.from(new Set(enrollments.map((e) => e.class.tutorUserId).filter(Boolean)));
+            const pendingPackages = await database_1.prisma.enrollmentPackage.findMany({
+                where: { studentUserId: userId, status: "PENDING_PAYMENT" },
+                include: {
+                    classBookCycle: {
+                        include: {
+                            book: { include: { series: true } },
+                            class: true,
+                        },
+                    },
+                },
+                orderBy: { createdAt: "desc" },
+            });
+            const tutorIds = Array.from(new Set([
+                ...enrollments.map((e) => e.class.tutorUserId).filter(Boolean),
+                ...pendingPackages.map((p) => p.classBookCycle.class.tutorUserId).filter(Boolean),
+            ]));
             const tutors = await database_1.prisma.user.findMany({
                 where: { userId: { in: tutorIds } },
                 select: { userId: true, displayName: true }
@@ -166,9 +181,30 @@ async function getDashboardSummary(req, res) {
                     seriesCefr: e.class.book?.series?.cefrLevel || "A1",
                 };
             });
-            const recentClasses = classSummaries
-                .sort((a, b) => Number(b.isLive) - Number(a.isLive))
-                .slice(0, 3);
+            const pendingPackageSummaries = pendingPackages.map((pkg) => {
+                const cycle = pkg.classBookCycle;
+                const cls = cycle.class;
+                const tutorName = tutorMap.get(cls.tutorUserId) || "Tutor";
+                return {
+                    id: cls.classId,
+                    cycleId: cycle.classBookCycleId,
+                    name: `${cls.title || cycle.book?.title || "Untitled Class"} / ${cycle.book?.title || "New Book"}`,
+                    status: pkg.status,
+                    tutorName,
+                    nextSession: cls.scheduleDescription || "ตามนัดหมาย",
+                    progress: 0,
+                    isLive: false,
+                    bookName: cycle.book?.title,
+                    seriesCefr: cycle.book?.series?.cefrLevel || "A1",
+                    price: Number(cycle.packagePriceMinor) / 100,
+                };
+            });
+            const sortedClassSummaries = classSummaries
+                .sort((a, b) => Number(b.isLive) - Number(a.isLive));
+            const recentClasses = [
+                ...pendingPackageSummaries,
+                ...sortedClassSummaries.slice(0, Math.max(0, 3 - pendingPackageSummaries.length)),
+            ];
             const historyFrom = getValidDateQuery(req.query.historyFrom);
             const historyTo = getValidDateQuery(req.query.historyTo);
             const [totalUnreadMessages, todayHistory] = await Promise.all([
@@ -227,8 +263,9 @@ async function getStudentProgress(req, res) {
         if (!userId) {
             return res.status(401).json({ error: "Unauthorized" });
         }
-        // 1. Find main enrollment
-        const enrollment = await database_1.prisma.enrollment.findFirst({
+        const requestedClassId = typeof req.query.classId === "string" ? req.query.classId : null;
+        // 1. Fetch ALL active enrollments so the frontend can show a class picker
+        const allEnrollments = await database_1.prisma.enrollment.findMany({
             where: { studentUserId: userId, status: "ACTIVE" },
             include: {
                 class: {
@@ -239,13 +276,29 @@ async function getStudentProgress(req, res) {
             },
             orderBy: { createdAt: "desc" }
         });
-        if (!enrollment) {
+        const enrolledClasses = allEnrollments.map((e) => ({
+            classId: e.class.classId,
+            name: e.class.title || e.class.book?.title || "Untitled Class",
+            cefr: e.class.book?.series?.cefrLevel || "A1",
+            bookTitle: e.class.book?.title || null,
+            seriesColor: (() => {
+                const c = { A1: "#06c755", A2: "#10b981", B1: "#3b82f6", B2: "#8b5cf6", C1: "#f59e0b", C2: "#ef4444" };
+                return c[e.class.book?.series?.cefrLevel || "A1"] ?? "#06c755";
+            })(),
+        }));
+        if (allEnrollments.length === 0) {
             return res.status(200).json({
-                stats: { articlesRead: 0, totalArticles: 0, totalMinutes: 0, weekStreak: 0, level: "N/A", cefr: "N/A", seriesColor: "#06c755" },
+                enrolledClasses: [],
+                selectedClassId: null,
+                stats: { articlesRead: 0, totalArticles: 0, totalMinutes: 0, weekStreak: 0, level: "N/A", cefr: "N/A", seriesColor: "#06c755", nextMilestone: { at: 5, reward: "⭐ Milestone" } },
                 weeklyActivity: [],
                 articles: []
             });
         }
+        // Pick the requested class, or fall back to the most recent enrollment
+        const enrollment = requestedClassId
+            ? allEnrollments.find((e) => e.class.classId === requestedClassId) || allEnrollments[0]
+            : allEnrollments[0];
         const book = enrollment.class.book;
         // 2. Get total read articles count and full history for weekly logic
         const participations = await database_1.prisma.sessionParticipant.findMany({
@@ -358,6 +411,8 @@ async function getStudentProgress(req, res) {
             reward: isFinalStretch ? "🎓 จบระดับ!" : `⭐ รางวัล Milestone บทที่ ${nextMilestoneAt}`,
         };
         return res.status(200).json({
+            enrolledClasses,
+            selectedClassId: enrollment.class.classId,
             stats: {
                 articlesRead,
                 totalArticles,
