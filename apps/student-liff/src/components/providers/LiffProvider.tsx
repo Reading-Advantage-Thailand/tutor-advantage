@@ -103,7 +103,7 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
                     const secure = window.location.protocol === "https:" ? "; Secure" : "";
                     document.cookie = `student-session=${authData.sessionToken}; path=/; max-age=${maxAge}; SameSite=Lax${secure}`;
                   }
-                  console.log("[LIFF] Backend session established");
+                  if (process.env.NODE_ENV !== "production") console.log("[LIFF] Backend session established");
                 }
               } catch (authErr) {
                 console.error("[LIFF] Backend login failed:", authErr);
