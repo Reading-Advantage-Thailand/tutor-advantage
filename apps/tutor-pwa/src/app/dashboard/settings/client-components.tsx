@@ -244,10 +244,17 @@ function SoundToggleRow() {
 function ThemeToggleRow() {
   const { theme, resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [saved, setSaved] = useState(false);
   useEffect(() => setMounted(true), []);
 
   // Use resolvedTheme to correctly identify active theme even when set to 'system'
   const isDark = mounted ? resolvedTheme === "dark" : false;
+
+  const handleThemeChange = (checked: boolean) => {
+    setTheme(checked ? "dark" : "light");
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
 
   return (
     <div className="flex items-center justify-between p-4 sm:p-5 hover:bg-brand-500/2 dark:hover:bg-brand-500/4 transition-all duration-300 relative group">
@@ -260,14 +267,16 @@ function ThemeToggleRow() {
           <p className="text-sm font-bold text-foreground">
             {t("dashboardSettings.themeTitle")}
           </p>
-          <p className="text-xs font-semibold text-muted-foreground/75 mt-0.5">{t("dashboardSettings.themeDescription")}</p>
+          <p className={`text-xs font-semibold mt-0.5 transition-colors duration-300 ${saved ? "text-emerald-500" : "text-muted-foreground/75"}`}>
+            {saved ? "บันทึกธีมแล้ว" : t("dashboardSettings.themeDescription")}
+          </p>
         </div>
       </div>
       <div>
         {mounted && (
-          <Switch 
-            checked={isDark} 
-            onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")} 
+          <Switch
+            checked={isDark}
+            onCheckedChange={handleThemeChange}
           />
         )}
       </div>
@@ -733,6 +742,34 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
             {t("dashboardSettings.modalDescription")}
           </DialogDescription>
         </DialogHeader>
+
+        {/* Step progress indicator */}
+        <div className="px-1 pt-2">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-semibold text-muted-foreground">ความคืบหน้าการยืนยัน</span>
+            <span className="text-xs font-bold text-foreground">
+              {[
+                getFieldStatus("idCard") !== "UNVERIFIED",
+                getFieldStatus("bankBook") !== "UNVERIFIED",
+                getFieldStatus("address") !== "UNVERIFIED",
+                (user?.settings?.taxName && user?.settings?.nationalId),
+              ].filter(Boolean).length} / 4 ขั้นตอน
+            </span>
+          </div>
+          <div className="flex gap-1.5">
+            {[
+              { label: "บัตรประชาชน", done: getFieldStatus("idCard") !== "UNVERIFIED" },
+              { label: "บัญชีธนาคาร", done: getFieldStatus("bankBook") !== "UNVERIFIED" },
+              { label: "ที่อยู่", done: getFieldStatus("address") !== "UNVERIFIED" },
+              { label: "ข้อมูลภาษี", done: !!(user?.settings?.taxName && user?.settings?.nationalId) },
+            ].map((step, idx) => (
+              <div key={idx} className="flex-1 flex flex-col items-center gap-1">
+                <div className={`h-1.5 w-full rounded-full transition-colors ${step.done ? "bg-primary" : "bg-muted"}`} />
+                <span className="text-[9px] font-semibold text-muted-foreground hidden sm:block">{step.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
 
         <div className="space-y-6 py-4">
           {/* Warning banner when editing previously verified data */}

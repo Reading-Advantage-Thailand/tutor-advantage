@@ -101,11 +101,13 @@ export default function ChatRoomClient({
     messagesEndRef.current?.scrollIntoView();
   }, []);
 
-  // Poll for updates every 4 seconds
+  // Poll for updates every 4 seconds, pausing when page is hidden
   useEffect(() => {
     let isMounted = true;
-    
+    let timer: ReturnType<typeof setInterval> | null = null;
+
     const pollMessages = async () => {
+      if (document.hidden) return;
       try {
         const res = await getConversationMessages(conversationId);
         if (!isMounted) return;
@@ -113,7 +115,6 @@ export default function ChatRoomClient({
         if (res && res.messages) {
           setMessages(prev => {
             const newMsgs = res.messages || [];
-            const realNewIds = new Set(newMsgs.map((m: any) => m.id));
             const tempMsgs = prev.filter(m => /^\d{13}$/.test(m.id));
             return [...newMsgs, ...tempMsgs];
           });
@@ -123,10 +124,35 @@ export default function ChatRoomClient({
       }
     };
 
-    const timer = setInterval(pollMessages, 4000);
+    const startPolling = () => {
+      if (timer === null) {
+        timer = setInterval(pollMessages, 4000);
+      }
+    };
+
+    const stopPolling = () => {
+      if (timer !== null) {
+        clearInterval(timer);
+        timer = null;
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stopPolling();
+      } else {
+        pollMessages(); // poll immediately on visibility resume
+        startPolling();
+      }
+    };
+
+    startPolling();
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
     return () => {
       isMounted = false;
-      clearInterval(timer);
+      stopPolling();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [conversationId]);
 
@@ -177,7 +203,7 @@ export default function ChatRoomClient({
 
   // Modern chat layout specifically for mobile PWA
   return (
-    <div className="fixed inset-0 z-[60] flex flex-col bg-background sm:static sm:h-[calc(100vh-4rem)] sm:max-w-2xl sm:mx-auto sm:border-x sm:border-b sm:border-border sm:rounded-b-none sm:shadow-lg sm:my-0 sm:-mx-8">
+    <div className="fixed inset-0 z-[60] flex flex-col bg-background lg:relative lg:inset-auto lg:z-auto lg:h-full lg:max-w-2xl lg:mx-auto lg:border-x lg:border-b lg:border-border lg:shadow-lg sm:static sm:h-[calc(100vh-4rem)] sm:max-w-2xl sm:mx-auto sm:border-x sm:border-b sm:border-border sm:rounded-b-none sm:shadow-lg sm:my-0 sm:-mx-8">
       
       {/* Header - Fixed at top on mobile */}
       <div className="flex items-center justify-between px-4 py-3 sm:py-4 border-b bg-background/95 backdrop-blur-md shrink-0 safe-top">
@@ -287,9 +313,10 @@ export default function ChatRoomClient({
               className="w-full bg-transparent border-none focus:outline-none px-4 py-3 text-[15px] font-medium"
               disabled={sending}
             />
-            <Button 
-              type="submit" 
-              size="icon" 
+            <Button
+              type="submit"
+              size="icon"
+              aria-label="ส่งข้อความ"
               disabled={!inputText.trim() || sending}
               className={`h-10 w-10 rounded-full shrink-0 transition-all shadow-sm mr-1 ${
                 inputText.trim() ? "bg-brand-500 hover:bg-brand-600 text-white" : "bg-muted-foreground/20 text-muted-foreground"

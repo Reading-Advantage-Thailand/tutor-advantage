@@ -46,7 +46,8 @@ import {
 } from "lucide-react";
 
 import { fetchWithAuth, getAdminRole } from "@/lib/api";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { t } from "@/lib/i18n";
 import { Textarea } from "@/components/ui/textarea";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
@@ -198,6 +199,7 @@ export default function UserDetailPage() {
     title: string;
   } | null>(null);
   const [imageZoom, setImageZoom] = useState(1);
+  const imageViewerRef = useRef<HTMLDivElement>(null);
 
   const loadUser = useCallback(async () => {
     try {
@@ -246,6 +248,8 @@ export default function UserDetailPage() {
       if (e.key === "Escape") closeImageViewer();
     };
     window.addEventListener("keydown", handleKey);
+    // Move focus to modal container when it opens
+    imageViewerRef.current?.focus();
     return () => window.removeEventListener("keydown", handleKey);
   }, [imageViewer]);
 
@@ -465,12 +469,12 @@ export default function UserDetailPage() {
           onClick={() => router.push("/users")}
         >
           <ArrowLeft className="h-4 w-4" />
-          กลับไปรายการผู้ใช้
+          {t("userDetail.backToList")}
         </Button>
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>โหลดข้อมูลไม่สำเร็จ</AlertTitle>
-          <AlertDescription>{loadError || "ไม่พบผู้ใช้งาน"}</AlertDescription>
+          <AlertTitle>{t("userDetail.loadError")}</AlertTitle>
+          <AlertDescription>{loadError || t("userDetail.userNotFound")}</AlertDescription>
         </Alert>
         <Button
           onClick={() => {
@@ -478,7 +482,7 @@ export default function UserDetailPage() {
             loadUser();
           }}
         >
-          ลองใหม่
+          {t("userDetail.retryButton")}
         </Button>
       </div>
     );
@@ -506,14 +510,14 @@ export default function UserDetailPage() {
         onClick={() => router.push("/users")}
       >
         <ArrowLeft className="h-4 w-4" />
-        ย้อนกลับ
+        {t("userDetail.back")}
       </Button>
 
       {/* Action messages */}
       {actionError && (
         <Alert variant="destructive" className="rounded-2xl">
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>เกิดข้อผิดพลาด</AlertTitle>
+          <AlertTitle>{t("userDetail.errorTitle")}</AlertTitle>
           <AlertDescription>{actionError}</AlertDescription>
         </Alert>
       )}
@@ -591,7 +595,7 @@ export default function UserDetailPage() {
                     ) : (
                       <Power className="h-4 w-4" />
                     )}
-                    {user.status === "INACTIVE" ? "เปิดใช้งาน" : "ระงับบัญชี"}
+                    {user.status === "INACTIVE" ? t("userDetail.reactivate") : t("userDetail.suspendAccount")}
                   </Button>
                 )}
               </div>
@@ -1240,7 +1244,9 @@ export default function UserDetailPage() {
       {/* Image Viewer Modal */}
       {imageViewer && (
         <div
-          className="fixed inset-0 z-50 flex flex-col bg-black/90 text-white"
+          ref={imageViewerRef}
+          tabIndex={-1}
+          className="fixed inset-0 z-50 flex flex-col bg-black/90 text-white outline-none"
           role="dialog"
           aria-modal="true"
           aria-label={imageViewer.title}

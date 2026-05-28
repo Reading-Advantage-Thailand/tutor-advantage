@@ -11,6 +11,7 @@ import {
   ShieldAlert,
   ShieldCheck,
   Zap,
+  X,
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -60,6 +61,14 @@ export default function FraudFlagsPage() {
   const [success, setSuccess] = useState("");
   const [confirmFreeze, setConfirmFreeze] = useState<{ id: string; targetName: string } | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  // Auto-dismiss success after 5s
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(""), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
   useEffect(() => {
     debounceRef.current = setTimeout(() => setDebouncedSearch(search), 400);
@@ -170,16 +179,22 @@ export default function FraudFlagsPage() {
       </div>
 
       {error && (
-        <Alert variant="destructive" className="rounded-2xl border-2 shadow-sm">
+        <Alert variant="destructive" className="rounded-2xl border-2 shadow-sm relative">
           <AlertTriangle className="h-5 w-5" />
           <AlertTitle className="font-bold">{t("fraud.actionFailed")}</AlertTitle>
           <AlertDescription className="font-medium">{error}</AlertDescription>
+          <button onClick={() => setError("")} className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
+            <X className="h-4 w-4" />
+          </button>
         </Alert>
       )}
       {success && (
-        <Alert className="rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/5 shadow-sm">
+        <Alert className="rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/5 shadow-sm relative">
           <CheckCircle2 className="h-5 w-5 text-emerald-600" />
           <AlertDescription className="font-medium text-emerald-700">{success}</AlertDescription>
+          <button onClick={() => setSuccess("")} className="absolute top-3 right-3 text-emerald-400 hover:text-emerald-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
+            <X className="h-4 w-4" />
+          </button>
         </Alert>
       )}
 
@@ -209,21 +224,21 @@ export default function FraudFlagsPage() {
             />
           </div>
 
-          {loading && (
+          {loading ? (
             <div className="space-y-4">
               <Skeleton className="h-32 w-full rounded-2xl" />
               <Skeleton className="h-32 w-full rounded-2xl" />
             </div>
-          )}
-          
-          {!loading && activeFlags.length === 0 && (
+          ) : (
+            <>
+          {activeFlags.length === 0 && (
             <div className="flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
               <ShieldCheck className="h-12 w-12 text-emerald-500/50 mb-4" />
               <p className="font-bold text-muted-foreground">{t("fraud.safeTitle")}</p>
               <p className="text-sm text-muted-foreground/60 mt-1">{t("fraud.safeDescription")}</p>
             </div>
           )}
-          
+
           <div className="grid grid-cols-1 gap-4">
             {activeFlags.map((flag) => (
               <div key={flag.id} className="rounded-2xl border border-border/60 bg-card p-6 transition-all hover:shadow-md hover:border-red-500/30 group">
@@ -299,6 +314,8 @@ export default function FraudFlagsPage() {
               </div>
             ))}
           </div>
+            </>
+          )}
         </CardContent>
       </Card>
       <ConfirmDialog

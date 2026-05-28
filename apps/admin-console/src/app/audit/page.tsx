@@ -66,41 +66,41 @@ const ACTION_CONFIG: Record<
   }
 > = {
   PREVIEW: {
-    label: "Preview Generated",
+    label: t("audit.actionLabelPreview"),
     icon: PlayCircle,
     className:
       "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-none",
   },
   APPROVE: {
-    label: "Settlement Approved",
+    label: t("audit.actionLabelApprove"),
     icon: CheckCircle2,
     className:
       "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-none",
   },
   REJECT: {
-    label: "Settlement Rejected",
+    label: t("audit.actionLabelReject"),
     icon: XCircle,
     className: "bg-red-500/10 text-red-700 dark:text-red-400 border-none",
   },
   ADJUST_CREATE: {
-    label: "Adjustment Created",
+    label: t("audit.actionLabelAdjustCreate"),
     icon: FilePenLine,
     className:
       "bg-violet-500/10 text-violet-700 dark:text-violet-400 border-none",
   },
   ADJUST_APPROVE: {
-    label: "Adjustment Approved",
+    label: t("audit.actionLabelAdjustApprove"),
     icon: CheckCircle2,
     className:
       "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-none",
   },
   ADJUST_REJECT: {
-    label: "Adjustment Rejected",
+    label: t("audit.actionLabelAdjustReject"),
     icon: XCircle,
     className: "bg-red-500/10 text-red-700 dark:text-red-400 border-none",
   },
   EXPORT: {
-    label: "Export CSV",
+    label: t("audit.actionLabelExport"),
     icon: Download,
     className:
       "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-none",

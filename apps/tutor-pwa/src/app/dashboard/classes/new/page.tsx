@@ -32,6 +32,7 @@ export default function NewClassPage() {
     startsAt: "",
     endsAt: "",
   });
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [books, setBooks] = useState<any[]>([]);
 
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
@@ -59,12 +60,22 @@ export default function NewClassPage() {
     setSelectedDays((prev) => toggleClassDay(prev, value));
   };
 
+  const clearFieldError = (field: string) => {
+    setFieldErrors((prev) => {
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.schedule) {
-      setErrorText(t("tutorClass.newClass.scheduleRequired"));
-      return;
-    }
+    const newErrors: Record<string, string> = {};
+    if (!form.name.trim()) newErrors.name = t("tutorClass.newClass.classNamePlaceholder") + " (จำเป็น)";
+    if (!form.book) newErrors.book = t("tutorClass.newClass.selectBook") + " (จำเป็น)";
+    if (!form.schedule) newErrors.schedule = t("tutorClass.newClass.scheduleRequired");
+    setFieldErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
     setLoading(true);
     setErrorText("");
     try {
@@ -111,18 +122,20 @@ export default function NewClassPage() {
                   id="class-name"
                   placeholder={t("tutorClass.newClass.classNamePlaceholder")}
                   value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  required
+                  onChange={(e) => { setForm({ ...form, name: e.target.value }); clearFieldError("name"); }}
+                  className={fieldErrors.name ? "border-destructive focus-visible:ring-destructive/30" : ""}
                 />
+                {fieldErrors.name && (
+                  <p className="text-xs text-destructive font-semibold">{fieldErrors.name}</p>
+                )}
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="book">{t("tutorClass.newClass.book")}</Label>
                 <select
                   id="book"
                   value={form.book}
-                  onChange={(e) => setForm({ ...form, book: e.target.value })}
-                  required
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-foreground"
+                  onChange={(e) => { setForm({ ...form, book: e.target.value }); clearFieldError("book"); }}
+                  className={`flex h-10 w-full rounded-md border bg-background px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 text-foreground ${fieldErrors.book ? "border-destructive focus-visible:ring-destructive/30" : "border-input focus-visible:ring-ring"}`}
                 >
                   <option value="" className="bg-background text-foreground">
                     {t("tutorClass.newClass.selectBook")}
@@ -133,6 +146,9 @@ export default function NewClassPage() {
                     </option>
                   ))}
                 </select>
+                {fieldErrors.book && (
+                  <p className="text-xs text-destructive font-semibold">{fieldErrors.book}</p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -154,7 +170,7 @@ export default function NewClassPage() {
                       <button
                         key={day.value}
                         type="button"
-                        onClick={() => toggleDay(day.value)}
+                        onClick={() => { toggleDay(day.value); clearFieldError("schedule"); }}
                         title={`${t("tutorClass.newClass.dayTitlePrefix")}${day.full}`}
                         className={`
                           w-10 h-10 rounded-full text-sm font-semibold transition-all border select-none
@@ -169,9 +185,13 @@ export default function NewClassPage() {
                     );
                   })}
                 </div>
-                <p className={`text-xs text-muted-foreground transition-opacity ${selectedDays.length === 0 ? "opacity-100" : "opacity-0"}`}>
-                  {t("tutorClass.newClass.selectAtLeastOneDay")}
-                </p>
+                {fieldErrors.schedule ? (
+                  <p className="text-xs text-destructive font-semibold">{fieldErrors.schedule}</p>
+                ) : (
+                  <p className={`text-xs text-muted-foreground transition-opacity ${selectedDays.length === 0 ? "opacity-100" : "opacity-0"}`}>
+                    {t("tutorClass.newClass.selectAtLeastOneDay")}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">

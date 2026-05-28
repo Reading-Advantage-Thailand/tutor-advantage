@@ -781,10 +781,12 @@ type MessageKey<T, TPrefix extends string = ""> = {
 export type I18nKey = MessageKey<Messages>;
 
 export function t(key: I18nKey): string {
-  return key.split(".").reduce<unknown>((current, part) => {
+  const resolved = key.split(".").reduce<unknown>((current, part) => {
     if (current && typeof current === "object" && part in current) {
       return (current as Record<string, unknown>)[part];
     }
     return undefined;
-  }, th) as string;
+  }, th);
+  if (typeof resolved === "string") return resolved;
+  return `[missing:${key}]`;
 }

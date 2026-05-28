@@ -41,7 +41,7 @@ export default function UnauthorizedPage() {
               {t("unauthorized.title")}
             </CardTitle>
             <CardDescription className="text-sm font-medium mt-2">
-              Access Denied
+              {t("unauthorized.title")}
             </CardDescription>
           </CardHeader>
 

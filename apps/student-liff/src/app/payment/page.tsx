@@ -88,6 +88,8 @@ function PaymentFlow() {
   const [cardCvv, setCardCvv] = useState("");
   const [loading, setLoading] = useState(false);
   const [qrLoading, setQrLoading] = useState(false);
+  const [qrSecondsLeft, setQrSecondsLeft] = useState<number | null>(null);
+  const qrTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [paymentIntentId, setPaymentIntentId] = useState<string | null>(
     returnedPaymentIntentId,
   );
@@ -276,6 +278,27 @@ function PaymentFlow() {
     }
   };
 
+  const stopQrTimer = () => {
+    if (qrTimerRef.current) {
+      clearInterval(qrTimerRef.current);
+      qrTimerRef.current = null;
+    }
+  };
+
+  const startQrTimer = () => {
+    stopQrTimer();
+    setQrSecondsLeft(15 * 60); // 15 minutes
+    qrTimerRef.current = setInterval(() => {
+      setQrSecondsLeft((prev) => {
+        if (prev === null || prev <= 1) {
+          stopQrTimer();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
   const startQrAutoPoll = (intentId: string) => {
     stopQrPoll();
     qrPollRef.current = setInterval(async () => {
@@ -315,13 +338,15 @@ function PaymentFlow() {
       );
       // Start auto-polling after QR is loaded
       startQrAutoPoll(intentId);
+      // Start 15-minute countdown timer
+      startQrTimer();
     } finally {
       setQrLoading(false);
     }
   };
 
-  // Cleanup poll on unmount
-  useEffect(() => () => { stopQrPoll(); }, []);
+  // Cleanup poll and timer on unmount
+  useEffect(() => () => { stopQrPoll(); stopQrTimer(); }, []);
 
   const handleConfirmPayment = async () => {
     stopQrPoll(); // stop auto-poll while manually checking
@@ -854,9 +879,9 @@ function PaymentFlow() {
 
           <div
             className="qr-container"
-            style={{ width: 200, height: 270, borderRadius: 20 }}
+            style={{ width: 200, height: 270, borderRadius: 20, opacity: qrSecondsLeft === 0 ? 0.4 : 1, transition: "opacity 0.3s ease" }}
           >
-            {checkout?.qrCodeDataUri ? (
+            {checkout?.qrCodeDataUri && qrSecondsLeft !== 0 ? (
               <Image
                 src={checkout.qrCodeDataUri}
                 alt="PromptPay QR"
@@ -936,25 +961,40 @@ function PaymentFlow() {
 
           <div
             style={{
-              background: "var(--accent-amber-light)",
+              background: qrSecondsLeft === 0 ? "var(--accent-red-light)" : "var(--accent-amber-light)",
               borderRadius: 14,
               padding: "12px 14px",
               width: "100%",
-              border: "1px solid #fde68a",
+              border: `1px solid ${qrSecondsLeft === 0 ? "rgba(239,68,68,0.3)" : "#fde68a"}`,
               display: "flex",
               gap: 8,
               alignItems: "center",
             }}
           >
-            <Clock size={16} style={{ color: "#92400e", flexShrink: 0 }} />
+            <Clock size={16} style={{ color: qrSecondsLeft === 0 ? "var(--accent-red)" : "#92400e", flexShrink: 0 }} />
             <p
               style={{
                 fontSize: "0.8125rem",
-                color: "#92400e",
+                color: qrSecondsLeft === 0 ? "var(--accent-red)" : "#92400e",
                 lineHeight: 1.5,
+                flex: 1,
               }}
             >
-              {t("payment.promptpay.expiryPrefix")} <strong>{t("payment.promptpay.expiryTime")}</strong>
+              {qrSecondsLeft === 0 ? (
+                <strong>QR Code หมดอายุแล้ว — กรุณาสร้างใหม่</strong>
+              ) : (
+                <>
+                  {t("payment.promptpay.expiryPrefix")}{" "}
+                  {qrSecondsLeft !== null ? (
+                    <strong>
+                      {String(Math.floor(qrSecondsLeft / 60)).padStart(2, "0")}:
+                      {String(qrSecondsLeft % 60).padStart(2, "0")}
+                    </strong>
+                  ) : (
+                    <strong>{t("payment.promptpay.expiryTime")}</strong>
+                  )}
+                </>
+              )}
             </p>
           </div>
 

@@ -331,9 +331,10 @@ function EnrollContent() {
             </button>
           </Link>
           <button
-            className="flex-2 flex-[2] py-4 rounded-2xl text-white font-black text-base flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
-            style={{ background: "var(--brand-500)", boxShadow: "var(--shadow-green)" }}
+            className="flex-2 flex-[2] py-4 rounded-2xl text-white font-black text-base flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
+            style={{ background: isFull ? "var(--neutral-400)" : "var(--brand-500)", boxShadow: isFull ? "none" : "var(--shadow-green)" }}
             onClick={goToPayment}
+            disabled={isFull}
           >
             {t("enroll.continue")}
             <ArrowRight size={18} />

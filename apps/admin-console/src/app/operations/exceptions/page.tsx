@@ -7,7 +7,8 @@ import {
   RefreshCw,
   Search,
   XCircle,
-  Activity
+  Activity,
+  X,
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -47,6 +48,14 @@ export default function ExceptionsPage() {
   const [success, setSuccess] = useState("");
   const [confirmAction, setConfirmAction] = useState<{ id: string; action: string } | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  // Auto-dismiss success after 5s
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(""), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
   useEffect(() => {
     debounceRef.current = setTimeout(() => setDebouncedSearch(search), 400);
@@ -113,18 +122,24 @@ export default function ExceptionsPage() {
       </div>
 
       {error && (
-        <Alert variant="destructive" className="rounded-2xl border-2 shadow-sm">
+        <Alert variant="destructive" className="rounded-2xl border-2 shadow-sm relative">
           <AlertTriangle className="h-5 w-5" />
           <AlertTitle className="font-bold">{t("operations.actionFailed")}</AlertTitle>
           <AlertDescription className="font-medium">{error}</AlertDescription>
+          <button onClick={() => setError("")} className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
+            <X className="h-4 w-4" />
+          </button>
         </Alert>
       )}
       {success && (
-        <Alert className="rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/5 shadow-sm">
+        <Alert className="rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/5 shadow-sm relative">
           <CheckCircle2 className="h-5 w-5 text-emerald-600" />
           <AlertDescription className="font-medium text-emerald-700">
             {success}
           </AlertDescription>
+          <button onClick={() => setSuccess("")} className="absolute top-3 right-3 text-emerald-400 hover:text-emerald-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
+            <X className="h-4 w-4" />
+          </button>
         </Alert>
       )}
 

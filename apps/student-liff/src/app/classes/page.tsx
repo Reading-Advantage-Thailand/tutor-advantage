@@ -189,6 +189,7 @@ export default function ClassesPage() {
             id="btn-scan-qr"
             onClick={handleScanQr}
             title={t("classes.scanQrTitle")}
+            aria-label={t("classes.scanQrTitle")}
             style={{
               width: 48,
               height: 48,
@@ -223,6 +224,8 @@ export default function ClassesPage() {
               { label: "Origins A1", value: "A1" },
               { label: "Quest A2", value: "A2" },
               { label: "Adventure B1", value: "B1" },
+              { label: "Hero B2", value: "B2" },
+              { label: "Legend C1", value: "C1" },
             ] as { label: string; value: string | null }[]).map(({ label, value }) => {
               const isActive = activeFilter === value;
               return (
@@ -264,20 +267,37 @@ export default function ClassesPage() {
             className="flex flex-col items-center justify-center p-12 gap-2"
             style={{ minHeight: "50dvh" }}
           >
-            <Loader2 className="animate-spin text-brand-500" />
-            <p className="text-slate-400 text-sm">
-              {t("classes.loading")}
-            </p>
+            {/* Skeleton cards */}
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="glass-card"
+                style={{ width: "100%", height: 140, borderRadius: 16, overflow: "hidden" }}
+              >
+                <div style={{ display: "flex", height: "100%" }}>
+                  <div className="skeleton" style={{ width: 4, height: "100%", borderRadius: 0 }} />
+                  <div style={{ flex: 1, padding: 16, display: "flex", flexDirection: "column", gap: 10 }}>
+                    <div className="skeleton" style={{ height: 18, width: "65%", borderRadius: 8 }} />
+                    <div className="skeleton" style={{ height: 14, width: "40%", borderRadius: 8 }} />
+                    <div className="skeleton" style={{ height: 8, width: "100%", borderRadius: 8 }} />
+                    <div className="skeleton" style={{ height: 14, width: "30%", borderRadius: 8 }} />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
         {error && (
-          <div className="p-6 bg-red-50 rounded-2xl flex flex-col items-center gap-3 text-center">
-            <AlertCircle className="text-red-500" />
-            <p className="text-red-700 font-medium">{error}</p>
+          <div
+            className="p-6 rounded-2xl flex flex-col items-center gap-3 text-center"
+            style={{ background: "var(--accent-red-light)" }}
+          >
+            <AlertCircle style={{ color: "var(--accent-red)" }} />
+            <p style={{ color: "var(--accent-red)", fontWeight: 500 }}>{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="text-sm font-bold text-red-600 underline"
+              style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--accent-red)", textDecoration: "underline", background: "none", border: "none", cursor: "pointer" }}
             >
               {t("classes.retry")}
             </button>
@@ -286,7 +306,7 @@ export default function ClassesPage() {
 
         {!loading && !error && classes.length === 0 && (
           <div className="p-12 text-center">
-            <p className="text-slate-500 font-medium">
+            <p style={{ color: "var(--text-secondary)", fontWeight: 500 }}>
               {searchQuery || activeFilter !== null
                 ? t("classes.emptySearch")
                 : t("classes.emptyOpen")}
@@ -311,6 +331,7 @@ export default function ClassesPage() {
                   key={cls.id}
                   href={`/classes/${cls.id}`}
                   id={`class-card-${cls.id}`}
+                  aria-label={cls.name}
                   className="animate-slide-up glass-card"
                   style={{
                     textDecoration: "none",

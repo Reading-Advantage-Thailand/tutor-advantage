@@ -10,8 +10,9 @@ interface AnimatedCounterProps {
 }
 
 /**
- * Animated number counter that counts from 0 to target value
- * Uses requestAnimationFrame for smooth 60fps animation
+ * Animated number counter that counts from 0 to target value on first mount.
+ * Subsequent value changes show the final value immediately (no re-animation).
+ * Uses requestAnimationFrame for smooth 60fps animation.
  */
 export function AnimatedCounter({
   value,
@@ -23,14 +24,23 @@ export function AnimatedCounter({
   const startTime = useRef<number | null>(null);
   const rafId = useRef<number | null>(null);
   const prevValue = useRef(0);
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
+    // After first mount animation, skip animation for subsequent value changes
+    if (hasAnimated.current) {
+      setDisplayValue(value);
+      prevValue.current = value;
+      return;
+    }
+
     const startValue = prevValue.current;
     const endValue = value;
     prevValue.current = value;
 
     if (startValue === endValue) {
       setDisplayValue(endValue);
+      hasAnimated.current = true;
       return;
     }
 
@@ -52,6 +62,7 @@ export function AnimatedCounter({
         rafId.current = requestAnimationFrame(animate);
       } else {
         setDisplayValue(endValue);
+        hasAnimated.current = true;
       }
     };
 

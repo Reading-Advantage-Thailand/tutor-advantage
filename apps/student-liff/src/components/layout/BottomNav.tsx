@@ -70,7 +70,7 @@ export function BottomNav() {
             />
             <span
               style={{
-                fontSize: "0.625rem",
+                fontSize: "0.75rem",
                 fontWeight: active ? 700 : 500,
                 letterSpacing: "0.01em",
                 transition: "all 0.2s ease",

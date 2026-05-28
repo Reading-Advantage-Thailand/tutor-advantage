@@ -43,7 +43,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { log } from "console";
 
 export function ClassStatusToggle({
   classId,
@@ -286,7 +285,7 @@ export function ArticleSelector({
   };
 
   return (
-    <Card className="border-border/60 bg-gradient-to-br from-background via-background to-primary/5 h-[650px] overflow-hidden shadow-sm flex flex-col">
+    <Card className="border-border/60 bg-gradient-to-br from-background via-background to-primary/5 min-h-[400px] max-h-[80vh] overflow-hidden shadow-sm flex flex-col">
       <CardHeader className="pb-4 shrink-0">
         <CardTitle className="text-base font-bold flex items-center gap-2.5 text-foreground">
           <span className="p-1.5 rounded-lg bg-primary/10 text-primary flex items-center justify-center">

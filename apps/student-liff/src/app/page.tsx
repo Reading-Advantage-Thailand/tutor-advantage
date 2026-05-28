@@ -7,7 +7,7 @@ import { useLiff } from "@/components/providers/LiffProvider";
 import { LineIcon } from "@/components/icons/LineIcon";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import { Sparkles, ChevronRight, BookOpen, Users, Clock, Shield } from "lucide-react";
+import { Sparkles, ChevronRight, BookOpen, Clock, Shield, FileText } from "lucide-react";
 import { t } from "@/lib/i18n";
 
 export default function LandingPage() {
@@ -129,7 +129,7 @@ export default function LandingPage() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
           {[
             { value: "32", label: t("app.statBooks"), suffix: t("app.statBookUnit"), Icon: BookOpen },
-            { value: "448", label: t("app.statArticles"), suffix: t("app.statArticleUnit"), Icon: Users },
+            { value: "448", label: t("app.statArticles"), suffix: t("app.statArticleUnit"), Icon: FileText },
             { value: "1,150+", label: t("app.statHours"), suffix: "", Icon: Clock },
           ].map((stat) => (
             <div

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap");
+/* Fonts loaded via next/font/google in layout.tsx — no duplicate @import needed */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -45,18 +45,13 @@
   --accent-blue-light: #dbeafe;
   --accent-purple: #8b5cf6;
   --accent-purple-light: #ede9fe;
+  --accent-emerald: #10b981;
+  --accent-emerald-light: #d1fae5;
 
-  /* Surfaces — theme-aware */
-  --surface-bg: #f0f4f8;
-  --surface-card: #ffffff;
-  --surface-elevated: #ffffff;
-  --surface-nav: rgba(255, 255, 255, 0.95);
-  --surface-border: #e2e8f0;
+  /* Translucent surfaces */
+  --surface-card-trans: rgba(255, 255, 255, 0.8);
 
-  /* Semantic text */
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-tertiary: #94a3b8;
+  /* Surfaces — theme-aware (single canonical definitions below) */
 
   /* Typography */
   --font-thai: "Noto Sans Thai", sans-serif;
@@ -912,6 +907,10 @@ p { line-height: 1.7; }
   --accent-blue-light: #0c1a2e;
   --accent-purple-light: #1a1030;
   --accent-red-light: #2d0f0f;
+  --accent-emerald-light: #064e3b;
+
+  /* Translucent surfaces */
+  --surface-card-trans: rgba(30, 30, 30, 0.8);
 
   /* Semantic text */
   --text-primary: #f0f6fc;

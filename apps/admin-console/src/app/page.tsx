@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import {
   Activity,
@@ -14,6 +14,8 @@ import {
   TrendingUp,
   Clock,
   ExternalLink,
+  X,
+  RefreshCw,
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +30,16 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchWithAuth, getAdminRole } from "@/lib/api";
 import { t } from "@/lib/i18n";
+
+const ACTION_TYPE_LABELS: Record<string, string> = {
+  PREVIEW: t("audit.actionLabelPreview"),
+  APPROVE: t("audit.actionLabelApprove"),
+  REJECT: t("audit.actionLabelReject"),
+  ADJUST_CREATE: t("audit.actionLabelAdjustCreate"),
+  ADJUST_APPROVE: t("audit.actionLabelAdjustApprove"),
+  ADJUST_REJECT: t("audit.actionLabelAdjustReject"),
+  EXPORT: t("audit.actionLabelExport"),
+};
 
 interface Overview {
   stats: {
@@ -55,8 +67,8 @@ interface Overview {
 const QUEUES = [
   {
     key: "settlements",
-    title: "Settlements",
-    description: "Finance approvals",
+    title: t("dashboard.queueSettlementsTitle"),
+    description: t("dashboard.queueSettlementsDescription"),
     href: "/settlements",
     icon: ReceiptText,
     color: "text-amber-500",
@@ -64,8 +76,8 @@ const QUEUES = [
   },
   {
     key: "adjustments",
-    title: "Adjustments",
-    description: "Ledger reviews",
+    title: t("dashboard.queueAdjustmentsTitle"),
+    description: t("dashboard.queueAdjustmentsDescription"),
     href: "/adjustments",
     icon: FilePenLine,
     color: "text-blue-500",
@@ -73,8 +85,8 @@ const QUEUES = [
   },
   {
     key: "verifications",
-    title: "Verifications",
-    description: "Tutor onboarding",
+    title: t("dashboard.queueVerificationsTitle"),
+    description: t("dashboard.queueVerificationsDescription"),
     href: "/users",
     icon: Users,
     color: "text-emerald-500",
@@ -82,8 +94,8 @@ const QUEUES = [
   },
   {
     key: "exceptions",
-    title: "Exceptions",
-    description: "System errors",
+    title: t("dashboard.queueExceptionsTitle"),
+    description: t("dashboard.queueExceptionsDescription"),
     href: "/operations/exceptions",
     icon: AlertTriangle,
     color: "text-red-500",
@@ -91,8 +103,8 @@ const QUEUES = [
   },
   {
     key: "fraudFlags",
-    title: "Fraud Flags",
-    description: "Risk alerts",
+    title: t("dashboard.queueFraudFlagsTitle"),
+    description: t("dashboard.queueFraudFlagsDescription"),
     href: "/fraud",
     icon: ShieldAlert,
     color: "text-purple-500",
@@ -125,22 +137,22 @@ export default function DashboardPage() {
     setRole(r || null);
   }, []);
 
-  useEffect(() => {
-    const loadOverview = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const data = await fetchWithAuth("/v1/admin/overview");
-        setOverview(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Could not load overview");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadOverview();
+  const loadOverview = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const data = await fetchWithAuth("/v1/admin/overview");
+      setOverview(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not load overview");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    loadOverview();
+  }, [loadOverview]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -178,10 +190,19 @@ export default function DashboardPage() {
       </div>
 
       {error && (
-        <Alert variant="destructive" className="rounded-2xl border-2 shadow-lg animate-in slide-in-from-top-4 duration-300">
+        <Alert variant="destructive" className="rounded-2xl border-2 shadow-lg animate-in slide-in-from-top-4 duration-300 relative">
           <AlertTriangle className="h-5 w-5" />
           <AlertTitle className="font-bold">{t("dashboard.connectionError")}</AlertTitle>
-          <AlertDescription className="font-medium">{error}</AlertDescription>
+          <AlertDescription className="font-medium flex items-center justify-between gap-4">
+            <span>{error}</span>
+            <Button size="sm" variant="outline" className="shrink-0 rounded-xl font-bold border-red-300 text-red-700 hover:bg-red-50" onClick={loadOverview}>
+              <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
+              ลองใหม่
+            </Button>
+          </AlertDescription>
+          <button onClick={() => setError("")} className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
+            <X className="h-4 w-4" />
+          </button>
         </Alert>
       )}
 
@@ -277,7 +298,7 @@ export default function DashboardPage() {
                       </div>
                       <div>
                         <p className="text-sm font-bold text-foreground">
-                          {event.actionType}
+                          {ACTION_TYPE_LABELS[event.actionType] ?? event.actionType}
                         </p>
                         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                           {event.entityType} • {event.targetId.slice(0, 8)}...

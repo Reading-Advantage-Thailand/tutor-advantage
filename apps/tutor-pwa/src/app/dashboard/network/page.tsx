@@ -216,14 +216,20 @@ export default async function NetworkPage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          {response?.networkTree ? (
+          {response?.networkTree && (response.networkTree.children?.length ?? 0) > 0 ? (
             <div className="w-full h-[650px]">
               <InteractiveNetwork tree={response.networkTree} />
             </div>
           ) : (
             <div className="p-6">
-              <div className="rounded-3xl border border-dashed border-border/60 p-12 text-center text-sm font-semibold text-muted-foreground bg-muted/10">
-                {t("dashboardNetwork.emptyDirectTutors")}
+              <div className="rounded-3xl border border-dashed border-border/60 p-12 text-center bg-muted/10 flex flex-col items-center justify-center gap-4">
+                <GitBranch className="h-10 w-10 text-muted-foreground/40" />
+                <div className="space-y-1">
+                  <p className="text-sm font-bold text-foreground">ยังไม่มีเครือข่าย</p>
+                  <p className="text-xs font-semibold text-muted-foreground">
+                    {t("dashboardNetwork.emptyDirectTutors")}
+                  </p>
+                </div>
               </div>
             </div>
           )}

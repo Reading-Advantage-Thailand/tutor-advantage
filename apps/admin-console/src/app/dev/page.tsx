@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { fetchWithAuth } from "@/lib/api";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 const ROLES = ["ADMIN", "TUTOR", "STUDENT", "FINANCE_CHECKER"] as const;
 const VERIFICATION_STATUSES = ["UNVERIFIED", "PENDING", "VERIFIED", "REJECTED"] as const;
@@ -153,6 +154,7 @@ export default function DevPage() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [actionMsg, setActionMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -205,7 +207,7 @@ export default function DevPage() {
           sponsorTutorId: editForm.sponsorTutorId || null,
         }),
       });
-      flash("ok", "User updated");
+      flash("ok", "อัปเดตผู้ใช้งานสำเร็จ");
       setEditingId(null);
       await load();
     } catch (e: any) {
@@ -228,7 +230,7 @@ export default function DevPage() {
           phoneNumber: createForm.phoneNumber || null,
         }),
       });
-      flash("ok", "User created");
+      flash("ok", "สร้างผู้ใช้งานสำเร็จ");
       setShowCreate(false);
       setCreateForm({ ...BLANK_FORM });
       await load();
@@ -241,11 +243,10 @@ export default function DevPage() {
 
   // ── Delete ─────────────────────────────────────────────────────────────────
   const deleteUser = async (userId: string) => {
-    if (!confirm(`Hard delete user ${userId}? This is irreversible.`)) return;
     setDeleting(userId);
     try {
       await fetchWithAuth(`/v1/dev/users/${userId}`, { method: "DELETE" });
-      flash("ok", "User deleted");
+      flash("ok", "ลบผู้ใช้งานสำเร็จ");
       await load();
     } catch (e: any) {
       flash("err", e.message);
@@ -436,7 +437,7 @@ export default function DevPage() {
                           size="sm"
                           variant="outline"
                           className="h-8 w-8 p-0 text-red-600 border-red-500/30 hover:bg-red-500/10"
-                          onClick={() => deleteUser(u.userId)}
+                          onClick={() => setConfirmDeleteId(u.userId)}
                           disabled={deleting === u.userId}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
@@ -456,6 +457,19 @@ export default function DevPage() {
           )}
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!confirmDeleteId}
+        onOpenChange={(open) => { if (!open) setConfirmDeleteId(null); }}
+        title="ยืนยันการลบผู้ใช้งาน"
+        description={`Hard delete user ${confirmDeleteId ?? ""}? การกระทำนี้ไม่สามารถย้อนกลับได้`}
+        variant="destructive"
+        confirmLabel="ลบผู้ใช้งาน"
+        cancelLabel="ยกเลิก"
+        onConfirm={async () => {
+          if (confirmDeleteId) await deleteUser(confirmDeleteId);
+        }}
+      />
     </div>
   );
 }

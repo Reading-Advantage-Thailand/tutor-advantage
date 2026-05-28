@@ -42,7 +42,7 @@ function LiveLeaderboard({ participants }: { participants: any[] }) {
   const maxScore = Math.max(...sorted.map(p => p.score || 0), 1);
 
   return (
-    <div className="w-72 shrink-0 flex flex-col rounded-2xl overflow-hidden border border-border/60 bg-card/60 backdrop-blur shadow-xl">
+    <div className="w-full lg:w-72 shrink-0 flex flex-col rounded-2xl overflow-hidden border border-border/60 bg-card/60 backdrop-blur shadow-xl">
       {/* Header */}
       <div className="px-5 py-3.5 bg-gradient-to-r from-slate-900 to-indigo-950 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2.5">
@@ -251,7 +251,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             </div>
           </div>
 
-          <div className="w-full max-w-3xl grid grid-cols-[1fr_auto] gap-5">
+          <div className="w-full max-w-3xl grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-5">
             {/* Bar chart */}
             <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
               <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">{t("lesson.interactive.answerSummary")}</p>
@@ -654,7 +654,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const submittedPct = totalParticipants > 0 ? (totalAnswered / totalParticipants) * 100 : 0;
 
     return (
-      <div className="flex-1 flex gap-5 overflow-hidden min-h-0">
+      <div className="flex-1 flex flex-col lg:flex-row gap-5 overflow-hidden min-h-0">
         {/* Left: Question + Progress */}
         <div className="flex-1 flex flex-col items-center justify-center gap-5 min-w-0 overflow-hidden">
           {/* Question card with glow */}

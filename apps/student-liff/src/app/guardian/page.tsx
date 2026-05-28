@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Users, Check, ShieldAlert, Save, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronDown, Users, Check, ShieldAlert, Save, Loader2 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -123,6 +123,13 @@ export default function GuardianPage() {
             </div>
             <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "8px" }}>{t("guardian.savedTitle")}</h2>
             <p style={{ fontSize: "0.9375rem", color: "var(--text-secondary)", marginBottom: "24px" }}>{t("guardian.savedDescription")}</p>
+            <Button
+              onClick={() => router.push("/profile")}
+              className="h-11 rounded-xl text-sm font-bold w-full max-w-[240px]"
+              style={{ background: "linear-gradient(135deg, #06c755 0%, #049a42 100%)", color: "white" }}
+            >
+              {t("profile.title")}
+            </Button>
           </Card>
         ) : (
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
@@ -201,8 +208,8 @@ export default function GuardianPage() {
                     <option value="Relative">{t("guardian.relative")}</option>
                     <option value="Other">{t("guardian.other")}</option>
                   </select>
-                  <div style={{ position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none", opacity: 0.5 }}>
-                    v
+                  <div style={{ position: "absolute", right: "16px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: "var(--text-tertiary)" }}>
+                    <ChevronDown size={16} />
                   </div>
                 </div>
               </div>

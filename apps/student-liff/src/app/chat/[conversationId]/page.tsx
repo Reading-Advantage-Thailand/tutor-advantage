@@ -394,10 +394,11 @@ export default function ChatRoomPage() {
             />
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
+            aria-label="ส่งข้อความ"
             disabled={!inputText.trim() || isSending}
-            style={{ 
+            style={{
               background: inputText.trim() ? "var(--brand-600)" : "var(--neutral-200)", 
               border: "none", 
               width: 40, 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface PageTransitionProps {
@@ -14,6 +15,7 @@ interface PageTransitionProps {
 /**
  * Page transition wrapper that adds entrance animations.
  * Uses CSS animations from globals.css — no Framer Motion needed.
+ * Respects prefers-reduced-motion.
  *
  * Usage:
  * ```tsx
@@ -30,11 +32,25 @@ export function PageTransition({
   variant = "slide-up",
   stagger = false,
 }: PageTransitionProps) {
-  const animationClass = {
-    "slide-up": "animate-slide-up",
-    fade: "animate-fade-in",
-    scale: "animate-scale-in",
-  }[variant];
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const checkedRef = useRef(false);
+
+  useEffect(() => {
+    if (!checkedRef.current) {
+      checkedRef.current = true;
+      if (typeof window !== "undefined") {
+        setReducedMotion(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+      }
+    }
+  }, []);
+
+  const animationClass = reducedMotion
+    ? undefined
+    : {
+        "slide-up": "animate-slide-up",
+        fade: "animate-fade-in",
+        scale: "animate-scale-in",
+      }[variant];
 
   return (
     <div

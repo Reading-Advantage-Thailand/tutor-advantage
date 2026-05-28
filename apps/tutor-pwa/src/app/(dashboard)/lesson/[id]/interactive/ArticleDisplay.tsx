@@ -193,9 +193,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   /* ─── Phase 1: Introduction ──────────────────────────────── */
   if (phase === 1) {
     return (
-      <div className="flex-1 flex gap-6 items-stretch py-6 px-4 w-full max-w-6xl mx-auto animate-in fade-in duration-500">
-        {/* Left 45%: Article Image Panel */}
-        <div className="w-[45%] shrink-0 rounded-3xl overflow-hidden shadow-2xl relative">
+      <div className="flex-1 flex flex-col lg:flex-row gap-6 items-stretch py-6 px-4 w-full max-w-6xl mx-auto animate-in fade-in duration-500">
+        {/* Left: Article Image Panel */}
+        <div className="w-full lg:w-[45%] shrink-0 rounded-3xl overflow-hidden shadow-2xl relative">
           {articleImageUrl ? (
             <img
               src={articleImageUrl}

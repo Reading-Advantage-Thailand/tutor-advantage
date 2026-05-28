@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { fetchWithAuth, getAdminRole, getAdminUserId } from "../../lib/api";
 import { CopyableId } from "@/components/ui/copyable-id";
 import {
@@ -27,6 +27,7 @@ import {
   Scale,
   PlusCircle,
   MinusCircle,
+  X,
 } from "lucide-react";
 import {
   Select,
@@ -81,6 +82,14 @@ export default function AdjustmentsPage() {
     setCurrentUserId(getAdminUserId());
   }, []);
 
+  // Auto-dismiss success after 5s
+  useEffect(() => {
+    if (submitSuccess) {
+      const timer = setTimeout(() => setSubmitSuccess(""), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [submitSuccess]);
+
   const loadPending = useCallback(async () => {
     setListLoading(true);
     setListError("");
@@ -106,7 +115,7 @@ export default function AdjustmentsPage() {
     e.preventDefault();
     const bahtValue = parseFloat(amountBaht);
     if (isNaN(bahtValue) || bahtValue === 0) {
-      setSubmitError("จำนวนเงินต้องไม่เป็น 0");
+      setSubmitError(t("adjustments.validation.amountRequired"));
       return;
     }
     setSubmitLoading(true);
@@ -247,18 +256,24 @@ export default function AdjustmentsPage() {
                   </div>
 
                   {submitError && (
-                    <Alert variant="destructive" className="rounded-xl border-2">
+                    <Alert variant="destructive" className="rounded-xl border-2 relative">
                       <AlertCircle className="h-4 w-4" />
                       <AlertTitle className="font-bold">{t("adjustments.errorTitle")}</AlertTitle>
                       <AlertDescription className="font-medium">{submitError}</AlertDescription>
+                      <button onClick={() => setSubmitError("")} className="absolute top-2.5 right-2.5 text-red-400 hover:text-red-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
+                        <X className="h-3.5 w-3.5" />
+                      </button>
                     </Alert>
                   )}
                   {submitSuccess && (
-                    <Alert className="rounded-xl border-2 border-emerald-500/30 bg-emerald-500/5">
+                    <Alert className="rounded-xl border-2 border-emerald-500/30 bg-emerald-500/5 relative">
                       <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                       <AlertDescription className="font-medium text-emerald-700 dark:text-emerald-400">
                         {submitSuccess}
                       </AlertDescription>
+                      <button onClick={() => setSubmitSuccess("")} className="absolute top-2.5 right-2.5 text-emerald-400 hover:text-emerald-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
+                        <X className="h-3.5 w-3.5" />
+                      </button>
                     </Alert>
                   )}
 
@@ -335,9 +350,12 @@ export default function AdjustmentsPage() {
           </div>
 
           {listError && (
-            <Alert variant="destructive" className="rounded-2xl border-2 shadow-sm">
+            <Alert variant="destructive" className="rounded-2xl border-2 shadow-sm relative">
               <AlertCircle className="h-5 w-5" />
               <AlertDescription className="font-medium">{listError}</AlertDescription>
+              <button onClick={() => setListError("")} className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
+                <X className="h-4 w-4" />
+              </button>
             </Alert>
           )}
 

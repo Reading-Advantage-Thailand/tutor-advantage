@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { downloadBlob, fetchBlobWithAuth, fetchWithAuth, getAdminRole } from "../../lib/api";
 import { CopyableId } from "@/components/ui/copyable-id";
 import {
@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   AlertCircle,
   CheckCircle2,
@@ -41,6 +42,7 @@ import {
   Loader2,
   UserCircle,
   Send,
+  X,
 } from "lucide-react";
 
 import { t } from "@/lib/i18n";
@@ -58,6 +60,7 @@ function CopyButton({ text }: { text: string }) {
       }}
       className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
       title="คัดลอก ID"
+      aria-label="คัดลอก ID"
     >
       {copied ? (
         <Check className="h-3 w-3 text-emerald-500" />
@@ -183,7 +186,7 @@ const STATUS_CONFIG: Record<
       "border-amber-500/40 text-amber-600 dark:text-amber-400 bg-amber-500/10",
   },
   SUBMITTED: {
-    label: "รออนุมัติ Finance",
+    label: t("settlements.submitted"),
     variant: "outline",
     icon: ShieldCheck,
     className:
@@ -239,6 +242,14 @@ export default function SettlementsPage() {
     setUserRole(getAdminRole());
   }, []);
 
+  // Auto-dismiss success after 5s
+  useEffect(() => {
+    if (success) {
+      const t = setTimeout(() => setSuccess(""), 5000);
+      return () => clearTimeout(t);
+    }
+  }, [success]);
+
   const loadSettlements = useCallback(async () => {
     setListLoading(true);
     try {
@@ -289,7 +300,7 @@ export default function SettlementsPage() {
         action === "submit" ? "SUBMITTED" : action === "approve" ? "APPROVED" : "REJECTED";
       setSuccess(
         action === "submit"
-          ? "ส่งรออนุมัติ Finance Checker เรียบร้อยแล้ว"
+          ? t("settlements.submitSuccess")
           : `${t("settlements.actionSuccessPrefix")} ${action === "approve" ? t("settlements.approveAction") : t("settlements.rejectAction")} ${t("settlements.successSuffix")}`,
       );
       loadSettlements();
@@ -305,6 +316,7 @@ export default function SettlementsPage() {
 
   const handleExport = async (id: string, periodMonth: string) => {
     setExportLoading(true);
+    setSuccess("");
     setError("");
     try {
       const blob = await fetchBlobWithAuth(`/v1/settlements/${id}/export`);
@@ -319,6 +331,8 @@ export default function SettlementsPage() {
   };
 
   const handleViewLines = async (id: string) => {
+    setSuccess("");
+    setError("");
     setLinesLoadingId(id);
     try {
       const data = await fetchWithAuth(`/v1/settlements/${id}/lines`);
@@ -342,7 +356,7 @@ export default function SettlementsPage() {
         `/v1/settlements/${linesData.snapshotId}/lines/${row.payoutLineId}/transfer`,
         { method: "POST" },
       );
-      setSuccess("ส่งรายการโอนให้ Omise แล้ว");
+      setSuccess(t("settlements.transferSuccess"));
       await handleViewLines(linesData.snapshotId);
       await loadSettlements();
     } catch (err) {
@@ -364,7 +378,7 @@ export default function SettlementsPage() {
   const isFinanceChecker = userRole === "FINANCE_CHECKER";
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto w-full animate-in fade-in duration-500">
+    <div className="space-y-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
       <div className="flex flex-col gap-2">
         <h2 className="text-3xl font-black tracking-tight text-foreground">{t("settlements.title")}</h2>
         <p className="text-muted-foreground font-medium">{t("settlements.description")}</p>
@@ -478,17 +492,23 @@ export default function SettlementsPage() {
       {(error || success) && (
         <div className="space-y-4">
           {error && (
-            <Alert variant="destructive" className="rounded-2xl border-2 shadow-md">
+            <Alert variant="destructive" className="rounded-2xl border-2 shadow-md relative">
               <AlertCircle className="h-5 w-5" />
               <AlertTitle className="font-bold">{t("settlements.errorTitle")}</AlertTitle>
               <AlertDescription className="font-medium">{error}</AlertDescription>
+              <button onClick={() => setError("")} className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
+                <X className="h-4 w-4" />
+              </button>
             </Alert>
           )}
           {success && (
-            <Alert className="rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/5 shadow-md">
+            <Alert className="rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/5 shadow-md relative">
               <CheckCircle2 className="h-5 w-5 text-emerald-600" />
               <AlertTitle className="font-bold text-emerald-700">{t("settlements.successTitle")}</AlertTitle>
               <AlertDescription className="font-medium text-emerald-700/80">{success}</AlertDescription>
+              <button onClick={() => setSuccess("")} className="absolute top-3 right-3 text-emerald-400 hover:text-emerald-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
+                <X className="h-4 w-4" />
+              </button>
             </Alert>
           )}
         </div>
@@ -583,6 +603,29 @@ export default function SettlementsPage() {
             {t("settlements.refresh")}
           </Button>
         </div>
+
+        {listLoading && list.length === 0 && (
+          <div className="grid grid-cols-1 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="rounded-2xl border border-border/70 bg-card shadow-sm overflow-hidden animate-pulse">
+                <div className="h-1 w-full bg-muted" />
+                <div className="grid gap-0 xl:grid-cols-[1fr_340px]">
+                  <div className="flex min-w-0 items-center gap-4 p-5">
+                    <Skeleton className="h-12 w-12 rounded-xl shrink-0" />
+                    <div className="space-y-2 flex-1">
+                      <Skeleton className="h-5 w-32" />
+                      <Skeleton className="h-3 w-48" />
+                    </div>
+                  </div>
+                  <div className="border-t border-border/70 bg-muted/15 p-5 xl:border-l xl:border-t-0 space-y-3">
+                    <Skeleton className="h-8 w-full rounded-xl" />
+                    <Skeleton className="h-10 w-full rounded-xl" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {list.length === 0 && !listLoading && (
           <div className="flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
@@ -775,7 +818,7 @@ export default function SettlementsPage() {
                 <p className="font-medium">ไม่มีรายการในรอบนี้</p>
               </div>
             ) : (
-              <div className="rounded-2xl border overflow-hidden">
+              <div className="rounded-2xl border overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-muted/50 text-xs font-bold text-muted-foreground uppercase tracking-wider">
                     <tr>

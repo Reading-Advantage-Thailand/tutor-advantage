@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { fetchWithAuth } from "@/lib/api";
+import { t } from "@/lib/i18n";
 import {
   Users,
   Search,
@@ -50,17 +51,22 @@ const VERIFICATION_CONFIG: Record<string, { label: string; className: string; ic
 
 type FilterTab = "all" | "TUTOR" | "STUDENT" | "pending";
 
+const LIMIT = 20;
+
 export default function UsersPage() {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState<UserInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<FilterTab>("all");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (currentPage: number) => {
     setLoading(true);
     try {
-      const resp = await fetchWithAuth("/v1/users");
+      const resp = await fetchWithAuth(`/v1/users?page=${currentPage}&limit=${LIMIT}`);
       setUsers(resp.users || []);
+      setTotal(resp.total ?? (resp.users?.length ?? 0));
     } catch (err) {
       console.error(err);
     } finally {
@@ -69,11 +75,16 @@ export default function UsersPage() {
   }, []);
 
   useEffect(() => {
-    loadData();
+    loadData(page);
     // Handle ?filter=pending from URL (e.g. from dashboard CTA)
     const params = new URLSearchParams(window.location.search);
     if (params.get("filter") === "pending") setActiveTab("pending");
-  }, [loadData]);
+  }, [loadData, page]);
+
+  // Reset to page 1 when searchQuery changes
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
 
   const searchFiltered = users.filter((u) => {
     const q = search.toLowerCase();
@@ -96,27 +107,27 @@ export default function UsersPage() {
   const pendingCount  = users.filter((u) => u.role === "TUTOR" && (u.pendingVerificationCount || 0) > 0).length;
 
   const tabs: { id: FilterTab; label: string; count: number }[] = [
-    { id: "all",     label: "ทั้งหมด",      count: users.length },
-    { id: "TUTOR",   label: "ติวเตอร์",    count: totalTutors },
-    { id: "STUDENT", label: "นักเรียน",     count: totalStudents },
-    { id: "pending", label: "รอตรวจสอบ",   count: pendingCount },
+    { id: "all",     label: t("users.tabAll"),     count: users.length },
+    { id: "TUTOR",   label: t("users.tabTutor"),   count: totalTutors },
+    { id: "STUDENT", label: t("users.tabStudent"), count: totalStudents },
+    { id: "pending", label: t("users.tabPending"), count: pendingCount },
   ];
 
   return (
     <div className="space-y-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
       {/* Header */}
       <div className="flex flex-col gap-2">
-        <h2 className="text-3xl font-black tracking-tight text-foreground">ผู้ใช้งาน & ความยินยอม</h2>
-        <p className="text-muted-foreground font-medium">จัดการบัญชีผู้ใช้, ความยินยอมจากผู้ปกครอง และการยืนยันตัวตน</p>
+        <h2 className="text-3xl font-black tracking-tight text-foreground">{t("users.title")}</h2>
+        <p className="text-muted-foreground font-medium">{t("users.description")}</p>
       </div>
 
       {/* Stat row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "ผู้ใช้งานทั้งหมด", value: users.length,   icon: Users,        color: "text-brand-600" },
-          { label: "ติวเตอร์",          value: totalTutors,   icon: User,         color: "text-purple-600" },
-          { label: "นักเรียน",           value: totalStudents, icon: GraduationCap,color: "text-blue-600" },
-          { label: "รอตรวจสอบเอกสาร",   value: pendingCount,  icon: ShieldAlert,  color: "text-amber-600" },
+          { label: t("users.statTotal"),      value: users.length,   icon: Users,        color: "text-brand-600" },
+          { label: t("users.statTutors"),     value: totalTutors,    icon: User,         color: "text-purple-600" },
+          { label: t("users.statStudents"),   value: totalStudents,  icon: GraduationCap,color: "text-blue-600" },
+          { label: t("users.statPendingDocs"),value: pendingCount,   icon: ShieldAlert,  color: "text-amber-600" },
         ].map(({ label, value, icon: Icon, color }) => (
           <Card key={label} className="border-none shadow-sm rounded-2xl bg-card">
             <CardContent className="p-5 flex items-center gap-4">
@@ -138,8 +149,8 @@ export default function UsersPage() {
           <Search className="absolute left-3.5 top-3.5 h-5 w-5 text-muted-foreground group-focus-within:text-brand-600 transition-colors" />
           <Input
             type="text"
-            placeholder="ค้นหาด้วยชื่อ, อีเมล หรือ ID ผู้ใช้งาน..."
-            className="pl-11 h-12 rounded-2xl border-2 focus-visible:ring-brand-500 font-medium bg-muted/30"
+            placeholder={t("users.searchPlaceholder")}
+            className="pl-11 h-12 rounded-xl border-2 focus-visible:ring-brand-500 font-medium bg-muted/30"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -152,6 +163,7 @@ export default function UsersPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`
                 inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all
+                focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-500 outline-none
                 ${activeTab === tab.id
                   ? tab.id === "pending"
                     ? "bg-amber-500 text-white shadow-md shadow-amber-500/20"
@@ -176,7 +188,7 @@ export default function UsersPage() {
       {activeTab === "pending" && pendingCount > 0 && (
         <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-sm font-semibold text-amber-700 dark:text-amber-400">
           <Bell className="h-4 w-4 shrink-0 animate-pulse" />
-          มีติวเตอร์ {pendingCount} รายที่รอการตรวจสอบเอกสาร
+          {t("users.pendingBanner")} {pendingCount} {t("users.pendingBannerSuffix")}
         </div>
       )}
 
@@ -184,7 +196,7 @@ export default function UsersPage() {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
           <div className="animate-spin h-10 w-10 border-4 border-muted-foreground/20 border-t-brand-500 rounded-full mb-4" />
-          <p className="font-bold text-muted-foreground">กำลังโหลดข้อมูล...</p>
+          <p className="font-bold text-muted-foreground">{t("users.loading")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -289,9 +301,34 @@ export default function UsersPage() {
           {!loading && filtered.length === 0 && (
             <div className="col-span-full flex flex-col items-center justify-center py-20 bg-muted/20 rounded-3xl border-2 border-dashed">
               <Users className="h-12 w-12 text-muted-foreground/30 mb-4" />
-              <p className="font-bold text-muted-foreground">ไม่พบผู้ใช้งานตามเงื่อนไขที่ค้นหา</p>
+              <p className="font-bold text-muted-foreground">{t("users.emptySearch")}</p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {!loading && total > LIMIT && (
+        <div className="flex items-center justify-between pt-4">
+          <Button
+            variant="outline"
+            className="rounded-xl font-bold"
+            disabled={page === 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+          >
+            {t("users.pagePrevious")}
+          </Button>
+          <span className="text-sm font-bold text-muted-foreground bg-muted/50 px-4 py-2 rounded-xl">
+            {t("users.pageLabel")} {page} {t("users.pageFrom")} {Math.ceil(total / LIMIT)}
+          </span>
+          <Button
+            variant="outline"
+            className="rounded-xl font-bold"
+            disabled={page >= Math.ceil(total / LIMIT)}
+            onClick={() => setPage((p) => Math.min(Math.ceil(total / LIMIT), p + 1))}
+          >
+            {t("users.pageNext")}
+          </Button>
         </div>
       )}
     </div>

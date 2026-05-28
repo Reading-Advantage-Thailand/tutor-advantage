@@ -35,7 +35,7 @@ export default function ConsentPage() {
               <div style={{ display: "flex", gap: "14px" }}>
                 <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: consent.status === "ACTIVE" ? "var(--accent-emerald-light)" : "var(--neutral-100)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                   {consent.status === "ACTIVE" ? (
-                    <ShieldCheck size={20} style={{ color: "rgb(16, 185, 129)" }} />
+                    <ShieldCheck size={20} style={{ color: "var(--accent-emerald)" }} />
                   ) : (
                     <FileCheck size={20} style={{ color: "var(--neutral-400)" }} />
                   )}
@@ -43,7 +43,7 @@ export default function ConsentPage() {
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px", marginBottom: "4px" }}>
                     <h3 style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)" }}>{consent.title}</h3>
-                    <span style={{ fontSize: "0.6875rem", fontWeight: 700, padding: "2px 8px", borderRadius: "6px", background: consent.status === "ACTIVE" ? "rgba(16, 185, 129, 0.1)" : "rgba(107, 114, 128, 0.1)", color: consent.status === "ACTIVE" ? "rgb(5, 150, 105)" : "var(--text-secondary)" }}>
+                    <span style={{ fontSize: "0.6875rem", fontWeight: 700, padding: "2px 8px", borderRadius: "6px", background: consent.status === "ACTIVE" ? "var(--accent-emerald-light)" : "var(--neutral-100)", color: consent.status === "ACTIVE" ? "var(--accent-emerald)" : "var(--text-secondary)" }}>
                       {consent.status === "ACTIVE" ? t("app.consentActive") : t("app.consentInactive")}
                     </span>
                   </div>
@@ -63,10 +63,10 @@ export default function ConsentPage() {
         </div>
 
         <div style={{ marginTop: "32px", padding: "16px", borderRadius: "16px", background: "rgba(251, 191, 36, 0.08)", border: "1px solid rgba(251, 191, 36, 0.2)", display: "flex", gap: "12px" }}>
-          <AlertCircle size={20} style={{ color: "rgb(217, 119, 6)", flexShrink: 0, marginTop: "2px" }} />
+          <AlertCircle size={20} style={{ color: "var(--accent-amber)", flexShrink: 0, marginTop: "2px" }} />
           <div>
-            <h4 style={{ fontSize: "0.875rem", fontWeight: 600, color: "rgb(180, 83, 9)", marginBottom: "4px" }}>{t("app.revokeConsentTitle")}</h4>
-            <p style={{ fontSize: "0.8125rem", color: "rgb(180, 83, 9)", lineHeight: 1.6 }}>
+            <h4 style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--accent-amber)", marginBottom: "4px" }}>{t("app.revokeConsentTitle")}</h4>
+            <p style={{ fontSize: "0.8125rem", color: "var(--accent-amber)", lineHeight: 1.6 }}>
               {t("app.revokeConsentDescription")}
             </p>
           </div>

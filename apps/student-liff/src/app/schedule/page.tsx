@@ -260,7 +260,7 @@ export default function SchedulePage() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => router.back()}
+          onClick={() => router.push("/dashboard")}
           style={{ borderRadius: 12, color: "var(--neutral-600)" }}
         >
           <ChevronLeft size={22} />

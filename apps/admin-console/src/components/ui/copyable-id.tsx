@@ -48,7 +48,8 @@ export function CopyableId({ name, id, variant = "label" }: CopyableIdProps) {
         <button
           onClick={handleCopy}
           className="text-muted-foreground hover:text-brand-600 transition-colors"
-          title="Copy full ID"
+          title="คัดลอก ID"
+          aria-label="คัดลอก ID"
         >
           {copied ? (
             <Check className="h-3 w-3 text-emerald-500" />

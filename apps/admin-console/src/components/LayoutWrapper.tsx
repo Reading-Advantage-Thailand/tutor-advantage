@@ -103,10 +103,11 @@ function AppSidebar({
   }, []);
 
   useEffect(() => {
+    if (!role) return; // Don't poll on login/unauthorized pages
     fetchSummary();
     const interval = setInterval(fetchSummary, 30000); // Poll every 30s
     return () => clearInterval(interval);
-  }, [fetchSummary]);
+  }, [fetchSummary, role]);
 
   return (
     <Sidebar collapsible="icon" className="border-r-0">
@@ -167,9 +168,12 @@ function AppSidebar({
                           {label}
                         </span>
                         {badgeCount > 0 && (
-                          <Badge className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden bg-brand-500 hover:bg-brand-600 text-white border-none shadow-sm">
-                            {badgeCount}
-                          </Badge>
+                          <>
+                            <Badge className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden bg-brand-500 hover:bg-brand-600 text-white border-none shadow-sm">
+                              {badgeCount}
+                            </Badge>
+                            <span className="hidden group-data-[collapsible=icon]:flex absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
+                          </>
                         )}
                       </Link>
                     </SidebarMenuButton>
@@ -242,9 +246,12 @@ function AppSidebar({
                             {label}
                           </span>
                           {badgeCount > 0 && (
-                            <Badge className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden bg-brand-500 hover:bg-brand-600 text-white border-none shadow-sm">
-                              {badgeCount}
-                            </Badge>
+                            <>
+                              <Badge className="h-5 px-1.5 text-[10px] min-w-5 flex items-center justify-center rounded-full leading-none ml-auto group-data-[collapsible=icon]:hidden bg-brand-500 hover:bg-brand-600 text-white border-none shadow-sm">
+                                {badgeCount}
+                              </Badge>
+                              <span className="hidden group-data-[collapsible=icon]:flex absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
+                            </>
                           )}
                         </Link>
                       </SidebarMenuButton>

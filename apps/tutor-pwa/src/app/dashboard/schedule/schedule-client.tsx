@@ -229,7 +229,7 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
       </div>
 
       {/* Right Column: Daily Summary view */}
-      <div className="lg:col-span-4 sticky top-28 animate-fade-in" style={{ animationDelay: '100ms' }}>
+      <div className="lg:col-span-4 sticky top-[var(--header-height,5rem)] animate-fade-in" style={{ animationDelay: '100ms' }}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-foreground">
             {isSameDay(selectedDate, new Date()) ? t("dashboardSchedule.today") : `${selectedDate.getDate()} ${thaiMonths[selectedDate.getMonth()]}`}
