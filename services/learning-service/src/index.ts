@@ -67,7 +67,7 @@ const app = express();
 const port = process.env.PORT || 3002;
 
 const ALLOWED_ORIGINS = (
-  process.env.ALLOWED_ORIGINS || "https://student-liff-1090865515742.asia-southeast1.run.app,https://resource-pushpin-tabby.ngrok-free.dev,http://localhost:3004,http://localhost:3005,http://localhost:3006"
+  process.env.ALLOWED_ORIGINS || "https://student-liff-1090865515742.asia-southeast1.run.app,https://resource-pushpin-tabby.ngrok-free.dev,http://localhost:3000,http://localhost:3004,http://localhost:3005,http://localhost:3006"
 ).split(",").map((o) => o.trim());
 
 const ALLOWED_ORIGIN_PATTERNS = [
