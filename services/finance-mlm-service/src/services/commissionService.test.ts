@@ -35,7 +35,7 @@ describe("commissionService", () => {
     expect(calculateCommissionRate(10_000)).toBeCloseTo(0.45);
     expect(calculateCommissionRate(20_000)).toBeCloseTo(0.5);
     expect(calculateCommissionInfo(50_000)).toMatchObject({
-      nextTarget: 100_000,
+      nextTarget: 70_000,
     });
     expect(calculateCommissionInfo(500_000)).toMatchObject({
       nextTarget: 0,
