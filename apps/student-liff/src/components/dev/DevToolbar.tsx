@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef } from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import {
   Terminal, X, RefreshCw, ChevronUp, ChevronDown,
   Copy, Check, AlertTriangle, Loader2, User,
@@ -546,21 +547,21 @@ export function DevToolbar() {
                   Purge history
                 </button>
 
-                <a
+                <Link
                   href="/lesson/history"
                   className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-muted text-foreground border border-border/50 hover:bg-muted/80 transition-colors"
                 >
                   <History className="h-3 w-3" />
                   View history
-                </a>
+                </Link>
 
-                <a
+                <Link
                   href="/progress"
                   className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-muted text-foreground border border-border/50 hover:bg-muted/80 transition-colors"
                 >
                   <TrendingUp className="h-3 w-3" />
                   View progress
-                </a>
+                </Link>
               </div>
 
               {/* Payment */}
@@ -587,13 +588,13 @@ export function DevToolbar() {
                   )}
                 </button>
 
-                <a
+                <Link
                   href="/payment"
                   className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-muted text-foreground border border-border/50 hover:bg-muted/80 transition-colors"
                 >
                   <CreditCard className="h-3 w-3" />
                   Payment page
-                </a>
+                </Link>
               </div>
 
               {/* Session */}
@@ -614,13 +615,13 @@ export function DevToolbar() {
                   Clear session
                 </button>
 
-                <a
+                <Link
                   href="/interactive/join"
                   className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-muted text-foreground border border-border/50 hover:bg-muted/80 transition-colors"
                 >
                   <BookOpen className="h-3 w-3" />
                   Join lesson
-                </a>
+                </Link>
 
               </div>
             </div>
@@ -646,7 +647,7 @@ export function DevToolbar() {
                     pathname === href ||
                     (href !== "/dashboard" && pathname.startsWith(href));
                   return (
-                    <a
+                    <Link
                       key={href}
                       href={href}
                       className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold border transition-colors ${
@@ -657,17 +658,17 @@ export function DevToolbar() {
                     >
                       <Icon className="h-2.5 w-2.5" />
                       {label}
-                    </a>
+                    </Link>
                   );
                 })}
 
-                <a
+                <Link
                   href="/login"
                   className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold border bg-muted hover:bg-muted/80 text-foreground border-border/50 transition-colors"
                 >
                   <Settings className="h-2.5 w-2.5" />
                   Login
-                </a>
+                </Link>
               </div>
             </div>
 
