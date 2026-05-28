@@ -798,7 +798,7 @@ export function DevClassSimulator({ classId }: { classId: string }) {
       <CardContent className="space-y-3">
         <p className="text-xs text-muted-foreground">
           Seeds FINISHED sessions for <strong>all enrolled students</strong> across every article in this book.
-          Use this to set up an "upclass" test scenario.
+          Use this to set up an &quot;upclass&quot; test scenario.
         </p>
 
         <Button
