@@ -162,6 +162,11 @@ export const th = {
     weeklyActivity: "กิจกรรมสัปดาห์นี้",
     allLessons: "บทเรียนทั้งหมด",
     done: "เสร็จ",
+    noEnrollment: "ยังไม่ได้ลงทะเบียนคลาส",
+    noEnrollmentSub: "ลงทะเบียนคลาสเรียนเพื่อเริ่มติดตามความก้าวหน้า",
+    findClass: "ค้นหาห้องเรียน",
+    noActivityYet: "ยังไม่มีกิจกรรมในสัปดาห์นี้",
+    noLessonsYet: "ยังไม่มีบทเรียน — ลงทะเบียนคลาสเพื่อเริ่มเรียน",
     map: {
       title: "แผนที่การเรียน",
       subtitle: "เดินทางผ่านบทเรียนทีละ checkpoint",

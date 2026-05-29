@@ -264,8 +264,7 @@ export default function ClassesPage() {
 
         {loading && (
           <div
-            className="flex flex-col items-center justify-center p-12 gap-2"
-            style={{ minHeight: "50dvh" }}
+            className="flex flex-col gap-3 p-4"
           >
             {/* Skeleton cards */}
             {[1, 2, 3].map((i) => (

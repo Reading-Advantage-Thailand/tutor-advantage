@@ -509,8 +509,10 @@ export default function ProgressPage() {
   }
 
   const { stats, weeklyActivity, articles } = data;
+  const hasData = stats.totalArticles > 0 || articles.length > 0;
   const progressPct = stats.totalArticles > 0 ? Math.round((stats.articlesRead / stats.totalArticles) * 100) : 0;
   const maxMin = Math.max(...(weeklyActivity.map((d) => d.minutes) || [0]), 1);
+  const hasWeeklyActivity = weeklyActivity.some((d) => d.minutes > 0);
   const currentArticleIdx = articles.findIndex((a) => !a.done);
 
   return (
@@ -518,9 +520,11 @@ export default function ProgressPage() {
       {/* Header */}
       <div className="top-bar" style={{ background: "var(--surface-card)", backdropFilter: "blur(12px)" }}>
         <h1 style={{ fontSize: "1.0625rem", fontWeight: 700, color: "var(--text-primary)", flex: 1 }}>{t("progress.title")}</h1>
-        <span style={{ background: "var(--brand-50)", color: "var(--brand-700)", padding: "5px 12px", borderRadius: "var(--radius-full)", fontSize: "0.75rem", fontWeight: 700, border: "1px solid var(--brand-100)" }}>
-          {stats.level} / {stats.cefr}
-        </span>
+        {hasData && (
+          <span style={{ background: "var(--brand-50)", color: "var(--brand-700)", padding: "5px 12px", borderRadius: "var(--radius-full)", fontSize: "0.75rem", fontWeight: 700, border: "1px solid var(--brand-100)" }}>
+            {stats.level} / {stats.cefr}
+          </span>
+        )}
       </div>
 
       {/* Class selector */}
@@ -585,28 +589,42 @@ export default function ProgressPage() {
       <div style={{ padding: "16px 16px", display: "flex", flexDirection: "column", gap: 16, opacity: switching ? 0.5 : 1, transition: "opacity 0.2s" }}>
 
         {/* Main progress card */}
-        <div className="curved-bottom" style={{ background: `linear-gradient(135deg, ${stats.seriesColor} 0%, #037d36 100%)`, borderRadius: 24, overflow: "hidden", position: "relative" }}>
+        <div className="curved-bottom" style={{ background: `linear-gradient(135deg, ${hasData ? stats.seriesColor : "#06c755"} 0%, #037d36 100%)`, borderRadius: 24, overflow: "hidden", position: "relative" }}>
           <div aria-hidden style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.06)" }} />
           <div style={{ padding: "24px 20px" }}>
             <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.75rem", marginBottom: 4, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.05em" }}>{t("progress.currentLevel")}</p>
-            <h2 style={{ color: "#fff", fontSize: "1.5rem", fontWeight: 800, marginBottom: 20 }}>{stats.level}</h2>
+            {hasData ? (
+              <>
+                <h2 style={{ color: "#fff", fontSize: "1.5rem", fontWeight: 800, marginBottom: 20 }}>{stats.level}</h2>
 
-            <div style={{ marginBottom: 14 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                <span style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.8125rem" }}>{stats.articlesRead} {t("progress.from")} {stats.totalArticles} {t("progress.articleUnit")}</span>
-                <span style={{ color: "#fff", fontWeight: 700, fontSize: "0.875rem" }}>{progressPct}%</span>
-              </div>
-              <div style={{ height: 8, background: "rgba(255,255,255,0.15)", borderRadius: 20, overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${progressPct}%`, background: "linear-gradient(90deg, #fff, #bbf7d0)", borderRadius: 20, transition: "width 0.6s ease", boxShadow: "0 0 10px rgba(255,255,255,0.3)" }} />
-              </div>
-            </div>
+                <div style={{ marginBottom: 14 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+                    <span style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.8125rem" }}>{stats.articlesRead} {t("progress.from")} {stats.totalArticles} {t("progress.articleUnit")}</span>
+                    <span style={{ color: "#fff", fontWeight: 700, fontSize: "0.875rem" }}>{progressPct}%</span>
+                  </div>
+                  <div style={{ height: 8, background: "rgba(255,255,255,0.15)", borderRadius: 20, overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: `${progressPct}%`, background: "linear-gradient(90deg, #fff, #bbf7d0)", borderRadius: 20, transition: "width 0.6s ease", boxShadow: "0 0 10px rgba(255,255,255,0.3)" }} />
+                  </div>
+                </div>
 
-            <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 14, padding: "10px 14px", display: "flex", alignItems: "center", gap: 10, border: "1px solid rgba(255,255,255,0.15)" }}>
-              <Target size={16} style={{ color: "#fbbf24", flexShrink: 0 }} />
-              <span style={{ color: "rgba(255,255,255,0.85)", fontSize: "0.8125rem" }}>
-                {t("progress.remainingPrefix")} <strong>{stats.nextMilestone.at - stats.articlesRead} {t("progress.articleUnit")}</strong> {t("progress.receive")} {stats.nextMilestone.reward}
-              </span>
-            </div>
+                <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 14, padding: "10px 14px", display: "flex", alignItems: "center", gap: 10, border: "1px solid rgba(255,255,255,0.15)" }}>
+                  <Target size={16} style={{ color: "#fbbf24", flexShrink: 0 }} />
+                  <span style={{ color: "rgba(255,255,255,0.85)", fontSize: "0.8125rem" }}>
+                    {t("progress.remainingPrefix")} <strong>{stats.nextMilestone.at - stats.articlesRead} {t("progress.articleUnit")}</strong> {t("progress.receive")} {stats.nextMilestone.reward}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 style={{ color: "#fff", fontSize: "1.5rem", fontWeight: 800, marginBottom: 12 }}>{t("progress.noEnrollment")}</h2>
+                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.8125rem", marginBottom: 16 }}>{t("progress.noEnrollmentSub")}</p>
+                <Link href="/classes">
+                  <button style={{ background: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.3)", color: "#fff", padding: "10px 20px", borderRadius: 14, fontSize: "0.875rem", fontWeight: 700, cursor: "pointer" }}>
+                    {t("progress.findClass")}
+                  </button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
@@ -630,24 +648,30 @@ export default function ProgressPage() {
         {/* Weekly chart */}
         <div className="glass-card" style={{ padding: "20px" }}>
           <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: 16 }}>{t("progress.weeklyActivity")}</h3>
-          <div style={{ display: "flex", gap: 6, alignItems: "flex-end", height: 80 }}>
-            {weeklyActivity.map((d) => (
-              <div key={d.day} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                <div style={{
-                  width: "100%",
-                  height: maxMin > 0 && d.minutes > 0 ? `${(d.minutes / maxMin) * 60}px` : "5px",
-                  background: d.active ? `linear-gradient(180deg, ${stats.seriesColor}, #34d399)` : "var(--neutral-200)",
-                  borderRadius: 6,
-                  transition: "height 0.5s ease",
-                  minHeight: 5,
-                  boxShadow: d.active ? "0 2px 6px rgba(6,199,85,0.2)" : "none",
-                }} />
-                <span style={{ fontSize: "0.625rem", fontWeight: d.active ? 700 : 400, color: d.active ? "var(--brand-600)" : "var(--text-tertiary)" }}>
-                  {d.day}
-                </span>
-              </div>
-            ))}
-          </div>
+          {hasWeeklyActivity ? (
+            <div style={{ display: "flex", gap: 6, alignItems: "flex-end", height: 80 }}>
+              {weeklyActivity.map((d) => (
+                <div key={d.day} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                  <div style={{
+                    width: "100%",
+                    height: maxMin > 0 && d.minutes > 0 ? `${(d.minutes / maxMin) * 60}px` : "5px",
+                    background: d.active ? `linear-gradient(180deg, ${stats.seriesColor}, #34d399)` : "var(--neutral-200)",
+                    borderRadius: 6,
+                    transition: "height 0.5s ease",
+                    minHeight: 5,
+                    boxShadow: d.active ? "0 2px 6px rgba(6,199,85,0.2)" : "none",
+                  }} />
+                  <span style={{ fontSize: "0.625rem", fontWeight: d.active ? 700 : 400, color: d.active ? "var(--brand-600)" : "var(--text-tertiary)" }}>
+                    {d.day}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ color: "var(--text-tertiary)", fontSize: "0.8125rem", textAlign: "center", padding: "16px 0" }}>
+              {t("progress.noActivityYet")}
+            </p>
+          )}
         </div>
 
         {/* Article list */}
@@ -660,6 +684,12 @@ export default function ProgressPage() {
           </div>
 
           <div className="glass-card" style={{ overflow: "hidden" }}>
+            {articles.length === 0 && (
+              <div style={{ padding: "28px 20px", textAlign: "center" }}>
+                <BookOpen size={24} style={{ color: "var(--neutral-300)", marginInline: "auto", marginBottom: 8 }} />
+                <p style={{ color: "var(--text-tertiary)", fontSize: "0.8125rem" }}>{t("progress.noLessonsYet")}</p>
+              </div>
+            )}
             {articles.map((art, idx) => {
               const isCur = idx === currentArticleIdx;
               const isInteractive = art.done || isCur;
