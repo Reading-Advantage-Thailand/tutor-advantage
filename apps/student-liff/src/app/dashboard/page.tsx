@@ -107,29 +107,32 @@ function ClassCard({ enrollment }: { enrollment: Enrollment }) {
       className="block no-underline active:scale-[0.98] transition-transform min-w-[260px] max-w-[280px]"
     >
       <div
-        className={`h-full rounded-2xl overflow-hidden transition-all relative ${
+        className="h-full rounded-2xl overflow-hidden transition-all relative"
+        style={
           isLive
-            ? "border border-rose-400/60 bg-gradient-to-br from-rose-50 to-pink-50 shadow-md shadow-rose-500/10"
+            ? { border: "1px solid rgba(244,63,94,0.4)", background: "linear-gradient(135deg, rgba(244,63,94,0.06) 0%, rgba(236,72,153,0.08) 100%)", boxShadow: "0 4px 12px rgba(244,63,94,0.1)" }
             : isPending
-            ? "border border-amber-400/50 bg-gradient-to-br from-amber-50 to-orange-50 shadow-md shadow-amber-500/10"
-            : "border border-brand-200 bg-gradient-to-br from-brand-50 via-white to-emerald-50 shadow-md shadow-brand-500/10"
-        }`}
+            ? { border: "1px solid rgba(245,158,11,0.4)", background: "linear-gradient(135deg, rgba(245,158,11,0.06) 0%, rgba(249,115,22,0.08) 100%)", boxShadow: "0 4px 12px rgba(245,158,11,0.1)" }
+            : { border: "1px solid rgba(6,199,85,0.2)", background: "linear-gradient(135deg, rgba(6,199,85,0.06) 0%, rgba(4,154,66,0.1) 100%)", boxShadow: "0 4px 12px rgba(6,199,85,0.1)" }
+        }
       >
         {/* Card top color bar */}
         <div
-          className={`h-1.5 w-full ${
-            isLive
-              ? "bg-gradient-to-r from-rose-500 to-pink-500"
+          className="h-1.5 w-full"
+          style={{
+            background: isLive
+              ? "linear-gradient(90deg, #f43f5e, #ec4899)"
               : isPending
-              ? "bg-gradient-to-r from-amber-400 to-orange-400"
-              : "bg-gradient-to-r from-brand-500 to-emerald-500"
-          }`}
+              ? "linear-gradient(90deg, #f59e0b, #f97316)"
+              : "linear-gradient(90deg, #06c755, #049a42)",
+          }}
         />
 
         {/* Decorative circle */}
-        <div className={`absolute top-4 right-2 w-20 h-20 rounded-full opacity-[0.07] ${
-          isLive ? "bg-rose-500" : isPending ? "bg-amber-500" : "bg-brand-500"
-        }`} />
+        <div
+          className="absolute top-4 right-2 w-20 h-20 rounded-full"
+          style={{ background: `radial-gradient(circle, ${isLive ? "rgba(244,63,94,0.08)" : isPending ? "rgba(245,158,11,0.08)" : "rgba(6,199,85,0.08)"} 0%, transparent 70%)` }}
+        />
 
         <div className="p-4 flex flex-col gap-3 relative">
           {/* Live / Pending badge */}
@@ -146,7 +149,10 @@ function ClassCard({ enrollment }: { enrollment: Enrollment }) {
             </div>
           )}
           {!isLive && !isPending && (
-            <div className="inline-flex items-center gap-1.5 bg-brand-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-fit shadow-sm shadow-brand-500/30">
+            <div
+              className="inline-flex items-center gap-1.5 text-white px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-fit"
+              style={{ background: "linear-gradient(135deg, #06c755, #049a42)", boxShadow: "0 2px 8px rgba(6,199,85,0.3)" }}
+            >
               <BookOpen size={9} />
               {t("dashboard.statusActive")}
             </div>
@@ -165,10 +171,10 @@ function ClassCard({ enrollment }: { enrollment: Enrollment }) {
 
           {/* Next session */}
           {enrollment.nextSession && enrollment.nextSession !== "-" && (
-            <div className="flex items-center gap-2 bg-white/80 border border-brand-200 rounded-xl px-3 py-2">
-              <Calendar size={12} className="text-brand-600 shrink-0" />
+            <div className="flex items-center gap-2 rounded-xl px-3 py-2" style={{ background: "rgba(6,199,85,0.08)", border: "1px solid rgba(6,199,85,0.15)" }}>
+              <Calendar size={12} style={{ color: "#06c755" }} className="shrink-0" />
               <div>
-                <p className="text-[10px] text-brand-700 font-bold uppercase tracking-wider leading-none mb-0.5">
+                <p className="text-[10px] font-bold uppercase tracking-wider leading-none mb-0.5" style={{ color: "#049a42" }}>
                   {t("dashboard.nextLesson")}
                 </p>
                 <p className="text-xs text-foreground font-medium leading-tight">
@@ -185,7 +191,7 @@ function ClassCard({ enrollment }: { enrollment: Enrollment }) {
                 <span className="text-[10px] text-muted-foreground font-medium">
                   {t("dashboard.progress")}
                 </span>
-                <span className="text-[10px] font-black text-brand-600">
+                <span className="text-[10px] font-black" style={{ color: "#06c755" }}>
                   {enrollment.progress}%
                 </span>
               </div>
@@ -517,7 +523,7 @@ export default function DashboardPage() {
             </div>
             <Link
               href="/classes"
-              className="flex items-center gap-1 text-xs font-bold text-white bg-brand-500 px-3 py-1.5 rounded-xl shadow-sm shadow-brand-500/25 active:scale-95 transition-transform"
+              className="flex items-center gap-1 text-xs font-bold text-brand-700 dark:text-brand-300 hover:text-brand-800"
             >
               {t("dashboard.viewAll")} <ChevronRight size={13} />
             </Link>
@@ -525,17 +531,41 @@ export default function DashboardPage() {
 
           {allClasses.length === 0 ? (
             /* Empty state */
-            <div className="rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 via-white to-emerald-50 p-8 text-center relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-brand-500/5 -translate-y-8 translate-x-8" />
-              <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full bg-emerald-500/5 translate-y-6 -translate-x-4" />
+            <div
+              className="rounded-2xl p-6 text-center relative overflow-hidden"
+              style={{
+                background: "linear-gradient(135deg, rgba(6,199,85,0.08) 0%, rgba(4,154,66,0.12) 100%)",
+                border: "1px solid rgba(6,199,85,0.2)",
+              }}
+            >
+              <div
+                className="absolute -top-10 -right-10 w-32 h-32 rounded-full"
+                style={{ background: "radial-gradient(circle, rgba(6,199,85,0.12) 0%, transparent 70%)" }}
+              />
+              <div
+                className="absolute -bottom-6 -left-6 w-20 h-20 rounded-full"
+                style={{ background: "radial-gradient(circle, rgba(6,199,85,0.08) 0%, transparent 70%)" }}
+              />
               <div className="relative">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-emerald-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-500/25">
-                  <Sparkles size={28} className="text-white" />
+                <div
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                  style={{
+                    background: "linear-gradient(135deg, #06c755 0%, #049a42 100%)",
+                    boxShadow: "0 6px 20px rgba(6,199,85,0.35)",
+                  }}
+                >
+                  <Sparkles size={26} className="text-white" />
                 </div>
                 <p className="font-black text-foreground text-sm mb-1">{t("dashboard.noClasses")}</p>
                 <p className="text-xs text-muted-foreground mb-5">{t("dashboard.noClassesSub")}</p>
                 <Link href="/classes">
-                  <button className="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-500 text-white font-bold text-sm shadow-lg shadow-brand-500/30 active:scale-95 transition-transform">
+                  <button
+                    className="px-6 py-3 rounded-xl text-white font-bold text-sm active:scale-95 transition-transform"
+                    style={{
+                      background: "linear-gradient(135deg, #06c755 0%, #049a42 100%)",
+                      boxShadow: "0 4px 16px rgba(6,199,85,0.4)",
+                    }}
+                  >
                     {t("dashboard.findClass")}
                   </button>
                 </Link>
@@ -558,11 +588,23 @@ export default function DashboardPage() {
               {/* Browse more card */}
               <div style={{ scrollSnapAlign: "start", flexShrink: 0 }} className="min-w-[160px] max-w-[160px]">
                 <Link href="/classes" className="block h-full">
-                  <div className="h-full min-h-[180px] rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 to-emerald-50 flex flex-col items-center justify-center gap-2.5 p-4 text-center active:scale-95 transition-transform shadow-sm">
-                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500 to-emerald-500 flex items-center justify-center shadow-md shadow-brand-500/25">
+                  <div
+                    className="h-full min-h-[180px] rounded-2xl flex flex-col items-center justify-center gap-2.5 p-4 text-center active:scale-95 transition-transform"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(6,199,85,0.08) 0%, rgba(4,154,66,0.12) 100%)",
+                      border: "1px solid rgba(6,199,85,0.2)",
+                    }}
+                  >
+                    <div
+                      className="w-11 h-11 rounded-xl flex items-center justify-center"
+                      style={{
+                        background: "linear-gradient(135deg, #06c755, #049a42)",
+                        boxShadow: "0 4px 12px rgba(6,199,85,0.3)",
+                      }}
+                    >
                       <Sparkles size={20} className="text-white" />
                     </div>
-                    <p className="text-xs font-bold text-brand-700">{t("dashboard.findClass")}</p>
+                    <p className="text-xs font-bold text-brand-700 dark:text-brand-300">{t("dashboard.findClass")}</p>
                     <p className="text-[10px] text-muted-foreground">{t("dashboard.findClassSub")}</p>
                   </div>
                 </Link>
