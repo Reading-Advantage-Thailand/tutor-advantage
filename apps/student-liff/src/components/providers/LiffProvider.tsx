@@ -110,18 +110,22 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
 
         reportError("liff_init_start", "starting", { liffId, useMock });
 
-        // Intercept all fetch calls during liff.init() to find which URL fails
-        const fetchLog: Array<{ url: string; status?: number; error?: string; ms: number }> = [];
+        // LIFF SDK fetches liffsdk.line-scdn.net/xlt/manifest.json for extensions
+        // during init. This request fails in LINE WebView on some devices/networks,
+        // crashing the entire init. Intercept and return an empty manifest on failure.
         const originalFetch = window.fetch;
         window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
           const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
-          const start = Date.now();
           try {
-            const res = await originalFetch(input, init);
-            fetchLog.push({ url, status: res.status, ms: Date.now() - start });
-            return res;
+            return await originalFetch(input, init);
           } catch (err) {
-            fetchLog.push({ url, error: err instanceof Error ? err.message : String(err), ms: Date.now() - start });
+            if (url.includes("liffsdk.line-scdn.net/xlt/manifest.json")) {
+              console.warn("[LIFF] manifest.json fetch failed, returning empty manifest");
+              return new Response(JSON.stringify({ xlt: [] }), {
+                status: 200,
+                headers: { "Content-Type": "application/json" },
+              });
+            }
             throw err;
           }
         };
@@ -134,7 +138,6 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
           });
         } finally {
           window.fetch = originalFetch;
-          reportError("liff_init_fetch_log", "fetch calls during init", { fetchLog });
         }
 
         reportError("liff_init_success", "ok", {
