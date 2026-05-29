@@ -516,7 +516,10 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <h2 className="text-base font-black text-foreground">{t("dashboard.myClasses")}</h2>
               {(dashboardData?.activeEnrollments ?? 0) > 0 && (
-                <span className="text-xs font-bold text-white bg-brand-500 px-2.5 py-0.5 rounded-full shadow-sm shadow-brand-500/30">
+                <span
+                  className="text-xs font-bold text-white px-2.5 py-0.5 rounded-full shadow-sm"
+                  style={{ background: "var(--brand-500)" }}
+                >
                   {dashboardData?.activeEnrollments} {t("dashboard.classUnit")}
                 </span>
               )}
