@@ -121,7 +121,7 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
           } catch (err) {
             if (url.includes("liffsdk.line-scdn.net/xlt/manifest.json")) {
               console.warn("[LIFF] manifest.json fetch failed, returning empty manifest");
-              return new Response(JSON.stringify({ xlt: [] }), {
+              return new Response(JSON.stringify({ createAt: 0, languages: {} }), {
                 status: 200,
                 headers: { "Content-Type": "application/json" },
               });
