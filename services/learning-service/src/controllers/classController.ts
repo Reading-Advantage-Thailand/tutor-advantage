@@ -1184,7 +1184,13 @@ export async function prepareClassBookCycleAccess(req: AuthenticatedRequest, res
       });
 
       if (!enrollment) {
-        throw new Error("ACTIVE_ENROLLMENT_REQUIRED");
+        const pendingEnrollment = await tx.enrollment.findFirst({
+          where: { classId, studentUserId: userId, status: "PENDING_PAYMENT" },
+        });
+        if (pendingEnrollment) {
+          throw new Error("ENROLLMENT_PAYMENT_PENDING");
+        }
+        throw new Error("NOT_ENROLLED");
       }
 
       const cycle = await tx.classBookCycle.findFirst({
@@ -1199,14 +1205,14 @@ export async function prepareClassBookCycleAccess(req: AuthenticatedRequest, res
       const existing = await tx.enrollmentPackage.findUnique({
         where: {
           enrollmentId_classBookCycleId: {
-            enrollmentId: enrollment.enrollmentId,
+            enrollmentId: enrollment!.enrollmentId,
             classBookCycleId: cycle.classBookCycleId,
           },
         },
       });
 
       if (existing?.status === "ACTIVE") {
-        return { enrollment, cycle, access: existing };
+        return { enrollment: enrollment!, cycle, access: existing };
       }
 
       const access = existing
@@ -1216,14 +1222,14 @@ export async function prepareClassBookCycleAccess(req: AuthenticatedRequest, res
           })
         : await tx.enrollmentPackage.create({
             data: {
-              enrollmentId: enrollment.enrollmentId,
+              enrollmentId: enrollment!.enrollmentId,
               classBookCycleId: cycle.classBookCycleId,
               studentUserId: userId,
               status: "PENDING_PAYMENT",
             },
           });
 
-      return { enrollment, cycle, access };
+      return { enrollment: enrollment!, cycle, access };
     });
 
     return res.status(200).json({
@@ -1240,9 +1246,14 @@ export async function prepareClassBookCycleAccess(req: AuthenticatedRequest, res
       },
     });
   } catch (error: any) {
-    if (error.message === "ACTIVE_ENROLLMENT_REQUIRED") {
+    if (error.message === "NOT_ENROLLED") {
       return res.status(403).json({
-        error: { code: "ACTIVE_ENROLLMENT_REQUIRED", message: "Please enroll in the class before upgrading" },
+        error: { code: "NOT_ENROLLED", message: "Please enroll in the class first" },
+      });
+    }
+    if (error.message === "ENROLLMENT_PAYMENT_PENDING") {
+      return res.status(409).json({
+        error: { code: "ENROLLMENT_PAYMENT_PENDING", message: "Please complete your class enrollment payment first" },
       });
     }
     if (error.message === "CYCLE_NOT_FOUND") {

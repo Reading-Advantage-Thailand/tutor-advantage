@@ -419,11 +419,15 @@ function PaymentFlow() {
       );
     } catch (err) {
       console.error("Payment/Enrollment failed:", err);
-      toast.error(
-        err instanceof Error
-          ? err.message
-          : t("payment.errors.enrollmentFailed"),
-      );
+      const msg = err instanceof Error ? err.message : "";
+      if (cycleId && (msg === "Please enroll in the class first")) {
+        // Student has no enrollment — redirect to class enrollment payment flow
+        const enrollUrl = new URLSearchParams({ classId });
+        if (referralToken) enrollUrl.set("referralToken", referralToken);
+        window.location.href = `/payment?${enrollUrl.toString()}`;
+        return;
+      }
+      toast.error(msg || t("payment.errors.enrollmentFailed"));
     } finally {
       setLoading(false);
       // Resume auto-poll if still on QR step and intent exists
