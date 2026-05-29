@@ -196,7 +196,8 @@ const setupLessonSocket = (io) => {
                 socket.emit("join_success", {
                     sessionId: session.sessionId,
                     currentPhase: session.currentPhase,
-                    articleData: session.articleData
+                    articleData: session.articleData,
+                    phaseSelectedIndices: session.phaseSelectedIndices
                 });
                 io.to(session.sessionId).emit("participants_updated", {
                     participants: Array.from(session.participants.values())

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -46,6 +46,14 @@ declare global {
     };
   }
 }
+
+type PaymentClassBookCycle = {
+  id: string;
+  title: string;
+  price: number;
+  packagePriceSatang: number;
+  cefr?: string | null;
+};
 
 function loadOmiseScript() {
   if (window.Omise) return Promise.resolve();
@@ -99,13 +107,6 @@ function PaymentFlow() {
   const [cls, setCls] = useState<OrderSummary>(createDefaultOrderSummary(classId));
 
   // Guard: no classId in URL → redirect back to classes list
-  if (!classId && !referralToken) {
-    if (typeof window !== "undefined") {
-      window.location.href = "/classes";
-    }
-    return null;
-  }
-
   useEffect(() => {
     let isMounted = true;
 
@@ -115,8 +116,9 @@ function PaymentFlow() {
       .getClassDetails(classId)
       .then((data) => {
         if (!isMounted || !data?.class) return;
+        const bookCycles = data.class.bookCycles as PaymentClassBookCycle[] | undefined;
         const cycle = cycleId
-          ? data.class.bookCycles?.find((item: any) => item.id === cycleId)
+          ? bookCycles?.find((item) => item.id === cycleId)
           : null;
         if (cycle) {
           setCls({
@@ -139,34 +141,6 @@ function PaymentFlow() {
       isMounted = false;
     };
   }, [classId, cycleId]);
-
-  useEffect(() => {
-    if (!returnedPaymentIntentId) return;
-
-    let isMounted = true;
-    setLoading(true);
-    studentApi
-      .getPaymentStatus(returnedPaymentIntentId)
-      .then((data) => {
-        if (!isMounted) return;
-        setPaymentIntentId(data.intent.paymentIntentId);
-        mergeCheckout(data.checkout);
-        setStep(getReturnedPaymentStep(data.intent));
-        if (shouldLoadPromptPayQr(data.intent)) {
-          void loadPromptPayQrCode(data.intent.paymentIntentId);
-        }
-      })
-      .catch((error) => {
-        console.error("Could not verify returned payment:", error);
-      })
-      .finally(() => {
-        if (isMounted) setLoading(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [returnedPaymentIntentId]);
 
   // Age / Guardian states
   const [isAdult, setIsAdult] = useState<boolean | null>(null);
@@ -252,11 +226,11 @@ function PaymentFlow() {
     });
   };
 
-  const mergeCheckout = (next: CheckoutDetails | null) => {
+  const mergeCheckout = useCallback((next: CheckoutDetails | null) => {
     setCheckout((prev) => mergeCheckoutDetails(prev, next));
-  };
+  }, []);
 
-  const verifyPaymentStatus = async (intentId: string) => {
+  const verifyPaymentStatus = useCallback(async (intentId: string) => {
     const status = await studentApi.getPaymentStatus(intentId);
     mergeCheckout(status.checkout);
     if (status.intent.status === "SUCCESS") {
@@ -269,23 +243,23 @@ function PaymentFlow() {
       );
     }
     toast.info(t("payment.errors.paymentPending"));
-  };
+  }, [mergeCheckout]);
 
-  const stopQrPoll = () => {
+  const stopQrPoll = useCallback(() => {
     if (qrPollRef.current) {
       clearInterval(qrPollRef.current);
       qrPollRef.current = null;
     }
-  };
+  }, []);
 
-  const stopQrTimer = () => {
+  const stopQrTimer = useCallback(() => {
     if (qrTimerRef.current) {
       clearInterval(qrTimerRef.current);
       qrTimerRef.current = null;
     }
-  };
+  }, []);
 
-  const startQrTimer = () => {
+  const startQrTimer = useCallback(() => {
     stopQrTimer();
     setQrSecondsLeft(15 * 60); // 15 minutes
     qrTimerRef.current = setInterval(() => {
@@ -297,9 +271,9 @@ function PaymentFlow() {
         return prev - 1;
       });
     }, 1000);
-  };
+  }, [stopQrTimer]);
 
-  const startQrAutoPoll = (intentId: string) => {
+  const startQrAutoPoll = useCallback((intentId: string) => {
     stopQrPoll();
     qrPollRef.current = setInterval(async () => {
       try {
@@ -316,9 +290,9 @@ function PaymentFlow() {
         // ignore transient errors during polling
       }
     }, 5000);
-  };
+  }, [mergeCheckout, stopQrPoll]);
 
-  const loadPromptPayQrCode = async (intentId: string) => {
+  const loadPromptPayQrCode = useCallback(async (intentId: string) => {
     setQrLoading(true);
     try {
       const qr = await studentApi.getPaymentQrCode(intentId);
@@ -343,10 +317,45 @@ function PaymentFlow() {
     } finally {
       setQrLoading(false);
     }
-  };
+  }, [startQrAutoPoll, startQrTimer]);
+
+  useEffect(() => {
+    if (!returnedPaymentIntentId) return;
+
+    let isMounted = true;
+    setLoading(true);
+    studentApi
+      .getPaymentStatus(returnedPaymentIntentId)
+      .then((data) => {
+        if (!isMounted) return;
+        setPaymentIntentId(data.intent.paymentIntentId);
+        mergeCheckout(data.checkout);
+        setStep(getReturnedPaymentStep(data.intent));
+        if (shouldLoadPromptPayQr(data.intent)) {
+          void loadPromptPayQrCode(data.intent.paymentIntentId);
+        }
+      })
+      .catch((error) => {
+        console.error("Could not verify returned payment:", error);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [loadPromptPayQrCode, mergeCheckout, returnedPaymentIntentId]);
 
   // Cleanup poll and timer on unmount
-  useEffect(() => () => { stopQrPoll(); stopQrTimer(); }, []);
+  useEffect(() => () => { stopQrPoll(); stopQrTimer(); }, [stopQrPoll, stopQrTimer]);
+
+  if (!classId && !referralToken) {
+    if (typeof window !== "undefined") {
+      window.location.href = "/classes";
+    }
+    return null;
+  }
 
   const handleConfirmPayment = async () => {
     stopQrPoll(); // stop auto-poll while manually checking

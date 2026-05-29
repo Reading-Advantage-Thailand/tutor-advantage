@@ -10,7 +10,6 @@ import {
   BookOpen,
   CheckCircle2,
   Clock,
-  Flag,
   Flame,
   Lock,
   Map,

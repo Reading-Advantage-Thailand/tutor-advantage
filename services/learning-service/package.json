@@ -7,7 +7,7 @@
     "dev": "ts-node-dev --respawn src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run --root ../.. services/learning-service/src"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.64",

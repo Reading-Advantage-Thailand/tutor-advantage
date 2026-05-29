@@ -54,8 +54,8 @@
   /* Surfaces — theme-aware (single canonical definitions below) */
 
   /* Typography */
-  --font-thai: "Noto Sans Thai", sans-serif;
-  --font-latin: "Inter", sans-serif;
+  --font-thai: "Noto Sans Thai", "Leelawadee UI", Tahoma, sans-serif;
+  --font-latin: Inter, Arial, "Helvetica Neue", sans-serif;
 
   /* Radius */
   --radius-sm: 8px;

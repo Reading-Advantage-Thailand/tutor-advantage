@@ -6,7 +6,8 @@
     "dev": "next dev -p 3005 --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run --root ../.. apps/admin-console/src"
   },
   "dependencies": {
     "@tutor-advantage/database": "1.0.0",

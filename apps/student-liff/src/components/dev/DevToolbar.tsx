@@ -220,7 +220,7 @@ export function DevToolbar() {
     if (next && !state) loadState();
   };
 
-  const { user, dashboard, recentPayments, notifications } = state ?? {};
+  const { user, dashboard, recentPayments } = state ?? {};
 
   // Token expiry colour
   const expSec = state?.tokenExpiresInSec ?? null;

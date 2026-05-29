@@ -19,7 +19,7 @@ export const useLessonSocket = (
   classBookCycleId?: string,
   bookId?: string,
 ) => {
-  const SOCKET_URL = socketUrl || 'http://localhost:3002';
+  const lessonSocketUrl = socketUrl || 'http://localhost:3002';
   const [socket, setSocket] = useState<Socket | null>(null);
   const [sessionData, setSessionData] = useState<TutorSessionData | null>(null);
   const [participants, setParticipants] = useState<any[]>([]);
@@ -53,7 +53,7 @@ export const useLessonSocket = (
           setError("Please sign in as a tutor before opening the live lesson lobby.");
           return;
         }
-        const socketInstance = io(SOCKET_URL, {
+        const socketInstance = io(lessonSocketUrl, {
           auth: { token },
           path: '/socket.io',
           addTrailingSlash: false,
@@ -144,7 +144,7 @@ export const useLessonSocket = (
         socketRef.current = null;
       }
     };
-  }, [tutorId, articleId, classId, classBookCycleId, bookId]);
+  }, [tutorId, articleId, classId, classBookCycleId, bookId, lessonSocketUrl]);
 
   const changePhase = (phase: number) => {
     if (socketRef.current && sessionData) {

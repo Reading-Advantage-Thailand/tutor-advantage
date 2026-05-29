@@ -1,22 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { t } from "@/lib/i18n";
 import { DevToolbar } from "@/components/dev/DevToolbar";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const notoSansThai = Noto_Sans_Thai({
-  subsets: ["thai"],
-  variable: "--font-noto-sans-thai",
-  display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800"],
-});
 
 export const viewport: Viewport = {
   themeColor: [
@@ -45,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th" suppressHydrationWarning>
-      <body className={`${notoSansThai.variable} ${inter.variable} ${notoSansThai.className}`}>
+      <body>
         {process.env.NODE_ENV === "development" && (
           <script
             dangerouslySetInnerHTML={{

@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import { jwtVerify } from "jose";
+import { jwtVerify } from "jose/jwt/verify";
 
 const jwtSecretRaw = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
 if (jwtSecretRaw === "secret-for-dev-only-change-me" && process.env.NODE_ENV === "production") {

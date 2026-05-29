@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { jwtVerify } from "jose";
+import { jwtVerify } from "jose/jwt/verify";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "secret-for-dev-only-change-me"

@@ -1,28 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_Thai, Inter, Geist } from "next/font/google";
 import { LiffProvider } from "@/components/providers/LiffProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import "./globals.css";
-import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { t } from "@/lib/i18n";
 import { DevToolbar } from "@/components/dev/DevToolbar";
-
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
-
-const notoSansThai = Noto_Sans_Thai({
-  variable: "--font-thai",
-  subsets: ["thai", "latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  display: "swap",
-});
-
-const inter = Inter({
-  variable: "--font-latin",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  display: "swap",
-});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -55,11 +37,11 @@ export default function RootLayout({
   return (
     <html
       lang="th"
-      className={cn("font-sans", geist.variable)}
+      className="font-sans"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
     >
-      <body className={`${notoSansThai.variable} ${inter.variable}`}>
+      <body>
         <ThemeProvider>
           <LiffProvider>
             <div className="liff-root">{children}</div>

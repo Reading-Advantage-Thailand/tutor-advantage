@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { studentApi } from "@/lib/api";
 import { useLiff } from "@/components/providers/LiffProvider";
-import { AlertCircle, Loader2, QrCode } from "lucide-react";
+import { AlertCircle, QrCode } from "lucide-react";
 import { toast } from "sonner";
 import { parseClassIdFromQrText } from "@/lib/paymentFlow";
 import { t } from "@/lib/i18n";

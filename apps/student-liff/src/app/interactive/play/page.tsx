@@ -69,7 +69,7 @@ function MobileLeaderboard({ participants, studentId }: {
               </div>
               <div className="size-8 rounded-full overflow-hidden border-2 border-border shadow-sm shrink-0 bg-muted flex items-center justify-center">
                 {p.pictureUrl
-                  ? <img src={p.pictureUrl} alt={p.name} className="size-full object-cover" />
+                  ? <Image src={p.pictureUrl} alt={p.name} width={32} height={32} className="size-full object-cover" unoptimized />
                   : <span className="text-[9px] font-black text-muted-foreground">{(p.name || '?').slice(0, 2)}</span>
                 }
               </div>
@@ -360,8 +360,8 @@ function PlayLessonContent() {
   };
 
   const isLookAtScreenPhase = [1, 2, 3, 4, 5, 6, 9].includes(currentPhase);
-  const articleId = (articleData as any)?.id as string | undefined;
-  const articleTitle = (articleData as any)?.title as string | undefined;
+  const articleId = articleData?.id;
+  const articleTitle = articleData?.title;
   const articleImageUrl = articleId
     ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${articleId}`
     : null;
@@ -407,7 +407,7 @@ function PlayLessonContent() {
             {/* Article hero / gradient banner */}
             {articleImageUrl ? (
               <div className="w-full h-40 rounded-3xl overflow-hidden shadow-xl relative">
-                <img src={articleImageUrl} alt="article" className="w-full h-full object-cover" />
+                <Image src={articleImageUrl} alt="article" fill sizes="(max-width: 640px) 100vw, 384px" className="object-cover" unoptimized />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
                   <p className="text-white/70 text-[10px] font-bold uppercase tracking-wider">บทเรียนวันนี้</p>
@@ -456,7 +456,7 @@ function PlayLessonContent() {
                       <div key={i} className="flex flex-col items-center gap-1" title={p.name}>
                         <div className="size-9 rounded-xl overflow-hidden border-2 border-border shadow-md bg-muted flex items-center justify-center">
                           {p.pictureUrl
-                            ? <img src={p.pictureUrl} alt={p.name} className="size-full object-cover" />
+                            ? <Image src={p.pictureUrl} alt={p.name} width={36} height={36} className="size-full object-cover" unoptimized />
                             : <span className="text-[9px] font-bold text-muted-foreground">{p.name.slice(0, 2)}</span>
                           }
                         </div>
@@ -571,7 +571,7 @@ function PlayLessonContent() {
                           <span className="w-6 text-center text-sm shrink-0">{rEmoji || `#${r}`}</span>
                           <div className="size-7 rounded-full overflow-hidden bg-muted border-2 border-border shadow-sm shrink-0 flex items-center justify-center">
                             {p.pictureUrl
-                              ? <img src={p.pictureUrl} alt={p.name} className="size-full object-cover" />
+                              ? <Image src={p.pictureUrl} alt={p.name} width={28} height={28} className="size-full object-cover" unoptimized />
                               : <span className="text-[9px] font-bold text-muted-foreground">{(p.name || '?').slice(0, 2)}</span>
                             }
                           </div>

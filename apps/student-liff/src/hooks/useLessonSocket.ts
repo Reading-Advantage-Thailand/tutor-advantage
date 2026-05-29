@@ -55,6 +55,8 @@ interface LessonSentence {
 }
 
 interface LessonArticleData {
+  id?: string;
+  title?: string;
   multipleChoiceQuestions?: LessonQuestion[];
   shortAnswerQuestions?: LessonQuestion[];
   words?: LessonWord[];

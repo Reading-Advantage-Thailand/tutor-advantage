@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, use } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Star, Users, Calendar, CheckCircle2, Lock, Share2, ChevronLeft,
   Loader2, AlertCircle, ChevronRight, BookOpen, Sparkles, CalendarPlus,
@@ -129,22 +130,6 @@ function downloadClassICS(cls: { id:string; name:string; schedule:string; starts
   const a = document.createElement("a"); a.href=url; a.download=`${cls.name.replace(/\s+/g,"-")}.ics`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
 }
-function cancelClassICS(cls: { id:string; name:string }) {
-  const dtstamp = new Date().toISOString().replace(/[-:.]/g,"").slice(0,15)+"Z";
-  const content = [
-    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Tutor Advantage//TH",
-    "CALSCALE:GREGORIAN","METHOD:CANCEL",
-    "BEGIN:VEVENT",
-    `UID:${cls.id}@ta.th`,`DTSTAMP:${dtstamp}`,
-    `SUMMARY:${cls.name}`,"STATUS:CANCELLED",
-    "END:VEVENT","END:VCALENDAR",
-  ].join("\r\n");
-  const blob = new Blob([content], { type:"text/calendar;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a"); a.href=url; a.download=`cancel-${cls.name.replace(/\s+/g,"-")}.ics`;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-}
-
 function googleCalClassUrl(cls: { name:string; schedule:string; startsAt?:string|null }): string {
   const { days, sh, sm, eh, em } = icsParseSchedule(cls.schedule);
   const anchor = cls.startsAt ? new Date(cls.startsAt) : new Date();
@@ -164,17 +149,8 @@ function cefrColor(level: string): string {
 }
 
 // ── Article type icon ────────────────────────────────────────────────────────
-function typeIcon(type?: string | null): string {
-  if (!type) return "📄";
-  const t = type.toLowerCase();
-  if (t.includes("quiz") || t.includes("test")) return "🎯";
-  if (t.includes("video")) return "🎬";
-  if (t.includes("listen") || t.includes("audio")) return "🎧";
-  return "📰";
-}
-
 // ── Passage excerpt with blur tail ──────────────────────────────────────────
-function PassageExcerpt({ text, accent }: { text: string; accent: string }) {
+function PassageExcerpt({ text }: { text: string }) {
   if (!text) return null;
   const trimmed = text.replace(/\.\.\.$/, "").trim();
   return (
@@ -208,12 +184,10 @@ function FeaturedArticleCard({
   article,
   accent,
   isEnrolled,
-  classId,
 }: {
   article: ClassArticleDetail;
   accent: string;
   isEnrolled: boolean;
-  classId: string;
 }) {
   const cc = cefrColor(article.cefrLevel);
 
@@ -317,7 +291,7 @@ function FeaturedArticleCard({
               <BookOpen size={11} />
               {t("classes.detail.lessonSamplePassage")}
             </div>
-            <PassageExcerpt text={article.passage} accent={accent} />
+            <PassageExcerpt text={article.passage} />
           </div>
         )}
       </div>
@@ -660,8 +634,6 @@ export default function ClassDetailPage({ params }: PageProps) {
 
   // Featured = first article from detailed fetch, fallback to basic info
   const featuredArticle = articles[0] ?? null;
-  const remainingArticles = articles.slice(1);
-
   return (
     <div className="page-shell">
       {/* Top bar */}
@@ -759,9 +731,11 @@ export default function ClassDetailPage({ params }: PageProps) {
         <div className="glass-card" style={{ padding: "18px" }}>
           <div style={{ display: "flex", gap: 14, alignItems: "center", marginBottom: 12 }}>
             {cls.tutor?.pictureUrl ? (
-              <img
+              <Image
                 src={cls.tutor.pictureUrl}
                 alt={cls.tutor.name}
+                width={52}
+                height={52}
                 style={{
                   width: 52, height: 52, borderRadius: 16,
                   objectFit: "cover", flexShrink: 0,
@@ -1020,7 +994,6 @@ export default function ClassDetailPage({ params }: PageProps) {
               article={featuredArticle}
               accent={seriesColor}
               isEnrolled={canReadSelectedCycle}
-              classId={cls.id}
             />
           ) : selectedCycle && !selectedCycle.hasAccess ? (
             <div className="glass-card" style={{ padding: "20px", textAlign: "center" }}>
