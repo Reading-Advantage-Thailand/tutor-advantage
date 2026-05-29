@@ -110,11 +110,32 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
 
         reportError("liff_init_start", "starting", { liffId, useMock });
 
-        await liff.init({
-          liffId,
-          // @ts-expect-error: mock is a custom property from the @line/liff-mock plugin
-          mock: useMock,
-        });
+        // Intercept all fetch calls during liff.init() to find which URL fails
+        const fetchLog: Array<{ url: string; status?: number; error?: string; ms: number }> = [];
+        const originalFetch = window.fetch;
+        window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+          const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+          const start = Date.now();
+          try {
+            const res = await originalFetch(input, init);
+            fetchLog.push({ url, status: res.status, ms: Date.now() - start });
+            return res;
+          } catch (err) {
+            fetchLog.push({ url, error: err instanceof Error ? err.message : String(err), ms: Date.now() - start });
+            throw err;
+          }
+        };
+
+        try {
+          await liff.init({
+            liffId,
+            // @ts-expect-error: mock is a custom property from the @line/liff-mock plugin
+            mock: useMock,
+          });
+        } finally {
+          window.fetch = originalFetch;
+          reportError("liff_init_fetch_log", "fetch calls during init", { fetchLog });
+        }
 
         reportError("liff_init_success", "ok", {
           isLoggedIn: liff.isLoggedIn(),

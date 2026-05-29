@@ -55,21 +55,23 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {},
   } catch (err: unknown) {
     if (!isServer) {
       console.error(`[studentApi] Fetch failed for ${url}:`, err);
-      fetch("/api/debug/client-error", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          stage: "fetchWithAuth",
-          url,
-          message: err instanceof Error ? err.message : String(err),
-          stack: err instanceof Error ? err.stack?.slice(0, 500) : undefined,
-          origin: window.location.origin,
-          userAgent: navigator.userAgent,
-          isInLine: navigator.userAgent.toLowerCase().includes(" line/"),
-          hasToken: !!token,
-          timestamp: new Date().toISOString(),
-        }),
-      }).catch(() => {});
+      try {
+        fetch("/api/debug/client-error", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            stage: "fetchWithAuth",
+            url,
+            message: err instanceof Error ? err.message : String(err),
+            stack: err instanceof Error ? err.stack?.slice(0, 500) : undefined,
+            origin: window.location.origin,
+            userAgent: navigator.userAgent,
+            isInLine: navigator.userAgent.toLowerCase().includes(" line/"),
+            hasToken: !!token,
+            timestamp: new Date().toISOString(),
+          }),
+        })?.catch(() => {});
+      } catch { /* debug report is best-effort */ }
     }
     throw err;
   }
