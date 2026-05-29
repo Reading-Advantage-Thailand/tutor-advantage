@@ -420,8 +420,11 @@ function PaymentFlow() {
     } catch (err) {
       console.error("Payment/Enrollment failed:", err);
       const msg = err instanceof Error ? err.message : "";
-      if (cycleId && (msg === "Please enroll in the class first")) {
-        // Student has no enrollment — redirect to class enrollment payment flow
+      const needsEnrollmentFirst =
+        msg === "Please enroll in the class first" ||
+        msg === "Please complete your class enrollment payment first";
+      if (cycleId && needsEnrollmentFirst) {
+        // Student has no active enrollment — redirect to enrollment payment flow first
         const enrollUrl = new URLSearchParams({ classId });
         if (referralToken) enrollUrl.set("referralToken", referralToken);
         window.location.href = `/payment?${enrollUrl.toString()}`;
