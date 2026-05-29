@@ -215,7 +215,7 @@ export async function generateTawi50Pdf(input: Tawi50PdfInput): Promise<Uint8Arr
   const issued = thaiDateParts(input.issuedAt, true);
 
   drawCenter(ctx, "1", 519, 40, 45, 16, 7);
-  drawText(ctx, input.documentNumber, 521, 61, 16, 6);
+  drawText(ctx, input.documentNumber, 505, 61, 16, 5);
   drawCenter(ctx, "1", 77, 62, 226, 15, 8);
 
   drawTaxId(ctx, input.companyTaxId, 375, 184, 83, 15);
