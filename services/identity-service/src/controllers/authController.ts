@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { verifyGoogleToken } from "../services/oauth/googleAuth";
-import { verifyFacebookToken } from "../services/oauth/facebookAuth";
 import { verifyLineToken } from "../services/oauth/lineAuth";
 import { processOAuthLogin } from "../services/authService";
 
@@ -23,6 +22,16 @@ export async function handleOAuthCallback(req: Request, res: Response) {
       });
     }
 
+    if (provider === "facebook") {
+      return res.status(403).json({
+        error: {
+          code: "PROVIDER_DISABLED",
+          message: "Facebook login is temporarily disabled",
+          requestId: req.id,
+        },
+      });
+    }
+
     let providerSubject = "";
     let email = "";
     let name = "";
@@ -34,13 +43,6 @@ export async function handleOAuthCallback(req: Request, res: Response) {
       providerSubject = profile.id;
       email = profile.email;
       name = profile.name;
-      picture = profile.picture || "";
-    } else if (provider === "facebook") {
-      const profile = await verifyFacebookToken(code, redirectUri);
-      providerSubject = profile.id;
-      email = profile.email;
-      name = profile.name;
-      picture = profile.picture || "";
       picture = profile.picture || "";
     } else if (provider === "line") {
       const profile = await verifyLineToken(code); // For LINE, code is the ID token

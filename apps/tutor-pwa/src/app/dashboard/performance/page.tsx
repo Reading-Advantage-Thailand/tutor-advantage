@@ -233,6 +233,20 @@ export default async function PerformancePage() {
   const nextTier = earningsData?.nextTierTargetTHB || 0;
   const currentRate = earningsData?.currentRate || 0;
   const commissionPercent = Math.round(currentRate * 100);
+  const hasMetricData =
+    studentSuccess !== null ||
+    ratingValue !== null ||
+    responseTimeValue !== null;
+  const hasActivityData =
+    numberOrZero(activity?.completedClasses) > 0 ||
+    numberOrZero(activity?.completedHours) > 0 ||
+    numberOrZero(activity?.interactiveSessions) > 0 ||
+    numberOrZero(activity?.referralCount) > 0 ||
+    numberOrZero(activity?.reviews?.total) > 0 ||
+    numberOrZero(activity?.answers?.total) > 0;
+  const hasPerformanceSignal =
+    Boolean(performanceData) &&
+    (hasMetricData || hasActivityData || badges.length > 0 || Boolean(nextGoal));
 
   let prevTier = 0;
   if (grossVolume >= 500000) prevTier = 500000;
@@ -342,6 +356,24 @@ export default async function PerformancePage() {
         </Card>
       )}
 
+      {performanceData && !hasPerformanceSignal && (
+        <Card className="rounded-2xl border-border/60 bg-muted/20">
+          <CardContent className="flex items-start gap-3 p-5">
+            <HelpCircle className="mt-0.5 h-5 w-5 text-muted-foreground" />
+            <div>
+              <p className="font-black text-foreground">
+                ยังไม่มีข้อมูลผลงานจริงสำหรับหน้านี้
+              </p>
+              <p className="mt-1 text-sm font-medium text-muted-foreground">
+                เมื่อมีคลาสที่สอนจบ รีวิว แชท หรือคำตอบจาก Interactive Session
+                ระบบจะแสดงคะแนน ความก้าวหน้า เหรียญ และเป้าหมายถัดไปให้โดยอัตโนมัติ
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {hasPerformanceSignal && (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <MetricPanel icon={Target} title="คุณภาพการสอน">
           <div className="flex items-start justify-between gap-3">
@@ -468,7 +500,9 @@ export default async function PerformancePage() {
           </div>
         </MetricPanel>
       </div>
+      )}
 
+      {hasPerformanceSignal && (
       <Card className="relative overflow-hidden rounded-3xl border border-brand-500/20 bg-card shadow-sm">
         <div className="absolute -right-10 -top-10 text-brand-500/[0.04] pointer-events-none">
           <Trophy className="h-44 w-44" />
@@ -539,7 +573,9 @@ export default async function PerformancePage() {
           )}
         </CardContent>
       </Card>
+      )}
 
+      {hasPerformanceSignal && (
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <Card className="rounded-3xl border-border/50 bg-card shadow-sm">
           <CardHeader className="pb-3">
@@ -651,6 +687,7 @@ export default async function PerformancePage() {
           </CardContent>
         </Card>
       </div>
+      )}
     </PageTransition>
   );
 }

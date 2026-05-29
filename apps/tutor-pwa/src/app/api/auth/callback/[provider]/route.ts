@@ -24,6 +24,12 @@ export async function GET(
 
   const publicBase = `${proto}://${host}`;
 
+  if (provider === "facebook") {
+    return NextResponse.redirect(
+      new URL("/?error=facebook_login_disabled", publicBase)
+    );
+  }
+
   if (!state || !storedState || state !== storedState) {
     return NextResponse.redirect(new URL("/?error=invalid_state", publicBase));
   }

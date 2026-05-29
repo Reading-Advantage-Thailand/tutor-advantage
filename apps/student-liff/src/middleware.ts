@@ -22,33 +22,14 @@ const PRIVATE_ROUTES = [
   "/lesson",
 ];
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+const LIFF_BOOTSTRAP_PARAMS = [
+  "liff.state",
+  "liff.referrer",
+  "lineAppVersion",
+  "access_token",
+];
 
-  const isPrivateRoute = PRIVATE_ROUTES.some((route) =>
-    pathname.startsWith(route)
-  );
-
-  if (isPrivateRoute) {
-    const token = request.cookies.get("student-session")?.value;
-
-    if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-
-    try {
-      await jwtVerify(token, JWT_SECRET);
-    } catch {
-      // Token expired or invalid — clear it and force re-login
-      const response = NextResponse.redirect(new URL("/login", request.url));
-      response.cookies.delete("student-session");
-      return response;
-    }
-  }
-
-  const response = NextResponse.next();
-
-  // Security headers — allow LINE domains for LIFF functionality
+function withSecurityHeaders(response: NextResponse) {
   const cspHeader = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.line-scdn.net https://liffsdk.line-scdn.net https://*.line-scdn.net",
@@ -77,6 +58,54 @@ export async function middleware(request: NextRequest) {
   );
 
   return response;
+}
+
+function isLiffBootstrapRequest(request: NextRequest) {
+  return LIFF_BOOTSTRAP_PARAMS.some((param) =>
+    request.nextUrl.searchParams.has(param)
+  );
+}
+
+function isLineInAppBrowserRequest(request: NextRequest) {
+  const userAgent = request.headers.get("user-agent")?.toLowerCase() ?? "";
+  return userAgent.includes(" line/") || userAgent.includes("liff");
+}
+
+function createLoginRedirect(request: NextRequest) {
+  const loginUrl = new URL("/login", request.url);
+  const target = `${request.nextUrl.pathname}${request.nextUrl.search}`;
+  loginUrl.searchParams.set("redirect", target);
+  return NextResponse.redirect(loginUrl);
+}
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  const isPrivateRoute = PRIVATE_ROUTES.some((route) =>
+    pathname.startsWith(route)
+  );
+
+  if (isPrivateRoute) {
+    const token = request.cookies.get("student-session")?.value;
+
+    if (!token) {
+      if (isLiffBootstrapRequest(request) || isLineInAppBrowserRequest(request)) {
+        return withSecurityHeaders(NextResponse.next());
+      }
+
+      return withSecurityHeaders(createLoginRedirect(request));
+    }
+
+    try {
+      await jwtVerify(token, JWT_SECRET);
+    } catch {
+      const response = createLoginRedirect(request);
+      response.cookies.delete("student-session");
+      return withSecurityHeaders(response);
+    }
+  }
+
+  return withSecurityHeaders(NextResponse.next());
 }
 
 export const config = {

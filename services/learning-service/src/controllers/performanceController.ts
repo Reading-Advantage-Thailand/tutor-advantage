@@ -274,9 +274,22 @@ export const getPerformanceSummary = async (req: AuthenticatedRequest, res: Resp
       };
     });
 
+    const hasPerformanceSignal =
+      Boolean(latestPerformance) ||
+      completedClassCount > 0 ||
+      totalHours > 0 ||
+      totalReferrals > 0 ||
+      totalInteractiveSessions > 0 ||
+      totalAnswersCount > 0 ||
+      reviewCount > 0 ||
+      responseTimeSamples.length > 0 ||
+      badges.length > 0;
+
     let nextGoal = null;
 
-    if (!unlockedCodes.has("RISING_STAR")) {
+    if (!hasPerformanceSignal) {
+      nextGoal = null;
+    } else if (!unlockedCodes.has("RISING_STAR")) {
       nextGoal = {
         code: "RISING_STAR",
         ...BADGE_MAP.RISING_STAR,

@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleOAuthCallback = handleOAuthCallback;
 const googleAuth_1 = require("../services/oauth/googleAuth");
-const facebookAuth_1 = require("../services/oauth/facebookAuth");
 const lineAuth_1 = require("../services/oauth/lineAuth");
 const authService_1 = require("../services/authService");
 async function handleOAuthCallback(req, res) {
@@ -21,6 +20,15 @@ async function handleOAuthCallback(req, res) {
                 },
             });
         }
+        if (provider === "facebook") {
+            return res.status(403).json({
+                error: {
+                    code: "PROVIDER_DISABLED",
+                    message: "Facebook login is temporarily disabled",
+                    requestId: req.id,
+                },
+            });
+        }
         let providerSubject = "";
         let email = "";
         let name = "";
@@ -31,14 +39,6 @@ async function handleOAuthCallback(req, res) {
             providerSubject = profile.id;
             email = profile.email;
             name = profile.name;
-            picture = profile.picture || "";
-        }
-        else if (provider === "facebook") {
-            const profile = await (0, facebookAuth_1.verifyFacebookToken)(code, redirectUri);
-            providerSubject = profile.id;
-            email = profile.email;
-            name = profile.name;
-            picture = profile.picture || "";
             picture = profile.picture || "";
         }
         else if (provider === "line") {

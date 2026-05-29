@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useLiff } from "@/components/providers/LiffProvider";
 import Link from "next/link";
+import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -121,7 +122,7 @@ function ClassCard({ enrollment }: { enrollment: Enrollment }) {
               ? "bg-gradient-to-r from-rose-500 to-pink-500"
               : isPending
               ? "bg-gradient-to-r from-amber-400 to-orange-400"
-              : "bg-gradient-to-r from-indigo-500 to-violet-500"
+              : "bg-gradient-to-r from-brand-500 to-emerald-500"
           }`}
         />
 
@@ -140,7 +141,7 @@ function ClassCard({ enrollment }: { enrollment: Enrollment }) {
             </div>
           )}
           {!isLive && !isPending && (
-            <div className="inline-flex items-center gap-1.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-fit">
+            <div className="inline-flex items-center gap-1.5 bg-brand-500/10 text-brand-700 dark:text-brand-300 border border-brand-500/20 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-fit">
               <BookOpen size={9} />
               {t("dashboard.statusActive")}
             </div>
@@ -159,10 +160,10 @@ function ClassCard({ enrollment }: { enrollment: Enrollment }) {
 
           {/* Next session */}
           {enrollment.nextSession && enrollment.nextSession !== "-" && (
-            <div className="flex items-center gap-2 bg-indigo-500/5 border border-indigo-500/15 rounded-xl px-3 py-2">
-              <Calendar size={12} className="text-indigo-500 shrink-0" />
+            <div className="flex items-center gap-2 bg-brand-500/5 border border-brand-500/15 rounded-xl px-3 py-2">
+              <Calendar size={12} className="text-brand-600 dark:text-brand-300 shrink-0" />
               <div>
-                <p className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-wider leading-none mb-0.5">
+                <p className="text-[10px] text-brand-700 dark:text-brand-300 font-bold uppercase tracking-wider leading-none mb-0.5">
                   {t("dashboard.nextLesson")}
                 </p>
                 <p className="text-xs text-foreground font-medium leading-tight">
@@ -179,7 +180,7 @@ function ClassCard({ enrollment }: { enrollment: Enrollment }) {
                 <span className="text-[10px] text-muted-foreground font-medium">
                   {t("dashboard.progress")}
                 </span>
-                <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400">
+                <span className="text-[10px] font-black text-brand-700 dark:text-brand-300">
                   {enrollment.progress}%
                 </span>
               </div>
@@ -404,6 +405,10 @@ export default function DashboardPage() {
 
   const handleCopyReferral = async () => {
     if (copyState !== 'idle') return;
+    if (shareableClasses.length === 0) {
+      toast.info("ยังไม่ได้ลงทะเบียนคลาส");
+      return;
+    }
     if (shareableClasses.length > 1) {
       setIsClassPickerOpen(true);
       return;
@@ -428,7 +433,7 @@ export default function DashboardPage() {
         <p className="text-muted-foreground">{error}</p>
         <button
           onClick={() => window.location.reload()}
-          className="px-6 py-3 rounded-xl bg-indigo-500 text-white font-bold text-sm"
+          className="px-6 py-3 rounded-xl bg-brand-500 text-white font-bold text-sm"
         >
           {t("dashboard.retry")}
         </button>
@@ -500,14 +505,14 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <h2 className="text-base font-black text-foreground">{t("dashboard.myClasses")}</h2>
               {(dashboardData?.activeEnrollments ?? 0) > 0 && (
-                <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full">
+                <span className="text-xs font-bold text-brand-700 dark:text-brand-300 bg-brand-500/10 px-2 py-0.5 rounded-full">
                   {dashboardData?.activeEnrollments} {t("dashboard.classUnit")}
                 </span>
               )}
             </div>
             <Link
               href="/classes"
-              className="flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2.5 py-1.5 rounded-xl"
+              className="flex items-center gap-1 text-xs font-bold text-brand-700 dark:text-brand-300 bg-brand-500/10 px-2.5 py-1.5 rounded-xl"
             >
               {t("dashboard.viewAll")} <ChevronRight size={13} />
             </Link>
@@ -516,13 +521,13 @@ export default function DashboardPage() {
           {allClasses.length === 0 ? (
             /* Empty state */
             <div className="rounded-2xl border-2 border-dashed border-border bg-card p-8 text-center">
-              <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mx-auto mb-3">
-                <Sparkles size={24} className="text-indigo-500" />
+              <div className="w-14 h-14 rounded-2xl bg-brand-500/10 flex items-center justify-center mx-auto mb-3">
+                <Sparkles size={24} className="text-brand-600 dark:text-brand-300" />
               </div>
               <p className="font-bold text-foreground text-sm mb-1">{t("dashboard.noClasses")}</p>
               <p className="text-xs text-muted-foreground mb-4">{t("dashboard.noClassesSub")}</p>
               <Link href="/classes">
-                <button className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white font-bold text-xs shadow-md">
+                <button className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-500 text-white font-bold text-xs shadow-md shadow-brand-500/20">
                   {t("dashboard.findClass")}
                 </button>
               </Link>
@@ -545,10 +550,10 @@ export default function DashboardPage() {
               <div style={{ scrollSnapAlign: "start", flexShrink: 0 }} className="min-w-[160px] max-w-[160px]">
                 <Link href="/classes" className="block h-full">
                   <div className="h-full min-h-[180px] rounded-2xl border-2 border-dashed border-border bg-card flex flex-col items-center justify-center gap-2 p-4 text-center active:scale-95 transition-transform">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center">
-                      <Sparkles size={18} className="text-indigo-500" />
+                    <div className="w-10 h-10 rounded-xl bg-brand-500/10 flex items-center justify-center">
+                      <Sparkles size={18} className="text-brand-600 dark:text-brand-300" />
                     </div>
-                    <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{t("dashboard.findClass")}</p>
+                    <p className="text-xs font-bold text-brand-700 dark:text-brand-300">{t("dashboard.findClass")}</p>
                     <p className="text-[10px] text-muted-foreground">{t("dashboard.findClassSub")}</p>
                   </div>
                 </Link>
@@ -570,7 +575,7 @@ export default function DashboardPage() {
             <button
               id="btn-copy-referral"
               onClick={handleCopyReferral}
-              disabled={copyState !== 'idle' || shareableClasses.length === 0}
+              disabled={copyState !== 'idle'}
               style={{
                 flexShrink: 0,
                 fontSize: "0.75rem",
@@ -578,7 +583,7 @@ export default function DashboardPage() {
                 padding: "8px 14px",
                 borderRadius: 12,
                 border: "none",
-                cursor: shareableClasses.length === 0 ? "not-allowed" : "pointer",
+                cursor: copyState !== 'idle' ? "wait" : "pointer",
                 transition: "all 0.2s",
                 background: copyState === 'copied'
                   ? "var(--brand-500)"
@@ -764,7 +769,7 @@ export default function DashboardPage() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="referral-class-picker-title"
-          className="fixed inset-0 z-50 flex items-end"
+          className="fixed inset-0 z-[150] flex items-end"
         >
           <button
             type="button"
@@ -791,7 +796,7 @@ export default function DashboardPage() {
                 <X size={18} />
               </button>
             </div>
-            <div className="max-h-[55dvh] overflow-y-auto px-4 pb-[calc(20px+env(safe-area-inset-bottom))]">
+            <div className="max-h-[calc(80dvh-88px)] overflow-y-auto px-4 pb-[calc(32px+env(safe-area-inset-bottom))]">
               <div className="flex flex-col gap-2">
                 {shareableClasses.map((cls, index) => {
                   const isCopyingThisClass = copyState === 'loading' && copyingClassId === cls.id;
@@ -804,7 +809,7 @@ export default function DashboardPage() {
                       disabled={copyState !== 'idle'}
                       className="flex w-full items-center gap-3 rounded-2xl border border-border bg-background px-4 py-3 text-left transition active:scale-[0.99] disabled:opacity-60"
                     >
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-500/10 text-brand-700 dark:text-brand-300">
                         <BookOpen size={18} />
                       </div>
                       <div className="min-w-0 flex-1">

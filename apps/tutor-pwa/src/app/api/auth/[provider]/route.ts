@@ -18,6 +18,13 @@ export async function GET(
   const baseUrl = `${proto}://${host}`;
   const redirectUri = `${baseUrl}/api/auth/callback/${provider}`;
 
+  if (provider === "facebook") {
+    return NextResponse.json(
+      { error: "Facebook login is temporarily disabled" },
+      { status: 403 }
+    );
+  }
+
   // Generate a random CSRF state token — sponsor info stays in its own cookie
   const csrfState = crypto.randomBytes(32).toString("hex");
 
@@ -57,34 +64,6 @@ export async function GET(
       path: "/",
     });
     response.cookies.set("pkce_verifier", codeVerifier, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 10,
-      path: "/",
-    });
-    return response;
-  }
-
-  if (provider === "facebook") {
-    const clientId = process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID;
-    if (!clientId) {
-      return NextResponse.json(
-        { error: "Facebook Client ID not configured" },
-        { status: 500 }
-      );
-    }
-
-    const facebookAuthUrl = new URL(
-      "https://www.facebook.com/v11.0/dialog/oauth"
-    );
-    facebookAuthUrl.searchParams.set("client_id", clientId);
-    facebookAuthUrl.searchParams.set("redirect_uri", redirectUri);
-    facebookAuthUrl.searchParams.set("scope", "public_profile,email");
-    facebookAuthUrl.searchParams.set("state", csrfState);
-
-    const response = NextResponse.redirect(facebookAuthUrl.toString());
-    response.cookies.set("oauth_state", csrfState, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

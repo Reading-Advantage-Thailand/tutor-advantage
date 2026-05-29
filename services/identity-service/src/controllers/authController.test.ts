@@ -65,6 +65,24 @@ describe("handleOAuthCallback", () => {
     });
   });
 
+  it("rejects Facebook while the provider is disabled", async () => {
+    const req = { id: "req-1", body: { provider: "facebook", code: "code-1" } };
+    const res = createResponse();
+
+    await handleOAuthCallback(req as never, res as never);
+
+    expect(verifyFacebookToken).not.toHaveBeenCalled();
+    expect(processOAuthLogin).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({
+      error: {
+        code: "PROVIDER_DISABLED",
+        message: "Facebook login is temporarily disabled",
+        requestId: "req-1",
+      },
+    });
+  });
+
   it("verifies Google profiles and returns the login result", async () => {
     verifyGoogleToken.mockResolvedValue({
       id: "google-subject",

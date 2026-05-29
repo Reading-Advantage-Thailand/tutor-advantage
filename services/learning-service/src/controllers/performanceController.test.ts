@@ -81,7 +81,7 @@ describe("getPerformanceSummary", () => {
       correctAnswers: null,
       totalAnswers: null,
     });
-    expect(Number.isNaN(body.badges.nextGoal.progress)).toBe(false);
+    expect(body.badges.nextGoal).toBeNull();
   });
 
   it("marks snapshot-only metrics as historical", async () => {
