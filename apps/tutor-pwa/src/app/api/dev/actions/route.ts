@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
-import { cookies } from "next/headers";
 import { FINANCE_URL } from "@/lib/service-urls";
+import { getActiveTutorSession } from "@/lib/tutor-session";
 
 type DevAction =
   | { action: "addVolume"; amountTHB: number }
@@ -12,25 +12,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Not available in production" }, { status: 403 });
   }
 
-  const cookieStore = await cookies();
-  const token = cookieStore.get("tutor_session")?.value;
-  if (!token) {
-    return NextResponse.json({ error: "No session cookie" }, { status: 401 });
+  const session = await getActiveTutorSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Decode userId from JWT payload (no verification — dev only)
-  let tutorUserId: string | null = null;
-  try {
-    const b64 = token.split(".")[1];
-    const payload = JSON.parse(Buffer.from(b64, "base64url").toString("utf8"));
-    tutorUserId = payload.userId ?? payload.sub ?? null;
-  } catch {
-    return NextResponse.json({ error: "Invalid token" }, { status: 401 });
-  }
-
-  if (!tutorUserId) {
-    return NextResponse.json({ error: "No userId in token" }, { status: 401 });
-  }
+  const tutorUserId = session.user.userId;
 
   let body: DevAction;
   try {

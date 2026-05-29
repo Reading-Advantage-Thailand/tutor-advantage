@@ -1,19 +1,18 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { getActiveTutorSession } from "@/lib/tutor-session";
 
 export async function GET() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("tutor_session")?.value;
+  const session = await getActiveTutorSession();
 
-  if (!token) {
-    return NextResponse.json({ unreadChat: 0, availableAuctions: 0 });
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
     const baseUrl =
       process.env.LEARNING_API_BASE_URL || "http://localhost:3002";
     const response = await fetch(`${baseUrl}/v1/notifications/summary`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${session.token}` },
       cache: "no-store",
     });
 

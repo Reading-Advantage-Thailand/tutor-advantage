@@ -1,23 +1,22 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { IDENTITY_URL, FINANCE_URL, LEARNING_URL } from "@/lib/service-urls";
+import { getActiveTutorSession } from "@/lib/tutor-session";
 
 export async function GET() {
   if (process.env.NODE_ENV !== "development") {
     return NextResponse.json({ error: "Not available in production" }, { status: 403 });
   }
 
-  const cookieStore = await cookies();
-  const token = cookieStore.get("tutor_session")?.value;
-
-  if (!token) {
-    return NextResponse.json({ error: "No session cookie" }, { status: 401 });
+  const session = await getActiveTutorSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const { token, user: activeUser } = session;
   const headers: HeadersInit = { Authorization: `Bearer ${token}` };
 
-  // Decode JWT payload first (no verification — dev only) to get userId for badge fetch
-  let tokenInfo: { userId?: string; sub?: string; exp?: number; iat?: number; role?: string } = {};
+  // Decode display-only token metadata for the dev toolbar.
+  let tokenInfo: { exp?: number; iat?: number; role?: string } = {};
   try {
     const b64 = token.split(".")[1];
     tokenInfo = JSON.parse(Buffer.from(b64, "base64url").toString("utf8"));
@@ -25,15 +24,11 @@ export async function GET() {
     // ignore malformed token
   }
 
-  const tutorUserId = tokenInfo.userId ?? tokenInfo.sub ?? null;
-
   const [userRes, earningsRes, notifRes, badgesRes] = await Promise.allSettled([
     fetch(`${IDENTITY_URL}/v1/users/me`, { headers, cache: "no-store" }),
     fetch(`${FINANCE_URL}/v1/tutors/earnings/history`, { headers, cache: "no-store" }),
     fetch(`${LEARNING_URL}/v1/notifications/summary`, { headers, cache: "no-store" }),
-    tutorUserId
-      ? fetch(`${FINANCE_URL}/v1/dev/tutor-badges/${tutorUserId}`, { cache: "no-store" })
-      : Promise.resolve(null),
+    fetch(`${FINANCE_URL}/v1/dev/tutor-badges/${activeUser.userId}`, { cache: "no-store" }),
   ]);
 
   const user =
@@ -74,6 +69,6 @@ export async function GET() {
     tokenExp: tokenInfo.exp ?? null,
     tokenExpiresInSec: expiresIn,
     tokenRole: tokenInfo.role ?? null,
-    tokenSub: tutorUserId,
+    tokenSub: activeUser.userId,
   });
 }

@@ -16,6 +16,7 @@ import {
   Users,
   ShieldAlert,
   Terminal,
+  Database,
 } from "lucide-react";
 
 import {
@@ -290,6 +291,26 @@ function AppSidebar({
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname.startsWith("/dev/database")}
+                    tooltip="Database"
+                    className={
+                      pathname.startsWith("/dev/database")
+                        ? "bg-orange-500/10 text-orange-600"
+                        : "hover:bg-orange-500/5 text-muted-foreground hover:text-orange-600"
+                    }
+                  >
+                    <Link href="/dev/database">
+                      <Database className="shrink-0" />
+                      <span className="truncate font-medium">Database</span>
+                      <span className="ml-auto text-[9px] font-bold text-orange-500 bg-orange-500/10 px-1.5 py-0.5 rounded group-data-[collapsible=icon]:hidden">
+                        DB
+                      </span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -408,6 +429,7 @@ export default function LayoutWrapper({
     "/operations/legacy-links": t("layout.legacyLinks"),
     "/users": t("layout.usersConsent"),
     "/fraud": t("layout.fraud"),
+    "/dev/database": "Database Dev Mode",
     "/dev": t("layout.developerGroup"),
   };
   const pageTitle =

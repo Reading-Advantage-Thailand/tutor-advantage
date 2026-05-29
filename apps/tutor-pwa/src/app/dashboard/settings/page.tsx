@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { IDENTITY_URL } from "@/lib/service-urls";
 import {
   SettingsInteractiveElements,
@@ -33,11 +34,9 @@ export default async function SettingsPage() {
   const token = cookieStore.get("tutor_session")?.value || "";
 
   const response = await getUserProfile(token);
-  const user = response?.user || {
-    displayName: "Tutor User",
-    userId: "TA-99999",
-    role: "TUTOR",
-  };
+  if (!response?.user) redirect("/");
+
+  const user = response.user;
 
   return (
     <PageTransition variant="slide-up" stagger className="max-w-2xl mx-auto space-y-6 lg:space-y-8 pb-28 sm:pb-12">

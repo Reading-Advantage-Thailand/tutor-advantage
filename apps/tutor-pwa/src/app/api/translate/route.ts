@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { getActiveTutorSession } from "@/lib/tutor-session";
 
 export async function POST(req: NextRequest) {
   // Require an active session to prevent API key abuse
-  const cookieStore = await cookies();
-  if (!cookieStore.get("tutor_session")?.value) {
+  const session = await getActiveTutorSession();
+  if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

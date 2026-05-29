@@ -16,36 +16,19 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { generateTawi50Pdf } from "@/lib/tawi50Pdf";
 import { getMissingTawi50Fields } from "@/lib/tawi50Requirements";
-import { IDENTITY_URL } from "@/lib/service-urls";
+import { getActiveTutorSession } from "@/lib/tutor-session";
 
 export const dynamic = "force-dynamic";
 
-async function getUserProfile(token: string) {
-  const res = await fetch(`${IDENTITY_URL}/v1/users/me`, {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: "no-store",
-  });
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data?.user ?? null;
-}
-
 export async function GET(req: NextRequest) {
   // ── Auth ──────────────────────────────────────────────────────────────
-  const cookieStore = await cookies();
-  const token = cookieStore.get("tutor_session")?.value ?? "";
-
-  if (!token) {
+  const session = await getActiveTutorSession();
+  if (!session) {
     return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
   }
-
-  const user = await getUserProfile(token);
-  if (!user) {
-    return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
-  }
+  const { user } = session;
 
   // ── Query params ──────────────────────────────────────────────────────
   const { searchParams } = req.nextUrl;
