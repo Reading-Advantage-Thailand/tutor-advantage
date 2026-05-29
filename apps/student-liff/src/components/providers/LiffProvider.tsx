@@ -110,24 +110,18 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
 
         reportError("liff_init_start", "starting", { liffId, useMock });
 
-        // LIFF SDK fetches liffsdk.line-scdn.net/xlt/manifest.json for extensions
-        // during init. This request fails in LINE WebView on some devices/networks,
-        // crashing the entire init. Intercept and return an empty manifest on failure.
+        // LIFF SDK fetches liffsdk.line-scdn.net/xlt/* for extensions and i18n
+        // during init. This fails in LINE WebView on some devices. Proxy these
+        // requests through our Next.js server to avoid the issue.
         const originalFetch = window.fetch;
-        window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+        window.fetch = async (input: RequestInfo | URL, initOpts?: RequestInit) => {
           const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
-          try {
-            return await originalFetch(input, init);
-          } catch (err) {
-            if (url.includes("liffsdk.line-scdn.net/xlt/manifest.json")) {
-              console.warn("[LIFF] manifest.json fetch failed, returning empty manifest");
-              return new Response(JSON.stringify({ createAt: 0, languages: {} }), {
-                status: 200,
-                headers: { "Content-Type": "application/json" },
-              });
-            }
-            throw err;
+          if (url.includes("liffsdk.line-scdn.net/xlt/")) {
+            const proxyPath = url.split("liffsdk.line-scdn.net/xlt/")[1];
+            const proxyUrl = `/api/liff-proxy/${proxyPath}`;
+            return originalFetch(proxyUrl, initOpts);
           }
+          return originalFetch(input, initOpts);
         };
 
         try {
