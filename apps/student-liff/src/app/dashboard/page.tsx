@@ -107,12 +107,12 @@ function ClassCard({ enrollment }: { enrollment: Enrollment }) {
       className="block no-underline active:scale-[0.98] transition-transform min-w-[260px] max-w-[280px]"
     >
       <div
-        className={`h-full rounded-2xl border overflow-hidden shadow-sm transition-all ${
+        className={`h-full rounded-2xl overflow-hidden transition-all relative ${
           isLive
-            ? "border-rose-400/60 bg-card"
+            ? "border border-rose-400/60 bg-gradient-to-br from-rose-50 to-pink-50 shadow-md shadow-rose-500/10"
             : isPending
-            ? "border-amber-400/50 bg-amber-500/5"
-            : "border-border bg-card"
+            ? "border border-amber-400/50 bg-gradient-to-br from-amber-50 to-orange-50 shadow-md shadow-amber-500/10"
+            : "border border-brand-200 bg-gradient-to-br from-brand-50 via-white to-emerald-50 shadow-md shadow-brand-500/10"
         }`}
       >
         {/* Card top color bar */}
@@ -126,22 +126,27 @@ function ClassCard({ enrollment }: { enrollment: Enrollment }) {
           }`}
         />
 
-        <div className="p-4 flex flex-col gap-3">
+        {/* Decorative circle */}
+        <div className={`absolute top-4 right-2 w-20 h-20 rounded-full opacity-[0.07] ${
+          isLive ? "bg-rose-500" : isPending ? "bg-amber-500" : "bg-brand-500"
+        }`} />
+
+        <div className="p-4 flex flex-col gap-3 relative">
           {/* Live / Pending badge */}
           {isLive && (
-            <div className="inline-flex items-center gap-1.5 bg-rose-500/10 text-rose-500 border border-rose-500/20 px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wider w-fit">
-              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+            <div className="inline-flex items-center gap-1.5 bg-rose-500 text-white px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider w-fit shadow-sm shadow-rose-500/30">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
               {t("dashboard.liveNow")}
             </div>
           )}
           {isPending && !isLive && (
-            <div className="inline-flex items-center gap-1.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wider w-fit">
+            <div className="inline-flex items-center gap-1.5 bg-amber-500 text-white px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider w-fit shadow-sm shadow-amber-500/30">
               <AlertTriangle size={9} />
               {t("dashboard.statusPending")}
             </div>
           )}
           {!isLive && !isPending && (
-            <div className="inline-flex items-center gap-1.5 bg-brand-500/10 text-brand-700 dark:text-brand-300 border border-brand-500/20 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-fit">
+            <div className="inline-flex items-center gap-1.5 bg-brand-500 text-white px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider w-fit shadow-sm shadow-brand-500/30">
               <BookOpen size={9} />
               {t("dashboard.statusActive")}
             </div>
@@ -154,16 +159,16 @@ function ClassCard({ enrollment }: { enrollment: Enrollment }) {
 
           {/* Tutor */}
           <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-            <Users size={11} />
+            <Users size={11} className="text-brand-500" />
             {enrollment.tutorName}
           </p>
 
           {/* Next session */}
           {enrollment.nextSession && enrollment.nextSession !== "-" && (
-            <div className="flex items-center gap-2 bg-brand-500/5 border border-brand-500/15 rounded-xl px-3 py-2">
-              <Calendar size={12} className="text-brand-600 dark:text-brand-300 shrink-0" />
+            <div className="flex items-center gap-2 bg-white/80 border border-brand-200 rounded-xl px-3 py-2">
+              <Calendar size={12} className="text-brand-600 shrink-0" />
               <div>
-                <p className="text-[10px] text-brand-700 dark:text-brand-300 font-bold uppercase tracking-wider leading-none mb-0.5">
+                <p className="text-[10px] text-brand-700 font-bold uppercase tracking-wider leading-none mb-0.5">
                   {t("dashboard.nextLesson")}
                 </p>
                 <p className="text-xs text-foreground font-medium leading-tight">
@@ -180,7 +185,7 @@ function ClassCard({ enrollment }: { enrollment: Enrollment }) {
                 <span className="text-[10px] text-muted-foreground font-medium">
                   {t("dashboard.progress")}
                 </span>
-                <span className="text-[10px] font-black text-brand-700 dark:text-brand-300">
+                <span className="text-[10px] font-black text-brand-600">
                   {enrollment.progress}%
                 </span>
               </div>
@@ -191,7 +196,7 @@ function ClassCard({ enrollment }: { enrollment: Enrollment }) {
           {/* Pending CTA */}
           {isPending && (
             <div className="mt-auto pt-1">
-              <div className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-orange-400 text-white font-black text-xs text-center shadow-sm shadow-amber-400/30 flex items-center justify-center gap-1.5">
+              <div className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-orange-400 text-white font-black text-xs text-center shadow-md shadow-amber-400/30 flex items-center justify-center gap-1.5">
                 <CreditCard size={12} />
                 {t("dashboard.pendingPaymentCta")}
               </div>
@@ -505,14 +510,14 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2">
               <h2 className="text-base font-black text-foreground">{t("dashboard.myClasses")}</h2>
               {(dashboardData?.activeEnrollments ?? 0) > 0 && (
-                <span className="text-xs font-bold text-brand-700 dark:text-brand-300 bg-brand-500/10 px-2 py-0.5 rounded-full">
+                <span className="text-xs font-bold text-white bg-brand-500 px-2.5 py-0.5 rounded-full shadow-sm shadow-brand-500/30">
                   {dashboardData?.activeEnrollments} {t("dashboard.classUnit")}
                 </span>
               )}
             </div>
             <Link
               href="/classes"
-              className="flex items-center gap-1 text-xs font-bold text-brand-700 dark:text-brand-300 bg-brand-500/10 px-2.5 py-1.5 rounded-xl"
+              className="flex items-center gap-1 text-xs font-bold text-white bg-brand-500 px-3 py-1.5 rounded-xl shadow-sm shadow-brand-500/25 active:scale-95 transition-transform"
             >
               {t("dashboard.viewAll")} <ChevronRight size={13} />
             </Link>
@@ -520,17 +525,21 @@ export default function DashboardPage() {
 
           {allClasses.length === 0 ? (
             /* Empty state */
-            <div className="rounded-2xl border-2 border-dashed border-border bg-card p-8 text-center">
-              <div className="w-14 h-14 rounded-2xl bg-brand-500/10 flex items-center justify-center mx-auto mb-3">
-                <Sparkles size={24} className="text-brand-600 dark:text-brand-300" />
+            <div className="rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 via-white to-emerald-50 p-8 text-center relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-brand-500/5 -translate-y-8 translate-x-8" />
+              <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full bg-emerald-500/5 translate-y-6 -translate-x-4" />
+              <div className="relative">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-emerald-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-500/25">
+                  <Sparkles size={28} className="text-white" />
+                </div>
+                <p className="font-black text-foreground text-sm mb-1">{t("dashboard.noClasses")}</p>
+                <p className="text-xs text-muted-foreground mb-5">{t("dashboard.noClassesSub")}</p>
+                <Link href="/classes">
+                  <button className="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-500 text-white font-bold text-sm shadow-lg shadow-brand-500/30 active:scale-95 transition-transform">
+                    {t("dashboard.findClass")}
+                  </button>
+                </Link>
               </div>
-              <p className="font-bold text-foreground text-sm mb-1">{t("dashboard.noClasses")}</p>
-              <p className="text-xs text-muted-foreground mb-4">{t("dashboard.noClassesSub")}</p>
-              <Link href="/classes">
-                <button className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-500 text-white font-bold text-xs shadow-md shadow-brand-500/20">
-                  {t("dashboard.findClass")}
-                </button>
-              </Link>
             </div>
           ) : allClasses.length === 1 ? (
             /* Single class — full width */
@@ -549,11 +558,11 @@ export default function DashboardPage() {
               {/* Browse more card */}
               <div style={{ scrollSnapAlign: "start", flexShrink: 0 }} className="min-w-[160px] max-w-[160px]">
                 <Link href="/classes" className="block h-full">
-                  <div className="h-full min-h-[180px] rounded-2xl border-2 border-dashed border-border bg-card flex flex-col items-center justify-center gap-2 p-4 text-center active:scale-95 transition-transform">
-                    <div className="w-10 h-10 rounded-xl bg-brand-500/10 flex items-center justify-center">
-                      <Sparkles size={18} className="text-brand-600 dark:text-brand-300" />
+                  <div className="h-full min-h-[180px] rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 to-emerald-50 flex flex-col items-center justify-center gap-2.5 p-4 text-center active:scale-95 transition-transform shadow-sm">
+                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500 to-emerald-500 flex items-center justify-center shadow-md shadow-brand-500/25">
+                      <Sparkles size={20} className="text-white" />
                     </div>
-                    <p className="text-xs font-bold text-brand-700 dark:text-brand-300">{t("dashboard.findClass")}</p>
+                    <p className="text-xs font-bold text-brand-700">{t("dashboard.findClass")}</p>
                     <p className="text-[10px] text-muted-foreground">{t("dashboard.findClassSub")}</p>
                   </div>
                 </Link>

@@ -474,10 +474,12 @@ p { line-height: 1.7; }
   border-bottom: 1px solid var(--neutral-200);
 }
 
-/* Page content area with floating bottom nav padding */
+/* Page content area with floating bottom nav padding.
+   BottomNav already adds safe-area-inset-bottom to its own height,
+   so we only need the nav's base height (~60px) + a small gap here. */
 .page-content {
   flex: 1;
-  padding-bottom: calc(72px + max(0px, env(safe-area-inset-bottom, 0px)));
+  padding-bottom: 68px;
 }
 
 /* ─── Form Elements ───────────────────────────────────────────────────────── */
