@@ -115,6 +115,7 @@ describe("handleOAuthCallback", () => {
       "Ada",
       "avatar.png",
       "tutor-1",
+      undefined,
     );
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ sessionToken: "session-token" }));
