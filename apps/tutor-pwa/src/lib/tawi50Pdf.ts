@@ -207,7 +207,11 @@ export async function generateTawi50Pdf(input: Tawi50PdfInput): Promise<Uint8Arr
 
   const gross = formatAmount(input.grossAmount);
   const withholdingTax = formatAmount(input.withholdingTax);
-  const paymentDate = formatThaiNumericDate(input.paidDate);
+  // Net amount actually paid out after withholding tax.
+  const net = formatAmount(Math.max(0, input.grossAmount - input.withholdingTax));
+  // "วัน เดือน ปีภาษี ที่จ่าย" — use the transfer/paid date, fall back to the
+  // document issue date so the field is never an empty dash.
+  const paymentDate = formatThaiNumericDate(input.paidDate || input.issuedAt);
   const issued = thaiDateParts(input.issuedAt, true);
 
   drawCenter(ctx, "1", 519, 40, 45, 16, 7);
@@ -227,7 +231,7 @@ export async function generateTawi50Pdf(input: Tawi50PdfInput): Promise<Uint8Arr
   drawRight(ctx, gross, 409, 80, 629, 14, 7);
   drawRight(ctx, withholdingTax, 496, 65, 629, 15, 7);
 
-  drawRight(ctx, gross, 409, 79, 646, 15, 7);
+  drawRight(ctx, net, 409, 79, 646, 15, 7);
   drawRight(ctx, withholdingTax, 496, 65, 646, 16, 7);
   drawText(ctx, bahtToWords(input.withholdingTax), 187, 665, 19, 8);
 
