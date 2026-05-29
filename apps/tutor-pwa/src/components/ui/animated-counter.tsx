@@ -7,6 +7,8 @@ interface AnimatedCounterProps {
   duration?: number;
   formatter?: (value: number) => string;
   className?: string;
+  /** Decimal places to keep while animating and when formatting (default 0). */
+  fractionDigits?: number;
 }
 
 /**
@@ -19,7 +21,10 @@ export function AnimatedCounter({
   duration = 1200,
   formatter,
   className,
+  fractionDigits = 0,
 }: AnimatedCounterProps) {
+  const factor = 10 ** fractionDigits;
+  const roundTo = (n: number) => Math.round(n * factor) / factor;
   const [displayValue, setDisplayValue] = useState(0);
   const startTime = useRef<number | null>(null);
   const rafId = useRef<number | null>(null);
@@ -56,7 +61,7 @@ export function AnimatedCounter({
       const eased = 1 - Math.pow(1 - progress, 3);
       const current = startValue + (endValue - startValue) * eased;
 
-      setDisplayValue(Math.round(current));
+      setDisplayValue(roundTo(current));
 
       if (progress < 1) {
         rafId.current = requestAnimationFrame(animate);
@@ -76,7 +81,14 @@ export function AnimatedCounter({
     };
   }, [value, duration]);
 
-  const formattedValue = formatter ? formatter(displayValue) : displayValue.toString();
+  const formattedValue = formatter
+    ? formatter(displayValue)
+    : fractionDigits > 0
+      ? displayValue.toLocaleString("th-TH", {
+          minimumFractionDigits: fractionDigits,
+          maximumFractionDigits: fractionDigits,
+        })
+      : displayValue.toString();
 
   return (
     <span className={className}>

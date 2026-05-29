@@ -232,7 +232,7 @@ export default async function PerformancePage() {
   const grossVolume = earningsData?.grossVolumeTHB || 0;
   const nextTier = earningsData?.nextTierTargetTHB || 0;
   const currentRate = earningsData?.currentRate || 0;
-  const commissionPercent = Math.round(currentRate * 100);
+  const commissionPercent = Number((currentRate * 100).toFixed(2));
   const hasMetricData =
     studentSuccess !== null ||
     ratingValue !== null ||
@@ -303,7 +303,7 @@ export default async function PerformancePage() {
                 {t("dashboardPerformance.currentCommissionRate")}
               </p>
               <div className="mt-2 text-3xl font-black">
-                <AnimatedCounter value={commissionPercent} />%
+                <AnimatedCounter value={commissionPercent} fractionDigits={2} />%
               </div>
             </div>
             <div className="rounded-2xl border border-white/20 bg-white/15 p-4 backdrop-blur">
@@ -516,12 +516,12 @@ export default async function PerformancePage() {
               </CardTitle>
               <CardDescription className="text-xs font-semibold text-brand-600 dark:text-brand-400">
                 {t("dashboardPerformance.networkCommission")}{" "}
-                {commissionPercent}%
+                {commissionPercent.toFixed(2)}%
               </CardDescription>
             </div>
             <div className="text-right">
               <div className="text-4xl font-black tracking-tight text-brand-500">
-                <AnimatedCounter value={commissionPercent} />%
+                <AnimatedCounter value={commissionPercent} fractionDigits={2} />%
               </div>
               <div className="mt-0.5 text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
                 Current Rate

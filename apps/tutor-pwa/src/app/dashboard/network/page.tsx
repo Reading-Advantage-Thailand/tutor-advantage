@@ -100,7 +100,7 @@ export default async function NetworkPage() {
   const token = cookieStore.get("tutor_session")?.value || "";
   const response = await getNetworkData(token);
   const summary = response?.summary || emptySummary;
-  const commissionPercent = Math.round(summary.currentRate * 100);
+  const commissionPercent = Number((summary.currentRate * 100).toFixed(2));
   const networkEstimatedWHT = summary.estimatedPayoutTHB > 0
     ? Math.round(summary.estimatedPayoutTHB * 0.03)
     : 0;
@@ -267,7 +267,7 @@ function MetricCard({
             <p className="mt-1 text-xl sm:text-2xl font-black text-foreground">
               {isPercent ? (
                 <span>
-                  <AnimatedCounter value={value} />%
+                  <AnimatedCounter value={value} fractionDigits={2} />%
                 </span>
               ) : (
                 <AnimatedCounter value={value} />

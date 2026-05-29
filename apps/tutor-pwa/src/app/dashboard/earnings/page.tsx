@@ -146,7 +146,7 @@ export default async function EarningsPage() {
   const rateInfo = response?.rateInfo || emptyRateInfo;
   // Display rate to 1 decimal to match the actual backend payout rate
   // (admin console renders payoutRate with the same precision).
-  const commissionPercent = Number((rateInfo.rate * 100).toFixed(1));
+  const commissionPercent = Number((rateInfo.rate * 100).toFixed(2));
 
   // WHT for current projection — satang-precise to mirror backend calculateWithholdingTax:
   // (grossMinor * 3 + 50) / 100 with integer (floor) division, matching BigInt arithmetic.
@@ -287,7 +287,7 @@ export default async function EarningsPage() {
                   {t("dashboardEarnings.currentCommission")}
                 </span>
                 <span className="text-xl font-black text-brand-500">
-                  <AnimatedCounter value={commissionPercent} />%
+                  <AnimatedCounter value={commissionPercent} fractionDigits={2} />%
                 </span>
               </CardTitle>
             </CardHeader>
