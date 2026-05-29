@@ -191,12 +191,18 @@ export default async function EarningsPage() {
   const history = response?.history || [];
   const clawbacks = response?.clawbacks || [];
   const rateInfo = response?.rateInfo || emptyRateInfo;
-  const commissionPercent = Math.round(rateInfo.rate * 100);
+  // Display rate to 1 decimal to match the actual backend payout rate
+  // (admin console renders payoutRate with the same precision).
+  const commissionPercent = Number((rateInfo.rate * 100).toFixed(1));
 
-  // Estimated WHT for current projection (3%, rounded)
+  // WHT for current projection — satang-precise to mirror backend calculateWithholdingTax:
+  // (grossMinor * 3 + 50) / 100 with integer (floor) division, matching BigInt arithmetic.
   const projectionGross = earnings.total;
-  const projectionEstimatedWHT = projectionGross > 0 ? Math.round(projectionGross * 0.03) : 0;
-  const projectionEstimatedNet = projectionGross - projectionEstimatedWHT;
+  const projectionGrossMinor = Math.round(projectionGross * 100);
+  const projectionWHTMinor =
+    projectionGrossMinor > 0 ? Math.floor((projectionGrossMinor * 3 + 50) / 100) : 0;
+  const projectionEstimatedWHT = projectionWHTMinor / 100;
+  const projectionEstimatedNet = (projectionGrossMinor - projectionWHTMinor) / 100;
 
   const progressPercent = Math.min(
     100,
@@ -243,6 +249,7 @@ export default async function EarningsPage() {
               <div className="flex items-baseline gap-2 mb-1">
                 <AnimatedCurrencyCounter
                   value={projectionEstimatedNet}
+                  fractionDigits={2}
                   className="text-4xl lg:text-5xl font-black tracking-tight text-foreground"
                 />
                 <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest bg-muted px-2 py-0.5 rounded-md">THB</span>
@@ -256,6 +263,7 @@ export default async function EarningsPage() {
                   <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">{t("dashboardEarnings.directCommission")}</p>
                   <AnimatedCurrencyCounter
                     value={earnings.directSales}
+                    fractionDigits={2}
                     className="text-lg sm:text-xl font-black text-foreground"
                   />
                 </div>
@@ -263,7 +271,7 @@ export default async function EarningsPage() {
                   <p className="text-[10px] font-bold text-brand-600 dark:text-brand-400 uppercase tracking-wider mb-1.5">{t("dashboardEarnings.networkBonus")}</p>
                   <div className="flex items-center text-lg sm:text-xl font-black text-brand-600 dark:text-brand-400">
                     <span>+</span>
-                    <AnimatedCurrencyCounter value={earnings.networkBonus} />
+                    <AnimatedCurrencyCounter value={earnings.networkBonus} fractionDigits={2} />
                   </div>
                 </div>
               </div>
@@ -276,7 +284,7 @@ export default async function EarningsPage() {
                   </span>
                   <div className="flex items-center text-lg font-black text-amber-600 dark:text-amber-400">
                     <span>+</span>
-                    <AnimatedCurrencyCounter value={earnings.badgeBonus ?? 0} />
+                    <AnimatedCurrencyCounter value={earnings.badgeBonus ?? 0} fractionDigits={2} />
                   </div>
                 </div>
               )}
@@ -289,6 +297,7 @@ export default async function EarningsPage() {
                   </span>
                   <AnimatedCurrencyCounter
                     value={earnings.clawback}
+                    fractionDigits={2}
                     className="font-black text-destructive"
                   />
                 </div>
@@ -298,20 +307,20 @@ export default async function EarningsPage() {
               <div className="mt-4 rounded-2xl border border-border/30 bg-muted/30 divide-y divide-border/30 overflow-hidden">
                 <div className="flex items-center justify-between px-4 py-2.5 text-xs text-muted-foreground">
                   <span className="font-medium">{t("dashboardEarnings.grossBeforeWHT")}</span>
-                  <AnimatedCurrencyCounter value={projectionGross} className="font-semibold text-foreground" />
+                  <AnimatedCurrencyCounter value={projectionGross} fractionDigits={2} className="font-semibold text-foreground" />
                 </div>
                 {projectionEstimatedWHT > 0 && (
                   <div className="flex items-center justify-between px-4 py-2.5 text-xs text-destructive/80">
                     <span className="font-medium">{t("dashboardEarnings.withholdingTaxEstimated")}</span>
                     <span className="font-semibold flex items-center gap-0.5">
                       <span>−</span>
-                      <AnimatedCurrencyCounter value={projectionEstimatedWHT} />
+                      <AnimatedCurrencyCounter value={projectionEstimatedWHT} fractionDigits={2} />
                     </span>
                   </div>
                 )}
                 <div className="flex items-center justify-between px-4 py-3 bg-brand-500/5">
                   <span className="text-xs font-bold text-foreground">{t("dashboardEarnings.estimatedNetPayout")}</span>
-                  <AnimatedCurrencyCounter value={projectionEstimatedNet} className="text-sm font-black text-brand-600 dark:text-brand-400" />
+                  <AnimatedCurrencyCounter value={projectionEstimatedNet} fractionDigits={2} className="text-sm font-black text-brand-600 dark:text-brand-400" />
                 </div>
               </div>
             </CardContent>

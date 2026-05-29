@@ -92,7 +92,8 @@ export function AnimatedCurrencyCounter({
   value,
   duration = 1200,
   className,
-}: Omit<AnimatedCounterProps, "formatter">) {
+  fractionDigits = 0,
+}: Omit<AnimatedCounterProps, "formatter"> & { fractionDigits?: number }) {
   return (
     <AnimatedCounter
       value={value}
@@ -102,7 +103,8 @@ export function AnimatedCurrencyCounter({
         v.toLocaleString("th-TH", {
           style: "currency",
           currency: "THB",
-          maximumFractionDigits: 0,
+          minimumFractionDigits: fractionDigits,
+          maximumFractionDigits: fractionDigits,
         })
       }
     />
