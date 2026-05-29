@@ -106,6 +106,9 @@ type DrawContext = {
   font: PDFFont;
 };
 
+const THAI_COMBINING_MARK_RE = /^[\u0e31\u0e34-\u0e3a\u0e47-\u0e4e]$/;
+const THAI_TEXT_TRACKING = -0.45;
+
 function yFromTop(ctx: DrawContext, topFromTop: number, fieldHeight = 0, fontSize = 8) {
   return ctx.pageHeight - topFromTop - fieldHeight + (fieldHeight - fontSize) / 2 + 1.8;
 }
@@ -120,8 +123,39 @@ function draw(ctx: DrawContext, text: string | number, x: number, y: number, siz
   });
 }
 
+function normalizeLineText(text: string | number): string {
+  return String(text).normalize("NFC").replace(/\s+/g, " ").trim();
+}
+
+function splitThaiClusters(text: string): string[] {
+  const clusters: string[] = [];
+  for (const char of Array.from(text)) {
+    if (THAI_COMBINING_MARK_RE.test(char) && clusters.length > 0) {
+      clusters[clusters.length - 1] += char;
+    } else {
+      clusters.push(char);
+    }
+  }
+  return clusters;
+}
+
+function drawTracked(ctx: DrawContext, text: string | number, x: number, y: number, size = 8, tracking = 0) {
+  const clusters = splitThaiClusters(normalizeLineText(text));
+  let cursor = x;
+
+  clusters.forEach((cluster, index) => {
+    draw(ctx, cluster, cursor, y, size);
+    cursor += ctx.font.widthOfTextAtSize(cluster, size);
+    if (index < clusters.length - 1) cursor += tracking;
+  });
+}
+
 function drawText(ctx: DrawContext, text: string | number, x: number, top: number, fieldHeight: number, size = 8) {
   draw(ctx, text, x, yFromTop(ctx, top, fieldHeight, size), size);
+}
+
+function drawThaiText(ctx: DrawContext, text: string | number, x: number, top: number, fieldHeight: number, size = 8) {
+  drawTracked(ctx, text, x, yFromTop(ctx, top, fieldHeight, size), size, THAI_TEXT_TRACKING);
 }
 
 function drawRight(
@@ -219,12 +253,12 @@ export async function generateTawi50Pdf(input: Tawi50PdfInput): Promise<Uint8Arr
   drawCenter(ctx, "1", 77, 62, 226, 15, 8);
 
   drawTaxId(ctx, input.companyTaxId, 375, 184, 83, 15);
-  drawText(ctx, input.companyName, 56, 97, 16, 8);
-  drawText(ctx, input.companyAddress, 63, 120, 16, 7);
+  drawThaiText(ctx, input.companyName, 56, 97, 16, 8);
+  drawThaiText(ctx, input.companyAddress, 63, 120, 16, 7);
 
   drawTaxId(ctx, input.tutorNationalId, 375, 182, 152, 15);
-  drawText(ctx, input.tutorName, 55, 171, 14, 8);
-  drawText(ctx, input.tutorAddress, 61, 199, 16, 7);
+  drawThaiText(ctx, input.tutorName, 55, 171, 14, 8);
+  drawThaiText(ctx, input.tutorAddress, 61, 199, 16, 7);
 
   drawText(ctx, "ค่าบริการ / ค่าจ้างสอน", 98, 628, 17, 8);
   drawCenter(ctx, paymentDate, 327, 76, 629, 14, 7);
