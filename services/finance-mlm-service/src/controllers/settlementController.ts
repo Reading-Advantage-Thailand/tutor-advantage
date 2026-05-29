@@ -112,6 +112,21 @@ export async function previewSettlement(
       });
     }
 
+    // Only allow manual preview on the 1st of the month (ICT) — dev bypass
+    if (process.env.NODE_ENV === "production") {
+      const nowUtc = new Date();
+      const nowIct = new Date(nowUtc.getTime() + 7 * 60 * 60 * 1000);
+      if (nowIct.getUTCDate() !== 1) {
+        return res.status(403).json({
+          error: {
+            code: "NOT_SETTLEMENT_DAY",
+            message: "สร้างรายการได้เฉพาะวันที่ 1 ของเดือนเท่านั้น",
+            requestId: req.id,
+          },
+        });
+      }
+    }
+
     const preview = await SettlementService.previewSettlement(
       periodMonth,
       userId,

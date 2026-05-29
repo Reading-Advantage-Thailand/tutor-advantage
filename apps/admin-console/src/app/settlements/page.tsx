@@ -213,6 +213,13 @@ function getPreviousMonth() {
   return d.toISOString().slice(0, 7);
 }
 
+function isSettlementDay(): boolean {
+  if (process.env.NODE_ENV === "development") return true;
+  const nowUtc = new Date();
+  const nowIct = new Date(nowUtc.getTime() + 7 * 60 * 60_000);
+  return nowIct.getUTCDate() === 1;
+}
+
 export default function SettlementsPage() {
   const [period, setPeriod] = useState(getPreviousMonth);
   const [loading, setLoading] = useState(false);
@@ -376,6 +383,7 @@ export default function SettlementsPage() {
     : null;
 
   const isFinanceChecker = userRole === "FINANCE_CHECKER";
+  const canPreview = isSettlementDay();
 
   return (
     <div className="space-y-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
@@ -471,7 +479,7 @@ export default function SettlementsPage() {
               </div>
               <Button
                 onClick={handlePreview}
-                disabled={loading}
+                disabled={loading || !canPreview}
                 className="h-12 px-8 rounded-xl font-bold shadow-lg shadow-brand-500/20 w-full sm:w-auto"
               >
                 {loading ? (
@@ -484,6 +492,12 @@ export default function SettlementsPage() {
                 )}
               </Button>
             </div>
+            {!canPreview && (
+              <p className="mt-3 text-xs font-medium text-amber-600 flex items-center gap-1.5">
+                <ClockIcon className="h-3.5 w-3.5" />
+                สร้างรายการได้เฉพาะวันที่ 1 ของเดือน (หลัง CronJob สร้าง DRAFT อัตโนมัติ)
+              </p>
+            )}
           </CardContent>
         </Card>
       )}
