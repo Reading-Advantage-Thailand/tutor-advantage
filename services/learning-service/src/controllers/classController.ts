@@ -680,6 +680,12 @@ export async function getBooks(_req: AuthenticatedRequest, res: Response) {
 }
 export async function deleteClass(req: AuthenticatedRequest, res: Response) {
   try {
+    if (process.env.NODE_ENV !== "development") {
+      return res.status(404).json({
+        error: { code: "NOT_FOUND", message: "Class not found" },
+      });
+    }
+
     const userId = req.user?.userId;
     const { classId } = req.params;
 

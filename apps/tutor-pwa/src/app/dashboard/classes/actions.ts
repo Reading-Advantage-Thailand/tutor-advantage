@@ -87,6 +87,10 @@ export async function getBooks() {
 }
 
 export async function deleteClass(classId: string) {
+  if (process.env.NODE_ENV !== "development") {
+    throw new Error("Dev only");
+  }
+
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value;
   

@@ -181,13 +181,18 @@ async function getDashboardSummary(req, res) {
                     seriesCefr: e.class.book?.series?.cefrLevel || "A1",
                 };
             });
+            const activeEnrollmentClassIds = new Set(enrollments.map((e) => e.class.classId));
             const pendingPackageSummaries = pendingPackages.map((pkg) => {
                 const cycle = pkg.classBookCycle;
                 const cls = cycle.class;
                 const tutorName = tutorMap.get(cls.tutorUserId) || "Tutor";
+                // Only include cycleId when enrollment is already ACTIVE (book cycle upgrade).
+                // If enrollment is still PENDING_PAYMENT, omit cycleId so the payment page
+                // uses the enrollment payment flow instead of prepareClassBookCycleAccess.
+                const isUpgradeCycle = activeEnrollmentClassIds.has(cls.classId);
                 return {
                     id: cls.classId,
-                    cycleId: cycle.classBookCycleId,
+                    cycleId: isUpgradeCycle ? cycle.classBookCycleId : undefined,
                     name: `${cls.title || cycle.book?.title || "Untitled Class"} / ${cycle.book?.title || "New Book"}`,
                     status: pkg.status,
                     tutorName,

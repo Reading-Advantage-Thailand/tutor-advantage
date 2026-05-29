@@ -46,6 +46,7 @@ const statusLabel: Record<
 export default async function ClassesPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value || "";
+  const showDevDelete = process.env.NODE_ENV === "development";
 
   const response = await getClassesData(token);
   const classesList = response?.classes || [];
@@ -122,7 +123,9 @@ export default async function ClassesPage() {
                         <Badge variant={status.variant} className={`text-xs px-2.5 py-0.5 sm:hidden ${status.className || ""}`}>
                           {status.label}
                         </Badge>
-                        <DeleteClassButton classId={cls.id} className={cls.name} />
+                        {showDevDelete && (
+                          <DeleteClassButton classId={cls.id} className={cls.name} />
+                        )}
                       </div>
                       <div className="flex items-center gap-1 text-xs font-bold text-primary ml-auto sm:ml-0 group-hover:underline">
                         {t("tutorClass.classes.manage")}
