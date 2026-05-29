@@ -57,6 +57,28 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
   const [profile, setProfile] = useState<LiffContextType["profile"]>(null);
 
   useEffect(() => {
+    const reportError = (stage: string, err: unknown, extra?: Record<string, unknown>) => {
+      const msg = err instanceof Error ? err.message : String(err);
+      const stack = err instanceof Error ? err.stack?.slice(0, 500) : undefined;
+      const payload = {
+        stage,
+        message: msg,
+        stack,
+        url: window.location.href,
+        origin: window.location.origin,
+        userAgent: navigator.userAgent,
+        isInLine: navigator.userAgent.toLowerCase().includes(" line/"),
+        timestamp: new Date().toISOString(),
+        ...extra,
+      };
+      console.error(`[LIFF-DEBUG] ${stage}:`, payload);
+      fetch("/api/debug/client-error", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }).catch(() => {});
+    };
+
     const init = async () => {
       const liffId = process.env.NEXT_PUBLIC_LIFF_ID;
 
@@ -86,10 +108,17 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
           console.log("[LIFF] Inspector enabled, origin:", liOrigin);
         }
 
+        reportError("liff_init_start", "starting", { liffId, useMock });
+
         await liff.init({
           liffId,
           // @ts-expect-error: mock is a custom property from the @line/liff-mock plugin
           mock: useMock,
+        });
+
+        reportError("liff_init_success", "ok", {
+          isLoggedIn: liff.isLoggedIn(),
+          isInClient: liff.isInClient(),
         });
 
         if (liff.isLoggedIn()) {
@@ -112,6 +141,7 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
               }
 
               try {
+                reportError("auth_exchange_start", "starting");
                 const authRes = await fetch("/api/auth/line", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
@@ -122,7 +152,7 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
                   const message =
                     (errorPayload as { error?: string }).error ||
                     "Backend login failed";
-                  console.error("[LIFF] Backend login failed:", errorPayload);
+                  reportError("auth_exchange_failed", message, { status: authRes.status, errorPayload });
                   if ((errorPayload as { code?: string }).code === "LINE_ID_TOKEN_EXPIRED") {
                     clearStudentSessionCookie();
                     liff.logout();
@@ -140,14 +170,14 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
                     const secure = window.location.protocol === "https:" ? "; Secure" : "";
                     document.cookie = `student-session=${authData.sessionToken}; path=/; max-age=${maxAge}; SameSite=Lax${secure}`;
                   }
-                  if (process.env.NODE_ENV !== "production") console.log("[LIFF] Backend session established");
+                  reportError("auth_exchange_success", "ok");
                 }
               } catch (authErr) {
-                console.error("[LIFF] Backend login failed:", authErr);
+                reportError("auth_exchange_error", authErr);
                 setError(authErr instanceof Error ? authErr.message : "Backend login failed");
               }
             } else {
-              console.warn("[LIFF] No ID Token found even though logged in");
+              reportError("no_id_token", "LINE did not return an ID token");
               setError("LINE did not return an ID token");
             }
           }
@@ -157,7 +187,8 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
       } catch (err) {
         const errorObject = err instanceof Error ? err : new Error(String(err));
         const rawMsg = errorObject.message || "Failed to initialize LIFF";
-        console.warn("[LIFF] Init failed:", rawMsg);
+
+        reportError("liff_init_error", err);
 
         // Help diagnose ngrok URL-mismatch: "Failed to fetch" during init means
         // LINE WebView can't validate the LIFF endpoint — update LINE Developers
@@ -168,8 +199,8 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
           rawMsg.toLowerCase().includes("networkerror");
 
         const displayMsg =
-          isFetchError && process.env.NODE_ENV === "development"
-            ? `LIFF init network error — ตรวจสอบว่า ${window.location.origin} ถูก register ใน LINE Developers Console แล้ว (LIFF endpoint URL)`
+          isFetchError
+            ? `LIFF network error — origin: ${window.location.origin}, UA: ${navigator.userAgent.slice(0, 80)}`
             : rawMsg;
 
         setError(displayMsg);
