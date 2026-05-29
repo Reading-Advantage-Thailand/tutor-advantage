@@ -155,6 +155,12 @@ export async function createOmiseTransfer(input: CreateTransferInput) {
   });
 }
 
+export async function retrieveOmiseTransfer(transferId: string) {
+  return omiseRequest<OmiseTransfer>(`/transfers/${encodeURIComponent(transferId)}`, {
+    method: "GET",
+  });
+}
+
 export async function downloadOmiseDocumentAsDataUri(downloadUri: string) {
   const secretKey = process.env.OMISE_PRIVATE_KEY;
   if (!secretKey) {

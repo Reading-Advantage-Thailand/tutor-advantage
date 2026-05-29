@@ -116,9 +116,9 @@ export const studentApi = {
     method: 'POST',
     body: JSON.stringify(payload),
   }),
-  enrollClass: (classId: string) => fetchWithAuth('/enroll/direct', {
+  enrollClass: (classId: string, referralToken?: string | null) => fetchWithAuth('/enroll/direct', {
     method: 'POST',
-    body: JSON.stringify({ classId }),
+    body: JSON.stringify(referralToken ? { classId, referralToken } : { classId }),
   }),
   enrollByReferral: (referralToken: string) => fetchWithAuth(`/enroll/${referralToken}`, {
     method: 'POST',

@@ -11,6 +11,7 @@ import {
 } from "./taxService";
 import {
   createOmiseTransfer,
+  retrieveOmiseTransfer,
   isOmiseConfigured,
   type OmiseTransfer,
 } from "./omiseService";
@@ -25,8 +26,6 @@ export interface PayoutNode {
   eligibilityStatus: string;
   verified: boolean;
 }
-
-const payoutsEnabled = () => process.env.OMISE_PAYOUTS_ENABLED === "true";
 
 function getOmiseRecipientId(settings: unknown) {
   if (!settings || typeof settings !== "object" || Array.isArray(settings)) {
@@ -478,14 +477,13 @@ export class SettlementService {
         tutorUserId: true,
       },
     });
-    const shouldSendPayouts = payoutsEnabled() && positivePayoutLines.length > 0;
+    // Auto-send transfers on approval whenever Omise is configured — no separate
+    // "send transfer" step required. If Omise is not configured, lines fall back
+    // to NOT_SENT (no throw) and can be sent later via retryPayoutTransfer.
+    const shouldSendPayouts = isOmiseConfigured() && positivePayoutLines.length > 0;
     const recipientByTutor = new Map<string, string>();
 
     if (shouldSendPayouts) {
-      if (!isOmiseConfigured()) {
-        throw new Error("OMISE_PAYOUTS_NOT_CONFIGURED");
-      }
-
       const tutorIds = [...new Set(positivePayoutLines.map((line) => line.tutorUserId))];
       const tutors = await prisma.user.findMany({
         where: { userId: { in: tutorIds } },
@@ -685,5 +683,61 @@ export class SettlementService {
       });
       throw new Error(`OMISE_TRANSFER_FAILED:${line.payoutLineId}:${error.message}`);
     }
+  }
+
+  /**
+   * Pulls the latest transfer status from Omise and syncs it onto the payout
+   * document. Used by the manual "refresh" button and auto-poll when the
+   * webhook hasn't (yet) delivered the final state.
+   */
+  static async syncPayoutTransferStatus(payoutLineId: string) {
+    const line = await prisma.payoutLine.findUnique({
+      where: { payoutLineId },
+      include: { payoutDocument: true },
+    });
+
+    if (!line) throw new Error("PAYOUT_LINE_NOT_FOUND");
+    if (!line.payoutDocument) throw new Error("PAYOUT_DOCUMENT_NOT_FOUND");
+
+    const providerTransferId = line.payoutDocument.providerTransferId;
+    // Nothing to sync yet — no Omise transfer was ever created for this line.
+    if (!providerTransferId) {
+      return {
+        payoutLineId,
+        tutorUserId: line.tutorUserId,
+        transferStatus: line.payoutDocument.transferStatus,
+        transferredAt: line.payoutDocument.transferredAt?.toISOString() ?? null,
+        synced: false,
+      };
+    }
+
+    if (!isOmiseConfigured()) {
+      throw new Error("OMISE_PAYOUTS_NOT_CONFIGURED");
+    }
+
+    const transfer = await retrieveOmiseTransfer(providerTransferId);
+    const transferStatus = transferStatusFromOmise(transfer);
+    const transferredAt = transfer.paid_at
+      ? new Date(transfer.paid_at)
+      : transfer.sent_at
+        ? new Date(transfer.sent_at)
+        : null;
+
+    await updatePayoutTransferTracking(payoutLineId, {
+      provider: "omise",
+      providerTransferId,
+      transferStatus,
+      transferFailureCode: transfer.failure_code ?? null,
+      transferFailureMessage: transfer.failure_message ?? null,
+      transferredAt,
+    });
+
+    return {
+      payoutLineId,
+      tutorUserId: line.tutorUserId,
+      transferStatus,
+      transferredAt: transferredAt?.toISOString() ?? null,
+      synced: true,
+    };
   }
 }

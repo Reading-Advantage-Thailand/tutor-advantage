@@ -370,7 +370,7 @@ function PaymentFlow() {
         ? await studentApi.prepareClassBookCycleAccess(classId, cycleId)
         : referralToken
         ? await studentApi.enrollByReferral(referralToken)
-        : await studentApi.enrollClass(classId);
+        : await studentApi.enrollClass(classId, referralToken);
       if (enrollment.status === "ACTIVE") {
         setStep("success");
         return;

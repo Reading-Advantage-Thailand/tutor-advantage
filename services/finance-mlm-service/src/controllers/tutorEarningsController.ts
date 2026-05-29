@@ -7,6 +7,7 @@ import {
   formatIctPeriodMonth,
   getIctMonthWindow,
 } from "../services/commissionService";
+import { SettlementService } from "../services/settlementService";
 
 type EarningsNode = {
   userId: string;
@@ -161,6 +162,7 @@ export async function getEarningsHistory(
       const badgeBonus = Math.round(Number(line.badgeBonusMinor) / 100);
       return {
         date: line.settlementRun.periodMonth,
+        payoutLineId: line.payoutLineId,
         // Separate badge bonus out of direct so the frontend can show it as its own line
         direct: Math.round(totalAmount - networkAmount - badgeBonus),
         network: Math.round(networkAmount),
@@ -210,6 +212,63 @@ export async function getEarningsHistory(
       error: {
         code: "INTERNAL_SERVER_ERROR",
         message: "Could not fetch earnings history",
+        requestId: req.id,
+      },
+    });
+  }
+}
+
+/**
+ * POST /v1/tutors/earnings/transfers/:payoutLineId/sync
+ * Lets a tutor refresh the Omise transfer status for their own payout line.
+ */
+export async function syncTutorTransfer(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  try {
+    const userId = req.user?.userId;
+    const { payoutLineId } = req.params;
+
+    if (!userId) {
+      return res.status(401).json({
+        error: { code: "UNAUTHORIZED", message: "User not identified", requestId: req.id },
+      });
+    }
+    if (!payoutLineId) {
+      return res.status(400).json({
+        error: { code: "BAD_REQUEST", message: "payoutLineId is required", requestId: req.id },
+      });
+    }
+
+    const line = await prisma.payoutLine.findUnique({
+      where: { payoutLineId },
+      select: { tutorUserId: true },
+    });
+    if (!line) {
+      return res.status(404).json({
+        error: { code: "NOT_FOUND", message: "Payout line not found", requestId: req.id },
+      });
+    }
+    if (line.tutorUserId !== userId) {
+      return res.status(403).json({
+        error: { code: "FORBIDDEN", message: "Not your payout line", requestId: req.id },
+      });
+    }
+
+    const result = await SettlementService.syncPayoutTransferStatus(payoutLineId);
+    return res.status(200).json({ transfer: result });
+  } catch (error: any) {
+    if (error.message === "OMISE_PAYOUTS_NOT_CONFIGURED") {
+      return res.status(502).json({
+        error: { code: error.message, message: "Omise keys are not configured", requestId: req.id },
+      });
+    }
+    console.error("Sync Tutor Transfer Error:", error);
+    return res.status(500).json({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not sync transfer status",
         requestId: req.id,
       },
     });

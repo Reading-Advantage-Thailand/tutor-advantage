@@ -197,6 +197,15 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
       });
 
       if (existing) {
+        // Backfill the referral token onto a pre-existing enrollment that was
+        // created without one (e.g. a prior direct enroll) so the referral is
+        // still credited to the tutor.
+        if (!existing.referralToken) {
+          await tx.enrollment.update({
+            where: { enrollmentId: existing.enrollmentId },
+            data: { referralToken: referral.token },
+          });
+        }
         await ensureEnrollmentPackageForClass(tx, existing);
         return {
           enrollmentId: existing.enrollmentId,
@@ -277,7 +286,10 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
 export async function directEnroll(req: AuthenticatedRequest, res: Response) {
   try {
     const userId = req.user?.userId;
-    const { classId } = req.body;
+    const { classId, referralToken } = req.body as {
+      classId?: string;
+      referralToken?: string;
+    };
 
     if (!userId) {
       return res.status(401).json({
@@ -335,6 +347,15 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
         orderBy: { createdAt: "desc" },
       });
       if (existing) {
+        // Backfill referral token if this enroll carried one and the existing
+        // record has none, so the referral is credited.
+        if (referralToken && !existing.referralToken) {
+          await tx.enrollment.update({
+            where: { enrollmentId: existing.enrollmentId },
+            data: { referralToken },
+          });
+          existing.referralToken = referralToken;
+        }
         await ensureEnrollmentPackageForClass(tx, existing);
         return { ...existing, placedByFallback };
       }
@@ -344,7 +365,8 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
         data: {
           classId: targetClassId,
           studentUserId: userId,
-          status: "PENDING_PAYMENT"
+          status: "PENDING_PAYMENT",
+          referralToken: referralToken ?? null,
         }
       });
 

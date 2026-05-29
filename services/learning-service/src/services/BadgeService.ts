@@ -34,6 +34,7 @@ interface TutorMetrics {
 async function fetchTutorMetrics(tutorUserId: string): Promise<TutorMetrics> {
   const [
     completedClasses,
+    scheduledClasses,
     totalReferrals,
     totalInteractiveSessions,
     totalAnswers,
@@ -43,7 +44,13 @@ async function fetchTutorMetrics(tutorUserId: string): Promise<TutorMetrics> {
   ] = await Promise.all([
     prisma.class.findMany({
       where: { tutorUserId, status: { in: ["CLOSED", "closed"] } },
-      include: { book: { select: { classHours: true } } },
+      select: { classId: true },
+    }),
+    // Teaching hours from actual scheduled time (start→end) across all classes,
+    // mirroring performanceController.ts.
+    prisma.class.findMany({
+      where: { tutorUserId, startsAt: { not: null }, endsAt: { not: null } },
+      select: { startsAt: true, endsAt: true },
     }),
     prisma.enrollment.count({
       where: { class: { tutorUserId }, referralToken: { not: null } },
@@ -67,9 +74,11 @@ async function fetchTutorMetrics(tutorUserId: string): Promise<TutorMetrics> {
     `,
   ]);
 
-  const totalHours = completedClasses.reduce(
-    (sum, cls) => sum + (cls.book?.classHours ?? 0),
-    0,
+  const totalHours = Math.round(
+    scheduledClasses.reduce((sum, cls) => {
+      const durationMs = cls.endsAt!.getTime() - cls.startsAt!.getTime();
+      return durationMs > 0 ? sum + durationMs / 3_600_000 : sum;
+    }, 0),
   );
 
   // Compute avg response time from chat messages

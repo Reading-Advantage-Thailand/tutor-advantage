@@ -244,10 +244,16 @@ export const getPerformanceSummary = async (req: AuthenticatedRequest, res: Resp
       };
     }
 
-    const [completedClasses, totalReferrals, totalInteractiveSessions, badges] = await Promise.all([
+    const [completedClasses, scheduledClasses, totalReferrals, totalInteractiveSessions, badges] = await Promise.all([
       prisma.class.findMany({
         where: { tutorUserId: userId, status: { in: ["CLOSED", "closed"] } },
-        include: { book: true },
+        select: { classId: true },
+      }),
+      // Teaching hours come from actual scheduled time across all classes that
+      // have both a start and end — not just CLOSED ones (book.classHours).
+      prisma.class.findMany({
+        where: { tutorUserId: userId, startsAt: { not: null }, endsAt: { not: null } },
+        select: { startsAt: true, endsAt: true },
       }),
       prisma.enrollment.count({
         where: { class: { tutorUserId: userId }, referralToken: { not: null } },
@@ -261,7 +267,12 @@ export const getPerformanceSummary = async (req: AuthenticatedRequest, res: Resp
       }),
     ]);
 
-    const totalHours = completedClasses.reduce((sum, cls) => sum + (cls.book?.classHours || 0), 0);
+    const totalHours = Math.round(
+      scheduledClasses.reduce((sum, cls) => {
+        const durationMs = cls.endsAt!.getTime() - cls.startsAt!.getTime();
+        return durationMs > 0 ? sum + durationMs / 3_600_000 : sum;
+      }, 0),
+    );
     const completedClassCount = completedClasses.length;
     const unlockedCodes = new Set(badges.map(b => b.badgeCode));
 

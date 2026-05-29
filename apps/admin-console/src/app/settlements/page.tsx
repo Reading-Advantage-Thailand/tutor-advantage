@@ -242,6 +242,7 @@ export default function SettlementsPage() {
   const [linesData, setLinesData] = useState<LinesData | null>(null);
   const [linesLoadingId, setLinesLoadingId] = useState<string | null>(null);
   const [transferLoadingId, setTransferLoadingId] = useState<string | null>(null);
+  const [syncLoadingId, setSyncLoadingId] = useState<string | null>(null);
 
   // Confirm dialog state
   const [confirmAction, setConfirmAction] = useState<{
@@ -376,6 +377,50 @@ export default function SettlementsPage() {
       setTransferLoadingId(null);
     }
   };
+
+  // Reload lines without toggling the full-panel loading spinner — used by
+  // manual sync and the auto-poll so the table doesn't flash.
+  const reloadLinesSilently = useCallback(async (id: string) => {
+    try {
+      const data = await fetchWithAuth(`/v1/settlements/${id}/lines`);
+      setLinesData(data);
+    } catch {
+      // ignore transient errors during polling
+    }
+  }, []);
+
+  const handleSyncTransfer = async (row: PayoutLineRow) => {
+    if (!linesData) return;
+    setSyncLoadingId(row.payoutLineId);
+    setError("");
+    try {
+      await fetchWithAuth(
+        `/v1/settlements/${linesData.snapshotId}/lines/${row.payoutLineId}/sync-transfer`,
+        { method: "POST" },
+      );
+      await reloadLinesSilently(linesData.snapshotId);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setSyncLoadingId(null);
+    }
+  };
+
+  // Auto-poll Omise transfer status while the lines panel is open and any row
+  // is still in a non-final state.
+  useEffect(() => {
+    if (!linesOpen || !linesData) return;
+    const PENDING = ["PENDING_TRANSFER", "CREATED", "SENT_PENDING", "SENT"];
+    const hasPending = linesData.lines.some((l) =>
+      PENDING.includes(l.transferStatus ?? "NOT_SENT"),
+    );
+    if (!hasPending) return;
+    const snapshotId = linesData.snapshotId;
+    const timer = setInterval(() => {
+      void reloadLinesSilently(snapshotId);
+    }, 8000);
+    return () => clearInterval(timer);
+  }, [linesOpen, linesData, reloadLinesSilently]);
 
   const handleExportCsv = () => {
     if (!result?.snapshotId) return;
@@ -1021,29 +1066,56 @@ export default function SettlementsPage() {
                                 (row.canSendTransfer ??
                                   !activeTransferStatuses.includes(row.transferStatus ?? "NOT_SENT"));
 
-                              if (!canRetryTransfer) {
-                                return row.transferBlockedReason ? (
-                                  <span className="text-[10px] font-medium text-amber-500">
-                                    {row.transferBlockedReason}
-                                  </span>
-                                ) : null;
-                              }
+                              // Show a "refresh status" button whenever an Omise
+                              // transfer exists but hasn't settled yet, so admins
+                              // can pull the latest state from Omise on demand.
+                              const canSyncTransfer =
+                                Boolean(row.transferId) &&
+                                ["PENDING_TRANSFER", "CREATED", "SENT_PENDING", "SENT"].includes(
+                                  row.transferStatus ?? "NOT_SENT",
+                                );
 
                               return (
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  disabled={transferLoadingId === row.payoutLineId}
-                                  onClick={() => handleRetryTransfer(row)}
-                                  className="mt-1 h-7 rounded-lg px-2 text-[10px] font-bold"
-                                >
-                                  {transferLoadingId === row.payoutLineId ? (
-                                    <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-                                  ) : (
-                                    <Send className="mr-1 h-3 w-3" />
+                                <div className="flex flex-col gap-1">
+                                  {canSyncTransfer && (
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      disabled={syncLoadingId === row.payoutLineId}
+                                      onClick={() => handleSyncTransfer(row)}
+                                      className="mt-1 h-7 rounded-lg px-2 text-[10px] font-bold"
+                                    >
+                                      {syncLoadingId === row.payoutLineId ? (
+                                        <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                                      ) : (
+                                        <RefreshCw className="mr-1 h-3 w-3" />
+                                      )}
+                                      ดึงสถานะ
+                                    </Button>
                                   )}
-                                  ส่งโอนอีกครั้ง
-                                </Button>
+                                  {canRetryTransfer ? (
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      disabled={transferLoadingId === row.payoutLineId}
+                                      onClick={() => handleRetryTransfer(row)}
+                                      className="mt-1 h-7 rounded-lg px-2 text-[10px] font-bold"
+                                    >
+                                      {transferLoadingId === row.payoutLineId ? (
+                                        <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                                      ) : (
+                                        <Send className="mr-1 h-3 w-3" />
+                                      )}
+                                      ส่งโอนอีกครั้ง
+                                    </Button>
+                                  ) : (
+                                    !canSyncTransfer && row.transferBlockedReason ? (
+                                      <span className="text-[10px] font-medium text-amber-500">
+                                        {row.transferBlockedReason}
+                                      </span>
+                                    ) : null
+                                  )}
+                                </div>
                               );
                             })()}
                           </div>

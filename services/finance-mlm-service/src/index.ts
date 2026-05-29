@@ -35,6 +35,7 @@ import {
   getSettlements,
   autoRunSettlement,
   retryPayoutTransfer,
+  syncPayoutTransfer,
 } from "./controllers/settlementController";
 import { auditTrailMiddleware } from "./middlewares/auditMiddleware";
 import { getAuditLogs } from "./controllers/auditController";
@@ -80,7 +81,7 @@ import {
   devAddVolume,
   devToggleBadge,
 } from "./controllers/devController";
-import { getEarningsSummary, getEarningsHistory } from "./controllers/tutorEarningsController";
+import { getEarningsSummary, getEarningsHistory, syncTutorTransfer } from "./controllers/tutorEarningsController";
 import { getTutorNetwork } from "./controllers/tutorNetworkController";
 
 if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
@@ -154,6 +155,7 @@ app.post("/v1/webhooks/omise-transfer", handleTransferWebhook);
 // ── Tutor Dashboard Routes ─────────────────────────────────────────────────
 app.get("/v1/tutors/earnings/summary", authMiddleware, getEarningsSummary);
 app.get("/v1/tutors/earnings/history", authMiddleware, getEarningsHistory);
+app.post("/v1/tutors/earnings/transfers/:payoutLineId/sync", authMiddleware, syncTutorTransfer);
 app.get("/v1/tutors/network", authMiddleware, getTutorNetwork);
 
 // ── Internal Routes (protected by X-Internal-Key, NOT JWT) ────────────────
@@ -203,6 +205,12 @@ app.post(
   authMiddleware,
   auditTrailMiddleware("RETRY_PAYOUT_TRANSFER"),
   retryPayoutTransfer,
+);
+
+app.post(
+  "/v1/settlements/:snapshotId/lines/:payoutLineId/sync-transfer",
+  authMiddleware,
+  syncPayoutTransfer,
 );
 
 app.get(

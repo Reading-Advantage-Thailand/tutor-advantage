@@ -842,6 +842,72 @@ export async function retryPayoutTransfer(
   }
 }
 
+/**
+ * POST /v1/settlements/:snapshotId/lines/:payoutLineId/sync-transfer
+ * Pulls the latest Omise transfer status onto the payout document.
+ */
+export async function syncPayoutTransfer(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  try {
+    const { payoutLineId } = req.params;
+    const role = req.user?.role;
+
+    if (role !== "ADMIN" && role !== "FINANCE_CHECKER") {
+      return res.status(403).json({
+        error: {
+          code: "FORBIDDEN",
+          message: "Only ADMIN or FINANCE_CHECKER can sync transfer status",
+          requestId: req.id,
+        },
+      });
+    }
+
+    if (!payoutLineId) {
+      return res.status(400).json({
+        error: {
+          code: "BAD_REQUEST",
+          message: "payoutLineId is required in the path",
+          requestId: req.id,
+        },
+      });
+    }
+
+    const result = await SettlementService.syncPayoutTransferStatus(payoutLineId);
+
+    return res.status(200).json({ message: "Transfer status synced", transfer: result });
+  } catch (error: any) {
+    const errorMap: Record<string, { status: number; message: string }> = {
+      PAYOUT_LINE_NOT_FOUND: { status: 404, message: "Payout line not found" },
+      PAYOUT_DOCUMENT_NOT_FOUND: {
+        status: 409,
+        message: "Payout document does not exist for this line",
+      },
+      OMISE_PAYOUTS_NOT_CONFIGURED: {
+        status: 502,
+        message: "Omise keys are not configured",
+      },
+    };
+
+    const mapped = errorMap[error.message];
+    if (mapped) {
+      return res.status(mapped.status).json({
+        error: { code: error.message, message: mapped.message, requestId: req.id },
+      });
+    }
+
+    console.error("Sync Payout Transfer Error:", error);
+    return res.status(500).json({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not sync transfer status",
+        requestId: req.id,
+      },
+    });
+  }
+}
+
 function serializeSettlementRun(run: {
   settlementRunId: string;
   periodMonth: string;

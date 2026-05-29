@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, AlertCircle, Wallet, Star, BanknoteIcon, Clock, CheckCircle2, XCircle, Send } from "lucide-react";
+import { Download, AlertCircle, Wallet, Star } from "lucide-react";
 import { cookies } from "next/headers";
 import VerificationBanner from "@/components/dashboard/verification-banner";
 import { t } from "@/lib/i18n";
@@ -8,9 +8,11 @@ import { PageTransition } from "@/components/ui/page-transition";
 import { AnimatedCurrencyCounter, AnimatedCounter } from "@/components/ui/animated-counter";
 import { IDENTITY_URL } from "@/lib/service-urls";
 import { Tawi50DownloadButton } from "./tawi50-download-button";
+import { TransferStatusBadge } from "./transfer-status-badge";
 
 type EarningsHistoryItem = {
   date: string;
+  payoutLineId?: string;
   direct: number;
   network: number;
   badgeBonus?: number;
@@ -128,55 +130,6 @@ function formatCurrencyTHB(value: number) {
     maximumFractionDigits: 0,
   });
 }
-
-type TransferStatusConfig = {
-  label: string;
-  className: string;
-  Icon: typeof CheckCircle2;
-};
-
-const transferStatusConfig: Record<string, TransferStatusConfig> = {
-  PAID: {
-    label: t("dashboardEarnings.transferStatuses.PAID"),
-    className: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
-    Icon: CheckCircle2,
-  },
-  SENT: {
-    label: t("dashboardEarnings.transferStatuses.SENT"),
-    className: "bg-brand-500/10 text-brand-600 dark:text-brand-400 border-brand-500/20",
-    Icon: BanknoteIcon,
-  },
-  SENT_PENDING: {
-    label: t("dashboardEarnings.transferStatuses.SENT_PENDING"),
-    className: "bg-brand-500/10 text-brand-600 dark:text-brand-400 border-brand-500/20",
-    Icon: Send,
-  },
-  CREATED: {
-    label: t("dashboardEarnings.transferStatuses.CREATED"),
-    className: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
-    Icon: Clock,
-  },
-  PENDING_TRANSFER: {
-    label: t("dashboardEarnings.transferStatuses.PENDING_TRANSFER"),
-    className: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
-    Icon: Clock,
-  },
-  NOT_SENT: {
-    label: t("dashboardEarnings.transferStatuses.NOT_SENT"),
-    className: "bg-muted text-muted-foreground border-border",
-    Icon: Clock,
-  },
-  TRANSFER_FAILED: {
-    label: t("dashboardEarnings.transferStatuses.TRANSFER_FAILED"),
-    className: "bg-destructive/10 text-destructive border-destructive/20",
-    Icon: XCircle,
-  },
-  NO_TRANSFER_REQUIRED: {
-    label: t("dashboardEarnings.transferStatuses.NO_TRANSFER_REQUIRED"),
-    className: "bg-muted text-muted-foreground border-border",
-    Icon: CheckCircle2,
-  },
-};
 
 export default async function EarningsPage() {
   const cookieStore = await cookies();
@@ -471,23 +424,13 @@ export default async function EarningsPage() {
                           </div>
                         )}
                       </div>
-                      {item.payoutDocument?.transferStatus && (() => {
-                        const ts = item.payoutDocument.transferStatus!;
-                        const cfg = transferStatusConfig[ts];
-                        if (!cfg) return null;
-                        const Icon = cfg.Icon;
-                        return (
-                          <div className={`mt-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-[10px] font-bold w-fit ${cfg.className}`}>
-                            <Icon className="h-3 w-3 shrink-0" />
-                            {cfg.label}
-                            {ts === "PAID" && item.payoutDocument.transferredAt && (
-                              <span className="opacity-60 font-medium">
-                                · {new Date(item.payoutDocument.transferredAt).toLocaleDateString("th-TH", { month: "short", day: "numeric" })}
-                              </span>
-                            )}
-                          </div>
-                        );
-                      })()}
+                      {item.payoutDocument?.transferStatus && item.payoutLineId && (
+                        <TransferStatusBadge
+                          payoutLineId={item.payoutLineId}
+                          initialStatus={item.payoutDocument.transferStatus}
+                          initialTransferredAt={item.payoutDocument.transferredAt}
+                        />
+                      )}
                       {item.payoutDocument && (
                         <div className="mt-2 flex items-center justify-between flex-wrap gap-2">
                           <div className="text-[10px] font-bold text-muted-foreground/60 tracking-wider">
