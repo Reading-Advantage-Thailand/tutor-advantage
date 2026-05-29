@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 import { cookies } from "next/headers";
 import VerificationBanner from "@/components/dashboard/verification-banner";
+import { RoleUpgradeBanner } from "@/components/dashboard/role-upgrade-banner";
 import { t } from "@/lib/i18n";
 import { AnimatedCounter, AnimatedCurrencyCounter } from "@/components/ui/animated-counter";
 import { PageTransition } from "@/components/ui/page-transition";
@@ -142,6 +144,9 @@ export default async function DashboardPage() {
 
   return (
     <PageTransition variant="slide-up" stagger className="space-y-8 max-w-5xl mx-auto w-full">
+      <Suspense>
+        <RoleUpgradeBanner />
+      </Suspense>
       <VerificationBanner />
       
       {/* Header */}

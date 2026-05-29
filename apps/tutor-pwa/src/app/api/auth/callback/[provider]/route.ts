@@ -56,6 +56,7 @@ export async function GET(
         code,
         sponsorTutorId,
         codeVerifier,
+        defaultRole: "TUTOR",
         redirectUri: `${proto}://${host}/api/auth/callback/${provider}`,
       }),
     });
@@ -77,7 +78,9 @@ export async function GET(
       );
     }
 
-    const redirect = NextResponse.redirect(new URL("/dashboard", publicBase));
+    const dashboardUrl = new URL("/dashboard", publicBase);
+    if (data.roleUpgraded) dashboardUrl.searchParams.set("role_upgraded", "true");
+    const redirect = NextResponse.redirect(dashboardUrl);
 
     redirect.cookies.set("tutor_session", sessionToken, {
       httpOnly: true,

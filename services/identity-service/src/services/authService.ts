@@ -5,6 +5,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
 
 export interface AuthResult {
   sessionToken: string;
+  roleUpgraded: boolean;
   user: {
     id: string;
     name: string;
@@ -20,8 +21,10 @@ export async function processOAuthLogin(
   name: string,
   picture: string = "",
   sponsorTutorId?: string | null,
+  defaultRole?: string,
 ): Promise<AuthResult> {
   let user;
+  let roleUpgraded = false;
   const invitedSponsorId =
     provider !== "line" && sponsorTutorId
       ? await resolveActiveTutorSponsorId(sponsorTutorId)
@@ -43,12 +46,14 @@ export async function processOAuthLogin(
   if (existingIdentity) {
     user = existingIdentity.user;
 
-    // If the identity already exists, optionally update the profile picture if missing
-    if (picture && !user.profilePictureUrl) {
-       user = await prisma.user.update({
-         where: { userId: user.userId },
-         data: { profilePictureUrl: picture },
-       });
+    const updateData: Record<string, unknown> = {};
+    if (picture && !user.profilePictureUrl) updateData.profilePictureUrl = picture;
+    if (defaultRole === "TUTOR" && user.role !== "TUTOR") {
+      updateData.role = "TUTOR";
+      roleUpgraded = true;
+    }
+    if (Object.keys(updateData).length > 0) {
+      user = await prisma.user.update({ where: { userId: user.userId }, data: updateData });
     }
   } else {
     // 2. If no identity, check if user exists by email (if email is provided by OAuth)
@@ -60,8 +65,7 @@ export async function processOAuthLogin(
 
     // 3. If still no user, create a new one.
     if (!user) {
-      // Default role is STUDENT to prevent insecure elevated privileges upon signup
-      const role = "STUDENT";
+      const role = defaultRole === "TUTOR" ? "TUTOR" : "STUDENT";
 
       // Create user and link identity in one transaction
       user = await prisma.user.create({
@@ -125,11 +129,12 @@ export async function processOAuthLogin(
 
   return {
     sessionToken,
+    roleUpgraded,
     user: {
       id: user.userId,
       name: user.displayName || "",
       role: user.role,
-      requiresGuardian: false, // Tutors are adults
+      requiresGuardian: false,
     },
   };
 }
