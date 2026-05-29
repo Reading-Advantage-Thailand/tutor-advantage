@@ -29,7 +29,14 @@ const LIFF_BOOTSTRAP_PARAMS = [
   "access_token",
 ];
 
-function withSecurityHeaders(response: NextResponse) {
+function withSecurityHeaders(response: NextResponse, request?: NextRequest) {
+  // Temporary: skip CSP when ?debug_csp=off to diagnose LIFF init failures
+  if (request?.nextUrl.searchParams.get("debug_csp") === "off") {
+    response.headers.set("X-Content-Type-Options", "nosniff");
+    response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+    return response;
+  }
+
   const cspHeader = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.line-scdn.net https://liffsdk.line-scdn.net https://*.line-scdn.net",
@@ -42,6 +49,7 @@ function withSecurityHeaders(response: NextResponse) {
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'self' https://*.line.me",
+    "report-uri /api/debug/csp-report",
     "upgrade-insecure-requests",
   ].join("; ");
 
@@ -90,10 +98,10 @@ export async function middleware(request: NextRequest) {
 
     if (!token) {
       if (isLiffBootstrapRequest(request) || isLineInAppBrowserRequest(request)) {
-        return withSecurityHeaders(NextResponse.next());
+        return withSecurityHeaders(NextResponse.next(), request);
       }
 
-      return withSecurityHeaders(createLoginRedirect(request));
+      return withSecurityHeaders(createLoginRedirect(request), request);
     }
 
     try {
@@ -101,11 +109,11 @@ export async function middleware(request: NextRequest) {
     } catch {
       const response = createLoginRedirect(request);
       response.cookies.delete("student-session");
-      return withSecurityHeaders(response);
+      return withSecurityHeaders(response, request);
     }
   }
 
-  return withSecurityHeaders(NextResponse.next());
+  return withSecurityHeaders(NextResponse.next(), request);
 }
 
 export const config = {
