@@ -220,6 +220,10 @@ function isSettlementDay(): boolean {
   return nowIct.getUTCDate() === 1;
 }
 
+// Dev mode relaxes the production guards: preview any day, and approve a DRAFT
+// directly (skipping submit → finance-checker). Mirrors the backend dev bypass.
+const IS_DEV_MODE = process.env.NODE_ENV !== "production";
+
 export default function SettlementsPage() {
   const [period, setPeriod] = useState(getPreviousMonth);
   const [loading, setLoading] = useState(false);
@@ -388,7 +392,18 @@ export default function SettlementsPage() {
   return (
     <div className="space-y-8 max-w-[1600px] mx-auto w-full animate-in fade-in duration-500">
       <div className="flex flex-col gap-2">
-        <h2 className="text-3xl font-black tracking-tight text-foreground">{t("settlements.title")}</h2>
+        <div className="flex items-center gap-3 flex-wrap">
+          <h2 className="text-3xl font-black tracking-tight text-foreground">{t("settlements.title")}</h2>
+          {IS_DEV_MODE && (
+            <Badge
+              variant="outline"
+              className="rounded-full px-3 py-1 font-bold border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+            >
+              <PlayCircle className="h-3.5 w-3.5 mr-1.5" />
+              Dev Mode — bypass cron &amp; maker-checker
+            </Badge>
+          )}
+        </div>
         <p className="text-muted-foreground font-medium">{t("settlements.description")}</p>
       </div>
 
@@ -775,6 +790,37 @@ export default function SettlementsPage() {
                               )}
                           </>
                         )}
+                        {/* Dev mode: approve a DRAFT/SUBMITTED run directly (skips maker-checker) */}
+                        {IS_DEV_MODE &&
+                          !(isItemSubmitted && isFinanceChecker) &&
+                          (isItemDraft || isItemSubmitted) && (
+                            <Button
+                              size="sm"
+                              disabled={
+                                actionLoadingId === run.snapshotId ||
+                                (run.pendingAdjustmentCount ?? 0) > 0
+                              }
+                              onClick={() => setConfirmAction({ id: run.snapshotId, action: "approve" })}
+                              className="col-span-2 h-10 w-full rounded-xl font-bold border-2 border-dashed border-amber-500/50 bg-amber-500/10 text-amber-700 dark:text-amber-400 shadow-none hover:bg-amber-500/20"
+                            >
+                              {actionLoadingId === run.snapshotId ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <>
+                                  <PlayCircle className="h-4 w-4 mr-1.5" />
+                                  อนุมัติทันที (Dev)
+                                </>
+                              )}
+                            </Button>
+                          )}
+                        {IS_DEV_MODE &&
+                          (isItemDraft || isItemSubmitted) &&
+                          (run.pendingAdjustmentCount ?? 0) > 0 &&
+                          !(isItemSubmitted && isFinanceChecker) && (
+                            <span className="col-span-full rounded-xl border border-orange-500/20 bg-orange-500/10 px-3 py-2 text-xs font-semibold text-orange-600">
+                              มีปรับยอดค้าง {run.pendingAdjustmentCount} รายการ
+                            </span>
+                          )}
                       </div>
                     </div>
                   </div>

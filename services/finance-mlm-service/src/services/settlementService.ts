@@ -451,13 +451,22 @@ export class SettlementService {
   /**
    * Approves a SUBMITTED settlement run (Finance Checker only).
    */
-  static async approveSettlement(snapshotId: string, approvedBy: string) {
+  static async approveSettlement(
+    snapshotId: string,
+    approvedBy: string,
+    options?: { allowDirectFromDraft?: boolean },
+  ) {
     const run = await prisma.settlementRun.findUnique({
       where: { settlementRunId: snapshotId },
     });
 
     if (!run) throw new Error("NOT_FOUND");
-    if (run.status !== "SUBMITTED") throw new Error("INVALID_STATUS");
+    // Dev mode may approve a DRAFT directly (skips the SUBMITTED maker-checker step).
+    // Production always requires a SUBMITTED run.
+    const validStatuses = options?.allowDirectFromDraft
+      ? ["DRAFT", "SUBMITTED"]
+      : ["SUBMITTED"];
+    if (!validStatuses.includes(run.status)) throw new Error("INVALID_STATUS");
 
     const positivePayoutLines = await prisma.payoutLine.findMany({
       where: {

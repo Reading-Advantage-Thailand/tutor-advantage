@@ -584,9 +584,16 @@ export async function approveSettlement(
   try {
     const userId = req.user?.userId;
     const { snapshotId } = req.params;
+    const role = req.user?.role;
 
-    // Only Finance Checker can approve (Maker-Checker: Admin submits, Checker approves)
-    if (!userId || req.user?.role !== "FINANCE_CHECKER") {
+    // Dev mode lets an ADMIN approve directly (and skip the SUBMITTED step) to ease
+    // local testing. Production keeps the strict Maker-Checker rule: only FINANCE_CHECKER
+    // approves, and only a SUBMITTED run.
+    const isDevMode = process.env.NODE_ENV !== "production";
+    const canApprove =
+      role === "FINANCE_CHECKER" || (isDevMode && role === "ADMIN");
+
+    if (!userId || !canApprove) {
       return res.status(403).json({
         error: {
           code: "FORBIDDEN",
@@ -616,7 +623,8 @@ export async function approveSettlement(
         error: { code: "NOT_FOUND", message: "Settlement run not found", requestId: req.id },
       });
     }
-    if (run.status !== "SUBMITTED") {
+    const approvableStatuses = isDevMode ? ["DRAFT", "SUBMITTED"] : ["SUBMITTED"];
+    if (!approvableStatuses.includes(run.status)) {
       return res.status(400).json({
         error: {
           code: "INVALID_STATUS",
@@ -647,6 +655,7 @@ export async function approveSettlement(
     const approvedRun = await SettlementService.approveSettlement(
       snapshotId,
       userId,
+      { allowDirectFromDraft: isDevMode },
     );
 
     return res.status(200).json({
