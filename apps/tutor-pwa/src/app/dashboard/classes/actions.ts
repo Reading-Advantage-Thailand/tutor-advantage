@@ -64,6 +64,36 @@ export async function updateClassStatus(classId: string, status: "open" | "full"
   revalidatePath(`/dashboard/classes/${classId}`);
   return res.json();
 }
+export async function rescheduleClass(
+  classId: string,
+  payload: { scheduleDescription: string; startsAt?: string; endsAt?: string; totalHours?: number },
+) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("tutor_session")?.value;
+
+  if (!token) {
+    throw new Error("Unauthorized");
+  }
+
+  const res = await fetch(`${LEARNING_URL}/v1/classes/${classId}/schedule`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(getClassActionErrorMessage(err, t("tutorClass.errors.reschedule")));
+  }
+
+  revalidatePath("/dashboard/classes");
+  revalidatePath(`/dashboard/classes/${classId}`);
+  return res.json();
+}
+
 export async function getBooks() {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value;

@@ -28,6 +28,7 @@ import {
   getBooks,
   deleteClass,
   updateMeetingUrl,
+  rescheduleClass,
   getAvailableClasses,
   getClassArticles,
   createClassBookCycle,
@@ -117,6 +118,7 @@ app.get("/v1/classes/available", authMiddleware, getAvailableClasses);
 app.get("/v1/classes/:classId", authMiddleware, getClassById);
 app.delete("/v1/classes/:classId", authMiddleware, deleteClass);
 app.patch("/v1/classes/:classId/meeting-url", authMiddleware, updateMeetingUrl);
+app.patch("/v1/classes/:classId/schedule", authMiddleware, rescheduleClass);
 app.get("/v1/classes/:classId/articles", authMiddleware, getClassArticles);
 app.post("/v1/classes/:classId/book-cycles", authMiddleware, createClassBookCycle);
 app.post("/v1/classes/:classId/book-cycles/:cycleId/access", authMiddleware, prepareClassBookCycleAccess);

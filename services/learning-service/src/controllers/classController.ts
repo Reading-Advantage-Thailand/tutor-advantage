@@ -4,11 +4,14 @@ import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
 import { LineNotificationService } from "../services/LineNotificationService";
 
+// Maximum live-teaching hours allowed per class schedule
+const MAX_CLASS_HOURS = 22;
+
 export async function createClass(req: AuthenticatedRequest, res: Response) {
   try {
     const userId = req.user?.userId;
     const role = req.user?.role;
-    const { bookId, title, capacity, scheduleDescription, startsAt, endsAt } = req.body;
+    const { bookId, title, capacity, scheduleDescription, startsAt, endsAt, totalHours } = req.body;
     const packagePriceSatang = req.body.packagePriceSatang ?? 250000;
 
     if (!userId || role !== "TUTOR") {
@@ -39,6 +42,16 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
         error: {
           code: "INVALID_PRICE",
           message: "packagePriceSatang must be a positive integer",
+          requestId: req.id,
+        },
+      });
+    }
+
+    if (typeof totalHours === "number" && totalHours > MAX_CLASS_HOURS) {
+      return res.status(400).json({
+        error: {
+          code: "HOURS_EXCEEDED",
+          message: `Scheduled teaching hours (${totalHours}) exceed the ${MAX_CLASS_HOURS}-hour limit`,
           requestId: req.id,
         },
       });
@@ -825,6 +838,89 @@ export async function updateMeetingUrl(
     console.error("Update Meeting URL error:", error);
     return res.status(500).json({
       error: { code: "INTERNAL_SERVER_ERROR", message: "Update failed" },
+    });
+  }
+}
+
+export async function rescheduleClass(req: AuthenticatedRequest, res: Response) {
+  try {
+    const userId = req.user?.userId;
+    const { classId } = req.params;
+    const { scheduleDescription, startsAt, endsAt, totalHours } = req.body;
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ error: { code: "UNAUTHORIZED", message: "User ID missing" } });
+    }
+
+    if (typeof totalHours === "number" && totalHours > MAX_CLASS_HOURS) {
+      return res.status(400).json({
+        error: {
+          code: "HOURS_EXCEEDED",
+          message: `Scheduled teaching hours (${totalHours}) exceed the ${MAX_CLASS_HOURS}-hour limit`,
+          requestId: req.id,
+        },
+      });
+    }
+
+    const cls = await prisma.class.findUnique({
+      where: { classId },
+      include: {
+        enrollments: {
+          where: { status: "ACTIVE" },
+          select: { studentUserId: true },
+        },
+      },
+    });
+
+    if (!cls || cls.tutorUserId !== userId) {
+      return res.status(404).json({
+        error: { code: "NOT_FOUND", message: "Class not found or unauthorized" },
+      });
+    }
+
+    const updated = await prisma.class.update({
+      where: { classId },
+      data: {
+        scheduleDescription: scheduleDescription ?? cls.scheduleDescription,
+        startsAt: startsAt ? new Date(startsAt) : cls.startsAt,
+        endsAt: endsAt ? new Date(endsAt) : cls.endsAt,
+      },
+    });
+
+    // Notify enrolled students about the new schedule
+    const studentIds = cls.enrollments.map((e) => e.studentUserId);
+    if (studentIds.length > 0) {
+      const classLink = LineNotificationService.buildLiffDeepLink(`/classes/${classId}`);
+      const message = [
+        `ตารางเรียนของคลาส "${cls.title}" มีการเปลี่ยนแปลง`,
+        updated.scheduleDescription ? `ตารางใหม่: ${updated.scheduleDescription}` : "",
+        classLink ? `ดูรายละเอียด: ${classLink}` : "",
+      ].filter(Boolean).join("\n");
+
+      Promise.allSettled(
+        studentIds.map((sid) =>
+          LineNotificationService.sendToUser(sid, message, {
+            type: "notifyClassReminders",
+          }),
+        ),
+      ).catch((e) => console.error("Reschedule Notification Error:", e));
+    }
+
+    return res.status(200).json({
+      message: "Class rescheduled successfully",
+      class: serializeClass(updated),
+    });
+  } catch (error: any) {
+    console.error("Reschedule Class Error:", error);
+    return res.status(500).json({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not reschedule class",
+        details: error.message,
+        requestId: req.id,
+      },
     });
   }
 }

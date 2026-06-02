@@ -19,16 +19,28 @@ import {
   Loader2,
   XCircle,
   AlertTriangle,
+  CalendarClock,
 } from "lucide-react";
 import {
   updateClassStatus,
   deleteClass,
   updateMeetingUrl,
+  rescheduleClass,
   getClassArticles,
   createClassBookCycle,
   getBooks,
   devSeedClassAllProgress,
 } from "./../actions";
+import {
+  buildScheduleString,
+  calculateTotalHours,
+  CLASS_DAYS,
+  CLASS_TIME_OPTIONS,
+  getEndTimeOptions,
+  MAX_CLASS_HOURS,
+  toggleClassDay,
+  WEEKLY_TEMPLATES,
+} from "@/lib/tutorClassFlow";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -756,6 +768,195 @@ export function MeetingUrlEditor({
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+export function RescheduleClassButton({
+  classId,
+  initialStartsAt,
+  initialEndsAt,
+}: {
+  classId: string;
+  initialStartsAt?: string | null;
+  initialEndsAt?: string | null;
+}) {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorText, setErrorText] = useState("");
+  const router = useRouter();
+
+  const toDateInput = (v?: string | null) =>
+    v ? new Date(v).toISOString().split("T")[0] : "";
+
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [startTime, setStartTime] = useState("18:00");
+  const [endTime, setEndTime] = useState("20:00");
+  const [startsAt, setStartsAt] = useState(toDateInput(initialStartsAt));
+  const [endsAt, setEndsAt] = useState(toDateInput(initialEndsAt));
+
+  const schedule = buildScheduleString(selectedDays, startTime, endTime);
+  const totalHours = calculateTotalHours(selectedDays, startTime, endTime, startsAt, endsAt);
+  const overLimit = totalHours > MAX_CLASS_HOURS;
+  const hoursPct = Math.min(100, (totalHours / MAX_CLASS_HOURS) * 100);
+
+  const handleSave = async () => {
+    if (!schedule) {
+      setErrorText(t("tutorClass.newClass.scheduleRequired"));
+      return;
+    }
+    if (overLimit) {
+      setErrorText(t("tutorClass.newClass.hoursOverLimit"));
+      return;
+    }
+    setLoading(true);
+    setErrorText("");
+    try {
+      await rescheduleClass(classId, {
+        scheduleDescription: schedule,
+        startsAt: startsAt || undefined,
+        endsAt: endsAt || undefined,
+        totalHours,
+      });
+      setOpen(false);
+      router.refresh();
+    } catch (error: any) {
+      setErrorText(error.message || t("tutorClass.errors.reschedule"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger
+        render={
+          <Button variant="outline" size="sm" className="gap-1.5">
+            <CalendarClock className="h-3.5 w-3.5" />
+            {t("tutorClass.detail.rescheduleButton")}
+          </Button>
+        }
+      />
+      <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{t("tutorClass.detail.rescheduleTitle")}</DialogTitle>
+          <DialogDescription>{t("tutorClass.detail.rescheduleDescription")}</DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4 py-2">
+          {/* Weekly templates */}
+          <div className="flex gap-1.5 flex-wrap">
+            {WEEKLY_TEMPLATES.map((tpl) => (
+              <button
+                key={tpl.id}
+                type="button"
+                onClick={() => {
+                  setSelectedDays(tpl.days);
+                  setStartTime(tpl.startTime);
+                  setEndTime(tpl.endTime);
+                }}
+                className="px-3 h-8 rounded-full text-xs font-semibold border border-border bg-muted text-muted-foreground hover:border-primary/50 hover:text-foreground transition-all"
+              >
+                {tpl.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Days */}
+          <div className="flex gap-1.5 flex-wrap">
+            {CLASS_DAYS.map((day) => {
+              const active = selectedDays.includes(day.value);
+              return (
+                <button
+                  key={day.value}
+                  type="button"
+                  onClick={() => setSelectedDays((p) => toggleClassDay(p, day.value))}
+                  className={`w-9 h-9 rounded-full text-xs font-semibold border transition-all ${
+                    active
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-muted text-muted-foreground border-border hover:border-primary/50"
+                  }`}
+                >
+                  {day.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Time */}
+          <div className="flex items-center gap-2">
+            <select
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              className="flex-1 h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground"
+            >
+              {CLASS_TIME_OPTIONS.map((tt) => (
+                <option key={tt} value={tt}>{tt}</option>
+              ))}
+            </select>
+            <span className="text-muted-foreground text-sm shrink-0">{t("tutorClass.newClass.until")}</span>
+            <select
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
+              className="flex-1 h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground"
+            >
+              {getEndTimeOptions(startTime).map((tt) => (
+                <option key={tt} value={tt}>{tt}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Dates */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label>{t("tutorClass.newClass.startsAt")}</Label>
+              <Input type="date" value={startsAt} onChange={(e) => setStartsAt(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label>{t("tutorClass.newClass.endsAt")}</Label>
+              <Input type="date" value={endsAt} min={startsAt || undefined} onChange={(e) => setEndsAt(e.target.value)} />
+            </div>
+          </div>
+
+          {/* Hours cap */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">{t("tutorClass.newClass.totalHoursLabel")}</span>
+              <span className={`font-bold ${overLimit ? "text-destructive" : "text-foreground"}`}>
+                {totalHours} / {MAX_CLASS_HOURS} {t("tutorClass.newClass.hoursUnit")}
+              </span>
+            </div>
+            <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all ${overLimit ? "bg-destructive" : "bg-primary"}`}
+                style={{ width: `${hoursPct}%` }}
+              />
+            </div>
+            {overLimit && (
+              <p className="text-xs text-destructive font-semibold flex items-center gap-1">
+                <AlertTriangle className="h-3.5 w-3.5" /> {t("tutorClass.newClass.hoursOverLimit")}
+              </p>
+            )}
+          </div>
+
+          {schedule && (
+            <div className="rounded-lg bg-primary/5 border border-primary/20 px-3 py-2">
+              <p className="text-xs text-muted-foreground mb-0.5">{t("tutorClass.newClass.previewLabel")}</p>
+              <p className="text-sm font-medium text-foreground">{schedule}</p>
+            </div>
+          )}
+
+          {errorText && <p className="text-xs text-destructive font-semibold">{errorText}</p>}
+          <p className="text-[11px] text-muted-foreground">{t("tutorClass.detail.rescheduleNotifyNote")}</p>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
+            {t("tutorClass.detail.cancel")}
+          </Button>
+          <Button onClick={handleSave} disabled={loading || overLimit || !schedule}>
+            {loading ? t("tutorClass.detail.saving") : t("tutorClass.detail.save")}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

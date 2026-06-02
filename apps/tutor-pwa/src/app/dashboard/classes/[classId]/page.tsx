@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { LEARNING_URL } from "@/lib/service-urls";
-import { ReferralLink, ArticleSelector, ClassStatusToggle, MeetingUrlEditor, StudentAvatars, DevClassSimulator } from "./client-components";
+import { ReferralLink, ArticleSelector, ClassStatusToggle, MeetingUrlEditor, RescheduleClassButton, StudentAvatars, DevClassSimulator } from "./client-components";
 import { notFound } from "next/navigation";
 
 async function getClassData(classId: string, token: string) {
@@ -96,6 +96,13 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
                     ? new Date(cls.endsAt).toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" })
                     : t("tutorClass.classes.notSet")}
                 </span>
+              </div>
+              <div className="pt-2">
+                <RescheduleClassButton
+                  classId={classId}
+                  initialStartsAt={cls.startsAt}
+                  initialEndsAt={cls.endsAt}
+                />
               </div>
             </CardContent>
           </Card>

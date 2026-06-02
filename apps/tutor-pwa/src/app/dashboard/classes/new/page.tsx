@@ -1,21 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, BookOpen, Calendar, Link2, Clock, ExternalLink } from "lucide-react";
+import { ArrowLeft, BookOpen, Calendar, Link2, Clock, ExternalLink, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { createClass, getBooks } from "../actions";
 import { t } from "@/lib/i18n";
 import {
   buildScheduleString,
+  calculateTotalHours,
   CLASS_DAYS,
   CLASS_TIME_OPTIONS,
   getEndTimeOptions,
+  MAX_CLASS_HOURS,
   toggleClassDay,
+  WEEKLY_TEMPLATES,
 } from "@/lib/tutorClassFlow";
 
 export default function NewClassPage() {
@@ -43,6 +46,20 @@ export default function NewClassPage() {
     const schedule = buildScheduleString(selectedDays, startTime, endTime);
     setForm((prev) => ({ ...prev, schedule }));
   }, [selectedDays, startTime, endTime]);
+
+  const totalHours = useMemo(
+    () => calculateTotalHours(selectedDays, startTime, endTime, form.startsAt, form.endsAt),
+    [selectedDays, startTime, endTime, form.startsAt, form.endsAt],
+  );
+  const overLimit = totalHours > MAX_CLASS_HOURS;
+  const hoursPct = Math.min(100, (totalHours / MAX_CLASS_HOURS) * 100);
+
+  const applyTemplate = (tpl: (typeof WEEKLY_TEMPLATES)[number]) => {
+    setSelectedDays(tpl.days);
+    setStartTime(tpl.startTime);
+    setEndTime(tpl.endTime);
+    clearFieldError("schedule");
+  };
 
   useEffect(() => {
     async function loadBooks() {
@@ -74,12 +91,13 @@ export default function NewClassPage() {
     if (!form.name.trim()) newErrors.name = t("tutorClass.newClass.classNamePlaceholder") + " (จำเป็น)";
     if (!form.book) newErrors.book = t("tutorClass.newClass.selectBook") + " (จำเป็น)";
     if (!form.schedule) newErrors.schedule = t("tutorClass.newClass.scheduleRequired");
+    if (overLimit) newErrors.schedule = t("tutorClass.newClass.hoursOverLimit");
     setFieldErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     setLoading(true);
     setErrorText("");
     try {
-      await createClass(form);
+      await createClass({ ...form, totalHours });
       router.push("/dashboard/classes");
       router.refresh();
     } catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -162,6 +180,22 @@ export default function NewClassPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
+                <Label>{t("tutorClass.newClass.quickTemplates")}</Label>
+                <div className="flex gap-1.5 flex-wrap">
+                  {WEEKLY_TEMPLATES.map((tpl) => (
+                    <button
+                      key={tpl.id}
+                      type="button"
+                      onClick={() => applyTemplate(tpl)}
+                      className="px-3 h-8 rounded-full text-xs font-semibold border border-border bg-muted text-muted-foreground hover:border-primary/50 hover:text-foreground transition-all"
+                    >
+                      {tpl.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
                 <Label>{t("tutorClass.newClass.days")}</Label>
                 <div className="flex gap-1.5 flex-wrap">
                   {CLASS_DAYS.map((day) => {
@@ -226,6 +260,28 @@ export default function NewClassPage() {
                     ))}
                   </select>
                 </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">{t("tutorClass.newClass.totalHoursLabel")}</span>
+                  <span className={`font-bold ${overLimit ? "text-destructive" : "text-foreground"}`}>
+                    {totalHours} / {MAX_CLASS_HOURS} {t("tutorClass.newClass.hoursUnit")}
+                  </span>
+                </div>
+                <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all ${overLimit ? "bg-destructive" : "bg-primary"}`}
+                    style={{ width: `${hoursPct}%` }}
+                  />
+                </div>
+                {overLimit ? (
+                  <p className="text-xs text-destructive font-semibold flex items-center gap-1">
+                    <AlertTriangle className="h-3.5 w-3.5" /> {t("tutorClass.newClass.hoursOverLimit")}
+                  </p>
+                ) : (!form.startsAt || !form.endsAt) ? (
+                  <p className="text-[11px] text-muted-foreground/70">{t("tutorClass.newClass.hoursNeedDates")}</p>
+                ) : null}
               </div>
 
               <div className="rounded-lg bg-primary/5 border border-primary/20 px-3 py-2 min-h-[52px]">
@@ -347,7 +403,7 @@ export default function NewClassPage() {
             type="submit"
             size="lg"
             className="w-full lg:w-auto lg:px-8 font-semibold shadow-md"
-            disabled={loading}
+            disabled={loading || overLimit}
           >
             {loading ? t("tutorClass.newClass.creating") : t("tutorClass.newClass.submit")}
           </Button>
