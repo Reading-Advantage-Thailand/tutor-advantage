@@ -22,7 +22,6 @@ const PHASE_CONFIG: Record<number, {
   4: { emoji: '🔍', label: 'โฟกัสคำศัพท์',   color: 'text-amber-600 dark:text-amber-400',   bg: 'bg-amber-500/10',   border: 'border-amber-500/30',   gradientFrom: 'from-amber-400',   gradientTo: 'to-orange-500',  tip: 'สังเกตคำศัพท์ที่ไฮไลต์บนจอ' },
   5: { emoji: '🧠', label: 'อ่านเชิงลึก',     color: 'text-emerald-600 dark:text-emerald-400',bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', gradientFrom: 'from-emerald-500', gradientTo: 'to-teal-600',    tip: 'ฟังคุณครูอธิบายความหมาย' },
   6: { emoji: '⭐', label: 'ประโยคสำคัญ',     color: 'text-rose-600 dark:text-rose-400',     bg: 'bg-rose-500/10',    border: 'border-rose-500/30',    gradientFrom: 'from-rose-500',    gradientTo: 'to-pink-600',    tip: 'จดจำประโยคสำคัญเหล่านี้' },
-  9: { emoji: '🎵', label: 'ฟังการออกเสียง',  color: 'text-teal-600 dark:text-teal-400',     bg: 'bg-teal-500/10',    border: 'border-teal-500/30',    gradientFrom: 'from-teal-500',    gradientTo: 'to-cyan-600',    tip: 'ฟังการออกเสียงที่ถูกต้อง' },
 };
 
 // ── Mobile Live Leaderboard ───────────────────────────────────────────────────
@@ -111,10 +110,13 @@ function PlayLessonContent() {
     isEveryoneReady,
     aiFeedback,
     submitAnswer,
-    kicked
+    kicked,
+    flagCounts,
+    flagSentence
   } = useLessonSocket(classId || undefined, studentId, name, profile?.pictureUrl);
 
   const [typedAnswer, setTypedAnswer] = useState('');
+  const [myFlags, setMyFlags] = useState<Set<number>>(new Set());
   const [showEveryoneReady, setShowEveryoneReady] = useState(false);
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [prevPhase, setPrevPhase] = useState<number | null>(null);
@@ -143,6 +145,9 @@ function PlayLessonContent() {
   }, [sessionData, prevPhase]);
 
   useEffect(() => { if (hasAnswered) setIsSubmitting(false); }, [hasAnswered]);
+
+  // Reset my sentence flags at the start of a fresh instructional cycle
+  useEffect(() => { if (currentPhase === 1) setMyFlags(new Set()); }, [currentPhase]);
 
   useEffect(() => {
     if (sessionData && sessionData.currentPhase === 0 && classId) {
@@ -319,8 +324,8 @@ function PlayLessonContent() {
     const currentPhase = sessionData?.currentPhase;
     let questionText = t("interactivePlay.defaultQuestion");
     let expected = "";
-    if (currentPhase === 7) {
-      const idx = sessionData?.phaseSelectedIndices?.[7] || 0;
+    if (currentPhase === 8) {
+      const idx = sessionData?.phaseSelectedIndices?.[8] || 0;
       const q = articleData?.multipleChoiceQuestions?.[idx];
       questionText = q?.question || questionText;
       expected = q?.answer || expected;
@@ -359,7 +364,26 @@ function PlayLessonContent() {
     }
   };
 
-  const isLookAtScreenPhase = [1, 2, 3, 4, 5, 6, 9].includes(currentPhase);
+  const handleFlagToggle = (sentenceIndex: number) => {
+    playSound('select');
+    setMyFlags(prev => {
+      const next = new Set(prev);
+      if (next.has(sentenceIndex)) next.delete(sentenceIndex);
+      else next.add(sentenceIndex);
+      return next;
+    });
+    flagSentence(sentenceIndex);
+  };
+
+  const handleReadAloudDone = () => {
+    if (hasAnswered || isSubmitting) return;
+    playSound('submit');
+    setIsSubmitting(true);
+    setSelectedChoice('done');
+    submitAnswer('อ่านออกเสียงแล้ว', 'Read aloud', '');
+  };
+
+  const isLookAtScreenPhase = [1, 2, 3, 4, 5, 6].includes(currentPhase);
   const articleId = articleData?.id;
   const articleTitle = articleData?.title;
   const articleImageUrl = articleId
@@ -519,6 +543,80 @@ function PlayLessonContent() {
           );
         })()}
 
+        {/* ─── Phase 7: Translation + Sentence Flag ─── */}
+        {currentPhase === 7 && (
+          <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
+            <div className="bg-teal-500/10 border-2 border-teal-500/30 rounded-3xl p-5 text-center shrink-0">
+              <div className="text-4xl mb-2">🎧</div>
+              <h2 className="text-lg font-black text-teal-600 dark:text-teal-400">อ่านพร้อมกัน · ออกเสียง</h2>
+              <p className="text-muted-foreground text-xs font-medium mt-1">แตะประโยคที่อยากให้คุณครูช่วยออกเสียง 🚩</p>
+            </div>
+            <div className="bg-card rounded-2xl border border-border shadow-sm p-3">
+              {(articleData?.sentences || []).map((s, idx) => {
+                const text = typeof s === 'object' ? s.sentences : s;
+                const isFlagged = myFlags.has(idx);
+                const count = flagCounts?.[idx] || 0;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handleFlagToggle(idx)}
+                    className={`w-full text-left rounded-xl px-3 py-2.5 mb-1.5 last:mb-0 transition-all flex items-start gap-2 ${
+                      isFlagged
+                        ? 'bg-rose-500/15 border border-rose-400/50'
+                        : 'bg-muted/40 border border-transparent active:bg-muted'
+                    }`}
+                  >
+                    <span className="text-base shrink-0 mt-0.5">{isFlagged ? '🚩' : '🔖'}</span>
+                    <span className={`flex-1 text-sm leading-relaxed ${isFlagged ? 'text-rose-700 dark:text-rose-300 font-semibold' : 'text-foreground'}`}>
+                      {text}
+                    </span>
+                    {count > 0 && (
+                      <span className="text-[10px] font-black text-rose-500 bg-rose-500/10 rounded-full px-1.5 py-0.5 shrink-0">{count}</span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ─── Phase 13: Read-Aloud ─── */}
+        {currentPhase === 13 && (() => {
+          const sentences = articleData?.sentences || [];
+          const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
+          const target = sentences[idx];
+          const text = typeof target === 'object' ? target?.sentences : target;
+          return (
+            <div className="phase-enter w-full max-w-md flex flex-col gap-4">
+              <div className="bg-emerald-500/10 border-2 border-emerald-500/30 rounded-3xl p-6 text-center">
+                <div className="text-5xl mb-3">🗣️</div>
+                <h2 className="text-xl font-black text-emerald-600 dark:text-emerald-400">อ่านออกเสียงพร้อมกัน</h2>
+                <p className="text-muted-foreground text-sm mt-1">อ่านประโยคนี้ออกเสียงตามคุณครู</p>
+              </div>
+              <div className="bg-card rounded-3xl border border-border shadow-lg p-6 text-center">
+                <p className="text-xl font-bold text-foreground leading-relaxed" style={{ fontFamily: 'Georgia, serif' }}>
+                  {text || '—'}
+                </p>
+              </div>
+              {(hasAnswered || isSubmitting) ? (
+                <div className="bg-emerald-500/10 border-2 border-emerald-500/30 rounded-2xl p-5 text-center">
+                  <div className="text-3xl mb-1">✅</div>
+                  <h3 className="font-black text-emerald-600 dark:text-emerald-400">อ่านจบแล้ว!</h3>
+                  <p className="text-emerald-600/70 dark:text-emerald-400/70 text-sm mt-0.5">รอเพื่อนๆ อ่านให้ครบ</p>
+                </div>
+              ) : (
+                <button
+                  onClick={handleReadAloudDone}
+                  className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black text-base py-4 rounded-2xl shadow-lg active:scale-95 transition-all"
+                >
+                  อ่านจบแล้ว ✓
+                </button>
+              )}
+              <MobileLeaderboard participants={participants} studentId={studentId} />
+            </div>
+          );
+        })()}
+
         {/* ─── Phase 14: Final Leaderboard ─── */}
         {currentPhase === 14 && (() => {
           const sorted = [...participants].sort((a, b) => (b.score || 0) - (a.score || 0));
@@ -647,8 +745,8 @@ function PlayLessonContent() {
           );
         })()}
 
-        {/* ─── MCQ Phases (7, 10, 11, 12) ─── */}
-        {[7, 10, 11, 12].includes(currentPhase) && (
+        {/* ─── MCQ Phases (8, 10, 11, 12) ─── */}
+        {[8, 10, 11, 12].includes(currentPhase) && (
           <div className="phase-enter w-full max-w-md flex-1 flex flex-col gap-3 min-h-0">
             {hasAnswered ? (
               /* After answering: show result + leaderboard */
@@ -684,8 +782,8 @@ function PlayLessonContent() {
                   </div>
                   <div className="px-4 py-4 text-center font-bold text-foreground text-sm leading-relaxed">
                     {(() => {
-                      if (currentPhase === 7) {
-                        const idx = sessionData?.phaseSelectedIndices?.[7] || 0;
+                      if (currentPhase === 8) {
+                        const idx = sessionData?.phaseSelectedIndices?.[8] || 0;
                         return articleData?.multipleChoiceQuestions?.[idx]?.question || t("interactivePlay.defaultQuestion");
                       } else if (currentPhase === 10) {
                         const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
@@ -723,8 +821,8 @@ function PlayLessonContent() {
           </div>
         )}
 
-        {/* ─── Short Answer (8, 13) ─── */}
-        {(currentPhase === 8 || currentPhase === 13) && (
+        {/* ─── Short Answer (9) ─── */}
+        {currentPhase === 9 && (
           <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
 
             {aiFeedback ? (

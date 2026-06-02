@@ -39,6 +39,7 @@ export default function TutorLobbyClient({
     totalAnswered,
     allAnsweredData,
     error,
+    flagCounts,
     changePhase,
     nudgeStudent,
     kickStudent,
@@ -92,6 +93,7 @@ export default function TutorLobbyClient({
               totalAnswered={totalAnswered}
               allAnsweredData={allAnsweredData}
               articleData={articleData}
+              flagCounts={flagCounts}
               changePhase={changePhase}
               onFinishSession={() => {
                 deleteSession();

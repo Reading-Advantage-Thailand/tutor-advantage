@@ -5,11 +5,13 @@ import { Volume2 } from "lucide-react";
 interface ArticleDisplayProps {
   articleData: any;
   phase: number;
+  flagCounts?: Record<number, number>;
 }
 
 export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   articleData,
   phase,
+  flagCounts,
 }) => {
   const words = useMemo(() => articleData?.words || [], [articleData?.words]);
   const sentences = useMemo(() => articleData?.sentences || [], [articleData?.sentences]);
@@ -97,10 +99,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     }
   };
 
-  // Auto-scroll active sentence into view in Phase 9
+  // Auto-scroll active sentence into view in Phase 7 (Translation)
   useEffect(() => {
-    if (phase !== 9 || activeIdx < 0) return;
-    const el = document.getElementById(`p9-sentence-${activeIdx}`);
+    if (phase !== 7 || activeIdx < 0) return;
+    const el = document.getElementById(`p7-sentence-${activeIdx}`);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [activeIdx, phase]);
 
@@ -164,7 +166,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   // Auto-translate sentences when no Thai translation available
   useEffect(() => {
-    if (!articleData || phase !== 9) return;
+    if (!articleData || phase !== 7) return;
     const hasThai = (articleData.translated_passage?.th?.length ?? 0) > 0;
     if (hasThai || sentences.length === 0) return;
     const texts = sentences.map((s: any) =>
@@ -923,8 +925,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     );
   }
 
-  /* ─── Phase 9: Translation + Audio Player ───────────────── */
-  if (phase === 9) {
+  /* ─── Phase 7: Translation + Audio Player + Sentence Flag ───────────────── */
+  if (phase === 7) {
     const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
     const thaiSentences: string[] =
       (articleData.translated_passage?.th?.length ?? 0) > 0
@@ -984,7 +986,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           <div className="max-w-3xl mx-auto mb-8">
             <div className="flex items-center gap-3 mb-4">
               <span className="bg-orange-500 text-white text-sm font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow">
-                Phase 9
+                Phase 7
               </span>
               <span className="bg-card text-orange-600 dark:text-orange-400 text-sm font-bold px-4 py-1.5 rounded-full border-2 border-orange-500/30">
                 Translation
@@ -1006,18 +1008,28 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 {group.length > 0
                   ? group.map(({ idx, text, ts }) => {
                       const isActive = idx === activeIdx;
+                      const flagCount = flagCounts?.[idx] || 0;
+                      const isFlagged = flagCount > 0;
                       return (
                         <span
-                          id={`p9-sentence-${idx}`}
+                          id={`p7-sentence-${idx}`}
                           key={idx}
                           onClick={() => seekToSentence(idx)}
                           className={`cursor-pointer rounded-lg px-0.5 transition-all duration-200 ${
                             isActive
                               ? "bg-orange-400 text-white font-bold px-2 py-0.5 rounded-xl shadow-md"
+                              : isFlagged
+                              ? "bg-rose-500/15 text-rose-700 dark:text-rose-300 font-semibold rounded-lg px-1 ring-1 ring-rose-400/50"
                               : "text-foreground hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400"
                           }`}
                         >
-                          {text}{" "}
+                          {text}
+                          {isFlagged && (
+                            <sup className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 align-super not-italic">
+                              🚩{flagCount}
+                            </sup>
+                          )}
+                          {" "}
                         </span>
                       );
                     })

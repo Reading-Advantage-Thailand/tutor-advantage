@@ -86,7 +86,8 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   const [isEveryoneReady, setIsEveryoneReady] = useState(false);
   const [nudgeMessage, setNudgeMessage] = useState<string | null>(null);
   const [kicked, setKicked] = useState<string | null>(null);
-  
+  const [flagCounts, setFlagCounts] = useState<Record<number, number>>({});
+
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -158,6 +159,12 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
       setHasAnswered(false);
       setIsEveryoneReady(false);
       setAiFeedback(null);
+      // Sentence flags reset at the start of a fresh instructional cycle
+      if (data.phase === 1) setFlagCounts({});
+    });
+
+    newSocket.on('flags_updated', (data: { flagCounts: Record<number, number> }) => {
+      setFlagCounts(data.flagCounts || {});
     });
 
     newSocket.on('answer_received', () => {
@@ -197,6 +204,16 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     }
   };
 
+  const flagSentence = (sentenceIndex: number) => {
+    if (socketRef.current && sessionData) {
+      socketRef.current.emit('flag_sentence', {
+        sessionId: sessionData.sessionId,
+        studentId,
+        sentenceIndex,
+      });
+    }
+  };
+
   return {
     socket,
     sessionData,
@@ -209,7 +226,9 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     aiFeedback,
     nudgeMessage,
     kicked,
+    flagCounts,
     submitAnswer,
-    toggleReady
+    toggleReady,
+    flagSentence
   };
 };

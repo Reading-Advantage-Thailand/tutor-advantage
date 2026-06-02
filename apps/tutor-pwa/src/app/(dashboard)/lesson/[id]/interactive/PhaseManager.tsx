@@ -34,6 +34,7 @@ interface PhaseManagerProps {
   changePhase: (phase: number) => void;
   sessionData?: any;
   onFinishSession?: () => void;
+  flagCounts?: Record<number, number>;
 }
 
 // ── Live Leaderboard Sidebar (Desktop) ───────────────────────────────────────
@@ -204,6 +205,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   changePhase,
   sessionData,
   onFinishSession,
+  flagCounts,
 }) => {
   const [isChangingPhase, setIsChangingPhase] = React.useState(false);
   const [canProceedDelayed, setCanProceedDelayed] = React.useState(false);
@@ -215,7 +217,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     setIsChangingPhase(false);
   }, [currentPhase]);
 
-  const isInteractivePhase = [7, 8, 10, 11, 12, 13].includes(currentPhase);
+  const isInteractivePhase = [8, 9, 10, 11, 12, 13].includes(currentPhase);
   const totalParticipants = participants.length;
   
   // Can proceed if everyone answered OR if results are already showing OR if no participants
@@ -310,7 +312,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   // Confetti effect when results are ready
   React.useEffect(() => {
-    if ([7, 10, 11, 12].includes(currentPhase) && allAnsweredData.length > 0) {
+    if ([8, 10, 11, 12].includes(currentPhase) && allAnsweredData.length > 0) {
       confetti({
         particleCount: 150,
         spread: 80,
@@ -336,7 +338,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   );
 
   const renderPresentation = () => (
-    <ArticleDisplay articleData={articleData} phase={currentPhase} />
+    <ArticleDisplay articleData={articleData} phase={currentPhase} flagCounts={flagCounts} />
   );
 
   const renderKahootGame = (question: string, mappedOptions: Record<string, string>, correctAnswer: string) => {
@@ -464,7 +466,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   };
 
   const renderMCQ = () => {
-    const idx = sessionData?.phaseSelectedIndices?.[7] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[8] || 0;
     const mcqQuestion = articleData?.multipleChoiceQuestions?.[idx];
     const rawAnswer = mcqQuestion?.answer || '';
     const optionsData = mcqQuestion?.options || {};
@@ -938,33 +940,70 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     );
   };
 
+  const renderReadAloud = () => {
+    const sentences = articleData?.sentences || [];
+    const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
+    const target = sentences[idx];
+    const sentenceText = typeof target === 'object' ? target?.sentences : target;
+    const totalParticipants = participants.length;
+    const doneCount = totalAnswered;
+    const donePct = totalParticipants > 0 ? (doneCount / totalParticipants) * 100 : 0;
+
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center gap-6 px-4">
+        <div className="flex items-center gap-3">
+          <span className="bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Phase 13</span>
+          <span className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-bold px-3 py-1 rounded-full border border-emerald-500/20">Read Aloud Together</span>
+        </div>
+        <p className="text-muted-foreground text-sm text-center max-w-xl">
+          {t("lesson.interactive.readAloudTutorPrompt")}
+        </p>
+        <div className="bg-card border-t-4 border-emerald-500 rounded-3xl shadow-xl p-12 max-w-3xl w-full text-center">
+          <p className="text-4xl font-black text-foreground leading-snug" style={{ fontFamily: 'Georgia, serif' }}>
+            {sentenceText || t("lesson.interactive.readAloudNoSentence")}
+          </p>
+        </div>
+        <div className="w-full max-w-md flex flex-col items-center gap-2">
+          <p className="text-sm font-semibold text-foreground">
+            {doneCount} / {totalParticipants} {t("lesson.interactive.readAloudDoneSuffix")}
+          </p>
+          <div className="w-full h-2.5 rounded-full bg-muted overflow-hidden">
+            <div className="h-full rounded-full bg-emerald-500 transition-all duration-700" style={{ width: `${donePct}%` }} />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderPhaseContent = () => {
     if (currentPhase === 0 && participants.length === 0) return renderLobby();
-    if (currentPhase === 7) return renderMCQ();
+    if (currentPhase === 8) return renderMCQ();
     if (currentPhase === 10) return renderVocabKahoot();
     if (currentPhase === 11) return renderSentenceFlashcardKahoot();
     if (currentPhase === 12) return renderSentenceOrderingKahoot();
-    if (currentPhase === 8 || currentPhase === 13) return renderShortAnswer();
+    if (currentPhase === 9) return renderShortAnswer();
+    if (currentPhase === 13) return renderReadAloud();
     if (currentPhase === 14) return renderLeaderboard();
-    
-    // Default presentation for phases 1-6, 9
+
+    // Default presentation for phases 1-7 (incl. Translation = phase 7)
     return renderPresentation();
   };
 
   const phaseGroups = [
     { label: 'Intro', phases: [1, 2], color: 'bg-indigo-500', lightColor: 'bg-indigo-100', textColor: 'text-indigo-700' },
     { label: 'Reading', phases: [3, 4, 5, 6], color: 'bg-blue-500', lightColor: 'bg-blue-100', textColor: 'text-blue-700' },
-    { label: 'MCQ', phases: [7, 8], color: 'bg-rose-500', lightColor: 'bg-rose-100', textColor: 'text-rose-700' },
-    { label: 'Translation', phases: [9], color: 'bg-orange-500', lightColor: 'bg-orange-100', textColor: 'text-orange-700' },
-    { label: 'Games', phases: [10, 11, 12, 13], color: 'bg-purple-500', lightColor: 'bg-purple-100', textColor: 'text-purple-700' },
+    { label: 'Pronunciation', phases: [7], color: 'bg-orange-500', lightColor: 'bg-orange-100', textColor: 'text-orange-700' },
+    { label: 'Comprehension', phases: [8, 9], color: 'bg-rose-500', lightColor: 'bg-rose-100', textColor: 'text-rose-700' },
+    { label: 'Games', phases: [10, 11, 12], color: 'bg-purple-500', lightColor: 'bg-purple-100', textColor: 'text-purple-700' },
+    { label: 'Recap', phases: [13], color: 'bg-emerald-500', lightColor: 'bg-emerald-100', textColor: 'text-emerald-700' },
     { label: 'Wrap-up', phases: [14], color: 'bg-amber-500', lightColor: 'bg-amber-100', textColor: 'text-amber-700' },
   ];
 
   const phaseNames: Record<number, string> = {
     0: 'Lobby', 1: 'Intro', 2: 'Vocab Preview', 3: 'First Reading', 4: 'Vocab Focus',
-    5: 'Deep Reading', 6: 'Key Sentences', 7: 'MCQ Quiz', 8: 'Short Answer',
-    9: 'Translation', 10: 'Vocab Kahoot', 11: 'Sentence Fill', 12: 'Sentence Order',
-    13: 'Short Answer 2', 14: 'Leaderboard',
+    5: 'Deep Reading', 6: 'Key Sentences', 7: 'Translation', 8: 'MCQ Quiz',
+    9: 'Short Answer', 10: 'Vocab Kahoot', 11: 'Sentence Fill', 12: 'Sentence Order',
+    13: 'Read-Aloud', 14: 'Leaderboard',
   };
 
   const renderPhaseProgressBar = () => {

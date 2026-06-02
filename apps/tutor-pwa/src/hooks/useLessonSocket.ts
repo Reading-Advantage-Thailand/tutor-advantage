@@ -27,7 +27,8 @@ export const useLessonSocket = (
   const [allAnsweredData, setAllAnsweredData] = useState<any[]>([]);
   const [articleData, setArticleData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  
+  const [flagCounts, setFlagCounts] = useState<Record<number, number>>({});
+
   const socketRef = useRef<Socket | null>(null);
   const sessionDataRef = useRef<TutorSessionData | null>(null);
 
@@ -102,6 +103,12 @@ export const useLessonSocket = (
           });
           setTotalAnswered(0);
           setAllAnsweredData([]);
+          // Sentence flags reset at the start of a fresh instructional cycle
+          if (data.phase === 1) setFlagCounts({});
+        });
+
+        socketInstance.on('flags_updated', (data) => {
+          setFlagCounts(data.flagCounts || {});
         });
 
         socketInstance.on('participant_answered', (data) => {
@@ -181,6 +188,7 @@ export const useLessonSocket = (
     allAnsweredData,
     articleData,
     error,
+    flagCounts,
     changePhase,
     nudgeStudent,
     kickStudent,

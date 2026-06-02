@@ -304,8 +304,8 @@ export const setupLessonSocket = (io: Server) => {
       // If it's a short answer, evaluate it
       let evaluatedAnswer = answer;
       const session = lessonSessionService.getSession(sessionId);
-      if (session && (session.currentPhase === 8 || session.currentPhase === 13)) {
-         // evaluate with AI
+      if (session && session.currentPhase === 9) {
+         // Short Answer (phase 9, post-renumber): evaluate with AI
          const aiResult = await evaluateShortAnswer(question, expectedAnswer, answer);
          evaluatedAnswer = {
            text: answer,
@@ -321,9 +321,10 @@ export const setupLessonSocket = (io: Server) => {
         // Update participant's total score
         const participant = result.session.participants.get(studentId);
         if (participant) {
-          if (result.session.currentPhase === 8 || result.session.currentPhase === 13) {
+          if (result.session.currentPhase === 9) {
+            // Short Answer (post-renumber phase 9) with AI score
             participant.score = (participant.score || 0) + (evaluatedAnswer.aiScore || 0);
-            
+
             // --- PERSIST DB ANSWER (SHORT ANSWER WITH AI) ---
             dbWriter.persistAnswer({
               sessionId: result.session.currentDbSessionId || sessionId,
@@ -336,13 +337,28 @@ export const setupLessonSocket = (io: Server) => {
               questionText: question,
               correctAnswer: expectedAnswer
             });
+          } else if (result.session.currentPhase === 13) {
+            // Read-Aloud (post-renumber phase 13): choral reading, award participation point
+            participant.score = (participant.score || 0) + 1;
+
+            dbWriter.persistAnswer({
+              sessionId: result.session.currentDbSessionId || sessionId,
+              studentId,
+              phase: result.session.currentPhase,
+              answerText: "อ่านออกเสียงแล้ว",
+              isCorrect: true,
+              score: 1,
+              questionText: question || "Read aloud",
+              correctAnswer: expectedAnswer
+            });
           } else {
             let correctLabel = "";
             let resolvedAnswerText = String(answer);
             const choiceIdx = String(answer).trim().toUpperCase().charCodeAt(0) - 65; // A=0, B=1, C=2, D=3
 
-            if (result.session.currentPhase === 7) {
-              const idx = result.session.phaseSelectedIndices?.[7] || 0;
+            if (result.session.currentPhase === 8) {
+              // MCQ (post-renumber phase 8)
+              const idx = result.session.phaseSelectedIndices?.[8] || 0;
               const mcqQuestion = result.session.articleData?.multipleChoiceQuestions?.[idx];
               if (mcqQuestion) {
                 const rawAnswer = mcqQuestion.answer || '';
@@ -534,6 +550,16 @@ export const setupLessonSocket = (io: Server) => {
 
           console.log(`[Socket] All participants answered in session ${sessionId} phase ${result.session.currentPhase}`);
         }
+      }
+    });
+
+    // Student toggles a sentence flag during Phase 7 (Translation) to ask the tutor about pronunciation
+    socket.on("flag_sentence", ({ sessionId, studentId, sentenceIndex }) => {
+      const result = lessonSessionService.toggleSentenceFlag(sessionId, studentId, sentenceIndex);
+      if (result) {
+        const flagCounts = lessonSessionService.getFlagCounts(result.session);
+        // Broadcast updated counts to the whole room (tutor highlights, students sync their own state)
+        io.to(result.session.sessionId).emit("flags_updated", { flagCounts });
       }
     });
 

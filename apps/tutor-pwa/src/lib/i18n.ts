@@ -523,6 +523,9 @@ export const th = {
     interactive: {
       teachingPrefix: "กำลังสอน:",
       phasePrefix: "ขั้นตอนที่",
+      readAloudTutorPrompt: "ให้นักเรียนอ่านประโยคนี้ออกเสียงพร้อมกัน แล้วกดยืนยันเมื่ออ่านจบ",
+      readAloudNoSentence: "ไม่มีประโยคสำหรับอ่าน",
+      readAloudDoneSuffix: "อ่านจบแล้ว",
       sessionCreateError: "เกิดข้อผิดพลาดในการสร้างเซสชัน",
       backToClass: "กลับไปยังคลาส",
       preparingRoom: "กำลังเตรียมห้องเรียนสำหรับติวเตอร์...",

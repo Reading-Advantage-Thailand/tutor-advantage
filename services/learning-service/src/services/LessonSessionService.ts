@@ -25,6 +25,8 @@ export interface LessonSession {
   participants: Map<string, SessionParticipant>;
   status: 'LOBBY' | 'ACTIVE' | 'FINISHED';
   phaseSelectedIndices?: Record<number, number>;
+  // Phase 7 (Translation) Sentence Flags: sentenceIndex -> set of studentIds who flagged it
+  sentenceFlags?: Map<number, Set<string>>;
   currentDbSessionId?: string; // Track active DB ID for dynamic restarting
 }
 
@@ -117,14 +119,14 @@ class LessonSessionService {
       }
     }
 
+    // Phase mapping (post-renumber): 7=Translation, 8=MCQ, 9=ShortAnswer, 13=Read-Aloud
     const phaseSelectedIndices: Record<number, number> = {};
     if (articleData?.multipleChoiceQuestions?.length) {
-      phaseSelectedIndices[7] = Math.floor(Math.random() * articleData.multipleChoiceQuestions.length);
+      phaseSelectedIndices[8] = Math.floor(Math.random() * articleData.multipleChoiceQuestions.length);
     }
     if (articleData?.shortAnswerQuestions?.length) {
       const count = articleData.shortAnswerQuestions.length;
-      phaseSelectedIndices[8] = getRandomIndex(count);
-      phaseSelectedIndices[13] = getRandomIndex(count, phaseSelectedIndices[8]);
+      phaseSelectedIndices[9] = getRandomIndex(count);
     }
     if (articleData?.words?.length) {
       phaseSelectedIndices[10] = Math.floor(Math.random() * articleData.words.length);
@@ -132,6 +134,7 @@ class LessonSessionService {
     if (articleData?.sentences?.length) {
       phaseSelectedIndices[11] = getRandomLongSentenceIndex(articleData.sentences);
       phaseSelectedIndices[12] = getRandomLongSentenceIndex(articleData.sentences);
+      phaseSelectedIndices[13] = getRandomLongSentenceIndex(articleData.sentences);
     }
 
     console.log(`[Service] Available MCQ questions (Phase 7):`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
@@ -151,7 +154,8 @@ class LessonSessionService {
       currentPhase: 0,
       participants: new Map(),
       status: 'LOBBY',
-      phaseSelectedIndices
+      phaseSelectedIndices,
+      sentenceFlags: new Map()
     };
 
     this.sessions.set(sessionId, session);
@@ -237,23 +241,27 @@ class LessonSessionService {
       }
     }
 
+    // Reset sentence flags at the start of a fresh instructional cycle
+    if (phase === 1) {
+      session.sentenceFlags = new Map();
+    }
+
     if (!session.phaseSelectedIndices) {
       session.phaseSelectedIndices = {};
     }
 
     // Force re-randomize every time we enter the phase
-    if (phase === 7) {
+    // Phase mapping (post-renumber): 8=MCQ, 9=ShortAnswer, 10=VocabGame, 11/12=SentenceGames, 13=Read-Aloud
+    if (phase === 8) {
       const count = session.articleData?.multipleChoiceQuestions?.length || 1;
-      session.phaseSelectedIndices[7] = Math.floor(Math.random() * count);
-    } else if (phase === 8 || phase === 13) {
+      session.phaseSelectedIndices[8] = Math.floor(Math.random() * count);
+    } else if (phase === 9) {
       const count = session.articleData?.shortAnswerQuestions?.length || 1;
-      const pairedPhase = phase === 8 ? 13 : 8;
-      const pairedIndex = session.phaseSelectedIndices[pairedPhase];
-      session.phaseSelectedIndices[phase] = getRandomIndex(count, pairedIndex);
+      session.phaseSelectedIndices[9] = getRandomIndex(count);
     } else if (phase === 10) {
       const count = session.articleData?.words?.length || 1;
       session.phaseSelectedIndices[10] = Math.floor(Math.random() * count);
-    } else if (phase === 11 || phase === 12) {
+    } else if (phase === 11 || phase === 12 || phase === 13) {
       session.phaseSelectedIndices[phase] = getRandomLongSentenceIndex(session.articleData?.sentences || []);
     }
 
@@ -262,7 +270,7 @@ class LessonSessionService {
     }
 
     console.log(`[Service] Session phase changed to: ${phase}`);
-    if ([7, 8, 10, 11, 12, 13].includes(phase)) {
+    if ([8, 9, 10, 11, 12, 13].includes(phase)) {
        const idx = session.phaseSelectedIndices?.[phase] || 0;
        console.log(`[Service] Selected Question Index for Phase ${phase}:`, idx);
     }
@@ -296,6 +304,44 @@ class LessonSessionService {
     }
 
     return { session, allAnswered };
+  }
+
+  // Toggle a student's flag on a sentence (Phase 7 Translation). Returns updated count for that sentence.
+  toggleSentenceFlag(sessionId: string, studentId: string, sentenceIndex: number):
+    { session: LessonSession; sentenceIndex: number; count: number; flagged: boolean } | undefined {
+    const session = this.sessions.get(sessionId);
+    if (!session) return undefined;
+
+    if (!session.sentenceFlags) session.sentenceFlags = new Map();
+
+    let voters = session.sentenceFlags.get(sentenceIndex);
+    if (!voters) {
+      voters = new Set();
+      session.sentenceFlags.set(sentenceIndex, voters);
+    }
+
+    let flagged: boolean;
+    if (voters.has(studentId)) {
+      voters.delete(studentId);
+      flagged = false;
+    } else {
+      voters.add(studentId);
+      flagged = true;
+    }
+
+    if (voters.size === 0) session.sentenceFlags.delete(sentenceIndex);
+
+    return { session, sentenceIndex, count: voters.size, flagged };
+  }
+
+  // Serialize all flag counts for broadcast: { sentenceIndex: count }
+  getFlagCounts(session: LessonSession): Record<number, number> {
+    const result: Record<number, number> = {};
+    if (!session.sentenceFlags) return result;
+    for (const [idx, voters] of session.sentenceFlags.entries()) {
+      if (voters.size > 0) result[idx] = voters.size;
+    }
+    return result;
   }
 
   deleteSession(sessionId: string): boolean {
