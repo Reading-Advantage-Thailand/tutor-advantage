@@ -402,6 +402,95 @@ function PlayLessonContent() {
   const getScoreStroke = (s: number) => s >= 4 ? '#10b981' : s >= 2 ? '#f59e0b' : '#f43f5e';
   const getScoreStars = (s: number) => '⭐'.repeat(Math.max(0, Math.round(s)));
 
+  // ─── Compact lesson content shown on the student's phone per phase (static, follows phase only) ──
+  const renderLessonContentMobile = () => {
+    const ad = articleData as any;
+    const words = articleData?.words || [];
+    const sentences = articleData?.sentences || [];
+    const passage: string = ad?.passage || '';
+    const vocabWords = words
+      .map((w) => (typeof w === 'object' ? (w.vocabulary || w.word || w.text) : w))
+      .filter(Boolean) as string[];
+
+    const renderPassage = (highlight: boolean) => {
+      if (!passage) return null;
+      let body: React.ReactNode = passage;
+      if (highlight && vocabWords.length) {
+        const parts = passage.split(/(\s+)/);
+        body = parts.map((part, i) => {
+          const clean = part.replace(/[.,!?;:"'()]/g, '').toLowerCase();
+          if (vocabWords.some((v) => v.toLowerCase() === clean)) {
+            return (
+              <mark key={i} className="bg-amber-300/60 dark:bg-amber-500/30 text-foreground rounded px-0.5 font-semibold not-italic">
+                {part}
+              </mark>
+            );
+          }
+          return <span key={i}>{part}</span>;
+        });
+      }
+      return (
+        <div className="bg-card rounded-2xl border border-border shadow-sm p-4">
+          <p className="text-foreground text-sm leading-relaxed" style={{ fontFamily: 'Georgia, serif' }}>{body}</p>
+        </div>
+      );
+    };
+
+    switch (currentPhase) {
+      case 1: {
+        const summary = ad?.translated_summary?.th?.[0] || (typeof ad?.summary === 'string' ? ad.summary : ad?.summary?.th?.[0]);
+        if (!summary) return null;
+        return (
+          <div className="bg-card rounded-2xl border border-border shadow-sm p-4">
+            <p className="text-foreground text-sm leading-relaxed">{summary}</p>
+          </div>
+        );
+      }
+      case 2:
+        if (!words.length) return null;
+        return (
+          <div className="bg-card rounded-2xl border border-border shadow-sm p-4">
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">คำศัพท์ ({words.length})</p>
+            <div className="space-y-2">
+              {words.map((item, i) => {
+                const wt = typeof item === 'object' ? (item.vocabulary || item.word || item.text) : item;
+                const th = typeof item === 'object' ? (item.definition?.th || item.translation) : undefined;
+                return (
+                  <div key={i} className="flex items-baseline justify-between gap-3 border-b border-border/50 last:border-0 pb-1.5 last:pb-0">
+                    <span className="font-bold text-foreground text-sm">{wt}</span>
+                    {th && <span className="text-muted-foreground text-xs text-right">{th}</span>}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      case 3:
+      case 5:
+        return renderPassage(false);
+      case 4:
+        return renderPassage(true);
+      case 6:
+        if (!sentences.length) return null;
+        return (
+          <div className="bg-card rounded-2xl border border-border shadow-sm p-4 space-y-2">
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">ประโยคสำคัญ</p>
+            {sentences.map((s, i) => {
+              const text = typeof s === 'object' ? s.sentences : s;
+              return (
+                <div key={i} className="flex gap-2 items-start">
+                  <span className="text-emerald-500 font-black text-xs shrink-0 mt-0.5">{i + 1}</span>
+                  <span className="text-foreground text-sm leading-relaxed">{text}</span>
+                </div>
+              );
+            })}
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
@@ -511,9 +600,9 @@ function PlayLessonContent() {
           const cfg = PHASE_CONFIG[currentPhase];
           if (!cfg) return null;
           return (
-            <div className="phase-enter w-full max-w-sm flex flex-col gap-4">
+            <div className="phase-enter w-full max-w-sm flex flex-col gap-4 overflow-y-auto max-h-[calc(100dvh-80px)] pb-4">
               {/* Big phase card */}
-              <div className={`${cfg.bg} border-2 ${cfg.border} rounded-3xl p-8 text-center shadow-xl`}>
+              <div className={`${cfg.bg} border-2 ${cfg.border} rounded-3xl p-8 text-center shadow-xl shrink-0`}>
                 <div className="text-7xl mb-4" style={{ animation: 'bounce 2s infinite' }}>{cfg.emoji}</div>
                 <div className={`inline-flex items-center gap-1.5 bg-white/10 dark:bg-white/5 border ${cfg.border} rounded-full px-3 py-1 mb-3`}>
                   <span className={`size-1.5 rounded-full animate-pulse ${cfg.color.replace('text-', 'bg-').split(' ')[0]}`} />
@@ -524,7 +613,7 @@ function PlayLessonContent() {
               </div>
 
               {/* Look at screen instruction */}
-              <div className="bg-card rounded-2xl border border-border shadow-md p-4 flex items-center gap-3">
+              <div className="bg-card rounded-2xl border border-border shadow-md p-4 flex items-center gap-3 shrink-0">
                 <div className={`size-11 rounded-xl ${cfg.bg} ${cfg.border} border flex items-center justify-center text-xl shrink-0`}>👆</div>
                 <div>
                   <p className="font-black text-foreground text-sm">{t("interactivePlay.lookAtScreen")}</p>
@@ -534,11 +623,14 @@ function PlayLessonContent() {
 
               {/* Article title pill */}
               {articleTitle && (
-                <div className="bg-card rounded-2xl border border-border shadow-sm p-3 flex items-center gap-2.5">
+                <div className="bg-card rounded-2xl border border-border shadow-sm p-3 flex items-center gap-2.5 shrink-0">
                   <span className="text-base shrink-0">📄</span>
                   <p className="text-xs font-semibold text-muted-foreground truncate">{articleTitle}</p>
                 </div>
               )}
+
+              {/* Compact lesson content (static, per phase) */}
+              {renderLessonContentMobile()}
             </div>
           );
         })()}
