@@ -125,7 +125,6 @@ function PlayLessonContent() {
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewComment, setReviewComment] = useState('');
   const [reviewLoaded, setReviewLoaded] = useState(false);
-  const [reviewSubmitting, setReviewSubmitting] = useState(false);
   // Step 11 Guided Writing
   const [writingPlan, setWritingPlan] = useState('');
   const [writingDraft, setWritingDraft] = useState('');
@@ -196,7 +195,6 @@ function PlayLessonContent() {
       return;
     }
 
-    setReviewSubmitting(true);
     try {
       await studentApi.submitClassReview(classId, {
         rating: reviewRating,
@@ -206,7 +204,6 @@ function PlayLessonContent() {
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'บันทึกรีวิวไม่สำเร็จ');
     } finally {
-      setReviewSubmitting(false);
     }
   };
 
