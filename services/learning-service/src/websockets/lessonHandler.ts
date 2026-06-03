@@ -316,10 +316,19 @@ export const setupLessonSocket = (io: Server) => {
          // send personal result immediately back to student
          socket.emit("ai_evaluation_result", evaluatedAnswer);
       } else if (session && session.currentPhase === 13) {
-         // Language Questions (Step 12): teacher-mediated AI answer
-         const ai = await answerLanguageQuestion(answer);
-         evaluatedAnswer = { text: answer, languageAnswer: ai.answer };
-         socket.emit("language_answer_result", { question: answer, answer: ai.answer });
+         // Language Questions (Step 12): teacher-mediated AI answer.
+         // Empty answer = student skipped (no question) — count as answered, no AI call.
+         const text = typeof answer === 'string' ? answer.trim() : '';
+         if (!text) {
+           evaluatedAnswer = { text: '', languageAnswer: '' };
+         } else {
+           const articleContext = [session.articleData?.title, session.articleData?.passage]
+             .filter(Boolean)
+             .join("\n\n");
+           const ai = await answerLanguageQuestion(text, articleContext);
+           evaluatedAnswer = { text: answer, languageAnswer: ai.answer };
+           socket.emit("language_answer_result", { question: answer, answer: ai.answer });
+         }
       }
 
       const result = lessonSessionService.submitAnswer(sessionId, studentId, evaluatedAnswer);

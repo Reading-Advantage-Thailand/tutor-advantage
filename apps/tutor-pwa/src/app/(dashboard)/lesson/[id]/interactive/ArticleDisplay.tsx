@@ -16,6 +16,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   const words = useMemo(() => articleData?.words || [], [articleData?.words]);
   const sentences = useMemo(() => articleData?.sentences || [], [articleData?.sentences]);
 
+  // "A0" is a placeholder beginner level from the article source; display it as A1 to match the rest of the app.
+  const displayCefr = articleData?.cefr_level === "A0" ? "A1" : articleData?.cefr_level;
+
   // Article image URL from GCS
   const articleImageUrl = articleData?.id
     ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${articleData.id}.png`
@@ -222,9 +225,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 {articleData.genre}
               </span>
             )}
-            {articleData.cefr_level && (
+            {displayCefr && (
               <span className="bg-indigo-500/80 backdrop-blur text-white text-xs font-bold px-3 py-1 rounded-full">
-                CEFR {articleData.cefr_level}
+                CEFR {displayCefr}
               </span>
             )}
           </div>
@@ -888,7 +891,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             </div>
             <h2 className="text-3xl font-black text-foreground mb-1">{articleData.title}</h2>
             {articleData.genre && (
-              <p className="text-muted-foreground text-sm">{articleData.genre} / CEFR {articleData.cefr_level}</p>
+              <p className="text-muted-foreground text-sm">{articleData.genre} / CEFR {displayCefr}</p>
             )}
           </div>
 

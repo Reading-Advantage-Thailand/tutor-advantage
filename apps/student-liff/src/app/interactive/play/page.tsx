@@ -131,6 +131,7 @@ function PlayLessonContent() {
   const [writingDraft, setWritingDraft] = useState('');
   // Step 12 Language Questions
   const [languageQuestion, setLanguageQuestion] = useState('');
+  const [languageSkipped, setLanguageSkipped] = useState(false);
   // Step 13 Reflection
   const [understanding, setUnderstanding] = useState('');
   const [effort, setEffort] = useState('');
@@ -154,6 +155,7 @@ function PlayLessonContent() {
       setWritingPlan('');
       setWritingDraft('');
       setLanguageQuestion('');
+      setLanguageSkipped(false);
       setUnderstanding('');
       setEffort('');
     }
@@ -411,11 +413,23 @@ function PlayLessonContent() {
     submitAnswer(languageQuestion, 'Language question', '');
   };
 
-  // Step 13 Reflection — submit understanding + effort ratings
-  const handleReflectionSubmit = () => {
+  // Step 12 — skip when the student has no question (counts as answered, no AI)
+  const handleLanguageSkip = () => {
+    if (hasAnswered || isSubmitting) return;
+    playSound('select');
+    setLanguageSkipped(true);
+    setIsSubmitting(true);
+    submitAnswer('', 'Language question', '');
+  };
+
+  // Step 13 Reflection — submit understanding + effort ratings (and tutor star review if given)
+  const handleReflectionSubmit = async () => {
     if (!understanding || !effort || hasAnswered || isSubmitting) return;
     playSound('submit');
     setIsSubmitting(true);
+    if (reviewRating > 0) {
+      await submitTutorReview();
+    }
     submitAnswer(`ความเข้าใจ: ${understanding} · ความพยายาม: ${effort}`, 'Lesson reflection', '');
   };
 
@@ -438,6 +452,36 @@ function PlayLessonContent() {
   const getScoreColor = (s: number) => s >= 4 ? 'text-emerald-500' : s >= 2 ? 'text-amber-500' : 'text-rose-500';
   const getScoreStroke = (s: number) => s >= 4 ? '#10b981' : s >= 2 ? '#f59e0b' : '#f43f5e';
   const getScoreStars = (s: number) => '⭐'.repeat(Math.max(0, Math.round(s)));
+
+  // Shared "waiting for AI" skeleton — matches the Short Answer loading state across steps
+  const renderAiSkeleton = (accent: 'sky' | 'violet') => {
+    const ping = accent === 'sky' ? 'bg-sky-400' : 'bg-violet-400';
+    const dot = accent === 'sky' ? 'bg-sky-500' : 'bg-violet-500';
+    const label = accent === 'sky' ? 'text-sky-600 dark:text-sky-400' : 'text-violet-600 dark:text-violet-400';
+    const avatar = accent === 'sky' ? 'bg-sky-500/10 border-sky-500/20' : 'bg-violet-500/10 border-violet-500/20';
+    return (
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-4 shrink-0">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="relative flex size-2">
+            <span className={`animate-ping absolute size-full rounded-full opacity-75 ${ping}`} />
+            <span className={`relative size-2 rounded-full ${dot}`} />
+          </span>
+          <span className={`text-[10px] font-black uppercase tracking-wider ${label}`}>{t("interactivePlay.sendingAi")}</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className={`size-12 rounded-xl border overflow-hidden relative shrink-0 ${avatar}`}>
+            <div className="absolute inset-0 skeleton opacity-40" />
+          </div>
+          <div className="flex-1 space-y-2">
+            <div className="h-2.5 rounded-full skeleton opacity-40" />
+            <div className="h-2.5 w-5/6 rounded-full skeleton opacity-40" />
+            <div className="h-2.5 w-2/3 rounded-full skeleton opacity-40" />
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground font-bold animate-pulse mt-3">{t("interactivePlay.aiChecking")}</p>
+      </div>
+    );
+  };
 
   // ─── Compact lesson content shown on the student's phone per phase (static, follows phase only) ──
   const renderLessonContentMobile = () => {
@@ -511,12 +555,37 @@ function PlayLessonContent() {
         return renderPassage(false);
       case 4:
         return renderPassage(true);
-      case 6:
+      case 6: {
         if (!sentences.length) return null;
+        // Mirror the tutor's key-sentence selection (ArticleDisplay phase 6) so both screens show the same subset.
+        const getText = (item: string | { sentences?: string }) => String(typeof item === 'object' ? item.sentences || '' : item || '');
+        const escapeRegExp = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const getWordCount = (txt: string) => txt.trim().split(/\s+/).filter(Boolean).length;
+        const kvWords = Array.from(new Set(
+          words
+            .map((w) => (typeof w === 'object' ? (w.vocabulary || w.word || w.text || '') : String(w)).toLowerCase().trim())
+            .filter((w) => w.length >= 3)
+        ));
+        const kvPatterns = kvWords.map((w) => ({ pattern: new RegExp(`\\b${escapeRegExp(w)}\\b`, 'i') }));
+        const limit = Math.min(5, Math.max(2, Math.ceil(sentences.length * 0.35)));
+        const keySentences = sentences
+          .map((item, index) => {
+            const txt = getText(item);
+            const matched = kvPatterns.filter(({ pattern }) => pattern.test(txt));
+            const wc = getWordCount(txt);
+            const bonus = wc >= 8 && wc <= 28 ? 1 : wc < 5 ? -1 : 0;
+            return { item, index, score: matched.length * 3 + matched.length / Math.max(wc, 1) + bonus };
+          })
+          .filter(({ score }) => score > 0)
+          .sort((a, b) => b.score - a.score || a.index - b.index)
+          .slice(0, limit)
+          .sort((a, b) => a.index - b.index)
+          .map(({ item }) => item);
+        const display = keySentences.length ? keySentences : sentences.slice(0, limit);
         return (
           <div className="bg-card rounded-2xl border border-border shadow-sm p-4 space-y-2">
             <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">ประโยคสำคัญ</p>
-            {sentences.map((s, i) => {
+            {display.map((s, i) => {
               const text = typeof s === 'object' ? s.sentences : s;
               return (
                 <div key={i} className="flex gap-2 items-start">
@@ -527,6 +596,7 @@ function PlayLessonContent() {
             })}
           </div>
         );
+      }
       default:
         return null;
     }
@@ -734,11 +804,7 @@ function PlayLessonContent() {
                   </div>
                 </div>
               ) : (hasAnswered || isSubmitting) ? (
-                <div className="bg-card rounded-2xl border border-border shadow-sm p-5 text-center">
-                  <div className="text-2xl mb-1">✅</div>
-                  <h2 className="font-black text-foreground">{t("interactivePlay.submittedDone")}</h2>
-                  <p className="text-muted-foreground text-sm mt-0.5">{t("interactivePlay.waitingAiScore")}</p>
-                </div>
+                renderAiSkeleton('sky')
               ) : (
                 <div className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden">
                   <div className="bg-gradient-to-r from-sky-500 to-blue-600 px-5 py-3">
@@ -747,10 +813,18 @@ function PlayLessonContent() {
                   <div className="p-5 space-y-3">
                     <p className="text-sm font-bold text-foreground leading-relaxed">{prompt}</p>
                     <div className="bg-sky-500/5 border border-sky-500/20 rounded-2xl p-3">
-                      <p className="text-[10px] font-black text-sky-600 dark:text-sky-400 uppercase tracking-widest mb-1.5">{t("interactivePlay.framesTitle")}</p>
+                      <p className="text-[10px] font-black text-sky-600 dark:text-sky-400 uppercase tracking-widest">{t("interactivePlay.framesTitle")}</p>
+                      <p className="text-[11px] text-muted-foreground mb-2 mt-0.5">{t("interactivePlay.framesHint")}</p>
                       <div className="flex flex-wrap gap-1.5">
                         {frames.map((f) => (
-                          <span key={f} className="text-xs bg-card border border-sky-500/20 rounded-full px-2.5 py-1 text-foreground">{f}</span>
+                          <button
+                            type="button"
+                            key={f}
+                            onClick={() => setWritingDraft((prev) => (prev ? prev.replace(/\s*$/, ' ') : '') + f.replace('…', '') + ' ')}
+                            className="text-xs bg-card border border-sky-500/30 rounded-full px-2.5 py-1 text-foreground active:scale-95 active:bg-sky-500/10 transition-all"
+                          >
+                            {f}
+                          </button>
                         ))}
                       </div>
                     </div>
@@ -790,7 +864,13 @@ function PlayLessonContent() {
         {/* ─── Step 12: Language Questions (phase 13) ─── */}
         {currentPhase === 13 && (
           <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
-            {languageAnswer ? (
+            {languageSkipped ? (
+              <div className="bg-card rounded-2xl border border-border shadow-sm p-5 text-center">
+                <div className="text-2xl mb-1">👌</div>
+                <h2 className="font-black text-foreground">{t("interactivePlay.languageSkipped")}</h2>
+                <p className="text-muted-foreground text-sm mt-0.5">{t("interactivePlay.waitingFriends")}</p>
+              </div>
+            ) : languageAnswer ? (
               <div className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden">
                 <div className="bg-gradient-to-r from-violet-500 to-indigo-600 px-5 py-3">
                   <span className="text-white text-xs font-black uppercase tracking-wider">🤖 {t("interactivePlay.languageAiTitle")}</span>
@@ -807,11 +887,7 @@ function PlayLessonContent() {
                 </div>
               </div>
             ) : (hasAnswered || isSubmitting) ? (
-              <div className="bg-card rounded-2xl border border-border shadow-sm p-5 text-center">
-                <div className="text-2xl mb-1">📨</div>
-                <h2 className="font-black text-foreground">{t("interactivePlay.answerSubmitted")}</h2>
-                <p className="text-muted-foreground text-sm mt-0.5">{t("interactivePlay.languageWaiting")}</p>
-              </div>
+              renderAiSkeleton('violet')
             ) : (
               <div className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden">
                 <div className="bg-gradient-to-r from-violet-500 to-indigo-600 px-5 py-3">
@@ -831,6 +907,12 @@ function PlayLessonContent() {
                     className="w-full bg-gradient-to-r from-violet-500 to-indigo-600 text-white font-black text-base py-4 rounded-2xl shadow-lg disabled:opacity-40 active:scale-95 transition-all"
                   >
                     {t("interactivePlay.languageSubmit")}
+                  </button>
+                  <button
+                    onClick={handleLanguageSkip}
+                    className="w-full border-2 border-border text-muted-foreground font-bold text-sm py-3 rounded-2xl bg-card active:scale-95 transition-all"
+                  >
+                    {t("interactivePlay.languageSkip")}
                   </button>
                 </div>
               </div>
@@ -862,9 +944,12 @@ function PlayLessonContent() {
               </div>
 
               {hasAnswered ? (
-                <div className="bg-emerald-500/10 border-2 border-emerald-500/30 rounded-2xl p-5 text-center">
-                  <div className="text-3xl mb-1">✅</div>
-                  <h3 className="font-black text-emerald-600 dark:text-emerald-400">{t("interactivePlay.reflectionDone")}</h3>
+                <div className="bg-emerald-500/10 border-2 border-emerald-500/30 rounded-2xl p-6 text-center">
+                  <div className="text-4xl mb-2">✅</div>
+                  <h3 className="font-black text-emerald-600 dark:text-emerald-400 text-lg">{t("interactivePlay.reflectionDone")}</h3>
+                  {reviewRating > 0 && (
+                    <p className="text-emerald-600/70 dark:text-emerald-400/70 text-sm mt-1">{'★'.repeat(reviewRating)} บันทึกรีวิวคุณครูแล้ว</p>
+                  )}
                 </div>
               ) : (
                 <div className="bg-card rounded-3xl border border-border shadow-lg p-5 space-y-4">
@@ -896,52 +981,42 @@ function PlayLessonContent() {
                       ))}
                     </div>
                   </div>
+
+                  {/* Tutor star review (optional, sent together with the reflection) */}
+                  <div className="border-t border-border pt-4">
+                    <p className="text-sm font-bold text-foreground">ให้คะแนนคุณครู <span className="text-muted-foreground font-normal text-xs">(ไม่บังคับ)</span></p>
+                    <p className="text-muted-foreground text-xs leading-relaxed mb-2">คะแนนนี้จะถูกนำไปคำนวณเรตติ้งเฉลี่ยจริงของคุณครู</p>
+                    <div className="grid grid-cols-5 gap-2 mb-3">
+                      {[1, 2, 3, 4, 5].map((value) => (
+                        <button
+                          key={value}
+                          type="button"
+                          onClick={() => setReviewRating(value)}
+                          aria-label={`ให้ ${value} ดาว`}
+                          className={`h-12 rounded-2xl border text-2xl transition-all active:scale-95 ${value <= reviewRating ? 'border-amber-400 bg-amber-400/15 text-amber-500' : 'border-border bg-muted/40 text-muted-foreground'}`}
+                        >
+                          ★
+                        </button>
+                      ))}
+                    </div>
+                    <textarea
+                      value={reviewComment}
+                      onChange={(event) => setReviewComment(event.target.value)}
+                      placeholder="เล่าความประทับใจหรือข้อเสนอแนะเพิ่มเติม"
+                      maxLength={500}
+                      className="min-h-20 w-full resize-y rounded-2xl border border-border bg-background p-3 text-sm font-medium text-foreground outline-none focus:border-amber-400"
+                    />
+                  </div>
+
                   <button
                     onClick={handleReflectionSubmit}
-                    disabled={!understanding || !effort}
+                    disabled={!understanding || !effort || isSubmitting}
                     className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-base py-4 rounded-2xl shadow-lg disabled:opacity-40 active:scale-95 transition-all"
                   >
-                    {t("interactivePlay.reflectionSubmit")}
+                    {isSubmitting ? 'กำลังส่ง...' : t("interactivePlay.reflectionSubmit")}
                   </button>
                 </div>
               )}
-
-              {/* Tutor star review */}
-              <div className="bg-card rounded-3xl border border-amber-500/30 shadow-lg p-5">
-                <p className="text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-2">Tutor Review</p>
-                <h4 className="font-black text-foreground text-base mb-1">ให้คะแนนคุณครู</h4>
-                <p className="text-muted-foreground text-xs leading-relaxed mb-4">
-                  คะแนนนี้จะถูกนำไปคำนวณเรตติ้งเฉลี่ยจริงของคุณครู
-                </p>
-                <div className="grid grid-cols-5 gap-2 mb-3">
-                  {[1, 2, 3, 4, 5].map((value) => (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() => setReviewRating(value)}
-                      aria-label={`ให้ ${value} ดาว`}
-                      className={`h-12 rounded-2xl border text-2xl transition-all active:scale-95 ${value <= reviewRating ? 'border-amber-400 bg-amber-400/15 text-amber-500' : 'border-border bg-muted/40 text-muted-foreground'}`}
-                    >
-                      ★
-                    </button>
-                  ))}
-                </div>
-                <textarea
-                  value={reviewComment}
-                  onChange={(event) => setReviewComment(event.target.value)}
-                  placeholder="เล่าความประทับใจหรือข้อเสนอแนะเพิ่มเติม"
-                  maxLength={500}
-                  className="min-h-24 w-full resize-y rounded-2xl border border-border bg-background p-3 text-sm font-medium text-foreground outline-none focus:border-amber-400"
-                />
-                <button
-                  type="button"
-                  onClick={submitTutorReview}
-                  disabled={reviewSubmitting || reviewRating === 0}
-                  className="mt-3 w-full rounded-2xl bg-amber-500 py-3.5 text-sm font-black text-white shadow-lg shadow-amber-500/20 transition-all active:scale-95 disabled:opacity-50"
-                >
-                  {reviewSubmitting ? 'กำลังบันทึก...' : reviewLoaded && reviewRating > 0 ? 'บันทึกรีวิว' : 'ส่งรีวิว'}
-                </button>
-              </div>
 
               <MobileLeaderboard participants={participants} studentId={studentId} />
             </div>

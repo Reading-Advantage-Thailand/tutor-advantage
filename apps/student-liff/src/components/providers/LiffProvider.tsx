@@ -71,7 +71,7 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
         timestamp: new Date().toISOString(),
         ...extra,
       };
-      console.error(`[LIFF-DEBUG] ${stage}:`, payload);
+      console.log(`[LIFF-DEBUG] ${stage}:`, payload);
       fetch("/api/debug/client-error", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

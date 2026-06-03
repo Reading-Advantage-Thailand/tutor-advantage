@@ -210,7 +210,7 @@ export default function TutorLobbyClient({
                 </span>
                 {articleData?.cefr_level && (
                   <span className="bg-indigo-500/80 backdrop-blur text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
-                    CEFR {articleData.cefr_level}
+                    CEFR {articleData.cefr_level === "A0" ? "A1" : articleData.cefr_level}
                   </span>
                 )}
               </div>

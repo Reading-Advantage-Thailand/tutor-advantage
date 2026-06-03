@@ -640,7 +640,7 @@ export const th = {
       period1: "คาบ 1 · เปิดบทเรียน & คำศัพท์",
       period2: "คาบ 2 · อ่านเชิงลึก & จับใจความ",
       period3: "คาบ 3 · ตอบโต้ & ฝึกฝน",
-      period4: "คาบ 4 · เขียน & สะท้อนคิด",
+      period4: "คาบ 4 · เขียน & สรุปการเรียนรู้และข้อคิดเห็น",
       // ── 13 Steps ──
       step1: "ก่อนอ่าน",
       step2: "คำศัพท์สำคัญ",
@@ -654,7 +654,7 @@ export const th = {
       step10: "ฝึกประโยค",
       step11: "เขียนแบบมีโครง",
       step12: "ถามภาษา",
-      step13: "สะท้อนบทเรียน",
+      step13: "สรุปการเรียนรู้และข้อคิดเห็น",
       wrapUp: "สรุปอันดับ",
       // ── Step 11 Guided Writing ──
       writingTitle: "เขียนแบบมีโครง (Guided Writing)",
@@ -667,9 +667,9 @@ export const th = {
       languageQuestionsHeading: "คำถามจากนักเรียน",
       languageNoQuestions: "ยังไม่มีคำถามเข้ามา",
       // ── Step 13 Lesson Reflection ──
-      reflectionTitle: "สะท้อนบทเรียน (Reflection)",
+      reflectionTitle: "สรุปการเรียนรู้และข้อคิดเห็น (Reflection)",
       reflectionPrompt: "ให้นักเรียนประเมินความเข้าใจและความพยายามของตนเอง",
-      reflectionSubmitted: "ส่งแบบสะท้อนแล้ว",
+      reflectionSubmitted: "ส่งแบบสรุปการเรียนรู้และข้อคิดเห็นแล้ว",
     },
   },
 } as const;
