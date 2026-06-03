@@ -24,7 +24,6 @@ export function AnimatedCounter({
   fractionDigits = 0,
 }: AnimatedCounterProps) {
   const factor = 10 ** fractionDigits;
-  const roundTo = (n: number) => Math.round(n * factor) / factor;
   const [displayValue, setDisplayValue] = useState(0);
   const startTime = useRef<number | null>(null);
   const rafId = useRef<number | null>(null);
@@ -61,7 +60,7 @@ export function AnimatedCounter({
       const eased = 1 - Math.pow(1 - progress, 3);
       const current = startValue + (endValue - startValue) * eased;
 
-      setDisplayValue(roundTo(current));
+      setDisplayValue(Math.round(current * factor) / factor);
 
       if (progress < 1) {
         rafId.current = requestAnimationFrame(animate);
@@ -79,7 +78,7 @@ export function AnimatedCounter({
         cancelAnimationFrame(rafId.current);
       }
     };
-  }, [value, duration]);
+  }, [value, duration, factor]);
 
   const formattedValue = formatter
     ? formatter(displayValue)

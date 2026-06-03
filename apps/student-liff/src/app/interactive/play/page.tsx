@@ -441,7 +441,11 @@ function PlayLessonContent() {
 
   // ─── Compact lesson content shown on the student's phone per phase (static, follows phase only) ──
   const renderLessonContentMobile = () => {
-    const ad = articleData as any;
+    const ad = articleData as {
+      passage?: string;
+      translated_summary?: { th?: string[] };
+      summary?: string | { th?: string[] };
+    } | null;
     const words = articleData?.words || [];
     const sentences = articleData?.sentences || [];
     const passage: string = ad?.passage || '';
