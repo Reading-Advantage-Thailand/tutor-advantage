@@ -2,7 +2,7 @@ import { Server, Socket } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 import { lessonSessionService } from "../services/LessonSessionService";
-import { evaluateShortAnswer } from "../services/AIEvaluator";
+import { evaluateShortAnswer, evaluateWriting, answerLanguageQuestion } from "../services/AIEvaluator";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
 import * as dbWriter from "../services/SessionDBWriter";
 import { LineNotificationService } from "../services/LineNotificationService";
@@ -263,8 +263,8 @@ export const setupLessonSocket = (io: Server) => {
         });
         console.log(`Session ${sessionId} changed to phase ${phase}`);
 
-        // If changing to phase 14 (Finish/Leaderboard), mark ACTIVE DB ROUND as FINISHED
-        if (phase === 14) {
+        // If changing to phase 15 (Wrap-up Leaderboard), mark ACTIVE DB ROUND as FINISHED
+        if (phase === 15) {
           dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
 
           // Non-blocking badge unlock check for the tutor
@@ -301,12 +301,13 @@ export const setupLessonSocket = (io: Server) => {
 
     // Student submits answer
     socket.on("submit_answer", async ({ sessionId, studentId, answer, question, expectedAnswer }) => {
-      // If it's a short answer, evaluate it
+      // AI-evaluated phases: 8=Guided Response (short answer), 12=Guided Writing
       let evaluatedAnswer = answer;
       const session = lessonSessionService.getSession(sessionId);
-      if (session && session.currentPhase === 9) {
-         // Short Answer (phase 9, post-renumber): evaluate with AI
-         const aiResult = await evaluateShortAnswer(question, expectedAnswer, answer);
+      if (session && (session.currentPhase === 8 || session.currentPhase === 12)) {
+         const aiResult = session.currentPhase === 12
+           ? await evaluateWriting(question, answer)
+           : await evaluateShortAnswer(question, expectedAnswer, answer);
          evaluatedAnswer = {
            text: answer,
            aiScore: aiResult.score,
@@ -314,6 +315,11 @@ export const setupLessonSocket = (io: Server) => {
          };
          // send personal result immediately back to student
          socket.emit("ai_evaluation_result", evaluatedAnswer);
+      } else if (session && session.currentPhase === 13) {
+         // Language Questions (Step 12): teacher-mediated AI answer
+         const ai = await answerLanguageQuestion(answer);
+         evaluatedAnswer = { text: answer, languageAnswer: ai.answer };
+         socket.emit("language_answer_result", { question: answer, answer: ai.answer });
       }
 
       const result = lessonSessionService.submitAnswer(sessionId, studentId, evaluatedAnswer);
@@ -321,11 +327,11 @@ export const setupLessonSocket = (io: Server) => {
         // Update participant's total score
         const participant = result.session.participants.get(studentId);
         if (participant) {
-          if (result.session.currentPhase === 9) {
-            // Short Answer (post-renumber phase 9) with AI score
+          if (result.session.currentPhase === 8 || result.session.currentPhase === 12) {
+            // Guided Response (8) / Guided Writing (12) with AI score
             participant.score = (participant.score || 0) + (evaluatedAnswer.aiScore || 0);
 
-            // --- PERSIST DB ANSWER (SHORT ANSWER WITH AI) ---
+            // --- PERSIST DB ANSWER (AI-SCORED) ---
             dbWriter.persistAnswer({
               sessionId: result.session.currentDbSessionId || sessionId,
               studentId,
@@ -338,27 +344,40 @@ export const setupLessonSocket = (io: Server) => {
               correctAnswer: expectedAnswer
             });
           } else if (result.session.currentPhase === 13) {
-            // Read-Aloud (post-renumber phase 13): choral reading, award participation point
+            // Language Questions (Step 12): participation point, store question + AI answer
             participant.score = (participant.score || 0) + 1;
 
             dbWriter.persistAnswer({
               sessionId: result.session.currentDbSessionId || sessionId,
               studentId,
               phase: result.session.currentPhase,
-              answerText: "อ่านออกเสียงแล้ว",
+              answerText: String(answer),
               isCorrect: true,
               score: 1,
-              questionText: question || "Read aloud",
-              correctAnswer: expectedAnswer
+              aiFeedback: evaluatedAnswer.languageAnswer,
+              questionText: "Language question",
+              correctAnswer: ""
+            });
+          } else if (result.session.currentPhase === 14) {
+            // Lesson Reflection (Step 13): store ratings, no competitive score
+            dbWriter.persistAnswer({
+              sessionId: result.session.currentDbSessionId || sessionId,
+              studentId,
+              phase: result.session.currentPhase,
+              answerText: String(answer),
+              isCorrect: true,
+              score: 0,
+              questionText: "Lesson reflection",
+              correctAnswer: ""
             });
           } else {
             let correctLabel = "";
             let resolvedAnswerText = String(answer);
             const choiceIdx = String(answer).trim().toUpperCase().charCodeAt(0) - 65; // A=0, B=1, C=2, D=3
 
-            if (result.session.currentPhase === 8) {
-              // MCQ (post-renumber phase 8)
-              const idx = result.session.phaseSelectedIndices?.[8] || 0;
+            if (result.session.currentPhase === 7) {
+              // Comprehension Check / MCQ (Step 7)
+              const idx = result.session.phaseSelectedIndices?.[7] || 0;
               const mcqQuestion = result.session.articleData?.multipleChoiceQuestions?.[idx];
               if (mcqQuestion) {
                 const rawAnswer = mcqQuestion.answer || '';
@@ -404,9 +423,10 @@ export const setupLessonSocket = (io: Server) => {
                   resolvedAnswerText = shuffledOptions[choiceIdx] || String(answer);
                 }
               }
-            } else if (result.session.currentPhase === 10) {
+            } else if (result.session.currentPhase === 9) {
+              // Vocabulary Practice (Step 9)
               const words = result.session.articleData?.words || [];
-              const idx = result.session.phaseSelectedIndices?.[10] || 0;
+              const idx = result.session.phaseSelectedIndices?.[9] || 0;
               const targetWord = words[idx] || words[0];
               if (targetWord) {
                 const correctTranslation = targetWord.definition?.th || targetWord.translation || "ความหมายที่ถูกต้อง";
@@ -445,9 +465,10 @@ export const setupLessonSocket = (io: Server) => {
                   resolvedAnswerText = shuffledOptions[choiceIdx];
                 }
               }
-            } else if (result.session.currentPhase === 11) {
+            } else if (result.session.currentPhase === 10) {
+              // Sentence Practice — fill in the blank (Step 10a)
               const sentences = result.session.articleData?.sentences || [];
-              const idx = result.session.phaseSelectedIndices?.[11] || 0;
+              const idx = result.session.phaseSelectedIndices?.[10] || 0;
               const targetSentence = typeof sentences[idx] === 'object' ? sentences[idx].sentences : sentences[idx];
               if (targetSentence) {
                 const words = String(targetSentence).split(' ');
@@ -469,9 +490,10 @@ export const setupLessonSocket = (io: Server) => {
                   resolvedAnswerText = shuffledOptions[choiceIdx];
                 }
               }
-            } else if (result.session.currentPhase === 12) {
+            } else if (result.session.currentPhase === 11) {
+              // Sentence Practice — put words in order (Step 10b)
               const sentences = result.session.articleData?.sentences || [];
-              const idx = result.session.phaseSelectedIndices?.[12] || 0;
+              const idx = result.session.phaseSelectedIndices?.[11] || 0;
               const targetSentence = typeof sentences[idx] === 'object' ? sentences[idx].sentences : sentences[idx];
               if (targetSentence) {
                 const words = String(targetSentence).split(' ').filter((w: any) => String(w).trim().length > 0);
@@ -553,7 +575,7 @@ export const setupLessonSocket = (io: Server) => {
       }
     });
 
-    // Student toggles a sentence flag during Phase 7 (Translation) to ask the tutor about pronunciation
+    // Student toggles a sentence flag during Step 3 (Read the Article) to ask the tutor about pronunciation
     socket.on("flag_sentence", ({ sessionId, studentId, sentenceIndex }) => {
       const result = lessonSessionService.toggleSentenceFlag(sessionId, studentId, sentenceIndex);
       if (result) {

@@ -87,6 +87,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   const [nudgeMessage, setNudgeMessage] = useState<string | null>(null);
   const [kicked, setKicked] = useState<string | null>(null);
   const [flagCounts, setFlagCounts] = useState<Record<number, number>>({});
+  const [languageAnswer, setLanguageAnswer] = useState<{ question: string; answer: string } | null>(null);
 
   const socketRef = useRef<Socket | null>(null);
 
@@ -159,6 +160,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
       setHasAnswered(false);
       setIsEveryoneReady(false);
       setAiFeedback(null);
+      setLanguageAnswer(null);
       // Sentence flags reset at the start of a fresh instructional cycle
       if (data.phase === 1) setFlagCounts({});
     });
@@ -176,6 +178,10 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
         score: data.aiScore,
         feedback: data.aiFeedback
       });
+    });
+
+    newSocket.on('language_answer_result', (data: { question: string; answer: string }) => {
+      setLanguageAnswer(data);
     });
 
     return () => {
@@ -227,6 +233,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     nudgeMessage,
     kicked,
     flagCounts,
+    languageAnswer,
     submitAnswer,
     toggleReady,
     flagSentence

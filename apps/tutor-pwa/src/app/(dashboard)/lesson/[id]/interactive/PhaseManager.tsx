@@ -217,7 +217,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     setIsChangingPhase(false);
   }, [currentPhase]);
 
-  const isInteractivePhase = [8, 9, 10, 11, 12, 13].includes(currentPhase);
+  const isInteractivePhase = [7, 8, 9, 10, 11, 12, 13, 14].includes(currentPhase);
   const totalParticipants = participants.length;
   
   // Can proceed if everyone answered OR if results are already showing OR if no participants
@@ -241,7 +241,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     if (!isChangingPhase && canProceedDelayed) {
       setIsChangingPhase(true);
       playSound('phaseChange');
-      if (currentPhase < 14) {
+      if (currentPhase < 15) {
         changePhase(currentPhase + 1);
       } else {
         // Safely loop back to lobby (Phase 0). 
@@ -312,7 +312,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   // Confetti effect when results are ready
   React.useEffect(() => {
-    if ([8, 10, 11, 12].includes(currentPhase) && allAnsweredData.length > 0) {
+    if ([7, 9, 10, 11].includes(currentPhase) && allAnsweredData.length > 0) {
       confetti({
         particleCount: 150,
         spread: 80,
@@ -466,7 +466,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   };
 
   const renderMCQ = () => {
-    const idx = sessionData?.phaseSelectedIndices?.[8] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[7] || 0;
     const mcqQuestion = articleData?.multipleChoiceQuestions?.[idx];
     const rawAnswer = mcqQuestion?.answer || '';
     const optionsData = mcqQuestion?.options || {};
@@ -518,7 +518,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const words = articleData?.words || [];
     if (words.length < 4) return <div className="flex-1 flex items-center justify-center text-xl">{t("lesson.interactive.notEnoughVocab")}</div>;
 
-    const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[9] || 0;
     const targetWord = words[idx] || words[0];
     const question = `${t("lesson.interactive.vocabQuestionPrefix")} "${targetWord.vocabulary || targetWord.word || targetWord.text}" ${t("lesson.interactive.vocabQuestionSuffix")}`;
     
@@ -564,7 +564,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const sentences = articleData?.sentences || [];
     if (sentences.length < 1) return <div className="flex-1 flex items-center justify-center text-xl">{t("lesson.interactive.notEnoughSentences")}</div>;
 
-    const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
     const targetSentence = typeof sentences[idx] === 'object' ? sentences[idx].sentences : sentences[idx];
     const words = String(targetSentence).split(' ');
     if (words.length < 3) return <div className="flex-1 flex items-center justify-center text-xl">{t("lesson.interactive.sentenceTooShort")}</div>;
@@ -597,7 +597,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const sentences = articleData?.sentences || [];
     if (sentences.length < 1) return <div className="flex-1 flex items-center justify-center text-xl">{t("lesson.interactive.notEnoughSentences")}</div>;
 
-    const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
     const targetSentence = typeof sentences[idx] === 'object' ? sentences[idx].sentences : sentences[idx];
     const words = String(targetSentence).split(' ').filter((w: any) => String(w).trim().length > 0);
     // Shuffle the sentence words deterministically based on session
@@ -940,70 +940,135 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     );
   };
 
-  const renderReadAloud = () => {
-    const sentences = articleData?.sentences || [];
-    const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
-    const target = sentences[idx];
-    const sentenceText = typeof target === 'object' ? target?.sentences : target;
-    const totalParticipants = participants.length;
-    const doneCount = totalAnswered;
-    const donePct = totalParticipants > 0 ? (doneCount / totalParticipants) * 100 : 0;
-
+  // Shared progress strip for the Period-4 facilitation phases
+  const renderTutorProgress = (accent: string) => {
+    const total = participants.length;
+    const pct = total > 0 ? (totalAnswered / total) * 100 : 0;
     return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-6 px-4">
-        <div className="flex items-center gap-3">
-          <span className="bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Phase 13</span>
-          <span className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs font-bold px-3 py-1 rounded-full border border-emerald-500/20">Read Aloud Together</span>
-        </div>
-        <p className="text-muted-foreground text-sm text-center max-w-xl">
-          {t("lesson.interactive.readAloudTutorPrompt")}
-        </p>
-        <div className="bg-card border-t-4 border-emerald-500 rounded-3xl shadow-xl p-12 max-w-3xl w-full text-center">
-          <p className="text-4xl font-black text-foreground leading-snug" style={{ fontFamily: 'Georgia, serif' }}>
-            {sentenceText || t("lesson.interactive.readAloudNoSentence")}
-          </p>
-        </div>
-        <div className="w-full max-w-md flex flex-col items-center gap-2">
-          <p className="text-sm font-semibold text-foreground">
-            {doneCount} / {totalParticipants} {t("lesson.interactive.readAloudDoneSuffix")}
-          </p>
-          <div className="w-full h-2.5 rounded-full bg-muted overflow-hidden">
-            <div className="h-full rounded-full bg-emerald-500 transition-all duration-700" style={{ width: `${donePct}%` }} />
-          </div>
+      <div className="w-full max-w-md flex flex-col items-center gap-2">
+        <p className="text-sm font-semibold text-foreground">{totalAnswered} / {total} {t("lesson.interactive.answersSubmitted")}</p>
+        <div className="w-full h-2.5 rounded-full bg-muted overflow-hidden">
+          <div className={`h-full rounded-full ${accent} transition-all duration-700`} style={{ width: `${pct}%` }} />
         </div>
       </div>
     );
   };
 
+  // ── Step 11: Guided Writing (AI-scored) ──
+  const renderWriting = () => {
+    const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
+    const prompt = articleData?.shortAnswerQuestions?.[idx]?.question || t("lesson.interactive.writingPromptLabel");
+
+    if (allAnsweredData.length > 0) {
+      const sum = allAnsweredData.reduce((acc, a) => acc + (a.answer?.aiScore || 0), 0);
+      const avg = allAnsweredData.length > 0 ? sum / allAnsweredData.length : 0;
+      return (
+        <div className="flex-1 flex flex-col items-center justify-center gap-5 px-4">
+          <span className="bg-sky-500/10 text-sky-700 dark:text-sky-400 text-xs font-bold px-3 py-1 rounded-full border border-sky-500/20">{t("lesson.interactive.writingResults")}</span>
+          <div className="bg-card border border-border rounded-3xl shadow-xl p-10 text-center">
+            <p className="text-6xl font-black text-sky-600 dark:text-sky-400">{avg.toFixed(1)}<span className="text-2xl text-muted-foreground"> / 5</span></p>
+            <p className="text-muted-foreground text-sm mt-2">{t("lesson.interactive.averageScore")} · {allAnsweredData.length} {t("lesson.interactive.peopleUnit")}</p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex-1 flex gap-5 overflow-hidden min-h-0">
+        <div className="flex-1 flex flex-col items-center justify-center gap-5 min-w-0">
+          <div className="w-full max-w-3xl rounded-3xl overflow-hidden shadow-xl border border-sky-500/20">
+            <div className="bg-gradient-to-r from-sky-500 to-blue-600 px-8 py-5">
+              <span className="text-white/80 text-xs font-bold uppercase tracking-widest">{t("lesson.interactive.writingTitle")}</span>
+              <h2 className="text-2xl font-black text-white leading-snug mt-2">{prompt}</h2>
+            </div>
+          </div>
+          <p className="text-muted-foreground text-sm text-center max-w-xl">{t("lesson.interactive.writingPlannerModel")}</p>
+          {renderTutorProgress('bg-sky-500')}
+        </div>
+        <LiveLeaderboard participants={participants} />
+      </div>
+    );
+  };
+
+  // ── Step 12: Language Questions (teacher-mediated AI) ──
+  const renderLanguageQuestions = () => {
+    const questions = allAnsweredData
+      .map((a) => (typeof a.answer === 'object' ? a.answer?.text : a.answer))
+      .filter(Boolean);
+    return (
+      <div className="flex-1 flex gap-5 overflow-hidden min-h-0">
+        <div className="flex-1 flex flex-col items-center justify-center gap-5 min-w-0">
+          <div className="text-center">
+            <span className="bg-violet-500/10 text-violet-700 dark:text-violet-400 text-xs font-bold px-3 py-1 rounded-full border border-violet-500/20">{t("lesson.interactive.languageTitle")}</span>
+            <p className="text-muted-foreground text-sm mt-3 max-w-xl">{t("lesson.interactive.languagePrompt")}</p>
+          </div>
+          <div className="w-full max-w-2xl bg-card border border-border rounded-2xl p-5">
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">{t("lesson.interactive.languageQuestionsHeading")}</p>
+            {questions.length > 0 ? (
+              <ul className="space-y-2 max-h-[40vh] overflow-y-auto">
+                {questions.map((q, i) => (
+                  <li key={i} className="text-foreground text-sm bg-muted/50 rounded-xl px-4 py-2.5">❓ {q}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-muted-foreground text-sm italic">{t("lesson.interactive.languageNoQuestions")}</p>
+            )}
+          </div>
+          {renderTutorProgress('bg-violet-500')}
+        </div>
+        <LiveLeaderboard participants={participants} />
+      </div>
+    );
+  };
+
+  // ── Step 13: Lesson Reflection ──
+  const renderReflection = () => (
+    <div className="flex-1 flex flex-col items-center justify-center gap-6 px-4">
+      <span className="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-xs font-bold px-3 py-1 rounded-full border border-amber-500/20">{t("lesson.interactive.reflectionTitle")}</span>
+      <div className="bg-card border-t-4 border-amber-500 rounded-3xl shadow-xl p-12 max-w-2xl w-full text-center">
+        <div className="text-5xl mb-4">📝</div>
+        <p className="text-xl font-bold text-foreground leading-snug">{t("lesson.interactive.reflectionPrompt")}</p>
+        {allAnsweredData.length > 0 && (
+          <p className="text-emerald-600 dark:text-emerald-400 font-semibold mt-4">{allAnsweredData.length} {t("lesson.interactive.reflectionSubmitted")}</p>
+        )}
+      </div>
+      {renderTutorProgress('bg-amber-500')}
+    </div>
+  );
+
   const renderPhaseContent = () => {
     if (currentPhase === 0 && participants.length === 0) return renderLobby();
-    if (currentPhase === 8) return renderMCQ();
-    if (currentPhase === 10) return renderVocabKahoot();
-    if (currentPhase === 11) return renderSentenceFlashcardKahoot();
-    if (currentPhase === 12) return renderSentenceOrderingKahoot();
-    if (currentPhase === 9) return renderShortAnswer();
-    if (currentPhase === 13) return renderReadAloud();
-    if (currentPhase === 14) return renderLeaderboard();
+    if (currentPhase === 7) return renderMCQ();            // Comprehension Check
+    if (currentPhase === 8) return renderShortAnswer();    // Guided Response
+    if (currentPhase === 9) return renderVocabKahoot();    // Vocabulary Practice
+    if (currentPhase === 10) return renderSentenceFlashcardKahoot(); // Sentence Practice (fill)
+    if (currentPhase === 11) return renderSentenceOrderingKahoot();  // Sentence Practice (order)
+    if (currentPhase === 12) return renderWriting();       // Guided Writing
+    if (currentPhase === 13) return renderLanguageQuestions(); // Language Questions
+    if (currentPhase === 14) return renderReflection();    // Lesson Reflection
+    if (currentPhase === 15) return renderLeaderboard();   // Wrap-up
 
-    // Default presentation for phases 1-7 (incl. Translation = phase 7)
+    // Presentation phases 1-6 (Launch, Vocab, Read+audio, Collect Vocab, Deep Reading, Collect Sentences)
     return renderPresentation();
   };
 
   const phaseGroups = [
-    { label: 'Intro', phases: [1, 2], color: 'bg-indigo-500', lightColor: 'bg-indigo-100', textColor: 'text-indigo-700' },
-    { label: 'Reading', phases: [3, 4, 5, 6], color: 'bg-blue-500', lightColor: 'bg-blue-100', textColor: 'text-blue-700' },
-    { label: 'Pronunciation', phases: [7], color: 'bg-orange-500', lightColor: 'bg-orange-100', textColor: 'text-orange-700' },
-    { label: 'Comprehension', phases: [8, 9], color: 'bg-rose-500', lightColor: 'bg-rose-100', textColor: 'text-rose-700' },
-    { label: 'Games', phases: [10, 11, 12], color: 'bg-purple-500', lightColor: 'bg-purple-100', textColor: 'text-purple-700' },
-    { label: 'Recap', phases: [13], color: 'bg-emerald-500', lightColor: 'bg-emerald-100', textColor: 'text-emerald-700' },
-    { label: 'Wrap-up', phases: [14], color: 'bg-amber-500', lightColor: 'bg-amber-100', textColor: 'text-amber-700' },
+    { label: t("lesson.interactive.period1"), phases: [1, 2, 3, 4], color: 'bg-indigo-500', lightColor: 'bg-indigo-100', textColor: 'text-indigo-700' },
+    { label: t("lesson.interactive.period2"), phases: [5, 6, 7], color: 'bg-blue-500', lightColor: 'bg-blue-100', textColor: 'text-blue-700' },
+    { label: t("lesson.interactive.period3"), phases: [8, 9, 10, 11], color: 'bg-purple-500', lightColor: 'bg-purple-100', textColor: 'text-purple-700' },
+    { label: t("lesson.interactive.period4"), phases: [12, 13, 14], color: 'bg-amber-500', lightColor: 'bg-amber-100', textColor: 'text-amber-700' },
+    { label: t("lesson.interactive.wrapUp"), phases: [15], color: 'bg-emerald-500', lightColor: 'bg-emerald-100', textColor: 'text-emerald-700' },
   ];
 
+  // phase 10 & 11 are both Step 10 (Sentence Practice); steps 11/12/13 live at phases 12/13/14
   const phaseNames: Record<number, string> = {
-    0: 'Lobby', 1: 'Intro', 2: 'Vocab Preview', 3: 'First Reading', 4: 'Vocab Focus',
-    5: 'Deep Reading', 6: 'Key Sentences', 7: 'Translation', 8: 'MCQ Quiz',
-    9: 'Short Answer', 10: 'Vocab Kahoot', 11: 'Sentence Fill', 12: 'Sentence Order',
-    13: 'Read-Aloud', 14: 'Leaderboard',
+    0: 'Lobby',
+    1: t("lesson.interactive.step1"), 2: t("lesson.interactive.step2"), 3: t("lesson.interactive.step3"),
+    4: t("lesson.interactive.step4"), 5: t("lesson.interactive.step5"), 6: t("lesson.interactive.step6"),
+    7: t("lesson.interactive.step7"), 8: t("lesson.interactive.step8"), 9: t("lesson.interactive.step9"),
+    10: t("lesson.interactive.step10"), 11: t("lesson.interactive.step10"),
+    12: t("lesson.interactive.step11"), 13: t("lesson.interactive.step12"), 14: t("lesson.interactive.step13"),
+    15: t("lesson.interactive.wrapUp"),
   };
 
   const renderPhaseProgressBar = () => {
@@ -1015,16 +1080,16 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <span className={`text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-full ${currentGroup?.lightColor || 'bg-muted'} ${currentGroup?.textColor || 'text-muted-foreground'}`}>
-              Phase {currentPhase}
+              {currentGroup?.label || `Phase ${currentPhase}`}
             </span>
             <span className="font-bold text-foreground text-sm">{phaseNames[currentPhase] || `Phase ${currentPhase}`}</span>
           </div>
-          <span className="text-xs text-muted-foreground font-medium">{currentPhase} / 14</span>
+          <span className="text-xs text-muted-foreground font-medium">{currentPhase} / 15</span>
         </div>
 
         {/* Phase dots */}
         <div className="flex items-center gap-1">
-          {Array.from({ length: 14 }, (_, i) => i + 1).map((p) => {
+          {Array.from({ length: 15 }, (_, i) => i + 1).map((p) => {
             const group = phaseGroups.find(g => g.phases.includes(p));
             const isPast = p < currentPhase;
             const isCurrent = p === currentPhase;
@@ -1121,7 +1186,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 {t("lesson.interactive.previous")}
               </button>
               <button 
-                onClick={() => changePhase(Math.min(15, currentPhase + 1))}
+                onClick={() => changePhase(Math.min(16, currentPhase + 1))}
                 className="px-3 py-1.5 bg-muted text-muted-foreground text-sm font-semibold rounded-lg hover:bg-accent transition-colors"
               >
                 {t("lesson.interactive.skipPhase")}
@@ -1156,7 +1221,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             </>
           ) : !canProceedDelayed ? (
             t("lesson.interactive.waitingAnswers")
-          ) : currentPhase === 14 ? (
+          ) : currentPhase === 15 ? (
             <>
               <span className="flex items-center gap-1">{t("lesson.interactive.startNewRound")} <kbd className="hidden md:inline-flex bg-primary-foreground/20 text-primary-foreground text-xs px-2 py-0.5 rounded ml-2 shadow-sm font-mono">→</kbd></span>
               <ChevronRight size={20} />

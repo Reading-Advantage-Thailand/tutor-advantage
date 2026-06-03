@@ -99,10 +99,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     }
   };
 
-  // Auto-scroll active sentence into view in Phase 7 (Translation)
+  // Auto-scroll active sentence into view in Step 3 (Read the Article)
   useEffect(() => {
-    if (phase !== 7 || activeIdx < 0) return;
-    const el = document.getElementById(`p7-sentence-${activeIdx}`);
+    if (phase !== 3 || activeIdx < 0) return;
+    const el = document.getElementById(`read-sentence-${activeIdx}`);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [activeIdx, phase]);
 
@@ -166,7 +166,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   // Auto-translate sentences when no Thai translation available
   useEffect(() => {
-    if (!articleData || phase !== 7) return;
+    if (!articleData || phase !== 3) return;
     const hasThai = (articleData.translated_passage?.th?.length ?? 0) > 0;
     if (hasThai || sentences.length === 0) return;
     const texts = sentences.map((s: any) =>
@@ -239,8 +239,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               <p className="text-white font-black text-xl">{sentences.length}</p>
             </div>
             <div className="bg-black/40 backdrop-blur rounded-xl px-3 py-2 text-center">
-              <p className="text-white/60 text-[10px] uppercase tracking-wider">Phase</p>
-              <p className="text-white font-black text-xl">1 / 14</p>
+              <p className="text-white/60 text-[10px] uppercase tracking-wider">Step</p>
+              <p className="text-white font-black text-xl">1 / 13</p>
             </div>
           </div>
         </div>
@@ -249,8 +249,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         <div className="flex-1 flex flex-col justify-center gap-5">
           {/* Badge row */}
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="bg-indigo-500 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">Phase 1</span>
-            <span className="bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-xs font-bold px-3 py-1 rounded-full border border-indigo-500/20">Introduction</span>
+            <span className="bg-indigo-500 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">{t("lesson.interactive.step1")}</span>
+            <span className="bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-xs font-bold px-3 py-1 rounded-full border border-indigo-500/20">{t("lesson.interactive.period1")}</span>
           </div>
 
           {/* Title */}
@@ -440,113 +440,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     );
   }
 
-  /* ─── Phase 3: First Reading ─────────────────────────────── */
-  if (phase === 3) {
-    const wordCount = articleData.passage
-      ? articleData.passage.split(/\s+/).length
-      : 0;
-    const readingTime = Math.max(1, Math.round(wordCount / 180));
-
-    return (
-      <div className="flex-1 flex flex-col items-center py-8 px-6 w-full animate-in fade-in duration-500">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-8 w-full max-w-5xl">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                Phase 3
-              </span>
-              <span className="bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-bold px-3 py-1 rounded-full border border-blue-500/20">
-                First Reading
-              </span>
-              {articleData.cefr_level && (
-                <span className="bg-muted text-muted-foreground text-xs font-bold px-3 py-1 rounded-full">
-                  CEFR {articleData.cefr_level}
-                </span>
-              )}
-            </div>
-            <h2 className="text-3xl font-black text-foreground">
-              {articleData.title}
-            </h2>
-          </div>
-          <div className="flex gap-3">
-            <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl px-4 py-3 text-center">
-              <p className="text-blue-700 dark:text-blue-300 font-black text-xl">{wordCount}</p>
-              <p className="text-blue-500 dark:text-blue-400 text-xs">words</p>
-            </div>
-            <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl px-4 py-3 text-center">
-              <p className="text-blue-700 dark:text-blue-300 font-black text-xl">
-                ~{readingTime}m
-              </p>
-              <p className="text-blue-500 dark:text-blue-400 text-xs">reading</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Article body */}
-        <div className="w-full max-w-5xl grid grid-cols-12 gap-6">
-          <div className="col-span-12 md:col-span-8">
-            <div className="bg-card rounded-2xl shadow-xl border-t-4 border-blue-500 overflow-hidden">
-              {/* Magazine-style article image header */}
-              {articleImageUrl && (
-                <div className="relative h-40 overflow-hidden">
-                  <img
-                    src={articleImageUrl}
-                    alt={articleData.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = 'none'; }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40" />
-                  <div className="absolute bottom-3 left-4">
-                    <span className="text-white/80 text-xs font-semibold bg-black/30 backdrop-blur rounded-full px-2 py-0.5">
-                      📷 Article Image
-                    </span>
-                  </div>
-                </div>
-              )}
-              <div className="p-10">
-                <p
-                  className="text-foreground text-xl leading-[2.2] font-medium"
-                  style={{ fontFamily: "Georgia, serif" }}
-                >
-                  {articleData.passage}
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="col-span-12 md:col-span-4 space-y-4">
-            <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-5">
-              <h4 className="font-bold text-blue-900 dark:text-blue-200 text-sm mb-3 flex items-center gap-2">
-                <span>Guide</span> Tutor Guide
-              </h4>
-              <ul className="text-blue-800 dark:text-blue-300 text-xs space-y-2">
-                <li className="flex gap-2">
-                  <span>1.</span> {t("lesson.interactive.phase3SilentRead1")}
-                </li>
-                <li className="flex gap-2">
-                  <span>2.</span> {t("lesson.interactive.phase3SilentRead2")}
-                </li>
-                <li className="flex gap-2">
-                  <span>3.</span> {t("lesson.interactive.phase3SilentRead3")}
-                </li>
-                <li className="flex gap-2">
-                  <span>4.</span> {t("lesson.interactive.phase3SilentRead4")}
-                </li>
-              </ul>
-            </div>
-            <div className="bg-muted border border-border rounded-2xl p-5">
-              <h4 className="font-bold text-foreground text-sm mb-2">
-                Silent Reading Mode
-              </h4>
-              <p className="text-muted-foreground text-xs">
-                {t("lesson.interactive.phase3SilentReadingNote")}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  /* ─── Step 3 (Read the Article) is rendered by the audio reader block below ─── */
 
   /* ─── Phase 4: Vocabulary Focus ──────────────────────────── */
   if (phase === 4) {
@@ -925,8 +819,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     );
   }
 
-  /* ─── Phase 7: Translation + Audio Player + Sentence Flag ───────────────── */
-  if (phase === 7) {
+  /* ─── Step 3: Read the Article + Audio Player + Sentence Flag ───────────────── */
+  if (phase === 3) {
     const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
     const thaiSentences: string[] =
       (articleData.translated_passage?.th?.length ?? 0) > 0
@@ -986,10 +880,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           <div className="max-w-3xl mx-auto mb-8">
             <div className="flex items-center gap-3 mb-4">
               <span className="bg-orange-500 text-white text-sm font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow">
-                Phase 7
+                {t("lesson.interactive.step3")}
               </span>
               <span className="bg-card text-orange-600 dark:text-orange-400 text-sm font-bold px-4 py-1.5 rounded-full border-2 border-orange-500/30">
-                Translation
+                {t("lesson.interactive.period1")}
               </span>
             </div>
             <h2 className="text-3xl font-black text-foreground mb-1">{articleData.title}</h2>
@@ -1012,7 +906,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                       const isFlagged = flagCount > 0;
                       return (
                         <span
-                          id={`p7-sentence-${idx}`}
+                          id={`read-sentence-${idx}`}
                           key={idx}
                           onClick={() => seekToSentence(idx)}
                           className={`cursor-pointer rounded-lg px-0.5 transition-all duration-200 ${

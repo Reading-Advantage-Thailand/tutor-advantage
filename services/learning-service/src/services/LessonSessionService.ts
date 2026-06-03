@@ -25,7 +25,7 @@ export interface LessonSession {
   participants: Map<string, SessionParticipant>;
   status: 'LOBBY' | 'ACTIVE' | 'FINISHED';
   phaseSelectedIndices?: Record<number, number>;
-  // Phase 7 (Translation) Sentence Flags: sentenceIndex -> set of studentIds who flagged it
+  // Step 3 (Read the Article) Sentence Flags: sentenceIndex -> set of studentIds who flagged it
   sentenceFlags?: Map<number, Set<string>>;
   currentDbSessionId?: string; // Track active DB ID for dynamic restarting
 }
@@ -119,26 +119,28 @@ class LessonSessionService {
       }
     }
 
-    // Phase mapping (post-renumber): 7=Translation, 8=MCQ, 9=ShortAnswer, 13=Read-Aloud
+    // 13-step / 4-period phase map. Interactive index slots:
+    //   7=Comprehension(MCQ) 8=GuidedResponse(ShortAnswer) 9=VocabPractice
+    //   10=SentencePractice(fill) 11=SentencePractice(order) 12=GuidedWriting(prompt)
     const phaseSelectedIndices: Record<number, number> = {};
     if (articleData?.multipleChoiceQuestions?.length) {
-      phaseSelectedIndices[8] = Math.floor(Math.random() * articleData.multipleChoiceQuestions.length);
+      phaseSelectedIndices[7] = Math.floor(Math.random() * articleData.multipleChoiceQuestions.length);
     }
     if (articleData?.shortAnswerQuestions?.length) {
       const count = articleData.shortAnswerQuestions.length;
-      phaseSelectedIndices[9] = getRandomIndex(count);
+      phaseSelectedIndices[8] = getRandomIndex(count);
+      phaseSelectedIndices[12] = getRandomIndex(count); // Guided Writing prompt
     }
     if (articleData?.words?.length) {
-      phaseSelectedIndices[10] = Math.floor(Math.random() * articleData.words.length);
+      phaseSelectedIndices[9] = Math.floor(Math.random() * articleData.words.length);
     }
     if (articleData?.sentences?.length) {
+      phaseSelectedIndices[10] = getRandomLongSentenceIndex(articleData.sentences);
       phaseSelectedIndices[11] = getRandomLongSentenceIndex(articleData.sentences);
-      phaseSelectedIndices[12] = getRandomLongSentenceIndex(articleData.sentences);
-      phaseSelectedIndices[13] = getRandomLongSentenceIndex(articleData.sentences);
     }
 
     console.log(`[Service] Available MCQ questions (Phase 7):`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
-    console.log(`[Service] Available Short Answer questions (Phase 8/13):`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
+    console.log(`[Service] Available Short Answer questions (Phase 8):`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
 
     // Force fresh UUID session instantiation every time to ensure unique, separated histories
     const sessionId = uuidv4();
@@ -251,17 +253,17 @@ class LessonSessionService {
     }
 
     // Force re-randomize every time we enter the phase
-    // Phase mapping (post-renumber): 8=MCQ, 9=ShortAnswer, 10=VocabGame, 11/12=SentenceGames, 13=Read-Aloud
-    if (phase === 8) {
+    // 7=MCQ 8=ShortAnswer 9=VocabGame 10/11=SentenceGames 12=GuidedWriting prompt
+    if (phase === 7) {
       const count = session.articleData?.multipleChoiceQuestions?.length || 1;
-      session.phaseSelectedIndices[8] = Math.floor(Math.random() * count);
-    } else if (phase === 9) {
+      session.phaseSelectedIndices[7] = Math.floor(Math.random() * count);
+    } else if (phase === 8 || phase === 12) {
       const count = session.articleData?.shortAnswerQuestions?.length || 1;
-      session.phaseSelectedIndices[9] = getRandomIndex(count);
-    } else if (phase === 10) {
+      session.phaseSelectedIndices[phase] = getRandomIndex(count);
+    } else if (phase === 9) {
       const count = session.articleData?.words?.length || 1;
-      session.phaseSelectedIndices[10] = Math.floor(Math.random() * count);
-    } else if (phase === 11 || phase === 12 || phase === 13) {
+      session.phaseSelectedIndices[9] = Math.floor(Math.random() * count);
+    } else if (phase === 10 || phase === 11) {
       session.phaseSelectedIndices[phase] = getRandomLongSentenceIndex(session.articleData?.sentences || []);
     }
 
@@ -270,7 +272,7 @@ class LessonSessionService {
     }
 
     console.log(`[Service] Session phase changed to: ${phase}`);
-    if ([8, 9, 10, 11, 12, 13].includes(phase)) {
+    if ([7, 8, 9, 10, 11, 12].includes(phase)) {
        const idx = session.phaseSelectedIndices?.[phase] || 0;
        console.log(`[Service] Selected Question Index for Phase ${phase}:`, idx);
     }
