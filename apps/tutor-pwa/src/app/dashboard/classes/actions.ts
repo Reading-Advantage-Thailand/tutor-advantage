@@ -66,7 +66,7 @@ export async function updateClassStatus(classId: string, status: "open" | "full"
 }
 export async function rescheduleClass(
   classId: string,
-  payload: { scheduleDescription: string; startsAt?: string; endsAt?: string; totalHours?: number },
+  payload: { scheduleDescription: string; scheduleData?: any[]; startsAt?: string; endsAt?: string; totalHours?: number },
 ) {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value;

@@ -11,7 +11,7 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
   try {
     const userId = req.user?.userId;
     const role = req.user?.role;
-    const { bookId, title, capacity, scheduleDescription, startsAt, endsAt, totalHours } = req.body;
+    const { bookId, title, capacity, scheduleDescription, scheduleData, startsAt, endsAt, totalHours } = req.body;
     const packagePriceSatang = req.body.packagePriceSatang ?? 250000;
 
     if (!userId || role !== "TUTOR") {
@@ -84,6 +84,7 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
           capacity,
           packagePriceMinor: BigInt(packagePriceSatang),
           scheduleDescription,
+          scheduleData: scheduleData || null,
           meetingUrl: req.body.meetingUrl,
           startsAt: startsAt ? new Date(startsAt) : undefined,
           endsAt: endsAt ? new Date(endsAt) : undefined,
@@ -320,6 +321,7 @@ export async function getClasses(req: AuthenticatedRequest, res: Response) {
       tutorUserId: c.tutorUserId,
       tutorName: tutorMap.get(c.tutorUserId) || "Unknown Tutor",
       nextSession: c.scheduleDescription || "ยังไม่ได้กำหนด",
+      scheduleData: (c as any).scheduleData || null,
       startsAt: c.startsAt ?? null,
       endsAt: c.endsAt ?? null,
     }));
@@ -516,6 +518,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
       startsAt: cls.startsAt,
       endsAt: cls.endsAt,
       schedule: cls.scheduleDescription || "ยังไม่ได้กำหนด",
+      scheduleData: cls.scheduleData || null,
       meetingUrl:
         cls.tutorUserId === userId || isActiveEnrollment ? cls.meetingUrl || "" : "",
       tutor: {
@@ -846,7 +849,7 @@ export async function rescheduleClass(req: AuthenticatedRequest, res: Response) 
   try {
     const userId = req.user?.userId;
     const { classId } = req.params;
-    const { scheduleDescription, startsAt, endsAt, totalHours } = req.body;
+    const { scheduleDescription, scheduleData, startsAt, endsAt, totalHours } = req.body;
 
     if (!userId) {
       return res
@@ -884,6 +887,7 @@ export async function rescheduleClass(req: AuthenticatedRequest, res: Response) 
       where: { classId },
       data: {
         scheduleDescription: scheduleDescription ?? cls.scheduleDescription,
+        scheduleData: scheduleData !== undefined ? scheduleData : (cls as any).scheduleData,
         startsAt: startsAt ? new Date(startsAt) : cls.startsAt,
         endsAt: endsAt ? new Date(endsAt) : cls.endsAt,
       },
@@ -1076,6 +1080,7 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
           summary: thaiSummary || "ไม่มีสรุปเนื้อหาสำหรับบทความนี้",
           passage: details?.passage ? `${details.passage.substring(0, 120)}...` : "", // Return a snippet for passage display
           cefrLevel: displayCefr,
+          imageUrl: art.articleId ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${art.articleId}.png` : null,
           isCompleted: completedArticleIds.has(art.articleId)
         };
       }),

@@ -164,6 +164,7 @@ model Class {
   enrolledCount Int                    @default(0) @map("enrolled_count")
   status              String
   scheduleDescription String?                @map("schedule_description")
+  scheduleData        Json?                  @map("schedule_data")
   meetingUrl          String?                @map("meeting_url")
   startsAt            DateTime?              @map("starts_at") @db.Timestamptz
   endsAt              DateTime?              @map("ends_at") @db.Timestamptz

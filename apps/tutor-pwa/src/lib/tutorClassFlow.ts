@@ -10,6 +10,7 @@ export type CreateClassForm = {
   name: string;
   book: string;
   schedule: string;
+  scheduleData?: any[];
   meetingUrl?: string;
   startsAt?: string;
   endsAt?: string;
@@ -21,6 +22,7 @@ export type CreateClassRequest = {
   bookId: string;
   capacity: number;
   scheduleDescription: string;
+  scheduleData?: any[];
   meetingUrl?: string;
   startsAt?: string;
   endsAt?: string;
@@ -167,6 +169,7 @@ export function buildCreateClassRequest(
     bookId: data.book,
     capacity,
     scheduleDescription: data.schedule,
+    scheduleData: data.scheduleData,
     meetingUrl: data.meetingUrl,
     startsAt: data.startsAt || undefined,
     endsAt: data.endsAt || undefined,

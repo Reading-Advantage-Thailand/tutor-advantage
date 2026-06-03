@@ -64,24 +64,24 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+      <div className="flex flex-col gap-6 lg:gap-8">
         
-        {/* Left Column (Info, Meeting, Link, Students) */}
-        <div className="lg:col-span-5 space-y-4 lg:space-y-6">
+        {/* Top Section: Meta Info Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6 items-stretch">
           {/* Meeting URL Editor */}
           <MeetingUrlEditor classId={classId} initialUrl={cls.meetingUrl} />
 
           <ReferralLink referralLink={cls.referralLink} />
 
           {/* Schedule & Dates */}
-          <Card className="border-border/60">
+          <Card className="border-border/60 h-full flex flex-col">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-primary" />
                 {t("tutorClass.classes.scheduleLabel")}
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm">
+            <CardContent className="space-y-2 text-sm flex-1 flex flex-col pb-4">
               <p className="text-foreground font-medium">{cls.schedule || t("tutorClass.classes.notSet")}</p>
               <div className="flex gap-6 text-muted-foreground text-xs mt-1">
                 <span>
@@ -97,9 +97,12 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
                     : t("tutorClass.classes.notSet")}
                 </span>
               </div>
-              <div className="pt-2">
+              <div className="pt-4 mt-auto">
                 <RescheduleClassButton
                   classId={classId}
+                  className={cls.name}
+                  currentSchedule={cls.schedule}
+                  scheduleData={(cls as any).scheduleData}
                   initialStartsAt={cls.startsAt}
                   initialEndsAt={cls.endsAt}
                 />
@@ -107,9 +110,8 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
             </CardContent>
           </Card>
 
-
           {/* Students */}
-          <Card className="border-border/60">
+          <Card className="border-border/60 h-full">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold flex items-center gap-2">
                 <Users className="h-4 w-4 text-primary" />
@@ -122,8 +124,8 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
           </Card>
         </div>
 
-        {/* Right Column (Article Selector) */}
-        <div className="lg:col-span-7 space-y-4 lg:space-y-6">
+        {/* Bottom Section: Article Selector (Full Width) */}
+        <div className="space-y-4 lg:space-y-6">
           <ArticleSelector classId={classId} bookCycles={cls.bookCycles || []} />
           {process.env.NODE_ENV === "development" && (
             <DevClassSimulator classId={classId} />
