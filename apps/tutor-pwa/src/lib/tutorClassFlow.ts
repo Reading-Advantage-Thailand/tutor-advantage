@@ -15,6 +15,7 @@ export type CreateClassForm = {
   startsAt?: string;
   endsAt?: string;
   totalHours?: number;
+  couponCode?: string;
 };
 
 export type CreateClassRequest = {
@@ -27,6 +28,7 @@ export type CreateClassRequest = {
   startsAt?: string;
   endsAt?: string;
   totalHours?: number;
+  couponCode?: string;
 };
 
 // Maximum live-teaching hours allowed per class schedule
@@ -174,6 +176,7 @@ export function buildCreateClassRequest(
     startsAt: data.startsAt || undefined,
     endsAt: data.endsAt || undefined,
     totalHours: data.totalHours,
+    couponCode: data.couponCode?.trim() || undefined,
   };
 }
 

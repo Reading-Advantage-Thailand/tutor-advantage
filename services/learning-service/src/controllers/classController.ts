@@ -3,6 +3,7 @@ import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
 import { LineNotificationService } from "../services/LineNotificationService";
+import { redeemCoupon, CouponError } from "../services/couponService";
 
 // Maximum live-teaching hours allowed per class schedule
 const MAX_CLASS_HOURS = 22;
@@ -11,8 +12,10 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
   try {
     const userId = req.user?.userId;
     const role = req.user?.role;
-    const { bookId, title, capacity, scheduleDescription, scheduleData, startsAt, endsAt, totalHours } = req.body;
-    const packagePriceSatang = req.body.packagePriceSatang ?? 250000;
+    const { bookId, title, capacity, scheduleDescription, scheduleData, startsAt, endsAt, totalHours, couponCode } = req.body;
+    // A coupon makes the class free for students — price is forced to 0.
+    const isCouponClass = typeof couponCode === "string" && couponCode.trim().length > 0;
+    const packagePriceSatang = isCouponClass ? 0 : (req.body.packagePriceSatang ?? 250000);
 
     if (!userId || role !== "TUTOR") {
       return res.status(401).json({
@@ -35,8 +38,8 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
     }
 
     if (
-      !Number.isInteger(packagePriceSatang) ||
-      packagePriceSatang <= 0
+      !isCouponClass &&
+      (!Number.isInteger(packagePriceSatang) || packagePriceSatang <= 0)
     ) {
       return res.status(400).json({
         error: {
@@ -92,6 +95,16 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
         },
       });
 
+      // Redeem the coupon (if any) and grant its hours to the new free class.
+      if (isCouponClass) {
+        const hours = await redeemCoupon(tx, couponCode, userId, cls.classId, "NEW_CLASS");
+        await tx.class.update({
+          where: { classId: cls.classId },
+          data: { freeHours: hours },
+        });
+        cls.freeHours = hours;
+      }
+
       await tx.classBookCycle.create({
         data: {
           classId: cls.classId,
@@ -110,6 +123,17 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
       class: serializeClass(newClass),
     });
   } catch (error: any) {
+    if (error instanceof CouponError) {
+      const status =
+        error.code === "COUPON_NOT_FOUND"
+          ? 404
+          : error.code === "COUPON_NOT_ASSIGNED"
+            ? 403
+            : 409;
+      return res.status(status).json({
+        error: { code: error.code, message: error.message, requestId: req.id },
+      });
+    }
     console.error("Create Class Error:", error);
     return res.status(500).json({
       error: {
@@ -476,6 +500,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
       level: cls.book?.levelNumber || 1,
       seriesColor: getSeriesColor(cefr),
       totalHours,
+      freeHours: cls.freeHours || 0,
       independentHours: cls.book?.independentHours || 0,
       articleCount: bookArticleCount,
       activeBookCycleId: activeCycle?.classBookCycleId || null,

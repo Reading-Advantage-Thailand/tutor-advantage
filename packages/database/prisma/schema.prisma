@@ -161,6 +161,7 @@ model Class {
   title         String
   capacity      Int
   packagePriceMinor BigInt                 @default(250000) @map("package_price_minor")
+  freeHours     Int                    @default(0) @map("free_hours")
   enrolledCount Int                    @default(0) @map("enrolled_count")
   status              String
   scheduleDescription String?                @map("schedule_description")
@@ -259,6 +260,33 @@ model EnrollmentPackage {
   @@map("enrollment_packages")
   @@schema("learning")
 }
+// ----------------------------------------------------------------------
+// COUPON SCHEMA (LEARNING)
+// ----------------------------------------------------------------------
+
+model TeachingHourCoupon {
+  couponId          String    @id @default(dbgenerated("gen_random_uuid()")) @map("coupon_id") @db.Uuid
+  code              String    @unique
+  hours             Int
+  status            String    @default("ACTIVE") // ACTIVE | REDEEMED | VOID | EXPIRED
+  note              String?
+  createdByUserId   String    @map("created_by_user_id") @db.Uuid
+  assignedTutorId   String?   @map("assigned_tutor_id") @db.Uuid
+  redeemedByTutorId String?   @map("redeemed_by_tutor_id") @db.Uuid
+  redeemedClassId   String?   @map("redeemed_class_id") @db.Uuid
+  redemptionMode    String?   @map("redemption_mode") // NEW_CLASS | EXTEND_CLASS
+  redeemedAt        DateTime? @map("redeemed_at") @db.Timestamptz
+  expiresAt         DateTime? @map("expires_at") @db.Timestamptz
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime  @default(now()) @map("updated_at") @db.Timestamptz
+
+  @@index([status])
+  @@index([assignedTutorId])
+  @@index([redeemedByTutorId])
+  @@map("teaching_hour_coupons")
+  @@schema("learning")
+}
+
 // ----------------------------------------------------------------------
 // INTERACTIVE SESSION SCHEMA (LEARNING)
 // ----------------------------------------------------------------------

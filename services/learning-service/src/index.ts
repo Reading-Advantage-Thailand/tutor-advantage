@@ -54,6 +54,11 @@ import {
 import { getPerformanceSummary } from "./controllers/performanceController";
 import { getMyTutorReviewForClass, submitTutorReview } from "./controllers/reviewController";
 import { getNotificationSummary } from "./controllers/notificationsController";
+import {
+  validateCouponCode,
+  applyCouponToClass,
+  getMyCoupons,
+} from "./controllers/couponController";
 import { getStudentLessonHistory, getLessonSessionDetails } from "./controllers/lessonHistoryController";
 import {
   devOnly,
@@ -176,6 +181,11 @@ app.post("/v1/classes/:classId/review", authMiddleware, submitTutorReview);
 
 // Protected Notifications Summary
 app.get("/v1/notifications/summary", authMiddleware, getNotificationSummary);
+
+// Protected Coupon Routes (tutor)
+app.get("/v1/coupons/mine", authMiddleware, getMyCoupons);
+app.post("/v1/coupons/validate", authMiddleware, validateCouponCode);
+app.post("/v1/classes/:classId/apply-coupon", authMiddleware, applyCouponToClass);
 
 // Dev-only routes (blocked in production by devOnly middleware)
 app.post("/v1/dev/seed/lesson-history", devOnly, authMiddleware, devSeedLessonHistory);

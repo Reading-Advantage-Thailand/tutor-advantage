@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { LEARNING_URL } from "@/lib/service-urls";
-import { ReferralLink, ArticleSelector, ClassStatusToggle, MeetingUrlEditor, RescheduleClassButton, StudentAvatars, DevClassSimulator } from "./client-components";
+import { ReferralLink, ArticleSelector, ClassStatusToggle, MeetingUrlEditor, RescheduleClassButton, CouponExtendButton, StudentAvatars, DevClassSimulator } from "./client-components";
 import { notFound } from "next/navigation";
 
 async function getClassData(classId: string, token: string) {
@@ -97,7 +97,13 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
                     : t("tutorClass.classes.notSet")}
                 </span>
               </div>
-              <div className="pt-4 mt-auto">
+              {((cls as any).freeHours ?? 0) > 0 && (
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 pt-2">
+                  <span className="font-medium text-foreground">{t("tutorClass.detail.freeHoursLabel")}: </span>
+                  {(cls as any).freeHours} {t("tutorClass.detail.freeHoursUnit")}
+                </div>
+              )}
+              <div className="pt-4 mt-auto flex flex-wrap gap-2">
                 <RescheduleClassButton
                   classId={classId}
                   className={cls.name}
@@ -106,6 +112,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
                   initialStartsAt={cls.startsAt}
                   initialEndsAt={cls.endsAt}
                 />
+                <CouponExtendButton classId={classId} />
               </div>
             </CardContent>
           </Card>

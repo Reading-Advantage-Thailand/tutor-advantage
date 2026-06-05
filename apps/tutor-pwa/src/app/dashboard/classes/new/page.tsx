@@ -7,13 +7,13 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, BookOpen, Calendar as CalendarIcon, Link2, Clock, ExternalLink, AlertTriangle } from "lucide-react";
+import { ArrowLeft, BookOpen, Calendar as CalendarIcon, Link2, Clock, ExternalLink, AlertTriangle, Ticket, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { th } from "date-fns/locale";
-import { createClass, getBooks } from "../actions";
+import { createClass, getBooks, validateCoupon } from "../actions";
 import { t } from "@/lib/i18n";
 import {
   buildScheduleString,
@@ -39,7 +39,12 @@ export default function NewClassPage() {
     meetingUrl: "",
     startsAt: "",
     endsAt: "",
+    couponCode: "",
   });
+
+  const [couponChecking, setCouponChecking] = useState(false);
+  const [couponHours, setCouponHours] = useState<number | null>(null);
+  const [couponError, setCouponError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [books, setBooks] = useState<any[]>([]);
 
@@ -157,6 +162,22 @@ export default function NewClassPage() {
   }, []);
 
 
+
+  const handleCheckCoupon = async () => {
+    const code = form.couponCode.trim();
+    if (!code) return;
+    setCouponChecking(true);
+    setCouponError("");
+    setCouponHours(null);
+    try {
+      const result = await validateCoupon(code);
+      setCouponHours(result.hours);
+    } catch (err: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+      setCouponError(err.message || t("tutorClass.errors.coupon"));
+    } finally {
+      setCouponChecking(false);
+    }
+  };
 
   const clearFieldError = (field: string) => {
     setFieldErrors((prev) => {
@@ -339,6 +360,57 @@ export default function NewClassPage() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Coupon Row */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <Ticket className="h-4 w-4 text-primary" />
+                {t("tutorClass.newClass.couponTitle")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-1.5">
+                <Label htmlFor="coupon-code">{t("tutorClass.newClass.couponLabel")}</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="coupon-code"
+                    placeholder={t("tutorClass.newClass.couponPlaceholder")}
+                    value={form.couponCode}
+                    onChange={(e) => {
+                      setForm({ ...form, couponCode: e.target.value });
+                      setCouponHours(null);
+                      setCouponError("");
+                    }}
+                    className="font-mono uppercase"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleCheckCoupon}
+                    disabled={couponChecking || !form.couponCode.trim()}
+                    className="shrink-0"
+                  >
+                    {couponChecking ? t("tutorClass.newClass.couponChecking") : t("tutorClass.newClass.couponCheck")}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {t("tutorClass.newClass.couponHelp")}
+                </p>
+                {couponHours !== null && (
+                  <p className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    {t("tutorClass.newClass.couponValid")}: {couponHours} {t("tutorClass.newClass.couponHoursUnit")}
+                  </p>
+                )}
+                {couponError && (
+                  <p className="text-xs text-destructive font-semibold flex items-center gap-1">
+                    <AlertTriangle className="h-3.5 w-3.5" /> {couponError}
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Bottom Row */}
           <Card>

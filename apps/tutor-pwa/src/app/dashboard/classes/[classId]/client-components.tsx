@@ -21,6 +21,7 @@ import {
   AlertTriangle,
   CalendarClock,
   Calendar as CalendarIcon,
+  Ticket,
 } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
@@ -34,6 +35,7 @@ import {
   createClassBookCycle,
   getBooks,
   devSeedClassAllProgress,
+  applyCoupon,
 } from "./../actions";
 import {
   buildScheduleString,
@@ -818,6 +820,80 @@ export function MeetingUrlEditor({
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+export function CouponExtendButton({ classId }: { classId: string }) {
+  const [open, setOpen] = useState(false);
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  const handleApply = async () => {
+    if (!code.trim()) return;
+    setLoading(true);
+    setError("");
+    try {
+      await applyCoupon(classId, code.trim());
+      setOpen(false);
+      setCode("");
+      router.refresh();
+    } catch (err: any) {
+      setError(err.message || t("tutorClass.errors.coupon"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setError(""); }}>
+      <DialogTrigger
+        render={
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2 font-medium"
+          >
+            <Ticket className="h-3.5 w-3.5" />
+            {t("tutorClass.detail.couponButton")}
+          </Button>
+        }
+      />
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t("tutorClass.detail.couponTitle")}</DialogTitle>
+          <DialogDescription>
+            {t("tutorClass.detail.couponDescription")}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="extend-coupon">{t("tutorClass.detail.couponLabel")}</Label>
+            <Input
+              id="extend-coupon"
+              placeholder={t("tutorClass.detail.couponPlaceholder")}
+              value={code}
+              onChange={(e) => { setCode(e.target.value); setError(""); }}
+              className="font-mono uppercase"
+            />
+            {error && (
+              <p className="text-xs text-destructive font-semibold flex items-center gap-1">
+                <AlertTriangle className="h-3.5 w-3.5" /> {error}
+              </p>
+            )}
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
+            {t("tutorClass.detail.cancel")}
+          </Button>
+          <Button onClick={handleApply} disabled={loading || !code.trim()}>
+            {loading ? t("tutorClass.detail.couponApplying") : t("tutorClass.detail.couponApply")}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
