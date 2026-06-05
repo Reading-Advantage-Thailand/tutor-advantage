@@ -13,6 +13,7 @@ import {
   Settings,
   HelpCircle,
   LogOut,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -23,6 +24,7 @@ import { t } from "@/lib/i18n";
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: t("app.navOverview") },
   { href: "/dashboard/classes", icon: BookOpen, label: t("app.navClasses") },
+  { href: "/dashboard/demo", icon: Sparkles, label: t("app.navDemo") },
   { href: "/dashboard/schedule", icon: Calendar, label: t("app.navSchedule") },
   { href: "/dashboard/chat", icon: MessageSquare, label: t("app.navChat") },
   { href: "/dashboard/earnings", icon: BarChart2, label: t("app.navEarnings") },

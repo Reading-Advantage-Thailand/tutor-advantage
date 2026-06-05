@@ -28,6 +28,8 @@ export interface LessonSession {
   // Step 3 (Read the Article) Sentence Flags: sentenceIndex -> set of studentIds who flagged it
   sentenceFlags?: Map<number, Set<string>>;
   currentDbSessionId?: string; // Track active DB ID for dynamic restarting
+  // Demo sessions are ephemeral previews: never persisted, never AI-scored, no class.
+  isDemo?: boolean;
 }
 
 function getRandomLongSentenceIndex(sentences: any[]): number {
@@ -66,6 +68,7 @@ class LessonSessionService {
     classId?: string,
     classBookCycleId?: string,
     bookId?: string,
+    isDemo?: boolean,
   ): LessonSession {
     // ATTEMPT RECOVERY: If an active session already exists for this class, REUSE it!
     if (classId) {
@@ -157,11 +160,13 @@ class LessonSessionService {
       participants: new Map(),
       status: 'LOBBY',
       phaseSelectedIndices,
-      sentenceFlags: new Map()
+      sentenceFlags: new Map(),
+      isDemo: isDemo ?? false,
     };
 
     this.sessions.set(sessionId, session);
-    if (classId) {
+    // Demo sessions are not tracked by class so concurrent demos never collide.
+    if (classId && !isDemo) {
       this.classToSessionId.set(classId, sessionId);
     }
 

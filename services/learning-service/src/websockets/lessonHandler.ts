@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { lessonSessionService } from "../services/LessonSessionService";
 import { evaluateShortAnswer, evaluateWriting, answerLanguageQuestion } from "../services/AIEvaluator";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
+import { getDemoArticle } from "../services/demoLessons";
 import * as dbWriter from "../services/SessionDBWriter";
 import { LineNotificationService } from "../services/LineNotificationService";
 import { checkAndUnlockBadges } from "../services/BadgeService";
@@ -48,9 +49,38 @@ export const setupLessonSocket = (io: Server) => {
     console.log(`Socket connected: ${socket.id}`);
 
     // Tutor creates a new session
-    socket.on("create_session", async ({ tutorId, articleId, classId, classBookCycleId, bookId }) => {
-      console.log(`[Socket] Tutor ${tutorId} creating session for class: ${classId}`);
+    socket.on("create_session", async ({ tutorId, articleId, classId, classBookCycleId, bookId, demo }) => {
+      const isDemo = demo === true;
+      console.log(`[Socket] Tutor ${tutorId} creating ${isDemo ? "DEMO " : ""}session for class: ${classId}`);
       try {
+        // Demo mode: zero-cost preview. Fixed bundled content, no class/cycle,
+        // no DB persistence, no AI scoring (solo tutor, no student answers).
+        if (isDemo) {
+          const demoArticle = getDemoArticle(articleId);
+          if (!demoArticle) {
+            socket.emit("error", { message: "Demo lesson not found." });
+            return;
+          }
+          const demoSession = lessonSessionService.createSession(
+            tutorId,
+            socket.id,
+            articleId,
+            demoArticle,
+            undefined,
+            undefined,
+            undefined,
+            true,
+          );
+          socket.join(demoSession.sessionId);
+          socket.emit("session_created", {
+            sessionId: demoSession.sessionId,
+            currentPhase: demoSession.currentPhase,
+            articleData: demoSession.articleData,
+          });
+          console.log(`[Socket] DEMO session created: ${demoSession.sessionId}`);
+          return;
+        }
+
         let resolvedCycleId = classBookCycleId;
         let resolvedBookId = bookId;
 
@@ -225,7 +255,8 @@ export const setupLessonSocket = (io: Server) => {
       if (session) {
         // --- CRITICAL: DYNAMIC RESTART RECORDING ---
         // If starting a new instructional cycle (Phase 0 -> Phase 1), determine if we need a FRESH DB identity.
-        if (phase === 1) {
+        // Demo sessions skip all persistence — they only loop the in-memory phase state.
+        if (phase === 1 && !session.isDemo) {
           if (!session.currentDbSessionId) {
             // --- FIRST CYCLE ---
             // Set explicit key to lock current cycle, but reuse original initialized DB record to avoid double logging!
@@ -264,7 +295,8 @@ export const setupLessonSocket = (io: Server) => {
         console.log(`Session ${sessionId} changed to phase ${phase}`);
 
         // If changing to phase 15 (Wrap-up Leaderboard), mark ACTIVE DB ROUND as FINISHED
-        if (phase === 15) {
+        // Demo sessions have no DB round, no badges to unlock, and no students to notify.
+        if (phase === 15 && !session.isDemo) {
           dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
 
           // Non-blocking badge unlock check for the tutor

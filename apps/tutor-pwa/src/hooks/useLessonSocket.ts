@@ -18,6 +18,7 @@ export const useLessonSocket = (
   socketUrl?: string,
   classBookCycleId?: string,
   bookId?: string,
+  demo?: boolean,
 ) => {
   const lessonSocketUrl = socketUrl || 'http://localhost:3002';
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -66,8 +67,9 @@ export const useLessonSocket = (
 
         socketInstance.on('connect', () => {
           console.log('Connected to Learning Service WebSocket');
-          // Auto create session on connect for Tutor with the selected article and classId
-          socketInstance.emit('create_session', { tutorId, articleId, classId, classBookCycleId, bookId });
+          // Auto create session on connect for Tutor with the selected article and classId.
+          // Demo mode runs a free, fixed preview with no class/DB/AI on the backend.
+          socketInstance.emit('create_session', { tutorId, articleId, classId, classBookCycleId, bookId, demo });
         });
 
         socketInstance.on('connect_error', (err) => {
@@ -151,7 +153,7 @@ export const useLessonSocket = (
         socketRef.current = null;
       }
     };
-  }, [tutorId, articleId, classId, classBookCycleId, bookId, lessonSocketUrl]);
+  }, [tutorId, articleId, classId, classBookCycleId, bookId, demo, lessonSocketUrl]);
 
   const changePhase = (phase: number) => {
     if (socketRef.current && sessionData) {

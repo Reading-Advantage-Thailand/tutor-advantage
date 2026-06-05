@@ -6,10 +6,10 @@ export default async function TutorLobbyPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ articleId?: string; cycleId?: string; bookId?: string }>;
+  searchParams: Promise<{ articleId?: string; cycleId?: string; bookId?: string; demo?: string }>;
 }) {
   const { id: classId } = await params;
-  const { articleId = "", cycleId, bookId } = await searchParams;
+  const { articleId = "", cycleId, bookId, demo } = await searchParams;
 
   return (
     <TutorLobbyClient
@@ -18,6 +18,7 @@ export default async function TutorLobbyPage({
       classBookCycleId={cycleId}
       bookId={bookId}
       socketUrl={LEARNING_URL}
+      demo={demo === "1" || demo === "true"}
     />
   );
 }

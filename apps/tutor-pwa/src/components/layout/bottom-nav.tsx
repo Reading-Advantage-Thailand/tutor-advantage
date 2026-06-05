@@ -10,6 +10,7 @@ import {
   GitBranch,
   Award,
   Settings,
+  Sparkles,
   MoreHorizontal,
   X,
 } from "lucide-react";
@@ -25,6 +26,7 @@ const primaryNavItems = [
 ];
 
 const secondaryNavItems = [
+  { href: "/dashboard/demo", icon: Sparkles, label: t("app.navDemo") },
   { href: "/dashboard/network", icon: GitBranch, label: t("app.navNetwork") },
   { href: "/dashboard/performance", icon: Award, label: t("app.navPerformance") },
   { href: "/dashboard/settings", icon: Settings, label: t("app.navSettings") },

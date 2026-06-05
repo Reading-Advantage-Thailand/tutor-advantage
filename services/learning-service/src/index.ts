@@ -34,6 +34,7 @@ import {
   createClassBookCycle,
   prepareClassBookCycleAccess,
 } from "./controllers/classController";
+import { getDemoLessonCatalog } from "./controllers/demoController";
 import { generateReferral } from "./controllers/referralController";
 import {
   enrollStudent,
@@ -116,6 +117,7 @@ app.get("/version", (_req: Request, res: Response) => {
 
 // Protected Class Routes
 app.get("/v1/books", authMiddleware, getBooks);
+app.get("/v1/demo/lessons", authMiddleware, getDemoLessonCatalog);
 app.post("/v1/classes", authMiddleware, createClass);
 app.post("/v1/classes/:classId/close", authMiddleware, closeClass);
 app.get("/v1/classes", authMiddleware, getClasses);
