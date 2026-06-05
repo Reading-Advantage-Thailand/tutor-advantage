@@ -34,6 +34,15 @@ export type CreateClassRequest = {
 // Maximum live-teaching hours allowed per class schedule
 export const MAX_CLASS_HOURS = 22;
 
+// Parse a "yyyy-MM-dd" string as a LOCAL calendar date (midnight local time).
+// Using `new Date("yyyy-MM-dd")` parses as UTC, which then shifts the day when
+// formatted/compared in local time. This keeps schedule dates stable across
+// save/load round-trips in any timezone.
+export function parseLocalDate(dateStr: string): Date {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(y, (m || 1) - 1, d || 1);
+}
+
 export type WeeklyTemplate = {
   id: string;
   label: string;

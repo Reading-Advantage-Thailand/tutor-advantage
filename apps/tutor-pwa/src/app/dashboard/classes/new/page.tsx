@@ -24,6 +24,7 @@ import {
   MAX_CLASS_HOURS,
   toggleClassDay,
   WEEKLY_TEMPLATES,
+  parseLocalDate,
 } from "@/lib/tutorClassFlow";
 
 export default function NewClassPage() {
@@ -69,7 +70,7 @@ export default function NewClassPage() {
 
   const handleGenerate = (tpl: typeof WEEKLY_TEMPLATES[0]) => {
     if (!genStart) return;
-    const start = new Date(genStart);
+    const start = parseLocalDate(genStart);
 
     const newDates: Date[] = [];
     const nextTimes: Record<string, { start: string; end: string }> = {};
@@ -146,8 +147,10 @@ export default function NewClassPage() {
     setForm(prev => ({ ...prev, schedule: scheduleDescription }));
   }, [scheduleDescription]);
 
-  const overLimit = totalHours > MAX_CLASS_HOURS;
-  const hoursPct = Math.min(100, (totalHours / MAX_CLASS_HOURS) * 100);
+  const freeHours = couponHours ?? 0;
+  const maxHours = MAX_CLASS_HOURS + freeHours;
+  const overLimit = totalHours > maxHours;
+  const hoursPct = Math.min(100, (totalHours / maxHours) * 100);
 
   useEffect(() => {
     async function loadBooks() {
@@ -506,7 +509,7 @@ export default function NewClassPage() {
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-muted-foreground">{t("tutorClass.newClass.totalHoursLabel")}</span>
                       <span className={`font-bold ${overLimit ? "text-destructive" : "text-foreground"}`}>
-                        {totalHours} / {MAX_CLASS_HOURS} {t("tutorClass.newClass.hoursUnit")}
+                        {totalHours} / {maxHours} {t("tutorClass.newClass.hoursUnit")}
                       </span>
                     </div>
                     <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
@@ -515,6 +518,24 @@ export default function NewClassPage() {
                         style={{ width: `${hoursPct}%` }}
                       />
                     </div>
+                    {freeHours > 0 && (
+                      <div className="flex flex-col gap-0.5 text-[11px] pt-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-muted-foreground flex items-center gap-1.5">
+                            <span className="h-2 w-2 rounded-full bg-primary" />
+                            {t("tutorClass.newClass.regularHoursLabel")}
+                          </span>
+                          <span className="font-semibold text-foreground tabular-nums">{MAX_CLASS_HOURS} {t("tutorClass.newClass.hoursUnit")}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-muted-foreground flex items-center gap-1.5">
+                            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                            {t("tutorClass.newClass.couponHoursLabel")}
+                          </span>
+                          <span className="font-semibold text-emerald-600 tabular-nums">{freeHours} {t("tutorClass.newClass.hoursUnit")}</span>
+                        </div>
+                      </div>
+                    )}
                     {overLimit ? (
                       <p className="text-xs text-destructive font-semibold flex items-center gap-1">
                         <AlertTriangle className="h-3.5 w-3.5" /> {t("tutorClass.newClass.hoursOverLimit")}

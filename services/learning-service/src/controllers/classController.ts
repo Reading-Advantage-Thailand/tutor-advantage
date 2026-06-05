@@ -3,7 +3,7 @@ import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
 import { LineNotificationService } from "../services/LineNotificationService";
-import { redeemCoupon, CouponError } from "../services/couponService";
+import { redeemCoupon, validateCoupon, CouponError } from "../services/couponService";
 
 // Maximum live-teaching hours allowed per class schedule
 const MAX_CLASS_HOURS = 22;
@@ -50,11 +50,20 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
       });
     }
 
-    if (typeof totalHours === "number" && totalHours > MAX_CLASS_HOURS) {
+    // Validate the coupon up front so its free hours can extend the schedulable
+    // limit. Re-validated atomically inside the transaction on redeem.
+    let couponHours = 0;
+    if (isCouponClass) {
+      const validated = await validateCoupon(couponCode, userId);
+      couponHours = validated.hours;
+    }
+
+    const hoursLimit = MAX_CLASS_HOURS + couponHours;
+    if (typeof totalHours === "number" && totalHours > hoursLimit) {
       return res.status(400).json({
         error: {
           code: "HOURS_EXCEEDED",
-          message: `Scheduled teaching hours (${totalHours}) exceed the ${MAX_CLASS_HOURS}-hour limit`,
+          message: `Scheduled teaching hours (${totalHours}) exceed the ${hoursLimit}-hour limit`,
           requestId: req.id,
         },
       });
@@ -882,16 +891,6 @@ export async function rescheduleClass(req: AuthenticatedRequest, res: Response) 
         .json({ error: { code: "UNAUTHORIZED", message: "User ID missing" } });
     }
 
-    if (typeof totalHours === "number" && totalHours > MAX_CLASS_HOURS) {
-      return res.status(400).json({
-        error: {
-          code: "HOURS_EXCEEDED",
-          message: `Scheduled teaching hours (${totalHours}) exceed the ${MAX_CLASS_HOURS}-hour limit`,
-          requestId: req.id,
-        },
-      });
-    }
-
     const cls = await prisma.class.findUnique({
       where: { classId },
       include: {
@@ -905,6 +904,18 @@ export async function rescheduleClass(req: AuthenticatedRequest, res: Response) 
     if (!cls || cls.tutorUserId !== userId) {
       return res.status(404).json({
         error: { code: "NOT_FOUND", message: "Class not found or unauthorized" },
+      });
+    }
+
+    // Coupon-granted free hours extend the schedulable limit beyond the base cap.
+    const hoursLimit = MAX_CLASS_HOURS + (cls.freeHours || 0);
+    if (typeof totalHours === "number" && totalHours > hoursLimit) {
+      return res.status(400).json({
+        error: {
+          code: "HOURS_EXCEEDED",
+          message: `Scheduled teaching hours (${totalHours}) exceed the ${hoursLimit}-hour limit`,
+          requestId: req.id,
+        },
       });
     }
 

@@ -46,6 +46,7 @@ import {
   MAX_CLASS_HOURS,
   toggleClassDay,
   WEEKLY_TEMPLATES,
+  parseLocalDate,
 } from "@/lib/tutorClassFlow";
 import { useRouter } from "next/navigation";
 import {
@@ -850,12 +851,8 @@ export function CouponExtendButton({ classId }: { classId: string }) {
     <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setError(""); }}>
       <DialogTrigger
         render={
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2 font-medium"
-          >
-            <Ticket className="h-3.5 w-3.5" />
+          <Button variant="outline" size="sm" className="w-full h-10 text-xs bg-background font-medium gap-2">
+            <Ticket className="h-4 w-4" />
             {t("tutorClass.detail.couponButton")}
           </Button>
         }
@@ -904,6 +901,7 @@ export function RescheduleClassButton({
   scheduleData,
   initialStartsAt,
   initialEndsAt,
+  freeHours = 0,
 }: {
   classId: string;
   className?: string;
@@ -911,6 +909,7 @@ export function RescheduleClassButton({
   scheduleData?: any[];
   initialStartsAt?: string | null;
   initialEndsAt?: string | null;
+  freeHours?: number;
 }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -937,7 +936,7 @@ export function RescheduleClassButton({
     const pastT: Record<string, { start: string; end: string }> = {};
     if (scheduleData) {
       scheduleData.forEach(item => {
-        const d = new Date(item.date);
+        const d = parseLocalDate(item.date);
         if (d < today) {
           pastD.push(d);
           pastT[item.date] = { start: item.start, end: item.end };
@@ -949,7 +948,7 @@ export function RescheduleClassButton({
 
   const doGenerate = (startDateStr: string, tpl: typeof WEEKLY_TEMPLATES[0]) => {
     if (!startDateStr) return;
-    const start = new Date(startDateStr);
+    const start = parseLocalDate(startDateStr);
     const { pastD, pastT } = getPastSchedule();
 
     const newDates: Date[] = [...pastD];
@@ -1000,14 +999,16 @@ export function RescheduleClassButton({
   useEffect(() => {
     let startStr = "";
     if (initialStartsAt) {
-      startStr = format(new Date(initialStartsAt), 'yyyy-MM-dd');
+      // initialStartsAt may be a full ISO timestamp or a yyyy-MM-dd string;
+      // take the date portion and parse as a local date to avoid UTC shifts.
+      startStr = format(parseLocalDate(String(initialStartsAt).slice(0, 10)), 'yyyy-MM-dd');
     } else {
       startStr = format(new Date(), 'yyyy-MM-dd');
     }
     setGenStart(startStr);
-    
+
     if (scheduleData && scheduleData.length > 0) {
-      const parsedDates = scheduleData.map(item => new Date(item.date));
+      const parsedDates = scheduleData.map(item => parseLocalDate(item.date));
       const parsedTimes: Record<string, { start: string; end: string }> = {};
       scheduleData.forEach(item => {
         parsedTimes[item.date] = { start: item.start, end: item.end };
@@ -1053,8 +1054,9 @@ export function RescheduleClassButton({
     return `${startStr} - ${endStr} (รวม ${sorted.length} วัน)`;
   }, [selectedDates, dateTimes]);
 
-  const overLimit = totalHours > MAX_CLASS_HOURS;
-  const hoursPct = Math.min(100, (totalHours / MAX_CLASS_HOURS) * 100);
+  const maxHours = MAX_CLASS_HOURS + (freeHours || 0);
+  const overLimit = totalHours > maxHours;
+  const hoursPct = Math.min(100, (totalHours / maxHours) * 100);
 
   const handleSave = async () => {
     if (!scheduleDescription) {
@@ -1215,7 +1217,7 @@ export function RescheduleClassButton({
               <div className="flex items-center justify-between text-xs">
                 <span className="text-muted-foreground">{t("tutorClass.newClass.totalHoursLabel")}</span>
                 <span className={`font-bold ${overLimit ? "text-destructive" : "text-foreground"}`}>
-                  {totalHours} / {MAX_CLASS_HOURS} {t("tutorClass.newClass.hoursUnit")}
+                  {totalHours} / {maxHours} {t("tutorClass.newClass.hoursUnit")}
                 </span>
               </div>
               <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
@@ -1224,6 +1226,24 @@ export function RescheduleClassButton({
                   style={{ width: `${hoursPct}%` }}
                 />
               </div>
+              {(freeHours || 0) > 0 && (
+                <div className="flex flex-col gap-0.5 text-[11px] pt-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-primary" />
+                      {t("tutorClass.newClass.regularHoursLabel")}
+                    </span>
+                    <span className="font-semibold text-foreground tabular-nums">{MAX_CLASS_HOURS} {t("tutorClass.newClass.hoursUnit")}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                      {t("tutorClass.newClass.couponHoursLabel")}
+                    </span>
+                    <span className="font-semibold text-emerald-600 tabular-nums">{freeHours} {t("tutorClass.newClass.hoursUnit")}</span>
+                  </div>
+                </div>
+              )}
               {overLimit ? (
                 <p className="text-xs text-destructive font-semibold flex items-center gap-1">
                   <AlertTriangle className="h-3.5 w-3.5" /> {t("tutorClass.newClass.hoursOverLimit")}

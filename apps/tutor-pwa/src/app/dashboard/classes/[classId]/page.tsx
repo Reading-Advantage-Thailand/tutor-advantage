@@ -8,6 +8,7 @@ import {
   ExternalLink,
   ArrowLeft,
   Calendar,
+  AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
@@ -97,12 +98,44 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
                     : t("tutorClass.classes.notSet")}
                 </span>
               </div>
-              {((cls as any).freeHours ?? 0) > 0 && (
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 pt-2">
-                  <span className="font-medium text-foreground">{t("tutorClass.detail.freeHoursLabel")}: </span>
-                  {(cls as any).freeHours} {t("tutorClass.detail.freeHoursUnit")}
-                </div>
-              )}
+              {(() => {
+                const freeHours = (cls as any).freeHours ?? 0;
+                if (freeHours <= 0) return null;
+                const scheduleData = (cls as any).scheduleData as
+                  | Array<{ start?: string; end?: string }>
+                  | undefined;
+                const scheduledHours = Array.isArray(scheduleData)
+                  ? scheduleData.reduce((sum, s) => {
+                      const [sh, sm] = (s.start || "").split(":").map(Number);
+                      const [eh, em] = (s.end || "").split(":").map(Number);
+                      const mins = (eh * 60 + em) - (sh * 60 + sm);
+                      return sum + (Number.isFinite(mins) && mins > 0 ? mins / 60 : 0);
+                    }, 0)
+                  : 0;
+                const remaining = Math.round((freeHours - scheduledHours) * 100) / 100;
+                if (remaining > 0) {
+                  return (
+                    <div className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 mt-2 space-y-1">
+                      <p className="text-xs font-semibold text-amber-700 flex items-center gap-1.5">
+                        <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                        {t("tutorClass.detail.couponUnscheduledWarning")}
+                      </p>
+                      <p className="text-xs text-amber-700">
+                        {t("tutorClass.detail.remainingHoursLabel")}:{" "}
+                        <span className="font-bold">
+                          {remaining} {t("tutorClass.detail.freeHoursUnit")}
+                        </span>
+                      </p>
+                    </div>
+                  );
+                }
+                return (
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600 pt-2">
+                    <span className="font-medium text-foreground">{t("tutorClass.detail.freeHoursLabel")}: </span>
+                    {freeHours} {t("tutorClass.detail.freeHoursUnit")}
+                  </div>
+                );
+              })()}
               <div className="pt-4 mt-auto flex flex-wrap gap-2">
                 <RescheduleClassButton
                   classId={classId}
@@ -111,6 +144,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ cl
                   scheduleData={(cls as any).scheduleData}
                   initialStartsAt={cls.startsAt}
                   initialEndsAt={cls.endsAt}
+                  freeHours={(cls as any).freeHours ?? 0}
                 />
                 <CouponExtendButton classId={classId} />
               </div>
