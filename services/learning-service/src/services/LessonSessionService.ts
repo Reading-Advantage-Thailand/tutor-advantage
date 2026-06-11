@@ -27,9 +27,22 @@ export interface LessonSession {
   phaseSelectedIndices?: Record<number, number>;
   // Step 3 (Read the Article) Sentence Flags: sentenceIndex -> set of studentIds who flagged it
   sentenceFlags?: Map<number, Set<string>>;
+  // Step 14 (Pair Conversation): random pairs, regenerated every time phase 15 starts
+  pairs?: { pairNumber: number; studentIds: string[] }[];
   currentDbSessionId?: string; // Track active DB ID for dynamic restarting
   // Demo sessions are ephemeral previews: never persisted, never AI-scored, no class.
   isDemo?: boolean;
+}
+
+export interface PairMember {
+  studentId: string;
+  name: string;
+  pictureUrl?: string;
+}
+
+export interface PairPayload {
+  pairNumber: number;
+  members: PairMember[];
 }
 
 function getRandomLongSentenceIndex(sentences: any[]): number {
@@ -122,7 +135,7 @@ class LessonSessionService {
       }
     }
 
-    // 13-step / 4-period phase map. Interactive index slots:
+    // 14-step / 4-period phase map. Interactive index slots:
     //   7=Comprehension(MCQ) 8=GuidedResponse(ShortAnswer) 9=VocabPractice
     //   10=SentencePractice(fill) 11=SentencePractice(order) 12=GuidedWriting(prompt)
     const phaseSelectedIndices: Record<number, number> = {};
@@ -272,6 +285,11 @@ class LessonSessionService {
       session.phaseSelectedIndices[phase] = getRandomLongSentenceIndex(session.articleData?.sentences || []);
     }
 
+    // Step 14 (Pair Conversation): shuffle students into fresh pairs every entry
+    if (phase === 15) {
+      this.generatePairs(session);
+    }
+
     if (phase > 0) {
       session.status = 'ACTIVE';
     }
@@ -283,6 +301,47 @@ class LessonSessionService {
     }
 
     return session;
+  }
+
+  // Step 14 (Pair Conversation): randomly pair up everyone in the room.
+  // An odd student out joins the last pair as a group of three.
+  private generatePairs(session: LessonSession) {
+    const ids = Array.from(session.participants.keys());
+    for (let i = ids.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [ids[i], ids[j]] = [ids[j], ids[i]];
+    }
+
+    const pairs: { pairNumber: number; studentIds: string[] }[] = [];
+    for (let i = 0; i + 1 < ids.length; i += 2) {
+      pairs.push({ pairNumber: pairs.length + 1, studentIds: [ids[i], ids[i + 1]] });
+    }
+    if (ids.length % 2 === 1) {
+      const leftover = ids[ids.length - 1];
+      if (pairs.length > 0) {
+        pairs[pairs.length - 1].studentIds.push(leftover);
+      } else {
+        pairs.push({ pairNumber: 1, studentIds: [leftover] });
+      }
+    }
+
+    session.pairs = pairs;
+    console.log(`[Service] Generated ${pairs.length} conversation pair(s) for session ${session.sessionId}`);
+  }
+
+  // Serialize pairs with display info for broadcast to tutor + students
+  getPairsPayload(session: LessonSession): PairPayload[] {
+    return (session.pairs ?? []).map((pair) => ({
+      pairNumber: pair.pairNumber,
+      members: pair.studentIds.map((studentId) => {
+        const participant = session.participants.get(studentId);
+        return {
+          studentId,
+          name: participant?.name || "?",
+          pictureUrl: participant?.pictureUrl,
+        };
+      }),
+    }));
   }
 
   submitAnswer(sessionId: string, studentId: string, answer: any): { session: LessonSession, allAnswered: boolean } | undefined {

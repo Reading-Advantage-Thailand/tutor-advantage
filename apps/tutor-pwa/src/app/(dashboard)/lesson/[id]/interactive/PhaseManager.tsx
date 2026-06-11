@@ -308,7 +308,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     if (!isChangingPhase && canProceedDelayed) {
       setIsChangingPhase(true);
       playSound("phaseChange");
-      if (currentPhase < 15) {
+      if (currentPhase < 16) {
         changePhase(currentPhase + 1);
       } else {
         // Safely loop back to lobby (Phase 0).
@@ -1572,6 +1572,112 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     </div>
   );
 
+  // ── Step 14: Pair Conversation (random pairs talk about the lesson) ──
+  const renderPairConversation = () => {
+    const pairs: {
+      pairNumber: number;
+      members: { studentId: string; name: string; pictureUrl?: string }[];
+    }[] = sessionData?.pairs || [];
+    const hasTriple = pairs.some((pair) => pair.members.length > 2);
+    const starters = [
+      "What was this story about?",
+      "Which new word do you like? Why?",
+      "What is the most interesting part?",
+      "What did you learn today?",
+    ];
+
+    return (
+      <div className="flex-1 flex flex-col items-center gap-6 overflow-y-auto pb-4">
+        <div className="text-center max-w-2xl">
+          <div className="text-5xl mb-4">🗣️</div>
+          <p className="text-xl font-bold text-foreground leading-snug">
+            {t("lesson.interactive.pairTitle")}
+          </p>
+          <p className="text-muted-foreground mt-2">
+            {t("lesson.interactive.pairSubtitle")}
+          </p>
+          {hasTriple && (
+            <p className="text-amber-600 dark:text-amber-400 text-sm font-semibold mt-2">
+              {t("lesson.interactive.pairTripleNote")}
+            </p>
+          )}
+        </div>
+
+        {pairs.length === 0 || participants.length < 2 ? (
+          <div className="bg-muted border border-border rounded-2xl px-8 py-6 text-center">
+            <span className="text-3xl block mb-2">👥</span>
+            <p className="text-muted-foreground font-medium">
+              {t("lesson.interactive.pairNeedTwo")}
+            </p>
+          </div>
+        ) : (
+          <div className="w-full max-w-4xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {pairs.map((pair) => (
+              <div
+                key={pair.pairNumber}
+                className="bg-card border border-border rounded-2xl p-5 shadow-sm flex flex-col items-center gap-3"
+              >
+                <span className="text-xs font-black uppercase tracking-widest text-rose-500 bg-rose-500/10 border border-rose-500/20 rounded-full px-3 py-1">
+                  {t("lesson.interactive.pairGroupLabel")} {pair.pairNumber}
+                </span>
+                <div className="flex items-center justify-center gap-2 flex-wrap">
+                  {pair.members.map((member, i) => (
+                    <React.Fragment key={member.studentId}>
+                      {i > 0 && <span className="text-xl">🤝</span>}
+                      <div className="flex flex-col items-center gap-1.5 min-w-0">
+                        <div className="size-12 rounded-full overflow-hidden border-2 border-rose-300/60 shadow-sm bg-muted">
+                          <img
+                            src={
+                              member.pictureUrl ||
+                              `https://api.dicebear.com/7.x/avataaars/svg?seed=${member.name}`
+                            }
+                            alt={member.name}
+                            className="size-full object-cover"
+                          />
+                        </div>
+                        <span className="text-xs font-bold text-foreground truncate max-w-[88px]">
+                          {member.name}
+                        </span>
+                      </div>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-5">
+            <h4 className="text-xs font-black uppercase tracking-widest text-rose-500 mb-3">
+              {t("lesson.interactive.pairStartersTitle")}
+            </h4>
+            <ul className="space-y-2">
+              {starters.map((starter) => (
+                <li
+                  key={starter}
+                  className="text-foreground text-sm font-medium bg-card border border-border rounded-xl px-3 py-2"
+                >
+                  💬 {starter}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="bg-muted/60 border border-border rounded-2xl p-5">
+            <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-3">
+              Tutor Actions
+            </h4>
+            <ul className="text-muted-foreground text-sm space-y-2">
+              <li>{t("lesson.interactive.pairTutorTip1")}</li>
+              <li>{t("lesson.interactive.pairTutorTip2")}</li>
+              <li>{t("lesson.interactive.pairTutorTip3")}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderPhaseContent = () => {
     if (currentPhase === 0 && participants.length === 0) return renderLobby();
     if (currentPhase === 7) return renderMCQ(); // Comprehension Check
@@ -1582,7 +1688,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     if (currentPhase === 12) return renderWriting(); // Guided Writing
     if (currentPhase === 13) return renderLanguageQuestions(); // Language Questions
     if (currentPhase === 14) return renderReflection(); // Lesson Reflection
-    if (currentPhase === 15) return renderLeaderboard(); // Wrap-up
+    if (currentPhase === 15) return renderPairConversation(); // Pair Conversation
+    if (currentPhase === 16) return renderLeaderboard(); // Wrap-up
 
     // Presentation phases 1-6 (Launch, Vocab, Read+audio, Collect Vocab, Deep Reading, Collect Sentences)
     return renderPresentation();
@@ -1612,21 +1719,21 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     },
     {
       label: t("lesson.interactive.period4"),
-      phases: [12, 13, 14],
+      phases: [12, 13, 14, 15],
       color: "bg-amber-500",
       lightColor: "bg-amber-100",
       textColor: "text-amber-700",
     },
     {
       label: t("lesson.interactive.wrapUp"),
-      phases: [15],
+      phases: [16],
       color: "bg-emerald-500",
       lightColor: "bg-emerald-100",
       textColor: "text-emerald-700",
     },
   ];
 
-  // phase 10 & 11 are both Step 10 (Sentence Practice); steps 11/12/13 live at phases 12/13/14
+  // phase 10 & 11 are both Step 10 (Sentence Practice); steps 11/12/13/14 live at phases 12/13/14/15
   const phaseNames: Record<number, string> = {
     0: "Lobby",
     1: t("lesson.interactive.step1"),
@@ -1643,7 +1750,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     12: t("lesson.interactive.step11"),
     13: t("lesson.interactive.step12"),
     14: t("lesson.interactive.step13"),
-    15: t("lesson.interactive.wrapUp"),
+    15: t("lesson.interactive.step14"),
+    16: t("lesson.interactive.wrapUp"),
   };
 
   const renderPhaseProgressBar = () => {
@@ -1666,13 +1774,13 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             </span>
           </div>
           <span className="text-xs text-muted-foreground font-medium">
-            {currentPhase} / 15
+            {currentPhase} / 16
           </span>
         </div>
 
         {/* Phase dots */}
         <div className="flex items-center gap-1">
-          {Array.from({ length: 15 }, (_, i) => i + 1).map((p) => {
+          {Array.from({ length: 16 }, (_, i) => i + 1).map((p) => {
             const group = phaseGroups.find((g) => g.phases.includes(p));
             const isPast = p < currentPhase;
             const isCurrent = p === currentPhase;
@@ -1815,7 +1923,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                     score: Math.floor(Math.random() * 60),
                   }));
                   setMockLeaderboard(mock);
-                  changePhase(15);
+                  changePhase(16);
                 }}
                 className={`px-3 py-1.5 text-sm font-semibold rounded-lg transition-colors ${mockLeaderboard ? "bg-orange-500 text-white" : "bg-muted text-muted-foreground hover:bg-accent"}`}
               >
@@ -1851,7 +1959,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             </>
           ) : !canProceedDelayed ? (
             t("lesson.interactive.waitingAnswers")
-          ) : currentPhase === 15 ? (
+          ) : currentPhase === 16 ? (
             <>
               <span className="flex items-center gap-1">
                 {t("lesson.interactive.startNewRound")}{" "}

@@ -83,6 +83,37 @@ export const setupLessonSocket = (io: Server) => {
 
         let resolvedCycleId = classBookCycleId;
         let resolvedBookId = bookId;
+        let resolvedArticleId = articleId;
+
+        // Demo classes are locked to one fixed lesson: the first article of the
+        // class book. They also stop accepting sessions once expired.
+        if (classId) {
+          const cls = await prisma.class.findUnique({
+            where: { classId },
+            select: { isDemo: true, expiresAt: true, bookId: true },
+          });
+          if (cls?.isDemo) {
+            if (cls.expiresAt && cls.expiresAt.getTime() < Date.now()) {
+              socket.emit("error", { message: "ห้องเรียน Demo นี้หมดอายุแล้ว ไม่สามารถเริ่มสอนได้" });
+              return;
+            }
+            const firstArticle = await prisma.article.findFirst({
+              where: { bookId: cls.bookId },
+              orderBy: { createdAt: "asc" },
+            });
+            if (!firstArticle) {
+              socket.emit("error", { message: "หนังสือของห้อง Demo นี้ยังไม่มีบทเรียน" });
+              return;
+            }
+            resolvedArticleId = firstArticle.articleId;
+          }
+        }
+
+        // Non-demo classes must name the article to teach.
+        if (!resolvedArticleId) {
+          socket.emit("error", { message: "กรุณาเลือกบทเรียนก่อนเริ่มสอน (missing articleId)" });
+          return;
+        }
 
         if (classId && (!resolvedCycleId || !resolvedBookId)) {
           const cycle = resolvedCycleId
@@ -98,7 +129,7 @@ export const setupLessonSocket = (io: Server) => {
           resolvedBookId = cycle?.bookId || resolvedBookId;
         }
 
-        const articleData = await getArticleDetails(articleId);
+        const articleData = await getArticleDetails(resolvedArticleId);
         console.log(`================= QUESTIONS LIST =================`);
         console.log(`Available MCQ questions:`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
         console.log(`Available SAQ questions:`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
@@ -106,7 +137,7 @@ export const setupLessonSocket = (io: Server) => {
         const session = lessonSessionService.createSession(
           tutorId,
           socket.id,
-          articleId,
+          resolvedArticleId,
           articleData,
           classId,
           resolvedCycleId,
@@ -116,7 +147,7 @@ export const setupLessonSocket = (io: Server) => {
         socket.join(session.sessionId);
 
         // PERSIST START OF SESSION TO DB (This creates initial Cycle 1 record)
-        dbWriter.persistSessionStart(session.sessionId, tutorId, articleId, classId, resolvedCycleId, resolvedBookId);
+        dbWriter.persistSessionStart(session.sessionId, tutorId, resolvedArticleId, classId, resolvedCycleId, resolvedBookId);
 
         socket.emit("session_created", {
           sessionId: session.sessionId,
@@ -222,7 +253,9 @@ export const setupLessonSocket = (io: Server) => {
           sessionId: session.sessionId,
           currentPhase: session.currentPhase,
           articleData: session.articleData,
-          phaseSelectedIndices: session.phaseSelectedIndices
+          phaseSelectedIndices: session.phaseSelectedIndices,
+          // Reconnecting mid Pair Conversation still shows the student's pair
+          pairs: session.currentPhase === 15 ? lessonSessionService.getPairsPayload(session) : null,
         });
         
         io.to(session.sessionId).emit("participants_updated", {
@@ -287,16 +320,21 @@ export const setupLessonSocket = (io: Server) => {
           }
         }
 
-        // Broadcast new phase to everyone in the room
-        io.to(sessionId).emit("phase_changed", { phase, phaseSelectedIndices: session.phaseSelectedIndices });
+        // Broadcast new phase to everyone in the room.
+        // Phase 15 (Pair Conversation) carries the freshly generated pairs.
+        io.to(sessionId).emit("phase_changed", {
+          phase,
+          phaseSelectedIndices: session.phaseSelectedIndices,
+          pairs: phase === 15 ? lessonSessionService.getPairsPayload(session) : null,
+        });
         io.to(sessionId).emit("participants_updated", {
           participants: Array.from(session.participants.values())
         });
         console.log(`Session ${sessionId} changed to phase ${phase}`);
 
-        // If changing to phase 15 (Wrap-up Leaderboard), mark ACTIVE DB ROUND as FINISHED
+        // If changing to phase 16 (Wrap-up Leaderboard), mark ACTIVE DB ROUND as FINISHED
         // Demo sessions have no DB round, no badges to unlock, and no students to notify.
-        if (phase === 15 && !session.isDemo) {
+        if (phase === 16 && !session.isDemo) {
           dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
 
           // Non-blocking badge unlock check for the tutor

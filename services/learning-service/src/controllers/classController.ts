@@ -1,4 +1,5 @@
 import { Response } from "express";
+import { randomUUID } from "crypto";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
@@ -12,10 +13,11 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
   try {
     const userId = req.user?.userId;
     const role = req.user?.role;
-    const { bookId, title, capacity, scheduleDescription, scheduleData, startsAt, endsAt, totalHours, couponCode } = req.body;
-    // A coupon makes the class free for students — price is forced to 0.
+    const { bookId, title, capacity, scheduleDescription, scheduleData, startsAt, endsAt, totalHours, couponCode, isDemo } = req.body;
+    // A coupon or demo class makes the class free for students — price is forced to 0.
     const isCouponClass = typeof couponCode === "string" && couponCode.trim().length > 0;
-    const packagePriceSatang = isCouponClass ? 0 : (req.body.packagePriceSatang ?? 250000);
+    const isDemoClass = isDemo === true;
+    const packagePriceSatang = (isCouponClass || isDemoClass) ? 0 : (req.body.packagePriceSatang ?? 250000);
 
     if (!userId || role !== "TUTOR") {
       return res.status(401).json({
@@ -38,7 +40,7 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
     }
 
     if (
-      !isCouponClass &&
+      !isCouponClass && !isDemoClass &&
       (!Number.isInteger(packagePriceSatang) || packagePriceSatang <= 0)
     ) {
       return res.status(400).json({
@@ -87,7 +89,29 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
       });
     }
 
+    // Demo classes always teach the book's first article (fixed content),
+    // so the book must have at least one. They expire 24 hours after creation.
+    if (isDemoClass) {
+      const firstArticle = await prisma.article.findFirst({
+        where: { bookId: book.bookId },
+        orderBy: { createdAt: "asc" },
+      });
+      if (!firstArticle) {
+        return res.status(400).json({
+          error: {
+            code: "NO_ARTICLE",
+            message: "This book has no articles available for demo",
+            requestId: req.id,
+          },
+        });
+      }
+    }
+
     const newClass = await prisma.$transaction(async (tx) => {
+      const demoExpiresAt = isDemoClass
+        ? new Date(Date.now() + 24 * 60 * 60 * 1000)
+        : undefined;
+
       const cls = await tx.class.create({
         data: {
           tutorUserId: userId,
@@ -100,6 +124,8 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
           meetingUrl: req.body.meetingUrl,
           startsAt: startsAt ? new Date(startsAt) : undefined,
           endsAt: endsAt ? new Date(endsAt) : undefined,
+          isDemo: isDemoClass,
+          expiresAt: demoExpiresAt,
           status: "OPEN",
         },
       });
@@ -124,12 +150,27 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
         },
       });
 
-      return cls;
+      // Demo classes get a referral token created automatically.
+      let referralToken: string | null = null;
+      if (isDemoClass) {
+        const token = randomUUID();
+        await tx.referral.create({
+          data: { token, classId: cls.classId, tutorUserId: userId, status: "ACTIVE" },
+        });
+        referralToken = token;
+      }
+
+      return { ...cls, referralToken };
     });
 
     return res.status(201).json({
       message: "Class created successfully",
-      class: serializeClass(newClass),
+      class: {
+        ...serializeClass(newClass),
+        referralToken: (newClass as any).referralToken ?? null,
+        expiresAt: (newClass as any).expiresAt ?? null,
+        isDemo: (newClass as any).isDemo ?? false,
+      },
     });
   } catch (error: any) {
     if (error instanceof CouponError) {
@@ -316,9 +357,13 @@ export async function getClasses(req: AuthenticatedRequest, res: Response) {
     let classes;
 
     if (role === "TUTOR") {
+      const isDemoFilter = req.query.isDemo === "true" ? true : req.query.isDemo === "false" ? false : undefined;
       classes = await prisma.class.findMany({
-        where: { tutorUserId: userId },
-        include: { book: true, _count: { select: { enrollments: true } } },
+        where: {
+          tutorUserId: userId,
+          ...(isDemoFilter !== undefined ? { isDemo: isDemoFilter } : {}),
+        },
+        include: { book: { include: { series: true } }, referrals: { select: { token: true }, take: 1 }, _count: { select: { enrollments: true } } },
         orderBy: { createdAt: "desc" },
       });
     } else {
@@ -345,11 +390,17 @@ export async function getClasses(req: AuthenticatedRequest, res: Response) {
 
     const mappedClasses = classes.map((c) => ({
       id: c.classId,
+      classId: c.classId,
       name: c.title || (c as any).book?.title || "Untitled Class",
       book: (c as any).book?.title || "Unknown Book",
+      bookTitle: (c as any).book?.title || "Unknown Book",
+      bookId: c.bookId,
+      cefrLevel: (c as any).book?.series?.cefrLevel || null,
       status: c.status.toLowerCase(),
       students: c.enrolledCount || 0,
+      enrolledCount: c.enrolledCount || 0,
       maxStudents: c.capacity,
+      capacity: c.capacity,
       packagePriceSatang: Number(c.packagePriceMinor),
       tutorUserId: c.tutorUserId,
       tutorName: tutorMap.get(c.tutorUserId) || "Unknown Tutor",
@@ -357,6 +408,9 @@ export async function getClasses(req: AuthenticatedRequest, res: Response) {
       scheduleData: (c as any).scheduleData || null,
       startsAt: c.startsAt ?? null,
       endsAt: c.endsAt ?? null,
+      isDemo: (c as any).isDemo ?? false,
+      expiresAt: (c as any).expiresAt ?? null,
+      referralToken: (c as any).referrals?.[0]?.token ?? null,
     }));
 
     return res.status(200).json({ classes: mappedClasses });

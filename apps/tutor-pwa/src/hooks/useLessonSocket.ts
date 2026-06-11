@@ -4,11 +4,18 @@ import { getTutorSessionToken } from '../app/dashboard/actions';
 import { t } from '@/lib/i18n';
 
 
+export type LessonPair = {
+  pairNumber: number;
+  members: { studentId: string; name: string; pictureUrl?: string }[];
+};
+
 type TutorSessionData = {
   sessionId: string;
   currentPhase: number;
   articleData?: any;
   phaseSelectedIndices?: Record<number, number>;
+  // Step 14 (Pair Conversation) random pairs, present while phase 15 is active
+  pairs?: LessonPair[] | null;
 };
 
 export const useLessonSocket = (
@@ -38,8 +45,9 @@ export const useLessonSocket = (
   }, [sessionData]);
 
   useEffect(() => {
-    // Don't initialize if no articleId
-    if (!articleId) {
+    // An explicit articleId is required unless a class is given — demo classes
+    // are pinned to their book's first article on the server.
+    if (!articleId && !classId) {
       setError("Missing article ID for this lesson.");
       return;
     }
@@ -99,7 +107,7 @@ export const useLessonSocket = (
         socketInstance.on('phase_changed', (data) => {
           console.log(`[Socket] Phase changed to: ${data.phase}`);
           setSessionData(prev => {
-            const next = prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices } : null;
+            const next = prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null } : null;
             sessionDataRef.current = next;
             return next;
           });

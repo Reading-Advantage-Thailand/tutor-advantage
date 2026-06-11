@@ -684,7 +684,7 @@ export const th = {
       period2: "คาบ 2 · อ่านเชิงลึก & จับใจความ",
       period3: "คาบ 3 · ตอบโต้ & ฝึกฝน",
       period4: "คาบ 4 · เขียน & สรุปการเรียนรู้และข้อคิดเห็น",
-      // ── 13 Steps ──
+      // ── 14 Steps ──
       step1: "ก่อนอ่าน",
       step2: "คำศัพท์สำคัญ",
       step3: "อ่านบทความ",
@@ -698,6 +698,7 @@ export const th = {
       step11: "เขียนแบบมีโครง",
       step12: "ถามภาษา",
       step13: "สรุปการเรียนรู้และข้อคิดเห็น",
+      step14: "สนทนาจับคู่",
       wrapUp: "สรุปอันดับ",
       // ── Step 11 Guided Writing ──
       writingTitle: "เขียนแบบมีโครง (Guided Writing)",
@@ -713,6 +714,21 @@ export const th = {
       reflectionTitle: "สรุปการเรียนรู้และข้อคิดเห็น (Reflection)",
       reflectionPrompt: "ให้นักเรียนประเมินความเข้าใจและความพยายามของตนเอง",
       reflectionSubmitted: "ส่งแบบสรุปการเรียนรู้และข้อคิดเห็นแล้ว",
+      // ── Lobby student invite ──
+      inviteTitle: "เชิญนักเรียนเข้าห้อง",
+      inviteHelp: "ให้นักเรียนสแกน QR หรือส่งลิงก์ให้กดเข้าร่วม",
+      inviteCopy: "คัดลอกลิงก์",
+      inviteCopied: "คัดลอกลิงก์แล้ว!",
+      // ── Step 14 Pair Conversation ──
+      pairTitle: "บทสนทนาจับคู่ (Pair Conversation)",
+      pairSubtitle: "ระบบสุ่มจับคู่นักเรียนแล้ว ให้แต่ละคู่ผลัดกันพูดคุยเกี่ยวกับบทเรียนวันนี้",
+      pairGroupLabel: "คู่ที่",
+      pairNeedTwo: "ต้องมีนักเรียนอย่างน้อย 2 คนจึงจะจับคู่สนทนาได้",
+      pairTripleNote: "นักเรียนเป็นจำนวนคี่ — คู่สุดท้ายจะเป็นกลุ่ม 3 คน",
+      pairStartersTitle: "ประโยคชวนคุย (Sentence Starters)",
+      pairTutorTip1: "เดินฟังแต่ละคู่ และช่วยเริ่มบทสนทนาถ้านักเรียนเงียบ",
+      pairTutorTip2: "กระตุ้นให้ใช้คำศัพท์จากบทเรียนระหว่างคุย",
+      pairTutorTip3: "ให้เวลาคุยคู่ละ 2-3 นาที แล้วสลับให้อีกฝ่ายพูดบ้าง",
     },
   },
 } as const;

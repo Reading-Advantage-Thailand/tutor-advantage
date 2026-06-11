@@ -167,6 +167,8 @@ model Class {
   scheduleDescription String?                @map("schedule_description")
   scheduleData        Json?                  @map("schedule_data")
   meetingUrl          String?                @map("meeting_url")
+  isDemo              Boolean                @default(false) @map("is_demo")
+  expiresAt           DateTime?              @map("expires_at") @db.Timestamptz
   startsAt            DateTime?              @map("starts_at") @db.Timestamptz
   endsAt              DateTime?              @map("ends_at") @db.Timestamptz
   createdAt     DateTime               @default(now()) @map("created_at") @db.Timestamptz
@@ -306,6 +308,8 @@ model InteractiveSession {
   participants SessionParticipant[]
   answers      SessionAnswer[]
 
+  @@index([classBookCycleId], map: "interactive_sessions_class_book_cycle_id_idx")
+  @@index([bookId], map: "interactive_sessions_book_id_idx")
   @@map("interactive_sessions")
   @@schema("learning")
 }
@@ -516,6 +520,7 @@ model PaymentIntent {
   events PaymentEvent[]
   receipt PaymentReceipt?
 
+  @@index([enrollmentPackageId], map: "payment_intents_enrollment_package_id_idx")
   @@map("payment_intents")
   @@schema("finance_mlm")
 }

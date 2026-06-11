@@ -7,13 +7,69 @@ import { playSound } from "@/lib/sounds";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft, Users, Bell, UserMinus, ShieldCheck,
-  BookOpen, Play, AlertCircle, X,
+  BookOpen, Play, AlertCircle, X, Copy, CheckCircle2, QrCode,
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { QRCodeSVG } from "qrcode.react";
 import { PhaseManager } from "./PhaseManager";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { t } from "@/lib/i18n";
+
+// Invite card shown while waiting in the lobby: scannable QR (the lobby is
+// usually on the projector) plus a copyable link for chat apps.
+function LobbyInviteCard({ referralLink }: { referralLink: string }) {
+  const [copied, setCopied] = React.useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(referralLink).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <div className="rounded-3xl border border-border/60 bg-card shadow-xl overflow-hidden">
+      <div className="px-5 py-3.5 bg-gradient-to-r from-emerald-500/15 to-teal-500/10 border-b border-border/60 flex items-center gap-2.5">
+        <div className="size-8 rounded-lg bg-emerald-500/15 flex items-center justify-center shrink-0">
+          <QrCode className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm font-bold text-foreground">{t("lesson.interactive.inviteTitle")}</p>
+          <p className="text-[11px] text-muted-foreground">{t("lesson.interactive.inviteHelp")}</p>
+        </div>
+      </div>
+      <div className="p-5 flex flex-col items-center gap-4">
+        <div className="bg-white p-3 rounded-2xl border border-border/50 shadow-sm">
+          <QRCodeSVG value={referralLink} size={168} level="M" includeMargin={false} />
+        </div>
+        <div className="flex items-center gap-2 w-full">
+          <input
+            readOnly
+            value={referralLink}
+            className="flex-1 h-10 min-w-0 rounded-lg border border-input bg-muted px-3 text-xs text-foreground font-mono truncate"
+          />
+          <button
+            onClick={handleCopy}
+            title={t("lesson.interactive.inviteCopy")}
+            className="h-10 w-10 shrink-0 flex items-center justify-center rounded-lg border border-input hover:bg-muted transition-colors"
+          >
+            {copied ? (
+              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+            ) : (
+              <Copy className="h-4 w-4 text-muted-foreground" />
+            )}
+          </button>
+        </div>
+        {copied && (
+          <p className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 -mt-2">
+            {t("lesson.interactive.inviteCopied")}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function TutorLobbyClient({
   classId,
@@ -22,6 +78,7 @@ export default function TutorLobbyClient({
   bookId,
   socketUrl,
   demo = false,
+  referralLink = null,
 }: {
   classId: string;
   articleId: string;
@@ -29,6 +86,7 @@ export default function TutorLobbyClient({
   bookId?: string;
   socketUrl: string;
   demo?: boolean;
+  referralLink?: string | null;
 }) {
   const router = useRouter();
 
@@ -267,6 +325,9 @@ export default function TutorLobbyClient({
               </div>
             </div>
           </div>
+
+          {/* Student invite: QR to scan from the projector + copyable link */}
+          {!demo && referralLink && <LobbyInviteCard referralLink={referralLink} />}
 
           <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/5 p-5">
             <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
