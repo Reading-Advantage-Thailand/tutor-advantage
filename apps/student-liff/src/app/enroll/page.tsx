@@ -84,6 +84,7 @@ function EnrollContent() {
   const [classDetails, setClassDetails] = useState<ClassDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [enrolling, setEnrolling] = useState(false);
 
   useEffect(() => {
     if (!isReady) return;
@@ -130,8 +131,28 @@ function EnrollContent() {
     }
   }, [isReady, profile, router, searchParams]);
 
-  const goToPayment = () => {
+  const handleAction = async () => {
     if (!classDetails) return;
+    
+    if (classDetails.price === 0) {
+      setEnrolling(true);
+      try {
+        const enrollment = referralToken
+          ? await studentApi.enrollByReferral(referralToken as string)
+          : await studentApi.enrollClass(classDetails.classId, referralToken as string | undefined);
+          
+        if (enrollment.status === "ACTIVE") {
+          router.replace("/dashboard");
+          return;
+        }
+      } catch (err) {
+        console.error("Enrollment failed:", err);
+        setError(err instanceof Error ? err.message : t("enroll.errors.loadClassFailed"));
+        setEnrolling(false);
+        return;
+      }
+    }
+
     const params = new URLSearchParams({ classId: classDetails.classId });
     if (referralToken) params.set("referralToken", referralToken);
     router.push(`/payment?${params.toString()}`);
@@ -333,11 +354,11 @@ function EnrollContent() {
           <button
             className="flex-2 flex-[2] py-4 rounded-2xl text-white font-black text-base flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
             style={{ background: isFull ? "var(--neutral-400)" : "var(--brand-500)", boxShadow: isFull ? "none" : "var(--shadow-green)" }}
-            onClick={goToPayment}
-            disabled={isFull}
+            onClick={handleAction}
+            disabled={isFull || enrolling}
           >
-            {t("enroll.continue")}
-            <ArrowRight size={18} />
+            {enrolling ? "กำลังดำเนินการ..." : (classDetails.price === 0 ? "เข้าเรียนฟรี" : t("enroll.continue"))}
+            {!enrolling && <ArrowRight size={18} />}
           </button>
         </div>
 

@@ -384,13 +384,10 @@ export async function getStudentProgress(
     // 3. Get Book Articles — natural sort on trailing number in articleId
     const dbArticles = await prisma.article.findMany({
       where: { bookId: book.bookId },
-    });
-    dbArticles.sort((a, b) => {
-      const num = (id: string) => {
-        const m = id.match(/(\d+)$/);
-        return m ? parseInt(m[1], 10) : 0;
-      };
-      return num(a.articleId) - num(b.articleId);
+      orderBy: [
+        { createdAt: "asc" },
+        { articleId: "asc" }
+      ],
     });
 
     const articles = dbArticles.map((art, idx) => {

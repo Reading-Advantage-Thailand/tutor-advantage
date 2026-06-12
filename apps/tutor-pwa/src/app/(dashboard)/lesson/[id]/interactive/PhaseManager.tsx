@@ -1583,7 +1583,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       members: { studentId: string; name: string; pictureUrl?: string }[];
     }[] = mockPairs ?? sessionData?.pairs ?? [];
     // Mock pairs preview the layout without real students in the room
-    const showEmptyState = pairs.length === 0 || (!mockPairs && participants.length < 2);
+    const showEmptyState = pairs.length === 0 || (!mockPairs && pairs.every((p) => p.members.length < 2));
     const hasTriple = pairs.some((pair) => pair.members.length > 2);
     const starters = [
       "What was this story about?",
