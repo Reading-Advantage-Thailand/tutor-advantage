@@ -134,7 +134,10 @@ function PlayLessonContent() {
   // Step 13 Reflection
   const [understanding, setUnderstanding] = useState('');
   const [effort, setEffort] = useState('');
-  const currentPhase = sessionData?.currentPhase ?? 0;
+  // Dev-only: preview the Step 14 pair view without a real session.
+  // 0 = off, 1 = pair (1 partner), 2 = group of three (2 partners)
+  const [devPairPreview, setDevPairPreview] = useState<0 | 1 | 2>(0);
+  const currentPhase = devPairPreview ? 15 : (sessionData?.currentPhase ?? 0);
 
   useEffect(() => {
     if (isEveryoneReady) {
@@ -315,7 +318,21 @@ function PlayLessonContent() {
     );
   }
 
-  if (!sessionData) {
+  // Dev-only toggle: off -> pair -> group of three -> off
+  const devPairButton = process.env.NODE_ENV === 'development' && (
+    <button
+      onClick={() => setDevPairPreview((v) => ((v + 1) % 3) as 0 | 1 | 2)}
+      className={`fixed bottom-4 left-4 z-50 px-3 py-1.5 rounded-lg text-xs font-bold shadow-lg border transition-colors ${
+        devPairPreview
+          ? 'bg-orange-500 text-white border-orange-600'
+          : 'bg-card text-muted-foreground border-border'
+      }`}
+    >
+      {devPairPreview === 0 ? 'DEV: Mock Pair' : devPairPreview === 1 ? 'DEV Pair: คู่' : 'DEV Pair: กลุ่ม 3'}
+    </button>
+  );
+
+  if (!sessionData && !devPairPreview) {
     return (
       <div className="min-h-[100dvh] bg-background flex items-center justify-center p-6">
         <div className="bg-card rounded-3xl border border-border shadow-xl p-8 text-center max-w-[280px] w-full">
@@ -327,6 +344,7 @@ function PlayLessonContent() {
             {[0, 1, 2].map(i => <div key={i} className="size-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: `${i * 0.2}s` }} />)}
           </div>
         </div>
+        {devPairButton}
       </div>
     );
   }
@@ -372,7 +390,7 @@ function PlayLessonContent() {
       playSound('submit');
       setIsSubmitting(true);
       setSelectedChoice(typedAnswer);
-      const currentPhase = sessionData?.currentPhase;
+      const currentPhase = sessionData?.currentPhase ?? 0;
       const idx = sessionData?.phaseSelectedIndices?.[currentPhase] || 0;
       const saqQuestion = articleData?.shortAnswerQuestions?.[idx];
       submitAnswer(typedAnswer, saqQuestion?.question, saqQuestion?.answer);
@@ -1022,7 +1040,17 @@ function PlayLessonContent() {
 
         {/* ─── Step 14: Pair Conversation (phase 15) ─── */}
         {currentPhase === 15 && (() => {
-          const pairs = sessionData?.pairs || [];
+          // Dev preview injects a fake pair containing this student
+          const pairs = devPairPreview
+            ? [{
+                pairNumber: 1,
+                members: [
+                  { studentId, name },
+                  { studentId: 'mock-partner-1', name: 'เพื่อนทดสอบ เอ' },
+                  ...(devPairPreview === 2 ? [{ studentId: 'mock-partner-2', name: 'เพื่อนทดสอบ บี' }] : []),
+                ],
+              }]
+            : (sessionData?.pairs || []);
           const myPair = pairs.find(p => p.members.some(m => m.studentId === studentId));
           const partners = myPair ? myPair.members.filter(m => m.studentId !== studentId) : [];
           const starters = [
@@ -1392,6 +1420,7 @@ function PlayLessonContent() {
         )}
 
       </main>
+      {devPairButton}
     </div>
   );
 }

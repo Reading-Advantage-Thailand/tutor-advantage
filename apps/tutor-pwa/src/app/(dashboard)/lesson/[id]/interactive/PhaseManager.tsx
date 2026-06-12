@@ -274,6 +274,10 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   const [isFullscreen, setIsFullscreen] = React.useState(false);
   // Dev-only: mock participant list to preview the wrap-up leaderboard
   const [mockLeaderboard, setMockLeaderboard] = React.useState<any[] | null>(null);
+  // Dev-only: mock pairs to preview the Step 14 pair-conversation layout
+  const [mockPairs, setMockPairs] = React.useState<
+    { pairNumber: number; members: { studentId: string; name: string; pictureUrl?: string }[] }[] | null
+  >(null);
   const fullscreenRef = React.useRef<HTMLDivElement>(null);
 
   // Reset loading state when phase actually changes
@@ -1577,7 +1581,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const pairs: {
       pairNumber: number;
       members: { studentId: string; name: string; pictureUrl?: string }[];
-    }[] = sessionData?.pairs || [];
+    }[] = mockPairs ?? sessionData?.pairs ?? [];
+    // Mock pairs preview the layout without real students in the room
+    const showEmptyState = pairs.length === 0 || (!mockPairs && participants.length < 2);
     const hasTriple = pairs.some((pair) => pair.members.length > 2);
     const starters = [
       "What was this story about?",
@@ -1603,7 +1609,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           )}
         </div>
 
-        {pairs.length === 0 || participants.length < 2 ? (
+        {showEmptyState ? (
           <div className="bg-muted border border-border rounded-2xl px-8 py-6 text-center">
             <span className="text-3xl block mb-2">👥</span>
             <p className="text-muted-foreground font-medium">
@@ -1928,6 +1934,32 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 className={`px-3 py-1.5 text-sm font-semibold rounded-lg transition-colors ${mockLeaderboard ? "bg-orange-500 text-white" : "bg-muted text-muted-foreground hover:bg-accent"}`}
               >
                 {mockLeaderboard ? "Mock: ON" : "Mock LB"}
+              </button>
+              <button
+                onClick={() => {
+                  if (mockPairs) {
+                    setMockPairs(null);
+                    return;
+                  }
+                  // 7 mock students -> 2 pairs + 1 triple, so the odd-count
+                  // note and the group-of-three card are visible too
+                  const students = Array.from({ length: 7 }, (_, i) => ({
+                    studentId: `mock-pair-${i}`,
+                    name: `นักเรียน ${i + 1}`,
+                  }));
+                  const mock = [];
+                  for (let i = 0; i + 1 < students.length; i += 2) {
+                    mock.push({ pairNumber: mock.length + 1, members: [students[i], students[i + 1]] });
+                  }
+                  if (students.length % 2 === 1) {
+                    mock[mock.length - 1].members.push(students[students.length - 1]);
+                  }
+                  setMockPairs(mock);
+                  changePhase(15);
+                }}
+                className={`px-3 py-1.5 text-sm font-semibold rounded-lg transition-colors ${mockPairs ? "bg-orange-500 text-white" : "bg-muted text-muted-foreground hover:bg-accent"}`}
+              >
+                {mockPairs ? "Pairs: ON" : "Mock Pairs"}
               </button>
             </div>
           )}
