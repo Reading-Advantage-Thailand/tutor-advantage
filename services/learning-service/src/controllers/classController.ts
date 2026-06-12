@@ -442,7 +442,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
         book: {
           include: {
             series: true,
-            articles: { orderBy: { articleId: "asc" }, take: 3 },
+            articles: { orderBy: [ { createdAt: "asc" }, { articleId: "asc" } ], take: 3 },
           },
         },
         bookCycles: {
@@ -542,7 +542,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
     const series = cls.book?.series;
     const cefr = series?.cefrLevel || "A1";
     const totalHours = cls.book?.classHours || 0;
-    const bookArticleCount = cls.book?.articleCount || cls.book?.articles?.length || 0;
+    const bookArticleCount = cls.isDemo ? 1 : (cls.book?.articleCount || cls.book?.articles?.length || 0);
     const status = mapClassStatus(cls.status, activeOrPendingStudents, cls.capacity);
     const firstArticle = cls.book?.articles?.[0];
     const mapped = {
@@ -617,7 +617,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
       },
       articleId: firstArticle?.articleId || null,
       articles:
-        cls.book?.articles?.map((article: any, index: number) => ({
+        (cls.isDemo ? cls.book?.articles?.slice(0, 1) : cls.book?.articles)?.map((article: any, index: number) => ({
           id: article.articleId,
           no: index + 1,
           title: article.title,
@@ -784,11 +784,7 @@ export async function getBooks(_req: AuthenticatedRequest, res: Response) {
 }
 export async function deleteClass(req: AuthenticatedRequest, res: Response) {
   try {
-    if (process.env.NODE_ENV !== "development") {
-      return res.status(404).json({
-        error: { code: "NOT_FOUND", message: "Class not found" },
-      });
-    }
+    // Environment check moved below to allow Demo class deletion in all environments
 
     const userId = req.user?.userId;
     const { classId } = req.params;
@@ -811,6 +807,13 @@ export async function deleteClass(req: AuthenticatedRequest, res: Response) {
       return res
         .status(404)
         .json({ error: { code: "NOT_FOUND", message: "Class not found" } });
+    }
+
+    const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === "development";
+    if (!isDev && !(cls as any).isDemo) {
+      return res.status(403).json({
+        error: { code: "FORBIDDEN", message: "Cannot delete a non-demo class in production" },
+      });
     }
 
     const enrollmentIds = cls.enrollments.map((e) => e.enrollmentId);
@@ -1104,14 +1107,17 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
 
     const dbArticlesRaw = await prisma.article.findMany({
       where: { bookId: cycle.bookId },
+      orderBy: [
+        { createdAt: "asc" },
+        { articleId: "asc" }
+      ]
     });
 
-    // Sort articles by their numeric articleId so order is stable and sequential
-    const dbArticles = [...dbArticlesRaw].sort((a, b) => {
-      const aNum = parseInt(a.articleId.replace(/\D/g, ""), 10) || 0;
-      const bNum = parseInt(b.articleId.replace(/\D/g, ""), 10) || 0;
-      return aNum - bNum;
-    });
+    let dbArticles = [...dbArticlesRaw];
+
+    if (cls.isDemo) {
+      dbArticles = dbArticles.slice(0, 1);
+    }
 
     // Fetch completed sessions for this class to mark completed articles
     const completedSessions = await prisma.interactiveSession.findMany({

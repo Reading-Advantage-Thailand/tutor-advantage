@@ -51,8 +51,20 @@ function decodeLineTokenDebug(idToken: string): LineTokenDebug | null {
 export async function verifyLineToken(idToken: string): Promise<LineProfile> {
   try {
     const liffId = process.env.NEXT_PUBLIC_LIFF_ID;
-    const clientId = process.env.LINE_CHANNEL_ID || liffId?.split("-")[0];
+    const liffClientId = liffId?.split("-")[0];
+    const tutorClientId = process.env.LINE_CHANNEL_ID;
     const tokenDebug = decodeLineTokenDebug(idToken);
+
+    let clientId = tutorClientId;
+    if (tokenDebug?.aud) {
+      const aud = Array.isArray(tokenDebug.aud) ? tokenDebug.aud[0] : tokenDebug.aud;
+      if (aud === liffClientId) {
+        clientId = liffClientId;
+      } else if (aud === tutorClientId) {
+        clientId = tutorClientId;
+      }
+    }
+    clientId = clientId || tutorClientId || liffClientId;
 
     if (!clientId) {
       throw new Error("LINE_CHANNEL_ID or NEXT_PUBLIC_LIFF_ID is not configured");

@@ -322,6 +322,9 @@ class LessonSessionService {
         pairs[pairs.length - 1].studentIds.push(leftover);
       } else {
         pairs.push({ pairNumber: 1, studentIds: [leftover] });
+        if (process.env.NODE_ENV !== "production") {
+          pairs[0].studentIds.push("mock-student-dev");
+        }
       }
     }
 
@@ -337,7 +340,7 @@ class LessonSessionService {
         const participant = session.participants.get(studentId);
         return {
           studentId,
-          name: participant?.name || "?",
+          name: participant?.name || (studentId.startsWith('mock') ? 'เพื่อนสมมติ (Dev)' : '?'),
           pictureUrl: participant?.pictureUrl,
         };
       }),

@@ -210,7 +210,7 @@ export default function DemoPage() {
       {!loading && demoClasses.length === 0 && (
         <Card className="border-border/40 bg-card/50">
           <CardContent className="py-8 text-center text-muted-foreground text-sm">
-            ยังไม่มีห้อง Demo — เลือกหนังสือและกด "สร้างห้อง" ด้านบน
+            ยังไม่มีห้อง Demo — เลือกหนังสือและกด &quot;สร้างห้อง&quot; ด้านบน
           </CardContent>
         </Card>
       )}

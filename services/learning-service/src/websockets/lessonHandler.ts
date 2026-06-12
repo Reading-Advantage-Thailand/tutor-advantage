@@ -99,7 +99,10 @@ export const setupLessonSocket = (io: Server) => {
             }
             const firstArticle = await prisma.article.findFirst({
               where: { bookId: cls.bookId },
-              orderBy: { createdAt: "asc" },
+              orderBy: [
+                { createdAt: "asc" },
+                { articleId: "asc" }
+              ],
             });
             if (!firstArticle) {
               socket.emit("error", { message: "หนังสือของห้อง Demo นี้ยังไม่มีบทเรียน" });

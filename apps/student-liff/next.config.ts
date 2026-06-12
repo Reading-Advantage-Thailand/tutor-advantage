@@ -1,4 +1,8 @@
 import type { NextConfig } from "next";
+import dotenv from "dotenv";
+import path from "path";
+
+dotenv.config({ path: path.resolve(process.cwd(), "../../.env") });
 
 const LEARNING_URL = process.env.LEARNING_SERVICE_URL || "http://localhost:3002";
 const IDENTITY_URL = process.env.IDENTITY_SERVICE_URL || "http://localhost:3001";
