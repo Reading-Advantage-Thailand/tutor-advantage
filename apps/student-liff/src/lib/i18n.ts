@@ -1,6 +1,7 @@
 export const th = {
   app: {
-    rootDescription: "ระบบสมัครเรียนและเรียนภาษาอังกฤษผ่าน LINE สำหรับนักเรียน - Tutor Advantage Student LIFF Portal",
+    rootDescription:
+      "ระบบสมัครเรียนและเรียนภาษาอังกฤษผ่าน LINE สำหรับนักเรียน - Tutor Advantage Student LIFF Portal",
     keywordEnglishLearning: "เรียนภาษาอังกฤษ",
     openGraphDescription: "เรียนภาษาอังกฤษกับติวเตอร์ที่คุณไว้วางใจ",
     dashboardTitle: "หน้าหลัก - Tutor Advantage",
@@ -26,9 +27,11 @@ export const th = {
     terms: "เงื่อนไขการใช้งาน",
     and: "และ",
     underagePrefix: "นักเรียนอายุต่ำกว่า 18 ปี",
-    underageNotice: "ต้องได้รับความยินยอมจากผู้ปกครองก่อนชำระเงินและใช้งานช่องทางติดต่อ",
+    underageNotice:
+      "ต้องได้รับความยินยอมจากผู้ปกครองก่อนชำระเงินและใช้งานช่องทางติดต่อ",
     securePaymentLine: "ชำระเงินปลอดภัยโดย Omise / PromptPay และบัตรเครดิต",
-    sessionCreationFailed: "LINE login สำเร็จแล้ว แต่ระบบยังสร้าง session ไม่สำเร็จ กรุณาลองเข้าสู่ระบบใหม่",
+    sessionCreationFailed:
+      "LINE login สำเร็จแล้ว แต่ระบบยังสร้าง session ไม่สำเร็จ กรุณาลองเข้าสู่ระบบใหม่",
     retryLogin: "ลองเข้าสู่ระบบใหม่",
     close: "ปิด",
     programBadge: "โปรแกรมภาษาอังกฤษ Origins & Quest",
@@ -54,7 +57,8 @@ export const th = {
     availableCourses: "หลักสูตรที่เปิดสอน",
     haveTutorLink: "มีลิงก์สมัครเรียนจากติวเตอร์แล้ว?",
     continueAfterLogin: "เข้าสู่ระบบเพื่อดำเนินการต่อได้เลย",
-    secureOmiseLine: "ชำระเงินผ่าน PromptPay หรือบัตรเครดิต / ปลอดภัย 100% โดย Omise",
+    secureOmiseLine:
+      "ชำระเงินผ่าน PromptPay หรือบัตรเครดิต / ปลอดภัย 100% โดย Omise",
     notFoundTitle: "ไม่พบหน้านี้",
     notFoundDescription: "ขออภัย เราไม่พบหน้าที่คุณกำลังมองหา",
     backDashboard: "กลับไปหน้า Dashboard",
@@ -62,17 +66,20 @@ export const th = {
     legalLastUpdated: "ปรับปรุงล่าสุด: 10 พฤษภาคม 2026",
     consentProfile: "โปรไฟล์",
     consentTitle: "ความยินยอมของคุณ (PDPA)",
-    consentSubtitle: "ตรวจสอบและจัดการการยินยอมในการใช้งานข้อมูลส่วนบุคคลของคุณบนระบบ Tutor Advantage",
+    consentSubtitle:
+      "ตรวจสอบและจัดการการยินยอมในการใช้งานข้อมูลส่วนบุคคลของคุณบนระบบ Tutor Advantage",
     consentActive: "ยินยอมแล้ว",
     consentInactive: "ยังไม่ยินยอม",
     consentDatePrefix: "ยินยอมเมื่อ:",
     revokeConsentTitle: "การเพิกถอนความยินยอม",
-    revokeConsentDescription: "หากท่านต้องการเพิกถอนความยินยอม หรือลบข้อมูลทั้งหมดออกจากระบบ โปรดทราบว่าสถานะบัญชีและการเข้าเรียนอาจสิ้นสุดลงตามความจำเป็นทางเทคนิค กรุณาติดต่อเจ้าหน้าที่ผ่านช่องทาง Support",
+    revokeConsentDescription:
+      "หากท่านต้องการเพิกถอนความยินยอม หรือลบข้อมูลทั้งหมดออกจากระบบ โปรดทราบว่าสถานะบัญชีและการเข้าเรียนอาจสิ้นสุดลงตามความจำเป็นทางเทคนิค กรุณาติดต่อเจ้าหน้าที่ผ่านช่องทาง Support",
     readFullPrivacy: "อ่านนโยบายความเป็นส่วนตัวฉบับเต็ม",
     readFullTerms: "อ่านเงื่อนไขการให้บริการฉบับเต็ม",
   },
   dashboard: {
-    sessionCreateFailed: "ไม่สามารถสร้างเซสชันกับเซิร์ฟเวอร์ได้ กรุณาลองเข้าสู่ระบบใหม่อีกครั้ง",
+    sessionCreateFailed:
+      "ไม่สามารถสร้างเซสชันกับเซิร์ฟเวอร์ได้ กรุณาลองเข้าสู่ระบบใหม่อีกครั้ง",
     loadFailed: "เกิดข้อผิดพลาดในการโหลดข้อมูล",
     noClass: "ยังไม่มีคลาสเรียน",
     loadingName: "กำลังโหลด...",
@@ -199,7 +206,8 @@ export const th = {
     saving: "กำลังบันทึก...",
     save: "บันทึกการตั้งค่า",
     liffTipTitle: "เกร็ดความรู้ LINE LIFF:",
-    liffTipDescription: "การเปิดใช้งานการแจ้งเตือนจะอนุญาตให้ระบบส่งข้อความ Direct Message เข้าหาคุณโดยตรงผ่าน LINE Official Account แม้จะไม่ได้เปิดแอปพลิเคชันอยู่",
+    liffTipDescription:
+      "การเปิดใช้งานการแจ้งเตือนจะอนุญาตให้ระบบส่งข้อความ Direct Message เข้าหาคุณโดยตรงผ่าน LINE Official Account แม้จะไม่ได้เปิดแอปพลิเคชันอยู่",
   },
   guardian: {
     validationError: "กรุณากรอกข้อมูลให้ครบถ้วนและกดยอมรับเงื่อนไข",
@@ -216,14 +224,17 @@ export const th = {
     mother: "มารดา",
     relative: "ญาติ",
     other: "อื่นๆ",
-    agreement: "ข้าพเจ้ายืนยันว่าข้อมูลข้างต้นเป็นความจริง และผู้ปกครองได้รับทราบและยินยอมให้จัดการข้อมูลเพื่อวัตถุประสงค์ทางการศึกษา",
+    agreement:
+      "ข้าพเจ้ายืนยันว่าข้อมูลข้างต้นเป็นความจริง และผู้ปกครองได้รับทราบและยินยอมให้จัดการข้อมูลเพื่อวัตถุประสงค์ทางการศึกษา",
     saving: "กำลังบันทึก...",
     save: "บันทึกข้อมูล",
     faqTitle: "คำถามที่พบบ่อย",
     faqWhyTitle: "ทำไมต้องระบุข้อมูลผู้ปกครอง?",
-    faqWhyDescription: "เพื่อให้สอดคล้องกับกฎหมายคุ้มครองข้อมูลส่วนบุคคล (PDPA) และเพื่อใช้ในการแจ้งเตือนเกี่ยวกับการเรียนและค่าใช้จ่าย ในกรณีที่ผู้เรียนเป็นผู้เยาว์",
+    faqWhyDescription:
+      "เพื่อให้สอดคล้องกับกฎหมายคุ้มครองข้อมูลส่วนบุคคล (PDPA) และเพื่อใช้ในการแจ้งเตือนเกี่ยวกับการเรียนและค่าใช้จ่าย ในกรณีที่ผู้เรียนเป็นผู้เยาว์",
     faqEditTitle: "หากต้องการแก้ไขข้อมูลภายหลัง?",
-    faqEditDescription: "ท่านสามารถกลับมากรอกข้อมูลใหม่เพื่อทำการอัปเดตข้อมูลล่าสุดลงในระบบได้ตลอดเวลา",
+    faqEditDescription:
+      "ท่านสามารถกลับมากรอกข้อมูลใหม่เพื่อทำการอัปเดตข้อมูลล่าสุดลงในระบบได้ตลอดเวลา",
   },
   chat: {
     sessionUnavailable: "ไม่สามารถสร้างเซสชันได้",
@@ -262,7 +273,8 @@ export const th = {
     contactTutorIfMistake: "กรุณาติดต่อคุณครูหากนี่เป็นข้อผิดพลาด",
     backHome: "กลับหน้าหลัก",
     classNotFoundTitle: "ไม่พบข้อมูลคลาส",
-    classNotFoundDescription: "คลาสนี้อาจยังไม่เปิดสอน หรือคุณยังไม่ได้ลงทะเบียน",
+    classNotFoundDescription:
+      "คลาสนี้อาจยังไม่เปิดสอน หรือคุณยังไม่ได้ลงทะเบียน",
     enrollmentInactive: "ระบบพบว่าการลงทะเบียนของคลาสนี้ยังไม่เป็น ACTIVE",
     goPayment: "ไปหน้าชำระเงิน",
     lobbyTitle: "ห้องพักคอย (Lobby)",
@@ -280,7 +292,8 @@ export const th = {
   },
   interactiveJoin: {
     title: "เข้าห้องเรียนผ่านลิงก์คลาส",
-    description: "ระบบเลิกใช้การกรอก PIN แล้ว กรุณาเปิดลิงก์หรือสแกน QR Code ที่ติวเตอร์ส่งให้",
+    description:
+      "ระบบเลิกใช้การกรอก PIN แล้ว กรุณาเปิดลิงก์หรือสแกน QR Code ที่ติวเตอร์ส่งให้",
     backHome: "กลับหน้าหลัก",
   },
   lessonHistory: {
@@ -319,7 +332,8 @@ export const th = {
   },
   study: {
     comingSoonTitle: "กำลังพัฒนา",
-    comingSoonDesc: "ระบบการเรียนแบบ Self-Study กำลังอยู่ระหว่างพัฒนา การเรียนปัจจุบันจะเกิดขึ้นในชั้นเรียนสดกับติวเตอร์ของคุณ",
+    comingSoonDesc:
+      "ระบบการเรียนแบบ Self-Study กำลังอยู่ระหว่างพัฒนา การเรียนปัจจุบันจะเกิดขึ้นในชั้นเรียนสดกับติวเตอร์ของคุณ",
   },
   articleReader: {
     metadataTitlePrefix: "บทอ่าน",
@@ -360,7 +374,8 @@ export const th = {
     personUnit: "คน",
     totalScore: "คะแนนรวมของคุณ",
     lessonCompletedTitle: "บทเรียนเสร็จสิ้นแล้ว!",
-    lessonCompletedDescription: "คุณได้มีส่วนร่วมและตอบคำถามครบทุก Phase อย่างยอดเยี่ยม",
+    lessonCompletedDescription:
+      "คุณได้มีส่วนร่วมและตอบคำถามครบทุก Phase อย่างยอดเยี่ยม",
     yourAnswer: "คำตอบของคุณ",
     everyoneAnswered: "ตอบครบทุกคนแล้ว!",
     watchTeacherAnswer: "โปรดดูเฉลยที่หน้าจอคุณครู",
@@ -379,6 +394,44 @@ export const th = {
     characterUnit: "ตัวอักษร",
     submitAnswer: "ส่งคำตอบ (Submit)",
     preparingData: "กำลังเตรียมข้อมูล...",
+    // ── Step 11 Guided Writing ──
+    writingTitle: "เขียนแบบมีโครง",
+    writingPlanLabel: "วางแผนก่อนเขียน (จดไอเดียสั้นๆ)",
+    writingPlanPlaceholder: "ไอเดียที่อยากเขียน...",
+    writingDraftLabel: "เขียนงานของคุณ",
+    writingDraftPlaceholder:
+      "ใช้ไอเดียและประโยคตัวอย่าง เขียนเป็นประโยคเต็ม...",
+    writingSelfCheck: "เช็คงานตัวเอง",
+    writingCheckComplete: "เขียนเป็นประโยคเต็ม",
+    writingCheckArticle: "อ้างอิงจากบทความ",
+    writingCheckFrames: "ใช้ประโยคตัวอย่าง",
+    writingSubmit: "ส่งงานเขียน",
+    framesTitle: "ประโยคตัวอย่าง (Sentence frames)",
+    framesHint: "แตะวลีเพื่อใส่ในงานเขียน แล้วเขียนต่อให้จบประโยค",
+    // ── Step 12 Language Questions ──
+    languageTitle: "ถามคำถามภาษา",
+    languagePrompt: "พิมพ์คำถามภาษาอังกฤษที่สงสัยให้ชัดเจน",
+    languagePlaceholder: "เช่น ใช้ a กับ an ต่างกันยังไง?",
+    languageSubmit: "ส่งคำถาม",
+    languageSkip: "ไม่มีคำถาม · ข้าม",
+    languageSkipped: "ข้ามแล้ว — ไม่มีคำถามในรอบนี้",
+    languageAiTitle: "คำตอบจาก AI",
+    languageWaiting: "รอ AI ช่วยตอบ...",
+    // ── Step 13 Lesson Reflection ──
+    reflectionTitle: "สรุปการเรียนรู้และข้อคิดเห็น",
+    reflectionPrompt: "วันนี้เป็นยังไงบ้าง?",
+    reflectionUnderstanding: "เข้าใจบทเรียนแค่ไหน?",
+    reflectionEffort: "ความพยายามวันนี้?",
+    reflectionUnderstandingAll: "เข้าใจทั้งหมด",
+    reflectionUnderstandingMost: "เข้าใจส่วนใหญ่",
+    reflectionUnderstandingSome: "เข้าใจบ้าง",
+    reflectionUnderstandingLittle: "เข้าใจนิดหน่อย",
+    reflectionEffortGreat: "ยอดเยี่ยม",
+    reflectionEffortGood: "ดี",
+    reflectionEffortOkay: "พอใช้",
+    reflectionEffortNeedsWork: "ต้องพยายามอีก",
+    reflectionSubmit: "ส่งแบบสรุปการเรียนรู้และข้อคิดเห็น",
+    reflectionDone: "ส่งแล้ว! ขอบคุณที่ตั้งใจเรียน",
   },
   payment: {
     loadingClass: "Loading class...",
@@ -391,8 +444,10 @@ export const th = {
       consentFailed: "เกิดข้อผิดพลาดในการยืนยันตัวตน",
       omiseNotConfigured: "Omise ยังไม่ได้ตั้งค่า public/private key",
       createCardTokenFailed: "สร้าง token บัตรไม่สำเร็จ",
-      paymentFailedPrefix: "การชำระเงินไม่สำเร็จ โปรดแสกน QR Code ใหม่อีกครั้ง หรือติดต่อเจ้าหน้าที่",
-      paymentPending: "ระบบยังไม่พบการชำระเงิน กรุณารอสักครู่แล้วตรวจสอบอีกครั้ง",
+      paymentFailedPrefix:
+        "การชำระเงินไม่สำเร็จ โปรดแสกน QR Code ใหม่อีกครั้ง หรือติดต่อเจ้าหน้าที่",
+      paymentPending:
+        "ระบบยังไม่พบการชำระเงิน กรุณารอสักครู่แล้วตรวจสอบอีกครั้ง",
       paymentIncomplete: "การชำระเงินยังไม่สำเร็จ",
       enrollmentFailed: "การลงทะเบียนล้มเหลว กรุณาลองใหม่อีกครั้ง",
     },
@@ -418,7 +473,8 @@ export const th = {
       adultYes: "ใช่ เกิน 18 ปีแล้ว",
       adultNo: "ยังไม่ถึง 18 ปี",
       guardianNotice: "คุณจำเป็นต้องให้ผู้ปกครองรับทราบ",
-      guardianInstruction: "กรุณากรอกข้อมูลผู้ปกครองเพื่อใช้ประกอบความยินยอมทางกฎหมาย",
+      guardianInstruction:
+        "กรุณากรอกข้อมูลผู้ปกครองเพื่อใช้ประกอบความยินยอมทางกฎหมาย",
       guardianNameLabel: "ชื่อ-นามสกุล ผู้ปกครอง",
       guardianNamePlaceholder: "เช่น สมชาย รักการเรียน",
       guardianRelationLabel: "ความสัมพันธ์",
@@ -471,7 +527,8 @@ export const th = {
     },
     history: {
       sessionUnavailable: "ไม่สามารถสร้างเซสชันได้ กรุณาลองใหม่อีกครั้ง",
-      fetchFailed: "ไม่สามารถดึงข้อมูลประวัติการชำระเงินได้ กรุณาลองใหม่อีกครั้ง",
+      fetchFailed:
+        "ไม่สามารถดึงข้อมูลประวัติการชำระเงินได้ กรุณาลองใหม่อีกครั้ง",
       statusSuccess: "สำเร็จ",
       statusPending: "รอชำระ",
       statusFailed: "ล้มเหลว",
@@ -479,7 +536,8 @@ export const th = {
       loading: "กำลังโหลดประวัติ...",
       retry: "ลองใหม่อีกครั้ง",
       emptyTitle: "ยังไม่มีประวัติการชำระเงิน",
-      emptyDescription: "เมื่อคุณซื้อคอร์สเรียน ประวัติการชำระเงินทั้งหมดจะแสดงที่นี่",
+      emptyDescription:
+        "เมื่อคุณซื้อคอร์สเรียน ประวัติการชำระเงินทั้งหมดจะแสดงที่นี่",
       browseClasses: "ดูคอร์สเรียนที่น่าสนใจ",
       unnamedClass: "ไม่ได้ระบุชื่อคลาส",
       otherExpense: "รายจ่ายอื่นๆ",
@@ -489,7 +547,8 @@ export const th = {
   enroll: {
     errors: {
       loadClassFailed: "ไม่สามารถโหลดข้อมูลคลาสได้",
-      referralMissingClassId: "ลิงก์สมัครเรียนนี้ไม่มี classId กรุณาขอลิงก์ใหม่จากติวเตอร์",
+      referralMissingClassId:
+        "ลิงก์สมัครเรียนนี้ไม่มี classId กรุณาขอลิงก์ใหม่จากติวเตอร์",
       missingClass: "ไม่พบข้อมูลคลาส กรุณาตรวจสอบลิงก์",
     },
     loadingPreparing: "กำลังเตรียมข้อมูล...",
@@ -520,15 +579,18 @@ export const th = {
     lineNoticeSecond: "ตรวจสอบการแจ้งเตือนจาก LINE Official Account",
     dashboardCta: "ไปหน้า Dashboard",
     fallbackBannerTitle: "คลาสนี้เต็มแล้ว",
-    fallbackBannerDesc: "ระบบจะจัดหาคลาสอื่นของติวเตอร์เดิมให้คุณโดยอัตโนมัติ คุณยังสามารถดำเนินการต่อได้",
+    fallbackBannerDesc:
+      "ระบบจะจัดหาคลาสอื่นของติวเตอร์เดิมให้คุณโดยอัตโนมัติ คุณยังสามารถดำเนินการต่อได้",
     urgentSeatsPrefix: "⚠️ เหลือเพียง",
     urgentSeatsSuffix: "ที่นั่ง!",
   },
   classes: {
     allFilter: "ทั้งหมด",
-    liffNotReady: "LINE LIFF ยังเริ่มไม่สำเร็จ กรุณาเปิดผ่านแอป LINE แล้วลองใหม่",
+    liffNotReady:
+      "LINE LIFF ยังเริ่มไม่สำเร็จ กรุณาเปิดผ่านแอป LINE แล้วลองใหม่",
     qrLineOnly: "💡 การสแกน QR Code รองรับเฉพาะการใช้งานผ่านแอป LINE เท่านั้น",
-    qrUnsupported: "⚠️ อุปกรณ์หรือเวอร์ชันของ LINE ไม่รองรับการสแกนในหน้าแอปนี้",
+    qrUnsupported:
+      "⚠️ อุปกรณ์หรือเวอร์ชันของ LINE ไม่รองรับการสแกนในหน้าแอปนี้",
     qrInvalid: "❌ รูปแบบ QR Code ไม่ถูกต้อง (ไม่พบข้อมูลคลาสเรียน)",
     statusOpen: "รับสมัคร",
     statusFull: "เต็มแล้ว",
@@ -601,7 +663,8 @@ export const th = {
       lessonPending: "ยังไม่ได้เรียน",
       allLessons: "บทเรียนทั้งหมด",
       reviewTitle: "ให้คะแนนคุณครู",
-      reviewDescription: "คะแนนนี้จะถูกนำไปคำนวณเรตติ้งเฉลี่ยจริงบนหน้า Performance ของครู",
+      reviewDescription:
+        "คะแนนนี้จะถูกนำไปคำนวณเรตติ้งเฉลี่ยจริงบนหน้า Performance ของครู",
       reviewLoading: "กำลังโหลดรีวิวของคุณ...",
       reviewed: "รีวิวแล้ว",
       editReview: "แก้ไขรีวิว",
@@ -653,10 +716,34 @@ export const studentScheduleCopy = {
 } as const;
 
 export const studyDemoLessons = [
-  { id: "L1", title: "Introduction & Basic Vocab", type: "video", duration: "15:20", completed: true },
-  { id: "L2", title: "Daily Conversations", type: "article", duration: "10 mins", completed: true },
-  { id: "L3", title: "Common Grammar Mistakes", type: "video", duration: "22:45", completed: false },
-  { id: "L4", title: "Final Quiz - Unit 1", type: "quiz", duration: "15 mins", completed: false },
+  {
+    id: "L1",
+    title: "Introduction & Basic Vocab",
+    type: "video",
+    duration: "15:20",
+    completed: true,
+  },
+  {
+    id: "L2",
+    title: "Daily Conversations",
+    type: "article",
+    duration: "10 mins",
+    completed: true,
+  },
+  {
+    id: "L3",
+    title: "Common Grammar Mistakes",
+    type: "video",
+    duration: "22:45",
+    completed: false,
+  },
+  {
+    id: "L4",
+    title: "Final Quiz - Unit 1",
+    type: "quiz",
+    duration: "15 mins",
+    completed: false,
+  },
 ] as const;
 
 export const studentReadMockArticle = {
@@ -716,8 +803,7 @@ export const studentLegalCopy = {
       },
       {
         title: "3. การแชร์ข้อมูลและสิทธิ์ของคุณ",
-        body:
-          "ข้อมูลจะถูกเปิดเผยให้ครูผู้สอนประจำคลาสและผู้ดูแลระบบเท่าที่จำเป็นเท่านั้น จะไม่มีการนำไปขายหรือส่งต่อเพื่อวัตถุประสงค์ทางการตลาดภายนอก คุณสามารถขอดู แก้ไข หรือลบข้อมูลได้ผ่านช่องทาง Support ทางการของบริษัท ยกเว้นข้อมูลทางการเงินที่ต้องเก็บตามกฎหมาย",
+        body: "ข้อมูลจะถูกเปิดเผยให้ครูผู้สอนประจำคลาสและผู้ดูแลระบบเท่าที่จำเป็นเท่านั้น จะไม่มีการนำไปขายหรือส่งต่อเพื่อวัตถุประสงค์ทางการตลาดภายนอก คุณสามารถขอดู แก้ไข หรือลบข้อมูลได้ผ่านช่องทาง Support ทางการของบริษัท ยกเว้นข้อมูลทางการเงินที่ต้องเก็บตามกฎหมาย",
       },
     ],
     contactTitle: "ติดต่อสอบถามเกี่ยวกับ PDPA",
@@ -738,13 +824,11 @@ export const studentLegalCopy = {
       },
       {
         title: "2. การคุ้มครองลิขสิทธิ์",
-        body:
-          "เนื้อหาแบบฝึกหัด บทความ เสียงอ่าน และฟีเจอร์สื่อสารการเรียนการสอนทั้งหมดในระบบ ถือเป็นทรัพย์สินทางปัญญาของบริษัท ห้ามคัดลอก บันทึก แคปหน้าจอเพื่อนำไปเผยแพร่ต่อ หรือทำซ้ำเพื่อการค้าโดยไม่ได้รับอนุญาต",
+        body: "เนื้อหาแบบฝึกหัด บทความ เสียงอ่าน และฟีเจอร์สื่อสารการเรียนการสอนทั้งหมดในระบบ ถือเป็นทรัพย์สินทางปัญญาของบริษัท ห้ามคัดลอก บันทึก แคปหน้าจอเพื่อนำไปเผยแพร่ต่อ หรือทำซ้ำเพื่อการค้าโดยไม่ได้รับอนุญาต",
       },
       {
         title: "3. นโยบายการยกเลิกและคืนเงิน",
-        body:
-          "เมื่อการลงทะเบียนเรียนและชำระเงินสำเร็จ ระบบจะตัดโควตาหนังสือและเตรียมการจัดส่งทันที จึงไม่สามารถขอคืนเงินได้ในทุกกรณี เว้นแต่คลาสเรียนนั้นไม่สามารถเปิดสอนได้จริงตามกำหนดการ หรือเป็นไปตามนโยบายพิจารณาพิเศษของบริษัท",
+        body: "เมื่อการลงทะเบียนเรียนและชำระเงินสำเร็จ ระบบจะตัดโควตาหนังสือและเตรียมการจัดส่งทันที จึงไม่สามารถขอคืนเงินได้ในทุกกรณี เว้นแต่คลาสเรียนนั้นไม่สามารถเปิดสอนได้จริงตามกำหนดการ หรือเป็นไปตามนโยบายพิจารณาพิเศษของบริษัท",
       },
     ],
     footer:
@@ -753,19 +837,22 @@ export const studentLegalCopy = {
   consents: [
     {
       title: "การยอมรับข้อกำหนดการใช้งาน",
-      description: "ยินยอมต่อเงื่อนไขการให้บริการทั่วไปและการประมวลผลข้อมูลพื้นฐาน",
+      description:
+        "ยินยอมต่อเงื่อนไขการให้บริการทั่วไปและการประมวลผลข้อมูลพื้นฐาน",
       status: "ACTIVE",
       date: "10 พ.ค. 2026",
     },
     {
       title: "ความยินยอมจากผู้ปกครอง",
-      description: "อนุญาตสำหรับการติดต่อสื่อสารและการชำระเงิน ครอบคลุมกรณีผู้เยาว์",
+      description:
+        "อนุญาตสำหรับการติดต่อสื่อสารและการชำระเงิน ครอบคลุมกรณีผู้เยาว์",
       status: "ACTIVE",
       date: "10 พ.ค. 2026",
     },
     {
       title: "การรับข้อมูลโปรโมชั่น",
-      description: "การแจ้งสิทธิพิเศษและโปรโมชั่นคอร์สเรียนใหม่ผ่านช่องทาง LINE",
+      description:
+        "การแจ้งสิทธิพิเศษและโปรโมชั่นคอร์สเรียนใหม่ผ่านช่องทาง LINE",
       status: "INACTIVE",
       date: "-",
     },
@@ -773,7 +860,10 @@ export const studentLegalCopy = {
 } as const;
 
 type Messages = typeof th;
-type DotPrefix<TPrefix extends string, TKey extends string> = `${TPrefix}.${TKey}`;
+type DotPrefix<
+  TPrefix extends string,
+  TKey extends string,
+> = `${TPrefix}.${TKey}`;
 
 type MessageKey<T, TPrefix extends string = ""> = {
   [K in keyof T & string]: T[K] extends string

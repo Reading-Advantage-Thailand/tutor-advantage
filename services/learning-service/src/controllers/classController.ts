@@ -1,15 +1,23 @@
 import { Response } from "express";
+import { randomUUID } from "crypto";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
 import { LineNotificationService } from "../services/LineNotificationService";
+import { redeemCoupon, validateCoupon, CouponError } from "../services/couponService";
+
+// Maximum live-teaching hours allowed per class schedule
+const MAX_CLASS_HOURS = 22;
 
 export async function createClass(req: AuthenticatedRequest, res: Response) {
   try {
     const userId = req.user?.userId;
     const role = req.user?.role;
-    const { bookId, title, capacity, scheduleDescription, startsAt, endsAt } = req.body;
-    const packagePriceSatang = req.body.packagePriceSatang ?? 250000;
+    const { bookId, title, capacity, scheduleDescription, scheduleData, startsAt, endsAt, totalHours, couponCode, isDemo } = req.body;
+    // A coupon or demo class makes the class free for students — price is forced to 0.
+    const isCouponClass = typeof couponCode === "string" && couponCode.trim().length > 0;
+    const isDemoClass = isDemo === true;
+    const packagePriceSatang = (isCouponClass || isDemoClass) ? 0 : (req.body.packagePriceSatang ?? 250000);
 
     if (!userId || role !== "TUTOR") {
       return res.status(401).json({
@@ -32,13 +40,32 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
     }
 
     if (
-      !Number.isInteger(packagePriceSatang) ||
-      packagePriceSatang <= 0
+      !isCouponClass && !isDemoClass &&
+      (!Number.isInteger(packagePriceSatang) || packagePriceSatang <= 0)
     ) {
       return res.status(400).json({
         error: {
           code: "INVALID_PRICE",
           message: "packagePriceSatang must be a positive integer",
+          requestId: req.id,
+        },
+      });
+    }
+
+    // Validate the coupon up front so its free hours can extend the schedulable
+    // limit. Re-validated atomically inside the transaction on redeem.
+    let couponHours = 0;
+    if (isCouponClass) {
+      const validated = await validateCoupon(couponCode, userId);
+      couponHours = validated.hours;
+    }
+
+    const hoursLimit = MAX_CLASS_HOURS + couponHours;
+    if (typeof totalHours === "number" && totalHours > hoursLimit) {
+      return res.status(400).json({
+        error: {
+          code: "HOURS_EXCEEDED",
+          message: `Scheduled teaching hours (${totalHours}) exceed the ${hoursLimit}-hour limit`,
           requestId: req.id,
         },
       });
@@ -62,7 +89,29 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
       });
     }
 
+    // Demo classes always teach the book's first article (fixed content),
+    // so the book must have at least one. They expire 24 hours after creation.
+    if (isDemoClass) {
+      const firstArticle = await prisma.article.findFirst({
+        where: { bookId: book.bookId },
+        orderBy: { createdAt: "asc" },
+      });
+      if (!firstArticle) {
+        return res.status(400).json({
+          error: {
+            code: "NO_ARTICLE",
+            message: "This book has no articles available for demo",
+            requestId: req.id,
+          },
+        });
+      }
+    }
+
     const newClass = await prisma.$transaction(async (tx) => {
+      const demoExpiresAt = isDemoClass
+        ? new Date(Date.now() + 24 * 60 * 60 * 1000)
+        : undefined;
+
       const cls = await tx.class.create({
         data: {
           tutorUserId: userId,
@@ -71,12 +120,25 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
           capacity,
           packagePriceMinor: BigInt(packagePriceSatang),
           scheduleDescription,
+          scheduleData: scheduleData || null,
           meetingUrl: req.body.meetingUrl,
           startsAt: startsAt ? new Date(startsAt) : undefined,
           endsAt: endsAt ? new Date(endsAt) : undefined,
+          isDemo: isDemoClass,
+          expiresAt: demoExpiresAt,
           status: "OPEN",
         },
       });
+
+      // Redeem the coupon (if any) and grant its hours to the new free class.
+      if (isCouponClass) {
+        const hours = await redeemCoupon(tx, couponCode, userId, cls.classId, "NEW_CLASS");
+        await tx.class.update({
+          where: { classId: cls.classId },
+          data: { freeHours: hours },
+        });
+        cls.freeHours = hours;
+      }
 
       await tx.classBookCycle.create({
         data: {
@@ -88,14 +150,40 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
         },
       });
 
-      return cls;
+      // Demo classes get a referral token created automatically.
+      let referralToken: string | null = null;
+      if (isDemoClass) {
+        const token = randomUUID();
+        await tx.referral.create({
+          data: { token, classId: cls.classId, tutorUserId: userId, status: "ACTIVE" },
+        });
+        referralToken = token;
+      }
+
+      return { ...cls, referralToken };
     });
 
     return res.status(201).json({
       message: "Class created successfully",
-      class: serializeClass(newClass),
+      class: {
+        ...serializeClass(newClass),
+        referralToken: (newClass as any).referralToken ?? null,
+        expiresAt: (newClass as any).expiresAt ?? null,
+        isDemo: (newClass as any).isDemo ?? false,
+      },
     });
   } catch (error: any) {
+    if (error instanceof CouponError) {
+      const status =
+        error.code === "COUPON_NOT_FOUND"
+          ? 404
+          : error.code === "COUPON_NOT_ASSIGNED"
+            ? 403
+            : 409;
+      return res.status(status).json({
+        error: { code: error.code, message: error.message, requestId: req.id },
+      });
+    }
     console.error("Create Class Error:", error);
     return res.status(500).json({
       error: {
@@ -269,9 +357,13 @@ export async function getClasses(req: AuthenticatedRequest, res: Response) {
     let classes;
 
     if (role === "TUTOR") {
+      const isDemoFilter = req.query.isDemo === "true" ? true : req.query.isDemo === "false" ? false : undefined;
       classes = await prisma.class.findMany({
-        where: { tutorUserId: userId },
-        include: { book: true, _count: { select: { enrollments: true } } },
+        where: {
+          tutorUserId: userId,
+          ...(isDemoFilter !== undefined ? { isDemo: isDemoFilter } : {}),
+        },
+        include: { book: { include: { series: true } }, referrals: { select: { token: true }, take: 1 }, _count: { select: { enrollments: true } } },
         orderBy: { createdAt: "desc" },
       });
     } else {
@@ -298,17 +390,27 @@ export async function getClasses(req: AuthenticatedRequest, res: Response) {
 
     const mappedClasses = classes.map((c) => ({
       id: c.classId,
+      classId: c.classId,
       name: c.title || (c as any).book?.title || "Untitled Class",
       book: (c as any).book?.title || "Unknown Book",
+      bookTitle: (c as any).book?.title || "Unknown Book",
+      bookId: c.bookId,
+      cefrLevel: (c as any).book?.series?.cefrLevel || null,
       status: c.status.toLowerCase(),
       students: c.enrolledCount || 0,
+      enrolledCount: c.enrolledCount || 0,
       maxStudents: c.capacity,
+      capacity: c.capacity,
       packagePriceSatang: Number(c.packagePriceMinor),
       tutorUserId: c.tutorUserId,
       tutorName: tutorMap.get(c.tutorUserId) || "Unknown Tutor",
       nextSession: c.scheduleDescription || "ยังไม่ได้กำหนด",
+      scheduleData: (c as any).scheduleData || null,
       startsAt: c.startsAt ?? null,
       endsAt: c.endsAt ?? null,
+      isDemo: (c as any).isDemo ?? false,
+      expiresAt: (c as any).expiresAt ?? null,
+      referralToken: (c as any).referrals?.[0]?.token ?? null,
     }));
 
     return res.status(200).json({ classes: mappedClasses });
@@ -461,6 +563,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
       level: cls.book?.levelNumber || 1,
       seriesColor: getSeriesColor(cefr),
       totalHours,
+      freeHours: cls.freeHours || 0,
       independentHours: cls.book?.independentHours || 0,
       articleCount: bookArticleCount,
       activeBookCycleId: activeCycle?.classBookCycleId || null,
@@ -503,6 +606,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
       startsAt: cls.startsAt,
       endsAt: cls.endsAt,
       schedule: cls.scheduleDescription || "ยังไม่ได้กำหนด",
+      scheduleData: cls.scheduleData || null,
       meetingUrl:
         cls.tutorUserId === userId || isActiveEnrollment ? cls.meetingUrl || "" : "",
       tutor: {
@@ -829,6 +933,92 @@ export async function updateMeetingUrl(
   }
 }
 
+export async function rescheduleClass(req: AuthenticatedRequest, res: Response) {
+  try {
+    const userId = req.user?.userId;
+    const { classId } = req.params;
+    const { scheduleDescription, scheduleData, startsAt, endsAt, totalHours } = req.body;
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ error: { code: "UNAUTHORIZED", message: "User ID missing" } });
+    }
+
+    const cls = await prisma.class.findUnique({
+      where: { classId },
+      include: {
+        enrollments: {
+          where: { status: "ACTIVE" },
+          select: { studentUserId: true },
+        },
+      },
+    });
+
+    if (!cls || cls.tutorUserId !== userId) {
+      return res.status(404).json({
+        error: { code: "NOT_FOUND", message: "Class not found or unauthorized" },
+      });
+    }
+
+    // Coupon-granted free hours extend the schedulable limit beyond the base cap.
+    const hoursLimit = MAX_CLASS_HOURS + (cls.freeHours || 0);
+    if (typeof totalHours === "number" && totalHours > hoursLimit) {
+      return res.status(400).json({
+        error: {
+          code: "HOURS_EXCEEDED",
+          message: `Scheduled teaching hours (${totalHours}) exceed the ${hoursLimit}-hour limit`,
+          requestId: req.id,
+        },
+      });
+    }
+
+    const updated = await prisma.class.update({
+      where: { classId },
+      data: {
+        scheduleDescription: scheduleDescription ?? cls.scheduleDescription,
+        scheduleData: scheduleData !== undefined ? scheduleData : (cls as any).scheduleData,
+        startsAt: startsAt ? new Date(startsAt) : cls.startsAt,
+        endsAt: endsAt ? new Date(endsAt) : cls.endsAt,
+      },
+    });
+
+    // Notify enrolled students about the new schedule
+    const studentIds = cls.enrollments.map((e) => e.studentUserId);
+    if (studentIds.length > 0) {
+      const classLink = LineNotificationService.buildLiffDeepLink(`/classes/${classId}`);
+      const message = [
+        `ตารางเรียนของคลาส "${cls.title}" มีการเปลี่ยนแปลง`,
+        updated.scheduleDescription ? `ตารางใหม่: ${updated.scheduleDescription}` : "",
+        classLink ? `ดูรายละเอียด: ${classLink}` : "",
+      ].filter(Boolean).join("\n");
+
+      Promise.allSettled(
+        studentIds.map((sid) =>
+          LineNotificationService.sendToUser(sid, message, {
+            type: "notifyClassReminders",
+          }),
+        ),
+      ).catch((e) => console.error("Reschedule Notification Error:", e));
+    }
+
+    return res.status(200).json({
+      message: "Class rescheduled successfully",
+      class: serializeClass(updated),
+    });
+  } catch (error: any) {
+    console.error("Reschedule Class Error:", error);
+    return res.status(500).json({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not reschedule class",
+        details: error.message,
+        requestId: req.id,
+      },
+    });
+  }
+}
+
 async function translateToThai(text: string): Promise<string> {
   try {
     const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=th&dt=t&q=${encodeURIComponent(text)}`;
@@ -980,6 +1170,7 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
           summary: thaiSummary || "ไม่มีสรุปเนื้อหาสำหรับบทความนี้",
           passage: details?.passage ? `${details.passage.substring(0, 120)}...` : "", // Return a snippet for passage display
           cefrLevel: displayCefr,
+          imageUrl: art.articleId ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${art.articleId}.png` : null,
           isCompleted: completedArticleIds.has(art.articleId)
         };
       }),

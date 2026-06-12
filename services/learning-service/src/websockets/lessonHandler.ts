@@ -2,8 +2,9 @@ import { Server, Socket } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 import { lessonSessionService } from "../services/LessonSessionService";
-import { evaluateShortAnswer } from "../services/AIEvaluator";
+import { evaluateShortAnswer, evaluateWriting, answerLanguageQuestion } from "../services/AIEvaluator";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
+import { getDemoArticle } from "../services/demoLessons";
 import * as dbWriter from "../services/SessionDBWriter";
 import { LineNotificationService } from "../services/LineNotificationService";
 import { checkAndUnlockBadges } from "../services/BadgeService";
@@ -48,11 +49,71 @@ export const setupLessonSocket = (io: Server) => {
     console.log(`Socket connected: ${socket.id}`);
 
     // Tutor creates a new session
-    socket.on("create_session", async ({ tutorId, articleId, classId, classBookCycleId, bookId }) => {
-      console.log(`[Socket] Tutor ${tutorId} creating session for class: ${classId}`);
+    socket.on("create_session", async ({ tutorId, articleId, classId, classBookCycleId, bookId, demo }) => {
+      const isDemo = demo === true;
+      console.log(`[Socket] Tutor ${tutorId} creating ${isDemo ? "DEMO " : ""}session for class: ${classId}`);
       try {
+        // Demo mode: zero-cost preview. Fixed bundled content, no class/cycle,
+        // no DB persistence, no AI scoring (solo tutor, no student answers).
+        if (isDemo) {
+          const demoArticle = getDemoArticle(articleId);
+          if (!demoArticle) {
+            socket.emit("error", { message: "Demo lesson not found." });
+            return;
+          }
+          const demoSession = lessonSessionService.createSession(
+            tutorId,
+            socket.id,
+            articleId,
+            demoArticle,
+            undefined,
+            undefined,
+            undefined,
+            true,
+          );
+          socket.join(demoSession.sessionId);
+          socket.emit("session_created", {
+            sessionId: demoSession.sessionId,
+            currentPhase: demoSession.currentPhase,
+            articleData: demoSession.articleData,
+          });
+          console.log(`[Socket] DEMO session created: ${demoSession.sessionId}`);
+          return;
+        }
+
         let resolvedCycleId = classBookCycleId;
         let resolvedBookId = bookId;
+        let resolvedArticleId = articleId;
+
+        // Demo classes are locked to one fixed lesson: the first article of the
+        // class book. They also stop accepting sessions once expired.
+        if (classId) {
+          const cls = await prisma.class.findUnique({
+            where: { classId },
+            select: { isDemo: true, expiresAt: true, bookId: true },
+          });
+          if (cls?.isDemo) {
+            if (cls.expiresAt && cls.expiresAt.getTime() < Date.now()) {
+              socket.emit("error", { message: "ห้องเรียน Demo นี้หมดอายุแล้ว ไม่สามารถเริ่มสอนได้" });
+              return;
+            }
+            const firstArticle = await prisma.article.findFirst({
+              where: { bookId: cls.bookId },
+              orderBy: { createdAt: "asc" },
+            });
+            if (!firstArticle) {
+              socket.emit("error", { message: "หนังสือของห้อง Demo นี้ยังไม่มีบทเรียน" });
+              return;
+            }
+            resolvedArticleId = firstArticle.articleId;
+          }
+        }
+
+        // Non-demo classes must name the article to teach.
+        if (!resolvedArticleId) {
+          socket.emit("error", { message: "กรุณาเลือกบทเรียนก่อนเริ่มสอน (missing articleId)" });
+          return;
+        }
 
         if (classId && (!resolvedCycleId || !resolvedBookId)) {
           const cycle = resolvedCycleId
@@ -68,7 +129,7 @@ export const setupLessonSocket = (io: Server) => {
           resolvedBookId = cycle?.bookId || resolvedBookId;
         }
 
-        const articleData = await getArticleDetails(articleId);
+        const articleData = await getArticleDetails(resolvedArticleId);
         console.log(`================= QUESTIONS LIST =================`);
         console.log(`Available MCQ questions:`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
         console.log(`Available SAQ questions:`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
@@ -76,7 +137,7 @@ export const setupLessonSocket = (io: Server) => {
         const session = lessonSessionService.createSession(
           tutorId,
           socket.id,
-          articleId,
+          resolvedArticleId,
           articleData,
           classId,
           resolvedCycleId,
@@ -86,7 +147,7 @@ export const setupLessonSocket = (io: Server) => {
         socket.join(session.sessionId);
 
         // PERSIST START OF SESSION TO DB (This creates initial Cycle 1 record)
-        dbWriter.persistSessionStart(session.sessionId, tutorId, articleId, classId, resolvedCycleId, resolvedBookId);
+        dbWriter.persistSessionStart(session.sessionId, tutorId, resolvedArticleId, classId, resolvedCycleId, resolvedBookId);
 
         socket.emit("session_created", {
           sessionId: session.sessionId,
@@ -192,7 +253,9 @@ export const setupLessonSocket = (io: Server) => {
           sessionId: session.sessionId,
           currentPhase: session.currentPhase,
           articleData: session.articleData,
-          phaseSelectedIndices: session.phaseSelectedIndices
+          phaseSelectedIndices: session.phaseSelectedIndices,
+          // Reconnecting mid Pair Conversation still shows the student's pair
+          pairs: session.currentPhase === 15 ? lessonSessionService.getPairsPayload(session) : null,
         });
         
         io.to(session.sessionId).emit("participants_updated", {
@@ -225,7 +288,8 @@ export const setupLessonSocket = (io: Server) => {
       if (session) {
         // --- CRITICAL: DYNAMIC RESTART RECORDING ---
         // If starting a new instructional cycle (Phase 0 -> Phase 1), determine if we need a FRESH DB identity.
-        if (phase === 1) {
+        // Demo sessions skip all persistence — they only loop the in-memory phase state.
+        if (phase === 1 && !session.isDemo) {
           if (!session.currentDbSessionId) {
             // --- FIRST CYCLE ---
             // Set explicit key to lock current cycle, but reuse original initialized DB record to avoid double logging!
@@ -256,15 +320,21 @@ export const setupLessonSocket = (io: Server) => {
           }
         }
 
-        // Broadcast new phase to everyone in the room
-        io.to(sessionId).emit("phase_changed", { phase, phaseSelectedIndices: session.phaseSelectedIndices });
+        // Broadcast new phase to everyone in the room.
+        // Phase 15 (Pair Conversation) carries the freshly generated pairs.
+        io.to(sessionId).emit("phase_changed", {
+          phase,
+          phaseSelectedIndices: session.phaseSelectedIndices,
+          pairs: phase === 15 ? lessonSessionService.getPairsPayload(session) : null,
+        });
         io.to(sessionId).emit("participants_updated", {
           participants: Array.from(session.participants.values())
         });
         console.log(`Session ${sessionId} changed to phase ${phase}`);
 
-        // If changing to phase 14 (Finish/Leaderboard), mark ACTIVE DB ROUND as FINISHED
-        if (phase === 14) {
+        // If changing to phase 16 (Wrap-up Leaderboard), mark ACTIVE DB ROUND as FINISHED
+        // Demo sessions have no DB round, no badges to unlock, and no students to notify.
+        if (phase === 16 && !session.isDemo) {
           dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
 
           // Non-blocking badge unlock check for the tutor
@@ -301,12 +371,13 @@ export const setupLessonSocket = (io: Server) => {
 
     // Student submits answer
     socket.on("submit_answer", async ({ sessionId, studentId, answer, question, expectedAnswer }) => {
-      // If it's a short answer, evaluate it
+      // AI-evaluated phases: 8=Guided Response (short answer), 12=Guided Writing
       let evaluatedAnswer = answer;
       const session = lessonSessionService.getSession(sessionId);
-      if (session && (session.currentPhase === 8 || session.currentPhase === 13)) {
-         // evaluate with AI
-         const aiResult = await evaluateShortAnswer(question, expectedAnswer, answer);
+      if (session && (session.currentPhase === 8 || session.currentPhase === 12)) {
+         const aiResult = session.currentPhase === 12
+           ? await evaluateWriting(question, answer)
+           : await evaluateShortAnswer(question, expectedAnswer, answer);
          evaluatedAnswer = {
            text: answer,
            aiScore: aiResult.score,
@@ -314,6 +385,20 @@ export const setupLessonSocket = (io: Server) => {
          };
          // send personal result immediately back to student
          socket.emit("ai_evaluation_result", evaluatedAnswer);
+      } else if (session && session.currentPhase === 13) {
+         // Language Questions (Step 12): teacher-mediated AI answer.
+         // Empty answer = student skipped (no question) — count as answered, no AI call.
+         const text = typeof answer === 'string' ? answer.trim() : '';
+         if (!text) {
+           evaluatedAnswer = { text: '', languageAnswer: '' };
+         } else {
+           const articleContext = [session.articleData?.title, session.articleData?.passage]
+             .filter(Boolean)
+             .join("\n\n");
+           const ai = await answerLanguageQuestion(text, articleContext);
+           evaluatedAnswer = { text: answer, languageAnswer: ai.answer };
+           socket.emit("language_answer_result", { question: answer, answer: ai.answer });
+         }
       }
 
       const result = lessonSessionService.submitAnswer(sessionId, studentId, evaluatedAnswer);
@@ -321,10 +406,11 @@ export const setupLessonSocket = (io: Server) => {
         // Update participant's total score
         const participant = result.session.participants.get(studentId);
         if (participant) {
-          if (result.session.currentPhase === 8 || result.session.currentPhase === 13) {
+          if (result.session.currentPhase === 8 || result.session.currentPhase === 12) {
+            // Guided Response (8) / Guided Writing (12) with AI score
             participant.score = (participant.score || 0) + (evaluatedAnswer.aiScore || 0);
-            
-            // --- PERSIST DB ANSWER (SHORT ANSWER WITH AI) ---
+
+            // --- PERSIST DB ANSWER (AI-SCORED) ---
             dbWriter.persistAnswer({
               sessionId: result.session.currentDbSessionId || sessionId,
               studentId,
@@ -336,12 +422,40 @@ export const setupLessonSocket = (io: Server) => {
               questionText: question,
               correctAnswer: expectedAnswer
             });
+          } else if (result.session.currentPhase === 13) {
+            // Language Questions (Step 12): participation point, store question + AI answer
+            participant.score = (participant.score || 0) + 1;
+
+            dbWriter.persistAnswer({
+              sessionId: result.session.currentDbSessionId || sessionId,
+              studentId,
+              phase: result.session.currentPhase,
+              answerText: String(answer),
+              isCorrect: true,
+              score: 1,
+              aiFeedback: evaluatedAnswer.languageAnswer,
+              questionText: "Language question",
+              correctAnswer: ""
+            });
+          } else if (result.session.currentPhase === 14) {
+            // Lesson Reflection (Step 13): store ratings, no competitive score
+            dbWriter.persistAnswer({
+              sessionId: result.session.currentDbSessionId || sessionId,
+              studentId,
+              phase: result.session.currentPhase,
+              answerText: String(answer),
+              isCorrect: true,
+              score: 0,
+              questionText: "Lesson reflection",
+              correctAnswer: ""
+            });
           } else {
             let correctLabel = "";
             let resolvedAnswerText = String(answer);
             const choiceIdx = String(answer).trim().toUpperCase().charCodeAt(0) - 65; // A=0, B=1, C=2, D=3
 
             if (result.session.currentPhase === 7) {
+              // Comprehension Check / MCQ (Step 7)
               const idx = result.session.phaseSelectedIndices?.[7] || 0;
               const mcqQuestion = result.session.articleData?.multipleChoiceQuestions?.[idx];
               if (mcqQuestion) {
@@ -388,9 +502,10 @@ export const setupLessonSocket = (io: Server) => {
                   resolvedAnswerText = shuffledOptions[choiceIdx] || String(answer);
                 }
               }
-            } else if (result.session.currentPhase === 10) {
+            } else if (result.session.currentPhase === 9) {
+              // Vocabulary Practice (Step 9)
               const words = result.session.articleData?.words || [];
-              const idx = result.session.phaseSelectedIndices?.[10] || 0;
+              const idx = result.session.phaseSelectedIndices?.[9] || 0;
               const targetWord = words[idx] || words[0];
               if (targetWord) {
                 const correctTranslation = targetWord.definition?.th || targetWord.translation || "ความหมายที่ถูกต้อง";
@@ -429,9 +544,10 @@ export const setupLessonSocket = (io: Server) => {
                   resolvedAnswerText = shuffledOptions[choiceIdx];
                 }
               }
-            } else if (result.session.currentPhase === 11) {
+            } else if (result.session.currentPhase === 10) {
+              // Sentence Practice — fill in the blank (Step 10a)
               const sentences = result.session.articleData?.sentences || [];
-              const idx = result.session.phaseSelectedIndices?.[11] || 0;
+              const idx = result.session.phaseSelectedIndices?.[10] || 0;
               const targetSentence = typeof sentences[idx] === 'object' ? sentences[idx].sentences : sentences[idx];
               if (targetSentence) {
                 const words = String(targetSentence).split(' ');
@@ -453,9 +569,10 @@ export const setupLessonSocket = (io: Server) => {
                   resolvedAnswerText = shuffledOptions[choiceIdx];
                 }
               }
-            } else if (result.session.currentPhase === 12) {
+            } else if (result.session.currentPhase === 11) {
+              // Sentence Practice — put words in order (Step 10b)
               const sentences = result.session.articleData?.sentences || [];
-              const idx = result.session.phaseSelectedIndices?.[12] || 0;
+              const idx = result.session.phaseSelectedIndices?.[11] || 0;
               const targetSentence = typeof sentences[idx] === 'object' ? sentences[idx].sentences : sentences[idx];
               if (targetSentence) {
                 const words = String(targetSentence).split(' ').filter((w: any) => String(w).trim().length > 0);
@@ -534,6 +651,16 @@ export const setupLessonSocket = (io: Server) => {
 
           console.log(`[Socket] All participants answered in session ${sessionId} phase ${result.session.currentPhase}`);
         }
+      }
+    });
+
+    // Student toggles a sentence flag during Step 3 (Read the Article) to ask the tutor about pronunciation
+    socket.on("flag_sentence", ({ sessionId, studentId, sentenceIndex }) => {
+      const result = lessonSessionService.toggleSentenceFlag(sessionId, studentId, sentenceIndex);
+      if (result) {
+        const flagCounts = lessonSessionService.getFlagCounts(result.session);
+        // Broadcast updated counts to the whole room (tutor highlights, students sync their own state)
+        io.to(result.session.sessionId).emit("flags_updated", { flagCounts });
       }
     });
 

@@ -6,6 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "prepare": "prisma generate",
     "generate": "prisma generate",
     "seed": "npx tsx seed.ts"
   },

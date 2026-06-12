@@ -22,7 +22,6 @@ const PHASE_CONFIG: Record<number, {
   4: { emoji: '🔍', label: 'โฟกัสคำศัพท์',   color: 'text-amber-600 dark:text-amber-400',   bg: 'bg-amber-500/10',   border: 'border-amber-500/30',   gradientFrom: 'from-amber-400',   gradientTo: 'to-orange-500',  tip: 'สังเกตคำศัพท์ที่ไฮไลต์บนจอ' },
   5: { emoji: '🧠', label: 'อ่านเชิงลึก',     color: 'text-emerald-600 dark:text-emerald-400',bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', gradientFrom: 'from-emerald-500', gradientTo: 'to-teal-600',    tip: 'ฟังคุณครูอธิบายความหมาย' },
   6: { emoji: '⭐', label: 'ประโยคสำคัญ',     color: 'text-rose-600 dark:text-rose-400',     bg: 'bg-rose-500/10',    border: 'border-rose-500/30',    gradientFrom: 'from-rose-500',    gradientTo: 'to-pink-600',    tip: 'จดจำประโยคสำคัญเหล่านี้' },
-  9: { emoji: '🎵', label: 'ฟังการออกเสียง',  color: 'text-teal-600 dark:text-teal-400',     bg: 'bg-teal-500/10',    border: 'border-teal-500/30',    gradientFrom: 'from-teal-500',    gradientTo: 'to-cyan-600',    tip: 'ฟังการออกเสียงที่ถูกต้อง' },
 };
 
 // ── Mobile Live Leaderboard ───────────────────────────────────────────────────
@@ -110,11 +109,15 @@ function PlayLessonContent() {
     hasAnswered,
     isEveryoneReady,
     aiFeedback,
+    languageAnswer,
     submitAnswer,
-    kicked
+    kicked,
+    flagCounts,
+    flagSentence
   } = useLessonSocket(classId || undefined, studentId, name, profile?.pictureUrl);
 
   const [typedAnswer, setTypedAnswer] = useState('');
+  const [myFlags, setMyFlags] = useState<Set<number>>(new Set());
   const [showEveryoneReady, setShowEveryoneReady] = useState(false);
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [prevPhase, setPrevPhase] = useState<number | null>(null);
@@ -122,8 +125,19 @@ function PlayLessonContent() {
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewComment, setReviewComment] = useState('');
   const [reviewLoaded, setReviewLoaded] = useState(false);
-  const [reviewSubmitting, setReviewSubmitting] = useState(false);
-  const currentPhase = sessionData?.currentPhase ?? 0;
+  // Step 11 Guided Writing
+  const [writingPlan, setWritingPlan] = useState('');
+  const [writingDraft, setWritingDraft] = useState('');
+  // Step 12 Language Questions
+  const [languageQuestion, setLanguageQuestion] = useState('');
+  const [languageSkipped, setLanguageSkipped] = useState(false);
+  // Step 13 Reflection
+  const [understanding, setUnderstanding] = useState('');
+  const [effort, setEffort] = useState('');
+  // Dev-only: preview the Step 14 pair view without a real session.
+  // 0 = off, 1 = pair (1 partner), 2 = group of three (2 partners)
+  const [devPairPreview, setDevPairPreview] = useState<0 | 1 | 2>(0);
+  const currentPhase = devPairPreview ? 15 : (sessionData?.currentPhase ?? 0);
 
   useEffect(() => {
     if (isEveryoneReady) {
@@ -138,11 +152,23 @@ function PlayLessonContent() {
     if (sessionData && prevPhase !== null && sessionData.currentPhase !== prevPhase) {
       playSound('phaseChange');
     }
+    if (sessionData && prevPhase !== null && sessionData.currentPhase !== prevPhase) {
+      // Clear per-step inputs when moving between Period-4 steps
+      setWritingPlan('');
+      setWritingDraft('');
+      setLanguageQuestion('');
+      setLanguageSkipped(false);
+      setUnderstanding('');
+      setEffort('');
+    }
     if (sessionData) setPrevPhase(sessionData.currentPhase);
     setIsSubmitting(false);
   }, [sessionData, prevPhase]);
 
   useEffect(() => { if (hasAnswered) setIsSubmitting(false); }, [hasAnswered]);
+
+  // Reset my sentence flags at the start of a fresh instructional cycle
+  useEffect(() => { if (currentPhase === 1) setMyFlags(new Set()); }, [currentPhase]);
 
   useEffect(() => {
     if (sessionData && sessionData.currentPhase === 0 && classId) {
@@ -172,7 +198,6 @@ function PlayLessonContent() {
       return;
     }
 
-    setReviewSubmitting(true);
     try {
       await studentApi.submitClassReview(classId, {
         rating: reviewRating,
@@ -182,7 +207,6 @@ function PlayLessonContent() {
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'บันทึกรีวิวไม่สำเร็จ');
     } finally {
-      setReviewSubmitting(false);
     }
   };
 
@@ -294,7 +318,21 @@ function PlayLessonContent() {
     );
   }
 
-  if (!sessionData) {
+  // Dev-only toggle: off -> pair -> group of three -> off
+  const devPairButton = process.env.NODE_ENV === 'development' && (
+    <button
+      onClick={() => setDevPairPreview((v) => ((v + 1) % 3) as 0 | 1 | 2)}
+      className={`fixed bottom-4 left-4 z-50 px-3 py-1.5 rounded-lg text-xs font-bold shadow-lg border transition-colors ${
+        devPairPreview
+          ? 'bg-orange-500 text-white border-orange-600'
+          : 'bg-card text-muted-foreground border-border'
+      }`}
+    >
+      {devPairPreview === 0 ? 'DEV: Mock Pair' : devPairPreview === 1 ? 'DEV Pair: คู่' : 'DEV Pair: กลุ่ม 3'}
+    </button>
+  );
+
+  if (!sessionData && !devPairPreview) {
     return (
       <div className="min-h-[100dvh] bg-background flex items-center justify-center p-6">
         <div className="bg-card rounded-3xl border border-border shadow-xl p-8 text-center max-w-[280px] w-full">
@@ -306,6 +344,7 @@ function PlayLessonContent() {
             {[0, 1, 2].map(i => <div key={i} className="size-2 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: `${i * 0.2}s` }} />)}
           </div>
         </div>
+        {devPairButton}
       </div>
     );
   }
@@ -324,20 +363,20 @@ function PlayLessonContent() {
       const q = articleData?.multipleChoiceQuestions?.[idx];
       questionText = q?.question || questionText;
       expected = q?.answer || expected;
-    } else if (currentPhase === 10) {
-      const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
+    } else if (currentPhase === 9) {
+      const idx = sessionData?.phaseSelectedIndices?.[9] || 0;
       const w = articleData?.words?.[idx];
       questionText = `${t("interactivePlay.vocabMeaningPrefix")} "${w?.vocabulary || w?.word || w?.text}" ${t("interactivePlay.vocabMeaningSuffix")}`;
       expected = w?.definition?.th || w?.translation || "";
-    } else if (currentPhase === 11) {
-      const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
+    } else if (currentPhase === 10) {
+      const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
       const s = articleData?.sentences?.[idx];
       const targetStr = typeof s === 'object' ? s.sentences : s;
       const words = String(targetStr).split(' ');
       questionText = words.slice(0, words.length - 1).join(' ') + ' _____';
       expected = words[words.length - 1].replace(/[.,!?]/g, '');
-    } else if (currentPhase === 12) {
-      const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
+    } else if (currentPhase === 11) {
+      const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
       const s = articleData?.sentences?.[idx];
       const targetStr = typeof s === 'object' ? s.sentences : s;
       questionText = `${t("interactivePlay.orderSentencePrefix")} ${idx + 1}`;
@@ -351,7 +390,7 @@ function PlayLessonContent() {
       playSound('submit');
       setIsSubmitting(true);
       setSelectedChoice(typedAnswer);
-      const currentPhase = sessionData?.currentPhase;
+      const currentPhase = sessionData?.currentPhase ?? 0;
       const idx = sessionData?.phaseSelectedIndices?.[currentPhase] || 0;
       const saqQuestion = articleData?.shortAnswerQuestions?.[idx];
       submitAnswer(typedAnswer, saqQuestion?.question, saqQuestion?.answer);
@@ -359,7 +398,58 @@ function PlayLessonContent() {
     }
   };
 
-  const isLookAtScreenPhase = [1, 2, 3, 4, 5, 6, 9].includes(currentPhase);
+  const handleFlagToggle = (sentenceIndex: number) => {
+    playSound('select');
+    setMyFlags(prev => {
+      const next = new Set(prev);
+      if (next.has(sentenceIndex)) next.delete(sentenceIndex);
+      else next.add(sentenceIndex);
+      return next;
+    });
+    flagSentence(sentenceIndex);
+  };
+
+  // Step 11 Guided Writing — submit draft for AI feedback
+  const handleWritingSubmit = () => {
+    if (!writingDraft.trim() || hasAnswered || isSubmitting) return;
+    playSound('submit');
+    setIsSubmitting(true);
+    setSelectedChoice(writingDraft);
+    const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
+    const prompt = articleData?.shortAnswerQuestions?.[idx]?.question || t("interactivePlay.writingTitle");
+    submitAnswer(writingDraft, prompt, '');
+  };
+
+  // Step 12 Language Questions — submit question for teacher-mediated AI answer
+  const handleLanguageSubmit = () => {
+    if (!languageQuestion.trim() || hasAnswered || isSubmitting) return;
+    playSound('submit');
+    setIsSubmitting(true);
+    submitAnswer(languageQuestion, 'Language question', '');
+  };
+
+  // Step 12 — skip when the student has no question (counts as answered, no AI)
+  const handleLanguageSkip = () => {
+    if (hasAnswered || isSubmitting) return;
+    playSound('select');
+    setLanguageSkipped(true);
+    setIsSubmitting(true);
+    submitAnswer('', 'Language question', '');
+  };
+
+  // Step 13 Reflection — submit understanding + effort ratings (and tutor star review if given)
+  const handleReflectionSubmit = async () => {
+    if (!understanding || !effort || hasAnswered || isSubmitting) return;
+    playSound('submit');
+    setIsSubmitting(true);
+    if (reviewRating > 0) {
+      await submitTutorReview();
+    }
+    submitAnswer(`ความเข้าใจ: ${understanding} · ความพยายาม: ${effort}`, 'Lesson reflection', '');
+  };
+
+  // Step 3 (Read the Article) has its own tap-to-flag UI, so it is not a passive look-at-screen phase
+  const isLookAtScreenPhase = [1, 2, 4, 5, 6].includes(currentPhase);
   const articleId = articleData?.id;
   const articleTitle = articleData?.title;
   const articleImageUrl = articleId
@@ -377,6 +467,155 @@ function PlayLessonContent() {
   const getScoreColor = (s: number) => s >= 4 ? 'text-emerald-500' : s >= 2 ? 'text-amber-500' : 'text-rose-500';
   const getScoreStroke = (s: number) => s >= 4 ? '#10b981' : s >= 2 ? '#f59e0b' : '#f43f5e';
   const getScoreStars = (s: number) => '⭐'.repeat(Math.max(0, Math.round(s)));
+
+  // Shared "waiting for AI" skeleton — matches the Short Answer loading state across steps
+  const renderAiSkeleton = (accent: 'sky' | 'violet') => {
+    const ping = accent === 'sky' ? 'bg-sky-400' : 'bg-violet-400';
+    const dot = accent === 'sky' ? 'bg-sky-500' : 'bg-violet-500';
+    const label = accent === 'sky' ? 'text-sky-600 dark:text-sky-400' : 'text-violet-600 dark:text-violet-400';
+    const avatar = accent === 'sky' ? 'bg-sky-500/10 border-sky-500/20' : 'bg-violet-500/10 border-violet-500/20';
+    return (
+      <div className="bg-card rounded-2xl border border-border shadow-sm p-4 shrink-0">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="relative flex size-2">
+            <span className={`animate-ping absolute size-full rounded-full opacity-75 ${ping}`} />
+            <span className={`relative size-2 rounded-full ${dot}`} />
+          </span>
+          <span className={`text-[10px] font-black uppercase tracking-wider ${label}`}>{t("interactivePlay.sendingAi")}</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className={`size-12 rounded-xl border overflow-hidden relative shrink-0 ${avatar}`}>
+            <div className="absolute inset-0 skeleton opacity-40" />
+          </div>
+          <div className="flex-1 space-y-2">
+            <div className="h-2.5 rounded-full skeleton opacity-40" />
+            <div className="h-2.5 w-5/6 rounded-full skeleton opacity-40" />
+            <div className="h-2.5 w-2/3 rounded-full skeleton opacity-40" />
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground font-bold animate-pulse mt-3">{t("interactivePlay.aiChecking")}</p>
+      </div>
+    );
+  };
+
+  // ─── Compact lesson content shown on the student's phone per phase (static, follows phase only) ──
+  const renderLessonContentMobile = () => {
+    const ad = articleData as {
+      passage?: string;
+      translated_summary?: { th?: string[] };
+      summary?: string | { th?: string[] };
+    } | null;
+    const words = articleData?.words || [];
+    const sentences = articleData?.sentences || [];
+    const passage: string = ad?.passage || '';
+    const vocabWords = words
+      .map((w) => (typeof w === 'object' ? (w.vocabulary || w.word || w.text) : w))
+      .filter(Boolean) as string[];
+
+    const renderPassage = (highlight: boolean) => {
+      if (!passage) return null;
+      let body: React.ReactNode = passage;
+      if (highlight && vocabWords.length) {
+        const parts = passage.split(/(\s+)/);
+        body = parts.map((part, i) => {
+          const clean = part.replace(/[.,!?;:"'()]/g, '').toLowerCase();
+          if (vocabWords.some((v) => v.toLowerCase() === clean)) {
+            return (
+              <mark key={i} className="bg-amber-300/60 dark:bg-amber-500/30 text-foreground rounded px-0.5 font-semibold not-italic">
+                {part}
+              </mark>
+            );
+          }
+          return <span key={i}>{part}</span>;
+        });
+      }
+      return (
+        <div className="bg-card rounded-2xl border border-border shadow-sm p-4">
+          <p className="text-foreground text-sm leading-relaxed" style={{ fontFamily: 'Georgia, serif' }}>{body}</p>
+        </div>
+      );
+    };
+
+    switch (currentPhase) {
+      case 1: {
+        const summary = ad?.translated_summary?.th?.[0] || (typeof ad?.summary === 'string' ? ad.summary : ad?.summary?.th?.[0]);
+        if (!summary) return null;
+        return (
+          <div className="bg-card rounded-2xl border border-border shadow-sm p-4">
+            <p className="text-foreground text-sm leading-relaxed">{summary}</p>
+          </div>
+        );
+      }
+      case 2:
+        if (!words.length) return null;
+        return (
+          <div className="bg-card rounded-2xl border border-border shadow-sm p-4">
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">คำศัพท์ ({words.length})</p>
+            <div className="space-y-2">
+              {words.map((item, i) => {
+                const wt = typeof item === 'object' ? (item.vocabulary || item.word || item.text) : item;
+                const th = typeof item === 'object' ? (item.definition?.th || item.translation) : undefined;
+                return (
+                  <div key={i} className="flex items-baseline justify-between gap-3 border-b border-border/50 last:border-0 pb-1.5 last:pb-0">
+                    <span className="font-bold text-foreground text-sm">{wt}</span>
+                    {th && <span className="text-muted-foreground text-xs text-right">{th}</span>}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      case 3:
+      case 5:
+        return renderPassage(false);
+      case 4:
+        return renderPassage(true);
+      case 6: {
+        if (!sentences.length) return null;
+        // Mirror the tutor's key-sentence selection (ArticleDisplay phase 6) so both screens show the same subset.
+        const getText = (item: string | { sentences?: string }) => String(typeof item === 'object' ? item.sentences || '' : item || '');
+        const escapeRegExp = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const getWordCount = (txt: string) => txt.trim().split(/\s+/).filter(Boolean).length;
+        const kvWords = Array.from(new Set(
+          words
+            .map((w) => (typeof w === 'object' ? (w.vocabulary || w.word || w.text || '') : String(w)).toLowerCase().trim())
+            .filter((w) => w.length >= 3)
+        ));
+        const kvPatterns = kvWords.map((w) => ({ pattern: new RegExp(`\\b${escapeRegExp(w)}\\b`, 'i') }));
+        const limit = Math.min(5, Math.max(2, Math.ceil(sentences.length * 0.35)));
+        const keySentences = sentences
+          .map((item, index) => {
+            const txt = getText(item);
+            const matched = kvPatterns.filter(({ pattern }) => pattern.test(txt));
+            const wc = getWordCount(txt);
+            const bonus = wc >= 8 && wc <= 28 ? 1 : wc < 5 ? -1 : 0;
+            return { item, index, score: matched.length * 3 + matched.length / Math.max(wc, 1) + bonus };
+          })
+          .filter(({ score }) => score > 0)
+          .sort((a, b) => b.score - a.score || a.index - b.index)
+          .slice(0, limit)
+          .sort((a, b) => a.index - b.index)
+          .map(({ item }) => item);
+        const display = keySentences.length ? keySentences : sentences.slice(0, limit);
+        return (
+          <div className="bg-card rounded-2xl border border-border shadow-sm p-4 space-y-2">
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">ประโยคสำคัญ</p>
+            {display.map((s, i) => {
+              const text = typeof s === 'object' ? s.sentences : s;
+              return (
+                <div key={i} className="flex gap-2 items-start">
+                  <span className="text-emerald-500 font-black text-xs shrink-0 mt-0.5">{i + 1}</span>
+                  <span className="text-foreground text-sm leading-relaxed">{text}</span>
+                </div>
+              );
+            })}
+          </div>
+        );
+      }
+      default:
+        return null;
+    }
+  };
 
   // ─── Render ────────────────────────────────────────────────────────────────
 
@@ -487,9 +726,9 @@ function PlayLessonContent() {
           const cfg = PHASE_CONFIG[currentPhase];
           if (!cfg) return null;
           return (
-            <div className="phase-enter w-full max-w-sm flex flex-col gap-4">
+            <div className="phase-enter w-full max-w-sm flex flex-col gap-4 overflow-y-auto max-h-[calc(100dvh-80px)] pb-4">
               {/* Big phase card */}
-              <div className={`${cfg.bg} border-2 ${cfg.border} rounded-3xl p-8 text-center shadow-xl`}>
+              <div className={`${cfg.bg} border-2 ${cfg.border} rounded-3xl p-8 text-center shadow-xl shrink-0`}>
                 <div className="text-7xl mb-4" style={{ animation: 'bounce 2s infinite' }}>{cfg.emoji}</div>
                 <div className={`inline-flex items-center gap-1.5 bg-white/10 dark:bg-white/5 border ${cfg.border} rounded-full px-3 py-1 mb-3`}>
                   <span className={`size-1.5 rounded-full animate-pulse ${cfg.color.replace('text-', 'bg-').split(' ')[0]}`} />
@@ -500,7 +739,7 @@ function PlayLessonContent() {
               </div>
 
               {/* Look at screen instruction */}
-              <div className="bg-card rounded-2xl border border-border shadow-md p-4 flex items-center gap-3">
+              <div className="bg-card rounded-2xl border border-border shadow-md p-4 flex items-center gap-3 shrink-0">
                 <div className={`size-11 rounded-xl ${cfg.bg} ${cfg.border} border flex items-center justify-center text-xl shrink-0`}>👆</div>
                 <div>
                   <p className="font-black text-foreground text-sm">{t("interactivePlay.lookAtScreen")}</p>
@@ -510,17 +749,382 @@ function PlayLessonContent() {
 
               {/* Article title pill */}
               {articleTitle && (
-                <div className="bg-card rounded-2xl border border-border shadow-sm p-3 flex items-center gap-2.5">
+                <div className="bg-card rounded-2xl border border-border shadow-sm p-3 flex items-center gap-2.5 shrink-0">
                   <span className="text-base shrink-0">📄</span>
                   <p className="text-xs font-semibold text-muted-foreground truncate">{articleTitle}</p>
                 </div>
               )}
+
+              {/* Compact lesson content (static, per phase) */}
+              {renderLessonContentMobile()}
             </div>
           );
         })()}
 
-        {/* ─── Phase 14: Final Leaderboard ─── */}
+        {/* ─── Step 3: Read the Article + Sentence Flag ─── */}
+        {currentPhase === 3 && (
+          <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
+            <div className="bg-teal-500/10 border-2 border-teal-500/30 rounded-3xl p-5 text-center shrink-0">
+              <div className="text-4xl mb-2">🎧</div>
+              <h2 className="text-lg font-black text-teal-600 dark:text-teal-400">อ่านบทความ · ออกเสียง</h2>
+              <p className="text-muted-foreground text-xs font-medium mt-1">แตะประโยคที่อยากให้คุณครูช่วยออกเสียง 🚩</p>
+            </div>
+            <div className="bg-card rounded-2xl border border-border shadow-sm p-3">
+              {(articleData?.sentences || []).map((s, idx) => {
+                const text = typeof s === 'object' ? s.sentences : s;
+                const isFlagged = myFlags.has(idx);
+                const count = flagCounts?.[idx] || 0;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handleFlagToggle(idx)}
+                    className={`w-full text-left rounded-xl px-3 py-2.5 mb-1.5 last:mb-0 transition-all flex items-start gap-2 ${
+                      isFlagged
+                        ? 'bg-rose-500/15 border border-rose-400/50'
+                        : 'bg-muted/40 border border-transparent active:bg-muted'
+                    }`}
+                  >
+                    <span className="text-base shrink-0 mt-0.5">{isFlagged ? '🚩' : '🔖'}</span>
+                    <span className={`flex-1 text-sm leading-relaxed ${isFlagged ? 'text-rose-700 dark:text-rose-300 font-semibold' : 'text-foreground'}`}>
+                      {text}
+                    </span>
+                    {count > 0 && (
+                      <span className="text-[10px] font-black text-rose-500 bg-rose-500/10 rounded-full px-1.5 py-0.5 shrink-0">{count}</span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ─── Step 11: Guided Writing (phase 12) ─── */}
+        {currentPhase === 12 && (() => {
+          const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
+          const prompt = articleData?.shortAnswerQuestions?.[idx]?.question || t("interactivePlay.writingTitle");
+          const frames = ['I think that…', 'One reason is…', 'For example,…', 'In conclusion,…'];
+          return (
+            <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
+              {aiFeedback ? (
+                <div className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden">
+                  <div className="bg-gradient-to-r from-sky-500 to-blue-600 px-5 py-3 flex items-center gap-2">
+                    <span className="text-white text-xs font-black uppercase tracking-wider">🤖 {t("interactivePlay.aiEvaluation")}</span>
+                  </div>
+                  <div className="p-5 flex flex-col items-center gap-3">
+                    <span className={`text-4xl font-black ${getScoreColor(aiFeedback.score)}`}>{aiFeedback.score}<span className="text-base text-muted-foreground"> / 5</span></span>
+                    <div className="w-full rounded-2xl p-4 border-l-4 bg-sky-500/10 border-sky-400">
+                      <p className="text-sm font-semibold text-foreground leading-relaxed">{aiFeedback.feedback}</p>
+                    </div>
+                    <p className="text-xs font-bold text-muted-foreground animate-pulse">{t("interactivePlay.waitingNextPage")}</p>
+                  </div>
+                </div>
+              ) : (hasAnswered || isSubmitting) ? (
+                renderAiSkeleton('sky')
+              ) : (
+                <div className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden">
+                  <div className="bg-gradient-to-r from-sky-500 to-blue-600 px-5 py-3">
+                    <span className="text-white text-xs font-black uppercase tracking-wider">✍️ {t("interactivePlay.writingTitle")}</span>
+                  </div>
+                  <div className="p-5 space-y-3">
+                    <p className="text-sm font-bold text-foreground leading-relaxed">{prompt}</p>
+                    <div className="bg-sky-500/5 border border-sky-500/20 rounded-2xl p-3">
+                      <p className="text-[10px] font-black text-sky-600 dark:text-sky-400 uppercase tracking-widest">{t("interactivePlay.framesTitle")}</p>
+                      <p className="text-[11px] text-muted-foreground mb-2 mt-0.5">{t("interactivePlay.framesHint")}</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {frames.map((f) => (
+                          <button
+                            type="button"
+                            key={f}
+                            onClick={() => setWritingDraft((prev) => (prev ? prev.replace(/\s*$/, ' ') : '') + f.replace('…', '') + ' ')}
+                            className="text-xs bg-card border border-sky-500/30 rounded-full px-2.5 py-1 text-foreground active:scale-95 active:bg-sky-500/10 transition-all"
+                          >
+                            {f}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-muted-foreground">{t("interactivePlay.writingPlanLabel")}</label>
+                      <textarea
+                        value={writingPlan}
+                        onChange={(e) => setWritingPlan(e.target.value)}
+                        className="mt-1 w-full border-2 border-border bg-muted text-foreground rounded-2xl p-3 min-h-[60px] text-sm focus:border-sky-500 focus:outline-none resize-y"
+                        placeholder={t("interactivePlay.writingPlanPlaceholder")}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-muted-foreground">{t("interactivePlay.writingDraftLabel")}</label>
+                      <textarea
+                        value={writingDraft}
+                        onChange={(e) => setWritingDraft(e.target.value)}
+                        className="mt-1 w-full border-2 border-border bg-muted text-foreground rounded-2xl p-3 min-h-[110px] text-sm focus:border-sky-500 focus:outline-none resize-y"
+                        placeholder={t("interactivePlay.writingDraftPlaceholder")}
+                      />
+                    </div>
+                    <button
+                      onClick={handleWritingSubmit}
+                      disabled={!writingDraft.trim()}
+                      className="w-full bg-gradient-to-r from-sky-500 to-blue-600 text-white font-black text-base py-4 rounded-2xl shadow-lg disabled:opacity-40 active:scale-95 transition-all"
+                    >
+                      {t("interactivePlay.writingSubmit")}
+                    </button>
+                  </div>
+                </div>
+              )}
+              <MobileLeaderboard participants={participants} studentId={studentId} />
+            </div>
+          );
+        })()}
+
+        {/* ─── Step 12: Language Questions (phase 13) ─── */}
+        {currentPhase === 13 && (
+          <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
+            {languageSkipped ? (
+              <div className="bg-card rounded-2xl border border-border shadow-sm p-5 text-center">
+                <div className="text-2xl mb-1">👌</div>
+                <h2 className="font-black text-foreground">{t("interactivePlay.languageSkipped")}</h2>
+                <p className="text-muted-foreground text-sm mt-0.5">{t("interactivePlay.waitingFriends")}</p>
+              </div>
+            ) : languageAnswer ? (
+              <div className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden">
+                <div className="bg-gradient-to-r from-violet-500 to-indigo-600 px-5 py-3">
+                  <span className="text-white text-xs font-black uppercase tracking-wider">🤖 {t("interactivePlay.languageAiTitle")}</span>
+                </div>
+                <div className="p-5 space-y-3">
+                  <div className="bg-muted/50 rounded-2xl p-3">
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{t("interactivePlay.yourAnswer")}</p>
+                    <p className="text-sm font-semibold text-foreground">{languageAnswer.question}</p>
+                  </div>
+                  <div className="rounded-2xl p-4 border-l-4 bg-violet-500/10 border-violet-400">
+                    <p className="text-sm font-semibold text-foreground leading-relaxed">{languageAnswer.answer}</p>
+                  </div>
+                  <p className="text-xs font-bold text-muted-foreground animate-pulse">{t("interactivePlay.waitingNextPage")}</p>
+                </div>
+              </div>
+            ) : (hasAnswered || isSubmitting) ? (
+              renderAiSkeleton('violet')
+            ) : (
+              <div className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden">
+                <div className="bg-gradient-to-r from-violet-500 to-indigo-600 px-5 py-3">
+                  <span className="text-white text-xs font-black uppercase tracking-wider">❓ {t("interactivePlay.languageTitle")}</span>
+                </div>
+                <div className="p-5 space-y-3">
+                  <p className="text-sm font-bold text-foreground">{t("interactivePlay.languagePrompt")}</p>
+                  <textarea
+                    value={languageQuestion}
+                    onChange={(e) => setLanguageQuestion(e.target.value)}
+                    className="w-full border-2 border-border bg-muted text-foreground rounded-2xl p-3 min-h-[100px] text-sm focus:border-violet-500 focus:outline-none resize-y"
+                    placeholder={t("interactivePlay.languagePlaceholder")}
+                  />
+                  <button
+                    onClick={handleLanguageSubmit}
+                    disabled={!languageQuestion.trim()}
+                    className="w-full bg-gradient-to-r from-violet-500 to-indigo-600 text-white font-black text-base py-4 rounded-2xl shadow-lg disabled:opacity-40 active:scale-95 transition-all"
+                  >
+                    {t("interactivePlay.languageSubmit")}
+                  </button>
+                  <button
+                    onClick={handleLanguageSkip}
+                    className="w-full border-2 border-border text-muted-foreground font-bold text-sm py-3 rounded-2xl bg-card active:scale-95 transition-all"
+                  >
+                    {t("interactivePlay.languageSkip")}
+                  </button>
+                </div>
+              </div>
+            )}
+            <MobileLeaderboard participants={participants} studentId={studentId} />
+          </div>
+        )}
+
+        {/* ─── Step 13: Lesson Reflection (phase 14) ─── */}
         {currentPhase === 14 && (() => {
+          const uOptions = [
+            { v: 'all', label: t("interactivePlay.reflectionUnderstandingAll") },
+            { v: 'most', label: t("interactivePlay.reflectionUnderstandingMost") },
+            { v: 'some', label: t("interactivePlay.reflectionUnderstandingSome") },
+            { v: 'little', label: t("interactivePlay.reflectionUnderstandingLittle") },
+          ];
+          const eOptions = [
+            { v: 'great', label: t("interactivePlay.reflectionEffortGreat") },
+            { v: 'good', label: t("interactivePlay.reflectionEffortGood") },
+            { v: 'okay', label: t("interactivePlay.reflectionEffortOkay") },
+            { v: 'needsWork', label: t("interactivePlay.reflectionEffortNeedsWork") },
+          ];
+          return (
+            <div className="phase-enter w-full max-w-md flex flex-col gap-4 overflow-y-auto max-h-[calc(100dvh-80px)] pb-4">
+              <div className="bg-amber-500/10 border-2 border-amber-500/30 rounded-3xl p-6 text-center">
+                <div className="text-5xl mb-2">📝</div>
+                <h2 className="text-xl font-black text-amber-600 dark:text-amber-400">{t("interactivePlay.reflectionTitle")}</h2>
+                <p className="text-muted-foreground text-sm mt-1">{t("interactivePlay.reflectionPrompt")}</p>
+              </div>
+
+              {hasAnswered ? (
+                <div className="bg-emerald-500/10 border-2 border-emerald-500/30 rounded-2xl p-6 text-center">
+                  <div className="text-4xl mb-2">✅</div>
+                  <h3 className="font-black text-emerald-600 dark:text-emerald-400 text-lg">{t("interactivePlay.reflectionDone")}</h3>
+                  {reviewRating > 0 && (
+                    <p className="text-emerald-600/70 dark:text-emerald-400/70 text-sm mt-1">{'★'.repeat(reviewRating)} บันทึกรีวิวคุณครูแล้ว</p>
+                  )}
+                </div>
+              ) : (
+                <div className="bg-card rounded-3xl border border-border shadow-lg p-5 space-y-4">
+                  <div>
+                    <p className="text-sm font-bold text-foreground mb-2">{t("interactivePlay.reflectionUnderstanding")}</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {uOptions.map((o) => (
+                        <button
+                          key={o.v}
+                          onClick={() => setUnderstanding(o.label)}
+                          className={`rounded-2xl border-2 py-2.5 text-sm font-bold transition-all active:scale-95 ${understanding === o.label ? 'border-amber-400 bg-amber-400/15 text-amber-600' : 'border-border bg-muted/40 text-muted-foreground'}`}
+                        >
+                          {o.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-foreground mb-2">{t("interactivePlay.reflectionEffort")}</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {eOptions.map((o) => (
+                        <button
+                          key={o.v}
+                          onClick={() => setEffort(o.label)}
+                          className={`rounded-2xl border-2 py-2.5 text-sm font-bold transition-all active:scale-95 ${effort === o.label ? 'border-amber-400 bg-amber-400/15 text-amber-600' : 'border-border bg-muted/40 text-muted-foreground'}`}
+                        >
+                          {o.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Tutor star review (optional, sent together with the reflection) */}
+                  <div className="border-t border-border pt-4">
+                    <p className="text-sm font-bold text-foreground">ให้คะแนนคุณครู <span className="text-muted-foreground font-normal text-xs">(ไม่บังคับ)</span></p>
+                    <p className="text-muted-foreground text-xs leading-relaxed mb-2">คะแนนนี้จะถูกนำไปคำนวณเรตติ้งเฉลี่ยจริงของคุณครู</p>
+                    <div className="grid grid-cols-5 gap-2 mb-3">
+                      {[1, 2, 3, 4, 5].map((value) => (
+                        <button
+                          key={value}
+                          type="button"
+                          onClick={() => setReviewRating(value)}
+                          aria-label={`ให้ ${value} ดาว`}
+                          className={`h-12 rounded-2xl border text-2xl transition-all active:scale-95 ${value <= reviewRating ? 'border-amber-400 bg-amber-400/15 text-amber-500' : 'border-border bg-muted/40 text-muted-foreground'}`}
+                        >
+                          ★
+                        </button>
+                      ))}
+                    </div>
+                    <textarea
+                      value={reviewComment}
+                      onChange={(event) => setReviewComment(event.target.value)}
+                      placeholder="เล่าความประทับใจหรือข้อเสนอแนะเพิ่มเติม"
+                      maxLength={500}
+                      className="min-h-20 w-full resize-y rounded-2xl border border-border bg-background p-3 text-sm font-medium text-foreground outline-none focus:border-amber-400"
+                    />
+                  </div>
+
+                  <button
+                    onClick={handleReflectionSubmit}
+                    disabled={!understanding || !effort || isSubmitting}
+                    className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-base py-4 rounded-2xl shadow-lg disabled:opacity-40 active:scale-95 transition-all"
+                  >
+                    {isSubmitting ? 'กำลังส่ง...' : t("interactivePlay.reflectionSubmit")}
+                  </button>
+                </div>
+              )}
+
+              <MobileLeaderboard participants={participants} studentId={studentId} />
+            </div>
+          );
+        })()}
+
+        {/* ─── Step 14: Pair Conversation (phase 15) ─── */}
+        {currentPhase === 15 && (() => {
+          // Dev preview injects a fake pair containing this student
+          const pairs = devPairPreview
+            ? [{
+                pairNumber: 1,
+                members: [
+                  { studentId, name },
+                  { studentId: 'mock-partner-1', name: 'เพื่อนทดสอบ เอ' },
+                  ...(devPairPreview === 2 ? [{ studentId: 'mock-partner-2', name: 'เพื่อนทดสอบ บี' }] : []),
+                ],
+              }]
+            : (sessionData?.pairs || []);
+          const myPair = pairs.find(p => p.members.some(m => m.studentId === studentId));
+          const partners = myPair ? myPair.members.filter(m => m.studentId !== studentId) : [];
+          const starters = [
+            'What was this story about?',
+            'Which new word do you like? Why?',
+            'What is the most interesting part?',
+            'What did you learn today?',
+          ];
+
+          return (
+            <div className="phase-enter w-full max-w-sm flex flex-col gap-4 overflow-y-auto max-h-[calc(100dvh-80px)] pb-4">
+              <div className="bg-rose-500/10 border-2 border-rose-500/30 rounded-3xl p-6 text-center">
+                <div className="text-5xl mb-2">🗣️</div>
+                <h2 className="text-xl font-black text-rose-600 dark:text-rose-400">สนทนาจับคู่</h2>
+                <p className="text-muted-foreground text-sm mt-1">คุยกับคู่ของคุณเกี่ยวกับบทเรียนวันนี้</p>
+              </div>
+
+              {myPair ? (
+                <div className="bg-card rounded-3xl border border-border shadow-lg p-5 text-center">
+                  <span className="inline-block text-[10px] font-black uppercase tracking-widest text-rose-500 bg-rose-500/10 border border-rose-500/20 rounded-full px-3 py-1 mb-4">
+                    คู่ที่ {myPair.pairNumber}
+                  </span>
+                  {partners.length > 0 ? (
+                    <>
+                      <p className="text-xs font-bold text-muted-foreground mb-3">
+                        {partners.length > 1 ? 'คู่สนทนาของคุณ (กลุ่ม 3 คน)' : 'คู่สนทนาของคุณ'}
+                      </p>
+                      <div className="flex items-center justify-center gap-4 flex-wrap">
+                        {partners.map((partner) => (
+                          <div key={partner.studentId} className="flex flex-col items-center gap-2">
+                            <div className="size-16 rounded-full overflow-hidden border-4 border-rose-300/60 shadow-lg bg-muted">
+                              <Image
+                                src={partner.pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${partner.name}`}
+                                alt={partner.name}
+                                width={64} height={64}
+                                className="size-full object-cover"
+                                unoptimized
+                              />
+                            </div>
+                            <span className="text-sm font-black text-foreground">{partner.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="text-muted-foreground text-xs mt-4 leading-relaxed">
+                        หันไปหาคู่ของคุณ แล้วผลัดกันพูดคนละ 2-3 นาที 🤝
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-muted-foreground text-sm">รอคุณครูจัดคู่ให้คุณ</p>
+                  )}
+                </div>
+              ) : (
+                <div className="bg-card rounded-3xl border border-border shadow-lg p-6 text-center">
+                  <div className="text-3xl mb-2">👀</div>
+                  <p className="text-muted-foreground text-sm font-medium">ดูคู่ของคุณบนจอคุณครู</p>
+                </div>
+              )}
+
+              <div className="bg-card rounded-2xl border border-border shadow-sm p-4">
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2.5">ประโยคชวนคุย</p>
+                <div className="space-y-2">
+                  {starters.map((starter) => (
+                    <div key={starter} className="bg-muted/50 border border-border/60 rounded-xl px-3 py-2 text-sm font-medium text-foreground">
+                      💬 {starter}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* ─── Wrap-up: Final Leaderboard (phase 16) ─── */}
+        {currentPhase === 16 && (() => {
           const sorted = [...participants].sort((a, b) => (b.score || 0) - (a.score || 0));
           const studentIndex = sorted.findIndex(p => p.studentId === studentId);
           const rank = studentIndex !== -1 ? studentIndex + 1 : 0;
@@ -594,49 +1198,6 @@ function PlayLessonContent() {
                 <p className="text-emerald-600/80 dark:text-emerald-400/80 text-xs leading-relaxed">{t("interactivePlay.lessonCompletedDescription")}</p>
               </div>
 
-              <div className="bg-card rounded-3xl border border-amber-500/30 shadow-lg p-5">
-                <p className="text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-2">Tutor Review</p>
-                <h4 className="font-black text-foreground text-base mb-1">ให้คะแนนคุณครู</h4>
-                <p className="text-muted-foreground text-xs leading-relaxed mb-4">
-                  คะแนนนี้จะถูกนำไปคำนวณเรตติ้งเฉลี่ยจริงของคุณครู
-                </p>
-
-                <div className="grid grid-cols-5 gap-2 mb-3">
-                  {[1, 2, 3, 4, 5].map((value) => (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() => setReviewRating(value)}
-                      aria-label={`ให้ ${value} ดาว`}
-                      className={`h-12 rounded-2xl border text-2xl transition-all active:scale-95 ${
-                        value <= reviewRating
-                          ? 'border-amber-400 bg-amber-400/15 text-amber-500'
-                          : 'border-border bg-muted/40 text-muted-foreground'
-                      }`}
-                    >
-                      ★
-                    </button>
-                  ))}
-                </div>
-
-                <textarea
-                  value={reviewComment}
-                  onChange={(event) => setReviewComment(event.target.value)}
-                  placeholder="เล่าความประทับใจหรือข้อเสนอแนะเพิ่มเติม"
-                  maxLength={500}
-                  className="min-h-24 w-full resize-y rounded-2xl border border-border bg-background p-3 text-sm font-medium text-foreground outline-none focus:border-amber-400"
-                />
-
-                <button
-                  type="button"
-                  onClick={submitTutorReview}
-                  disabled={reviewSubmitting || reviewRating === 0}
-                  className="mt-3 w-full rounded-2xl bg-amber-500 py-3.5 text-sm font-black text-white shadow-lg shadow-amber-500/20 transition-all active:scale-95 disabled:opacity-50"
-                >
-                  {reviewSubmitting ? 'กำลังบันทึก...' : reviewLoaded && reviewRating > 0 ? 'บันทึกรีวิว' : 'ส่งรีวิว'}
-                </button>
-              </div>
-
               <button
                 onClick={() => router.push('/dashboard')}
                 className="w-full bg-gradient-to-r from-indigo-500 to-violet-600 text-white font-black py-4 rounded-2xl shadow-xl active:scale-95 transition-all"
@@ -647,8 +1208,8 @@ function PlayLessonContent() {
           );
         })()}
 
-        {/* ─── MCQ Phases (7, 10, 11, 12) ─── */}
-        {[7, 10, 11, 12].includes(currentPhase) && (
+        {/* ─── MCQ-style Phases: Comprehension(7), Vocab(9), Sentence fill(10), Sentence order(11) ─── */}
+        {[7, 9, 10, 11].includes(currentPhase) && (
           <div className="phase-enter w-full max-w-md flex-1 flex flex-col gap-3 min-h-0">
             {hasAnswered ? (
               /* After answering: show result + leaderboard */
@@ -687,18 +1248,18 @@ function PlayLessonContent() {
                       if (currentPhase === 7) {
                         const idx = sessionData?.phaseSelectedIndices?.[7] || 0;
                         return articleData?.multipleChoiceQuestions?.[idx]?.question || t("interactivePlay.defaultQuestion");
-                      } else if (currentPhase === 10) {
-                        const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
+                      } else if (currentPhase === 9) {
+                        const idx = sessionData?.phaseSelectedIndices?.[9] || 0;
                         const w = articleData?.words?.[idx];
                         return `${t("interactivePlay.vocabMeaningPrefix")} "${w?.vocabulary || w?.word || w?.text}" ${t("interactivePlay.vocabMeaningSuffix")}`;
-                      } else if (currentPhase === 11) {
-                        const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
+                      } else if (currentPhase === 10) {
+                        const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
                         const s = articleData?.sentences?.[idx];
                         const targetStr = typeof s === 'object' ? s.sentences : s;
                         const words = String(targetStr).split(' ');
                         return `${t("interactivePlay.fillBlankPrefix")} ${words.slice(0, words.length - 1).join(' ')} _____`;
-                      } else if (currentPhase === 12) {
-                        const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
+                      } else if (currentPhase === 11) {
+                        const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
                         return `${t("interactivePlay.orderSentencePrefix")} ${idx + 1}`;
                       }
                       return t("interactivePlay.defaultQuestion");
@@ -723,8 +1284,8 @@ function PlayLessonContent() {
           </div>
         )}
 
-        {/* ─── Short Answer (8, 13) ─── */}
-        {(currentPhase === 8 || currentPhase === 13) && (
+        {/* ─── Guided Response / Short Answer (Step 8) ─── */}
+        {currentPhase === 8 && (
           <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
 
             {aiFeedback ? (
@@ -859,6 +1420,7 @@ function PlayLessonContent() {
         )}
 
       </main>
+      {devPairButton}
     </div>
   );
 }

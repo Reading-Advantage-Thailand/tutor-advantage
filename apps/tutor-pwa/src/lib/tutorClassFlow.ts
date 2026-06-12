@@ -10,9 +10,12 @@ export type CreateClassForm = {
   name: string;
   book: string;
   schedule: string;
+  scheduleData?: any[];
   meetingUrl?: string;
   startsAt?: string;
   endsAt?: string;
+  totalHours?: number;
+  couponCode?: string;
 };
 
 export type CreateClassRequest = {
@@ -20,10 +23,41 @@ export type CreateClassRequest = {
   bookId: string;
   capacity: number;
   scheduleDescription: string;
+  scheduleData?: any[];
   meetingUrl?: string;
   startsAt?: string;
   endsAt?: string;
+  totalHours?: number;
+  couponCode?: string;
 };
+
+// Maximum live-teaching hours allowed per class schedule
+export const MAX_CLASS_HOURS = 22;
+
+// Parse a "yyyy-MM-dd" string as a LOCAL calendar date (midnight local time).
+// Using `new Date("yyyy-MM-dd")` parses as UTC, which then shifts the day when
+// formatted/compared in local time. This keeps schedule dates stable across
+// save/load round-trips in any timezone.
+export function parseLocalDate(dateStr: string): Date {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  return new Date(y, (m || 1) - 1, d || 1);
+}
+
+export type WeeklyTemplate = {
+  id: string;
+  label: string;
+  days: string[];
+  startTime: string;
+  endTime: string;
+};
+
+// Quick-pick weekly schedule presets
+export const WEEKLY_TEMPLATES: WeeklyTemplate[] = [
+  { id: "weekday-eve", label: "จ–ศ เย็น", days: ["MON", "TUE", "WED", "THU", "FRI"], startTime: "18:00", endTime: "20:00" },
+  { id: "mwf-eve", label: "จ/พ/ศ เย็น", days: ["MON", "WED", "FRI"], startTime: "18:00", endTime: "20:00" },
+  { id: "tt-eve", label: "อ/พฤ เย็น", days: ["TUE", "THU"], startTime: "18:00", endTime: "20:00" },
+  { id: "weekend-morning", label: "ส–อา เช้า", days: ["SAT", "SUN"], startTime: "09:00", endTime: "12:00" },
+];
 
 export const CLASS_DAYS: ClassDay[] = [
   { label: t("tutorClass.days.monShort"), full: t("tutorClass.days.monFull"), value: "MON" },
@@ -85,6 +119,58 @@ export function getEndTimeOptions(
   return timeOptions.filter((time) => time > startTime);
 }
 
+// Hours between two "HH:MM" times (single session length)
+export function diffHours(startTime: string, endTime: string): number {
+  if (!startTime || !endTime) return 0;
+  const [sh, sm] = startTime.split(":").map(Number);
+  const [eh, em] = endTime.split(":").map(Number);
+  const minutes = (eh * 60 + em) - (sh * 60 + sm);
+  return minutes > 0 ? minutes / 60 : 0;
+}
+
+const DAY_TO_INDEX: Record<string, number> = {
+  SUN: 0, MON: 1, TUE: 2, WED: 3, THU: 4, FRI: 5, SAT: 6,
+};
+
+// Count how many of the selected weekdays fall within [startsAt, endsAt] inclusive
+export function countSessionOccurrences(
+  days: string[],
+  startsAt?: string,
+  endsAt?: string,
+): number {
+  if (!days.length || !startsAt || !endsAt) return 0;
+  const start = new Date(startsAt);
+  const end = new Date(endsAt);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end < start) return 0;
+
+  const wanted = new Set(days.map((d) => DAY_TO_INDEX[d]).filter((n) => n !== undefined));
+  if (wanted.size === 0) return 0;
+
+  let count = 0;
+  let guard = 0;
+  const cur = new Date(start);
+  while (cur <= end && guard < 3660) {
+    if (wanted.has(cur.getDay())) count++;
+    cur.setDate(cur.getDate() + 1);
+    guard++;
+  }
+  return count;
+}
+
+// Total live-teaching hours = session length × number of session days in range
+export function calculateTotalHours(
+  days: string[],
+  startTime: string,
+  endTime: string,
+  startsAt?: string,
+  endsAt?: string,
+): number {
+  const per = diffHours(startTime, endTime);
+  if (per <= 0) return 0;
+  const occurrences = countSessionOccurrences(days, startsAt, endsAt);
+  return Math.round(per * occurrences * 100) / 100;
+}
+
 export function buildCreateClassRequest(
   data: CreateClassForm,
   capacity = 30,
@@ -94,9 +180,12 @@ export function buildCreateClassRequest(
     bookId: data.book,
     capacity,
     scheduleDescription: data.schedule,
+    scheduleData: data.scheduleData,
     meetingUrl: data.meetingUrl,
     startsAt: data.startsAt || undefined,
     endsAt: data.endsAt || undefined,
+    totalHours: data.totalHours,
+    couponCode: data.couponCode?.trim() || undefined,
   };
 }
 

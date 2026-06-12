@@ -67,6 +67,11 @@ import {
 } from "./controllers/fraudController";
 import { getAdminOverview } from "./controllers/adminController";
 import {
+  createCoupon,
+  getCoupons,
+  voidCoupon,
+} from "./controllers/couponController";
+import {
   devListUsers,
   devCreateUser,
   devUpdateUser,
@@ -141,6 +146,11 @@ app.get("/version", (_req: Request, res: Response) => {
 });
 
 app.get("/v1/admin/overview", authMiddleware, getAdminOverview);
+
+// ── Coupon Routes (admin) ──────────────────────────────────────────────────
+app.post("/v1/coupons", authMiddleware, createCoupon);
+app.get("/v1/coupons", authMiddleware, getCoupons);
+app.post("/v1/coupons/:couponId/void", authMiddleware, voidCoupon);
 
 // ── Payment Routes ─────────────────────────────────────────────────────────
 app.post("/v1/payments/intent", authMiddleware, createPaymentIntent);

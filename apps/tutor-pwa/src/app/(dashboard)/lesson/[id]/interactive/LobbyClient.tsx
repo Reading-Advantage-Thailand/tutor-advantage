@@ -7,13 +7,69 @@ import { playSound } from "@/lib/sounds";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft, Users, Bell, UserMinus, ShieldCheck,
-  BookOpen, Play, AlertCircle, X,
+  BookOpen, Play, AlertCircle, X, Copy, CheckCircle2, QrCode,
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { QRCodeSVG } from "qrcode.react";
 import { PhaseManager } from "./PhaseManager";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { t } from "@/lib/i18n";
+
+// Invite card shown while waiting in the lobby: scannable QR (the lobby is
+// usually on the projector) plus a copyable link for chat apps.
+function LobbyInviteCard({ referralLink }: { referralLink: string }) {
+  const [copied, setCopied] = React.useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(referralLink).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  return (
+    <div className="rounded-3xl border border-border/60 bg-card shadow-xl overflow-hidden">
+      <div className="px-5 py-3.5 bg-gradient-to-r from-emerald-500/15 to-teal-500/10 border-b border-border/60 flex items-center gap-2.5">
+        <div className="size-8 rounded-lg bg-emerald-500/15 flex items-center justify-center shrink-0">
+          <QrCode className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm font-bold text-foreground">{t("lesson.interactive.inviteTitle")}</p>
+          <p className="text-[11px] text-muted-foreground">{t("lesson.interactive.inviteHelp")}</p>
+        </div>
+      </div>
+      <div className="p-5 flex flex-col items-center gap-4">
+        <div className="bg-white p-3 rounded-2xl border border-border/50 shadow-sm">
+          <QRCodeSVG value={referralLink} size={168} level="M" includeMargin={false} />
+        </div>
+        <div className="flex items-center gap-2 w-full">
+          <input
+            readOnly
+            value={referralLink}
+            className="flex-1 h-10 min-w-0 rounded-lg border border-input bg-muted px-3 text-xs text-foreground font-mono truncate"
+          />
+          <button
+            onClick={handleCopy}
+            title={t("lesson.interactive.inviteCopy")}
+            className="h-10 w-10 shrink-0 flex items-center justify-center rounded-lg border border-input hover:bg-muted transition-colors"
+          >
+            {copied ? (
+              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+            ) : (
+              <Copy className="h-4 w-4 text-muted-foreground" />
+            )}
+          </button>
+        </div>
+        {copied && (
+          <p className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 -mt-2">
+            {t("lesson.interactive.inviteCopied")}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function TutorLobbyClient({
   classId,
@@ -21,16 +77,23 @@ export default function TutorLobbyClient({
   classBookCycleId,
   bookId,
   socketUrl,
+  demo = false,
+  referralLink = null,
 }: {
   classId: string;
   articleId: string;
   classBookCycleId?: string;
   bookId?: string;
   socketUrl: string;
+  demo?: boolean;
+  referralLink?: string | null;
 }) {
   const router = useRouter();
 
   const tutorId = "tutor-123";
+
+  // In demo mode there is no real class to return to.
+  const backHref = demo ? "/dashboard/demo" : `/dashboard/classes/${classId}`;
 
   const {
     sessionData,
@@ -39,15 +102,18 @@ export default function TutorLobbyClient({
     totalAnswered,
     allAnsweredData,
     error,
+    flagCounts,
     changePhase,
     nudgeStudent,
     kickStudent,
     deleteSession,
-  } = useLessonSocket(tutorId, articleId, classId, socketUrl, classBookCycleId, bookId);
+  } = useLessonSocket(tutorId, articleId, classId, socketUrl, classBookCycleId, bookId, demo);
 
   const readyCount = participants.filter((participant) => participant.isReady).length;
   const totalCount = participants.length;
   const isEveryoneReady = totalCount > 0 && readyCount === totalCount;
+  // Demo is a solo walkthrough — the tutor can start without waiting for students.
+  const canStart = demo || isEveryoneReady;
 
   // Article image URL from GCS
   const articleImgId = (articleData as any)?.id as string | undefined;
@@ -61,7 +127,7 @@ export default function TutorLobbyClient({
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href={`/dashboard/classes/${classId}`}>
+              <Link href={backHref}>
                 <Button variant="ghost" size="icon" className="rounded-xl">
                   <ArrowLeft />
                 </Button>
@@ -92,10 +158,11 @@ export default function TutorLobbyClient({
               totalAnswered={totalAnswered}
               allAnsweredData={allAnsweredData}
               articleData={articleData}
+              flagCounts={flagCounts}
               changePhase={changePhase}
               onFinishSession={() => {
                 deleteSession();
-                router.push(`/dashboard/classes/${classId}`);
+                router.push(backHref);
               }}
             />
           </div>
@@ -112,7 +179,7 @@ export default function TutorLobbyClient({
         </div>
         <h2 className="text-xl font-bold text-foreground">{t("lesson.interactive.sessionCreateError")}</h2>
         <p className="text-muted-foreground max-w-md">{error}</p>
-        <Link href={`/dashboard/classes/${classId}`}>
+        <Link href={backHref}>
           <Button variant="outline" className="mt-2">{t("lesson.interactive.backToClass")}</Button>
         </Link>
       </div>
@@ -135,7 +202,7 @@ export default function TutorLobbyClient({
       <header className="bg-card border-b border-border sticky top-0 z-30 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href={`/dashboard/classes/${classId}`}>
+            <Link href={backHref}>
               <Button variant="ghost" size="icon" className="rounded-xl hover:bg-muted">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
@@ -143,12 +210,20 @@ export default function TutorLobbyClient({
             <div>
               <div className="flex items-center gap-2.5">
                 <h1 className="text-lg font-bold text-foreground">{t("lesson.interactive.lobbyTitle")}</h1>
-                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 gap-1.5 font-bold">
-                  <span className="live-dot text-emerald-500" />
-                  Live Active
-                </Badge>
+                {demo ? (
+                  <Badge variant="outline" className="bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20 gap-1.5 font-bold">
+                    {t("lesson.interactive.demoBadge")}
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 gap-1.5 font-bold">
+                    <span className="live-dot text-emerald-500" />
+                    Live Active
+                  </Badge>
+                )}
               </div>
-              <p className="text-xs text-muted-foreground">Class ID: {classId}</p>
+              <p className="text-xs text-muted-foreground">
+                {demo ? t("lesson.interactive.demoSubtitle") : `Class ID: ${classId}`}
+              </p>
             </div>
           </div>
 
@@ -173,7 +248,7 @@ export default function TutorLobbyClient({
                 onClick={() => {
                   if (confirm(t("lesson.interactive.closeRoomConfirm"))) {
                     deleteSession();
-                    router.push(`/dashboard/classes/${classId}`);
+                    router.push(backHref);
                   }
                 }}
               >
@@ -208,7 +283,7 @@ export default function TutorLobbyClient({
                 </span>
                 {articleData?.cefr_level && (
                   <span className="bg-indigo-500/80 backdrop-blur text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
-                    CEFR {articleData.cefr_level}
+                    CEFR {articleData.cefr_level === "A0" ? "A1" : articleData.cefr_level}
                   </span>
                 )}
               </div>
@@ -251,6 +326,9 @@ export default function TutorLobbyClient({
             </div>
           </div>
 
+          {/* Student invite: QR to scan from the projector + copyable link */}
+          {!demo && referralLink && <LobbyInviteCard referralLink={referralLink} />}
+
           <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/5 p-5">
             <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
               <ShieldCheck size={16} className="text-indigo-500" /> {t("lesson.interactive.tutorTips")}
@@ -287,9 +365,11 @@ export default function TutorLobbyClient({
                 <div className="w-16 h-16 bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-4">
                   <Users className="text-indigo-500" size={28} />
                 </div>
-                <h4 className="font-bold text-lg text-foreground">{t("lesson.interactive.emptyStudentsTitle")}</h4>
+                <h4 className="font-bold text-lg text-foreground">
+                  {demo ? t("lesson.interactive.demoEmptyTitle") : t("lesson.interactive.emptyStudentsTitle")}
+                </h4>
                 <p className="text-sm text-muted-foreground mt-1 max-w-xs">
-                  {t("lesson.interactive.emptyStudentsLinkMessage")}
+                  {demo ? t("lesson.interactive.demoEmptyMessage") : t("lesson.interactive.emptyStudentsLinkMessage")}
                 </p>
               </div>
             ) : (
@@ -354,19 +434,28 @@ export default function TutorLobbyClient({
           <div className="pt-6">
             <button
               className={`w-full py-5 rounded-2xl text-lg font-black flex items-center justify-center gap-3 shadow-xl transition-all duration-300 ${
-                isEveryoneReady
+                canStart
                   ? "bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white shadow-indigo-500/30 active:scale-[0.98] shimmer-cta"
                   : "bg-muted text-muted-foreground cursor-not-allowed"
               }`}
-              disabled={!isEveryoneReady}
+              disabled={!canStart}
               onClick={() => { changePhase(1); playSound("phaseChange"); }}
             >
               <Play fill="currentColor" className="h-6 w-6" />
-              {isEveryoneReady ? t("lesson.interactive.startNow") : `${t("lesson.interactive.waitingReadyPrefix")} (${readyCount}/${totalCount})`}
+              {demo
+                ? t("lesson.interactive.startDemo")
+                : isEveryoneReady
+                  ? t("lesson.interactive.startNow")
+                  : `${t("lesson.interactive.waitingReadyPrefix")} (${readyCount}/${totalCount})`}
             </button>
-            {!isEveryoneReady && totalCount > 0 && (
+            {!demo && !isEveryoneReady && totalCount > 0 && (
               <p className="text-center text-xs text-muted-foreground mt-4">
                 {t("lesson.interactive.readyOnlyNote")}
+              </p>
+            )}
+            {demo && (
+              <p className="text-center text-xs text-muted-foreground mt-4">
+                {t("lesson.interactive.demoSoloNote")}
               </p>
             )}
           </div>

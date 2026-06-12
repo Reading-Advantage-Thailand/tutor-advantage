@@ -161,17 +161,35 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
 
       // 2. Check primary class capacity
       const primaryClass = referral.class;
+      let targetClass = primaryClass;
       let targetClassId = primaryClass.classId;
+
+      // Expired demo classes no longer accept enrollments.
+      if (
+        primaryClass.isDemo &&
+        primaryClass.expiresAt &&
+        primaryClass.expiresAt.getTime() < Date.now()
+      ) {
+        throw new Error("DEMO_EXPIRED");
+      }
 
       if (
         primaryClass.status !== "OPEN" ||
         primaryClass.enrolledCount >= primaryClass.capacity
       ) {
-        // Fallback Logic: Primary class is full or closed. Look for another OPEN class by the same tutor.
+        // Demo classes never fall back: their invite is tied to the free demo
+        // room, and falling back would grant free ACTIVE access to a paid class.
+        if (primaryClass.isDemo) {
+          throw new Error("NO_FALLBACK_AVAILABLE");
+        }
+
+        // Fallback Logic: Primary class is full or closed. Look for another OPEN
+        // class by the same tutor (excluding demo rooms).
         const availableClasses = await tx.class.findMany({
           where: {
             tutorUserId: primaryClass.tutorUserId,
             status: "OPEN",
+            isDemo: false,
           },
         });
 
@@ -184,6 +202,7 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
           throw new Error("NO_FALLBACK_AVAILABLE");
         }
 
+        targetClass = fallbackClass;
         targetClassId = fallbackClass.classId;
       }
 
@@ -214,13 +233,20 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
         };
       }
 
-      // 3. Create the enrollment in PENDING_PAYMENT state
+      // 3. Free classes activate immediately — no payment needed. Price 0 alone
+      // is not enough: the class must explicitly be a demo room or have
+      // coupon-granted free hours, so a misconfigured price can't skip payment.
+      const isFreeClass =
+        BigInt(targetClass.packagePriceMinor) === BigInt(0) &&
+        (targetClass.isDemo || targetClass.freeHours > 0);
+      const enrollmentStatus = isFreeClass ? "ACTIVE" : "PENDING_PAYMENT";
+
       const enrollment = await tx.enrollment.create({
         data: {
           classId: targetClassId,
           studentUserId: userId,
           referralToken: referral.token,
-          status: "PENDING_PAYMENT",
+          status: enrollmentStatus,
         },
       });
 
@@ -240,11 +266,14 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
         enrollmentId: enrollment.enrollmentId,
         classId: enrollment.classId,
         isFallback: targetClassId !== primaryClass.classId,
+        isFreeClass,
       };
     });
 
     return res.status(200).json({
-      message: "Enrollment successful. Pending payment.",
+      message: enrollmentResult.isFreeClass
+        ? "Enrollment successful. Access granted immediately."
+        : "Enrollment successful. Pending payment.",
       enrollmentId: enrollmentResult.enrollmentId,
       classId: enrollmentResult.classId,
       placement: enrollmentResult.isFallback ? "FALLBACK" : "PRIMARY",
@@ -266,6 +295,16 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
           code: "CLASS_FULL",
           message:
             "The target class is full and no alternative classes are available from this tutor",
+          requestId: req.id,
+        },
+      });
+    }
+
+    if (error.message === "DEMO_EXPIRED") {
+      return res.status(400).json({
+        error: {
+          code: "DEMO_EXPIRED",
+          message: "This demo class has expired and no longer accepts enrollments",
           requestId: req.id,
         },
       });
@@ -311,6 +350,16 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
 
       if (!targetClass) throw new Error("CLASS_NOT_FOUND");
 
+      // Expired demo classes no longer accept enrollments.
+      if (
+        targetClass.isDemo &&
+        targetClass.expiresAt &&
+        targetClass.expiresAt.getTime() < Date.now()
+      ) {
+        throw new Error("DEMO_EXPIRED");
+      }
+
+      let enrolledClass = targetClass;
       let targetClassId = targetClass.classId;
       let placedByFallback = false;
 
@@ -318,10 +367,19 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
         targetClass.status !== "OPEN" ||
         targetClass.enrolledCount >= targetClass.capacity
       ) {
+        // Demo classes never fall back: falling back would grant free ACTIVE
+        // access to a paid class (or drop a paying student into a demo room).
+        if (targetClass.isDemo) {
+          throw new Error(
+            targetClass.status !== "OPEN" ? "CLASS_CLOSED" : "CLASS_FULL",
+          );
+        }
+
         const fallbackClass = await tx.class.findFirst({
           where: {
             tutorUserId: targetClass.tutorUserId,
             status: "OPEN",
+            isDemo: false,
             enrolledCount: { lt: tx.class.fields.capacity },
           },
           orderBy: { createdAt: "asc" },
@@ -333,6 +391,7 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
           );
         }
 
+        enrolledClass = fallbackClass;
         targetClassId = fallbackClass.classId;
         placedByFallback = true;
       }
@@ -360,12 +419,17 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
         return { ...existing, placedByFallback };
       }
 
-      // 3. Create enrollment
+      // 3. Free classes activate immediately — no payment needed. Price 0 alone
+      // is not enough: the class must explicitly be a demo room or have
+      // coupon-granted free hours, so a misconfigured price can't skip payment.
+      const isFreeClass =
+        BigInt(enrolledClass.packagePriceMinor) === BigInt(0) &&
+        (enrolledClass.isDemo || enrolledClass.freeHours > 0);
       const enrollment = await tx.enrollment.create({
         data: {
           classId: targetClassId,
           studentUserId: userId,
-          status: "PENDING_PAYMENT",
+          status: isFreeClass ? "ACTIVE" : "PENDING_PAYMENT",
           referralToken: referralToken ?? null,
         }
       });
@@ -393,7 +457,12 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
     });
   } catch (error: any) {
     console.error("Direct Enrollment Error:", error);
-    const code = error.message.includes("CLASS") || error.message === "ALREADY_ENROLLED" ? "BAD_REQUEST" : "INTERNAL_SERVER_ERROR";
+    const code =
+      error.message.includes("CLASS") ||
+      error.message === "ALREADY_ENROLLED" ||
+      error.message === "DEMO_EXPIRED"
+        ? "BAD_REQUEST"
+        : "INTERNAL_SERVER_ERROR";
     return res.status(code === "BAD_REQUEST" ? 400 : 500).json({
       error: {
         code,

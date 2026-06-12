@@ -28,11 +28,13 @@ import {
   getBooks,
   deleteClass,
   updateMeetingUrl,
+  rescheduleClass,
   getAvailableClasses,
   getClassArticles,
   createClassBookCycle,
   prepareClassBookCycleAccess,
 } from "./controllers/classController";
+import { getDemoLessonCatalog } from "./controllers/demoController";
 import { generateReferral } from "./controllers/referralController";
 import {
   enrollStudent,
@@ -53,6 +55,11 @@ import {
 import { getPerformanceSummary } from "./controllers/performanceController";
 import { getMyTutorReviewForClass, submitTutorReview } from "./controllers/reviewController";
 import { getNotificationSummary } from "./controllers/notificationsController";
+import {
+  validateCouponCode,
+  applyCouponToClass,
+  getMyCoupons,
+} from "./controllers/couponController";
 import { getStudentLessonHistory, getLessonSessionDetails } from "./controllers/lessonHistoryController";
 import {
   devOnly,
@@ -110,6 +117,7 @@ app.get("/version", (_req: Request, res: Response) => {
 
 // Protected Class Routes
 app.get("/v1/books", authMiddleware, getBooks);
+app.get("/v1/demo/lessons", authMiddleware, getDemoLessonCatalog);
 app.post("/v1/classes", authMiddleware, createClass);
 app.post("/v1/classes/:classId/close", authMiddleware, closeClass);
 app.get("/v1/classes", authMiddleware, getClasses);
@@ -117,6 +125,7 @@ app.get("/v1/classes/available", authMiddleware, getAvailableClasses);
 app.get("/v1/classes/:classId", authMiddleware, getClassById);
 app.delete("/v1/classes/:classId", authMiddleware, deleteClass);
 app.patch("/v1/classes/:classId/meeting-url", authMiddleware, updateMeetingUrl);
+app.patch("/v1/classes/:classId/schedule", authMiddleware, rescheduleClass);
 app.get("/v1/classes/:classId/articles", authMiddleware, getClassArticles);
 app.post("/v1/classes/:classId/book-cycles", authMiddleware, createClassBookCycle);
 app.post("/v1/classes/:classId/book-cycles/:cycleId/access", authMiddleware, prepareClassBookCycleAccess);
@@ -174,6 +183,11 @@ app.post("/v1/classes/:classId/review", authMiddleware, submitTutorReview);
 
 // Protected Notifications Summary
 app.get("/v1/notifications/summary", authMiddleware, getNotificationSummary);
+
+// Protected Coupon Routes (tutor)
+app.get("/v1/coupons/mine", authMiddleware, getMyCoupons);
+app.post("/v1/coupons/validate", authMiddleware, validateCouponCode);
+app.post("/v1/classes/:classId/apply-coupon", authMiddleware, applyCouponToClass);
 
 // Dev-only routes (blocked in production by devOnly middleware)
 app.post("/v1/dev/seed/lesson-history", devOnly, authMiddleware, devSeedLessonHistory);

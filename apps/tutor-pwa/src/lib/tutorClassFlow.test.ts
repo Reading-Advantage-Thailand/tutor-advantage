@@ -1,13 +1,24 @@
 import { describe, expect, it } from "vitest";
+import { format } from "date-fns";
 import {
   buildCreateClassRequest,
   buildScheduleString,
   getClassActionErrorMessage,
   getEndTimeOptions,
+  parseLocalDate,
   toggleClassDay,
 } from "./tutorClassFlow";
 
 describe("tutorClassFlow helpers", () => {
+  it("parses a yyyy-MM-dd string as a local date with no timezone shift", () => {
+    const d = parseLocalDate("2026-06-01");
+    expect(d.getFullYear()).toBe(2026);
+    expect(d.getMonth()).toBe(5); // June (0-indexed)
+    expect(d.getDate()).toBe(1);
+    // Round-trips losslessly through date-fns local format
+    expect(format(d, "yyyy-MM-dd")).toBe("2026-06-01");
+  });
+
   it("builds a stable schedule string from selected days and times", () => {
     expect(buildScheduleString(["MON", "WED"], "19:00", "21:00")).toBe(
       "ทุกวันจันทร์, พุธ 19:00-21:00 น.",

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose/jwt/verify";
-import { prisma } from "@tutor-advantage/database";
+import { prisma, type Prisma } from "@tutor-advantage/database";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "secret-for-dev-only-change-me",
@@ -217,7 +217,7 @@ export async function POST(request: NextRequest) {
     .map((table) => qualifiedName(table.schemaName, table.tableName))
     .join(", ")} RESTART IDENTITY CASCADE`;
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
     await tx.$executeRawUnsafe(sql);
   });
 

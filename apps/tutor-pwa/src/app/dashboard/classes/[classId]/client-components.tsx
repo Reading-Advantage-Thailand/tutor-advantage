@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { t } from "@/lib/i18n";
 import {
@@ -19,16 +19,35 @@ import {
   Loader2,
   XCircle,
   AlertTriangle,
+  CalendarClock,
+  Calendar as CalendarIcon,
+  Ticket,
 } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { th } from "date-fns/locale";
 import {
   updateClassStatus,
   deleteClass,
   updateMeetingUrl,
+  rescheduleClass,
   getClassArticles,
   createClassBookCycle,
   getBooks,
   devSeedClassAllProgress,
+  applyCoupon,
 } from "./../actions";
+import {
+  buildScheduleString,
+  calculateTotalHours,
+  CLASS_DAYS,
+  CLASS_TIME_OPTIONS,
+  getEndTimeOptions,
+  MAX_CLASS_HOURS,
+  toggleClassDay,
+  WEEKLY_TEMPLATES,
+  parseLocalDate,
+} from "@/lib/tutorClassFlow";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -128,84 +147,89 @@ export function ReferralLink({ referralLink }: { referralLink: string }) {
   };
 
   return (
-    <Card className="border-border/60">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-semibold flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <QrCode className="h-4 w-4 text-primary" />
-            {t("tutorClass.detail.referralTitle")}
+    <Card className="border-border/60 h-full flex flex-col">
+      <CardContent className="p-4 flex flex-col h-full">
+        <div className="flex flex-col flex-1">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
+              <QrCode className="h-5 w-5 text-primary" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-foreground truncate">
+                ลิงก์เชิญนักเรียน
+              </p>
+              <p className="text-xs text-muted-foreground whitespace-normal leading-relaxed mt-0.5">
+                {t("tutorClass.detail.referralHelp")}
+              </p>
+            </div>
           </div>
-
-          <Dialog>
-            <DialogTrigger
-              render={
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-7 px-2 text-xs gap-1.5 text-primary hover:text-primary hover:bg-primary/10"
-                >
-                  <QrCode className="h-3.5 w-3.5" />
-                  {t("tutorClass.detail.showQr")}
-                </Button>
-              }
-            />
-            <DialogContent className="sm:max-w-sm">
-              <DialogHeader>
-                <DialogTitle>{t("tutorClass.detail.qrTitle")}</DialogTitle>
-                <DialogDescription>
-                  {t("tutorClass.detail.qrDescription")}
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex flex-col items-center justify-center p-4 space-y-6">
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-border/50">
-                  <QRCodeSVG
-                    value={referralLink}
-                    size={220}
-                    level="M"
-                    includeMargin={true}
-                  />
-                </div>
-                <div className="w-full flex">
+          <div className="flex flex-col gap-2 w-full mt-auto pt-4">
+            <div className="flex items-center gap-2 w-full">
+              <input
+                readOnly
+                value={referralLink}
+                className="flex-1 h-10 rounded-lg border border-input bg-muted px-3 text-xs text-foreground font-mono truncate"
+              />
+              <button
+                onClick={handleCopy}
+                id="btn-copy-referral"
+                className="h-10 w-10 shrink-0 flex items-center justify-center rounded-lg border border-input hover:bg-muted transition-colors"
+              >
+                {copied ? (
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                ) : (
+                  <Copy className="h-4 w-4 text-muted-foreground" />
+                )}
+              </button>
+            </div>
+            <Dialog>
+              <DialogTrigger
+                render={
                   <Button
                     variant="outline"
-                    className="w-full gap-2"
-                    onClick={handleCopy}
+                    size="sm"
+                    className="w-full h-10 text-xs bg-background font-medium gap-2"
                   >
-                    {copied ? (
-                      <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                    {copied ? t("tutorClass.detail.copied") : t("tutorClass.detail.copy")}
+                    <QrCode className="h-4 w-4" />
+                    {t("tutorClass.detail.showQr")}
                   </Button>
+                }
+              />
+              <DialogContent className="sm:max-w-sm">
+                <DialogHeader>
+                  <DialogTitle>{t("tutorClass.detail.qrTitle")}</DialogTitle>
+                  <DialogDescription>
+                    {t("tutorClass.detail.qrDescription")}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="flex flex-col items-center justify-center p-4 space-y-6">
+                  <div className="bg-white p-4 rounded-xl shadow-sm border border-border/50">
+                    <QRCodeSVG
+                      value={referralLink}
+                      size={220}
+                      level="M"
+                      includeMargin={true}
+                    />
+                  </div>
+                  <div className="w-full flex">
+                    <Button
+                      variant="outline"
+                      className="w-full gap-2"
+                      onClick={handleCopy}
+                    >
+                      {copied ? (
+                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                      {copied ? t("tutorClass.detail.copied") : t("tutorClass.detail.copy")}
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-2">
-        <div className="flex items-center gap-2">
-          <input
-            readOnly
-            value={referralLink}
-            className="flex-1 h-9 rounded-lg border border-input bg-muted px-3 text-xs text-foreground font-mono"
-          />
-          <button
-            onClick={handleCopy}
-            id="btn-copy-referral"
-            className="h-9 w-9 shrink-0 flex items-center justify-center rounded-lg border border-input hover:bg-muted transition-colors"
-          >
-            {copied ? (
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-            ) : (
-              <Copy className="h-4 w-4 text-muted-foreground" />
-            )}
-          </button>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
-        <p className="text-xs text-muted-foreground">
-          {t("tutorClass.detail.referralHelp")}
-        </p>
       </CardContent>
     </Card>
   );
@@ -474,48 +498,69 @@ export function ArticleSelector({
       </CardHeader>
 
       <CardContent className="pb-6 flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto space-y-3 pr-1 min-h-0 scrollbar-thin">
+        <div className="flex-1 overflow-y-auto pr-2 min-h-0 scrollbar-thin">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 pb-2">
           {fetching ? (
-            <div className="py-24 flex flex-col items-center justify-center text-center gap-2">
+            <div className="py-24 flex flex-col items-center justify-center text-center gap-2 col-span-full">
               <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
               <p className="text-xs text-muted-foreground font-medium">
                 {t("tutorClass.detail.articleLoading")}
               </p>
             </div>
           ) : error ? (
-            <div className="py-24 flex flex-col items-center justify-center text-center gap-2">
+            <div className="py-24 flex flex-col items-center justify-center text-center gap-2 col-span-full">
               <p className="text-xs text-destructive font-medium">{error}</p>
             </div>
           ) : articles.length === 0 ? (
-            <div className="py-24 flex flex-col items-center justify-center text-center gap-2">
+            <div className="py-24 flex flex-col items-center justify-center text-center gap-2 col-span-full">
               <p className="text-xs text-muted-foreground font-medium">
                 {t("tutorClass.detail.articleEmpty")}
               </p>
             </div>
           ) : (
-            articles.map((article, idx) => (
+            articles.map((article: any, idx: number) => (
               <div
                 key={article.id}
                 onClick={() => setSelectedArticle(article.id)}
-                className={`group border rounded-xl p-3.5 transition-all duration-300 relative overflow-hidden cursor-pointer ${
+                className={`group border rounded-xl p-4 transition-all duration-300 relative overflow-hidden cursor-pointer flex flex-col h-full ${
                   selectedArticle === article.id
-                    ? "border-primary/40 bg-primary/[0.03] shadow-md ring-1 ring-primary/20"
-                    : "border-border/50 bg-background hover:bg-muted/30 hover:border-border"
-                } ${article.isCompleted ? "opacity-80 saturate-[0.85]" : ""}`}
+                    ? "border-primary/50 bg-primary/[0.04] shadow-md ring-2 ring-primary/20"
+                    : "border-border/60 bg-card hover:bg-muted/40 hover:border-primary/30 hover:shadow-sm"
+                } ${article.isCompleted ? "opacity-85 saturate-[0.9]" : ""}`}
               >
                 <div
-                  className={`absolute top-0 bottom-0 left-0 w-1.5 transition-all duration-300 ${
+                  className={`absolute top-0 bottom-0 left-0 w-1.5 transition-all duration-300 z-10 ${
                     selectedArticle === article.id
                       ? "bg-primary"
-                      : "bg-transparent group-hover:bg-muted"
+                      : "bg-transparent group-hover:bg-primary/40"
                   }`}
                 />
-                <div className="pl-2.5">
-                  <div className="flex items-center gap-2 mb-1.5">
+                
+                {article.imageUrl && (
+                  <div className="w-full h-36 rounded-lg bg-muted/40 overflow-hidden mb-4 relative shrink-0 border border-border/50 shadow-sm group-hover:shadow-md transition-shadow">
+                    <img 
+                      src={article.imageUrl} 
+                      alt={article.title} 
+                      className={`w-full h-full object-cover transition-transform duration-700 ease-out ${selectedArticle === article.id ? 'scale-105' : 'group-hover:scale-105'}`} 
+                      loading="lazy"
+                    />
+                    {article.isCompleted && (
+                      <div className="absolute inset-0 bg-background/20 backdrop-blur-[2px] flex items-center justify-center">
+                        <span className="bg-emerald-500/90 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5">
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          {t("tutorClass.detail.taught")}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="pl-2 flex flex-col flex-1">
+                  <div className="flex items-center flex-wrap gap-2 mb-2">
                     <span className="text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground px-2 py-0.5 rounded-md border border-border/40">
                       {t("tutorClass.detail.chapterPrefix")} {idx + 1}
                     </span>
-                    {article.isCompleted && (
+                    {!article.imageUrl && article.isCompleted && (
                       <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 flex items-center gap-1">
                         <div className="w-1 h-1 rounded-full bg-emerald-500" />
                         {t("tutorClass.detail.taught")}
@@ -528,12 +573,12 @@ export function ArticleSelector({
                     )}
                   </div>
                   <h3
-                    className={`text-sm font-bold mt-1 transition-colors ${selectedArticle === article.id ? "text-primary" : "text-foreground"}`}
+                    className={`text-sm font-bold leading-snug transition-colors line-clamp-2 ${selectedArticle === article.id ? "text-primary" : "text-foreground group-hover:text-primary/80"}`}
                   >
                     {article.title}
                   </h3>
                   {article.summary && (
-                    <p className="text-xs text-muted-foreground font-normal line-clamp-2 mt-1.5 leading-relaxed">
+                    <p className="text-xs text-muted-foreground font-medium line-clamp-3 mt-2 leading-relaxed flex-1">
                       {article.summary}
                     </p>
                   )}
@@ -541,6 +586,7 @@ export function ArticleSelector({
               </div>
             ))
           )}
+          </div>
         </div>
 
         <div className="pt-4 shrink-0">
@@ -658,6 +704,7 @@ export function MeetingUrlEditor({
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState(initialUrl);
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
   const router = useRouter();
 
   const handleUpdate = async () => {
@@ -673,31 +720,49 @@ export function MeetingUrlEditor({
     }
   };
 
+  const handleCopy = () => {
+    if (!initialUrl) return;
+    navigator.clipboard.writeText(initialUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <Card className="border-primary/20 bg-primary/5">
-      <CardContent className="p-4">
-        <div className="flex flex-col gap-4">
+    <Card className="border-primary/20 bg-primary/5 h-full flex flex-col">
+      <CardContent className="p-4 flex flex-col h-full">
+        <div className="flex flex-col flex-1">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
               <Video className="h-5 w-5 text-primary" />
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="text-sm font-bold text-foreground">
                 {t("tutorClass.detail.onlineRoom")}
               </p>
-              <p className="text-xs text-muted-foreground truncate">
-                {initialUrl || t("tutorClass.detail.missingMeetingUrl")}
-              </p>
+              <div className="flex items-center gap-2 mt-0.5">
+                <p className="text-xs text-muted-foreground truncate flex-1">
+                  {initialUrl || t("tutorClass.detail.missingMeetingUrl")}
+                </p>
+                {initialUrl && (
+                  <button
+                    onClick={handleCopy}
+                    className="shrink-0 p-1 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground flex items-center justify-center"
+                    title={copied ? t("tutorClass.detail.copied") : t("tutorClass.detail.copy")}
+                  >
+                    {copied ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 w-full">
+          <div className="flex flex-col gap-2 w-full mt-auto pt-4">
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger
                 render={
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1 h-10 px-3 text-xs bg-background font-medium"
+                    className="w-full h-10 px-3 text-xs bg-background font-medium"
                   >
                     {t("tutorClass.detail.editLink")}
                   </Button>
@@ -741,12 +806,12 @@ export function MeetingUrlEditor({
                 href={initialUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1"
+                className="w-full"
               >
                 <Button
                   id="btn-join-meeting"
                   size="sm"
-                  className="w-full h-10 gap-2 shrink-0 font-medium"
+                  className="w-full h-10 gap-2 font-medium"
                 >
                   {t("tutorClass.detail.enterRoom")} <ExternalLink className="h-3.5 w-3.5" />
                 </Button>
@@ -756,6 +821,515 @@ export function MeetingUrlEditor({
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+export function CouponExtendButton({ classId }: { classId: string }) {
+  const [open, setOpen] = useState(false);
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  const handleApply = async () => {
+    if (!code.trim()) return;
+    setLoading(true);
+    setError("");
+    try {
+      await applyCoupon(classId, code.trim());
+      setOpen(false);
+      setCode("");
+      router.refresh();
+    } catch (err: any) {
+      setError(err.message || t("tutorClass.errors.coupon"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setError(""); }}>
+      <DialogTrigger
+        render={
+          <Button variant="outline" size="sm" className="w-full h-10 text-xs bg-background font-medium gap-2">
+            <Ticket className="h-4 w-4" />
+            {t("tutorClass.detail.couponButton")}
+          </Button>
+        }
+      />
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t("tutorClass.detail.couponTitle")}</DialogTitle>
+          <DialogDescription>
+            {t("tutorClass.detail.couponDescription")}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="extend-coupon">{t("tutorClass.detail.couponLabel")}</Label>
+            <Input
+              id="extend-coupon"
+              placeholder={t("tutorClass.detail.couponPlaceholder")}
+              value={code}
+              onChange={(e) => { setCode(e.target.value); setError(""); }}
+              className="font-mono uppercase"
+            />
+            {error && (
+              <p className="text-xs text-destructive font-semibold flex items-center gap-1">
+                <AlertTriangle className="h-3.5 w-3.5" /> {error}
+              </p>
+            )}
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
+            {t("tutorClass.detail.cancel")}
+          </Button>
+          <Button onClick={handleApply} disabled={loading || !code.trim()}>
+            {loading ? t("tutorClass.detail.couponApplying") : t("tutorClass.detail.couponApply")}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function RescheduleClassButton({
+  classId,
+  className,
+  currentSchedule,
+  scheduleData,
+  initialStartsAt,
+  initialEndsAt,
+  freeHours = 0,
+}: {
+  classId: string;
+  className?: string;
+  currentSchedule?: string;
+  scheduleData?: any[];
+  initialStartsAt?: string | null;
+  initialEndsAt?: string | null;
+  freeHours?: number;
+}) {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorText, setErrorText] = useState("");
+  const router = useRouter();
+
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+  const [dateTimes, setDateTimes] = useState<Record<string, { start: string; end: string }>>({});
+
+  const [genStart, setGenStart] = useState("");
+
+  const diffHours = (start: string, end: string) => {
+    if (!start || !end) return 0;
+    const [sh, sm] = start.split(":").map(Number);
+    const [eh, em] = end.split(":").map(Number);
+    const minutes = (eh * 60 + em) - (sh * 60 + sm);
+    return minutes > 0 ? minutes / 60 : 0;
+  };
+
+  const getPastSchedule = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const pastD: Date[] = [];
+    const pastT: Record<string, { start: string; end: string }> = {};
+    if (scheduleData) {
+      scheduleData.forEach(item => {
+        const d = parseLocalDate(item.date);
+        if (d < today) {
+          pastD.push(d);
+          pastT[item.date] = { start: item.start, end: item.end };
+        }
+      });
+    }
+    return { pastD, pastT };
+  };
+
+  const doGenerate = (startDateStr: string, tpl: typeof WEEKLY_TEMPLATES[0]) => {
+    if (!startDateStr) return;
+    const start = parseLocalDate(startDateStr);
+    const { pastD, pastT } = getPastSchedule();
+
+    const newDates: Date[] = [...pastD];
+    const nextTimes: Record<string, { start: string; end: string }> = { ...pastT };
+    
+    const cur = new Date(start);
+    cur.setHours(0, 0, 0, 0);
+
+    const dayNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+    
+    let accumulatedHours = 0;
+    pastD.forEach(d => {
+      const key = format(d, 'yyyy-MM-dd');
+      const t = pastT[key];
+      if (t) accumulatedHours += diffHours(t.start, t.end);
+    });
+
+    while (accumulatedHours < MAX_CLASS_HOURS) {
+      const dayName = dayNames[cur.getDay()];
+      if (tpl.days.includes(dayName)) {
+        const d = new Date(cur);
+        newDates.push(d);
+        
+        const templateHours = diffHours(tpl.startTime, tpl.endTime);
+        const hoursNeeded = MAX_CLASS_HOURS - accumulatedHours;
+        
+        if (hoursNeeded >= templateHours) {
+          nextTimes[format(d, 'yyyy-MM-dd')] = { start: tpl.startTime, end: tpl.endTime };
+          accumulatedHours += templateHours;
+        } else {
+          const [sh, sm] = tpl.startTime.split(":").map(Number);
+          const totalMinutes = (sh * 60 + sm) + (hoursNeeded * 60);
+          const eh = Math.floor(totalMinutes / 60);
+          const em = totalMinutes % 60;
+          const adjustedEndTime = `${String(eh).padStart(2, '0')}:${String(em).padStart(2, '0')}`;
+          
+          nextTimes[format(d, 'yyyy-MM-dd')] = { start: tpl.startTime, end: adjustedEndTime };
+          accumulatedHours += hoursNeeded;
+        }
+      }
+      cur.setDate(cur.getDate() + 1);
+    }
+
+    setSelectedDates(newDates);
+    setDateTimes(nextTimes);
+  };
+
+  useEffect(() => {
+    let startStr = "";
+    if (initialStartsAt) {
+      // initialStartsAt may be a full ISO timestamp or a yyyy-MM-dd string;
+      // take the date portion and parse as a local date to avoid UTC shifts.
+      startStr = format(parseLocalDate(String(initialStartsAt).slice(0, 10)), 'yyyy-MM-dd');
+    } else {
+      startStr = format(new Date(), 'yyyy-MM-dd');
+    }
+    setGenStart(startStr);
+
+    if (scheduleData && scheduleData.length > 0) {
+      const parsedDates = scheduleData.map(item => parseLocalDate(item.date));
+      const parsedTimes: Record<string, { start: string; end: string }> = {};
+      scheduleData.forEach(item => {
+        parsedTimes[item.date] = { start: item.start, end: item.end };
+      });
+      setSelectedDates(parsedDates);
+      setDateTimes(parsedTimes);
+    } else if (selectedDates.length === 0) {
+      // Automatically generate a default schedule so it isn't empty
+      doGenerate(startStr, WEEKLY_TEMPLATES[0]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialStartsAt, scheduleData]);
+
+  const handleGenerate = (tpl: typeof WEEKLY_TEMPLATES[0]) => {
+    doGenerate(genStart, tpl);
+  };
+
+  const totalHours = useMemo(() => {
+    let sum = 0;
+    selectedDates.forEach(d => {
+      const key = format(d, 'yyyy-MM-dd');
+      const times = dateTimes[key];
+      if (times) sum += diffHours(times.start, times.end);
+    });
+    return Math.round(sum * 100) / 100;
+  }, [selectedDates, dateTimes]);
+
+  const scheduleDescription = useMemo(() => {
+    if (selectedDates.length === 0) return "";
+    const sorted = [...selectedDates].sort((a, b) => a.getTime() - b.getTime());
+    
+    const firstDate = sorted[0];
+    const lastDate = sorted[sorted.length - 1];
+    
+    const startStr = format(firstDate, 'd MMM yy', { locale: th });
+    const endStr = format(lastDate, 'd MMM yy', { locale: th });
+    
+    if (sorted.length === 1) {
+      const times = dateTimes[format(firstDate, 'yyyy-MM-dd')];
+      return `${startStr} (${times?.start || ''}-${times?.end || ''})`;
+    }
+    
+    return `${startStr} - ${endStr} (รวม ${sorted.length} วัน)`;
+  }, [selectedDates, dateTimes]);
+
+  const maxHours = MAX_CLASS_HOURS + (freeHours || 0);
+  const overLimit = totalHours > maxHours;
+  const hoursPct = Math.min(100, (totalHours / maxHours) * 100);
+
+  const handleSave = async () => {
+    if (!scheduleDescription) {
+      setErrorText(t("tutorClass.newClass.scheduleRequired"));
+      return;
+    }
+    if (overLimit) {
+      setErrorText(t("tutorClass.newClass.hoursOverLimit"));
+      return;
+    }
+    try {
+      setLoading(true);
+      const sortedDates = [...selectedDates].sort((a, b) => a.getTime() - b.getTime());
+      const finalStartsAt = sortedDates.length > 0 ? format(sortedDates[0], 'yyyy-MM-dd') : undefined;
+      const finalEndsAt = sortedDates.length > 0 ? format(sortedDates[sortedDates.length - 1], 'yyyy-MM-dd') : undefined;
+      
+      const newScheduleData = sortedDates.map(d => {
+        const dateStr = format(d, 'yyyy-MM-dd');
+        return {
+          date: dateStr,
+          start: dateTimes[dateStr]?.start || "",
+          end: dateTimes[dateStr]?.end || "",
+        };
+      });
+
+      await rescheduleClass(classId, {
+        scheduleDescription,
+        scheduleData: newScheduleData,
+        startsAt: finalStartsAt,
+        endsAt: finalEndsAt,
+        totalHours,
+      });
+      setOpen(false);
+      router.refresh();
+    } catch (error: any) {
+      setErrorText(error.message || t("tutorClass.errors.reschedule"));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger
+        render={
+          <Button variant="outline" size="sm" className="w-full h-10 text-xs bg-background font-medium gap-2">
+            <CalendarClock className="h-4 w-4" />
+            {t("tutorClass.detail.rescheduleButton")}
+          </Button>
+        }
+      />
+      <DialogContent className="sm:max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto p-0">
+        <DialogHeader className="p-6 pb-2">
+          <DialogTitle>{t("tutorClass.detail.rescheduleTitle")}</DialogTitle>
+          <DialogDescription>{t("tutorClass.detail.rescheduleDescription")}</DialogDescription>
+        </DialogHeader>
+
+        {className && currentSchedule && (
+          <div className="px-6 mb-2">
+            <div className="flex items-center gap-2 p-3 bg-primary/10 border border-primary/20 rounded-lg">
+              <CalendarIcon className="h-4 w-4 text-primary shrink-0" />
+              <div className="text-sm">
+                <span className="font-bold text-foreground">ข้อมูลคลาสเดิม ({className}): </span>
+                <span className="text-muted-foreground">{currentSchedule}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="px-6 py-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left Column: Calendar & Template */}
+          <div className="space-y-4">
+            <div className="p-3 bg-muted/40 rounded-lg border border-border space-y-3 mb-2">
+              <Label className="text-xs font-bold text-muted-foreground uppercase">เพิ่มวันสอนแบบอัตโนมัติ (Template)</Label>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-[11px]">เริ่มสอนตั้งแต่วันที่ (ระบบจะคำนวณวันให้จนครบ {MAX_CLASS_HOURS} ชม.)</Label>
+                  <Input type="date" value={genStart} onChange={e => setGenStart(e.target.value)} className="h-8 text-xs" />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-[11px]">คลิกเทมเพลตเพื่อสร้างตารางเรียน</Label>
+                <div className="flex gap-1.5 flex-wrap">
+                  {WEEKLY_TEMPLATES.map(tpl => (
+                    <button
+                      key={tpl.id}
+                      type="button"
+                      onClick={() => handleGenerate(tpl)}
+                      className="px-2.5 h-7 rounded-md text-[11px] font-semibold border border-border bg-background text-foreground hover:border-primary/50 hover:bg-primary/5 active:scale-95 transition-all"
+                    >
+                      + {tpl.label}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => { 
+                      const { pastD, pastT } = getPastSchedule();
+                      setSelectedDates(pastD); 
+                      setDateTimes(pastT); 
+                    }}
+                    className="px-2.5 h-7 rounded-md text-[11px] font-semibold border border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100 active:scale-95 transition-all ml-auto"
+                  >
+                    ล้างทั้งหมด
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-bold">เลือกวันสอนบนปฏิทิน</Label>
+                <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-1 rounded-md">
+                  {selectedDates.length > 0 ? `เลือกแล้ว ${selectedDates.length} วัน` : "ยังไม่ได้เลือกวัน"}
+                </span>
+              </div>
+              <div className="w-full flex justify-center p-2 rounded-xl border bg-background shadow-sm overflow-x-auto">
+                <Calendar
+                  mode="multiple"
+                  locale={th}
+                  defaultMonth={selectedDates[0] || new Date()}
+                  selected={selectedDates}
+                  className="pointer-events-auto border-0 p-0"
+                  classNames={{
+                    day: "text-sm font-medium",
+                    caption_label: "text-base font-bold"
+                  }}
+                  onSelect={(dates) => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const { pastD, pastT } = getPastSchedule();
+                    const newValidDates = (dates || []).filter(d => d >= today);
+                    const mergedDates = [...pastD, ...newValidDates].sort((a,b) => a.getTime() - b.getTime());
+                    
+                    setSelectedDates(mergedDates);
+                    setDateTimes(prev => {
+                      const next = { ...pastT };
+                      newValidDates.forEach(d => {
+                        const key = format(d, 'yyyy-MM-dd');
+                        next[key] = prev[key] || { start: '19:00', end: '21:00' };
+                      });
+                      return next;
+                    });
+                  }}
+                  disabled={(date) => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    return date < today;
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Date List & Summary */}
+          <div className="space-y-4 flex flex-col h-full md:min-h-[400px]">
+            {/* Total Hours Section */}
+            <div className="space-y-1.5 pb-4 border-b border-border">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">{t("tutorClass.newClass.totalHoursLabel")}</span>
+                <span className={`font-bold ${overLimit ? "text-destructive" : "text-foreground"}`}>
+                  {totalHours} / {maxHours} {t("tutorClass.newClass.hoursUnit")}
+                </span>
+              </div>
+              <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all ${overLimit ? "bg-destructive" : "bg-primary"}`}
+                  style={{ width: `${hoursPct}%` }}
+                />
+              </div>
+              {(freeHours || 0) > 0 && (
+                <div className="flex flex-col gap-0.5 text-[11px] pt-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-primary" />
+                      {t("tutorClass.newClass.regularHoursLabel")}
+                    </span>
+                    <span className="font-semibold text-foreground tabular-nums">{MAX_CLASS_HOURS} {t("tutorClass.newClass.hoursUnit")}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                      {t("tutorClass.newClass.couponHoursLabel")}
+                    </span>
+                    <span className="font-semibold text-emerald-600 tabular-nums">{freeHours} {t("tutorClass.newClass.hoursUnit")}</span>
+                  </div>
+                </div>
+              )}
+              {overLimit ? (
+                <p className="text-xs text-destructive font-semibold flex items-center gap-1">
+                  <AlertTriangle className="h-3.5 w-3.5" /> {t("tutorClass.newClass.hoursOverLimit")}
+                </p>
+              ) : null}
+            </div>
+
+            <div className="flex-1 overflow-hidden flex flex-col min-h-[250px]">
+              {selectedDates.length > 0 ? (
+                <div className="space-y-3 h-full flex flex-col">
+                  <Label>ตั้งเวลาสอนแต่ละวัน</Label>
+                  <div className="space-y-2 flex-1 overflow-y-auto pr-1">
+                    {[...selectedDates].sort((a,b) => a.getTime() - b.getTime()).map(d => {
+                      const key = format(d, 'yyyy-MM-dd');
+                      const times = dateTimes[key] || { start: '19:00', end: '21:00' };
+                      
+                      const today = new Date();
+                      today.setHours(0,0,0,0);
+                      const isPast = d < today;
+
+                      return (
+                        <div key={key} className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 border border-border">
+                          <span className="text-xs font-semibold w-14 shrink-0 flex items-center gap-1">
+                            {isPast && <CalendarClock className="h-3 w-3 text-muted-foreground" />}
+                            {format(d, 'd MMM', { locale: th })}
+                          </span>
+                          <select
+                            value={times.start}
+                            disabled={isPast}
+                            onChange={(e) => setDateTimes(prev => ({ ...prev, [key]: { ...prev[key], start: e.target.value } }))}
+                            className={`flex-1 h-8 rounded-md border border-input bg-background px-1 text-xs text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${isPast ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          >
+                            {CLASS_TIME_OPTIONS.map((time) => <option key={time} value={time}>{time}</option>)}
+                          </select>
+                          <span className="text-muted-foreground text-xs">-</span>
+                          <select
+                            value={times.end}
+                            disabled={isPast}
+                            onChange={(e) => setDateTimes(prev => ({ ...prev, [key]: { ...prev[key], end: e.target.value } }))}
+                            className={`flex-1 h-8 rounded-md border border-input bg-background px-1 text-xs text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${isPast ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          >
+                            {getEndTimeOptions(times.start).map((time) => <option key={time} value={time}>{time}</option>)}
+                          </select>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-muted-foreground border-2 border-dashed border-border rounded-xl">
+                  <CalendarIcon className="h-10 w-10 opacity-20 mb-2" />
+                  <p className="text-sm">โปรดเลือกวันที่ต้องการสอนบนปฏิทิน</p>
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-lg bg-primary/5 border border-primary/20 px-3 py-2 shrink-0 mt-auto">
+              {scheduleDescription ? (
+                <>
+                  <p className="text-xs text-muted-foreground mb-0.5">
+                    {t("tutorClass.newClass.previewLabel")}
+                  </p>
+                  <p className="text-sm font-medium text-foreground">{scheduleDescription}</p>
+                </>
+              ) : (
+                <p className="text-xs text-muted-foreground/50 italic">
+                  {t("tutorClass.newClass.previewEmpty")}
+                </p>
+              )}
+            </div>
+            
+            {errorText && <p className="text-xs text-destructive font-semibold">{errorText}</p>}
+            <p className="text-[11px] text-muted-foreground">{t("tutorClass.detail.rescheduleNotifyNote")}</p>
+          </div>
+        </div>
+
+        <DialogFooter className="p-6 pt-2 bg-muted/30 border-t border-border mt-4">
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
+            {t("tutorClass.detail.cancel")}
+          </Button>
+          <Button onClick={handleSave} disabled={loading || overLimit || selectedDates.length === 0}>
+            {loading ? t("tutorClass.detail.saving") : t("tutorClass.detail.save")}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

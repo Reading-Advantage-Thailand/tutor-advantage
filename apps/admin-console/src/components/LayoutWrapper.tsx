@@ -17,6 +17,7 @@ import {
   ShieldAlert,
   Terminal,
   Database,
+  Ticket,
 } from "lucide-react";
 
 import {
@@ -72,6 +73,7 @@ const OPS_ITEMS = [
 const USER_RISK_ITEMS = [
   { href: "/users", label: t("layout.usersConsent"), icon: Users },
   { href: "/fraud", label: t("layout.fraud"), icon: ShieldAlert },
+  { href: "/coupons", label: t("layout.coupons"), icon: Ticket },
 ];
 
 function AppSidebar({
@@ -429,6 +431,7 @@ export default function LayoutWrapper({
     "/operations/legacy-links": t("layout.legacyLinks"),
     "/users": t("layout.usersConsent"),
     "/fraud": t("layout.fraud"),
+    "/coupons": t("layout.coupons"),
     "/dev/database": "Database Dev Mode",
     "/dev": t("layout.developerGroup"),
   };

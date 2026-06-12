@@ -64,6 +64,87 @@ export async function updateClassStatus(classId: string, status: "open" | "full"
   revalidatePath(`/dashboard/classes/${classId}`);
   return res.json();
 }
+export async function rescheduleClass(
+  classId: string,
+  payload: { scheduleDescription: string; scheduleData?: any[]; startsAt?: string; endsAt?: string; totalHours?: number },
+) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("tutor_session")?.value;
+
+  if (!token) {
+    throw new Error("Unauthorized");
+  }
+
+  const res = await fetch(`${LEARNING_URL}/v1/classes/${classId}/schedule`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(getClassActionErrorMessage(err, t("tutorClass.errors.reschedule")));
+  }
+
+  revalidatePath("/dashboard/classes");
+  revalidatePath(`/dashboard/classes/${classId}`);
+  return res.json();
+}
+
+export async function validateCoupon(code: string) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("tutor_session")?.value;
+
+  if (!token) {
+    throw new Error("Unauthorized");
+  }
+
+  const res = await fetch(`${LEARNING_URL}/v1/coupons/validate`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ code }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(getClassActionErrorMessage(data, t("tutorClass.errors.coupon")));
+  }
+  return data as { valid: boolean; code: string; hours: number; expiresAt: string | null };
+}
+
+export async function applyCoupon(classId: string, code: string) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("tutor_session")?.value;
+
+  if (!token) {
+    throw new Error("Unauthorized");
+  }
+
+  const res = await fetch(`${LEARNING_URL}/v1/classes/${classId}/apply-coupon`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ code }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(getClassActionErrorMessage(data, t("tutorClass.errors.coupon")));
+  }
+
+  revalidatePath("/dashboard/classes");
+  revalidatePath(`/dashboard/classes/${classId}`);
+  return data as { classId: string; freeHours: number };
+}
+
 export async function getBooks() {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value;

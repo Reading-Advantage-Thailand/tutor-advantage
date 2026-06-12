@@ -14,11 +14,12 @@ async function createSessionToken(role = "TUTOR") {
 }
 
 function createRequest(path: string, token?: string) {
-  const init: RequestInit = token
-    ? { headers: { cookie: `tutor_session=${token}` } }
-    : {};
-
-  return new NextRequest(`http://localhost:3000${path}`, init);
+  // Inline the init so TS infers a shape compatible with Next's own
+  // RequestInit (its `signal` does not accept null, unlike the DOM type).
+  return new NextRequest(
+    `http://localhost:3000${path}`,
+    token ? { headers: { cookie: `tutor_session=${token}` } } : {},
+  );
 }
 
 describe("tutor middleware", () => {

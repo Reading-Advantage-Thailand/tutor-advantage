@@ -1,0 +1,777 @@
+{
+  "series": {
+    "Origins": {
+      "cefrLevel": "A1",
+      "raLevelStart": 1,
+      "raLevelEnd": 3,
+      "tagline": "Your journey starts here",
+      "plannedBooks": 4,
+      "classHoursTotal": 90,
+      "independentHoursTotal": 45
+    },
+    "Quest": {
+      "cefrLevel": "A2",
+      "raLevelStart": 4,
+      "raLevelEnd": 6,
+      "tagline": "Your quest awaits",
+      "plannedBooks": 4,
+      "classHoursTotal": 100,
+      "independentHoursTotal": 45
+    },
+    "Adventure": {
+      "cefrLevel": "B1",
+      "raLevelStart": 7,
+      "raLevelEnd": 9,
+      "tagline": "Your adventure's in sight",
+      "plannedBooks": 8,
+      "classHoursTotal": 200,
+      "independentHoursTotal": 90
+    },
+    "Hero": {
+      "cefrLevel": "B2",
+      "raLevelStart": 10,
+      "raLevelEnd": 12,
+      "tagline": "You're the hero in the story",
+      "plannedBooks": 8,
+      "classHoursTotal": 200,
+      "independentHoursTotal": 90
+    },
+    "Legend": {
+      "cefrLevel": "C1",
+      "raLevelStart": 13,
+      "raLevelEnd": 15,
+      "tagline": "Legendary stories",
+      "plannedBooks": 8,
+      "classHoursTotal": 200,
+      "independentHoursTotal": 90
+    }
+  },
+  "books": {
+    "Origins 1": [
+      {
+        "type": "fiction",
+        "genre": "Young Adult Fiction",
+        "title": "The Silent Truth",
+        "id": "MMmPVvbXr1LnBo7P0oTT"
+      },
+      {
+        "type": "fiction",
+        "genre": "Westerns",
+        "title": "The Prospector's Gamble",
+        "id": "Bm9w2y9wQAf1Fr4mYUzA"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Humor",
+        "title": "The Comedy of Errors: Funny Tales of Mistaken Identities",
+        "id": "4KEEDPYfLpRWutFuYceS"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Children's Nonfiction",
+        "title": "Phones and Our Feelings",
+        "id": "cmmki0z6z0002s60e30ppdzvg"
+      },
+      {
+        "type": "fiction",
+        "genre": "Historical Fiction",
+        "title": "Lucius's Choice",
+        "id": "cmn57x04l00f2s60et9r9k1c6"
+      },
+      {
+        "type": "fiction",
+        "genre": "Horror",
+        "title": "The Doll Factory",
+        "id": "cmjhremv1000ds60ew177qfxg"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Children's Nonfiction",
+        "title": "Our Earth is Too Warm",
+        "id": "YbIjlPcIZbnBlcvJ1q9J"
+      }
+    ],
+    "Origins 2": [
+      {
+        "type": "fiction",
+        "genre": "Young Adult Fiction",
+        "title": "The Silent Rebellion",
+        "id": "AgYv5H7fCZL2u2N4qBwT"
+      },
+      {
+        "type": "fiction",
+        "genre": "Westerns",
+        "title": "The Sheriff of Deadwood",
+        "id": "nFZObhzKbSGn5IFMbmf4"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Travel",
+        "title": "My Backpack in Asia",
+        "id": "cmjw1t3ky00mps60etppweqpu"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Biographies",
+        "title": "The Life and Legacy of Nelson Mandela",
+        "id": "1lnzzXylJmtQWd39qmkQ"
+      },
+      {
+        "type": "fiction",
+        "genre": "Children's Fiction",
+        "title": "A Soldier's Sacrifice: A Tale of Love and War",
+        "id": "0tVl8K7MCiecTPJ1lmdE"
+      },
+      {
+        "type": "fiction",
+        "genre": "Contemporary Fiction",
+        "title": "A Day in the Life of an Artist",
+        "id": "7apvHQXjJb8od9KowL92"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Science",
+        "title": "The Mysterious Goblin Shark: A Deep-Sea Predator",
+        "id": "vGLJOdqIOYsJS0orm79e"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Parenting",
+        "title": "Tommy's Screen Time",
+        "id": "uT67FwqUlttv74p2snCr"
+      },
+      {
+        "type": "fiction",
+        "genre": "Westerns",
+        "title": "The Saloon Showdown",
+        "id": "ZT2sa9qiH0lHnYH9ayfF"
+      },
+      {
+        "type": "fiction",
+        "genre": "Horror",
+        "title": "The Shadow House",
+        "id": "cmmtse9p801a4s60en4k8d32q"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Science",
+        "title": "Stars and Other Worlds",
+        "id": "cmmscy4zq00wys60eetu0jbr2"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Cultural Criticism",
+        "title": "The Green Team's Mission",
+        "id": "fzMRYypdLSTFhc8rdM7h"
+      },
+      {
+        "type": "fiction",
+        "genre": "Science Fiction",
+        "title": "The Alien in the Woods",
+        "id": "5whpV1ZrLk7qb1lgAJnT"
+      },
+      {
+        "type": "fiction",
+        "genre": "Fantasy",
+        "title": "Elara and the Purple Door",
+        "id": "cmkmhgh5501lds60ev7s791s5"
+      }
+    ],
+    "Origins 3.1": [
+      {
+        "type": "fiction",
+        "genre": "Children's Fiction",
+        "title": "The Library Map",
+        "id": "cmjfm919v0232s60eo0tzv1x8"
+      },
+      {
+        "type": "fiction",
+        "genre": "Fantasy",
+        "title": "The Quest for the Golden Sword",
+        "id": "i4iNzw6AArWrTOU0SE6f"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Humor",
+        "title": "Funny People and Jokes",
+        "id": "cmixr8kil000us60esgwguw0z"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Language",
+        "title": "English: Our World Language",
+        "id": "mQBtacaks53c7Djci9n6"
+      },
+      {
+        "type": "fiction",
+        "genre": "Young Adult Fiction",
+        "title": "The City Under Mars",
+        "id": "cmgu0xb0i00rqs60e2djeq0xt"
+      },
+      {
+        "type": "fiction",
+        "genre": "Horror",
+        "title": "The House on the Hill",
+        "id": "h31ImmMoHtDQS3jxOuOy"
+      },
+      {
+        "type": "fiction",
+        "genre": "Young Adult Fiction",
+        "title": "Finding Myself",
+        "id": "PfzjAu0eSyuUokFK2rnk"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Self-help",
+        "title": "The Goal Tree",
+        "id": "7UQDbGLuIPZbE7yYa33x"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Science",
+        "title": "The Water Quest",
+        "id": "5a3MFFCMZSJLOc2CXiy2"
+      },
+      {
+        "type": "fiction",
+        "genre": "Fantasy",
+        "title": "The Quest for the Lost Gem",
+        "id": "ok5b5Be1QOBPzX2as2S4"
+      },
+      {
+        "type": "fiction",
+        "genre": "War",
+        "title": "Love in the Time of War",
+        "id": "BHusTKr0h8i6vOhbrfpx"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Children's Nonfiction",
+        "title": "The Amazing Human Body",
+        "id": "rY1QKnciUBBhE9MyadbF"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Career Guides",
+        "title": "People and Jobs",
+        "id": "cmitgx6xd000ts60ew7qdd5a4"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Self-help",
+        "title": "Time for School: Prioritize Tasks",
+        "id": "AEh9oRp1WDa8CApSdrCr"
+      }
+    ],
+    "Origins 3.2": [
+      {
+        "type": "fiction",
+        "genre": "Westerns",
+        "title": "The Journey of a Young Cowboy",
+        "id": "hFxfpuViJkutoIqbcUwP"
+      },
+      {
+        "type": "fiction",
+        "genre": "Adult Fiction",
+        "title": "The Picture is a Secret",
+        "id": "cmhnbfgmv02aks60ebexfxwjv"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Food Writing",
+        "title": "The Garden of Hope",
+        "id": "chuRe1DJvPmMoRGW76hF"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "History",
+        "title": "The Journey of Christopher Columbus",
+        "id": "ni2xVrAHyhxgCyv50gkQ"
+      },
+      {
+        "type": "fiction",
+        "genre": "Romance",
+        "title": "A Second Chance at Love",
+        "id": "ZVpzwnckH1oFrnuDiXuh"
+      },
+      {
+        "type": "fiction",
+        "genre": "Horror",
+        "title": "The House on the Hill",
+        "id": "h31ImmMoHtDQS3jxOuOy"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "How-to",
+        "title": "The Perfect Birdhouse",
+        "id": "gCxlXVCOY1YnpbwsHOwg"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Science",
+        "title": "The Amazing Journey Inside the Body",
+        "id": "ZU86LBsTRTVADkLuBuBN"
+      },
+      {
+        "type": "fiction",
+        "genre": "Young Adult Fiction",
+        "title": "Finding Myself",
+        "id": "PfzjAu0eSyuUokFK2rnk"
+      },
+      {
+        "type": "fiction",
+        "genre": "Horror",
+        "title": "The Whispering Shadows",
+        "id": "GopoxMhN05ICdRQTzZYw"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Self-help",
+        "title": "A Good Way to Think",
+        "id": "cmjwrjbp700tis60eq8qzcfpp"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Flash Nonfiction",
+        "title": "Old Places, New Life",
+        "id": "0o7eOLMiyCT9r3iljbOd"
+      },
+      {
+        "type": "fiction",
+        "genre": "Contemporary Fiction",
+        "title": "The Secret Diary of Sam",
+        "id": "PV8t70u68XwKXjWh8DaR"
+      },
+      {
+        "type": "fiction",
+        "genre": "Horror",
+        "title": "The Howl in the Night",
+        "id": "seLILcBfZNSfaapisRra"
+      }
+    ],
+    "Quest 4": [
+      {
+        "type": "fiction",
+        "genre": "Horror",
+        "title": "The Haunting Ambition of Victor Frankenstein",
+        "id": "4ZZeSspAGo285csIxNcc"
+      },
+      {
+        "type": "fiction",
+        "genre": "Fantasy",
+        "title": "The Creation Myth of Quetzalcoatl and Tezcatlipoca",
+        "id": "9VRaZ4coQyiz4gJW91av"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Science",
+        "title": "The Impact of Gophers on the Prairie Ecosystem",
+        "id": "gyWWNG0hzEt4bFEHkGX1"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "History",
+        "title": "The Enigmatic Harappan Civilization: A Glimpse into the Ancient Indus Valley",
+        "id": "iSYAqKTgtXABlx5IYuNY"
+      },
+      {
+        "type": "fiction",
+        "genre": "Children's Fiction",
+        "title": "The School Chronicles: A Tale of Friendship and Empowerment",
+        "id": "7MrOtihsv9tsz3SaBfVC"
+      },
+      {
+        "type": "fiction",
+        "genre": "Young Adult Fiction",
+        "title": "The Divide",
+        "id": "XTXZcvdQ1juCo7wSnmtZ"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Science",
+        "title": "The Remarkable Arctic Lousewort: Surviving in the Harshest Environment",
+        "id": "BwJEsTpAiGfxqxvSmRZ3"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Science",
+        "title": "The Enigmatic Megalodon: A Giant of the Ancient Seas",
+        "id": "CRiCha2pxDeP0xx1KqnS"
+      },
+      {
+        "type": "fiction",
+        "genre": "Historical Fiction",
+        "title": "A Scandalous Affair in Victorian England",
+        "id": "KzUwB5Uc6139Fw5fcnpx"
+      },
+      {
+        "type": "fiction",
+        "genre": "Fantasy",
+        "title": "The Creation Myth of Quetzalcoatl and Tezcatlipoca",
+        "id": "44QFyTUgeUGPKf9gfLlL"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Science",
+        "title": "The Evolution of Marsupials: A Story of Adaptation and Diversification",
+        "id": "xAo8XxZoSl5fpbkicsqe"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Food Writing",
+        "title": "The Influence of Regional Ingredients on Traditional Dishes: A Study of Southern Cuisine",
+        "id": "ayOLHwUR3JnnjVsY43yc"
+      },
+      {
+        "type": "fiction",
+        "genre": "Science Fiction",
+        "title": "The Chromatic Insurrection",
+        "id": "cmkgrpes5003os60ex7cqbzva"
+      },
+      {
+        "type": "fiction",
+        "genre": "Young Adult Fiction",
+        "title": "The Dissonance of Silence",
+        "id": "cml5szh5o00aas60e5wv1q9ez"
+      }
+    ],
+    "Quest 5": [
+      {
+        "type": "fiction",
+        "genre": "Children's Fiction",
+        "title": "The Curious Cat and the Mysterious Island",
+        "id": "VpbPd6AcDo1LXDmwwpcz"
+      },
+      {
+        "type": "fiction",
+        "genre": "Horror",
+        "title": "The Woman in Black",
+        "id": "LYoo0xXVqh1vxV5hPY7L"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Language",
+        "title": "The Influence of Latin on Modern Languages",
+        "id": "sVt8IafJKn3g5PyjMEDA"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Travel",
+        "title": "Hiking the Inca Trail to Machu Picchu",
+        "id": "bag4wyd75fJ5rUvwQXZd"
+      },
+      {
+        "type": "fiction",
+        "genre": "Science Fiction",
+        "title": "The Alien Artifact",
+        "id": "qzevLhkp2cShRgVIQtGN"
+      },
+      {
+        "type": "fiction",
+        "genre": "Adult Fiction",
+        "title": "Moonlight Secrets",
+        "id": "30mWkKsXiHcmK5Py82HE"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Flash Nonfiction",
+        "title": "A Day at the Market",
+        "id": "wWSMX7cQ66RHSv9W8RGZ"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Humor",
+        "title": "The Meme King",
+        "id": "j6ZCQ1jRK2tSwXODUOo0"
+      },
+      {
+        "type": "fiction",
+        "genre": "Mystery/Thriller",
+        "title": "Gone Girl",
+        "id": "5kA4C3PujXGSSt1OW4oi"
+      },
+      {
+        "type": "fiction",
+        "genre": "Contemporary Fiction",
+        "title": "Little Fires Everywhere",
+        "id": "JXmRcSQks7LTFN0ipVAy"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Journalism",
+        "title": "The Hidden Cost of Progress",
+        "id": "QQtnABasb5uOCvjoWaPd"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Children's Nonfiction",
+        "title": "The Adaptations of Arctic Animals",
+        "id": "RoT9WUo5frmxyfjN2U9J"
+      },
+      {
+        "type": "fiction",
+        "genre": "Westerns",
+        "title": "The Outlaw Witch",
+        "id": "lWXWegLFVjpO1lzmeLUO"
+      },
+      {
+        "type": "fiction",
+        "genre": "Contemporary Fiction",
+        "title": "Two Sisters, Two Paths",
+        "id": "mIGa1v9cgtJgkXAnmVGy"
+      }
+    ],
+    "Quest 6.1": [
+      {
+        "type": "fiction",
+        "genre": "Literary Fiction",
+        "title": "Leo and the Hero Cat",
+        "id": "cmimt2el00003dcaobo9b9r3f"
+      },
+      {
+        "type": "fiction",
+        "genre": "Young Adult Fiction",
+        "title": "The Blue Paper",
+        "id": "xhNwd3G8tk4zEqI5XYRI"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Travel",
+        "title": "Costa Rica's Green Travel",
+        "id": "cml526drc00ges60emv019fn6"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Children's Nonfiction",
+        "title": "The Children's Crusade",
+        "id": "1fp84I1JPobquiidnSiT"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Self-help",
+        "title": "You Can Learn and Grow",
+        "id": "cmjwriyvf00sts60em3b14w7d"
+      },
+      {
+        "type": "fiction",
+        "genre": "Fantasy",
+        "title": "Kael and the Sunstone",
+        "id": "cmjsh7kiu01q6s60ez51ws8r3"
+      },
+      {
+        "type": "fiction",
+        "genre": "Contemporary Fiction",
+        "title": "The Secret of the River",
+        "id": "cmgf0s7ol00dos60efhlwbcgu"
+      },
+      {
+        "type": "fiction",
+        "genre": "Literary Fiction",
+        "title": "Lina's Special Lunch",
+        "id": "cmjih4iqc006ps60eur0zlqvb"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Flash Nonfiction",
+        "title": "My Rusty Bike",
+        "id": "cmkbrnka801c9s60e6y5n61q0"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Career Guides",
+        "title": "Your First Business: A Teen Guide",
+        "id": "WBTAniq6iDywaXQLBZYF"
+      },
+      {
+        "type": "fiction",
+        "genre": "Children's Fiction",
+        "title": "The Secret of the Old Book",
+        "id": "cml6hmdgq00n5s60etpeou7u0"
+      },
+      {
+        "type": "fiction",
+        "genre": "Historical Fiction",
+        "title": "Clara's New Friend",
+        "id": "cmj2ralem013us60eboxwb8pr"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Travel",
+        "title": "Mongolia: A Nomadic Life",
+        "id": "cmgpqkvxo01qds60eazl5v6a1"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Crafts and Hobbies",
+        "title": "The Art of Letters",
+        "id": "iO4trC2AgGcR843wEx94"
+      }
+    ],
+    "Adventure 7.1": [
+      {
+        "type": "fiction",
+        "genre": "Children's Fiction",
+        "title": "Timmy the Turtle Learns to Swim",
+        "id": "hoJzpKVdEvJRSGN5kZz4"
+      },
+      {
+        "type": "fiction",
+        "genre": "Contemporary Fiction",
+        "title": "The Underground Journey",
+        "id": "V4lVrdNQsadqMMG4rLEx"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Parenting",
+        "title": "The Magic of Positive Words",
+        "id": "bMkxX79S3wDnV5TunNzH"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Philosophy",
+        "title": "The Curious Case of Dr. Elara",
+        "id": "UASIW8snbbE4IyQTiyHY"
+      },
+      {
+        "type": "fiction",
+        "genre": "Science Fiction",
+        "title": "New Home on Zeta-5",
+        "id": "iqPyiVb28JvJWchR2x5n"
+      },
+      {
+        "type": "fiction",
+        "genre": "Young Adult Fiction",
+        "title": "The Hidden Flame",
+        "id": "kthnsZE0his52tjpyDwI"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Biographies",
+        "title": "Steve Jobs: The Innovator Behind Apple",
+        "id": "BINSURK3l0UIjjXQ3Lho"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Flash Nonfiction",
+        "title": "The Joys of Parenthood: A Flash Memoir",
+        "id": "Kngf1cWGxRby0omZRG6B"
+      },
+      {
+        "type": "fiction",
+        "genre": "Adult Fiction",
+        "title": "The Nightingale Sisters",
+        "id": "9f3IhYOE7SfJjirJLHte"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Language",
+        "title": "The Future of Global Communication",
+        "id": "CZkjBDAcet1AimWjwAjF"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Humor",
+        "title": "The Evolution of Mockumentaries",
+        "id": "vBZRHhd6lNwTye5af2we"
+      },
+      {
+        "type": "fiction",
+        "genre": "Science Fiction",
+        "title": "The Pilot's Quest",
+        "id": "9fOD2YynQ86J6U9mcnx8"
+      },
+      {
+        "type": "fiction",
+        "genre": "War",
+        "title": "The Battle of the Hills and Rivers",
+        "id": "FWSuj1yh5kzajOz2ra4W"
+      }
+    ],
+    "Adventure 7.2": [
+      {
+        "type": "fiction",
+        "genre": "Children's Fiction",
+        "title": "The Magical Menagerie",
+        "id": "mk1cGngBZEvlEMejyY1J"
+      },
+      {
+        "type": "fiction",
+        "genre": "Science Fiction",
+        "title": "The Pilot's Quest",
+        "id": "9fOD2YynQ86J6U9mcnx8"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Flash Nonfiction",
+        "title": "A Day at the Market",
+        "id": "Usdm93Q1U6dhVEGsg54x"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Language",
+        "title": "The Future of Global Communication",
+        "id": "WBHMs7EzNCPdrsrTkflF"
+      },
+      {
+        "type": "fiction",
+        "genre": "Children's Fiction",
+        "title": "Super Funny: The Comical Superhero",
+        "id": "j9q5K2q7a3FILal0CxRx"
+      },
+      {
+        "type": "fiction",
+        "genre": "Young Adult Fiction",
+        "title": "The Road to Hidden Hearts",
+        "id": "gVYeO54oRcBTNRdgCufB"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Language",
+        "title": "The Evolution of Slang and Jargon",
+        "id": "2ERO17dpy8fxPjbF9y6M"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Religion and Spirituality",
+        "title": "The Three Paths of Peace",
+        "id": "NSpNkX8OyjXmZl3Aiw5J"
+      },
+      {
+        "type": "fiction",
+        "genre": "Children's Fiction",
+        "title": "The Legend of Paul Bunyan and Babe the Blue Ox",
+        "id": "ArqKbTO9S0QCaJl0r51e"
+      },
+      {
+        "type": "fiction",
+        "genre": "Children's Fiction",
+        "title": "Percy's Icy Adventure",
+        "id": "Yi3OGXBEdqSIyENRySgs"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Biographies",
+        "title": "Steve Jobs: The Innovator Behind Apple",
+        "id": "BINSURK3l0UIjjXQ3Lho"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Self-help",
+        "title": "The Power of Small Steps",
+        "id": "otGARuUmJDBaoxFLJJEW"
+      },
+      {
+        "type": "fiction",
+        "genre": "Contemporary Fiction",
+        "title": "The Bond of Resilience",
+        "id": "O0NkneVeChqGGbq49fdr"
+      },
+      {
+        "type": "fiction",
+        "genre": "Historical Fiction",
+        "title": "The Resistance Fighters of Occupied France in World War II",
+        "id": "vhQPapCRtJ8zdXOODg7n"
+      }
+    ]
+  }
+}

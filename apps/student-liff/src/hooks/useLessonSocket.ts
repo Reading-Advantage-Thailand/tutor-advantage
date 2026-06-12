@@ -20,11 +20,18 @@ const getSocketUrl = () => {
   return isConfiguredLocalhost && !isPageOnLocalhost ? window.location.origin : configuredUrl;
 };
 
+export interface LessonPair {
+  pairNumber: number;
+  members: { studentId: string; name: string; pictureUrl?: string }[];
+}
+
 interface LessonSessionData {
   sessionId: string;
   currentPhase: number;
   phaseSelectedIndices?: Record<number, number>;
   articleData?: LessonArticleData;
+  // Step 14 (Pair Conversation) random pairs, present while phase 15 is active
+  pairs?: LessonPair[] | null;
 }
 
 interface LessonParticipant {
@@ -86,7 +93,9 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   const [isEveryoneReady, setIsEveryoneReady] = useState(false);
   const [nudgeMessage, setNudgeMessage] = useState<string | null>(null);
   const [kicked, setKicked] = useState<string | null>(null);
-  
+  const [flagCounts, setFlagCounts] = useState<Record<number, number>>({});
+  const [languageAnswer, setLanguageAnswer] = useState<{ question: string; answer: string } | null>(null);
+
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -153,11 +162,18 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
       setPaymentRequired(data);
     });
 
-    newSocket.on('phase_changed', (data: { phase: number; phaseSelectedIndices?: Record<number, number> }) => {
-      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices } : null);
+    newSocket.on('phase_changed', (data: { phase: number; phaseSelectedIndices?: Record<number, number>; pairs?: LessonPair[] | null }) => {
+      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null } : null);
       setHasAnswered(false);
       setIsEveryoneReady(false);
       setAiFeedback(null);
+      setLanguageAnswer(null);
+      // Sentence flags reset at the start of a fresh instructional cycle
+      if (data.phase === 1) setFlagCounts({});
+    });
+
+    newSocket.on('flags_updated', (data: { flagCounts: Record<number, number> }) => {
+      setFlagCounts(data.flagCounts || {});
     });
 
     newSocket.on('answer_received', () => {
@@ -169,6 +185,10 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
         score: data.aiScore,
         feedback: data.aiFeedback
       });
+    });
+
+    newSocket.on('language_answer_result', (data: { question: string; answer: string }) => {
+      setLanguageAnswer(data);
     });
 
     return () => {
@@ -197,6 +217,16 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     }
   };
 
+  const flagSentence = (sentenceIndex: number) => {
+    if (socketRef.current && sessionData) {
+      socketRef.current.emit('flag_sentence', {
+        sessionId: sessionData.sessionId,
+        studentId,
+        sentenceIndex,
+      });
+    }
+  };
+
   return {
     socket,
     sessionData,
@@ -209,7 +239,10 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     aiFeedback,
     nudgeMessage,
     kicked,
+    flagCounts,
+    languageAnswer,
     submitAnswer,
-    toggleReady
+    toggleReady,
+    flagSentence
   };
 };
