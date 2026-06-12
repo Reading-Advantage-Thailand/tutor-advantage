@@ -9,6 +9,10 @@ COPY packages/shared-config/package.json ./packages/shared-config/
 COPY packages/database/package.json      ./packages/database/
 COPY services/finance-mlm-service/package.json ./services/finance-mlm-service/
 
+# Prisma schema must exist before npm ci: the database package's `prepare`
+# script runs `prisma generate` during install
+COPY packages/database/prisma ./packages/database/prisma
+
 RUN npm ci
 
 COPY packages/shared-config/ ./packages/shared-config/
@@ -30,6 +34,9 @@ COPY package.json package-lock.json ./
 COPY packages/shared-config/package.json ./packages/shared-config/
 COPY packages/database/package.json      ./packages/database/
 COPY services/finance-mlm-service/package.json ./services/finance-mlm-service/
+
+# Prisma schema must exist before npm ci (see builder stage note)
+COPY packages/database/prisma ./packages/database/prisma
 
 RUN npm ci --omit=dev
 

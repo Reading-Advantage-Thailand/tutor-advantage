@@ -15,6 +15,10 @@ COPY packages/shared-config/package.json ./packages/shared-config/
 COPY packages/database/package.json      ./packages/database/
 COPY services/learning-service/package.json ./services/learning-service/
 
+# Prisma schema must exist before npm ci: the database package's `prepare`
+# script runs `prisma generate` during install
+COPY packages/database/prisma ./packages/database/prisma
+
 # Install ALL workspace dependencies (hoisted to root node_modules)
 RUN npm ci
 
@@ -43,6 +47,9 @@ COPY package.json package-lock.json ./
 COPY packages/shared-config/package.json ./packages/shared-config/
 COPY packages/database/package.json      ./packages/database/
 COPY services/learning-service/package.json ./services/learning-service/
+
+# Prisma schema must exist before npm ci (see builder stage note)
+COPY packages/database/prisma ./packages/database/prisma
 
 # Install production dependencies only
 RUN npm ci --omit=dev
