@@ -72,6 +72,7 @@ function LobbyInviteCard({ referralLink }: { referralLink: string }) {
 }
 
 export default function TutorLobbyClient({
+  tutorId,
   classId,
   articleId,
   classBookCycleId,
@@ -80,6 +81,7 @@ export default function TutorLobbyClient({
   demo = false,
   referralLink = null,
 }: {
+  tutorId: string;
   classId: string;
   articleId: string;
   classBookCycleId?: string;
@@ -89,8 +91,6 @@ export default function TutorLobbyClient({
   referralLink?: string | null;
 }) {
   const router = useRouter();
-
-  const tutorId = "tutor-123";
 
   // In demo mode there is no real class to return to.
   const backHref = demo ? "/dashboard/demo" : `/dashboard/classes/${classId}`;

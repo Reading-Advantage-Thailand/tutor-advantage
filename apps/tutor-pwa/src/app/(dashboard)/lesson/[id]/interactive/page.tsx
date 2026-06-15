@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { decodeJwt } from "jose";
 import { LEARNING_URL } from "@/lib/service-urls";
 import TutorLobbyClient from "./LobbyClient";
 
@@ -34,8 +35,22 @@ export default async function TutorLobbyPage({
   // Demo walkthroughs have no real class to invite students into.
   const referralLink = isDemo ? null : await getReferralLink(classId);
 
+  // Extract real tutorId from JWT cookie
+  let tutorId = "tutor-fallback";
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("tutor_session")?.value;
+    if (token) {
+      const payload = decodeJwt(token);
+      if (payload.userId) tutorId = String(payload.userId);
+    }
+  } catch (e) {
+    console.error("Failed to decode tutor session token", e);
+  }
+
   return (
     <TutorLobbyClient
+      tutorId={tutorId}
       classId={classId}
       articleId={articleId}
       classBookCycleId={cycleId}

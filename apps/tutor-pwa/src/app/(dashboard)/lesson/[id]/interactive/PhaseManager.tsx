@@ -12,6 +12,12 @@ import { ChevronRight, Check, Maximize2, Minimize2 } from "lucide-react";
 import { playSound } from "@/lib/sounds";
 import { t } from "@/lib/i18n";
 import confetti from "canvas-confetti";
+import {
+  Participant,
+  TutorSessionData,
+  AnswerData,
+  ArticleData,
+} from "@/lib/lesson-types";
 
 function seededShuffle<T>(array: T[], seedInput: string): T[] {
   const result = [...array];
@@ -34,18 +40,18 @@ function seededShuffle<T>(array: T[], seedInput: string): T[] {
 
 interface PhaseManagerProps {
   currentPhase: number;
-  participants: any[];
+  participants: Participant[];
   totalAnswered: number;
-  allAnsweredData: any[];
-  articleData?: any;
+  allAnsweredData: AnswerData[];
+  articleData?: ArticleData;
   changePhase: (phase: number) => void;
-  sessionData?: any;
+  sessionData?: TutorSessionData;
   onFinishSession?: () => void;
   flagCounts?: Record<number, number>;
 }
 
 // ── Live Leaderboard Sidebar (Desktop) ───────────────────────────────────────
-function LiveLeaderboard({ participants }: { participants: any[] }) {
+function LiveLeaderboard({ participants }: { participants: Participant[] }) {
   const sorted = [...participants].sort(
     (a, b) => (b.score || 0) - (a.score || 0),
   );

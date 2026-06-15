@@ -4,19 +4,12 @@ import { getTutorSessionToken } from '../app/dashboard/actions';
 import { t } from '@/lib/i18n';
 
 
-export type LessonPair = {
-  pairNumber: number;
-  members: { studentId: string; name: string; pictureUrl?: string }[];
-};
-
-type TutorSessionData = {
-  sessionId: string;
-  currentPhase: number;
-  articleData?: any;
-  phaseSelectedIndices?: Record<number, number>;
-  // Step 14 (Pair Conversation) random pairs, present while phase 15 is active
-  pairs?: LessonPair[] | null;
-};
+import {
+  Participant,
+  TutorSessionData,
+  AnswerData,
+  ArticleData,
+} from '@/lib/lesson-types';
 
 export const useLessonSocket = (
   tutorId: string,
@@ -30,10 +23,10 @@ export const useLessonSocket = (
   const lessonSocketUrl = socketUrl || 'http://localhost:3002';
   const [socket, setSocket] = useState<Socket | null>(null);
   const [sessionData, setSessionData] = useState<TutorSessionData | null>(null);
-  const [participants, setParticipants] = useState<any[]>([]);
+  const [participants, setParticipants] = useState<Participant[]>([]);
   const [totalAnswered, setTotalAnswered] = useState(0);
-  const [allAnsweredData, setAllAnsweredData] = useState<any[]>([]);
-  const [articleData, setArticleData] = useState<any>(null);
+  const [allAnsweredData, setAllAnsweredData] = useState<AnswerData[]>([]);
+  const [articleData, setArticleData] = useState<ArticleData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [flagCounts, setFlagCounts] = useState<Record<number, number>>({});
 

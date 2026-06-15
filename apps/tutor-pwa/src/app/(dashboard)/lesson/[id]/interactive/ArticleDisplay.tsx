@@ -2,8 +2,10 @@ import React, { useRef, useState, useEffect, useMemo } from "react";
 import { t } from "@/lib/i18n";
 import { Volume2 } from "lucide-react";
 
+import { ArticleData } from "@/lib/lesson-types";
+
 interface ArticleDisplayProps {
-  articleData: any;
+  articleData: ArticleData;
   phase: number;
   flagCounts?: Record<number, number>;
 }
