@@ -74,7 +74,6 @@ export const useLessonSocket = (
         setSocket(socketInstance);
 
         socketInstance.on('connect', () => {
-          console.log('Connected to Learning Service WebSocket');
           // Auto create session on connect for Tutor with the selected article and classId.
           // Demo mode runs a free, fixed preview with no class/DB/AI on the backend.
           socketInstance.emit('create_session', { tutorId, articleId, classId, classBookCycleId, bookId, demo });
@@ -105,7 +104,6 @@ export const useLessonSocket = (
         });
 
         socketInstance.on('phase_changed', (data) => {
-          console.log(`[Socket] Phase changed to: ${data.phase}`);
           setSessionData(prev => {
             const next = prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null } : null;
             sessionDataRef.current = next;
@@ -122,12 +120,10 @@ export const useLessonSocket = (
         });
 
         socketInstance.on('participant_answered', (data) => {
-          console.log(`[Socket] Participant answered: ${data.studentId}, Total: ${data.totalAnswered}`);
           setTotalAnswered(data.totalAnswered);
         });
 
         socketInstance.on('all_answered', (data) => {
-          console.log(`[Socket] All participants answered!`, data.answers);
           setAllAnsweredData(data.answers);
         });
 
@@ -136,7 +132,6 @@ export const useLessonSocket = (
         });
 
         socketInstance.on('session_deleted', (data) => {
-          console.log(`[Socket] Session deleted: ${data.message}`);
           sessionDataRef.current = null;
           setSessionData(null);
           setError(t("app.lessonSessionCancelled"));

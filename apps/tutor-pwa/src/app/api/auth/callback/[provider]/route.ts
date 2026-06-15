@@ -22,7 +22,7 @@ export async function GET(
   const cookieStore = await cookies();
   const storedState = cookieStore.get("oauth_state")?.value;
 
-  const publicBase = `${proto}://${host}`;
+  const publicBase = process.env.NEXT_PUBLIC_BASE_URL || `${proto}://${host}`;
 
   if (provider === "facebook") {
     return NextResponse.redirect(
@@ -57,7 +57,7 @@ export async function GET(
         sponsorTutorId,
         codeVerifier,
         defaultRole: "TUTOR",
-        redirectUri: `${proto}://${host}/api/auth/callback/${provider}`,
+        redirectUri: `${publicBase}/api/auth/callback/${provider}`,
       }),
     });
 

@@ -15,7 +15,7 @@ export async function GET(
   const proto =
     request.headers.get("x-forwarded-proto") ||
     (reqUrl.protocol.replace(":", "") as string);
-  const baseUrl = `${proto}://${host}`;
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `${proto}://${host}`;
   const redirectUri = `${baseUrl}/api/auth/callback/${provider}`;
 
   if (provider === "facebook") {
