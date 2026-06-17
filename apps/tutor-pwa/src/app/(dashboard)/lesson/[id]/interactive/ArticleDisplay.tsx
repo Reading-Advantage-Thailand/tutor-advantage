@@ -5,7 +5,7 @@ import { Volume2 } from "lucide-react";
 import { ArticleData } from "@/lib/lesson-types";
 
 interface ArticleDisplayProps {
-  articleData: ArticleData;
+  articleData?: ArticleData;
   phase: number;
   flagCounts?: Record<number, number>;
 }

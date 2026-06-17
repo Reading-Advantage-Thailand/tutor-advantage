@@ -157,7 +157,7 @@ export default function TutorLobbyClient({
               participants={participants}
               totalAnswered={totalAnswered}
               allAnsweredData={allAnsweredData}
-              articleData={articleData}
+              articleData={articleData ?? undefined}
               flagCounts={flagCounts}
               changePhase={changePhase}
               onFinishSession={() => {
@@ -297,8 +297,8 @@ export default function TutorLobbyClient({
             {/* Article meta */}
             <div className="p-4 space-y-3">
               <p className="text-sm text-muted-foreground line-clamp-2">
-                {articleData?.translated_summary?.th?.[0] ||
-                  articleData?.summary?.th?.[0] ||
+                {(articleData?.translated_summary as any)?.th?.[0] ||
+                  (articleData?.summary as any)?.th?.[0] ||
                   (typeof articleData?.summary === "string" ? articleData.summary : "") ||
                   articleData?.description ||
                   t("lesson.interactive.noDescription")}
