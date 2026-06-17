@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getSettings = getSettings;
 exports.updateSettings = updateSettings;
 const database_1 = require("@tutor-advantage/database");
+const shared_config_1 = require("@tutor-advantage/shared-config");
 async function getSettings(req, res) {
     try {
         const userId = req.user?.userId;
@@ -25,7 +26,8 @@ async function getSettings(req, res) {
         return res.status(200).json({ settings });
     }
     catch (error) {
-        console.error("Get Settings Error:", error);
+        const err = error;
+        shared_config_1.logger.error("Get Settings Error:", err);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -70,7 +72,8 @@ async function updateSettings(req, res) {
         return res.status(200).json({ settings: updatedUser.settings });
     }
     catch (error) {
-        console.error("Update Settings Error:", error);
+        const err = error;
+        shared_config_1.logger.error("Update Settings Error:", err);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",

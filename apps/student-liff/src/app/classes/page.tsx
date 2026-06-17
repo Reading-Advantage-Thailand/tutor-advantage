@@ -104,9 +104,7 @@ export default function ClassesPage() {
         }
       }
     } catch (err) {
-      // Users might cancel scanning, usually safe to log
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      console.log("QR Scan stopped:", errorMessage);
+      // Users might cancel scanning, safe to ignore
     }
   };
 

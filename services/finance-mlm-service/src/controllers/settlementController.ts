@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Request, Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { SettlementService } from "../services/settlementService";
@@ -45,7 +46,7 @@ export async function autoRunSettlement(req: Request, res: Response) {
       orderBy: { createdAt: "desc" },
     });
     if (existing) {
-      console.log(
+      logger.info(
         `[AutoSettlement] Run for ${periodMonth} already exists (${existing.settlementRunId}). Skipping.`,
       );
       return res.status(200).json({
@@ -61,7 +62,7 @@ export async function autoRunSettlement(req: Request, res: Response) {
       "SYSTEM_SCHEDULER",
     );
 
-    console.log(
+    logger.info(
       `[AutoSettlement] Created settlement preview for ${periodMonth}: ${preview.snapshotId}`,
     );
 
@@ -71,8 +72,9 @@ export async function autoRunSettlement(req: Request, res: Response) {
       settlementRunId: preview.snapshotId,
       skipped: false,
     });
-  } catch (error: any) {
-    console.error("[AutoSettlement] Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("[AutoSettlement] Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -136,7 +138,8 @@ export async function previewSettlement(
       message: "Settlement preview generated",
       preview,
     });
-  } catch (error: any) {
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
     if (error.message === "DRAFT_EXISTS") {
       return res.status(409).json({
         error: {
@@ -146,7 +149,7 @@ export async function previewSettlement(
         },
       });
     }
-    console.error("Preview Settlement Error:", error);
+    logger.error("Preview Settlement Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -214,8 +217,9 @@ export async function submitSettlement(
     });
 
     return res.status(200).json({ message: "Settlement submitted for review" });
-  } catch (error: any) {
-    console.error("Submit Settlement Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Submit Settlement Error:", error);
     return res.status(500).json({
       error: { code: "INTERNAL_SERVER_ERROR", message: "Could not submit settlement", requestId: req.id },
     });
@@ -281,8 +285,9 @@ export async function rejectSettlement(
     });
 
     return res.status(200).json({ message: "Settlement rejected" });
-  } catch (error: any) {
-    console.error("Reject Settlement Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Reject Settlement Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -372,8 +377,9 @@ export async function exportSettlementCsv(
       `attachment; filename="settlement-${run.periodMonth}-${snapshotId.slice(0, 8)}.csv"`,
     );
     return res.status(200).send(csv);
-  } catch (error: any) {
-    console.error("Export CSV Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Export CSV Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -527,8 +533,9 @@ export async function getSettlementLines(
       totalNetPayoutTHB: lines.reduce((s, l) => s + l.netPayoutTHB, 0),
       lines,
     });
-  } catch (error: any) {
-    console.error("getSettlementLines error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("getSettlementLines error:", error);
     return res.status(500).json({
       error: { code: "INTERNAL_SERVER_ERROR", message: "Could not fetch lines" },
     });
@@ -565,8 +572,9 @@ export async function getSettlementSummary(
       pendingApprovals: pendingCount,
       pendingAdjustments: pendingAdjCount,
     });
-  } catch (error: any) {
-    console.error("Summary Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Summary Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -662,7 +670,8 @@ export async function approveSettlement(
       message: "Settlement run approved",
       run: serializeSettlementRun(approvedRun),
     });
-  } catch (error: any) {
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
     if (error.message === "NOT_FOUND") {
       return res.status(404).json({
         error: {
@@ -717,7 +726,7 @@ export async function approveSettlement(
       });
     }
 
-    console.error("Approve Settlement Error:", error);
+    logger.error("Approve Settlement Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -765,7 +774,8 @@ export async function retryPayoutTransfer(
       message: "Payout transfer sent",
       transfer,
     });
-  } catch (error: any) {
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
     const errorMap: Record<string, { status: number; message: string }> = {
       PAYOUT_LINE_NOT_FOUND: {
         status: 404,
@@ -831,7 +841,7 @@ export async function retryPayoutTransfer(
       });
     }
 
-    console.error("Retry Payout Transfer Error:", error);
+    logger.error("Retry Payout Transfer Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -877,7 +887,8 @@ export async function syncPayoutTransfer(
     const result = await SettlementService.syncPayoutTransferStatus(payoutLineId);
 
     return res.status(200).json({ message: "Transfer status synced", transfer: result });
-  } catch (error: any) {
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
     const errorMap: Record<string, { status: number; message: string }> = {
       PAYOUT_LINE_NOT_FOUND: { status: 404, message: "Payout line not found" },
       PAYOUT_DOCUMENT_NOT_FOUND: {
@@ -897,7 +908,7 @@ export async function syncPayoutTransfer(
       });
     }
 
-    console.error("Sync Payout Transfer Error:", error);
+    logger.error("Sync Payout Transfer Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -1041,8 +1052,9 @@ export async function getSettlements(req: AuthenticatedRequest, res: Response) {
     }));
 
     return res.status(200).json({ settlements: mapped });
-  } catch (error: any) {
-    console.error("GetSettlements Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("GetSettlements Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",

@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Server, Socket } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
@@ -46,12 +47,12 @@ export const setupLessonSocket = (io: Server) => {
   });
 
   io.on("connection", (socket: Socket) => {
-    console.log(`Socket connected: ${socket.id}`);
+    logger.info(`Socket connected: ${socket.id}`);
 
     // Tutor creates a new session
     socket.on("create_session", async ({ tutorId, articleId, classId, classBookCycleId, bookId, demo }) => {
       const isDemo = demo === true;
-      console.log(`[Socket] Tutor ${tutorId} creating ${isDemo ? "DEMO " : ""}session for class: ${classId}`);
+      logger.info(`[Socket] Tutor ${tutorId} creating ${isDemo ? "DEMO " : ""}session for class: ${classId}`);
       try {
         // Demo mode: zero-cost preview. Fixed bundled content, no class/cycle,
         // no DB persistence, no AI scoring (solo tutor, no student answers).
@@ -77,7 +78,7 @@ export const setupLessonSocket = (io: Server) => {
             currentPhase: demoSession.currentPhase,
             articleData: demoSession.articleData,
           });
-          console.log(`[Socket] DEMO session created: ${demoSession.sessionId}`);
+          logger.info(`[Socket] DEMO session created: ${demoSession.sessionId}`);
           return;
         }
 
@@ -133,10 +134,10 @@ export const setupLessonSocket = (io: Server) => {
         }
 
         const articleData = await getArticleDetails(resolvedArticleId);
-        console.log(`================= QUESTIONS LIST =================`);
-        console.log(`Available MCQ questions:`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
-        console.log(`Available SAQ questions:`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
-        console.log(`==================================================`);
+        logger.info(`================= QUESTIONS LIST =================`);
+        logger.info(`Available MCQ questions:`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
+        logger.info(`Available SAQ questions:`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
+        logger.info(`==================================================`);
         const session = lessonSessionService.createSession(
           tutorId,
           socket.id,
@@ -157,20 +158,21 @@ export const setupLessonSocket = (io: Server) => {
           currentPhase: session.currentPhase,
           articleData: session.articleData
         });
-        console.log(`[Socket] Session created: ${session.sessionId} for class ${classId}`);
-      } catch (error: any) {
-        console.error("[Socket] Error creating session:", error);
+        logger.info(`[Socket] Session created: ${session.sessionId} for class ${classId}`);
+      } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+        logger.error("[Socket] Error creating session:", error);
         socket.emit("error", { message: "Failed to create session. Please check database connection." });
       }
     });
 
     // Student joins a session using classId.
     socket.on("join_class", async ({ classId, studentId, name, pictureUrl }) => {
-      console.log(`[Socket] Student ${name} (${studentId}) attempting to join class: ${classId}`);
+      logger.info(`[Socket] Student ${name} (${studentId}) attempting to join class: ${classId}`);
       const resolvedStudentId = await dbWriter.resolveUserId(studentId);
 
       if (!resolvedStudentId) {
-        console.warn(`[Socket] Join denied: could not resolve student ${studentId}`);
+        logger.warn(`[Socket] Join denied: could not resolve student ${studentId}`);
         socket.emit("error", { message: "Please sign in before joining class." });
         return;
       }
@@ -180,7 +182,7 @@ export const setupLessonSocket = (io: Server) => {
       });
 
       if (!activeEnrollment) {
-        console.warn(`[Socket] Join denied: student ${studentId} has no ACTIVE enrollment for class ${classId}`);
+        logger.warn(`[Socket] Join denied: student ${studentId} has no ACTIVE enrollment for class ${classId}`);
         socket.emit("error", { message: "Please complete payment before joining class." });
         return;
       }
@@ -230,7 +232,7 @@ export const setupLessonSocket = (io: Server) => {
         }
 
         if (!activeAccess) {
-          console.warn(`[Socket] Join denied: student ${studentId} has no ACTIVE access for cycle ${activeSession.classBookCycleId}`);
+          logger.warn(`[Socket] Join denied: student ${studentId} has no ACTIVE access for cycle ${activeSession.classBookCycleId}`);
           const paymentUrl = `/payment?classId=${classId}&cycleId=${activeSession.classBookCycleId}`;
           socket.emit("payment_required", {
             classId,
@@ -264,19 +266,19 @@ export const setupLessonSocket = (io: Server) => {
         io.to(session.sessionId).emit("participants_updated", {
           participants: Array.from(session.participants.values())
         });
-        console.log(`[Socket] Student ${name} joined class ${classId} successfully (Pic: ${!!pictureUrl})`);
+        logger.info(`[Socket] Student ${name} joined class ${classId} successfully (Pic: ${!!pictureUrl})`);
         
         // PERSIST PARTICIPANT JOIN
         dbWriter.persistSessionParticipant(session.currentDbSessionId || session.sessionId, studentId);
       } else {
-        console.warn(`[Socket] Join failed: No active session for class ${classId}`);
+        logger.warn(`[Socket] Join failed: No active session for class ${classId}`);
         socket.emit("error", { message: "ยังไม่มีคลาสที่เปิดสอนในขณะนี้ หรือคุณครูยังไม่ได้เริ่มเซสชัน" });
       }
     });
 
     // Toggle Ready status
     socket.on("toggle_ready", ({ sessionId, studentId }) => {
-      console.log(`[Socket] Student ${studentId} toggled ready for session ${sessionId}`);
+      logger.info(`[Socket] Student ${studentId} toggled ready for session ${sessionId}`);
       const session = lessonSessionService.toggleReady(sessionId, studentId);
       if (session) {
         io.to(session.sessionId).emit("participants_updated", {
@@ -297,13 +299,13 @@ export const setupLessonSocket = (io: Server) => {
             // --- FIRST CYCLE ---
             // Set explicit key to lock current cycle, but reuse original initialized DB record to avoid double logging!
             session.currentDbSessionId = sessionId; 
-            console.log(`[Socket] CYCLE 1: Initializing first loop using original session ${sessionId}`);
+            logger.info(`[Socket] CYCLE 1: Initializing first loop using original session ${sessionId}`);
           } else {
             // --- RESTART CYCLES (2, 3+) ---
             // This generates a TOTALLY distinct row in student dashboard history while keeping same socket room!
             const newDbId = uuidv4();
             session.currentDbSessionId = newDbId; // Set explicit new key for this cycle
-            console.log(`[Socket] RECYCLE: Starting fresh learning loop for room ${sessionId}. New DB Session: ${newDbId}`);
+            logger.info(`[Socket] RECYCLE: Starting fresh learning loop for room ${sessionId}. New DB Session: ${newDbId}`);
             
             // 1. Create NEW DB header record
             dbWriter.persistSessionStart(
@@ -333,7 +335,7 @@ export const setupLessonSocket = (io: Server) => {
         io.to(sessionId).emit("participants_updated", {
           participants: Array.from(session.participants.values())
         });
-        console.log(`Session ${sessionId} changed to phase ${phase}`);
+        logger.info(`Session ${sessionId} changed to phase ${phase}`);
 
         // If changing to phase 16 (Wrap-up Leaderboard), mark ACTIVE DB ROUND as FINISHED
         // Demo sessions have no DB round, no badges to unlock, and no students to notify.
@@ -343,7 +345,7 @@ export const setupLessonSocket = (io: Server) => {
           // Non-blocking badge unlock check for the tutor
           if (session.tutorId) {
             checkAndUnlockBadges(session.tutorId).catch((e) =>
-              console.error("[Socket] Badge check failed:", e),
+              logger.error("[Socket] Badge check failed:", e),
             );
           }
 
@@ -365,7 +367,7 @@ export const setupLessonSocket = (io: Server) => {
                  }
               }
             } catch (e) {
-              console.error("[Socket] Failed to trigger score notification:", e);
+              logger.error("[Socket] Failed to trigger score notification:", e);
             }
           })();
         }
@@ -652,7 +654,7 @@ export const setupLessonSocket = (io: Server) => {
             totalParticipants: result.session.participants.size 
           });
 
-          console.log(`[Socket] All participants answered in session ${sessionId} phase ${result.session.currentPhase}`);
+          logger.info(`[Socket] All participants answered in session ${sessionId} phase ${result.session.currentPhase}`);
         }
       }
     });
@@ -674,7 +676,7 @@ export const setupLessonSocket = (io: Server) => {
         const participant = session.participants.get(studentId);
         if (participant) {
           io.to(participant.socketId).emit("nudge_received", { message: "คุณครูกำลังรอคุณอยู่... กด Ready หน่อยครับ!" });
-          console.log(`Tutor nudged student ${studentId}`);
+          logger.info(`Tutor nudged student ${studentId}`);
         }
       }
     });
@@ -690,7 +692,7 @@ export const setupLessonSocket = (io: Server) => {
           io.to(sessionId).emit("participants_updated", {
             participants: Array.from(session.participants.values())
           });
-          console.log(`Tutor kicked student ${studentId}`);
+          logger.info(`Tutor kicked student ${studentId}`);
         }
       }
     });
@@ -701,7 +703,7 @@ export const setupLessonSocket = (io: Server) => {
       if (session) {
         io.to(sessionId).emit("session_deleted", { message: "เซสชันถูกยกเลิกโดยคุณครู" });
         lessonSessionService.deleteSession(sessionId);
-        console.log(`[Socket] Session ${sessionId} deleted by tutor`);
+        logger.info(`[Socket] Session ${sessionId} deleted by tutor`);
       }
     });
 
@@ -710,7 +712,7 @@ export const setupLessonSocket = (io: Server) => {
 
       if (tutorSession) {
         const { sessionId } = tutorSession;
-        console.log(`[Socket] Tutor disconnect detected for: ${socket.id}. Session ${sessionId} will close if tutor does not reconnect.`);
+        logger.info(`[Socket] Tutor disconnect detected for: ${socket.id}. Session ${sessionId} will close if tutor does not reconnect.`);
 
         setTimeout(() => {
           const latestSession = lessonSessionService.getSession(sessionId);
@@ -720,13 +722,13 @@ export const setupLessonSocket = (io: Server) => {
 
           io.to(sessionId).emit("session_deleted", { message: "à¹€à¸‹à¸ªà¸Šà¸±à¸™à¸–à¸¹à¸à¸¢à¸à¹€à¸¥à¸´à¸à¹‚à¸”à¸¢à¸„à¸¸à¸“à¸„à¸£à¸¹" });
           lessonSessionService.deleteSession(sessionId);
-          console.log(`[Socket] Session ${sessionId} deleted after tutor disconnect grace period`);
+          logger.info(`[Socket] Session ${sessionId} deleted after tutor disconnect grace period`);
         }, 15000);
 
         return;
       }
 
-      console.log(`[Socket] Disconnect detected for: ${socket.id}. Session state is preserved for auto-recovery.`);
+      logger.info(`[Socket] Disconnect detected for: ${socket.id}. Session state is preserved for auto-recovery.`);
     });
   });
 };

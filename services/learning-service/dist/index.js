@@ -12,13 +12,14 @@ dotenv_1.default.config({
     path: path_1.default.resolve(__dirname, "../../../.env"),
     override: true,
 });
-console.log(`[Learning] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
+shared_config_1.logger.info(`[Learning] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
 const { prisma } = require("@tutor-advantage/database");
 const http_1 = require("http");
 const socket_io_1 = require("socket.io");
 const shared_config_1 = require("@tutor-advantage/shared-config");
 const authMiddleware_1 = require("./middlewares/authMiddleware");
 const classController_1 = require("./controllers/classController");
+const demoController_1 = require("./controllers/demoController");
 const referralController_1 = require("./controllers/referralController");
 const enrollmentController_1 = require("./controllers/enrollmentController");
 const dashboardController_1 = require("./controllers/dashboardController");
@@ -27,6 +28,7 @@ const auctionController_1 = require("./controllers/auctionController");
 const performanceController_1 = require("./controllers/performanceController");
 const reviewController_1 = require("./controllers/reviewController");
 const notificationsController_1 = require("./controllers/notificationsController");
+const couponController_1 = require("./controllers/couponController");
 const lessonHistoryController_1 = require("./controllers/lessonHistoryController");
 const devController_1 = require("./controllers/devController");
 const app = (0, express_1.default)();
@@ -69,6 +71,7 @@ app.get("/version", (_req, res) => {
 });
 // Protected Class Routes
 app.get("/v1/books", authMiddleware_1.authMiddleware, classController_1.getBooks);
+app.get("/v1/demo/lessons", authMiddleware_1.authMiddleware, demoController_1.getDemoLessonCatalog);
 app.post("/v1/classes", authMiddleware_1.authMiddleware, classController_1.createClass);
 app.post("/v1/classes/:classId/close", authMiddleware_1.authMiddleware, classController_1.closeClass);
 app.get("/v1/classes", authMiddleware_1.authMiddleware, classController_1.getClasses);
@@ -76,6 +79,7 @@ app.get("/v1/classes/available", authMiddleware_1.authMiddleware, classControlle
 app.get("/v1/classes/:classId", authMiddleware_1.authMiddleware, classController_1.getClassById);
 app.delete("/v1/classes/:classId", authMiddleware_1.authMiddleware, classController_1.deleteClass);
 app.patch("/v1/classes/:classId/meeting-url", authMiddleware_1.authMiddleware, classController_1.updateMeetingUrl);
+app.patch("/v1/classes/:classId/schedule", authMiddleware_1.authMiddleware, classController_1.rescheduleClass);
 app.get("/v1/classes/:classId/articles", authMiddleware_1.authMiddleware, classController_1.getClassArticles);
 app.post("/v1/classes/:classId/book-cycles", authMiddleware_1.authMiddleware, classController_1.createClassBookCycle);
 app.post("/v1/classes/:classId/book-cycles/:cycleId/access", authMiddleware_1.authMiddleware, classController_1.prepareClassBookCycleAccess);
@@ -108,6 +112,10 @@ app.get("/v1/classes/:classId/review", authMiddleware_1.authMiddleware, reviewCo
 app.post("/v1/classes/:classId/review", authMiddleware_1.authMiddleware, reviewController_1.submitTutorReview);
 // Protected Notifications Summary
 app.get("/v1/notifications/summary", authMiddleware_1.authMiddleware, notificationsController_1.getNotificationSummary);
+// Protected Coupon Routes (tutor)
+app.get("/v1/coupons/mine", authMiddleware_1.authMiddleware, couponController_1.getMyCoupons);
+app.post("/v1/coupons/validate", authMiddleware_1.authMiddleware, couponController_1.validateCouponCode);
+app.post("/v1/classes/:classId/apply-coupon", authMiddleware_1.authMiddleware, couponController_1.applyCouponToClass);
 // Dev-only routes (blocked in production by devOnly middleware)
 app.post("/v1/dev/seed/lesson-history", devController_1.devOnly, authMiddleware_1.authMiddleware, devController_1.devSeedLessonHistory);
 app.delete("/v1/dev/seed/lesson-history", devController_1.devOnly, authMiddleware_1.authMiddleware, devController_1.devPurgeLessonHistory);
@@ -138,20 +146,20 @@ const io = new socket_io_1.Server(httpServer, {
 const lessonHandler_1 = require("./websockets/lessonHandler");
 (0, lessonHandler_1.setupLessonSocket)(io);
 httpServer.listen(port, () => {
-    console.log(`Learning Service running on port ${port}`);
+    shared_config_1.logger.info(`Learning Service running on port ${port}`);
 });
 // Graceful shutdown — drain HTTP + WebSocket connections then disconnect DB
 const shutdown = (signal) => async () => {
-    console.log(`[Learning] ${signal} received — shutting down gracefully`);
+    shared_config_1.logger.info(`[Learning] ${signal} received — shutting down gracefully`);
     io.close(() => {
         httpServer.close(async () => {
             await prisma.$disconnect();
-            console.log("[Learning] Shutdown complete");
+            shared_config_1.logger.info("[Learning] Shutdown complete");
             process.exit(0);
         });
     });
     setTimeout(() => {
-        console.error("[Learning] Shutdown timeout — forcing exit");
+        shared_config_1.logger.error("[Learning] Shutdown timeout — forcing exit");
         process.exit(1);
     }, 10_000).unref();
 };

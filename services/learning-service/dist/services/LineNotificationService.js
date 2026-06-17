@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LineNotificationService = void 0;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
@@ -21,7 +22,7 @@ class LineNotificationService {
     static async sendToUser(userId, message, options) {
         try {
             if (!LINE_CHANNEL_ACCESS_TOKEN) {
-                console.warn("[LineNotificationService] LINE_CHANNEL_ACCESS_TOKEN is missing. Skipping.");
+                shared_config_1.logger.warn("[LineNotificationService] LINE_CHANNEL_ACCESS_TOKEN is missing. Skipping.");
                 return false;
             }
             // 1. Fetch user settings to check notification preference
@@ -30,7 +31,7 @@ class LineNotificationService {
                 select: { settings: true }
             });
             if (!user) {
-                console.warn(`[LineNotificationService] User ${userId} not found.`);
+                shared_config_1.logger.warn(`[LineNotificationService] User ${userId} not found.`);
                 return false;
             }
             // Check user settings preference
@@ -40,7 +41,7 @@ class LineNotificationService {
                 const defaultValue = options.type === "notifyMarketing" ? false : true;
                 const isEnabled = settings[options.type] !== undefined ? settings[options.type] : defaultValue;
                 if (!isEnabled) {
-                    console.log(`[LineNotificationService] User ${userId} has disabled ${options.type}. Notification suppressed.`);
+                    shared_config_1.logger.info(`[LineNotificationService] User ${userId} has disabled ${options.type}. Notification suppressed.`);
                     return false;
                 }
             }
@@ -52,7 +53,7 @@ class LineNotificationService {
                 }
             });
             if (!lineIdentity || !lineIdentity.providerSubject) {
-                console.log(`[LineNotificationService] No linked LINE identity found for user ${userId}. Cannot push.`);
+                shared_config_1.logger.info(`[LineNotificationService] No linked LINE identity found for user ${userId}. Cannot push.`);
                 return false;
             }
             const lineUserId = lineIdentity.providerSubject;
@@ -75,14 +76,14 @@ class LineNotificationService {
             });
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error(`[LineNotificationService] LINE API error: ${response.status}`, errorText);
+                shared_config_1.logger.error(`[LineNotificationService] LINE API error: ${response.status}`, errorText);
                 return false;
             }
-            console.log(`[LineNotificationService] Notification sent successfully to user ${userId} (LINE: ${lineUserId})`);
+            shared_config_1.logger.info(`[LineNotificationService] Notification sent successfully to user ${userId} (LINE: ${lineUserId})`);
             return true;
         }
         catch (error) {
-            console.error(`[LineNotificationService] Critical error sending notification to ${userId}:`, error);
+            shared_config_1.logger.error(`[LineNotificationService] Critical error sending notification to ${userId}:`, error);
             return false;
         }
     }

@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -289,8 +290,9 @@ export async function getDashboardSummary(
       recentClasses,
       unreadMessages,
     });
-  } catch (error: any) {
-    console.error("Dashboard Summary Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Dashboard Summary Error:", error);
     return res.status(500).json({
       error: { code: "INTERNAL_SERVER_ERROR", message: error.message },
     });
@@ -494,8 +496,9 @@ export async function getStudentProgress(
       articles,
     });
 
-  } catch (error: any) {
-    console.error("Get Student Progress Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Get Student Progress Error:", error);
     return res.status(500).json({
       error: { code: "INTERNAL_SERVER_ERROR", message: "Could not fetch progress" },
     });
@@ -564,8 +567,9 @@ export async function getStudentArticle(
         })),
       },
     });
-  } catch (error: any) {
-    console.error("Get Student Article Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Get Student Article Error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 }
@@ -629,8 +633,9 @@ export async function generateStudentShareLink(
       token: referral.token,
       className: targetClass.title,
     });
-  } catch (error: any) {
-    console.error("Generate Student Share Link Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Generate Student Share Link Error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 }

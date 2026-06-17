@@ -37,11 +37,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setupLessonSocket = void 0;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const uuid_1 = require("uuid");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const LessonSessionService_1 = require("../services/LessonSessionService");
 const AIEvaluator_1 = require("../services/AIEvaluator");
 const ReadingAdvantageDB_1 = require("../services/ReadingAdvantageDB");
+const demoLessons_1 = require("../services/demoLessons");
 const dbWriter = __importStar(require("../services/SessionDBWriter"));
 const LineNotificationService_1 = require("../services/LineNotificationService");
 const BadgeService_1 = require("../services/BadgeService");
@@ -79,13 +81,64 @@ const setupLessonSocket = (io) => {
         }
     });
     io.on("connection", (socket) => {
-        console.log(`Socket connected: ${socket.id}`);
+        shared_config_1.logger.info(`Socket connected: ${socket.id}`);
         // Tutor creates a new session
-        socket.on("create_session", async ({ tutorId, articleId, classId, classBookCycleId, bookId }) => {
-            console.log(`[Socket] Tutor ${tutorId} creating session for class: ${classId}`);
+        socket.on("create_session", async ({ tutorId, articleId, classId, classBookCycleId, bookId, demo }) => {
+            const isDemo = demo === true;
+            shared_config_1.logger.info(`[Socket] Tutor ${tutorId} creating ${isDemo ? "DEMO " : ""}session for class: ${classId}`);
             try {
+                // Demo mode: zero-cost preview. Fixed bundled content, no class/cycle,
+                // no DB persistence, no AI scoring (solo tutor, no student answers).
+                if (isDemo) {
+                    const demoArticle = (0, demoLessons_1.getDemoArticle)(articleId);
+                    if (!demoArticle) {
+                        socket.emit("error", { message: "Demo lesson not found." });
+                        return;
+                    }
+                    const demoSession = LessonSessionService_1.lessonSessionService.createSession(tutorId, socket.id, articleId, demoArticle, undefined, undefined, undefined, true);
+                    socket.join(demoSession.sessionId);
+                    socket.emit("session_created", {
+                        sessionId: demoSession.sessionId,
+                        currentPhase: demoSession.currentPhase,
+                        articleData: demoSession.articleData,
+                    });
+                    shared_config_1.logger.info(`[Socket] DEMO session created: ${demoSession.sessionId}`);
+                    return;
+                }
                 let resolvedCycleId = classBookCycleId;
                 let resolvedBookId = bookId;
+                let resolvedArticleId = articleId;
+                // Demo classes are locked to one fixed lesson: the first article of the
+                // class book. They also stop accepting sessions once expired.
+                if (classId) {
+                    const cls = await database_1.prisma.class.findUnique({
+                        where: { classId },
+                        select: { isDemo: true, expiresAt: true, bookId: true },
+                    });
+                    if (cls?.isDemo) {
+                        if (cls.expiresAt && cls.expiresAt.getTime() < Date.now()) {
+                            socket.emit("error", { message: "ห้องเรียน Demo นี้หมดอายุแล้ว ไม่สามารถเริ่มสอนได้" });
+                            return;
+                        }
+                        const firstArticle = await database_1.prisma.article.findFirst({
+                            where: { bookId: cls.bookId },
+                            orderBy: [
+                                { createdAt: "asc" },
+                                { articleId: "asc" }
+                            ],
+                        });
+                        if (!firstArticle) {
+                            socket.emit("error", { message: "หนังสือของห้อง Demo นี้ยังไม่มีบทเรียน" });
+                            return;
+                        }
+                        resolvedArticleId = firstArticle.articleId;
+                    }
+                }
+                // Non-demo classes must name the article to teach.
+                if (!resolvedArticleId) {
+                    socket.emit("error", { message: "กรุณาเลือกบทเรียนก่อนเริ่มสอน (missing articleId)" });
+                    return;
+                }
                 if (classId && (!resolvedCycleId || !resolvedBookId)) {
                     const cycle = resolvedCycleId
                         ? await database_1.prisma.classBookCycle.findFirst({
@@ -98,34 +151,35 @@ const setupLessonSocket = (io) => {
                     resolvedCycleId = cycle?.classBookCycleId || resolvedCycleId;
                     resolvedBookId = cycle?.bookId || resolvedBookId;
                 }
-                const articleData = await (0, ReadingAdvantageDB_1.getArticleDetails)(articleId);
-                console.log(`================= QUESTIONS LIST =================`);
-                console.log(`Available MCQ questions:`, articleData?.multipleChoiceQuestions?.map((q) => q.question));
-                console.log(`Available SAQ questions:`, articleData?.shortAnswerQuestions?.map((q) => q.question));
-                console.log(`==================================================`);
-                const session = LessonSessionService_1.lessonSessionService.createSession(tutorId, socket.id, articleId, articleData, classId, resolvedCycleId, resolvedBookId);
+                const articleData = await (0, ReadingAdvantageDB_1.getArticleDetails)(resolvedArticleId);
+                shared_config_1.logger.info(`================= QUESTIONS LIST =================`);
+                shared_config_1.logger.info(`Available MCQ questions:`, articleData?.multipleChoiceQuestions?.map((q) => q.question));
+                shared_config_1.logger.info(`Available SAQ questions:`, articleData?.shortAnswerQuestions?.map((q) => q.question));
+                shared_config_1.logger.info(`==================================================`);
+                const session = LessonSessionService_1.lessonSessionService.createSession(tutorId, socket.id, resolvedArticleId, articleData, classId, resolvedCycleId, resolvedBookId);
                 // Keep currentDbSessionId undefined initially, so the first cycle defaults to the standard sessionId!
                 socket.join(session.sessionId);
                 // PERSIST START OF SESSION TO DB (This creates initial Cycle 1 record)
-                dbWriter.persistSessionStart(session.sessionId, tutorId, articleId, classId, resolvedCycleId, resolvedBookId);
+                dbWriter.persistSessionStart(session.sessionId, tutorId, resolvedArticleId, classId, resolvedCycleId, resolvedBookId);
                 socket.emit("session_created", {
                     sessionId: session.sessionId,
                     currentPhase: session.currentPhase,
                     articleData: session.articleData
                 });
-                console.log(`[Socket] Session created: ${session.sessionId} for class ${classId}`);
+                shared_config_1.logger.info(`[Socket] Session created: ${session.sessionId} for class ${classId}`);
             }
-            catch (error) {
-                console.error("[Socket] Error creating session:", error);
+            catch (error_err) {
+                const error = error_err;
+                shared_config_1.logger.error("[Socket] Error creating session:", error);
                 socket.emit("error", { message: "Failed to create session. Please check database connection." });
             }
         });
         // Student joins a session using classId.
         socket.on("join_class", async ({ classId, studentId, name, pictureUrl }) => {
-            console.log(`[Socket] Student ${name} (${studentId}) attempting to join class: ${classId}`);
+            shared_config_1.logger.info(`[Socket] Student ${name} (${studentId}) attempting to join class: ${classId}`);
             const resolvedStudentId = await dbWriter.resolveUserId(studentId);
             if (!resolvedStudentId) {
-                console.warn(`[Socket] Join denied: could not resolve student ${studentId}`);
+                shared_config_1.logger.warn(`[Socket] Join denied: could not resolve student ${studentId}`);
                 socket.emit("error", { message: "Please sign in before joining class." });
                 return;
             }
@@ -133,7 +187,7 @@ const setupLessonSocket = (io) => {
                 where: { classId, studentUserId: resolvedStudentId, status: "ACTIVE" },
             });
             if (!activeEnrollment) {
-                console.warn(`[Socket] Join denied: student ${studentId} has no ACTIVE enrollment for class ${classId}`);
+                shared_config_1.logger.warn(`[Socket] Join denied: student ${studentId} has no ACTIVE enrollment for class ${classId}`);
                 socket.emit("error", { message: "Please complete payment before joining class." });
                 return;
             }
@@ -173,7 +227,7 @@ const setupLessonSocket = (io) => {
                     }
                 }
                 if (!activeAccess) {
-                    console.warn(`[Socket] Join denied: student ${studentId} has no ACTIVE access for cycle ${activeSession.classBookCycleId}`);
+                    shared_config_1.logger.warn(`[Socket] Join denied: student ${studentId} has no ACTIVE access for cycle ${activeSession.classBookCycleId}`);
                     const paymentUrl = `/payment?classId=${classId}&cycleId=${activeSession.classBookCycleId}`;
                     socket.emit("payment_required", {
                         classId,
@@ -197,23 +251,25 @@ const setupLessonSocket = (io) => {
                     sessionId: session.sessionId,
                     currentPhase: session.currentPhase,
                     articleData: session.articleData,
-                    phaseSelectedIndices: session.phaseSelectedIndices
+                    phaseSelectedIndices: session.phaseSelectedIndices,
+                    // Reconnecting mid Pair Conversation still shows the student's pair
+                    pairs: session.currentPhase === 15 ? LessonSessionService_1.lessonSessionService.getPairsPayload(session) : null,
                 });
                 io.to(session.sessionId).emit("participants_updated", {
                     participants: Array.from(session.participants.values())
                 });
-                console.log(`[Socket] Student ${name} joined class ${classId} successfully (Pic: ${!!pictureUrl})`);
+                shared_config_1.logger.info(`[Socket] Student ${name} joined class ${classId} successfully (Pic: ${!!pictureUrl})`);
                 // PERSIST PARTICIPANT JOIN
                 dbWriter.persistSessionParticipant(session.currentDbSessionId || session.sessionId, studentId);
             }
             else {
-                console.warn(`[Socket] Join failed: No active session for class ${classId}`);
+                shared_config_1.logger.warn(`[Socket] Join failed: No active session for class ${classId}`);
                 socket.emit("error", { message: "ยังไม่มีคลาสที่เปิดสอนในขณะนี้ หรือคุณครูยังไม่ได้เริ่มเซสชัน" });
             }
         });
         // Toggle Ready status
         socket.on("toggle_ready", ({ sessionId, studentId }) => {
-            console.log(`[Socket] Student ${studentId} toggled ready for session ${sessionId}`);
+            shared_config_1.logger.info(`[Socket] Student ${studentId} toggled ready for session ${sessionId}`);
             const session = LessonSessionService_1.lessonSessionService.toggleReady(sessionId, studentId);
             if (session) {
                 io.to(session.sessionId).emit("participants_updated", {
@@ -227,19 +283,20 @@ const setupLessonSocket = (io) => {
             if (session) {
                 // --- CRITICAL: DYNAMIC RESTART RECORDING ---
                 // If starting a new instructional cycle (Phase 0 -> Phase 1), determine if we need a FRESH DB identity.
-                if (phase === 1) {
+                // Demo sessions skip all persistence — they only loop the in-memory phase state.
+                if (phase === 1 && !session.isDemo) {
                     if (!session.currentDbSessionId) {
                         // --- FIRST CYCLE ---
                         // Set explicit key to lock current cycle, but reuse original initialized DB record to avoid double logging!
                         session.currentDbSessionId = sessionId;
-                        console.log(`[Socket] CYCLE 1: Initializing first loop using original session ${sessionId}`);
+                        shared_config_1.logger.info(`[Socket] CYCLE 1: Initializing first loop using original session ${sessionId}`);
                     }
                     else {
                         // --- RESTART CYCLES (2, 3+) ---
                         // This generates a TOTALLY distinct row in student dashboard history while keeping same socket room!
                         const newDbId = (0, uuid_1.v4)();
                         session.currentDbSessionId = newDbId; // Set explicit new key for this cycle
-                        console.log(`[Socket] RECYCLE: Starting fresh learning loop for room ${sessionId}. New DB Session: ${newDbId}`);
+                        shared_config_1.logger.info(`[Socket] RECYCLE: Starting fresh learning loop for room ${sessionId}. New DB Session: ${newDbId}`);
                         // 1. Create NEW DB header record
                         dbWriter.persistSessionStart(newDbId, session.tutorId, session.articleId, session.classId, session.classBookCycleId, session.bookId);
                         // 2. Automatically enroll all existing students in the NEW round immediately
@@ -249,18 +306,24 @@ const setupLessonSocket = (io) => {
                         }
                     }
                 }
-                // Broadcast new phase to everyone in the room
-                io.to(sessionId).emit("phase_changed", { phase, phaseSelectedIndices: session.phaseSelectedIndices });
+                // Broadcast new phase to everyone in the room.
+                // Phase 15 (Pair Conversation) carries the freshly generated pairs.
+                io.to(sessionId).emit("phase_changed", {
+                    phase,
+                    phaseSelectedIndices: session.phaseSelectedIndices,
+                    pairs: phase === 15 ? LessonSessionService_1.lessonSessionService.getPairsPayload(session) : null,
+                });
                 io.to(sessionId).emit("participants_updated", {
                     participants: Array.from(session.participants.values())
                 });
-                console.log(`Session ${sessionId} changed to phase ${phase}`);
-                // If changing to phase 14 (Finish/Leaderboard), mark ACTIVE DB ROUND as FINISHED
-                if (phase === 14) {
+                shared_config_1.logger.info(`Session ${sessionId} changed to phase ${phase}`);
+                // If changing to phase 16 (Wrap-up Leaderboard), mark ACTIVE DB ROUND as FINISHED
+                // Demo sessions have no DB round, no badges to unlock, and no students to notify.
+                if (phase === 16 && !session.isDemo) {
                     dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
                     // Non-blocking badge unlock check for the tutor
                     if (session.tutorId) {
-                        (0, BadgeService_1.checkAndUnlockBadges)(session.tutorId).catch((e) => console.error("[Socket] Badge check failed:", e));
+                        (0, BadgeService_1.checkAndUnlockBadges)(session.tutorId).catch((e) => shared_config_1.logger.error("[Socket] Badge check failed:", e));
                     }
                     // Trigger LINE Notifications for final score
                     (async () => {
@@ -279,7 +342,7 @@ const setupLessonSocket = (io) => {
                             }
                         }
                         catch (e) {
-                            console.error("[Socket] Failed to trigger score notification:", e);
+                            shared_config_1.logger.error("[Socket] Failed to trigger score notification:", e);
                         }
                     })();
                 }
@@ -287,12 +350,13 @@ const setupLessonSocket = (io) => {
         });
         // Student submits answer
         socket.on("submit_answer", async ({ sessionId, studentId, answer, question, expectedAnswer }) => {
-            // If it's a short answer, evaluate it
+            // AI-evaluated phases: 8=Guided Response (short answer), 12=Guided Writing
             let evaluatedAnswer = answer;
             const session = LessonSessionService_1.lessonSessionService.getSession(sessionId);
-            if (session && (session.currentPhase === 8 || session.currentPhase === 13)) {
-                // evaluate with AI
-                const aiResult = await (0, AIEvaluator_1.evaluateShortAnswer)(question, expectedAnswer, answer);
+            if (session && (session.currentPhase === 8 || session.currentPhase === 12)) {
+                const aiResult = session.currentPhase === 12
+                    ? await (0, AIEvaluator_1.evaluateWriting)(question, answer)
+                    : await (0, AIEvaluator_1.evaluateShortAnswer)(question, expectedAnswer, answer);
                 evaluatedAnswer = {
                     text: answer,
                     aiScore: aiResult.score,
@@ -301,14 +365,31 @@ const setupLessonSocket = (io) => {
                 // send personal result immediately back to student
                 socket.emit("ai_evaluation_result", evaluatedAnswer);
             }
+            else if (session && session.currentPhase === 13) {
+                // Language Questions (Step 12): teacher-mediated AI answer.
+                // Empty answer = student skipped (no question) — count as answered, no AI call.
+                const text = typeof answer === 'string' ? answer.trim() : '';
+                if (!text) {
+                    evaluatedAnswer = { text: '', languageAnswer: '' };
+                }
+                else {
+                    const articleContext = [session.articleData?.title, session.articleData?.passage]
+                        .filter(Boolean)
+                        .join("\n\n");
+                    const ai = await (0, AIEvaluator_1.answerLanguageQuestion)(text, articleContext);
+                    evaluatedAnswer = { text: answer, languageAnswer: ai.answer };
+                    socket.emit("language_answer_result", { question: answer, answer: ai.answer });
+                }
+            }
             const result = LessonSessionService_1.lessonSessionService.submitAnswer(sessionId, studentId, evaluatedAnswer);
             if (result) {
                 // Update participant's total score
                 const participant = result.session.participants.get(studentId);
                 if (participant) {
-                    if (result.session.currentPhase === 8 || result.session.currentPhase === 13) {
+                    if (result.session.currentPhase === 8 || result.session.currentPhase === 12) {
+                        // Guided Response (8) / Guided Writing (12) with AI score
                         participant.score = (participant.score || 0) + (evaluatedAnswer.aiScore || 0);
-                        // --- PERSIST DB ANSWER (SHORT ANSWER WITH AI) ---
+                        // --- PERSIST DB ANSWER (AI-SCORED) ---
                         dbWriter.persistAnswer({
                             sessionId: result.session.currentDbSessionId || sessionId,
                             studentId,
@@ -321,11 +402,40 @@ const setupLessonSocket = (io) => {
                             correctAnswer: expectedAnswer
                         });
                     }
+                    else if (result.session.currentPhase === 13) {
+                        // Language Questions (Step 12): participation point, store question + AI answer
+                        participant.score = (participant.score || 0) + 1;
+                        dbWriter.persistAnswer({
+                            sessionId: result.session.currentDbSessionId || sessionId,
+                            studentId,
+                            phase: result.session.currentPhase,
+                            answerText: String(answer),
+                            isCorrect: true,
+                            score: 1,
+                            aiFeedback: evaluatedAnswer.languageAnswer,
+                            questionText: "Language question",
+                            correctAnswer: ""
+                        });
+                    }
+                    else if (result.session.currentPhase === 14) {
+                        // Lesson Reflection (Step 13): store ratings, no competitive score
+                        dbWriter.persistAnswer({
+                            sessionId: result.session.currentDbSessionId || sessionId,
+                            studentId,
+                            phase: result.session.currentPhase,
+                            answerText: String(answer),
+                            isCorrect: true,
+                            score: 0,
+                            questionText: "Lesson reflection",
+                            correctAnswer: ""
+                        });
+                    }
                     else {
                         let correctLabel = "";
                         let resolvedAnswerText = String(answer);
                         const choiceIdx = String(answer).trim().toUpperCase().charCodeAt(0) - 65; // A=0, B=1, C=2, D=3
                         if (result.session.currentPhase === 7) {
+                            // Comprehension Check / MCQ (Step 7)
                             const idx = result.session.phaseSelectedIndices?.[7] || 0;
                             const mcqQuestion = result.session.articleData?.multipleChoiceQuestions?.[idx];
                             if (mcqQuestion) {
@@ -369,9 +479,10 @@ const setupLessonSocket = (io) => {
                                 }
                             }
                         }
-                        else if (result.session.currentPhase === 10) {
+                        else if (result.session.currentPhase === 9) {
+                            // Vocabulary Practice (Step 9)
                             const words = result.session.articleData?.words || [];
-                            const idx = result.session.phaseSelectedIndices?.[10] || 0;
+                            const idx = result.session.phaseSelectedIndices?.[9] || 0;
                             const targetWord = words[idx] || words[0];
                             if (targetWord) {
                                 const correctTranslation = targetWord.definition?.th || targetWord.translation || "ความหมายที่ถูกต้อง";
@@ -405,9 +516,10 @@ const setupLessonSocket = (io) => {
                                 }
                             }
                         }
-                        else if (result.session.currentPhase === 11) {
+                        else if (result.session.currentPhase === 10) {
+                            // Sentence Practice — fill in the blank (Step 10a)
                             const sentences = result.session.articleData?.sentences || [];
-                            const idx = result.session.phaseSelectedIndices?.[11] || 0;
+                            const idx = result.session.phaseSelectedIndices?.[10] || 0;
                             const targetSentence = typeof sentences[idx] === 'object' ? sentences[idx].sentences : sentences[idx];
                             if (targetSentence) {
                                 const words = String(targetSentence).split(' ');
@@ -426,9 +538,10 @@ const setupLessonSocket = (io) => {
                                 }
                             }
                         }
-                        else if (result.session.currentPhase === 12) {
+                        else if (result.session.currentPhase === 11) {
+                            // Sentence Practice — put words in order (Step 10b)
                             const sentences = result.session.articleData?.sentences || [];
-                            const idx = result.session.phaseSelectedIndices?.[12] || 0;
+                            const idx = result.session.phaseSelectedIndices?.[11] || 0;
                             const targetSentence = typeof sentences[idx] === 'object' ? sentences[idx].sentences : sentences[idx];
                             if (targetSentence) {
                                 const words = String(targetSentence).split(' ').filter((w) => String(w).trim().length > 0);
@@ -493,8 +606,17 @@ const setupLessonSocket = (io) => {
                     io.to(sessionId).emit("all_answered_broadcast", {
                         totalParticipants: result.session.participants.size
                     });
-                    console.log(`[Socket] All participants answered in session ${sessionId} phase ${result.session.currentPhase}`);
+                    shared_config_1.logger.info(`[Socket] All participants answered in session ${sessionId} phase ${result.session.currentPhase}`);
                 }
+            }
+        });
+        // Student toggles a sentence flag during Step 3 (Read the Article) to ask the tutor about pronunciation
+        socket.on("flag_sentence", ({ sessionId, studentId, sentenceIndex }) => {
+            const result = LessonSessionService_1.lessonSessionService.toggleSentenceFlag(sessionId, studentId, sentenceIndex);
+            if (result) {
+                const flagCounts = LessonSessionService_1.lessonSessionService.getFlagCounts(result.session);
+                // Broadcast updated counts to the whole room (tutor highlights, students sync their own state)
+                io.to(result.session.sessionId).emit("flags_updated", { flagCounts });
             }
         });
         // Tutor nudges a student to get ready
@@ -504,7 +626,7 @@ const setupLessonSocket = (io) => {
                 const participant = session.participants.get(studentId);
                 if (participant) {
                     io.to(participant.socketId).emit("nudge_received", { message: "คุณครูกำลังรอคุณอยู่... กด Ready หน่อยครับ!" });
-                    console.log(`Tutor nudged student ${studentId}`);
+                    shared_config_1.logger.info(`Tutor nudged student ${studentId}`);
                 }
             }
         });
@@ -519,7 +641,7 @@ const setupLessonSocket = (io) => {
                     io.to(sessionId).emit("participants_updated", {
                         participants: Array.from(session.participants.values())
                     });
-                    console.log(`Tutor kicked student ${studentId}`);
+                    shared_config_1.logger.info(`Tutor kicked student ${studentId}`);
                 }
             }
         });
@@ -529,14 +651,14 @@ const setupLessonSocket = (io) => {
             if (session) {
                 io.to(sessionId).emit("session_deleted", { message: "เซสชันถูกยกเลิกโดยคุณครู" });
                 LessonSessionService_1.lessonSessionService.deleteSession(sessionId);
-                console.log(`[Socket] Session ${sessionId} deleted by tutor`);
+                shared_config_1.logger.info(`[Socket] Session ${sessionId} deleted by tutor`);
             }
         });
         socket.on("disconnect", () => {
             const tutorSession = LessonSessionService_1.lessonSessionService.getSessionByTutorSocketId(socket.id);
             if (tutorSession) {
                 const { sessionId } = tutorSession;
-                console.log(`[Socket] Tutor disconnect detected for: ${socket.id}. Session ${sessionId} will close if tutor does not reconnect.`);
+                shared_config_1.logger.info(`[Socket] Tutor disconnect detected for: ${socket.id}. Session ${sessionId} will close if tutor does not reconnect.`);
                 setTimeout(() => {
                     const latestSession = LessonSessionService_1.lessonSessionService.getSession(sessionId);
                     if (latestSession?.tutorSocketId !== socket.id) {
@@ -544,11 +666,11 @@ const setupLessonSocket = (io) => {
                     }
                     io.to(sessionId).emit("session_deleted", { message: "à¹€à¸‹à¸ªà¸Šà¸±à¸™à¸–à¸¹à¸à¸¢à¸à¹€à¸¥à¸´à¸à¹‚à¸”à¸¢à¸„à¸¸à¸“à¸„à¸£à¸¹" });
                     LessonSessionService_1.lessonSessionService.deleteSession(sessionId);
-                    console.log(`[Socket] Session ${sessionId} deleted after tutor disconnect grace period`);
+                    shared_config_1.logger.info(`[Socket] Session ${sessionId} deleted after tutor disconnect grace period`);
                 }, 15000);
                 return;
             }
-            console.log(`[Socket] Disconnect detected for: ${socket.id}. Session state is preserved for auto-recovery.`);
+            shared_config_1.logger.info(`[Socket] Disconnect detected for: ${socket.id}. Session state is preserved for auto-recovery.`);
         });
     });
 };

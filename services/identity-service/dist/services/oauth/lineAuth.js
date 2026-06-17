@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyLineToken = verifyLineToken;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 function decodeLineTokenDebug(idToken) {
     const [, payload] = idToken.split(".");
     if (!payload) {
@@ -27,13 +28,25 @@ function decodeLineTokenDebug(idToken) {
 async function verifyLineToken(idToken) {
     try {
         const liffId = process.env.NEXT_PUBLIC_LIFF_ID;
-        const clientId = process.env.LINE_CHANNEL_ID || liffId?.split("-")[0];
+        const liffClientId = liffId?.split("-")[0];
+        const tutorClientId = process.env.LINE_CHANNEL_ID;
         const tokenDebug = decodeLineTokenDebug(idToken);
+        let clientId = tutorClientId;
+        if (tokenDebug?.aud) {
+            const aud = Array.isArray(tokenDebug.aud) ? tokenDebug.aud[0] : tokenDebug.aud;
+            if (aud === liffClientId) {
+                clientId = liffClientId;
+            }
+            else if (aud === tutorClientId) {
+                clientId = tutorClientId;
+            }
+        }
+        clientId = clientId || tutorClientId || liffClientId;
         if (!clientId) {
             throw new Error("LINE_CHANNEL_ID or NEXT_PUBLIC_LIFF_ID is not configured");
         }
         if (process.env.NODE_ENV !== "production") {
-            console.info("[LINE] Verifying ID token", {
+            shared_config_1.logger.info("[LINE] Verifying ID token", {
                 expectedClientId: clientId,
                 configuredLiffId: liffId,
                 tokenAudience: tokenDebug?.aud,
@@ -69,9 +82,10 @@ async function verifyLineToken(idToken) {
             picture: decoded.picture,
         };
     }
-    catch (err) {
-        console.error("LINE Token Verification Error:", err);
-        if (process.env.NODE_ENV !== "production" && err instanceof Error) {
+    catch (error) {
+        const err = error;
+        shared_config_1.logger.error("LINE Token Verification Error:", err);
+        if (process.env.NODE_ENV !== "production") {
             throw new Error(err.message);
         }
         throw new Error("Failed to verify LINE token");

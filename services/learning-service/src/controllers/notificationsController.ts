@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { PrismaClient } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -51,7 +52,7 @@ export const getNotificationSummary = async (req: AuthenticatedRequest, res: Res
       }
     });
   } catch (error) {
-    console.error("Error fetching notification summary:", error);
+    logger.error("Error fetching notification summary:", error);
     res.status(500).json({ error: "Failed to fetch notification summary" });
   }
 };

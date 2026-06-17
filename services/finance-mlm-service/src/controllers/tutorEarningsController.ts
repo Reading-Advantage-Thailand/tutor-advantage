@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -47,8 +48,9 @@ export async function getEarningsSummary(
       estimatedCommissionTHB: projection.totalPayoutTHB,
       networkBonusTHB: projection.networkBonusTHB,
     });
-  } catch (error: any) {
-    console.error("Get Earnings Summary Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Get Earnings Summary Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -206,8 +208,9 @@ export async function getEarningsHistory(
         nextTarget: projection.nextTarget,
       },
     });
-  } catch (error: any) {
-    console.error("Get Earnings History Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Get Earnings History Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -258,13 +261,14 @@ export async function syncTutorTransfer(
 
     const result = await SettlementService.syncPayoutTransferStatus(payoutLineId);
     return res.status(200).json({ transfer: result });
-  } catch (error: any) {
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
     if (error.message === "OMISE_PAYOUTS_NOT_CONFIGURED") {
       return res.status(502).json({
         error: { code: error.message, message: "Omise keys are not configured", requestId: req.id },
       });
     }
-    console.error("Sync Tutor Transfer Error:", error);
+    logger.error("Sync Tutor Transfer Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",

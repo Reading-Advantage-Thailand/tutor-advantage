@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { verifyGoogleToken } from "../services/oauth/googleAuth";
 import { verifyLineToken } from "../services/oauth/lineAuth";
 import { processOAuthLogin } from "../services/authService";
+import { logger } from "@tutor-advantage/shared-config";
 
 export async function handleOAuthCallback(req: Request, res: Response) {
   try {
@@ -72,13 +73,14 @@ export async function handleOAuthCallback(req: Request, res: Response) {
     );
 
     return res.status(200).json(authResult);
-  } catch (error: any) {
-    console.error("OAuth Callback Error:", error);
+  } catch (error) {
+    const err = error as Error;
+    logger.error("OAuth Callback Error:", err);
     return res.status(401).json({
       error: {
         code: "UNAUTHORIZED",
         message: "Invalid authorization code or provider error",
-        details: error.message,
+        details: err.message,
         requestId: req.id,
       },
     });

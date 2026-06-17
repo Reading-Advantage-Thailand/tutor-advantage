@@ -8,6 +8,7 @@ exports.deleteFromGCS = deleteFromGCS;
 const storage_1 = require("@google-cloud/storage");
 const path_1 = __importDefault(require("path"));
 const uuid_1 = require("uuid");
+const shared_config_1 = require("@tutor-advantage/shared-config");
 // Dynamically resolve service account path if it's relative in .env
 let keyFilename = process.env.GCP_KEY_FILEPATH;
 if (!keyFilename && process.env.GOOGLE_APPLICATION_CREDENTIALS) {
@@ -67,11 +68,12 @@ async function deleteFromGCS(publicUrl) {
         const [exists] = await file.exists();
         if (exists) {
             await file.delete();
-            console.log(`Successfully deleted old object from GCS: ${relativePath}`);
+            shared_config_1.logger.info(`Successfully deleted old object from GCS: ${relativePath}`);
         }
     }
     catch (error) {
         // Non-critical, don't crash if cleanup fails
-        console.error("Failed to cleanup old object from GCS:", error);
+        const err = error;
+        shared_config_1.logger.error("Failed to cleanup old object from GCS:", err);
     }
 }

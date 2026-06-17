@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -101,8 +102,9 @@ export async function getAdjustments(req: AuthenticatedRequest, res: Response) {
         totalPages: Math.ceil(total / limit),
       },
     });
-  } catch (error: any) {
-    console.error("GetAdjustments Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("GetAdjustments Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -210,8 +212,9 @@ export async function createAdjustment(
       message: "Adjustment created",
       adjustmentId: adj.adjustmentId,
     });
-  } catch (error: any) {
-    console.error("CreateAdjustment Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("CreateAdjustment Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -293,8 +296,9 @@ export async function approveAdjustment(
       message: "Adjustment approved",
       settlementRefresh,
     });
-  } catch (error: any) {
-    console.error("ApproveAdjustment Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("ApproveAdjustment Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -375,8 +379,9 @@ export async function rejectAdjustment(
       message: "Adjustment rejected",
       settlementRefresh,
     });
-  } catch (error: any) {
-    console.error("RejectAdjustment Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("RejectAdjustment Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",

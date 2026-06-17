@@ -580,7 +580,8 @@ export class SettlementService {
             transferFailureMessage: transfer.failure_message ?? null,
             transferredAt: transfer.sent_at ? new Date(transfer.sent_at) : null,
           });
-        } catch (error: any) {
+        } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
           await updatePayoutTransferTracking(line.payoutLineId, {
             provider: "omise",
             transferStatus: "TRANSFER_FAILED",
@@ -675,7 +676,8 @@ export class SettlementService {
         transferFailureMessage: transfer.failure_message ?? null,
         transferredAt: transfer.sent_at ?? null,
       };
-    } catch (error: any) {
+    } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
       await updatePayoutTransferTracking(line.payoutLineId, {
         provider: "omise",
         transferStatus: "TRANSFER_FAILED",

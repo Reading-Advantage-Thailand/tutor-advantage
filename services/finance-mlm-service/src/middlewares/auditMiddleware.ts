@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response, NextFunction } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "./authMiddleware";
@@ -47,7 +48,7 @@ export function auditTrailMiddleware(actionName: string) {
               },
             },
           })
-          .catch((err) => console.error("Failed to write audit log:", err));
+          .catch((err) => logger.error("Failed to write audit log:", err));
       }
 
       return res.json(body);

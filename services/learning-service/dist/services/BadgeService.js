@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BADGE_BONUS_SATANG = void 0;
 exports.checkAndUnlockBadges = checkAndUnlockBadges;
 exports.getTutorBadgeBonusSatang = getTutorBadgeBonusSatang;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 /**
@@ -24,10 +25,16 @@ exports.BADGE_BONUS_SATANG = {
  * Mirrors the calculation logic in performanceController.ts.
  */
 async function fetchTutorMetrics(tutorUserId) {
-    const [completedClasses, totalReferrals, totalInteractiveSessions, totalAnswers, correctAnswers, chatMessages, reviewAggregate,] = await Promise.all([
+    const [completedClasses, scheduledClasses, totalReferrals, totalInteractiveSessions, totalAnswers, correctAnswers, chatMessages, reviewAggregate,] = await Promise.all([
         prisma.class.findMany({
             where: { tutorUserId, status: { in: ["CLOSED", "closed"] } },
-            include: { book: { select: { classHours: true } } },
+            select: { classId: true },
+        }),
+        // Teaching hours from actual scheduled time (start→end) across all classes,
+        // mirroring performanceController.ts.
+        prisma.class.findMany({
+            where: { tutorUserId, startsAt: { not: null }, endsAt: { not: null } },
+            select: { startsAt: true, endsAt: true },
         }),
         prisma.enrollment.count({
             where: { class: { tutorUserId }, referralToken: { not: null } },
@@ -50,7 +57,10 @@ async function fetchTutorMetrics(tutorUserId) {
       WHERE "tutor_user_id" = CAST(${tutorUserId} AS uuid)
     `,
     ]);
-    const totalHours = completedClasses.reduce((sum, cls) => sum + (cls.book?.classHours ?? 0), 0);
+    const totalHours = Math.round(scheduledClasses.reduce((sum, cls) => {
+        const durationMs = cls.endsAt.getTime() - cls.startsAt.getTime();
+        return durationMs > 0 ? sum + durationMs / 3_600_000 : sum;
+    }, 0));
     // Compute avg response time from chat messages
     const pendingByConversation = new Map();
     const responseTimes = [];
@@ -131,12 +141,12 @@ async function checkAndUnlockBadges(tutorUserId) {
             create: { tutorUserId, badgeCode },
             update: {}, // already exists — no-op
         })));
-        console.log(`[BadgeService] Unlocked badges for ${tutorUserId}: ${toUnlock.join(", ")}`);
+        shared_config_1.logger.info(`[BadgeService] Unlocked badges for ${tutorUserId}: ${toUnlock.join(", ")}`);
         return toUnlock;
     }
     catch (error) {
         // Non-fatal: badge unlock failure should not block the caller
-        console.error(`[BadgeService] Failed to check badges for ${tutorUserId}:`, error);
+        shared_config_1.logger.error(`[BadgeService] Failed to check badges for ${tutorUserId}:`, error);
         return [];
     }
 }

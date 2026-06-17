@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getArticleDetails = void 0;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const pg_1 = require("pg");
 const connectionString = process.env.DATABASE_URL_READING_ADVANTAGE || process.env.DATABASE_URL;
 if (!connectionString) {
@@ -172,7 +173,7 @@ const mockArticles = {
 const getArticleDetails = async (articleId) => {
     // 1. Direct mock resolver for local development or empty databases
     if (mockArticles[articleId]) {
-        console.log(`[ReadingAdvantageDB] Returning mock data for articleId: ${articleId}`);
+        shared_config_1.logger.info(`[ReadingAdvantageDB] Returning mock data for articleId: ${articleId}`);
         return mockArticles[articleId];
     }
     try {
@@ -182,7 +183,8 @@ const getArticleDetails = async (articleId) => {
          FROM "article" 
          WHERE id = $1`, [articleId]);
         }
-        catch (e) {
+        catch (e_err) {
+            const e = e_err;
             if (e.code === "42P01") {
                 // relation does not exist
                 res = await pool.query(`SELECT *
@@ -194,7 +196,7 @@ const getArticleDetails = async (articleId) => {
             }
         }
         if (res.rows.length === 0) {
-            console.warn(`[ReadingAdvantageDB] Article ${articleId} not found, falling back to mock art-001`);
+            shared_config_1.logger.warn(`[ReadingAdvantageDB] Article ${articleId} not found, falling back to mock art-001`);
             return mockArticles["art-001"];
         }
         const article = res.rows[0];
@@ -205,7 +207,8 @@ const getArticleDetails = async (articleId) => {
          FROM "MultipleChoiceQuestion" 
          WHERE article_id = $1`, [articleId]);
         }
-        catch (e) {
+        catch (e_err) {
+            const e = e_err;
             if (e.code === "42P01") {
                 mcqRes = await pool.query(`SELECT id, question, options, answer 
            FROM "multiplechoicequestion" 
@@ -222,7 +225,8 @@ const getArticleDetails = async (articleId) => {
          FROM "ShortAnswerQuestion" 
          WHERE article_id = $1`, [articleId]);
         }
-        catch (e) {
+        catch (e_err) {
+            const e = e_err;
             if (e.code === "42P01") {
                 saqRes = await pool.query(`SELECT id, question, answer 
            FROM "shortanswerquestion" 
@@ -239,7 +243,7 @@ const getArticleDetails = async (articleId) => {
         };
     }
     catch (error) {
-        console.error("Error fetching article from Reading Advantage DB, falling back to mock art-001:", error);
+        shared_config_1.logger.error("Error fetching article from Reading Advantage DB, falling back to mock art-001:", error);
         return mockArticles["art-001"];
     }
 };

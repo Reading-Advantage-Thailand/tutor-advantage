@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Request, Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -124,7 +125,7 @@ export const getUsers = async (req: AuthenticatedRequest, res: Response) => {
 
     res.status(200).json({ users: formattedUsers });
   } catch (error) {
-    console.error("Get Users Error:", error);
+    logger.error("Get Users Error:", error);
     res.status(500).json({ error: "Could not fetch users" });
   }
 };
@@ -204,7 +205,7 @@ export const getUserDetails = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error("Get User Details Error:", error);
+    logger.error("Get User Details Error:", error);
     res.status(500).json({ error: "Could not fetch user details" });
   }
 };
@@ -340,10 +341,11 @@ export const verifyUser = async (req: Request, res: Response) => {
             },
           });
 
-          console.log(`[verifyUser] Created Omise recipient ${recipient.id} for tutor ${id}`);
-        } catch (omiseError: any) {
+          logger.info(`[verifyUser] Created Omise recipient ${recipient.id} for tutor ${id}`);
+        } catch (omiseError_err) {
+    const omiseError = omiseError_err as Error & { code?: string; details?: string; };
           // Non-fatal: log and continue — admin can set recipient ID manually
-          console.error(`[verifyUser] Failed to auto-create Omise recipient for ${id}:`, omiseError.message);
+          logger.error(`[verifyUser] Failed to auto-create Omise recipient for ${id}:`, omiseError.message);
         }
       }
     }
@@ -354,7 +356,7 @@ export const verifyUser = async (req: Request, res: Response) => {
       verificationDetails: newVerification,
     });
   } catch (error) {
-    console.error("Verify User Error:", error);
+    logger.error("Verify User Error:", error);
     res.status(500).json({ error: "Could not update verification status" });
   }
 };
@@ -383,7 +385,7 @@ export const suspendUser = async (req: AuthenticatedRequest, res: Response) => {
       message: `User ${id} has been ${updated.isActive ? "unsuspended" : "suspended"}`,
     });
   } catch (error) {
-    console.error("Suspend User Error:", error);
+    logger.error("Suspend User Error:", error);
     return res.status(500).json({ error: "Could not update user status" });
   }
 };
@@ -431,7 +433,7 @@ export const updateOmiseRecipient = async (req: AuthenticatedRequest, res: Respo
       omiseRecipientId: trimmed || null,
     });
   } catch (error) {
-    console.error("Update Omise Recipient Error:", error);
+    logger.error("Update Omise Recipient Error:", error);
     return res.status(500).json({ error: "Could not update Omise recipient ID" });
   }
 };
@@ -458,7 +460,7 @@ export const anonymizeUser = async (req: AuthenticatedRequest, res: Response) =>
       .status(200)
       .json({ success: true, message: `User ${id} has been anonymized` });
   } catch (error) {
-    console.error("Anonymize User Error:", error);
+    logger.error("Anonymize User Error:", error);
     res.status(500).json({ error: "Could not anonymize user" });
   }
 };

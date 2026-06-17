@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -97,8 +98,9 @@ export async function generateReferral(
       url: referralUrl,
       qrPayload: referralUrl, // For QR generation on the frontend
     });
-  } catch (error: any) {
-    console.error("Generate Referral Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Generate Referral Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",

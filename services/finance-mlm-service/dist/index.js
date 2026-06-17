@@ -10,7 +10,7 @@ const path_1 = __importDefault(require("path"));
 const database_1 = require("@tutor-advantage/database");
 // Load root .env file
 dotenv_1.default.config({ path: path_1.default.resolve(__dirname, "../../../.env") });
-console.log(`[Finance] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
+shared_config_1.logger.info(`[Finance] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
 const shared_config_1 = require("@tutor-advantage/shared-config");
 const authMiddleware_1 = require("./middlewares/authMiddleware");
 const paymentController_1 = require("./controllers/paymentController");
@@ -23,11 +23,12 @@ const operationsController_1 = require("./controllers/operationsController");
 const userController_1 = require("./controllers/userController");
 const fraudController_1 = require("./controllers/fraudController");
 const adminController_1 = require("./controllers/adminController");
+const couponController_1 = require("./controllers/couponController");
 const devController_1 = require("./controllers/devController");
 const tutorEarningsController_1 = require("./controllers/tutorEarningsController");
 const tutorNetworkController_1 = require("./controllers/tutorNetworkController");
 if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
-    console.error("FATAL: JWT_SECRET must be set in production");
+    shared_config_1.logger.error("FATAL: JWT_SECRET must be set in production");
     process.exit(1);
 }
 const app = (0, express_1.default)();
@@ -73,6 +74,10 @@ app.get("/version", (_req, res) => {
     res.status(200).json({ version: "1.0.0", service: "finance-mlm-service" });
 });
 app.get("/v1/admin/overview", authMiddleware_1.authMiddleware, adminController_1.getAdminOverview);
+// ── Coupon Routes (admin) ──────────────────────────────────────────────────
+app.post("/v1/coupons", authMiddleware_1.authMiddleware, couponController_1.createCoupon);
+app.get("/v1/coupons", authMiddleware_1.authMiddleware, couponController_1.getCoupons);
+app.post("/v1/coupons/:couponId/void", authMiddleware_1.authMiddleware, couponController_1.voidCoupon);
 // ── Payment Routes ─────────────────────────────────────────────────────────
 app.post("/v1/payments/intent", authMiddleware_1.authMiddleware, paymentController_1.createPaymentIntent);
 app.post("/v1/payments/confirm-mock", authMiddleware_1.authMiddleware, paymentController_1.confirmMockPayment);
@@ -85,6 +90,7 @@ app.post("/v1/webhooks/omise-transfer", transferWebhookController_1.handleTransf
 // ── Tutor Dashboard Routes ─────────────────────────────────────────────────
 app.get("/v1/tutors/earnings/summary", authMiddleware_1.authMiddleware, tutorEarningsController_1.getEarningsSummary);
 app.get("/v1/tutors/earnings/history", authMiddleware_1.authMiddleware, tutorEarningsController_1.getEarningsHistory);
+app.post("/v1/tutors/earnings/transfers/:payoutLineId/sync", authMiddleware_1.authMiddleware, tutorEarningsController_1.syncTutorTransfer);
 app.get("/v1/tutors/network", authMiddleware_1.authMiddleware, tutorNetworkController_1.getTutorNetwork);
 // ── Internal Routes (protected by X-Internal-Key, NOT JWT) ────────────────
 // Called by Google Cloud Scheduler — no authMiddleware
@@ -99,6 +105,7 @@ app.post("/v1/settlements/:snapshotId/approve", authMiddleware_1.authMiddleware,
 app.post("/v1/settlements/:snapshotId/reject", authMiddleware_1.authMiddleware, settlementController_1.rejectSettlement);
 app.get("/v1/settlements/:snapshotId/lines", authMiddleware_1.authMiddleware, settlementController_1.getSettlementLines);
 app.post("/v1/settlements/:snapshotId/lines/:payoutLineId/transfer", authMiddleware_1.authMiddleware, (0, auditMiddleware_1.auditTrailMiddleware)("RETRY_PAYOUT_TRANSFER"), settlementController_1.retryPayoutTransfer);
+app.post("/v1/settlements/:snapshotId/lines/:payoutLineId/sync-transfer", authMiddleware_1.authMiddleware, settlementController_1.syncPayoutTransfer);
 app.get("/v1/settlements/:snapshotId/export", authMiddleware_1.authMiddleware, settlementController_1.exportSettlementCsv);
 // ── Adjustment Routes ──────────────────────────────────────────────────────
 app.get("/v1/adjustments", authMiddleware_1.authMiddleware, adjustmentController_1.getAdjustments);
@@ -149,18 +156,18 @@ app.post("/v1/dev/actions/toggle-badge", devOnly, devController_1.devToggleBadge
 // Apply error handler last
 app.use(shared_config_1.errorHandlerMiddleware);
 const server = app.listen(port, () => {
-    console.log(`Finance & MLM Service running on port ${port}`);
+    shared_config_1.logger.info(`Finance & MLM Service running on port ${port}`);
 });
 // Graceful shutdown — drain connections then disconnect DB
 const shutdown = (signal) => async () => {
-    console.log(`[Finance] ${signal} received — shutting down gracefully`);
+    shared_config_1.logger.info(`[Finance] ${signal} received — shutting down gracefully`);
     server.close(async () => {
         await database_1.prisma.$disconnect();
-        console.log("[Finance] Shutdown complete");
+        shared_config_1.logger.info("[Finance] Shutdown complete");
         process.exit(0);
     });
     setTimeout(() => {
-        console.error("[Finance] Shutdown timeout — forcing exit");
+        shared_config_1.logger.error("[Finance] Shutdown timeout — forcing exit");
         process.exit(1);
     }, 10_000).unref();
 };

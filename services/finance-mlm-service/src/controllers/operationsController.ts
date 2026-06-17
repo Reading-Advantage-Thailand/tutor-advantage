@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -60,7 +61,7 @@ export const getExceptions = async (
       })),
     });
   } catch (error) {
-    console.error("Get Exceptions Error:", error);
+    logger.error("Get Exceptions Error:", error);
     res.status(500).json({ error: "Could not fetch exceptions" });
   }
 };
@@ -112,7 +113,7 @@ export const resolveException = async (
       message: `Exception ${id} updated to ${status}`,
     });
   } catch (error) {
-    console.error("Resolve Exception Error:", error);
+    logger.error("Resolve Exception Error:", error);
     res.status(500).json({ error: "Could not update exception" });
   }
 };
@@ -135,7 +136,7 @@ export const getUnresolvedLinks = async (
       })),
     });
   } catch (error) {
-    console.error("Get Unresolved Links Error:", error);
+    logger.error("Get Unresolved Links Error:", error);
     res.status(500).json({ error: "Could not fetch unresolved links" });
   }
 };
@@ -160,7 +161,7 @@ export const getMappings = async (
       })),
     });
   } catch (error) {
-    console.error("Get Legacy Mappings Error:", error);
+    logger.error("Get Legacy Mappings Error:", error);
     res.status(500).json({ error: "Could not fetch legacy mappings" });
   }
 };
@@ -202,7 +203,7 @@ export const createMapping = async (
       },
     });
   } catch (error) {
-    console.error("Create Legacy Mapping Error:", error);
+    logger.error("Create Legacy Mapping Error:", error);
     res.status(500).json({ error: "Could not save legacy mapping" });
   }
 };
@@ -217,7 +218,7 @@ export const deleteMapping = async (
     await prisma.legacyLinkMapping.delete({ where: { mappingId: id } });
     res.status(200).json({ success: true, message: "Mapping deleted" });
   } catch (error) {
-    console.error("Delete Legacy Mapping Error:", error);
+    logger.error("Delete Legacy Mapping Error:", error);
     res.status(500).json({ error: "Could not delete legacy mapping" });
   }
 };

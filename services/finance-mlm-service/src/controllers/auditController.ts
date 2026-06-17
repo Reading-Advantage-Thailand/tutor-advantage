@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -89,8 +90,9 @@ export async function getAuditLogs(req: AuthenticatedRequest, res: Response) {
         totalPages: Math.ceil(total / limit),
       },
     });
-  } catch (error: any) {
-    console.error("AuditLogs Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("AuditLogs Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",

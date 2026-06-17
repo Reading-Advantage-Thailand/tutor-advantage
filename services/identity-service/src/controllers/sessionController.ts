@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+import { logger } from "@tutor-advantage/shared-config";
 
 export async function getSession(req: AuthenticatedRequest, res: Response) {
   try {
@@ -64,13 +65,14 @@ export async function getSession(req: AuthenticatedRequest, res: Response) {
       role: user.role,
       requiresGuardian,
     });
-  } catch (error: any) {
-    console.error("Session Details Error:", error);
+  } catch (error) {
+    const err = error as Error;
+    logger.error("Session Details Error:", err);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
         message: "Could not fetch session details",
-        details: error.message,
+        details: err.message,
         requestId: req.id,
       },
     });

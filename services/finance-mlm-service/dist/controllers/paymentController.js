@@ -10,6 +10,7 @@ exports.getPromptPayQrCode = getPromptPayQrCode;
 exports.confirmMockPayment = confirmMockPayment;
 exports.handleWebhook = handleWebhook;
 exports.getPaymentHistory = getPaymentHistory;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const crypto_1 = __importDefault(require("crypto"));
 const taxService_1 = require("../services/taxService");
@@ -279,8 +280,9 @@ async function createPaymentIntent(req, res) {
             checkout: buildCheckoutDetailsFromCharge(charge),
         });
     }
-    catch (error) {
-        console.error("Create Payment Intent Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Create Payment Intent Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -351,8 +353,9 @@ async function getPaymentStatus(req, res) {
             checkout,
         });
     }
-    catch (error) {
-        console.error("Get Payment Status Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Get Payment Status Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -424,8 +427,9 @@ async function getPromptPayQrCode(req, res) {
             dataUri,
         });
     }
-    catch (error) {
-        console.error("Get PromptPay QR Code Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Get PromptPay QR Code Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -572,8 +576,9 @@ async function confirmMockPayment(req, res) {
             },
         });
     }
-    catch (error) {
-        console.error("Confirm Mock Payment Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Confirm Mock Payment Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -642,8 +647,9 @@ async function handleWebhook(req, res) {
         }
         return res.status(200).send("Webhook processed successfully");
     }
-    catch (error) {
-        console.error("Payment Webhook Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Payment Webhook Error:", error);
         // Return 200 even on errors for certain webhook providers to stop blast retries,
         // unless we strictly want them to retry. Returning 500 for now for visibility.
         return res.status(500).send("Webhook processing failed");
@@ -738,7 +744,7 @@ function verifyWebhookSignature(req, payload) {
         return true;
     }
     if (!secret) {
-        console.error("CRITICAL: Webhook secret is not configured");
+        shared_config_1.logger.error("CRITICAL: Webhook secret is not configured");
         return false;
     }
     const signature = req.headers["omise-signature"] || req.headers["x-omise-signature"];
@@ -772,7 +778,7 @@ async function buildCheckoutDetails(providerRef) {
         return buildCheckoutDetailsFromCharge(charge);
     }
     catch (error) {
-        console.error("Could not retrieve Omise checkout details:", error);
+        shared_config_1.logger.error("Could not retrieve Omise checkout details:", error);
         return { providerRef };
     }
 }
@@ -908,8 +914,9 @@ async function getPaymentHistory(req, res) {
             payments: result,
         });
     }
-    catch (error) {
-        console.error("Get Payment History Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Get Payment History Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",

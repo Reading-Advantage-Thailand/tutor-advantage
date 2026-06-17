@@ -13,7 +13,7 @@ dotenv_1.default.config({
     path: path_1.default.resolve(__dirname, "../../../.env"),
     override: process.env.NODE_ENV !== "production",
 });
-console.log(`[Identity] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
+shared_config_1.logger.info(`[Identity] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
 const shared_config_1 = require("@tutor-advantage/shared-config");
 const authController_1 = require("./controllers/authController");
 const sessionController_1 = require("./controllers/sessionController");

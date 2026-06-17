@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Request, Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -324,8 +325,9 @@ export async function createPaymentIntent(
       intent: serializePaymentIntent(finalIntent),
       checkout: buildCheckoutDetailsFromCharge(charge),
     });
-  } catch (error: any) {
-    console.error("Create Payment Intent Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Create Payment Intent Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -413,8 +415,9 @@ export async function getPaymentStatus(
       intent: serializePaymentIntent(currentIntent),
       checkout,
     });
-  } catch (error: any) {
-    console.error("Get Payment Status Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Get Payment Status Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -498,8 +501,9 @@ export async function getPromptPayQrCode(
       chargeId: charge.id,
       dataUri,
     });
-  } catch (error: any) {
-    console.error("Get PromptPay QR Code Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Get PromptPay QR Code Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -666,8 +670,9 @@ export async function confirmMockPayment(
         amountMinor: Number(fulfilledIntent.amountMinor),
       },
     });
-  } catch (error: any) {
-    console.error("Confirm Mock Payment Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Confirm Mock Payment Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -743,8 +748,9 @@ export async function handleWebhook(req: Request, res: Response) {
     }
 
     return res.status(200).send("Webhook processed successfully");
-  } catch (error: any) {
-    console.error("Payment Webhook Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Payment Webhook Error:", error);
     // Return 200 even on errors for certain webhook providers to stop blast retries,
     // unless we strictly want them to retry. Returning 500 for now for visibility.
     return res.status(500).send("Webhook processing failed");
@@ -858,7 +864,7 @@ function verifyWebhookSignature(req: Request, payload: unknown) {
   }
 
   if (!secret) {
-    console.error("CRITICAL: Webhook secret is not configured");
+    logger.error("CRITICAL: Webhook secret is not configured");
     return false;
   }
 
@@ -911,7 +917,7 @@ async function buildCheckoutDetails(providerRef?: string | null) {
     const charge = await retrieveOmiseCharge(providerRef);
     return buildCheckoutDetailsFromCharge(charge);
   } catch (error) {
-    console.error("Could not retrieve Omise checkout details:", error);
+    logger.error("Could not retrieve Omise checkout details:", error);
     return { providerRef };
   }
 }
@@ -1077,8 +1083,9 @@ export async function getPaymentHistory(req: AuthenticatedRequest, res: Response
       payments: result,
     });
 
-  } catch (error: any) {
-    console.error("Get Payment History Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Get Payment History Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",

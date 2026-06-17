@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -114,7 +115,7 @@ export const submitTutorReview = async (req: AuthenticatedRequest, res: Response
       },
     });
   } catch (error) {
-    console.error("Failed to submit tutor review", error);
+    logger.error("Failed to submit tutor review", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -161,7 +162,7 @@ export const getMyTutorReviewForClass = async (req: AuthenticatedRequest, res: R
         : null,
     });
   } catch (error) {
-    console.error("Failed to fetch tutor review", error);
+    logger.error("Failed to fetch tutor review", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

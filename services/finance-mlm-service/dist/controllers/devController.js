@@ -1,6 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.devToggleBadge = exports.devAddVolume = exports.devGetTutorBadges = exports.devPurge = exports.devSeedAdjustment = exports.devDeleteFraudFlag = exports.devSeedFraudFlag = exports.devRunSettlement = exports.devGetState = exports.devDeleteUser = exports.devUpdateUser = exports.devCreateUser = exports.devListUsers = void 0;
+/**
+ * devController.ts
+ *
+ * DEV-ONLY endpoints for managing users (CRUD) and triggering test actions.
+ * All routes mounting this controller are guarded by devOnlyMiddleware —
+ * they will never be reachable in production.
+ */
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const settlementService_1 = require("../services/settlementService");
 const ALLOWED_ROLES = ["ADMIN", "TUTOR", "STUDENT", "FINANCE_CHECKER"];
@@ -30,7 +38,7 @@ const devListUsers = async (_req, res) => {
         res.json({ users });
     }
     catch (err) {
-        console.error("devListUsers error:", err);
+        shared_config_1.logger.error("devListUsers error:", err);
         res.status(500).json({ error: "Could not list users" });
     }
 };
@@ -54,11 +62,12 @@ const devCreateUser = async (req, res) => {
         });
         res.status(201).json({ user });
     }
-    catch (err) {
+    catch (err_err) {
+        const err = err_err;
         if (err?.code === "P2002") {
             return res.status(409).json({ error: "Email already exists" });
         }
-        console.error("devCreateUser error:", err);
+        shared_config_1.logger.error("devCreateUser error:", err);
         res.status(500).json({ error: "Could not create user" });
     }
 };
@@ -99,14 +108,15 @@ const devUpdateUser = async (req, res) => {
         });
         res.json({ user });
     }
-    catch (err) {
+    catch (err_err) {
+        const err = err_err;
         if (err?.code === "P2025") {
             return res.status(404).json({ error: "User not found" });
         }
         if (err?.code === "P2002") {
             return res.status(409).json({ error: "Email already exists" });
         }
-        console.error("devUpdateUser error:", err);
+        shared_config_1.logger.error("devUpdateUser error:", err);
         res.status(500).json({ error: "Could not update user" });
     }
 };
@@ -119,11 +129,12 @@ const devDeleteUser = async (req, res) => {
         await database_1.prisma.user.delete({ where: { userId: id } });
         res.json({ success: true, message: `User ${id} permanently deleted` });
     }
-    catch (err) {
+    catch (err_err) {
+        const err = err_err;
         if (err?.code === "P2025") {
             return res.status(404).json({ error: "User not found" });
         }
-        console.error("devDeleteUser error:", err);
+        shared_config_1.logger.error("devDeleteUser error:", err);
         res.status(500).json({ error: "Could not delete user" });
     }
 };
@@ -162,7 +173,7 @@ const devGetState = async (_req, res) => {
         });
     }
     catch (err) {
-        console.error("devGetState error:", err);
+        shared_config_1.logger.error("devGetState error:", err);
         res.status(500).json({ error: "Could not fetch state" });
     }
 };
@@ -203,8 +214,9 @@ const devRunSettlement = async (req, res) => {
             skipped: false,
         });
     }
-    catch (err) {
-        console.error("devRunSettlement error:", err);
+    catch (err_err) {
+        const err = err_err;
+        shared_config_1.logger.error("devRunSettlement error:", err);
         res.status(500).json({ error: err.message || "Could not run settlement" });
     }
 };
@@ -218,8 +230,9 @@ const devSeedFraudFlag = async (req, res) => {
         });
         res.status(201).json({ flag });
     }
-    catch (err) {
-        console.error("devSeedFraudFlag error:", err);
+    catch (err_err) {
+        const err = err_err;
+        shared_config_1.logger.error("devSeedFraudFlag error:", err);
         res.status(500).json({ error: "Could not create fraud flag" });
     }
 };
@@ -231,10 +244,11 @@ const devDeleteFraudFlag = async (req, res) => {
         await database_1.prisma.fraudFlag.delete({ where: { flagId: id } });
         res.json({ success: true });
     }
-    catch (err) {
+    catch (err_err) {
+        const err = err_err;
         if (err?.code === "P2025")
             return res.status(404).json({ error: "Flag not found" });
-        console.error("devDeleteFraudFlag error:", err);
+        shared_config_1.logger.error("devDeleteFraudFlag error:", err);
         res.status(500).json({ error: "Could not delete flag" });
     }
 };
@@ -276,8 +290,9 @@ const devSeedAdjustment = async (req, res) => {
             periodMonth: run.periodMonth,
         });
     }
-    catch (err) {
-        console.error("devSeedAdjustment error:", err);
+    catch (err_err) {
+        const err = err_err;
+        shared_config_1.logger.error("devSeedAdjustment error:", err);
         res.status(500).json({ error: err.message || "Could not create adjustment" });
     }
 };
@@ -338,8 +353,9 @@ const devPurge = async (req, res) => {
         }
         res.json({ success: true, deleted: results });
     }
-    catch (err) {
-        console.error("devPurge error:", err);
+    catch (err_err) {
+        const err = err_err;
+        shared_config_1.logger.error("devPurge error:", err);
         res.status(500).json({ error: "Could not purge data" });
     }
 };
@@ -367,7 +383,7 @@ const devGetTutorBadges = async (req, res) => {
         res.json({ badges: badges.map((b) => b.badgeCode) });
     }
     catch (err) {
-        console.error("devGetTutorBadges error:", err);
+        shared_config_1.logger.error("devGetTutorBadges error:", err);
         res.status(500).json({ error: "Could not fetch badges" });
     }
 };
@@ -440,8 +456,9 @@ const devAddVolume = async (req, res) => {
             message: `Added DEV volume ฿${amount.toLocaleString()}`,
         });
     }
-    catch (err) {
-        console.error("devAddVolume error:", err);
+    catch (err_err) {
+        const err = err_err;
+        shared_config_1.logger.error("devAddVolume error:", err);
         res.status(500).json({ error: err.message || "Could not add volume" });
     }
 };
@@ -467,8 +484,9 @@ const devToggleBadge = async (req, res) => {
             return res.json({ action: "added", badgeCode });
         }
     }
-    catch (err) {
-        console.error("devToggleBadge error:", err);
+    catch (err_err) {
+        const err = err_err;
+        shared_config_1.logger.error("devToggleBadge error:", err);
         res.status(500).json({ error: err.message || "Could not toggle badge" });
     }
 };

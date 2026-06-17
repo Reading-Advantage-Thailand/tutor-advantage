@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.auditTrailMiddleware = auditTrailMiddleware;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const SENSITIVE_FIELDS = new Set([
     "password", "token", "secret", "cvv", "cardNumber", "pan",
@@ -42,7 +43,7 @@ function auditTrailMiddleware(actionName) {
                         },
                     },
                 })
-                    .catch((err) => console.error("Failed to write audit log:", err));
+                    .catch((err) => shared_config_1.logger.error("Failed to write audit log:", err));
             }
             return res.json(body);
         };

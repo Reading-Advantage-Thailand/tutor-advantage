@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -49,7 +50,7 @@ export const getAuctionClasses = async (req: AuthenticatedRequest, res: Response
 
     res.status(200).json({ auctions: formattedAuctions });
   } catch (error) {
-    console.error("Failed to fetch auction classes", error);
+    logger.error("Failed to fetch auction classes", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -119,7 +120,7 @@ export const claimAuctionClass = async (req: AuthenticatedRequest, res: Response
            })}::jsonb, NOW())`;
       } catch (e) {
          // Silently fail audit log if it doesn't work across schemas in this transaction setup
-         console.error("Audit log failed", e);
+         logger.error("Audit log failed", e);
       }
 
       return updatedTransfer;
@@ -133,8 +134,9 @@ export const claimAuctionClass = async (req: AuthenticatedRequest, res: Response
         classId: result.classId,
       }
     });
-  } catch (error: any) {
-    console.error("Failed to claim auction class", error, req.params.transferId);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Failed to claim auction class", error, req.params.transferId);
     
     // Provide user-friendly errors for known conditions
     if (error.message === "Class is no longer available" || 

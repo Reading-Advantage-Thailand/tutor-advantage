@@ -2,6 +2,7 @@ import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { deleteFromGCS } from "../lib/storage";
+import { logger } from "@tutor-advantage/shared-config";
 
 export async function getCurrentUser(req: AuthenticatedRequest, res: Response) {
   try {
@@ -38,8 +39,9 @@ export async function getCurrentUser(req: AuthenticatedRequest, res: Response) {
     }
 
     return res.status(200).json({ user });
-  } catch (error: any) {
-    console.error("Get Current User Error:", error);
+  } catch (error) {
+    const err = error as Error;
+    logger.error("Get Current User Error:", err);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -181,10 +183,10 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
 
     // Background cleanup old images to save space
     if (idCardImageUrl && currentUser?.idCardImageUrl && currentUser.idCardImageUrl !== idCardImageUrl) {
-      deleteFromGCS(currentUser.idCardImageUrl).catch(console.error);
+      deleteFromGCS(currentUser.idCardImageUrl).catch(e => logger.error(e));
     }
     if (bankBookImageUrl && currentUser?.bankBookImageUrl && currentUser.bankBookImageUrl !== bankBookImageUrl) {
-      deleteFromGCS(currentUser.bankBookImageUrl).catch(console.error);
+      deleteFromGCS(currentUser.bankBookImageUrl).catch(e => logger.error(e));
     }
 
     return res.status(200).json({ 
@@ -192,8 +194,9 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
       verificationStatus: updatedUser.verificationStatus,
       verificationDetails: (updatedUser.settings as any)?.verification
     });
-  } catch (error: any) {
-    console.error("Submit Verification Error:", error);
+  } catch (error) {
+    const err = error as Error;
+    logger.error("Submit Verification Error:", err);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",

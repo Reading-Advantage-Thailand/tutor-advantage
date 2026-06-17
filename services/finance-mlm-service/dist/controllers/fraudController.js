@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.triggerFraudAction = exports.getFraudFlags = void 0;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const ACTIVE_STATUSES = ["OPEN", "INVESTIGATING", "MONITORING", "FROZEN"];
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -71,7 +72,7 @@ const getFraudFlags = async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Get Fraud Flags Error:", error);
+        shared_config_1.logger.error("Get Fraud Flags Error:", error);
         res.status(500).json({ error: "Could not fetch fraud flags" });
     }
 };
@@ -121,7 +122,7 @@ const triggerFraudAction = async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Fraud Action Error:", error);
+        shared_config_1.logger.error("Fraud Action Error:", error);
         res.status(500).json({ error: "Could not update fraud flag" });
     }
 };

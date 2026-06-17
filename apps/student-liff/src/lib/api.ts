@@ -20,10 +20,6 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {},
   const baseUrl = isServer ? defaultBaseUrl : apiBase;
   const url = `${baseUrl}${endpoint}`;
 
-  if (!isServer && process.env.NODE_ENV !== "production") {
-    console.log(`[studentApi] Requesting: ${url}`);
-  }
-
   // Read session token from cookie instead of localStorage
   const token = !isServer ? getSessionToken() : null;
 

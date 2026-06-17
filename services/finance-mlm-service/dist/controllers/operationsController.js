@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteMapping = exports.createMapping = exports.getMappings = exports.getUnresolvedLinks = exports.resolveException = exports.getExceptions = void 0;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const formatAmount = (amountMinor) => {
     if (amountMinor == null)
@@ -51,7 +52,7 @@ const getExceptions = async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Get Exceptions Error:", error);
+        shared_config_1.logger.error("Get Exceptions Error:", error);
         res.status(500).json({ error: "Could not fetch exceptions" });
     }
 };
@@ -95,7 +96,7 @@ const resolveException = async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Resolve Exception Error:", error);
+        shared_config_1.logger.error("Resolve Exception Error:", error);
         res.status(500).json({ error: "Could not update exception" });
     }
 };
@@ -115,7 +116,7 @@ const getUnresolvedLinks = async (_req, res) => {
         });
     }
     catch (error) {
-        console.error("Get Unresolved Links Error:", error);
+        shared_config_1.logger.error("Get Unresolved Links Error:", error);
         res.status(500).json({ error: "Could not fetch unresolved links" });
     }
 };
@@ -137,7 +138,7 @@ const getMappings = async (_req, res) => {
         });
     }
     catch (error) {
-        console.error("Get Legacy Mappings Error:", error);
+        shared_config_1.logger.error("Get Legacy Mappings Error:", error);
         res.status(500).json({ error: "Could not fetch legacy mappings" });
     }
 };
@@ -170,7 +171,7 @@ const createMapping = async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Create Legacy Mapping Error:", error);
+        shared_config_1.logger.error("Create Legacy Mapping Error:", error);
         res.status(500).json({ error: "Could not save legacy mapping" });
     }
 };
@@ -182,7 +183,7 @@ const deleteMapping = async (req, res) => {
         res.status(200).json({ success: true, message: "Mapping deleted" });
     }
     catch (error) {
-        console.error("Delete Legacy Mapping Error:", error);
+        shared_config_1.logger.error("Delete Legacy Mapping Error:", error);
         res.status(500).json({ error: "Could not delete legacy mapping" });
     }
 };

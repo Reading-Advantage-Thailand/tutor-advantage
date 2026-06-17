@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.claimAuctionClass = exports.getAuctionClasses = void 0;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 // Get open class transfer requests (auction)
 const getAuctionClasses = async (req, res) => {
@@ -47,7 +48,7 @@ const getAuctionClasses = async (req, res) => {
         res.status(200).json({ auctions: formattedAuctions });
     }
     catch (error) {
-        console.error("Failed to fetch auction classes", error);
+        shared_config_1.logger.error("Failed to fetch auction classes", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };
@@ -109,7 +110,7 @@ const claimAuctionClass = async (req, res) => {
             }
             catch (e) {
                 // Silently fail audit log if it doesn't work across schemas in this transaction setup
-                console.error("Audit log failed", e);
+                shared_config_1.logger.error("Audit log failed", e);
             }
             return updatedTransfer;
         });
@@ -122,8 +123,9 @@ const claimAuctionClass = async (req, res) => {
             }
         });
     }
-    catch (error) {
-        console.error("Failed to claim auction class", error, req.params.transferId);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Failed to claim auction class", error, req.params.transferId);
         // Provide user-friendly errors for known conditions
         if (error.message === "Class is no longer available" ||
             error.message === "Transfer request has expired" ||

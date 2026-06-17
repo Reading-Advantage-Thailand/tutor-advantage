@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+import { logger } from "@tutor-advantage/shared-config";
 
 export async function getSettings(req: AuthenticatedRequest, res: Response) {
   try {
@@ -26,8 +27,9 @@ export async function getSettings(req: AuthenticatedRequest, res: Response) {
     const settings = ObjectUser.settings || {};
 
     return res.status(200).json({ settings });
-  } catch (error: any) {
-    console.error("Get Settings Error:", error);
+  } catch (error) {
+    const err = error as Error;
+    logger.error("Get Settings Error:", err);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -78,8 +80,9 @@ export async function updateSettings(req: AuthenticatedRequest, res: Response) {
     });
 
     return res.status(200).json({ settings: updatedUser.settings });
-  } catch (error: any) {
-    console.error("Update Settings Error:", error);
+  } catch (error) {
+    const err = error as Error;
+    logger.error("Update Settings Error:", err);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",

@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 const getSocketUrl = () => {
@@ -25,7 +25,7 @@ export interface LessonPair {
   members: { studentId: string; name: string; pictureUrl?: string }[];
 }
 
-interface LessonSessionData {
+export interface LessonSessionData {
   sessionId: string;
   currentPhase: number;
   phaseSelectedIndices?: Record<number, number>;
@@ -34,7 +34,7 @@ interface LessonSessionData {
   pairs?: LessonPair[] | null;
 }
 
-interface LessonParticipant {
+export interface LessonParticipant {
   studentId: string;
   name: string;
   pictureUrl?: string;
@@ -115,7 +115,6 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
 
     newSocket.on('connect', () => {
       setError(null);
-      console.log('Connected to Learning Service WebSocket');
       newSocket.emit('join_class', { classId, studentId, name, pictureUrl });
     });
 

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPerformanceSummary = void 0;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const BADGE_MAP = {
@@ -204,10 +205,16 @@ const getPerformanceSummary = async (req, res) => {
                 details: null,
             };
         }
-        const [completedClasses, totalReferrals, totalInteractiveSessions, badges] = await Promise.all([
+        const [completedClasses, scheduledClasses, totalReferrals, totalInteractiveSessions, badges] = await Promise.all([
             prisma.class.findMany({
                 where: { tutorUserId: userId, status: { in: ["CLOSED", "closed"] } },
-                include: { book: true },
+                select: { classId: true },
+            }),
+            // Teaching hours come from actual scheduled time across all classes that
+            // have both a start and end — not just CLOSED ones (book.classHours).
+            prisma.class.findMany({
+                where: { tutorUserId: userId, startsAt: { not: null }, endsAt: { not: null } },
+                select: { startsAt: true, endsAt: true },
             }),
             prisma.enrollment.count({
                 where: { class: { tutorUserId: userId }, referralToken: { not: null } },
@@ -220,7 +227,10 @@ const getPerformanceSummary = async (req, res) => {
                 orderBy: { unlockedAt: "desc" },
             }),
         ]);
-        const totalHours = completedClasses.reduce((sum, cls) => sum + (cls.book?.classHours || 0), 0);
+        const totalHours = Math.round(scheduledClasses.reduce((sum, cls) => {
+            const durationMs = cls.endsAt.getTime() - cls.startsAt.getTime();
+            return durationMs > 0 ? sum + durationMs / 3_600_000 : sum;
+        }, 0));
         const completedClassCount = completedClasses.length;
         const unlockedCodes = new Set(badges.map(b => b.badgeCode));
         const unlockedBadgeList = badges.map(b => {
@@ -329,7 +339,7 @@ const getPerformanceSummary = async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Failed to fetch performance summary", error);
+        shared_config_1.logger.error("Failed to fetch performance summary", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };

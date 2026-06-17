@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -379,7 +380,7 @@ export const getPerformanceSummary = async (req: AuthenticatedRequest, res: Resp
       },
     });
   } catch (error) {
-    console.error("Failed to fetch performance summary", error);
+    logger.error("Failed to fetch performance summary", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

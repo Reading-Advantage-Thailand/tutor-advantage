@@ -8,18 +8,27 @@ exports.getAvailableClasses = getAvailableClasses;
 exports.getBooks = getBooks;
 exports.deleteClass = deleteClass;
 exports.updateMeetingUrl = updateMeetingUrl;
+exports.rescheduleClass = rescheduleClass;
 exports.getClassArticles = getClassArticles;
 exports.createClassBookCycle = createClassBookCycle;
 exports.prepareClassBookCycleAccess = prepareClassBookCycleAccess;
+const shared_config_1 = require("@tutor-advantage/shared-config");
+const crypto_1 = require("crypto");
 const database_1 = require("@tutor-advantage/database");
 const ReadingAdvantageDB_1 = require("../services/ReadingAdvantageDB");
 const LineNotificationService_1 = require("../services/LineNotificationService");
+const couponService_1 = require("../services/couponService");
+// Maximum live-teaching hours allowed per class schedule
+const MAX_CLASS_HOURS = 22;
 async function createClass(req, res) {
     try {
         const userId = req.user?.userId;
         const role = req.user?.role;
-        const { bookId, title, capacity, scheduleDescription, startsAt, endsAt } = req.body;
-        const packagePriceSatang = req.body.packagePriceSatang ?? 250000;
+        const { bookId, title, capacity, scheduleDescription, scheduleData, startsAt, endsAt, totalHours, couponCode, isDemo } = req.body;
+        // A coupon or demo class makes the class free for students — price is forced to 0.
+        const isCouponClass = typeof couponCode === "string" && couponCode.trim().length > 0;
+        const isDemoClass = isDemo === true;
+        const packagePriceSatang = (isCouponClass || isDemoClass) ? 0 : (req.body.packagePriceSatang ?? 250000);
         if (!userId || role !== "TUTOR") {
             return res.status(401).json({
                 error: {
@@ -38,12 +47,29 @@ async function createClass(req, res) {
                 },
             });
         }
-        if (!Number.isInteger(packagePriceSatang) ||
-            packagePriceSatang <= 0) {
+        if (!isCouponClass && !isDemoClass &&
+            (!Number.isInteger(packagePriceSatang) || packagePriceSatang <= 0)) {
             return res.status(400).json({
                 error: {
                     code: "INVALID_PRICE",
                     message: "packagePriceSatang must be a positive integer",
+                    requestId: req.id,
+                },
+            });
+        }
+        // Validate the coupon up front so its free hours can extend the schedulable
+        // limit. Re-validated atomically inside the transaction on redeem.
+        let couponHours = 0;
+        if (isCouponClass) {
+            const validated = await (0, couponService_1.validateCoupon)(couponCode, userId);
+            couponHours = validated.hours;
+        }
+        const hoursLimit = MAX_CLASS_HOURS + couponHours;
+        if (typeof totalHours === "number" && totalHours > hoursLimit) {
+            return res.status(400).json({
+                error: {
+                    code: "HOURS_EXCEEDED",
+                    message: `Scheduled teaching hours (${totalHours}) exceed the ${hoursLimit}-hour limit`,
                     requestId: req.id,
                 },
             });
@@ -61,7 +87,27 @@ async function createClass(req, res) {
                 },
             });
         }
+        // Demo classes always teach the book's first article (fixed content),
+        // so the book must have at least one. They expire 24 hours after creation.
+        if (isDemoClass) {
+            const firstArticle = await database_1.prisma.article.findFirst({
+                where: { bookId: book.bookId },
+                orderBy: { createdAt: "asc" },
+            });
+            if (!firstArticle) {
+                return res.status(400).json({
+                    error: {
+                        code: "NO_ARTICLE",
+                        message: "This book has no articles available for demo",
+                        requestId: req.id,
+                    },
+                });
+            }
+        }
         const newClass = await database_1.prisma.$transaction(async (tx) => {
+            const demoExpiresAt = isDemoClass
+                ? new Date(Date.now() + 24 * 60 * 60 * 1000)
+                : undefined;
             const cls = await tx.class.create({
                 data: {
                     tutorUserId: userId,
@@ -70,12 +116,24 @@ async function createClass(req, res) {
                     capacity,
                     packagePriceMinor: BigInt(packagePriceSatang),
                     scheduleDescription,
+                    scheduleData: scheduleData || null,
                     meetingUrl: req.body.meetingUrl,
                     startsAt: startsAt ? new Date(startsAt) : undefined,
                     endsAt: endsAt ? new Date(endsAt) : undefined,
+                    isDemo: isDemoClass,
+                    expiresAt: demoExpiresAt,
                     status: "OPEN",
                 },
             });
+            // Redeem the coupon (if any) and grant its hours to the new free class.
+            if (isCouponClass) {
+                const hours = await (0, couponService_1.redeemCoupon)(tx, couponCode, userId, cls.classId, "NEW_CLASS");
+                await tx.class.update({
+                    where: { classId: cls.classId },
+                    data: { freeHours: hours },
+                });
+                cls.freeHours = hours;
+            }
             await tx.classBookCycle.create({
                 data: {
                     classId: cls.classId,
@@ -85,15 +143,40 @@ async function createClass(req, res) {
                     packagePriceMinor: BigInt(packagePriceSatang),
                 },
             });
-            return cls;
+            // Demo classes get a referral token created automatically.
+            let referralToken = null;
+            if (isDemoClass) {
+                const token = (0, crypto_1.randomUUID)();
+                await tx.referral.create({
+                    data: { token, classId: cls.classId, tutorUserId: userId, status: "ACTIVE" },
+                });
+                referralToken = token;
+            }
+            return { ...cls, referralToken };
         });
         return res.status(201).json({
             message: "Class created successfully",
-            class: serializeClass(newClass),
+            class: {
+                ...serializeClass(newClass),
+                referralToken: newClass.referralToken ?? null,
+                expiresAt: newClass.expiresAt ?? null,
+                isDemo: newClass.isDemo ?? false,
+            },
         });
     }
-    catch (error) {
-        console.error("Create Class Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        if (error instanceof couponService_1.CouponError) {
+            const status = error.code === "COUPON_NOT_FOUND"
+                ? 404
+                : error.code === "COUPON_NOT_ASSIGNED"
+                    ? 403
+                    : 409;
+            return res.status(status).json({
+                error: { code: error.code, message: error.message, requestId: req.id },
+            });
+        }
+        shared_config_1.logger.error("Create Class Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -225,8 +308,9 @@ async function closeClass(req, res) {
             class: updatedClass,
         });
     }
-    catch (error) {
-        console.error("Close Class Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Close Class Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -248,9 +332,13 @@ async function getClasses(req, res) {
         const role = req.user?.role;
         let classes;
         if (role === "TUTOR") {
+            const isDemoFilter = req.query.isDemo === "true" ? true : req.query.isDemo === "false" ? false : undefined;
             classes = await database_1.prisma.class.findMany({
-                where: { tutorUserId: userId },
-                include: { book: true, _count: { select: { enrollments: true } } },
+                where: {
+                    tutorUserId: userId,
+                    ...(isDemoFilter !== undefined ? { isDemo: isDemoFilter } : {}),
+                },
+                include: { book: { include: { series: true } }, referrals: { select: { token: true }, take: 1 }, _count: { select: { enrollments: true } } },
                 orderBy: { createdAt: "desc" },
             });
         }
@@ -276,22 +364,33 @@ async function getClasses(req, res) {
         const tutorMap = new Map(tutors.map((t) => [t.userId, t.displayName]));
         const mappedClasses = classes.map((c) => ({
             id: c.classId,
+            classId: c.classId,
             name: c.title || c.book?.title || "Untitled Class",
             book: c.book?.title || "Unknown Book",
+            bookTitle: c.book?.title || "Unknown Book",
+            bookId: c.bookId,
+            cefrLevel: c.book?.series?.cefrLevel || null,
             status: c.status.toLowerCase(),
             students: c.enrolledCount || 0,
+            enrolledCount: c.enrolledCount || 0,
             maxStudents: c.capacity,
+            capacity: c.capacity,
             packagePriceSatang: Number(c.packagePriceMinor),
             tutorUserId: c.tutorUserId,
             tutorName: tutorMap.get(c.tutorUserId) || "Unknown Tutor",
             nextSession: c.scheduleDescription || "ยังไม่ได้กำหนด",
+            scheduleData: c.scheduleData || null,
             startsAt: c.startsAt ?? null,
             endsAt: c.endsAt ?? null,
+            isDemo: c.isDemo ?? false,
+            expiresAt: c.expiresAt ?? null,
+            referralToken: c.referrals?.[0]?.token ?? null,
         }));
         return res.status(200).json({ classes: mappedClasses });
     }
-    catch (error) {
-        console.error("Get Classes Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Get Classes Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -315,7 +414,7 @@ async function getClassById(req, res) {
                 book: {
                     include: {
                         series: true,
-                        articles: { orderBy: { articleId: "asc" }, take: 3 },
+                        articles: { orderBy: [{ createdAt: "asc" }, { articleId: "asc" }], take: 3 },
                     },
                 },
                 bookCycles: {
@@ -399,7 +498,7 @@ async function getClassById(req, res) {
         const series = cls.book?.series;
         const cefr = series?.cefrLevel || "A1";
         const totalHours = cls.book?.classHours || 0;
-        const bookArticleCount = cls.book?.articleCount || cls.book?.articles?.length || 0;
+        const bookArticleCount = cls.isDemo ? 1 : (cls.book?.articleCount || cls.book?.articles?.length || 0);
         const status = mapClassStatus(cls.status, activeOrPendingStudents, cls.capacity);
         const firstArticle = cls.book?.articles?.[0];
         const mapped = {
@@ -420,6 +519,7 @@ async function getClassById(req, res) {
             level: cls.book?.levelNumber || 1,
             seriesColor: getSeriesColor(cefr),
             totalHours,
+            freeHours: cls.freeHours || 0,
             independentHours: cls.book?.independentHours || 0,
             articleCount: bookArticleCount,
             activeBookCycleId: activeCycle?.classBookCycleId || null,
@@ -460,6 +560,7 @@ async function getClassById(req, res) {
             startsAt: cls.startsAt,
             endsAt: cls.endsAt,
             schedule: cls.scheduleDescription || "ยังไม่ได้กำหนด",
+            scheduleData: cls.scheduleData || null,
             meetingUrl: cls.tutorUserId === userId || isActiveEnrollment ? cls.meetingUrl || "" : "",
             tutor: {
                 name: tutor?.displayName || "Unknown Tutor",
@@ -468,7 +569,7 @@ async function getClassById(req, res) {
                 students: tutorStudentCount,
             },
             articleId: firstArticle?.articleId || null,
-            articles: cls.book?.articles?.map((article, index) => ({
+            articles: (cls.isDemo ? cls.book?.articles?.slice(0, 1) : cls.book?.articles)?.map((article, index) => ({
                 id: article.articleId,
                 no: index + 1,
                 title: article.title,
@@ -505,8 +606,9 @@ async function getClassById(req, res) {
         };
         return res.status(200).json({ class: mapped });
     }
-    catch (error) {
-        console.error("Get Class By ID Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Get Class By ID Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -589,8 +691,9 @@ async function getAvailableClasses(req, res) {
         });
         return res.status(200).json({ classes: mappedClasses });
     }
-    catch (error) {
-        console.error("Get Available Classes Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Get Available Classes Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -611,8 +714,9 @@ async function getBooks(_req, res) {
         });
         return res.status(200).json({ books });
     }
-    catch (error) {
-        console.error("Get Books Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Get Books Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -623,11 +727,7 @@ async function getBooks(_req, res) {
 }
 async function deleteClass(req, res) {
     try {
-        if (process.env.NODE_ENV !== "development") {
-            return res.status(404).json({
-                error: { code: "NOT_FOUND", message: "Class not found" },
-            });
-        }
+        // Environment check moved below to allow Demo class deletion in all environments
         const userId = req.user?.userId;
         const { classId } = req.params;
         if (!userId) {
@@ -647,30 +747,36 @@ async function deleteClass(req, res) {
                 .status(404)
                 .json({ error: { code: "NOT_FOUND", message: "Class not found" } });
         }
+        const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === "development";
+        if (!isDev && !cls.isDemo) {
+            return res.status(403).json({
+                error: { code: "FORBIDDEN", message: "Cannot delete a non-demo class in production" },
+            });
+        }
         const enrollmentIds = cls.enrollments.map((e) => e.enrollmentId);
         const conversationIds = cls.conversations.map((c) => c.conversationId);
-        console.log(`[DELETE_CLASS] Starting deletion for class: ${classId}`);
+        shared_config_1.logger.info(`[DELETE_CLASS] Starting deletion for class: ${classId}`);
         // Break down into smaller steps for better error visibility
         try {
             if (enrollmentIds.length > 0) {
-                console.log(`[DELETE_CLASS] Step 1: Cleaning up Finance records for ${enrollmentIds.length} enrollments...`);
+                shared_config_1.logger.info(`[DELETE_CLASS] Step 1: Cleaning up Finance records for ${enrollmentIds.length} enrollments...`);
                 // PaymentReceipts reference PaymentIntents
                 const receiptsDeleted = await database_1.prisma.paymentReceipt.deleteMany({
                     where: { paymentIntent: { enrollmentId: { in: enrollmentIds } } },
                 });
-                console.log(`[DELETE_CLASS] Deleted ${receiptsDeleted.count} payment receipts`);
+                shared_config_1.logger.info(`[DELETE_CLASS] Deleted ${receiptsDeleted.count} payment receipts`);
                 // PaymentEvents reference PaymentIntents
                 const eventsDeleted = await database_1.prisma.paymentEvent.deleteMany({
                     where: { paymentIntent: { enrollmentId: { in: enrollmentIds } } },
                 });
-                console.log(`[DELETE_CLASS] Deleted ${eventsDeleted.count} payment events`);
+                shared_config_1.logger.info(`[DELETE_CLASS] Deleted ${eventsDeleted.count} payment events`);
                 // PaymentIntents reference Enrollments
                 const intentsDeleted = await database_1.prisma.paymentIntent.deleteMany({
                     where: { enrollmentId: { in: enrollmentIds } },
                 });
-                console.log(`[DELETE_CLASS] Deleted ${intentsDeleted.count} payment intents`);
+                shared_config_1.logger.info(`[DELETE_CLASS] Deleted ${intentsDeleted.count} payment intents`);
             }
-            console.log(`[DELETE_CLASS] Step 2: Cleaning up Chat records...`);
+            shared_config_1.logger.info(`[DELETE_CLASS] Step 2: Cleaning up Chat records...`);
             if (conversationIds.length > 0) {
                 await database_1.prisma.message.deleteMany({
                     where: { conversationId: { in: conversationIds } },
@@ -682,7 +788,7 @@ async function deleteClass(req, res) {
                     where: { conversationId: { in: conversationIds } },
                 });
             }
-            console.log(`[DELETE_CLASS] Step 3: Cleaning up Learning relations...`);
+            shared_config_1.logger.info(`[DELETE_CLASS] Step 3: Cleaning up Learning relations...`);
             await database_1.prisma.enrollmentPackage.deleteMany({
                 where: { enrollmentId: { in: enrollmentIds } },
             });
@@ -690,20 +796,22 @@ async function deleteClass(req, res) {
             await database_1.prisma.referral.deleteMany({ where: { classId } });
             await database_1.prisma.classTransferRequest.deleteMany({ where: { classId } });
             await database_1.prisma.classBookCycle.deleteMany({ where: { classId } });
-            console.log(`[DELETE_CLASS] Step 4: Deleting the Class record itself...`);
+            shared_config_1.logger.info(`[DELETE_CLASS] Step 4: Deleting the Class record itself...`);
             await database_1.prisma.class.delete({
                 where: { classId },
             });
-            console.log(`[DELETE_CLASS] ✅ Successfully deleted class ${classId}`);
+            shared_config_1.logger.info(`[DELETE_CLASS] ✅ Successfully deleted class ${classId}`);
             return res.status(200).json({ message: "Class deleted successfully" });
         }
-        catch (stepError) {
-            console.error("[DELETE_CLASS] Step Error:", stepError);
+        catch (stepError_err) {
+            const stepError = stepError_err;
+            shared_config_1.logger.error("[DELETE_CLASS] Step Error:", stepError);
             throw stepError; // Re-throw to be caught by main catch
         }
     }
-    catch (error) {
-        console.error("[DELETE_CLASS] ❌ FINAL ERROR:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("[DELETE_CLASS] ❌ FINAL ERROR:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -741,10 +849,86 @@ async function updateMeetingUrl(req, res) {
             .status(200)
             .json({ message: "Meeting URL updated", meetingUrl: updated.meetingUrl });
     }
-    catch (error) {
-        console.error("Update Meeting URL error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Update Meeting URL error:", error);
         return res.status(500).json({
             error: { code: "INTERNAL_SERVER_ERROR", message: "Update failed" },
+        });
+    }
+}
+async function rescheduleClass(req, res) {
+    try {
+        const userId = req.user?.userId;
+        const { classId } = req.params;
+        const { scheduleDescription, scheduleData, startsAt, endsAt, totalHours } = req.body;
+        if (!userId) {
+            return res
+                .status(401)
+                .json({ error: { code: "UNAUTHORIZED", message: "User ID missing" } });
+        }
+        const cls = await database_1.prisma.class.findUnique({
+            where: { classId },
+            include: {
+                enrollments: {
+                    where: { status: "ACTIVE" },
+                    select: { studentUserId: true },
+                },
+            },
+        });
+        if (!cls || cls.tutorUserId !== userId) {
+            return res.status(404).json({
+                error: { code: "NOT_FOUND", message: "Class not found or unauthorized" },
+            });
+        }
+        // Coupon-granted free hours extend the schedulable limit beyond the base cap.
+        const hoursLimit = MAX_CLASS_HOURS + (cls.freeHours || 0);
+        if (typeof totalHours === "number" && totalHours > hoursLimit) {
+            return res.status(400).json({
+                error: {
+                    code: "HOURS_EXCEEDED",
+                    message: `Scheduled teaching hours (${totalHours}) exceed the ${hoursLimit}-hour limit`,
+                    requestId: req.id,
+                },
+            });
+        }
+        const updated = await database_1.prisma.class.update({
+            where: { classId },
+            data: {
+                scheduleDescription: scheduleDescription ?? cls.scheduleDescription,
+                scheduleData: scheduleData !== undefined ? scheduleData : cls.scheduleData,
+                startsAt: startsAt ? new Date(startsAt) : cls.startsAt,
+                endsAt: endsAt ? new Date(endsAt) : cls.endsAt,
+            },
+        });
+        // Notify enrolled students about the new schedule
+        const studentIds = cls.enrollments.map((e) => e.studentUserId);
+        if (studentIds.length > 0) {
+            const classLink = LineNotificationService_1.LineNotificationService.buildLiffDeepLink(`/classes/${classId}`);
+            const message = [
+                `ตารางเรียนของคลาส "${cls.title}" มีการเปลี่ยนแปลง`,
+                updated.scheduleDescription ? `ตารางใหม่: ${updated.scheduleDescription}` : "",
+                classLink ? `ดูรายละเอียด: ${classLink}` : "",
+            ].filter(Boolean).join("\n");
+            Promise.allSettled(studentIds.map((sid) => LineNotificationService_1.LineNotificationService.sendToUser(sid, message, {
+                type: "notifyClassReminders",
+            }))).catch((e) => shared_config_1.logger.error("Reschedule Notification Error:", e));
+        }
+        return res.status(200).json({
+            message: "Class rescheduled successfully",
+            class: serializeClass(updated),
+        });
+    }
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Reschedule Class Error:", error);
+        return res.status(500).json({
+            error: {
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Could not reschedule class",
+                details: error.message,
+                requestId: req.id,
+            },
         });
     }
 }
@@ -758,7 +942,7 @@ async function translateToThai(text) {
         return json?.[0]?.[0]?.[0] || text;
     }
     catch (err) {
-        console.error("Translation error:", err);
+        shared_config_1.logger.error("Translation error:", err);
         return text;
     }
 }
@@ -824,13 +1008,15 @@ async function getClassArticles(req, res) {
         }
         const dbArticlesRaw = await database_1.prisma.article.findMany({
             where: { bookId: cycle.bookId },
+            orderBy: [
+                { createdAt: "asc" },
+                { articleId: "asc" }
+            ]
         });
-        // Sort articles by their numeric articleId so order is stable and sequential
-        const dbArticles = [...dbArticlesRaw].sort((a, b) => {
-            const aNum = parseInt(a.articleId.replace(/\D/g, ""), 10) || 0;
-            const bNum = parseInt(b.articleId.replace(/\D/g, ""), 10) || 0;
-            return aNum - bNum;
-        });
+        let dbArticles = [...dbArticlesRaw];
+        if (cls.isDemo) {
+            dbArticles = dbArticles.slice(0, 1);
+        }
         // Fetch completed sessions for this class to mark completed articles
         const completedSessions = await database_1.prisma.interactiveSession.findMany({
             where: {
@@ -840,13 +1026,13 @@ async function getClassArticles(req, res) {
             },
             select: { articleId: true }
         }).catch((error) => {
-            console.warn("Could not fetch completed interactive sessions:", error);
+            shared_config_1.logger.warn("Could not fetch completed interactive sessions:", error);
             return [];
         });
         const completedArticleIds = new Set(completedSessions.map(s => s.articleId));
         const articles = await Promise.all(dbArticles.map(async (art, index) => {
             const details = await (0, ReadingAdvantageDB_1.getArticleDetails)(art.articleId).catch((error) => {
-                console.warn(`Could not fetch Reading Advantage details for article ${art.articleId}:`, error);
+                shared_config_1.logger.warn(`Could not fetch Reading Advantage details for article ${art.articleId}:`, error);
                 return null;
             });
             let thaiSummary = "";
@@ -884,6 +1070,7 @@ async function getClassArticles(req, res) {
                 summary: thaiSummary || "ไม่มีสรุปเนื้อหาสำหรับบทความนี้",
                 passage: details?.passage ? `${details.passage.substring(0, 120)}...` : "", // Return a snippet for passage display
                 cefrLevel: displayCefr,
+                imageUrl: art.articleId ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${art.articleId}.png` : null,
                 isCompleted: completedArticleIds.has(art.articleId)
             };
         }));
@@ -898,8 +1085,9 @@ async function getClassArticles(req, res) {
             articles,
         });
     }
-    catch (error) {
-        console.error("Get Class Articles Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Get Class Articles Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -1007,7 +1195,7 @@ async function createClassBookCycle(req, res) {
             Promise.allSettled(result.studentUserIds.map((studentUserId) => LineNotificationService_1.LineNotificationService.sendToUser(studentUserId, message, {
                 type: "notifyClassReminders",
             }))).catch((notifyError) => {
-                console.error("Class Book Cycle Notification Error:", notifyError);
+                shared_config_1.logger.error("Class Book Cycle Notification Error:", notifyError);
             });
         }
         return res.status(201).json({
@@ -1023,7 +1211,8 @@ async function createClassBookCycle(req, res) {
             },
         });
     }
-    catch (error) {
+    catch (error_err) {
+        const error = error_err;
         if (error.message === "CLASS_NOT_FOUND") {
             return res.status(404).json({
                 error: { code: "NOT_FOUND", message: "Class not found or unauthorized" },
@@ -1039,7 +1228,7 @@ async function createClassBookCycle(req, res) {
                 error: { code: error.message, message: bookCycleMessages[error.message] },
             });
         }
-        console.error("Create Class Book Cycle Error:", error);
+        shared_config_1.logger.error("Create Class Book Cycle Error:", error);
         return res.status(500).json({
             error: { code: "INTERNAL_SERVER_ERROR", message: "Could not open class book" },
         });
@@ -1115,7 +1304,8 @@ async function prepareClassBookCycleAccess(req, res) {
             },
         });
     }
-    catch (error) {
+    catch (error_err) {
+        const error = error_err;
         if (error.message === "NOT_ENROLLED") {
             return res.status(403).json({
                 error: { code: "NOT_ENROLLED", message: "Please enroll in the class first" },
@@ -1131,7 +1321,7 @@ async function prepareClassBookCycleAccess(req, res) {
                 error: { code: "NOT_FOUND", message: "Book cycle not found" },
             });
         }
-        console.error("Prepare Class Book Cycle Access Error:", error);
+        shared_config_1.logger.error("Prepare Class Book Cycle Access Error:", error);
         return res.status(500).json({
             error: { code: "INTERNAL_SERVER_ERROR", message: "Could not prepare upgrade access" },
         });

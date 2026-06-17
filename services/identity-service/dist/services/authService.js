@@ -7,8 +7,9 @@ exports.processOAuthLogin = processOAuthLogin;
 const database_1 = require("@tutor-advantage/database");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const JWT_SECRET = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
-async function processOAuthLogin(provider, providerSubject, email, name, picture = "", sponsorTutorId) {
+async function processOAuthLogin(provider, providerSubject, email, name, picture = "", sponsorTutorId, defaultRole) {
     let user;
+    let roleUpgraded = false;
     const invitedSponsorId = provider !== "line" && sponsorTutorId
         ? await resolveActiveTutorSponsorId(sponsorTutorId)
         : null;
@@ -26,12 +27,15 @@ async function processOAuthLogin(provider, providerSubject, email, name, picture
     });
     if (existingIdentity) {
         user = existingIdentity.user;
-        // If the identity already exists, optionally update the profile picture if missing
-        if (picture && !user.profilePictureUrl) {
-            user = await database_1.prisma.user.update({
-                where: { userId: user.userId },
-                data: { profilePictureUrl: picture },
-            });
+        const updateData = {};
+        if (picture && !user.profilePictureUrl)
+            updateData.profilePictureUrl = picture;
+        if (defaultRole === "TUTOR" && user.role !== "TUTOR") {
+            updateData.role = "TUTOR";
+            roleUpgraded = true;
+        }
+        if (Object.keys(updateData).length > 0) {
+            user = await database_1.prisma.user.update({ where: { userId: user.userId }, data: updateData });
         }
     }
     else {
@@ -43,8 +47,7 @@ async function processOAuthLogin(provider, providerSubject, email, name, picture
         }
         // 3. If still no user, create a new one.
         if (!user) {
-            // Default role is STUDENT to prevent insecure elevated privileges upon signup
-            const role = "STUDENT";
+            const role = defaultRole === "TUTOR" ? "TUTOR" : "STUDENT";
             // Create user and link identity in one transaction
             user = await database_1.prisma.user.create({
                 data: {
@@ -98,11 +101,12 @@ async function processOAuthLogin(provider, providerSubject, email, name, picture
     const sessionToken = jsonwebtoken_1.default.sign({ userId: user.userId, role: user.role }, JWT_SECRET, { expiresIn: "7d" });
     return {
         sessionToken,
+        roleUpgraded,
         user: {
             id: user.userId,
             name: user.displayName || "",
             role: user.role,
-            requiresGuardian: false, // Tutors are adults
+            requiresGuardian: false,
         },
     };
 }

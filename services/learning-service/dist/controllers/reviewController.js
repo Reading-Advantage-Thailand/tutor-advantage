@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMyTutorReviewForClass = exports.submitTutorReview = void 0;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const parseRating = (value) => {
@@ -95,7 +96,7 @@ const submitTutorReview = async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Failed to submit tutor review", error);
+        shared_config_1.logger.error("Failed to submit tutor review", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };
@@ -140,7 +141,7 @@ const getMyTutorReviewForClass = async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Failed to fetch tutor review", error);
+        shared_config_1.logger.error("Failed to fetch tutor review", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };

@@ -4,10 +4,11 @@ exports.handleOAuthCallback = handleOAuthCallback;
 const googleAuth_1 = require("../services/oauth/googleAuth");
 const lineAuth_1 = require("../services/oauth/lineAuth");
 const authService_1 = require("../services/authService");
+const shared_config_1 = require("@tutor-advantage/shared-config");
 async function handleOAuthCallback(req, res) {
     try {
         // The request body matches the OpenAPI definition: { provider, code }
-        const { provider, code, sponsorTutorId, codeVerifier } = req.body;
+        const { provider, code, sponsorTutorId, codeVerifier, defaultRole } = req.body;
         // Allow frontend to explicitly pass the exact redirectUri used, or fallback
         const baseUrl = process.env.OAUTH_REDIRECT_URI || "http://localhost:3000/api/auth/callback";
         const redirectUri = req.body.redirectUri || `${baseUrl}/${provider}`;
@@ -58,16 +59,17 @@ async function handleOAuthCallback(req, res) {
                 },
             });
         }
-        const authResult = await (0, authService_1.processOAuthLogin)(provider, providerSubject, email, name, picture, typeof sponsorTutorId === "string" ? sponsorTutorId : null);
+        const authResult = await (0, authService_1.processOAuthLogin)(provider, providerSubject, email, name, picture, typeof sponsorTutorId === "string" ? sponsorTutorId : null, typeof defaultRole === "string" ? defaultRole : undefined);
         return res.status(200).json(authResult);
     }
     catch (error) {
-        console.error("OAuth Callback Error:", error);
+        const err = error;
+        shared_config_1.logger.error("OAuth Callback Error:", err);
         return res.status(401).json({
             error: {
                 code: "UNAUTHORIZED",
                 message: "Invalid authorization code or provider error",
-                details: error.message,
+                details: err.message,
                 requestId: req.id,
             },
         });
