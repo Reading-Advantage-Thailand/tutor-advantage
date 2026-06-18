@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.anonymizeUser = exports.updateOmiseRecipient = exports.suspendUser = exports.verifyUser = exports.getUserDetails = exports.getUsers = void 0;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const omiseService_1 = require("../services/omiseService");
 const ACTIVE_CLASS_STATUSES = ["ACTIVE", "OPEN", "IN_PROGRESS", "PUBLISHED"];
@@ -103,7 +104,7 @@ const getUsers = async (req, res) => {
         res.status(200).json({ users: formattedUsers });
     }
     catch (error) {
-        console.error("Get Users Error:", error);
+        shared_config_1.logger.error("Get Users Error:", error);
         res.status(500).json({ error: "Could not fetch users" });
     }
 };
@@ -178,7 +179,7 @@ const getUserDetails = async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Get User Details Error:", error);
+        shared_config_1.logger.error("Get User Details Error:", error);
         res.status(500).json({ error: "Could not fetch user details" });
     }
 };
@@ -285,11 +286,12 @@ const verifyUser = async (req, res) => {
                             },
                         },
                     });
-                    console.log(`[verifyUser] Created Omise recipient ${recipient.id} for tutor ${id}`);
+                    shared_config_1.logger.info(`[verifyUser] Created Omise recipient ${recipient.id} for tutor ${id}`);
                 }
-                catch (omiseError) {
+                catch (omiseError_err) {
+                    const omiseError = omiseError_err;
                     // Non-fatal: log and continue — admin can set recipient ID manually
-                    console.error(`[verifyUser] Failed to auto-create Omise recipient for ${id}:`, omiseError.message);
+                    shared_config_1.logger.error(`[verifyUser] Failed to auto-create Omise recipient for ${id}:`, omiseError.message);
                 }
             }
         }
@@ -300,7 +302,7 @@ const verifyUser = async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Verify User Error:", error);
+        shared_config_1.logger.error("Verify User Error:", error);
         res.status(500).json({ error: "Could not update verification status" });
     }
 };
@@ -329,7 +331,7 @@ const suspendUser = async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Suspend User Error:", error);
+        shared_config_1.logger.error("Suspend User Error:", error);
         return res.status(500).json({ error: "Could not update user status" });
     }
 };
@@ -374,7 +376,7 @@ const updateOmiseRecipient = async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Update Omise Recipient Error:", error);
+        shared_config_1.logger.error("Update Omise Recipient Error:", error);
         return res.status(500).json({ error: "Could not update Omise recipient ID" });
     }
 };
@@ -401,7 +403,7 @@ const anonymizeUser = async (req, res) => {
             .json({ success: true, message: `User ${id} has been anonymized` });
     }
     catch (error) {
-        console.error("Anonymize User Error:", error);
+        shared_config_1.logger.error("Anonymize User Error:", error);
         res.status(500).json({ error: "Could not anonymize user" });
     }
 };

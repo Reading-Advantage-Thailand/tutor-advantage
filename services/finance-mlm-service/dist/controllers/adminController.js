@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAdminOverview = getAdminOverview;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const ACTIVE_FRAUD_STATUSES = ["OPEN", "INVESTIGATING", "MONITORING", "FROZEN"];
 async function getAdminOverview(req, res) {
@@ -64,7 +65,7 @@ async function getAdminOverview(req, res) {
         });
     }
     catch (error) {
-        console.error("Admin Overview Error:", error);
+        shared_config_1.logger.error("Admin Overview Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",

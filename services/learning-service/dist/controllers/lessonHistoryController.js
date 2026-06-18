@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getStudentLessonHistory = getStudentLessonHistory;
 exports.getLessonSessionDetails = getLessonSessionDetails;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const ReadingAdvantageDB_1 = require("../services/ReadingAdvantageDB");
 function isMissingTableError(error) {
@@ -56,8 +57,9 @@ async function getStudentLessonHistory(req, res) {
         }));
         return res.status(200).json({ history });
     }
-    catch (error) {
-        console.error("Fetch Lesson History Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Fetch Lesson History Error:", error);
         if (isMissingTableError(error)) {
             return res.status(200).json({ history: [] });
         }
@@ -115,8 +117,9 @@ async function getLessonSessionDetails(req, res) {
             }))
         });
     }
-    catch (error) {
-        console.error("Fetch Session Detail Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Fetch Session Detail Error:", error);
         if (isMissingTableError(error)) {
             return res.status(404).json({ error: "Lesson history is not available yet" });
         }

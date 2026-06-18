@@ -4,6 +4,7 @@ exports.getCurrentUser = getCurrentUser;
 exports.submitVerification = submitVerification;
 const database_1 = require("@tutor-advantage/database");
 const storage_1 = require("../lib/storage");
+const shared_config_1 = require("@tutor-advantage/shared-config");
 async function getCurrentUser(req, res) {
     try {
         const userId = req.user?.userId;
@@ -38,7 +39,8 @@ async function getCurrentUser(req, res) {
         return res.status(200).json({ user });
     }
     catch (error) {
-        console.error("Get Current User Error:", error);
+        const err = error;
+        shared_config_1.logger.error("Get Current User Error:", err);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -154,10 +156,10 @@ async function submitVerification(req, res) {
         });
         // Background cleanup old images to save space
         if (idCardImageUrl && currentUser?.idCardImageUrl && currentUser.idCardImageUrl !== idCardImageUrl) {
-            (0, storage_1.deleteFromGCS)(currentUser.idCardImageUrl).catch(console.error);
+            (0, storage_1.deleteFromGCS)(currentUser.idCardImageUrl).catch(e => shared_config_1.logger.error(e));
         }
         if (bankBookImageUrl && currentUser?.bankBookImageUrl && currentUser.bankBookImageUrl !== bankBookImageUrl) {
-            (0, storage_1.deleteFromGCS)(currentUser.bankBookImageUrl).catch(console.error);
+            (0, storage_1.deleteFromGCS)(currentUser.bankBookImageUrl).catch(e => shared_config_1.logger.error(e));
         }
         return res.status(200).json({
             message: "Verification documents submitted successfully",
@@ -166,7 +168,8 @@ async function submitVerification(req, res) {
         });
     }
     catch (error) {
-        console.error("Submit Verification Error:", error);
+        const err = error;
+        shared_config_1.logger.error("Submit Verification Error:", err);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",

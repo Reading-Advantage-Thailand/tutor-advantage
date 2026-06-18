@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -78,7 +79,7 @@ export async function getAdminOverview(
       },
     });
   } catch (error) {
-    console.error("Admin Overview Error:", error);
+    logger.error("Admin Overview Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",

@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -61,8 +62,9 @@ export async function getStudentLessonHistory(req: AuthenticatedRequest, res: Re
     }));
 
     return res.status(200).json({ history });
-  } catch (error: any) {
-    console.error("Fetch Lesson History Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Fetch Lesson History Error:", error);
     if (isMissingTableError(error)) {
       return res.status(200).json({ history: [] });
     }
@@ -128,8 +130,9 @@ export async function getLessonSessionDetails(req: AuthenticatedRequest, res: Re
       }))
     });
 
-  } catch (error: any) {
-    console.error("Fetch Session Detail Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Fetch Session Detail Error:", error);
     if (isMissingTableError(error)) {
       return res.status(404).json({ error: "Lesson history is not available yet" });
     }

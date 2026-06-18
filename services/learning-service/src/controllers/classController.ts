@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { randomUUID } from "crypto";
 import { prisma } from "@tutor-advantage/database";
@@ -172,7 +173,8 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
         isDemo: (newClass as any).isDemo ?? false,
       },
     });
-  } catch (error: any) {
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
     if (error instanceof CouponError) {
       const status =
         error.code === "COUPON_NOT_FOUND"
@@ -184,7 +186,7 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
         error: { code: error.code, message: error.message, requestId: req.id },
       });
     }
-    console.error("Create Class Error:", error);
+    logger.error("Create Class Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -331,8 +333,9 @@ export async function closeClass(req: AuthenticatedRequest, res: Response) {
       message: "Class closed successfully",
       class: updatedClass,
     });
-  } catch (error: any) {
-    console.error("Close Class Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Close Class Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -414,8 +417,9 @@ export async function getClasses(req: AuthenticatedRequest, res: Response) {
     }));
 
     return res.status(200).json({ classes: mappedClasses });
-  } catch (error: any) {
-    console.error("Get Classes Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Get Classes Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -655,8 +659,9 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
     };
 
     return res.status(200).json({ class: mapped });
-  } catch (error: any) {
-    console.error("Get Class By ID Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Get Class By ID Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -749,8 +754,9 @@ export async function getAvailableClasses(
     });
 
     return res.status(200).json({ classes: mappedClasses });
-  } catch (error: any) {
-    console.error("Get Available Classes Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Get Available Classes Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -772,8 +778,9 @@ export async function getBooks(_req: AuthenticatedRequest, res: Response) {
     });
 
     return res.status(200).json({ books });
-  } catch (error: any) {
-    console.error("Get Books Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Get Books Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -819,25 +826,25 @@ export async function deleteClass(req: AuthenticatedRequest, res: Response) {
     const enrollmentIds = cls.enrollments.map((e) => e.enrollmentId);
     const conversationIds = cls.conversations.map((c) => c.conversationId);
 
-    console.log(`[DELETE_CLASS] Starting deletion for class: ${classId}`);
+    logger.info(`[DELETE_CLASS] Starting deletion for class: ${classId}`);
 
     // Break down into smaller steps for better error visibility
     try {
       if (enrollmentIds.length > 0) {
-        console.log(
+        logger.info(
           `[DELETE_CLASS] Step 1: Cleaning up Finance records for ${enrollmentIds.length} enrollments...`,
         );
         // PaymentReceipts reference PaymentIntents
         const receiptsDeleted = await prisma.paymentReceipt.deleteMany({
           where: { paymentIntent: { enrollmentId: { in: enrollmentIds } } },
         });
-        console.log(`[DELETE_CLASS] Deleted ${receiptsDeleted.count} payment receipts`);
+        logger.info(`[DELETE_CLASS] Deleted ${receiptsDeleted.count} payment receipts`);
 
         // PaymentEvents reference PaymentIntents
         const eventsDeleted = await prisma.paymentEvent.deleteMany({
           where: { paymentIntent: { enrollmentId: { in: enrollmentIds } } },
         });
-        console.log(
+        logger.info(
           `[DELETE_CLASS] Deleted ${eventsDeleted.count} payment events`,
         );
 
@@ -845,12 +852,12 @@ export async function deleteClass(req: AuthenticatedRequest, res: Response) {
         const intentsDeleted = await prisma.paymentIntent.deleteMany({
           where: { enrollmentId: { in: enrollmentIds } },
         });
-        console.log(
+        logger.info(
           `[DELETE_CLASS] Deleted ${intentsDeleted.count} payment intents`,
         );
       }
 
-      console.log(`[DELETE_CLASS] Step 2: Cleaning up Chat records...`);
+      logger.info(`[DELETE_CLASS] Step 2: Cleaning up Chat records...`);
       if (conversationIds.length > 0) {
         await prisma.message.deleteMany({
           where: { conversationId: { in: conversationIds } },
@@ -863,7 +870,7 @@ export async function deleteClass(req: AuthenticatedRequest, res: Response) {
         });
       }
 
-      console.log(`[DELETE_CLASS] Step 3: Cleaning up Learning relations...`);
+      logger.info(`[DELETE_CLASS] Step 3: Cleaning up Learning relations...`);
       await prisma.enrollmentPackage.deleteMany({
         where: { enrollmentId: { in: enrollmentIds } },
       });
@@ -872,19 +879,21 @@ export async function deleteClass(req: AuthenticatedRequest, res: Response) {
       await prisma.classTransferRequest.deleteMany({ where: { classId } });
       await prisma.classBookCycle.deleteMany({ where: { classId } });
 
-      console.log(`[DELETE_CLASS] Step 4: Deleting the Class record itself...`);
+      logger.info(`[DELETE_CLASS] Step 4: Deleting the Class record itself...`);
       await prisma.class.delete({
         where: { classId },
       });
 
-      console.log(`[DELETE_CLASS] ✅ Successfully deleted class ${classId}`);
+      logger.info(`[DELETE_CLASS] ✅ Successfully deleted class ${classId}`);
       return res.status(200).json({ message: "Class deleted successfully" });
-    } catch (stepError: any) {
-      console.error("[DELETE_CLASS] Step Error:", stepError);
+    } catch (stepError_err) {
+    const stepError = stepError_err as Error & { code?: string; details?: string; };
+      logger.error("[DELETE_CLASS] Step Error:", stepError);
       throw stepError; // Re-throw to be caught by main catch
     }
-  } catch (error: any) {
-    console.error("[DELETE_CLASS] ❌ FINAL ERROR:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("[DELETE_CLASS] ❌ FINAL ERROR:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -928,8 +937,9 @@ export async function updateMeetingUrl(
     return res
       .status(200)
       .json({ message: "Meeting URL updated", meetingUrl: updated.meetingUrl });
-  } catch (error: any) {
-    console.error("Update Meeting URL error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Update Meeting URL error:", error);
     return res.status(500).json({
       error: { code: "INTERNAL_SERVER_ERROR", message: "Update failed" },
     });
@@ -1002,15 +1012,16 @@ export async function rescheduleClass(req: AuthenticatedRequest, res: Response) 
             type: "notifyClassReminders",
           }),
         ),
-      ).catch((e) => console.error("Reschedule Notification Error:", e));
+      ).catch((e) => logger.error("Reschedule Notification Error:", e));
     }
 
     return res.status(200).json({
       message: "Class rescheduled successfully",
       class: serializeClass(updated),
     });
-  } catch (error: any) {
-    console.error("Reschedule Class Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Reschedule Class Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -1030,7 +1041,7 @@ async function translateToThai(text: string): Promise<string> {
     const json = await res.json() as any;
     return json?.[0]?.[0]?.[0] || text;
   } catch (err) {
-    console.error("Translation error:", err);
+    logger.error("Translation error:", err);
     return text;
   }
 }
@@ -1128,7 +1139,7 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
       },
       select: { articleId: true }
     }).catch((error) => {
-      console.warn("Could not fetch completed interactive sessions:", error);
+      logger.warn("Could not fetch completed interactive sessions:", error);
       return [];
     });
     const completedArticleIds = new Set(completedSessions.map(s => s.articleId));
@@ -1136,7 +1147,7 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
     const articles = await Promise.all(
       dbArticles.map(async (art, index) => {
         const details = await getArticleDetails(art.articleId).catch((error) => {
-          console.warn(`Could not fetch Reading Advantage details for article ${art.articleId}:`, error);
+          logger.warn(`Could not fetch Reading Advantage details for article ${art.articleId}:`, error);
           return null;
         });
         
@@ -1192,8 +1203,9 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
       },
       articles,
     });
-  } catch (error: any) {
-    console.error("Get Class Articles Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Get Class Articles Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -1327,7 +1339,7 @@ export async function createClassBookCycle(req: AuthenticatedRequest, res: Respo
           }),
         ),
       ).catch((notifyError) => {
-        console.error("Class Book Cycle Notification Error:", notifyError);
+        logger.error("Class Book Cycle Notification Error:", notifyError);
       });
     }
 
@@ -1343,7 +1355,8 @@ export async function createClassBookCycle(req: AuthenticatedRequest, res: Respo
         packagePriceSatang: Number(cycle.packagePriceMinor),
       },
     });
-  } catch (error: any) {
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
     if (error.message === "CLASS_NOT_FOUND") {
       return res.status(404).json({
         error: { code: "NOT_FOUND", message: "Class not found or unauthorized" },
@@ -1362,7 +1375,7 @@ export async function createClassBookCycle(req: AuthenticatedRequest, res: Respo
       });
     }
 
-    console.error("Create Class Book Cycle Error:", error);
+    logger.error("Create Class Book Cycle Error:", error);
     return res.status(500).json({
       error: { code: "INTERNAL_SERVER_ERROR", message: "Could not open class book" },
     });
@@ -1448,7 +1461,8 @@ export async function prepareClassBookCycleAccess(req: AuthenticatedRequest, res
         sequence: result.cycle.sequence,
       },
     });
-  } catch (error: any) {
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
     if (error.message === "NOT_ENROLLED") {
       return res.status(403).json({
         error: { code: "NOT_ENROLLED", message: "Please enroll in the class first" },
@@ -1465,7 +1479,7 @@ export async function prepareClassBookCycleAccess(req: AuthenticatedRequest, res
       });
     }
 
-    console.error("Prepare Class Book Cycle Access Error:", error);
+    logger.error("Prepare Class Book Cycle Access Error:", error);
     return res.status(500).json({
       error: { code: "INTERNAL_SERVER_ERROR", message: "Could not prepare upgrade access" },
     });

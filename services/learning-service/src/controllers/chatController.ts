@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -97,7 +98,7 @@ export const getConversations = async (req: AuthenticatedRequest, res: Response)
 
     res.status(200).json({ conversations: formattedConversations });
   } catch (error) {
-    console.error("Failed to fetch conversations", error);
+    logger.error("Failed to fetch conversations", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -195,7 +196,7 @@ export const getMessages = async (req: AuthenticatedRequest, res: Response): Pro
       }))
     });
   } catch (error) {
-    console.error("Failed to fetch messages", error);
+    logger.error("Failed to fetch messages", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -269,7 +270,7 @@ export const sendMessage = async (req: AuthenticatedRequest, res: Response): Pro
           await LineNotificationService.sendToUser(p.userId, pushMessage, { type: "notifyLineMessages" });
         }
       } catch (e) {
-        console.error("Background Notification Error:", e);
+        logger.error("Background Notification Error:", e);
       }
     })();
 
@@ -283,7 +284,7 @@ export const sendMessage = async (req: AuthenticatedRequest, res: Response): Pro
       isOwn: true,
     });
   } catch (error) {
-    console.error("Failed to send message", error);
+    logger.error("Failed to send message", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -389,7 +390,7 @@ export const initiateChat = async (req: AuthenticatedRequest, res: Response): Pr
     }
 
   } catch (error) {
-    console.error("Failed to initiate conversation:", error);
+    logger.error("Failed to initiate conversation:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };

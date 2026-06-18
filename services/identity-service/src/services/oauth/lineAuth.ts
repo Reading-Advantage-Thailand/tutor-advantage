@@ -1,3 +1,5 @@
+import { logger } from "@tutor-advantage/shared-config";
+
 export interface LineProfile {
   id: string;
   name: string;
@@ -71,7 +73,7 @@ export async function verifyLineToken(idToken: string): Promise<LineProfile> {
     }
 
     if (process.env.NODE_ENV !== "production") {
-      console.info("[LINE] Verifying ID token", {
+      logger.info("[LINE] Verifying ID token", {
         expectedClientId: clientId,
         configuredLiffId: liffId,
         tokenAudience: tokenDebug?.aud,
@@ -114,9 +116,10 @@ export async function verifyLineToken(idToken: string): Promise<LineProfile> {
       email: decoded.email,
       picture: decoded.picture,
     };
-  } catch (err) {
-    console.error("LINE Token Verification Error:", err);
-    if (process.env.NODE_ENV !== "production" && err instanceof Error) {
+  } catch (error) {
+    const err = error as Error;
+    logger.error("LINE Token Verification Error:", err);
+    if (process.env.NODE_ENV !== "production") {
       throw new Error(err.message);
     }
     throw new Error("Failed to verify LINE token");

@@ -6,12 +6,13 @@ import { prisma } from "@tutor-advantage/database";
 
 // Load root .env file
 dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
-console.log(`[Finance] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
+logger.info(`[Finance] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
 
 import {
   requestLoggerMiddleware,
   requestIdMiddleware,
   errorHandlerMiddleware,
+  logger,
 } from "@tutor-advantage/shared-config";
 import { authMiddleware } from "./middlewares/authMiddleware";
 import {
@@ -90,7 +91,7 @@ import { getEarningsSummary, getEarningsHistory, syncTutorTransfer } from "./con
 import { getTutorNetwork } from "./controllers/tutorNetworkController";
 
 if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
-  console.error("FATAL: JWT_SECRET must be set in production");
+  logger.error("FATAL: JWT_SECRET must be set in production");
   process.exit(1);
 }
 
@@ -306,19 +307,19 @@ app.post("/v1/dev/actions/toggle-badge", devOnly, devToggleBadge);
 app.use(errorHandlerMiddleware);
 
 const server = app.listen(port, () => {
-  console.log(`Finance & MLM Service running on port ${port}`);
+  logger.info(`Finance & MLM Service running on port ${port}`);
 });
 
 // Graceful shutdown — drain connections then disconnect DB
 const shutdown = (signal: string) => async () => {
-  console.log(`[Finance] ${signal} received — shutting down gracefully`);
+  logger.info(`[Finance] ${signal} received — shutting down gracefully`);
   server.close(async () => {
     await prisma.$disconnect();
-    console.log("[Finance] Shutdown complete");
+    logger.info("[Finance] Shutdown complete");
     process.exit(0);
   });
   setTimeout(() => {
-    console.error("[Finance] Shutdown timeout — forcing exit");
+    logger.error("[Finance] Shutdown timeout — forcing exit");
     process.exit(1);
   }, 10_000).unref();
 };

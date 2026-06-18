@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getNotificationSummary = void 0;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const prisma = new database_1.PrismaClient();
 const getNotificationSummary = async (req, res) => {
@@ -44,7 +45,7 @@ const getNotificationSummary = async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Error fetching notification summary:", error);
+        shared_config_1.logger.error("Error fetching notification summary:", error);
         res.status(500).json({ error: "Failed to fetch notification summary" });
     }
 };

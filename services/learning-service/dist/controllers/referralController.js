@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateReferral = generateReferral;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const uuid_1 = require("uuid");
 const STUDENT_APP_PROD_URL = "https://student-liff-1090865515742.asia-southeast1.run.app";
@@ -83,8 +84,9 @@ async function generateReferral(req, res) {
             qrPayload: referralUrl, // For QR generation on the frontend
         });
     }
-    catch (error) {
-        console.error("Generate Referral Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Generate Referral Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",

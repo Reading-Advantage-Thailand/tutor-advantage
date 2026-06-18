@@ -2,8 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getEarningsSummary = getEarningsSummary;
 exports.getEarningsHistory = getEarningsHistory;
+exports.syncTutorTransfer = syncTutorTransfer;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const commissionService_1 = require("../services/commissionService");
+const settlementService_1 = require("../services/settlementService");
 async function getEarningsSummary(req, res) {
     try {
         const userId = req.user?.userId;
@@ -24,8 +27,9 @@ async function getEarningsSummary(req, res) {
             networkBonusTHB: projection.networkBonusTHB,
         });
     }
-    catch (error) {
-        console.error("Get Earnings Summary Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Get Earnings Summary Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -107,6 +111,7 @@ async function getEarningsHistory(req, res) {
             const badgeBonus = Math.round(Number(line.badgeBonusMinor) / 100);
             return {
                 date: line.settlementRun.periodMonth,
+                payoutLineId: line.payoutLineId,
                 // Separate badge bonus out of direct so the frontend can show it as its own line
                 direct: Math.round(totalAmount - networkAmount - badgeBonus),
                 network: Math.round(networkAmount),
@@ -149,12 +154,65 @@ async function getEarningsHistory(req, res) {
             },
         });
     }
-    catch (error) {
-        console.error("Get Earnings History Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Get Earnings History Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
                 message: "Could not fetch earnings history",
+                requestId: req.id,
+            },
+        });
+    }
+}
+/**
+ * POST /v1/tutors/earnings/transfers/:payoutLineId/sync
+ * Lets a tutor refresh the Omise transfer status for their own payout line.
+ */
+async function syncTutorTransfer(req, res) {
+    try {
+        const userId = req.user?.userId;
+        const { payoutLineId } = req.params;
+        if (!userId) {
+            return res.status(401).json({
+                error: { code: "UNAUTHORIZED", message: "User not identified", requestId: req.id },
+            });
+        }
+        if (!payoutLineId) {
+            return res.status(400).json({
+                error: { code: "BAD_REQUEST", message: "payoutLineId is required", requestId: req.id },
+            });
+        }
+        const line = await database_1.prisma.payoutLine.findUnique({
+            where: { payoutLineId },
+            select: { tutorUserId: true },
+        });
+        if (!line) {
+            return res.status(404).json({
+                error: { code: "NOT_FOUND", message: "Payout line not found", requestId: req.id },
+            });
+        }
+        if (line.tutorUserId !== userId) {
+            return res.status(403).json({
+                error: { code: "FORBIDDEN", message: "Not your payout line", requestId: req.id },
+            });
+        }
+        const result = await settlementService_1.SettlementService.syncPayoutTransferStatus(payoutLineId);
+        return res.status(200).json({ transfer: result });
+    }
+    catch (error_err) {
+        const error = error_err;
+        if (error.message === "OMISE_PAYOUTS_NOT_CONFIGURED") {
+            return res.status(502).json({
+                error: { code: error.message, message: "Omise keys are not configured", requestId: req.id },
+            });
+        }
+        shared_config_1.logger.error("Sync Tutor Transfer Error:", error);
+        return res.status(500).json({
+            error: {
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Could not sync transfer status",
                 requestId: req.id,
             },
         });

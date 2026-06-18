@@ -5,6 +5,7 @@
  * All routes mounting this controller are guarded by devOnlyMiddleware —
  * they will never be reachable in production.
  */
+import { logger } from "@tutor-advantage/shared-config";
 import { Request, Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { SettlementService } from "../services/settlementService";
@@ -36,7 +37,7 @@ export const devListUsers = async (_req: Request, res: Response) => {
     });
     res.json({ users });
   } catch (err) {
-    console.error("devListUsers error:", err);
+    logger.error("devListUsers error:", err);
     res.status(500).json({ error: "Could not list users" });
   }
 };
@@ -61,11 +62,12 @@ export const devCreateUser = async (req: Request, res: Response) => {
       },
     });
     res.status(201).json({ user });
-  } catch (err: any) {
+  } catch (err_err) {
+    const err = err_err as Error & { code?: string; details?: string; };
     if (err?.code === "P2002") {
       return res.status(409).json({ error: "Email already exists" });
     }
-    console.error("devCreateUser error:", err);
+    logger.error("devCreateUser error:", err);
     res.status(500).json({ error: "Could not create user" });
   }
 };
@@ -110,14 +112,15 @@ export const devUpdateUser = async (req: Request, res: Response) => {
       data,
     });
     res.json({ user });
-  } catch (err: any) {
+  } catch (err_err) {
+    const err = err_err as Error & { code?: string; details?: string; };
     if (err?.code === "P2025") {
       return res.status(404).json({ error: "User not found" });
     }
     if (err?.code === "P2002") {
       return res.status(409).json({ error: "Email already exists" });
     }
-    console.error("devUpdateUser error:", err);
+    logger.error("devUpdateUser error:", err);
     res.status(500).json({ error: "Could not update user" });
   }
 };
@@ -129,11 +132,12 @@ export const devDeleteUser = async (req: Request, res: Response) => {
     // Hard delete — cascade handled by DB foreign key constraints
     await prisma.user.delete({ where: { userId: id } });
     res.json({ success: true, message: `User ${id} permanently deleted` });
-  } catch (err: any) {
+  } catch (err_err) {
+    const err = err_err as Error & { code?: string; details?: string; };
     if (err?.code === "P2025") {
       return res.status(404).json({ error: "User not found" });
     }
-    console.error("devDeleteUser error:", err);
+    logger.error("devDeleteUser error:", err);
     res.status(500).json({ error: "Could not delete user" });
   }
 };
@@ -180,7 +184,7 @@ export const devGetState = async (_req: Request, res: Response) => {
       openFraudFlags,
     });
   } catch (err) {
-    console.error("devGetState error:", err);
+    logger.error("devGetState error:", err);
     res.status(500).json({ error: "Could not fetch state" });
   }
 };
@@ -224,8 +228,9 @@ export const devRunSettlement = async (req: Request, res: Response) => {
       tutorCount: lineCount,
       skipped: false,
     });
-  } catch (err: any) {
-    console.error("devRunSettlement error:", err);
+  } catch (err_err) {
+    const err = err_err as Error & { code?: string; details?: string; };
+    logger.error("devRunSettlement error:", err);
     res.status(500).json({ error: err.message || "Could not run settlement" });
   }
 };
@@ -245,8 +250,9 @@ export const devSeedFraudFlag = async (req: Request, res: Response) => {
       data: { type, severity, targetId, targetName, description, status: "OPEN" },
     });
     res.status(201).json({ flag });
-  } catch (err: any) {
-    console.error("devSeedFraudFlag error:", err);
+  } catch (err_err) {
+    const err = err_err as Error & { code?: string; details?: string; };
+    logger.error("devSeedFraudFlag error:", err);
     res.status(500).json({ error: "Could not create fraud flag" });
   }
 };
@@ -257,9 +263,10 @@ export const devDeleteFraudFlag = async (req: Request, res: Response) => {
   try {
     await prisma.fraudFlag.delete({ where: { flagId: id } });
     res.json({ success: true });
-  } catch (err: any) {
+  } catch (err_err) {
+    const err = err_err as Error & { code?: string; details?: string; };
     if (err?.code === "P2025") return res.status(404).json({ error: "Flag not found" });
-    console.error("devDeleteFraudFlag error:", err);
+    logger.error("devDeleteFraudFlag error:", err);
     res.status(500).json({ error: "Could not delete flag" });
   }
 };
@@ -303,8 +310,9 @@ export const devSeedAdjustment = async (req: Request, res: Response) => {
       settlementRunId: run.settlementRunId,
       periodMonth: run.periodMonth,
     });
-  } catch (err: any) {
-    console.error("devSeedAdjustment error:", err);
+  } catch (err_err) {
+    const err = err_err as Error & { code?: string; details?: string; };
+    logger.error("devSeedAdjustment error:", err);
     res.status(500).json({ error: err.message || "Could not create adjustment" });
   }
 };
@@ -364,8 +372,9 @@ export const devPurge = async (req: Request, res: Response) => {
       results.devPayments = r.count;
     }
     res.json({ success: true, deleted: results });
-  } catch (err: any) {
-    console.error("devPurge error:", err);
+  } catch (err_err) {
+    const err = err_err as Error & { code?: string; details?: string; };
+    logger.error("devPurge error:", err);
     res.status(500).json({ error: "Could not purge data" });
   }
 };
@@ -394,7 +403,7 @@ export const devGetTutorBadges = async (req: Request, res: Response) => {
     });
     res.json({ badges: badges.map((b) => b.badgeCode) });
   } catch (err) {
-    console.error("devGetTutorBadges error:", err);
+    logger.error("devGetTutorBadges error:", err);
     res.status(500).json({ error: "Could not fetch badges" });
   }
 };
@@ -471,8 +480,9 @@ export const devAddVolume = async (req: Request, res: Response) => {
       amountTHB: Number(amountMinor) / 100,
       message: `Added DEV volume ฿${amount.toLocaleString()}`,
     });
-  } catch (err: any) {
-    console.error("devAddVolume error:", err);
+  } catch (err_err) {
+    const err = err_err as Error & { code?: string; details?: string; };
+    logger.error("devAddVolume error:", err);
     res.status(500).json({ error: err.message || "Could not add volume" });
   }
 };
@@ -497,8 +507,9 @@ export const devToggleBadge = async (req: Request, res: Response) => {
       await prisma.tutorBadge.create({ data: { tutorUserId, badgeCode } });
       return res.json({ action: "added", badgeCode });
     }
-  } catch (err: any) {
-    console.error("devToggleBadge error:", err);
+  } catch (err_err) {
+    const err = err_err as Error & { code?: string; details?: string; };
+    logger.error("devToggleBadge error:", err);
     res.status(500).json({ error: err.message || "Could not toggle badge" });
   }
 };

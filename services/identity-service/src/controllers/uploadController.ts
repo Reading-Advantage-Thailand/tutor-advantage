@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { uploadToGCS } from "../lib/storage";
+import { logger } from "@tutor-advantage/shared-config";
 
 export async function uploadFile(req: AuthenticatedRequest, res: Response) {
   try {
@@ -14,8 +15,9 @@ export async function uploadFile(req: AuthenticatedRequest, res: Response) {
     const publicUrl = await uploadToGCS(file);
 
     return res.status(200).json({ url: publicUrl });
-  } catch (error: any) {
-    console.error("Upload File Error:", error);
+  } catch (error) {
+    const err = error as Error;
+    logger.error("Upload File Error:", err);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",

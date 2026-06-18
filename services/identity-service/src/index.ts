@@ -9,7 +9,7 @@ dotenv.config({
   path: path.resolve(__dirname, "../../../.env"),
   override: process.env.NODE_ENV !== "production",
 });
-console.log(`[Identity] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
+logger.info(`[Identity] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
 
 import {
   requestLoggerMiddleware,

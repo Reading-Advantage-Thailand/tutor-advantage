@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getGuardianConsentStatus = getGuardianConsentStatus;
 exports.submitGuardianConsent = submitGuardianConsent;
 const database_1 = require("@tutor-advantage/database");
+const shared_config_1 = require("@tutor-advantage/shared-config");
 async function getGuardianConsentStatus(req, res) {
     try {
         const userId = req.user?.userId;
@@ -16,7 +17,8 @@ async function getGuardianConsentStatus(req, res) {
         return res.status(200).json({ hasConsent: !!existing });
     }
     catch (error) {
-        console.error("Get Guardian Consent Status Error:", error);
+        const err = error;
+        shared_config_1.logger.error("Get Guardian Consent Status Error:", err);
         return res.status(500).json({ error: { code: "INTERNAL_SERVER_ERROR", message: "Could not fetch consent status" } });
     }
 }
@@ -68,12 +70,13 @@ async function submitGuardianConsent(req, res) {
         });
     }
     catch (error) {
-        console.error("Submit Guardian Consent Error:", error);
+        const err = error;
+        shared_config_1.logger.error("Submit Guardian Consent Error:", err);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
                 message: "Could not record guardian consent",
-                details: error.message,
+                details: err.message,
                 requestId: req.id,
             },
         });

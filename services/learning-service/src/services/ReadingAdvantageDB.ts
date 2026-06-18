@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Pool } from "pg";
 
 const connectionString =
@@ -176,7 +177,7 @@ const mockArticles: Record<string, any> = {
 export const getArticleDetails = async (articleId: string) => {
   // 1. Direct mock resolver for local development or empty databases
   if (mockArticles[articleId]) {
-    console.log(
+    logger.info(
       `[ReadingAdvantageDB] Returning mock data for articleId: ${articleId}`,
     );
     return mockArticles[articleId];
@@ -191,7 +192,8 @@ export const getArticleDetails = async (articleId: string) => {
          WHERE id = $1`,
         [articleId],
       );
-    } catch (e: any) {
+    } catch (e_err) {
+    const e = e_err as Error & { code?: string; details?: string; };
       if (e.code === "42P01") {
         // relation does not exist
         res = await pool.query(
@@ -206,7 +208,7 @@ export const getArticleDetails = async (articleId: string) => {
     }
 
     if (res.rows.length === 0) {
-      console.warn(
+      logger.warn(
         `[ReadingAdvantageDB] Article ${articleId} not found, falling back to mock art-001`,
       );
       return mockArticles["art-001"];
@@ -223,7 +225,8 @@ export const getArticleDetails = async (articleId: string) => {
          WHERE article_id = $1`,
         [articleId],
       );
-    } catch (e: any) {
+    } catch (e_err) {
+    const e = e_err as Error & { code?: string; details?: string; };
       if (e.code === "42P01") {
         mcqRes = await pool.query(
           `SELECT id, question, options, answer 
@@ -245,7 +248,8 @@ export const getArticleDetails = async (articleId: string) => {
          WHERE article_id = $1`,
         [articleId],
       );
-    } catch (e: any) {
+    } catch (e_err) {
+    const e = e_err as Error & { code?: string; details?: string; };
       if (e.code === "42P01") {
         saqRes = await pool.query(
           `SELECT id, question, answer 
@@ -264,7 +268,7 @@ export const getArticleDetails = async (articleId: string) => {
       shortAnswerQuestions: saqRes.rows,
     };
   } catch (error) {
-    console.error(
+    logger.error(
       "Error fetching article from Reading Advantage DB, falling back to mock art-001:",
       error,
     );

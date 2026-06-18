@@ -71,7 +71,6 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
         timestamp: new Date().toISOString(),
         ...extra,
       };
-      console.log(`[LIFF-DEBUG] ${stage}:`, payload);
       fetch("/api/debug/client-error", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -105,7 +104,6 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
         if (liOrigin) {
           const { LIFFInspectorPlugin } = await import("@line/liff-inspector");
           liff.use(new LIFFInspectorPlugin());
-          console.log("[LIFF] Inspector enabled, origin:", liOrigin);
         }
 
         reportError("liff_init_start", "starting", { liffId, useMock });
@@ -145,7 +143,6 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
 
           if (useMock) {
             // Mock mode (localhost dev) — no real LINE token to exchange
-            console.log("[LIFF] Mock mode: skipping backend token exchange");
           } else {
             // Real LIFF (ngrok or production) — exchange token for session cookie
             const idToken = liff.getIDToken();

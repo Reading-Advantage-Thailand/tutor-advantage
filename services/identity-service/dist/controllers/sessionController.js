@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getSession = getSession;
 const database_1 = require("@tutor-advantage/database");
+const shared_config_1 = require("@tutor-advantage/shared-config");
 async function getSession(req, res) {
     try {
         const userId = req.user?.userId;
@@ -59,12 +60,13 @@ async function getSession(req, res) {
         });
     }
     catch (error) {
-        console.error("Session Details Error:", error);
+        const err = error;
+        shared_config_1.logger.error("Session Details Error:", err);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
                 message: "Could not fetch session details",
-                details: error.message,
+                details: err.message,
                 requestId: req.id,
             },
         });

@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -29,7 +30,7 @@ export class LineNotificationService {
   ): Promise<boolean> {
     try {
       if (!LINE_CHANNEL_ACCESS_TOKEN) {
-        console.warn("[LineNotificationService] LINE_CHANNEL_ACCESS_TOKEN is missing. Skipping.");
+        logger.warn("[LineNotificationService] LINE_CHANNEL_ACCESS_TOKEN is missing. Skipping.");
         return false;
       }
 
@@ -40,7 +41,7 @@ export class LineNotificationService {
       });
 
       if (!user) {
-        console.warn(`[LineNotificationService] User ${userId} not found.`);
+        logger.warn(`[LineNotificationService] User ${userId} not found.`);
         return false;
       }
 
@@ -52,7 +53,7 @@ export class LineNotificationService {
         const isEnabled = settings[options.type] !== undefined ? settings[options.type] : defaultValue;
 
         if (!isEnabled) {
-          console.log(`[LineNotificationService] User ${userId} has disabled ${options.type}. Notification suppressed.`);
+          logger.info(`[LineNotificationService] User ${userId} has disabled ${options.type}. Notification suppressed.`);
           return false;
         }
       }
@@ -66,7 +67,7 @@ export class LineNotificationService {
       });
 
       if (!lineIdentity || !lineIdentity.providerSubject) {
-        console.log(`[LineNotificationService] No linked LINE identity found for user ${userId}. Cannot push.`);
+        logger.info(`[LineNotificationService] No linked LINE identity found for user ${userId}. Cannot push.`);
         return false;
       }
 
@@ -92,15 +93,15 @@ export class LineNotificationService {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error(`[LineNotificationService] LINE API error: ${response.status}`, errorText);
+        logger.error(`[LineNotificationService] LINE API error: ${response.status}`, errorText);
         return false;
       }
 
-      console.log(`[LineNotificationService] Notification sent successfully to user ${userId} (LINE: ${lineUserId})`);
+      logger.info(`[LineNotificationService] Notification sent successfully to user ${userId} (LINE: ${lineUserId})`);
       return true;
 
     } catch (error) {
-      console.error(`[LineNotificationService] Critical error sending notification to ${userId}:`, error);
+      logger.error(`[LineNotificationService] Critical error sending notification to ${userId}:`, error);
       return false;
     }
   }

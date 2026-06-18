@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -113,7 +114,7 @@ export async function createCoupon(req: AuthenticatedRequest, res: Response) {
 
     return res.status(201).json({ coupon });
   } catch (error) {
-    console.error("Create Coupon Error:", error);
+    logger.error("Create Coupon Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -191,7 +192,7 @@ export async function getCoupons(req: AuthenticatedRequest, res: Response) {
       },
     });
   } catch (error) {
-    console.error("Get Coupons Error:", error);
+    logger.error("Get Coupons Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -239,7 +240,7 @@ export async function voidCoupon(req: AuthenticatedRequest, res: Response) {
     });
     return res.status(200).json({ coupon });
   } catch (error) {
-    console.error("Void Coupon Error:", error);
+    logger.error("Void Coupon Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",

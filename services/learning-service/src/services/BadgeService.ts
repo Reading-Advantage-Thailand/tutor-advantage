@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -182,11 +183,11 @@ export async function checkAndUnlockBadges(tutorUserId: string): Promise<string[
       ),
     );
 
-    console.log(`[BadgeService] Unlocked badges for ${tutorUserId}: ${toUnlock.join(", ")}`);
+    logger.info(`[BadgeService] Unlocked badges for ${tutorUserId}: ${toUnlock.join(", ")}`);
     return toUnlock;
   } catch (error) {
     // Non-fatal: badge unlock failure should not block the caller
-    console.error(`[BadgeService] Failed to check badges for ${tutorUserId}:`, error);
+    logger.error(`[BadgeService] Failed to check badges for ${tutorUserId}:`, error);
     return [];
   }
 }

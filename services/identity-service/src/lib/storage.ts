@@ -1,6 +1,7 @@
 import { Storage } from "@google-cloud/storage";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
+import { logger } from "@tutor-advantage/shared-config";
 
 // Dynamically resolve service account path if it's relative in .env
 let keyFilename: string | undefined = process.env.GCP_KEY_FILEPATH;
@@ -70,10 +71,11 @@ export async function deleteFromGCS(publicUrl: string): Promise<void> {
     const [exists] = await file.exists();
     if (exists) {
       await file.delete();
-      console.log(`Successfully deleted old object from GCS: ${relativePath}`);
+      logger.info(`Successfully deleted old object from GCS: ${relativePath}`);
     }
   } catch (error) {
     // Non-critical, don't crash if cleanup fails
-    console.error("Failed to cleanup old object from GCS:", error);
+    const err = error as Error;
+    logger.error("Failed to cleanup old object from GCS:", err);
   }
 }

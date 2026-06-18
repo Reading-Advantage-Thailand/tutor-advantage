@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handleTransferWebhook = handleTransferWebhook;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const crypto_1 = __importDefault(require("crypto"));
 const database_1 = require("@tutor-advantage/database");
 /**
@@ -28,7 +29,7 @@ function verifySignature(req, payload) {
     if (!secret && process.env.NODE_ENV !== "production")
         return true;
     if (!secret) {
-        console.error("[TransferWebhook] OMISE_WEBHOOK_SECRET not configured");
+        shared_config_1.logger.error("[TransferWebhook] OMISE_WEBHOOK_SECRET not configured");
         return false;
     }
     const signature = req.headers["omise-signature"] || req.headers["x-omise-signature"];
@@ -73,7 +74,7 @@ async function handleTransferWebhook(req, res) {
       LIMIT 1
     `;
         if (existing.length === 0) {
-            console.warn(`[TransferWebhook] No payout_document found for transfer ${transferId}`);
+            shared_config_1.logger.warn(`[TransferWebhook] No payout_document found for transfer ${transferId}`);
             return res.status(200).send("Transfer not tracked — ignored");
         }
         const currentStatus = existing[0].transfer_status;
@@ -96,11 +97,12 @@ async function handleTransferWebhook(req, res) {
         "transferred_at"           = ${transferredAt}
       WHERE "provider_transfer_id" = ${transferId}
     `;
-        console.log(`[TransferWebhook] ${eventKey} → ${mappedStatus} for transfer ${transferId} (event ${eventId})`);
+        shared_config_1.logger.info(`[TransferWebhook] ${eventKey} → ${mappedStatus} for transfer ${transferId} (event ${eventId})`);
         return res.status(200).send("OK");
     }
-    catch (error) {
-        console.error("[TransferWebhook] Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("[TransferWebhook] Error:", error);
         return res.status(500).send("Webhook processing failed");
     }
 }

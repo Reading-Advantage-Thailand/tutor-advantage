@@ -8,7 +8,7 @@ dotenv.config({
   path: path.resolve(__dirname, "../../../.env"),
   override: true,
 });
-console.log(`[Learning] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
+logger.info(`[Learning] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
 
 const { prisma } = require("@tutor-advantage/database") as typeof import("@tutor-advantage/database");
 
@@ -18,6 +18,7 @@ import {
   requestLoggerMiddleware,
   requestIdMiddleware,
   errorHandlerMiddleware,
+  logger,
 } from "@tutor-advantage/shared-config";
 import { authMiddleware } from "./middlewares/authMiddleware";
 import {
@@ -220,21 +221,21 @@ import { setupLessonSocket } from "./websockets/lessonHandler";
 setupLessonSocket(io);
 
 httpServer.listen(port, () => {
-  console.log(`Learning Service running on port ${port}`);
+  logger.info(`Learning Service running on port ${port}`);
 });
 
 // Graceful shutdown — drain HTTP + WebSocket connections then disconnect DB
 const shutdown = (signal: string) => async () => {
-  console.log(`[Learning] ${signal} received — shutting down gracefully`);
+  logger.info(`[Learning] ${signal} received — shutting down gracefully`);
   io.close(() => {
     httpServer.close(async () => {
       await prisma.$disconnect();
-      console.log("[Learning] Shutdown complete");
+      logger.info("[Learning] Shutdown complete");
       process.exit(0);
     });
   });
   setTimeout(() => {
-    console.error("[Learning] Shutdown timeout — forcing exit");
+    logger.error("[Learning] Shutdown timeout — forcing exit");
     process.exit(1);
   }, 10_000).unref();
 };

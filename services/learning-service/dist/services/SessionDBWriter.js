@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateSessionStatus = exports.persistAnswer = exports.persistSessionParticipant = exports.persistSessionStart = exports.resolveUserId = void 0;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const resolveUserId = async (inputId) => {
     if (!inputId || inputId === "anonymous")
@@ -35,7 +36,7 @@ const persistSessionStart = async (sessionId, tutorId, articleId, classId, class
                 const cls = await database_1.prisma.class.findUnique({ where: { classId }, select: { tutorUserId: true } });
                 if (cls) {
                     resolvedTutorId = cls.tutorUserId;
-                    console.log(`[SessionDB] Resolved tutor ID ${resolvedTutorId} from Class ${classId}`);
+                    shared_config_1.logger.info(`[SessionDB] Resolved tutor ID ${resolvedTutorId} from Class ${classId}`);
                 }
             }
         }
@@ -44,11 +45,11 @@ const persistSessionStart = async (sessionId, tutorId, articleId, classId, class
             const fallback = await database_1.prisma.user.findFirst({ where: { role: "TUTOR" }, select: { userId: true } });
             if (fallback) {
                 resolvedTutorId = fallback.userId;
-                console.log(`[SessionDB] Fallback: Using general Tutor ${resolvedTutorId}`);
+                shared_config_1.logger.info(`[SessionDB] Fallback: Using general Tutor ${resolvedTutorId}`);
             }
         }
         if (!resolvedTutorId) {
-            console.warn(`[SessionDB] Cannot create session entry: Tutor ID not found & could not resolve via Class/Role.`);
+            shared_config_1.logger.warn(`[SessionDB] Cannot create session entry: Tutor ID not found & could not resolve via Class/Role.`);
             return;
         }
         // Validate classId format before inserting into DB (must be UUID)
@@ -75,7 +76,7 @@ const persistSessionStart = async (sessionId, tutorId, articleId, classId, class
         });
     }
     catch (error) {
-        console.error(`[SessionDB] Error persisting session start:`, error);
+        shared_config_1.logger.error(`[SessionDB] Error persisting session start:`, error);
     }
 };
 exports.persistSessionStart = persistSessionStart;
@@ -87,7 +88,7 @@ const persistSessionParticipant = async (sessionId, studentId) => {
             const fallback = await database_1.prisma.user.findFirst({ where: { role: "STUDENT" }, select: { userId: true } });
             if (fallback) {
                 resolvedStudentId = fallback.userId;
-                console.log(`[SessionDB] Resolved student via Fallback: ${resolvedStudentId}`);
+                shared_config_1.logger.info(`[SessionDB] Resolved student via Fallback: ${resolvedStudentId}`);
             }
         }
         if (!resolvedStudentId)
@@ -108,7 +109,7 @@ const persistSessionParticipant = async (sessionId, studentId) => {
         });
     }
     catch (error) {
-        console.error(`[SessionDB] Error persisting session participant:`, error);
+        shared_config_1.logger.error(`[SessionDB] Error persisting session participant:`, error);
     }
 };
 exports.persistSessionParticipant = persistSessionParticipant;
@@ -119,7 +120,7 @@ const persistAnswer = async (params) => {
             const fallback = await database_1.prisma.user.findFirst({ where: { role: "STUDENT" }, select: { userId: true } });
             if (fallback) {
                 resolvedStudentId = fallback.userId;
-                console.log(`[SessionDB] Resolved student for answer via Fallback: ${resolvedStudentId}`);
+                shared_config_1.logger.info(`[SessionDB] Resolved student for answer via Fallback: ${resolvedStudentId}`);
             }
         }
         if (!resolvedStudentId)
@@ -155,7 +156,7 @@ const persistAnswer = async (params) => {
         });
     }
     catch (error) {
-        console.error(`[SessionDB] Error saving answer:`, error);
+        shared_config_1.logger.error(`[SessionDB] Error saving answer:`, error);
     }
 };
 exports.persistAnswer = persistAnswer;
@@ -167,7 +168,7 @@ const updateSessionStatus = async (sessionId, status) => {
         });
     }
     catch (error) {
-        console.error(`[SessionDB] Error updating session status:`, error);
+        shared_config_1.logger.error(`[SessionDB] Error updating session status:`, error);
     }
 };
 exports.updateSessionStatus = updateSessionStatus;

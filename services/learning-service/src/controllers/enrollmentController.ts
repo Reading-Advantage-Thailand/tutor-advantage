@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -107,8 +108,9 @@ export async function getReferralDetails(req: AuthenticatedRequest, res: Respons
       },
       referralToken: referral.token,
     });
-  } catch (error: any) {
-    console.error("Get Referral Details Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Get Referral Details Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -278,7 +280,8 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
       classId: enrollmentResult.classId,
       placement: enrollmentResult.isFallback ? "FALLBACK" : "PRIMARY",
     });
-  } catch (error: any) {
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
     if (error.message === "REFERRAL_INVALID") {
       return res.status(400).json({
         error: {
@@ -310,7 +313,7 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
       });
     }
 
-    console.error("Enrollment Error:", error);
+    logger.error("Enrollment Error:", error);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
@@ -455,8 +458,9 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
       status: result.status,
       placement: result.placedByFallback ? "FALLBACK" : "PRIMARY",
     });
-  } catch (error: any) {
-    console.error("Direct Enrollment Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("Direct Enrollment Error:", error);
     const code =
       error.message.includes("CLASS") ||
       error.message === "ALREADY_ENROLLED" ||

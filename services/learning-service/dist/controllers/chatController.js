@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initiateChat = exports.sendMessage = exports.getMessages = exports.getConversations = void 0;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const LineNotificationService_1 = require("../services/LineNotificationService");
 // Get list of conversations for the current user
@@ -91,7 +92,7 @@ const getConversations = async (req, res) => {
         res.status(200).json({ conversations: formattedConversations });
     }
     catch (error) {
-        console.error("Failed to fetch conversations", error);
+        shared_config_1.logger.error("Failed to fetch conversations", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };
@@ -182,7 +183,7 @@ const getMessages = async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Failed to fetch messages", error);
+        shared_config_1.logger.error("Failed to fetch messages", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };
@@ -249,7 +250,7 @@ const sendMessage = async (req, res) => {
                 }
             }
             catch (e) {
-                console.error("Background Notification Error:", e);
+                shared_config_1.logger.error("Background Notification Error:", e);
             }
         })();
         res.status(201).json({
@@ -263,7 +264,7 @@ const sendMessage = async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Failed to send message", error);
+        shared_config_1.logger.error("Failed to send message", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };
@@ -356,7 +357,7 @@ const initiateChat = async (req, res) => {
         }
     }
     catch (error) {
-        console.error("Failed to initiate conversation:", error);
+        shared_config_1.logger.error("Failed to initiate conversation:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 };

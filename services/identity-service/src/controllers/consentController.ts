@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+import { logger } from "@tutor-advantage/shared-config";
 
 export async function getGuardianConsentStatus(
   req: AuthenticatedRequest,
@@ -18,8 +19,9 @@ export async function getGuardianConsentStatus(
     });
 
     return res.status(200).json({ hasConsent: !!existing });
-  } catch (error: any) {
-    console.error("Get Guardian Consent Status Error:", error);
+  } catch (error) {
+    const err = error as Error;
+    logger.error("Get Guardian Consent Status Error:", err);
     return res.status(500).json({ error: { code: "INTERNAL_SERVER_ERROR", message: "Could not fetch consent status" } });
   }
 }
@@ -78,13 +80,14 @@ export async function submitGuardianConsent(
     return res.status(200).json({
       message: "Consent recorded successfully",
     });
-  } catch (error: any) {
-    console.error("Submit Guardian Consent Error:", error);
+  } catch (error) {
+    const err = error as Error;
+    logger.error("Submit Guardian Consent Error:", err);
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
         message: "Could not record guardian consent",
-        details: error.message,
+        details: err.message,
         requestId: req.id,
       },
     });

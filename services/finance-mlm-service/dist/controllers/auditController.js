@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAuditLogs = getAuditLogs;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 /**
  * GET /v1/audit-logs
@@ -73,8 +74,9 @@ async function getAuditLogs(req, res) {
             },
         });
     }
-    catch (error) {
-        console.error("AuditLogs Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("AuditLogs Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",

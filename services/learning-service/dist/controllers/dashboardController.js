@@ -4,6 +4,7 @@ exports.getDashboardSummary = getDashboardSummary;
 exports.getStudentProgress = getStudentProgress;
 exports.getStudentArticle = getStudentArticle;
 exports.generateStudentShareLink = generateStudentShareLink;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const LessonSessionService_1 = require("../services/LessonSessionService");
 const ReadingAdvantageDB_1 = require("../services/ReadingAdvantageDB");
@@ -255,8 +256,9 @@ async function getDashboardSummary(req, res) {
             unreadMessages,
         });
     }
-    catch (error) {
-        console.error("Dashboard Summary Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Dashboard Summary Error:", error);
         return res.status(500).json({
             error: { code: "INTERNAL_SERVER_ERROR", message: error.message },
         });
@@ -334,13 +336,10 @@ async function getStudentProgress(req, res) {
         // 3. Get Book Articles — natural sort on trailing number in articleId
         const dbArticles = await database_1.prisma.article.findMany({
             where: { bookId: book.bookId },
-        });
-        dbArticles.sort((a, b) => {
-            const num = (id) => {
-                const m = id.match(/(\d+)$/);
-                return m ? parseInt(m[1], 10) : 0;
-            };
-            return num(a.articleId) - num(b.articleId);
+            orderBy: [
+                { createdAt: "asc" },
+                { articleId: "asc" }
+            ],
         });
         const articles = dbArticles.map((art, idx) => {
             const isRead = distinctArticlesRead.has(`${book.bookId}:${art.articleId}`) ||
@@ -432,8 +431,9 @@ async function getStudentProgress(req, res) {
             articles,
         });
     }
-    catch (error) {
-        console.error("Get Student Progress Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Get Student Progress Error:", error);
         return res.status(500).json({
             error: { code: "INTERNAL_SERVER_ERROR", message: "Could not fetch progress" },
         });
@@ -494,8 +494,9 @@ async function getStudentArticle(req, res) {
             },
         });
     }
-    catch (error) {
-        console.error("Get Student Article Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Get Student Article Error:", error);
         return res.status(500).json({ error: "Internal server error" });
     }
 }
@@ -549,8 +550,9 @@ async function generateStudentShareLink(req, res) {
             className: targetClass.title,
         });
     }
-    catch (error) {
-        console.error("Generate Student Share Link Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Generate Student Share Link Error:", error);
         return res.status(500).json({ error: "Internal server error" });
     }
 }

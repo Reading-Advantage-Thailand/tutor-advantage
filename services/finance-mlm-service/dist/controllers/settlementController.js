@@ -9,7 +9,9 @@ exports.getSettlementLines = getSettlementLines;
 exports.getSettlementSummary = getSettlementSummary;
 exports.approveSettlement = approveSettlement;
 exports.retryPayoutTransfer = retryPayoutTransfer;
+exports.syncPayoutTransfer = syncPayoutTransfer;
 exports.getSettlements = getSettlements;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const settlementService_1 = require("../services/settlementService");
 const database_1 = require("@tutor-advantage/database");
 /**
@@ -48,7 +50,7 @@ async function autoRunSettlement(req, res) {
             orderBy: { createdAt: "desc" },
         });
         if (existing) {
-            console.log(`[AutoSettlement] Run for ${periodMonth} already exists (${existing.settlementRunId}). Skipping.`);
+            shared_config_1.logger.info(`[AutoSettlement] Run for ${periodMonth} already exists (${existing.settlementRunId}). Skipping.`);
             return res.status(200).json({
                 message: "Settlement run already exists for this period — skipped",
                 periodMonth,
@@ -57,7 +59,7 @@ async function autoRunSettlement(req, res) {
             });
         }
         const preview = await settlementService_1.SettlementService.previewSettlement(periodMonth, "SYSTEM_SCHEDULER");
-        console.log(`[AutoSettlement] Created settlement preview for ${periodMonth}: ${preview.snapshotId}`);
+        shared_config_1.logger.info(`[AutoSettlement] Created settlement preview for ${periodMonth}: ${preview.snapshotId}`);
         return res.status(201).json({
             message: "Settlement preview created successfully",
             periodMonth,
@@ -65,8 +67,9 @@ async function autoRunSettlement(req, res) {
             skipped: false,
         });
     }
-    catch (error) {
-        console.error("[AutoSettlement] Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("[AutoSettlement] Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -119,7 +122,8 @@ async function previewSettlement(req, res) {
             preview,
         });
     }
-    catch (error) {
+    catch (error_err) {
+        const error = error_err;
         if (error.message === "DRAFT_EXISTS") {
             return res.status(409).json({
                 error: {
@@ -129,7 +133,7 @@ async function previewSettlement(req, res) {
                 },
             });
         }
-        console.error("Preview Settlement Error:", error);
+        shared_config_1.logger.error("Preview Settlement Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -189,8 +193,9 @@ async function submitSettlement(req, res) {
         });
         return res.status(200).json({ message: "Settlement submitted for review" });
     }
-    catch (error) {
-        console.error("Submit Settlement Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Submit Settlement Error:", error);
         return res.status(500).json({
             error: { code: "INTERNAL_SERVER_ERROR", message: "Could not submit settlement", requestId: req.id },
         });
@@ -247,8 +252,9 @@ async function rejectSettlement(req, res) {
         });
         return res.status(200).json({ message: "Settlement rejected" });
     }
-    catch (error) {
-        console.error("Reject Settlement Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Reject Settlement Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -321,8 +327,9 @@ async function exportSettlementCsv(req, res) {
         res.setHeader("Content-Disposition", `attachment; filename="settlement-${run.periodMonth}-${snapshotId.slice(0, 8)}.csv"`);
         return res.status(200).send(csv);
     }
-    catch (error) {
-        console.error("Export CSV Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Export CSV Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -446,8 +453,9 @@ async function getSettlementLines(req, res) {
             lines,
         });
     }
-    catch (error) {
-        console.error("getSettlementLines error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("getSettlementLines error:", error);
         return res.status(500).json({
             error: { code: "INTERNAL_SERVER_ERROR", message: "Could not fetch lines" },
         });
@@ -479,8 +487,9 @@ async function getSettlementSummary(req, res) {
             pendingAdjustments: pendingAdjCount,
         });
     }
-    catch (error) {
-        console.error("Summary Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Summary Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -494,8 +503,13 @@ async function approveSettlement(req, res) {
     try {
         const userId = req.user?.userId;
         const { snapshotId } = req.params;
-        // Only Finance Checker can approve (Maker-Checker: Admin submits, Checker approves)
-        if (!userId || req.user?.role !== "FINANCE_CHECKER") {
+        const role = req.user?.role;
+        // Dev mode lets an ADMIN approve directly (and skip the SUBMITTED step) to ease
+        // local testing. Production keeps the strict Maker-Checker rule: only FINANCE_CHECKER
+        // approves, and only a SUBMITTED run.
+        const isDevMode = process.env.NODE_ENV !== "production";
+        const canApprove = role === "FINANCE_CHECKER" || (isDevMode && role === "ADMIN");
+        if (!userId || !canApprove) {
             return res.status(403).json({
                 error: {
                     code: "FORBIDDEN",
@@ -523,7 +537,8 @@ async function approveSettlement(req, res) {
                 error: { code: "NOT_FOUND", message: "Settlement run not found", requestId: req.id },
             });
         }
-        if (run.status !== "SUBMITTED") {
+        const approvableStatuses = isDevMode ? ["DRAFT", "SUBMITTED"] : ["SUBMITTED"];
+        if (!approvableStatuses.includes(run.status)) {
             return res.status(400).json({
                 error: {
                     code: "INVALID_STATUS",
@@ -549,13 +564,14 @@ async function approveSettlement(req, res) {
                 },
             });
         }
-        const approvedRun = await settlementService_1.SettlementService.approveSettlement(snapshotId, userId);
+        const approvedRun = await settlementService_1.SettlementService.approveSettlement(snapshotId, userId, { allowDirectFromDraft: isDevMode });
         return res.status(200).json({
             message: "Settlement run approved",
             run: serializeSettlementRun(approvedRun),
         });
     }
-    catch (error) {
+    catch (error_err) {
+        const error = error_err;
         if (error.message === "NOT_FOUND") {
             return res.status(404).json({
                 error: {
@@ -603,7 +619,7 @@ async function approveSettlement(req, res) {
                 },
             });
         }
-        console.error("Approve Settlement Error:", error);
+        shared_config_1.logger.error("Approve Settlement Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -641,7 +657,8 @@ async function retryPayoutTransfer(req, res) {
             transfer,
         });
     }
-    catch (error) {
+    catch (error_err) {
+        const error = error_err;
         const errorMap = {
             PAYOUT_LINE_NOT_FOUND: {
                 status: 404,
@@ -702,11 +719,69 @@ async function retryPayoutTransfer(req, res) {
                 },
             });
         }
-        console.error("Retry Payout Transfer Error:", error);
+        shared_config_1.logger.error("Retry Payout Transfer Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
                 message: "Could not send payout transfer",
+                requestId: req.id,
+            },
+        });
+    }
+}
+/**
+ * POST /v1/settlements/:snapshotId/lines/:payoutLineId/sync-transfer
+ * Pulls the latest Omise transfer status onto the payout document.
+ */
+async function syncPayoutTransfer(req, res) {
+    try {
+        const { payoutLineId } = req.params;
+        const role = req.user?.role;
+        if (role !== "ADMIN" && role !== "FINANCE_CHECKER") {
+            return res.status(403).json({
+                error: {
+                    code: "FORBIDDEN",
+                    message: "Only ADMIN or FINANCE_CHECKER can sync transfer status",
+                    requestId: req.id,
+                },
+            });
+        }
+        if (!payoutLineId) {
+            return res.status(400).json({
+                error: {
+                    code: "BAD_REQUEST",
+                    message: "payoutLineId is required in the path",
+                    requestId: req.id,
+                },
+            });
+        }
+        const result = await settlementService_1.SettlementService.syncPayoutTransferStatus(payoutLineId);
+        return res.status(200).json({ message: "Transfer status synced", transfer: result });
+    }
+    catch (error_err) {
+        const error = error_err;
+        const errorMap = {
+            PAYOUT_LINE_NOT_FOUND: { status: 404, message: "Payout line not found" },
+            PAYOUT_DOCUMENT_NOT_FOUND: {
+                status: 409,
+                message: "Payout document does not exist for this line",
+            },
+            OMISE_PAYOUTS_NOT_CONFIGURED: {
+                status: 502,
+                message: "Omise keys are not configured",
+            },
+        };
+        const mapped = errorMap[error.message];
+        if (mapped) {
+            return res.status(mapped.status).json({
+                error: { code: error.message, message: mapped.message, requestId: req.id },
+            });
+        }
+        shared_config_1.logger.error("Sync Payout Transfer Error:", error);
+        return res.status(500).json({
+            error: {
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Could not sync transfer status",
                 requestId: req.id,
             },
         });
@@ -798,8 +873,9 @@ async function getSettlements(req, res) {
         }));
         return res.status(200).json({ settlements: mapped });
     }
-    catch (error) {
-        console.error("GetSettlements Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("GetSettlements Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",

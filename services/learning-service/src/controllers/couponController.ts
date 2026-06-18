@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -52,7 +53,7 @@ export async function validateCouponCode(
         error: { code: error.code, message: error.message, requestId: req.id },
       });
     }
-    console.error("Validate Coupon Error:", error);
+    logger.error("Validate Coupon Error:", error);
     return res.status(500).json({
       error: { code: "INTERNAL_SERVER_ERROR", message: "Could not validate coupon", requestId: req.id },
     });
@@ -116,7 +117,7 @@ export async function applyCouponToClass(
         error: { code: error.code, message: error.message, requestId: req.id },
       });
     }
-    console.error("Apply Coupon Error:", error);
+    logger.error("Apply Coupon Error:", error);
     return res.status(500).json({
       error: { code: "INTERNAL_SERVER_ERROR", message: "Could not apply coupon", requestId: req.id },
     });
@@ -154,7 +155,7 @@ export async function getMyCoupons(req: AuthenticatedRequest, res: Response) {
 
     return res.status(200).json({ coupons });
   } catch (error) {
-    console.error("Get My Coupons Error:", error);
+    logger.error("Get My Coupons Error:", error);
     return res.status(500).json({
       error: { code: "INTERNAL_SERVER_ERROR", message: "Could not fetch coupons", requestId: req.id },
     });

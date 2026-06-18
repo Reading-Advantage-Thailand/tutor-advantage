@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { v4 as uuidv4 } from "uuid";
 
 export interface SessionParticipant {
@@ -89,7 +90,7 @@ class LessonSessionService {
       if (existingSessionId) {
         const existing = this.sessions.get(existingSessionId);
         if (existing && existing.status !== 'FINISHED') {
-          console.log(`[Service] Recovered existing session ${existingSessionId} for class ${classId}`);
+          logger.info(`[Service] Recovered existing session ${existingSessionId} for class ${classId}`);
           existing.tutorSocketId = tutorSocketId;
           return existing;
         }
@@ -155,8 +156,8 @@ class LessonSessionService {
       phaseSelectedIndices[11] = getRandomLongSentenceIndex(articleData.sentences);
     }
 
-    console.log(`[Service] Available MCQ questions (Phase 7):`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
-    console.log(`[Service] Available Short Answer questions (Phase 8):`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
+    logger.info(`[Service] Available MCQ questions (Phase 7):`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
+    logger.info(`[Service] Available Short Answer questions (Phase 8):`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
 
     // Force fresh UUID session instantiation every time to ensure unique, separated histories
     const sessionId = uuidv4();
@@ -183,7 +184,7 @@ class LessonSessionService {
       this.classToSessionId.set(classId, sessionId);
     }
 
-    console.log(`[Service] Created NEW session ${sessionId} for class ${classId}`);
+    logger.info(`[Service] Created NEW session ${sessionId} for class ${classId}`);
     return session;
   }
 
@@ -294,10 +295,10 @@ class LessonSessionService {
       session.status = 'ACTIVE';
     }
 
-    console.log(`[Service] Session phase changed to: ${phase}`);
+    logger.info(`[Service] Session phase changed to: ${phase}`);
     if ([7, 8, 9, 10, 11, 12].includes(phase)) {
        const idx = session.phaseSelectedIndices?.[phase] || 0;
-       console.log(`[Service] Selected Question Index for Phase ${phase}:`, idx);
+       logger.info(`[Service] Selected Question Index for Phase ${phase}:`, idx);
     }
 
     return session;
@@ -329,7 +330,7 @@ class LessonSessionService {
     }
 
     session.pairs = pairs;
-    console.log(`[Service] Generated ${pairs.length} conversation pair(s) for session ${session.sessionId}`);
+    logger.info(`[Service] Generated ${pairs.length} conversation pair(s) for session ${session.sessionId}`);
   }
 
   // Serialize pairs with display info for broadcast to tutor + students

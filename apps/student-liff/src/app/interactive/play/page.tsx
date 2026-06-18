@@ -8,6 +8,10 @@ import { playSound } from '@/lib/sounds';
 import { studentApi } from '@/lib/api';
 import { t } from '@/lib/i18n';
 import Image from 'next/image';
+import { MobileLeaderboard } from '@/components/lesson/MobileLeaderboard';
+import { LessonReflectionPhase } from '@/components/lesson/phases/LessonReflectionPhase';
+import { LessonPairPhase } from '@/components/lesson/phases/LessonPairPhase';
+import { LessonWrapUpPhase } from '@/components/lesson/phases/LessonWrapUpPhase';
 import { toast } from 'sonner';
 
 // ── Phase Config (Look at Screen) ────────────────────────────────────────────
@@ -24,71 +28,7 @@ const PHASE_CONFIG: Record<number, {
   6: { emoji: '⭐', label: 'ประโยคสำคัญ',     color: 'text-rose-600 dark:text-rose-400',     bg: 'bg-rose-500/10',    border: 'border-rose-500/30',    gradientFrom: 'from-rose-500',    gradientTo: 'to-pink-600',    tip: 'จดจำประโยคสำคัญเหล่านี้' },
 };
 
-// ── Mobile Live Leaderboard ───────────────────────────────────────────────────
-function MobileLeaderboard({ participants, studentId }: {
-  participants: { studentId: string; name: string; pictureUrl?: string; score?: number }[];
-  studentId: string;
-}) {
-  const sorted = [...participants].sort((a, b) => (b.score || 0) - (a.score || 0));
-  const myRank = sorted.findIndex(p => p.studentId === studentId) + 1;
-  if (sorted.length === 0) return null;
 
-  return (
-    <div className="w-full">
-      <div className="flex items-center justify-between mb-2.5 px-0.5">
-        <div className="flex items-center gap-1.5">
-          <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Live Leaderboard</span>
-        </div>
-        {myRank > 0 && (
-          <span className="text-[10px] font-black text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-indigo-500/20">
-            คุณ #{myRank}
-          </span>
-        )}
-      </div>
-      <div className="space-y-1.5 max-h-60 overflow-y-auto">
-        {sorted.map((p, i) => {
-          const rank = i + 1;
-          const isMe = p.studentId === studentId;
-          const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : null;
-          return (
-            <div key={p.studentId || i} className={[
-              'flex items-center gap-2.5 rounded-xl px-3 py-2.5 border-2 transition-all duration-300',
-              isMe
-                ? 'border-indigo-400/60 bg-indigo-500/10'
-                : rank === 1
-                  ? 'border-amber-400/40 bg-amber-500/10'
-                  : 'border-border bg-card',
-            ].join(' ')}>
-              <div className="w-6 text-center shrink-0">
-                {rankEmoji
-                  ? <span className="text-base leading-none">{rankEmoji}</span>
-                  : <span className="text-[10px] font-black text-muted-foreground">#{rank}</span>
-                }
-              </div>
-              <div className="size-8 rounded-full overflow-hidden border-2 border-border shadow-sm shrink-0 bg-muted flex items-center justify-center">
-                {p.pictureUrl
-                  ? <Image src={p.pictureUrl} alt={p.name} width={32} height={32} className="size-full object-cover" unoptimized />
-                  : <span className="text-[9px] font-black text-muted-foreground">{(p.name || '?').slice(0, 2)}</span>
-                }
-              </div>
-              <span className={`flex-1 text-sm font-semibold truncate ${isMe ? 'text-indigo-600 dark:text-indigo-400' : 'text-foreground'}`}>
-                {isMe ? 'คุณ' : p.name}
-              </span>
-              {isMe && <span className="text-[9px] bg-indigo-600 text-white font-black px-1.5 py-0.5 rounded-full shrink-0">ME</span>}
-              <div className="text-right shrink-0">
-                <p className={`text-sm font-black tabular-nums ${isMe ? 'text-indigo-600 dark:text-indigo-400' : rank <= 3 ? 'text-amber-500' : 'text-foreground'}`}>
-                  {p.score || 0}
-                </p>
-                <p className="text-[9px] text-muted-foreground leading-none">pts</p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
 
 // ── Main Component ────────────────────────────────────────────────────────────
 function PlayLessonContent() {
@@ -937,276 +877,39 @@ function PlayLessonContent() {
         )}
 
         {/* ─── Step 13: Lesson Reflection (phase 14) ─── */}
-        {currentPhase === 14 && (() => {
-          const uOptions = [
-            { v: 'all', label: t("interactivePlay.reflectionUnderstandingAll") },
-            { v: 'most', label: t("interactivePlay.reflectionUnderstandingMost") },
-            { v: 'some', label: t("interactivePlay.reflectionUnderstandingSome") },
-            { v: 'little', label: t("interactivePlay.reflectionUnderstandingLittle") },
-          ];
-          const eOptions = [
-            { v: 'great', label: t("interactivePlay.reflectionEffortGreat") },
-            { v: 'good', label: t("interactivePlay.reflectionEffortGood") },
-            { v: 'okay', label: t("interactivePlay.reflectionEffortOkay") },
-            { v: 'needsWork', label: t("interactivePlay.reflectionEffortNeedsWork") },
-          ];
-          return (
-            <div className="phase-enter w-full max-w-md flex flex-col gap-4 overflow-y-auto max-h-[calc(100dvh-80px)] pb-4">
-              <div className="bg-amber-500/10 border-2 border-amber-500/30 rounded-3xl p-6 text-center">
-                <div className="text-5xl mb-2">📝</div>
-                <h2 className="text-xl font-black text-amber-600 dark:text-amber-400">{t("interactivePlay.reflectionTitle")}</h2>
-                <p className="text-muted-foreground text-sm mt-1">{t("interactivePlay.reflectionPrompt")}</p>
-              </div>
+        {currentPhase === 14 && (
+          <LessonReflectionPhase
+            hasAnswered={hasAnswered}
+            reviewRating={reviewRating}
+            setReviewRating={setReviewRating}
+            reviewComment={reviewComment}
+            setReviewComment={setReviewComment}
+            understanding={understanding}
+            setUnderstanding={setUnderstanding}
+            effort={effort}
+            setEffort={setEffort}
+            isSubmitting={isSubmitting}
+            handleReflectionSubmit={handleReflectionSubmit}
+            participants={participants}
+            studentId={studentId}
+          />
+        )}
 
-              {hasAnswered ? (
-                <div className="bg-emerald-500/10 border-2 border-emerald-500/30 rounded-2xl p-6 text-center">
-                  <div className="text-4xl mb-2">✅</div>
-                  <h3 className="font-black text-emerald-600 dark:text-emerald-400 text-lg">{t("interactivePlay.reflectionDone")}</h3>
-                  {reviewRating > 0 && (
-                    <p className="text-emerald-600/70 dark:text-emerald-400/70 text-sm mt-1">{'★'.repeat(reviewRating)} บันทึกรีวิวคุณครูแล้ว</p>
-                  )}
-                </div>
-              ) : (
-                <div className="bg-card rounded-3xl border border-border shadow-lg p-5 space-y-4">
-                  <div>
-                    <p className="text-sm font-bold text-foreground mb-2">{t("interactivePlay.reflectionUnderstanding")}</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {uOptions.map((o) => (
-                        <button
-                          key={o.v}
-                          onClick={() => setUnderstanding(o.label)}
-                          className={`rounded-2xl border-2 py-2.5 text-sm font-bold transition-all active:scale-95 ${understanding === o.label ? 'border-amber-400 bg-amber-400/15 text-amber-600' : 'border-border bg-muted/40 text-muted-foreground'}`}
-                        >
-                          {o.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-foreground mb-2">{t("interactivePlay.reflectionEffort")}</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {eOptions.map((o) => (
-                        <button
-                          key={o.v}
-                          onClick={() => setEffort(o.label)}
-                          className={`rounded-2xl border-2 py-2.5 text-sm font-bold transition-all active:scale-95 ${effort === o.label ? 'border-amber-400 bg-amber-400/15 text-amber-600' : 'border-border bg-muted/40 text-muted-foreground'}`}
-                        >
-                          {o.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+        {currentPhase === 15 && (
+          <LessonPairPhase
+            devPairPreview={devPairPreview}
+            sessionData={sessionData}
+            studentId={studentId}
+            name={name}
+          />
+        )}
 
-                  {/* Tutor star review (optional, sent together with the reflection) */}
-                  <div className="border-t border-border pt-4">
-                    <p className="text-sm font-bold text-foreground">ให้คะแนนคุณครู <span className="text-muted-foreground font-normal text-xs">(ไม่บังคับ)</span></p>
-                    <p className="text-muted-foreground text-xs leading-relaxed mb-2">คะแนนนี้จะถูกนำไปคำนวณเรตติ้งเฉลี่ยจริงของคุณครู</p>
-                    <div className="grid grid-cols-5 gap-2 mb-3">
-                      {[1, 2, 3, 4, 5].map((value) => (
-                        <button
-                          key={value}
-                          type="button"
-                          onClick={() => setReviewRating(value)}
-                          aria-label={`ให้ ${value} ดาว`}
-                          className={`h-12 rounded-2xl border text-2xl transition-all active:scale-95 ${value <= reviewRating ? 'border-amber-400 bg-amber-400/15 text-amber-500' : 'border-border bg-muted/40 text-muted-foreground'}`}
-                        >
-                          ★
-                        </button>
-                      ))}
-                    </div>
-                    <textarea
-                      value={reviewComment}
-                      onChange={(event) => setReviewComment(event.target.value)}
-                      placeholder="เล่าความประทับใจหรือข้อเสนอแนะเพิ่มเติม"
-                      maxLength={500}
-                      className="min-h-20 w-full resize-y rounded-2xl border border-border bg-background p-3 text-sm font-medium text-foreground outline-none focus:border-amber-400"
-                    />
-                  </div>
-
-                  <button
-                    onClick={handleReflectionSubmit}
-                    disabled={!understanding || !effort || isSubmitting}
-                    className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-base py-4 rounded-2xl shadow-lg disabled:opacity-40 active:scale-95 transition-all"
-                  >
-                    {isSubmitting ? 'กำลังส่ง...' : t("interactivePlay.reflectionSubmit")}
-                  </button>
-                </div>
-              )}
-
-              <MobileLeaderboard participants={participants} studentId={studentId} />
-            </div>
-          );
-        })()}
-
-        {/* ─── Step 14: Pair Conversation (phase 15) ─── */}
-        {currentPhase === 15 && (() => {
-          // Dev preview injects a fake pair containing this student
-          const pairs = devPairPreview
-            ? [{
-                pairNumber: 1,
-                members: [
-                  { studentId, name },
-                  { studentId: 'mock-partner-1', name: 'เพื่อนทดสอบ เอ' },
-                  ...(devPairPreview === 2 ? [{ studentId: 'mock-partner-2', name: 'เพื่อนทดสอบ บี' }] : []),
-                ],
-              }]
-            : (sessionData?.pairs || []);
-          const myPair = pairs.find(p => p.members.some(m => m.studentId === studentId));
-          const partners = myPair ? myPair.members.filter(m => m.studentId !== studentId) : [];
-          const starters = [
-            'What was this story about?',
-            'Which new word do you like? Why?',
-            'What is the most interesting part?',
-            'What did you learn today?',
-          ];
-
-          return (
-            <div className="phase-enter w-full max-w-sm flex flex-col gap-4 overflow-y-auto max-h-[calc(100dvh-80px)] pb-4">
-              <div className="bg-rose-500/10 border-2 border-rose-500/30 rounded-3xl p-6 text-center">
-                <div className="text-5xl mb-2">🗣️</div>
-                <h2 className="text-xl font-black text-rose-600 dark:text-rose-400">สนทนาจับคู่</h2>
-                <p className="text-muted-foreground text-sm mt-1">คุยกับคู่ของคุณเกี่ยวกับบทเรียนวันนี้</p>
-              </div>
-
-              {myPair ? (
-                <div className="bg-card rounded-3xl border border-border shadow-lg p-5 text-center">
-                  <span className="inline-block text-[10px] font-black uppercase tracking-widest text-rose-500 bg-rose-500/10 border border-rose-500/20 rounded-full px-3 py-1 mb-4">
-                    คู่ที่ {myPair.pairNumber}
-                  </span>
-                  {partners.length > 0 ? (
-                    <>
-                      <p className="text-xs font-bold text-muted-foreground mb-3">
-                        {partners.length > 1 ? 'คู่สนทนาของคุณ (กลุ่ม 3 คน)' : 'คู่สนทนาของคุณ'}
-                      </p>
-                      <div className="flex items-center justify-center gap-4 flex-wrap">
-                        {partners.map((partner) => (
-                          <div key={partner.studentId} className="flex flex-col items-center gap-2">
-                            <div className="size-16 rounded-full overflow-hidden border-4 border-rose-300/60 shadow-lg bg-muted">
-                              <Image
-                                src={partner.pictureUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${partner.name}`}
-                                alt={partner.name}
-                                width={64} height={64}
-                                className="size-full object-cover"
-                                unoptimized
-                              />
-                            </div>
-                            <span className="text-sm font-black text-foreground">{partner.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                      <p className="text-muted-foreground text-xs mt-4 leading-relaxed">
-                        หันไปหาคู่ของคุณ แล้วผลัดกันพูดคนละ 2-3 นาที 🤝
-                      </p>
-                    </>
-                  ) : (
-                    <p className="text-muted-foreground text-sm">รอคุณครูจัดคู่ให้คุณ</p>
-                  )}
-                </div>
-              ) : (
-                <div className="bg-card rounded-3xl border border-border shadow-lg p-6 text-center">
-                  <div className="text-3xl mb-2">👀</div>
-                  <p className="text-muted-foreground text-sm font-medium">ดูคู่ของคุณบนจอคุณครู</p>
-                </div>
-              )}
-
-              <div className="bg-card rounded-2xl border border-border shadow-sm p-4">
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2.5">ประโยคชวนคุย</p>
-                <div className="space-y-2">
-                  {starters.map((starter) => (
-                    <div key={starter} className="bg-muted/50 border border-border/60 rounded-xl px-3 py-2 text-sm font-medium text-foreground">
-                      💬 {starter}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          );
-        })()}
-
-        {/* ─── Wrap-up: Final Leaderboard (phase 16) ─── */}
-        {currentPhase === 16 && (() => {
-          const sorted = [...participants].sort((a, b) => (b.score || 0) - (a.score || 0));
-          const studentIndex = sorted.findIndex(p => p.studentId === studentId);
-          const rank = studentIndex !== -1 ? studentIndex + 1 : 0;
-          const score = rank > 0 ? sorted[studentIndex]?.score || 0 : 0;
-          const rankEmoji = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '🎖️';
-          const rankGrad = rank === 1
-            ? 'from-amber-400 to-yellow-500'
-            : rank === 2
-            ? 'from-slate-400 to-slate-500'
-            : rank === 3
-            ? 'from-orange-400 to-amber-500'
-            : 'from-indigo-500 to-violet-600';
-          let rankTitle = t("interactivePlay.greatJob");
-          if (rank === 1) rankTitle = t("interactivePlay.rankFirst");
-          else if (rank === 2) rankTitle = t("interactivePlay.rankSecond");
-          else if (rank === 3) rankTitle = t("interactivePlay.rankThird");
-
-          return (
-            <div className="phase-enter w-full max-w-sm flex flex-col gap-4 overflow-y-auto max-h-[calc(100dvh-80px)] pb-4">
-              {/* Rank hero */}
-              <div className={`bg-gradient-to-br ${rankGrad} rounded-3xl p-7 text-center shadow-2xl text-white relative overflow-hidden`}>
-                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 25% 25%, white 1.5px, transparent 1.5px)', backgroundSize: '18px 18px' }} />
-                <div className="relative z-10">
-                  <div className="text-7xl mb-3 animate-bounce" style={{ animationDuration: '1.5s' }}>{rankEmoji}</div>
-                  <h2 className="text-2xl font-black mb-1">{rankTitle}</h2>
-                  <p className="text-white/80 text-sm font-medium">อันดับ {rank > 0 ? rank : '-'} จาก {participants.length} คน</p>
-                </div>
-              </div>
-
-              {/* Score */}
-              <div className="bg-card rounded-3xl border border-border shadow-lg p-6 text-center">
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">{t("interactivePlay.totalScore")}</p>
-                <p className="text-6xl font-black text-indigo-600 dark:text-indigo-400 mt-2">{score}</p>
-                <p className="text-muted-foreground font-medium text-sm">คะแนน</p>
-              </div>
-
-              {/* Final mini leaderboard */}
-              {sorted.length > 0 && (
-                <div className="bg-card rounded-3xl border border-border shadow-lg p-5">
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">ผลการแข่งขัน</p>
-                  <div className="space-y-2">
-                    {sorted.map((p, i) => {
-                      const r = i + 1;
-                      const isMe = p.studentId === studentId;
-                      const rEmoji = r === 1 ? '🥇' : r === 2 ? '🥈' : r === 3 ? '🥉' : null;
-                      return (
-                        <div key={p.studentId || i} className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 ${isMe ? 'bg-indigo-500/10 border-2 border-indigo-500/30' : 'bg-muted/50 border border-border'}`}>
-                          <span className="w-6 text-center text-sm shrink-0">{rEmoji || `#${r}`}</span>
-                          <div className="size-7 rounded-full overflow-hidden bg-muted border-2 border-border shadow-sm shrink-0 flex items-center justify-center">
-                            {p.pictureUrl
-                              ? <Image src={p.pictureUrl} alt={p.name} width={28} height={28} className="size-full object-cover" unoptimized />
-                              : <span className="text-[9px] font-bold text-muted-foreground">{(p.name || '?').slice(0, 2)}</span>
-                            }
-                          </div>
-                          <span className={`flex-1 text-sm font-semibold truncate ${isMe ? 'text-indigo-600 dark:text-indigo-400' : 'text-foreground'}`}>
-                            {isMe ? 'คุณ' : p.name}
-                          </span>
-                          {isMe && <span className="text-[9px] bg-indigo-600 text-white font-black px-1.5 py-0.5 rounded-full shrink-0">ME</span>}
-                          <span className={`text-sm font-black tabular-nums ${isMe ? 'text-indigo-600 dark:text-indigo-400' : 'text-foreground'}`}>{p.score || 0}</span>
-                          <span className="text-[9px] text-muted-foreground">pts</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Completed */}
-              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4">
-                <h4 className="font-black text-emerald-600 dark:text-emerald-400 text-sm mb-1">{t("interactivePlay.lessonCompletedTitle")}</h4>
-                <p className="text-emerald-600/80 dark:text-emerald-400/80 text-xs leading-relaxed">{t("interactivePlay.lessonCompletedDescription")}</p>
-              </div>
-
-              <button
-                onClick={() => router.push('/dashboard')}
-                className="w-full bg-gradient-to-r from-indigo-500 to-violet-600 text-white font-black py-4 rounded-2xl shadow-xl active:scale-95 transition-all"
-              >
-                {t("interactivePlay.backHome")}
-              </button>
-            </div>
-          );
-        })()}
+        {currentPhase === 16 && (
+          <LessonWrapUpPhase
+            participants={participants}
+            studentId={studentId}
+          />
+        )}
 
         {/* ─── MCQ-style Phases: Comprehension(7), Vocab(9), Sentence fill(10), Sentence order(11) ─── */}
         {[7, 9, 10, 11].includes(currentPhase) && (

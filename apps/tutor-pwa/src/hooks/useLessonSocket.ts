@@ -4,19 +4,12 @@ import { getTutorSessionToken } from '../app/dashboard/actions';
 import { t } from '@/lib/i18n';
 
 
-export type LessonPair = {
-  pairNumber: number;
-  members: { studentId: string; name: string; pictureUrl?: string }[];
-};
-
-type TutorSessionData = {
-  sessionId: string;
-  currentPhase: number;
-  articleData?: any;
-  phaseSelectedIndices?: Record<number, number>;
-  // Step 14 (Pair Conversation) random pairs, present while phase 15 is active
-  pairs?: LessonPair[] | null;
-};
+import {
+  Participant,
+  TutorSessionData,
+  AnswerData,
+  ArticleData,
+} from '@/lib/lesson-types';
 
 export const useLessonSocket = (
   tutorId: string,
@@ -30,10 +23,10 @@ export const useLessonSocket = (
   const lessonSocketUrl = socketUrl || 'http://localhost:3002';
   const [socket, setSocket] = useState<Socket | null>(null);
   const [sessionData, setSessionData] = useState<TutorSessionData | null>(null);
-  const [participants, setParticipants] = useState<any[]>([]);
+  const [participants, setParticipants] = useState<Participant[]>([]);
   const [totalAnswered, setTotalAnswered] = useState(0);
-  const [allAnsweredData, setAllAnsweredData] = useState<any[]>([]);
-  const [articleData, setArticleData] = useState<any>(null);
+  const [allAnsweredData, setAllAnsweredData] = useState<AnswerData[]>([]);
+  const [articleData, setArticleData] = useState<ArticleData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [flagCounts, setFlagCounts] = useState<Record<number, number>>({});
 
@@ -74,7 +67,6 @@ export const useLessonSocket = (
         setSocket(socketInstance);
 
         socketInstance.on('connect', () => {
-          console.log('Connected to Learning Service WebSocket');
           // Auto create session on connect for Tutor with the selected article and classId.
           // Demo mode runs a free, fixed preview with no class/DB/AI on the backend.
           socketInstance.emit('create_session', { tutorId, articleId, classId, classBookCycleId, bookId, demo });
@@ -105,7 +97,6 @@ export const useLessonSocket = (
         });
 
         socketInstance.on('phase_changed', (data) => {
-          console.log(`[Socket] Phase changed to: ${data.phase}`);
           setSessionData(prev => {
             const next = prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null } : null;
             sessionDataRef.current = next;
@@ -122,12 +113,10 @@ export const useLessonSocket = (
         });
 
         socketInstance.on('participant_answered', (data) => {
-          console.log(`[Socket] Participant answered: ${data.studentId}, Total: ${data.totalAnswered}`);
           setTotalAnswered(data.totalAnswered);
         });
 
         socketInstance.on('all_answered', (data) => {
-          console.log(`[Socket] All participants answered!`, data.answers);
           setAllAnsweredData(data.answers);
         });
 
@@ -136,7 +125,6 @@ export const useLessonSocket = (
         });
 
         socketInstance.on('session_deleted', (data) => {
-          console.log(`[Socket] Session deleted: ${data.message}`);
           sessionDataRef.current = null;
           setSessionData(null);
           setError(t("app.lessonSessionCancelled"));

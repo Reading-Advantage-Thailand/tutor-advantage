@@ -6,7 +6,6 @@ const client_1 = require("@prisma/client");
 const commissionService_1 = require("./commissionService");
 const taxService_1 = require("./taxService");
 const omiseService_1 = require("./omiseService");
-const payoutsEnabled = () => process.env.OMISE_PAYOUTS_ENABLED === "true";
 function getOmiseRecipientId(settings) {
     if (!settings || typeof settings !== "object" || Array.isArray(settings)) {
         return null;
@@ -353,13 +352,18 @@ class SettlementService {
     /**
      * Approves a SUBMITTED settlement run (Finance Checker only).
      */
-    static async approveSettlement(snapshotId, approvedBy) {
+    static async approveSettlement(snapshotId, approvedBy, options) {
         const run = await database_1.prisma.settlementRun.findUnique({
             where: { settlementRunId: snapshotId },
         });
         if (!run)
             throw new Error("NOT_FOUND");
-        if (run.status !== "SUBMITTED")
+        // Dev mode may approve a DRAFT directly (skips the SUBMITTED maker-checker step).
+        // Production always requires a SUBMITTED run.
+        const validStatuses = options?.allowDirectFromDraft
+            ? ["DRAFT", "SUBMITTED"]
+            : ["SUBMITTED"];
+        if (!validStatuses.includes(run.status))
             throw new Error("INVALID_STATUS");
         const positivePayoutLines = await database_1.prisma.payoutLine.findMany({
             where: {
@@ -371,12 +375,12 @@ class SettlementService {
                 tutorUserId: true,
             },
         });
-        const shouldSendPayouts = payoutsEnabled() && positivePayoutLines.length > 0;
+        // Auto-send transfers on approval whenever Omise is configured — no separate
+        // "send transfer" step required. If Omise is not configured, lines fall back
+        // to NOT_SENT (no throw) and can be sent later via retryPayoutTransfer.
+        const shouldSendPayouts = (0, omiseService_1.isOmiseConfigured)() && positivePayoutLines.length > 0;
         const recipientByTutor = new Map();
         if (shouldSendPayouts) {
-            if (!(0, omiseService_1.isOmiseConfigured)()) {
-                throw new Error("OMISE_PAYOUTS_NOT_CONFIGURED");
-            }
             const tutorIds = [...new Set(positivePayoutLines.map((line) => line.tutorUserId))];
             const tutors = await database_1.prisma.user.findMany({
                 where: { userId: { in: tutorIds } },
@@ -466,7 +470,8 @@ class SettlementService {
                         transferredAt: transfer.sent_at ? new Date(transfer.sent_at) : null,
                     });
                 }
-                catch (error) {
+                catch (error_err) {
+                    const error = error_err;
                     await updatePayoutTransferTracking(line.payoutLineId, {
                         provider: "omise",
                         transferStatus: "TRANSFER_FAILED",
@@ -554,7 +559,8 @@ class SettlementService {
                 transferredAt: transfer.sent_at ?? null,
             };
         }
-        catch (error) {
+        catch (error_err) {
+            const error = error_err;
             await updatePayoutTransferTracking(line.payoutLineId, {
                 provider: "omise",
                 transferStatus: "TRANSFER_FAILED",
@@ -562,6 +568,57 @@ class SettlementService {
             });
             throw new Error(`OMISE_TRANSFER_FAILED:${line.payoutLineId}:${error.message}`);
         }
+    }
+    /**
+     * Pulls the latest transfer status from Omise and syncs it onto the payout
+     * document. Used by the manual "refresh" button and auto-poll when the
+     * webhook hasn't (yet) delivered the final state.
+     */
+    static async syncPayoutTransferStatus(payoutLineId) {
+        const line = await database_1.prisma.payoutLine.findUnique({
+            where: { payoutLineId },
+            include: { payoutDocument: true },
+        });
+        if (!line)
+            throw new Error("PAYOUT_LINE_NOT_FOUND");
+        if (!line.payoutDocument)
+            throw new Error("PAYOUT_DOCUMENT_NOT_FOUND");
+        const providerTransferId = line.payoutDocument.providerTransferId;
+        // Nothing to sync yet — no Omise transfer was ever created for this line.
+        if (!providerTransferId) {
+            return {
+                payoutLineId,
+                tutorUserId: line.tutorUserId,
+                transferStatus: line.payoutDocument.transferStatus,
+                transferredAt: line.payoutDocument.transferredAt?.toISOString() ?? null,
+                synced: false,
+            };
+        }
+        if (!(0, omiseService_1.isOmiseConfigured)()) {
+            throw new Error("OMISE_PAYOUTS_NOT_CONFIGURED");
+        }
+        const transfer = await (0, omiseService_1.retrieveOmiseTransfer)(providerTransferId);
+        const transferStatus = transferStatusFromOmise(transfer);
+        const transferredAt = transfer.paid_at
+            ? new Date(transfer.paid_at)
+            : transfer.sent_at
+                ? new Date(transfer.sent_at)
+                : null;
+        await updatePayoutTransferTracking(payoutLineId, {
+            provider: "omise",
+            providerTransferId,
+            transferStatus,
+            transferFailureCode: transfer.failure_code ?? null,
+            transferFailureMessage: transfer.failure_message ?? null,
+            transferredAt,
+        });
+        return {
+            payoutLineId,
+            tutorUserId: line.tutorUserId,
+            transferStatus,
+            transferredAt: transferredAt?.toISOString() ?? null,
+            synced: true,
+        };
     }
 }
 exports.SettlementService = SettlementService;

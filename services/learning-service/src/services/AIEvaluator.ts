@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { generateObject } from 'ai';
 import { google } from '@ai-sdk/google';
 import { z } from 'zod';
@@ -31,7 +32,7 @@ export const evaluateShortAnswer = async (
 
     return result.object as { score: number; feedback: string };
   } catch (error) {
-    console.error("AI Evaluation failed, using fallback:", error);
+    logger.error("AI Evaluation failed, using fallback:", error);
     // Fallback: Give full score to allow student to proceed, but with a note
     return {
       score: 5,
@@ -68,7 +69,7 @@ export const evaluateWriting = async (
 
     return result.object as { score: number; feedback: string };
   } catch (error) {
-    console.error("AI Writing evaluation failed, using fallback:", error);
+    logger.error("AI Writing evaluation failed, using fallback:", error);
     return {
       score: 5,
       feedback: "ส่งงานเขียนสำเร็จ! (ระบบตรวจอัตโนมัติขัดข้องชั่วคราว คุณครูจะอ่านงานของคุณอีกครั้ง)"
@@ -113,7 +114,7 @@ export const answerLanguageQuestion = async (
 
     return result.object as { answer: string };
   } catch (error) {
-    console.error("AI Language answer failed, using fallback:", error);
+    logger.error("AI Language answer failed, using fallback:", error);
     return {
       answer: "บันทึกคำถามแล้ว! (ระบบ AI ขัดข้องชั่วคราว คุณครูจะช่วยตอบคำถามนี้ในคาบเรียน)"
     };

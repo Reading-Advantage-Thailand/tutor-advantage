@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTutorNetwork = getTutorNetwork;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const commissionService_1 = require("../services/commissionService");
 async function getTutorNetwork(req, res) {
@@ -157,8 +158,9 @@ async function getTutorNetwork(req, res) {
             })),
         });
     }
-    catch (error) {
-        console.error("Get Tutor Network Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Get Tutor Network Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",

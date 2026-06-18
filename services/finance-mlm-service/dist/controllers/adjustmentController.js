@@ -4,6 +4,7 @@ exports.getAdjustments = getAdjustments;
 exports.createAdjustment = createAdjustment;
 exports.approveAdjustment = approveAdjustment;
 exports.rejectAdjustment = rejectAdjustment;
+const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const settlementService_1 = require("../services/settlementService");
 function canCreateAdjustment(role) {
@@ -91,8 +92,9 @@ async function getAdjustments(req, res) {
             },
         });
     }
-    catch (error) {
-        console.error("GetAdjustments Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("GetAdjustments Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -189,8 +191,9 @@ async function createAdjustment(req, res) {
             adjustmentId: adj.adjustmentId,
         });
     }
-    catch (error) {
-        console.error("CreateAdjustment Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("CreateAdjustment Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -260,8 +263,9 @@ async function approveAdjustment(req, res) {
             settlementRefresh,
         });
     }
-    catch (error) {
-        console.error("ApproveAdjustment Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("ApproveAdjustment Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
@@ -330,8 +334,9 @@ async function rejectAdjustment(req, res) {
             settlementRefresh,
         });
     }
-    catch (error) {
-        console.error("RejectAdjustment Error:", error);
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("RejectAdjustment Error:", error);
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",

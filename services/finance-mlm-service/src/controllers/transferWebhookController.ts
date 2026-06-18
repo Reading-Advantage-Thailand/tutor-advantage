@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import crypto from "crypto";
 import { Request, Response } from "express";
 import { prisma } from "@tutor-advantage/database";
@@ -25,7 +26,7 @@ function verifySignature(req: Request, payload: unknown): boolean {
   // In non-production, allow unsigned webhooks for local testing
   if (!secret && process.env.NODE_ENV !== "production") return true;
   if (!secret) {
-    console.error("[TransferWebhook] OMISE_WEBHOOK_SECRET not configured");
+    logger.error("[TransferWebhook] OMISE_WEBHOOK_SECRET not configured");
     return false;
   }
 
@@ -80,7 +81,7 @@ export async function handleTransferWebhook(req: Request, res: Response) {
     `;
 
     if (existing.length === 0) {
-      console.warn(`[TransferWebhook] No payout_document found for transfer ${transferId}`);
+      logger.warn(`[TransferWebhook] No payout_document found for transfer ${transferId}`);
       return res.status(200).send("Transfer not tracked — ignored");
     }
 
@@ -107,11 +108,12 @@ export async function handleTransferWebhook(req: Request, res: Response) {
       WHERE "provider_transfer_id" = ${transferId}
     `;
 
-    console.log(`[TransferWebhook] ${eventKey} → ${mappedStatus} for transfer ${transferId} (event ${eventId})`);
+    logger.info(`[TransferWebhook] ${eventKey} → ${mappedStatus} for transfer ${transferId} (event ${eventId})`);
 
     return res.status(200).send("OK");
-  } catch (error: any) {
-    console.error("[TransferWebhook] Error:", error);
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    logger.error("[TransferWebhook] Error:", error);
     return res.status(500).send("Webhook processing failed");
   }
 }

@@ -1,3 +1,4 @@
+import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -81,7 +82,7 @@ export const getFraudFlags = async (
       },
     });
   } catch (error) {
-    console.error("Get Fraud Flags Error:", error);
+    logger.error("Get Fraud Flags Error:", error);
     res.status(500).json({ error: "Could not fetch fraud flags" });
   }
 };
@@ -139,7 +140,7 @@ export const triggerFraudAction = async (
       },
     });
   } catch (error) {
-    console.error("Fraud Action Error:", error);
+    logger.error("Fraud Action Error:", error);
     res.status(500).json({ error: "Could not update fraud flag" });
   }
 };
