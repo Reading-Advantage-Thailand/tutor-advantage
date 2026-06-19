@@ -46,7 +46,12 @@ interface AuditLog {
     | "ADJUST_CREATE"
     | "ADJUST_APPROVE"
     | "ADJUST_REJECT"
-    | "EXPORT";
+    | "EXPORT"
+    | "SETTLEMENT_REFRESH"
+    | "SUBMIT"
+    | "SUBMIT_SETTLEMENT"
+    | "APPROVE_SETTLEMENT"
+    | string;
   actorUserId: string;
   displayName: string;
   targetId: string;
@@ -104,6 +109,26 @@ const ACTION_CONFIG: Record<
     icon: Download,
     className:
       "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-none",
+  },
+  SETTLEMENT_REFRESH: {
+    label: t("audit.actionLabelSettlementRefresh"),
+    icon: RefreshCw,
+    className: "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-none",
+  },
+  SUBMIT: {
+    label: t("audit.actionLabelSubmit"),
+    icon: CheckCircle2,
+    className: "bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-none",
+  },
+  SUBMIT_SETTLEMENT: {
+    label: t("audit.actionLabelSubmitSettlement"),
+    icon: CheckCircle2,
+    className: "bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-none",
+  },
+  APPROVE_SETTLEMENT: {
+    label: t("audit.actionLabelApproveSettlement"),
+    icon: CheckCircle2,
+    className: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-none",
   },
 };
 
@@ -212,6 +237,10 @@ export default function AuditPage() {
                   <SelectItem value="ADJUST_CREATE">{t("audit.adjustCreate")}</SelectItem>
                   <SelectItem value="ADJUST_APPROVE">{t("audit.adjustApprove")}</SelectItem>
                   <SelectItem value="ADJUST_REJECT">{t("audit.adjustReject")}</SelectItem>
+                  <SelectItem value="SETTLEMENT_REFRESH">{t("audit.actionLabelSettlementRefresh")}</SelectItem>
+                  <SelectItem value="SUBMIT">{t("audit.actionLabelSubmit")}</SelectItem>
+                  <SelectItem value="SUBMIT_SETTLEMENT">{t("audit.actionLabelSubmitSettlement")}</SelectItem>
+                  <SelectItem value="APPROVE_SETTLEMENT">{t("audit.actionLabelApproveSettlement")}</SelectItem>
                   <SelectItem value="EXPORT">{t("audit.export")}</SelectItem>
                 </SelectContent>
               </Select>

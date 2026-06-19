@@ -14,8 +14,8 @@ import {
   Shield,
   Trash2,
 } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -89,7 +89,6 @@ export default function DevDatabasePage() {
   const [data, setData] = useState<DatabasePayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [actionMessage, setActionMessage] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [schemaFilter, setSchemaFilter] = useState("all");
   const [selectedTableKey, setSelectedTableKey] = useState<string | null>(null);
@@ -188,13 +187,12 @@ export default function DevDatabasePage() {
 
   const runAction = async (action: "truncate_selected" | "reset_except_books") => {
     if (confirmText !== "DELETE") {
-      setError('Type DELETE to confirm this destructive action.');
+      toast.error('Type DELETE to confirm this destructive action.');
       return;
     }
 
     setSubmitting(true);
     setError(null);
-    setActionMessage(null);
     try {
       const res = await fetch("/api/dev/database", {
         method: "POST",
@@ -206,13 +204,13 @@ export default function DevDatabasePage() {
       });
       const body = await res.json();
       if (!res.ok) throw new Error(body.error || "Database action failed");
-      setActionMessage(
+      toast.success(
         `Truncated ${body.truncatedTables.length} tables, removed about ${formatNumber(body.estimatedRowsRemoved)} rows.`,
       );
       clearSelection();
       await load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      toast.error(err instanceof Error ? err.message : String(err));
     } finally {
       setSubmitting(false);
     }
@@ -225,10 +223,10 @@ export default function DevDatabasePage() {
 
   if (process.env.NODE_ENV === "production") {
     return (
-      <Alert variant="destructive">
+      <div className="bg-red-50 text-red-600 p-4 rounded-xl border border-red-200 flex items-center gap-2">
         <AlertTriangle className="h-4 w-4" />
-        <AlertDescription>Database Dev Mode is disabled in production.</AlertDescription>
-      </Alert>
+        <p>Database Dev Mode is disabled in production.</p>
+      </div>
     );
   }
 
@@ -251,20 +249,6 @@ export default function DevDatabasePage() {
           Refresh
         </Button>
       </div>
-
-      {error && (
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      {actionMessage && (
-        <Alert className="border-emerald-500/30 bg-emerald-500/5">
-          <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-          <AlertDescription className="text-emerald-700">{actionMessage}</AlertDescription>
-        </Alert>
-      )}
 
       <div className="grid gap-3 md:grid-cols-4">
         <Card>
@@ -296,13 +280,13 @@ export default function DevDatabasePage() {
         </Card>
       </div>
 
-      <Alert className="border-orange-500/30 bg-orange-500/5">
-        <Shield className="h-4 w-4 text-orange-600" />
-        <AlertDescription className="text-orange-800 dark:text-orange-300">
+      <div className="rounded-xl border border-orange-500/30 bg-orange-500/5 p-4 flex gap-3">
+        <Shield className="h-5 w-5 text-orange-600 shrink-0" />
+        <p className="text-orange-800 dark:text-orange-300 text-sm">
           Preserved tables are locked: <strong>learning.series</strong>, <strong>learning.books</strong>, and{" "}
           <strong>learning.articles</strong>. Reset actions truncate everything else in identity, learning, and finance_mlm.
-        </AlertDescription>
-      </Alert>
+        </p>
+      </div>
 
       <div className="grid gap-4 xl:grid-cols-[minmax(360px,520px)_1fr]">
         <Card className="overflow-hidden">

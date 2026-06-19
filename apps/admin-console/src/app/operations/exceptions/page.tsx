@@ -10,8 +10,8 @@ import {
   Activity,
   X,
 } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -44,18 +44,8 @@ export default function ExceptionsPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [resolvingId, setResolvingId] = useState<string | null>(null);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [confirmAction, setConfirmAction] = useState<{ id: string; action: string } | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
-
-  // Auto-dismiss success after 5s
-  useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => setSuccess(""), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [success]);
 
   useEffect(() => {
     debounceRef.current = setTimeout(() => setDebouncedSearch(search), 400);
@@ -64,7 +54,6 @@ export default function ExceptionsPage() {
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    setError("");
     try {
       const params = new URLSearchParams();
       if (debouncedSearch.trim()) params.set("q", debouncedSearch.trim());
@@ -74,7 +63,7 @@ export default function ExceptionsPage() {
       );
       setData(resp.exceptions || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("operations.loadExceptionsFailed"));
+      toast.error(err instanceof Error ? err.message : t("operations.loadExceptionsFailed"));
     } finally {
       setLoading(false);
     }
@@ -88,17 +77,15 @@ export default function ExceptionsPage() {
 
   const handleResolve = async (id: string, action: string) => {
     setResolvingId(id);
-    setError("");
-    setSuccess("");
     try {
       await fetchWithAuth(
         `/v1/operations/exceptions/${id}/${action.replace(/\s+/g, "_").toUpperCase()}`,
         { method: "POST" },
       );
-      setSuccess(`${t("operations.updateExceptionSuccessPrefix")} ${id.slice(0, 8)} ${t("operations.successSuffix")}`);
+      toast.success(`${t("operations.updateExceptionSuccessPrefix")} ${id.slice(0, 8)} ${t("operations.successSuffix")}`);
       await loadData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("operations.updateExceptionFailed"));
+      toast.error(err instanceof Error ? err.message : t("operations.updateExceptionFailed"));
     } finally {
       setResolvingId(null);
     }
@@ -120,28 +107,6 @@ export default function ExceptionsPage() {
           {t("operations.refresh")}
         </Button>
       </div>
-
-      {error && (
-        <Alert variant="destructive" className="rounded-2xl border-2 shadow-sm relative">
-          <AlertTriangle className="h-5 w-5" />
-          <AlertTitle className="font-bold">{t("operations.actionFailed")}</AlertTitle>
-          <AlertDescription className="font-medium">{error}</AlertDescription>
-          <button onClick={() => setError("")} className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
-            <X className="h-4 w-4" />
-          </button>
-        </Alert>
-      )}
-      {success && (
-        <Alert className="rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/5 shadow-sm relative">
-          <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-          <AlertDescription className="font-medium text-emerald-700">
-            {success}
-          </AlertDescription>
-          <button onClick={() => setSuccess("")} className="absolute top-3 right-3 text-emerald-400 hover:text-emerald-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
-            <X className="h-4 w-4" />
-          </button>
-        </Alert>
-      )}
 
       <Card className="border-none shadow-md rounded-3xl bg-card overflow-hidden">
         <CardHeader className="bg-muted/20 border-b px-8 py-6">

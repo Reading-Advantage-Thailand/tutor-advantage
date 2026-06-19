@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
-import { fetchWithAuth, getAdminRole, getAdminEmail } from "../lib/api";
+import { fetchWithAuth, getAdminRole, getAdminEmail, getAdminName, getAdminPicture } from "../lib/api";
 import {
   LayoutDashboard,
   ReceiptText,
@@ -12,12 +12,13 @@ import {
   ShieldCheck,
   FilePenLine,
   AlertTriangle,
-  Link as LinkIcon,
   Users,
   ShieldAlert,
   Terminal,
   Database,
   Ticket,
+  CodeXml,
+  Settings,
 } from "lucide-react";
 
 import {
@@ -63,11 +64,6 @@ const OPS_ITEMS = [
     label: t("layout.exceptions"),
     icon: AlertTriangle,
   },
-  {
-    href: "/operations/legacy-links",
-    label: t("layout.legacyLinks"),
-    icon: LinkIcon,
-  },
 ];
 
 const USER_RISK_ITEMS = [
@@ -76,17 +72,25 @@ const USER_RISK_ITEMS = [
   { href: "/coupons", label: t("layout.coupons"), icon: Ticket },
 ];
 
+const SETTINGS_ITEMS = [
+  { href: "/settings/roles", label: t("layout.roleManagement"), icon: Settings },
+];
+
 function AppSidebar({
   role,
   email,
+  name,
+  picture,
   onLogout,
 }: {
   role: string | null;
   email: string;
+  name: string;
+  picture: string;
   onLogout: () => void;
 }) {
   const pathname = usePathname();
-  const initial = role ? role[0].toUpperCase() : "A";
+  const initial = name ? name.charAt(0).toUpperCase() : role ? role.charAt(0).toUpperCase() : "A";
   const canAccessUserRisk = role === "ADMIN";
 
   const [pendingSettlements, setPendingSettlements] = useState(0);
@@ -265,6 +269,42 @@ function AppSidebar({
             </SidebarGroupContent>
           </SidebarGroup>
         )}
+
+        {canAccessUserRisk && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="px-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60">
+              {t("layout.settingsGroup")}
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {SETTINGS_ITEMS.map(({ href, label, icon: Icon }) => {
+                  const active = pathname.startsWith(href);
+                  return (
+                    <SidebarMenuItem key={href}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={active}
+                        tooltip={label}
+                        className={
+                          active
+                            ? "bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-400"
+                            : "hover:bg-brand-50/50 dark:hover:bg-brand-900/10"
+                        }
+                      >
+                        <Link href={href}>
+                          <Icon className={`shrink-0 ${active ? "text-brand-600" : "text-muted-foreground"}`} />
+                          <span className={`truncate ${active ? "font-semibold" : "font-medium"}`}>
+                            {label}
+                          </span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
         {/* Dev mode — development only */}
         {process.env.NODE_ENV === "development" && (
           <SidebarGroup>
@@ -329,12 +369,19 @@ function AppSidebar({
                   className="rounded-xl border border-border/50 bg-card/50 shadow-sm data-[state=open]:bg-sidebar-accent"
                 >
                   <Avatar className="h-9 w-9 border-2 border-brand-100 dark:border-brand-900">
-                    <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 text-white text-xs font-bold">
-                      {initial}
-                    </AvatarFallback>
+                    {picture ? (
+                      <img src={picture} alt="Profile" className="h-full w-full object-cover" />
+                    ) : (
+                      <AvatarFallback className="bg-gradient-to-br from-brand-400 to-brand-600 text-white text-xs font-bold">
+                        {initial}
+                      </AvatarFallback>
+                    )}
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight ml-1">
                     <span className="truncate font-semibold text-foreground">
+                      {name || email}
+                    </span>
+                    <span className="truncate text-[10px] font-medium text-brand-600 dark:text-brand-400">
                       {role === "ADMIN" ? t("layout.roleAdmin") : role === "FINANCE_CHECKER" ? t("layout.roleFinanceChecker") : role || t("layout.defaultRole")}
                     </span>
                     <span className="flex items-center gap-1.5 truncate text-[10px] font-medium text-muted-foreground uppercase tracking-tight">
@@ -353,16 +400,20 @@ function AppSidebar({
                 <DropdownMenuLabel className="p-2 font-normal">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10">
-                      <AvatarFallback className="bg-brand-100 text-brand-700 text-sm font-bold">
-                        {initial}
-                      </AvatarFallback>
+                      {picture ? (
+                        <img src={picture} alt="Profile" className="h-full w-full object-cover" />
+                      ) : (
+                        <AvatarFallback className="bg-brand-100 text-brand-700 text-sm font-bold">
+                          {initial}
+                        </AvatarFallback>
+                      )}
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-bold text-foreground">
-                        {role === "ADMIN" ? t("layout.roleAdmin") : role === "FINANCE_CHECKER" ? t("layout.roleFinanceChecker") : role || t("layout.defaultRole")}
+                        {name || email}
                       </span>
                       <p className="text-xs text-muted-foreground truncate">
-                        {email || "—"}
+                        {role === "ADMIN" ? t("layout.roleAdmin") : role === "FINANCE_CHECKER" ? t("layout.roleFinanceChecker") : role || t("layout.defaultRole")}
                       </p>
                     </div>
                   </div>
@@ -393,11 +444,15 @@ export default function LayoutWrapper({
   const router = useRouter();
   const [role, setRole] = useState<string | null>(null);
   const [email, setEmail] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [picture, setPicture] = useState<string>("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const savedRole = getAdminRole();
       const savedEmail = getAdminEmail();
+      const savedName = getAdminName();
+      const savedPicture = getAdminPicture();
       const isPublicPage = pathname === "/login" || pathname === "/unauthorized";
 
       if (!savedRole && !isPublicPage) {
@@ -405,6 +460,8 @@ export default function LayoutWrapper({
       } else {
         setRole(savedRole);
         setEmail(savedEmail);
+        setName(savedName);
+        setPicture(savedPicture);
       }
     }
   }, [pathname, router]);
@@ -428,10 +485,10 @@ export default function LayoutWrapper({
     "/adjustments": t("layout.adjustments"),
     "/audit": t("layout.audit"),
     "/operations/exceptions": t("layout.exceptions"),
-    "/operations/legacy-links": t("layout.legacyLinks"),
     "/users": t("layout.usersConsent"),
     "/fraud": t("layout.fraud"),
     "/coupons": t("layout.coupons"),
+    "/settings/roles": t("layout.roleManagement"),
     "/dev/database": "Database Dev Mode",
     "/dev": t("layout.developerGroup"),
   };
@@ -442,8 +499,13 @@ export default function LayoutWrapper({
 
   return (
     <SidebarProvider>
-      <AppSidebar role={role} email={email} onLogout={handleLogout} />
-      <SidebarInset className="bg-background/50 flex flex-col h-screen overflow-hidden">
+      <AppSidebar 
+        role={role} 
+        email={email} 
+        name={name}
+        picture={picture}
+        onLogout={handleLogout} 
+      /><SidebarInset className="bg-background/50 flex flex-col h-screen overflow-hidden">
         {/* Top Header */}
         <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2 border-b bg-background/95 px-6 backdrop-blur-md">
           <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-brand-600 transition-colors" />

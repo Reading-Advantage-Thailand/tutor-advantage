@@ -39,6 +39,10 @@ const ACTION_TYPE_LABELS: Record<string, string> = {
   ADJUST_APPROVE: t("audit.actionLabelAdjustApprove"),
   ADJUST_REJECT: t("audit.actionLabelAdjustReject"),
   EXPORT: t("audit.actionLabelExport"),
+  SETTLEMENT_REFRESH: t("audit.actionLabelSettlementRefresh"),
+  SUBMIT: t("audit.actionLabelSubmit"),
+  SUBMIT_SETTLEMENT: t("audit.actionLabelSubmitSettlement"),
+  APPROVE_SETTLEMENT: t("audit.actionLabelApproveSettlement"),
 };
 
 interface Overview {

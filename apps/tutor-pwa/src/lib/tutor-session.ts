@@ -12,6 +12,7 @@ export type ActiveTutorSession = {
     userId: string;
     role: string;
     isActive?: boolean;
+    userConsents?: Array<{ consentType: string; status: string }>;
     [key: string]: unknown;
   };
 };

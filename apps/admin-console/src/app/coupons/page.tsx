@@ -12,13 +12,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  AlertCircle,
-  CheckCircle2,
   RefreshCw,
   Ticket,
   Clock,
@@ -27,6 +24,7 @@ import {
   Ban,
   X,
 } from "lucide-react";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -83,12 +81,9 @@ export default function CouponsPage() {
   const [assignedTutorId, setAssignedTutorId] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [submitLoading, setSubmitLoading] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-  const [submitSuccess, setSubmitSuccess] = useState("");
 
   const [list, setList] = useState<Coupon[]>([]);
   const [listLoading, setListLoading] = useState(false);
-  const [listError, setListError] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -96,16 +91,8 @@ export default function CouponsPage() {
   const [voidId, setVoidId] = useState<string | null>(null);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (submitSuccess) {
-      const timer = setTimeout(() => setSubmitSuccess(""), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [submitSuccess]);
-
   const loadCoupons = useCallback(async () => {
     setListLoading(true);
-    setListError("");
     try {
       const params = new URLSearchParams({ page: page.toString(), pageSize: "50" });
       if (statusFilter !== "ALL") params.set("status", statusFilter);
@@ -113,7 +100,7 @@ export default function CouponsPage() {
       setList(data.coupons ?? []);
       setTotalPages(data.pagination?.totalPages ?? 1);
     } catch (err) {
-      setListError((err as Error).message);
+      toast.error((err as Error).message);
     } finally {
       setListLoading(false);
     }
@@ -127,12 +114,10 @@ export default function CouponsPage() {
     e.preventDefault();
     const hoursValue = parseInt(hours, 10);
     if (isNaN(hoursValue) || hoursValue <= 0) {
-      setSubmitError(t("coupons.validation.hoursRequired"));
+      toast.error(t("coupons.validation.hoursRequired"));
       return;
     }
     setSubmitLoading(true);
-    setSubmitError("");
-    setSubmitSuccess("");
     try {
       const body: Record<string, unknown> = { hours: hoursValue };
       if (note.trim()) body.note = note.trim();
@@ -142,7 +127,7 @@ export default function CouponsPage() {
         method: "POST",
         body: JSON.stringify(body),
       });
-      setSubmitSuccess(`${t("coupons.issueSuccess")}: ${data.coupon?.code ?? ""}`);
+      toast.success(`${t("coupons.issueSuccess")}: ${data.coupon?.code ?? ""}`);
       setHours("");
       setNote("");
       setAssignedTutorId("");
@@ -150,7 +135,7 @@ export default function CouponsPage() {
       setPage(1);
       loadCoupons();
     } catch (err) {
-      setSubmitError((err as Error).message);
+      toast.error((err as Error).message);
     } finally {
       setSubmitLoading(false);
     }
@@ -158,12 +143,12 @@ export default function CouponsPage() {
 
   const handleVoid = async (couponId: string) => {
     setActionLoadingId(couponId);
-    setListError("");
     try {
       await fetchWithAuth(`/v1/coupons/${couponId}/void`, { method: "POST" });
       loadCoupons();
+      toast.success("Coupon voided successfully");
     } catch (err) {
-      setListError((err as Error).message);
+      toast.error((err as Error).message);
     } finally {
       setActionLoadingId(null);
     }
@@ -256,28 +241,6 @@ export default function CouponsPage() {
                   />
                 </div>
 
-                {submitError && (
-                  <Alert variant="destructive" className="rounded-xl border-2 relative">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle className="font-bold">{t("coupons.errorTitle")}</AlertTitle>
-                    <AlertDescription className="font-medium">{submitError}</AlertDescription>
-                    <button onClick={() => setSubmitError("")} className="absolute top-2.5 right-2.5 text-red-400 hover:text-red-600 transition-colors" aria-label="ปิด">
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  </Alert>
-                )}
-                {submitSuccess && (
-                  <Alert className="rounded-xl border-2 border-emerald-500/30 bg-emerald-500/5 relative">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                    <AlertDescription className="font-medium text-emerald-700 dark:text-emerald-400">
-                      {submitSuccess}
-                    </AlertDescription>
-                    <button onClick={() => setSubmitSuccess("")} className="absolute top-2.5 right-2.5 text-emerald-400 hover:text-emerald-600 transition-colors" aria-label="ปิด">
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  </Alert>
-                )}
-
                 <Button
                   type="submit"
                   disabled={submitLoading}
@@ -337,17 +300,7 @@ export default function CouponsPage() {
             </div>
           </div>
 
-          {listError && (
-            <Alert variant="destructive" className="rounded-2xl border-2 shadow-sm relative">
-              <AlertCircle className="h-5 w-5" />
-              <AlertDescription className="font-medium">{listError}</AlertDescription>
-              <button onClick={() => setListError("")} className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition-colors" aria-label="ปิด">
-                <X className="h-4 w-4" />
-              </button>
-            </Alert>
-          )}
-
-          {!listLoading && list.length === 0 && !listError && (
+          {!listLoading && list.length === 0 && (
             <Card className="border-none shadow-sm rounded-3xl bg-muted/20 border-2 border-dashed">
               <CardContent className="flex flex-col items-center justify-center py-20 text-center">
                 <Ticket className="h-12 w-12 text-muted-foreground/30 mb-4" />

@@ -3,6 +3,7 @@ import "./globals.css";
 import LayoutWrapper from "../components/LayoutWrapper";
 import { ThemeProvider } from "../components/ThemeProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Tutor Advantage - Admin Console",
@@ -23,6 +24,7 @@ export default function RootLayout({
           <TooltipProvider>
             <LayoutWrapper>{children}</LayoutWrapper>
           </TooltipProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

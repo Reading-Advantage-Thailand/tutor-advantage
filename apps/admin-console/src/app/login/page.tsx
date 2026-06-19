@@ -174,19 +174,20 @@ export default function LoginPage() {
               )}
             </Button>
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border/50" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground font-bold tracking-widest">
-                  {t("login.or")}
-                </span>
-              </div>
-            </div>
-
             {/* Dev Login Toggle - Only visible in development */}
             {process.env.NODE_ENV === "development" && (
+              <>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-border/50" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-card px-2 text-muted-foreground font-bold tracking-widest">
+                      {t("login.or")}
+                    </span>
+                  </div>
+                </div>
+
               <div className="rounded-2xl border border-border/50 overflow-hidden transition-all duration-300 bg-muted/10">
                 <button
                   type="button"
@@ -264,6 +265,7 @@ export default function LoginPage() {
                   </div>
                 )}
               </div>
+              </>
             )}
           </CardContent>
 

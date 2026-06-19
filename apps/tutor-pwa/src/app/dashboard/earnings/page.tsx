@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Download, AlertCircle, Wallet, Star } from "lucide-react";
 import { cookies } from "next/headers";
 import VerificationBanner from "@/components/dashboard/verification-banner";
@@ -9,6 +9,7 @@ import { AnimatedCurrencyCounter, AnimatedCounter } from "@/components/ui/animat
 import { IDENTITY_URL } from "@/lib/service-urls";
 import { Tawi50DownloadButton } from "./tawi50-download-button";
 import { TransferStatusBadge } from "./transfer-status-badge";
+import { SalesCsvDownloadButton } from "./sales-csv-download-button";
 
 type EarningsHistoryItem = {
   date: string;
@@ -17,6 +18,7 @@ type EarningsHistoryItem = {
   network: number;
   badgeBonus?: number;
   clawback: number;
+  adjustments?: { amount: number; reason: string }[];
   withholdingTax?: number;
   netPayout?: number;
   payoutDocument?: {
@@ -43,6 +45,7 @@ type EarningsResponse = {
     networkBonus: number;
     badgeBonus?: number;
     clawback: number;
+    adjustments?: { amount: number; reason: string }[];
     total: number;
   };
   history: EarningsHistoryItem[];
@@ -56,6 +59,7 @@ type EarningsResponse = {
 
 type UserProfileResponse = {
   user?: {
+    verificationStatus?: string;
     settings?: {
       taxName?: string;
       nationalId?: string;
@@ -174,20 +178,18 @@ export default async function EarningsPage() {
             {t("dashboardEarnings.subtitle")}
           </p>
         </div>
-        <Button
-          id="btn-download-reports"
-          variant="outline"
+        <SalesCsvDownloadButton
+          periodMonth={response?.periodMonth || ""}
+          label={t("dashboardEarnings.downloadCsv")}
           className="h-10 px-5 rounded-xl font-bold hover:bg-brand-50 dark:hover:bg-brand-900/20 hover:text-brand-600 hover:border-brand-500/30 shadow-sm transition-all gap-2 shrink-0 hidden sm:flex hover-lift press-scale"
-        >
-          <Download className="h-4 w-4" />
-          {t("dashboardEarnings.downloadCsv")}
-        </Button>
+          variant="outline"
+        />
       </div>
 
       <div className="grid gap-6 lg:gap-8 md:grid-cols-12 stagger">
         {/* Left column */}
-        <div className="md:col-span-7 space-y-6 lg:space-y-8 animate-slide-up" style={{ animationDelay: '50ms' }}>
-          <Card className="border border-border/40 hover:shadow-lg rounded-3xl shadow-sm bg-card bg-gradient-to-br from-card via-card to-brand-500/2 dark:to-brand-500/5 transition-all duration-300 overflow-hidden relative group">
+        <div className="md:col-span-7 animate-slide-up h-full" style={{ animationDelay: '50ms' }}>
+          <Card className="h-full border border-border/40 hover:shadow-lg rounded-3xl shadow-sm bg-card bg-gradient-to-br from-card via-card to-brand-500/2 dark:to-brand-500/5 transition-all duration-300 overflow-hidden relative group">
             <div className="absolute top-0 right-0 w-44 h-44 bg-brand-500/10 dark:bg-brand-500/5 rounded-full blur-3xl -mr-12 -mt-12 pointer-events-none" />
             <CardContent className="p-5 sm:p-6 relative z-10">
               <div className="flex items-center gap-3 mb-5">
@@ -242,19 +244,35 @@ export default async function EarningsPage() {
                 </div>
               )}
 
-              {earnings.clawback !== 0 && (
+              {(!earnings.adjustments || earnings.adjustments.length === 0) && earnings.clawback !== 0 && (
                 <div className="mt-4 flex items-center justify-between rounded-2xl bg-destructive/5 border border-destructive/15 px-4 py-3 text-sm animate-scale-in">
                   <span className="text-destructive/90 flex items-center gap-2 font-semibold">
                     <AlertCircle className="h-4 w-4" />
-                    <span>{t("dashboardEarnings.clawback")}</span>
+                    {t("dashboardEarnings.clawback")}
                   </span>
                   <AnimatedCurrencyCounter
                     value={earnings.clawback}
                     fractionDigits={2}
-                    className="font-black text-destructive"
+                    className="font-bold text-destructive"
                   />
                 </div>
               )}
+
+              {earnings.adjustments && earnings.adjustments.length > 0 && earnings.adjustments.map((adj, i) => (
+                <div key={`proj-adj-${i}`} className={`mt-4 flex items-center justify-between rounded-2xl ${adj.amount < 0 ? 'bg-destructive/5 border-destructive/15' : 'bg-brand-500/5 border-brand-500/20'} border px-4 py-3 text-sm animate-scale-in`}>
+                  <span className={`${adj.amount < 0 ? 'text-destructive/90' : 'text-brand-600 dark:text-brand-400'} flex items-center gap-2 font-semibold`}>
+                    {adj.amount < 0 ? <AlertCircle className="h-4 w-4" /> : <Star className="h-4 w-4" />}
+                    {adj.reason || t("dashboardEarnings.clawback")}
+                  </span>
+                  <div className={`flex items-center font-bold ${adj.amount < 0 ? 'text-destructive' : 'text-brand-600 dark:text-brand-400'}`}>
+                    {adj.amount > 0 ? "+" : ""}
+                    <AnimatedCurrencyCounter
+                      value={adj.amount}
+                      fractionDigits={2}
+                    />
+                  </div>
+                </div>
+              ))}
 
               {/* WHT breakdown strip */}
               <div className="mt-4 rounded-2xl border border-border/30 bg-muted/30 divide-y divide-border/30 overflow-hidden">
@@ -278,7 +296,163 @@ export default async function EarningsPage() {
               </div>
             </CardContent>
           </Card>
+        </div>
 
+        {/* Right column */}
+        <div className="md:col-span-5 animate-slide-up h-full" style={{ animationDelay: '100ms' }}>
+          <Card className="h-full border border-border/40 hover:shadow-md rounded-3xl shadow-sm bg-card overflow-hidden transition-all duration-300 flex flex-col">
+            <CardHeader className="py-4 px-5 flex flex-row items-center justify-between border-b border-border/40 shrink-0">
+              <CardTitle className="text-sm font-bold text-foreground">
+                {t("dashboardEarnings.payoutHistory")}
+              </CardTitle>
+              <SalesCsvDownloadButton
+                periodMonth={response?.periodMonth || ""}
+                label="CSV"
+                className="h-8 gap-1 text-brand-500 hover:text-brand-600 hover:bg-brand-500/5 sm:hidden px-2 -mr-2 font-bold"
+                variant="ghost"
+                size="sm"
+              />
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="divide-y divide-border/30">
+                {history.length === 0 && (
+                  <div className="p-6 text-center text-sm font-semibold text-muted-foreground">
+                    {t("dashboardEarnings.emptyPayoutHistory")}
+                  </div>
+                )}
+                {history.map((item, idx) => {
+                  // Use netPayout (post-WHT, includes all adjustments) when available.
+                  // Fallback to gross sum only for legacy records without netPayout.
+                  const total = item.netPayout !== undefined ? item.netPayout : item.direct + item.network + item.clawback;
+                  const status = statusMap[item.status] || {
+                    label: item.status,
+                    className: "bg-muted",
+                  };
+                  return (
+                    <div key={`${item.date}-${item.status}`} className="p-4 sm:p-5 hover:bg-brand-500/2 dark:hover:bg-brand-500/4 transition-colors relative group">
+                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-brand-500 transition-all duration-300" />
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-sm font-bold text-foreground">{item.date}</p>
+                        <span
+                          className={`px-2.5 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${status.className}`}
+                        >
+                          {status.label}
+                        </span>
+                      </div>
+
+                      <AnimatedCurrencyCounter
+                        value={total}
+                        fractionDigits={2}
+                        className="text-xl font-black text-foreground block mb-3"
+                      />
+
+                      {/* Breakdown: accounting-style formula */}
+                      <div className="rounded-xl border border-border/30 bg-muted/20 overflow-hidden text-xs">
+                        {/* Components */}
+                        <div className="divide-y divide-border/20">
+                          <div className="flex justify-between px-3 py-2 text-muted-foreground">
+                            <span className="font-medium">{t("dashboardEarnings.settlementPayout")}</span>
+                            <AnimatedCurrencyCounter value={item.direct} fractionDigits={2} className="font-semibold text-foreground" />
+                          </div>
+                          {item.network !== 0 && (
+                            <div className="flex justify-between px-3 py-2 text-muted-foreground">
+                              <span className="font-medium">{t("dashboardEarnings.networkBonus")}</span>
+                              <span className="font-bold text-brand-600 dark:text-brand-400 flex items-center gap-0.5">
+                                +<AnimatedCurrencyCounter value={item.network} fractionDigits={2} />
+                              </span>
+                            </div>
+                          )}
+                          {(item.badgeBonus ?? 0) !== 0 && (
+                            <div className="flex justify-between px-3 py-2 text-muted-foreground">
+                              <span className="font-medium flex items-center gap-1">
+                                <Star className="h-3 w-3 text-amber-500 fill-amber-400" />
+                                {t("dashboardEarnings.badgeBonus")}
+                              </span>
+                              <span className="font-bold text-amber-600 dark:text-amber-400 flex items-center gap-0.5">
+                                +<AnimatedCurrencyCounter value={item.badgeBonus ?? 0} fractionDigits={2} />
+                              </span>
+                            </div>
+                          )}
+                          {(!item.adjustments || item.adjustments.length === 0) && item.clawback !== 0 && (
+                            <div className="flex justify-between px-3 py-2 text-destructive/80">
+                              <span className="font-medium flex items-center gap-1">
+                                <AlertCircle className="h-3 w-3" />
+                                {t("dashboardEarnings.clawback")}
+                              </span>
+                              <AnimatedCurrencyCounter value={item.clawback} fractionDigits={2} className="font-bold text-destructive" />
+                            </div>
+                          )}
+                          {item.adjustments && item.adjustments.length > 0 && item.adjustments.map((adj, i) => (
+                            <div key={`adj-${i}`} className={`flex justify-between px-3 py-2 ${adj.amount < 0 ? 'text-destructive/80' : 'text-brand-600/80 dark:text-brand-400/80'}`}>
+                              <span className="font-medium flex items-center gap-1">
+                                {adj.amount < 0 ? <AlertCircle className="h-3 w-3" /> : <Star className="h-3 w-3" />}
+                                {adj.reason || t("dashboardEarnings.clawback")}
+                              </span>
+                              <span className={`font-bold flex items-center gap-0.5 ${adj.amount < 0 ? 'text-destructive' : 'text-brand-600 dark:text-brand-400'}`}>
+                                {adj.amount > 0 ? "+" : ""}
+                                <AnimatedCurrencyCounter value={adj.amount} fractionDigits={2} />
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                        {/* Gross subtotal */}
+                        <div className="flex justify-between px-3 py-2 bg-muted/40 border-t border-border/40 text-muted-foreground">
+                          <span className="font-semibold">{t("dashboardEarnings.grossBeforeWHT")}</span>
+                          <AnimatedCurrencyCounter
+                            value={item.direct + item.network + (item.badgeBonus ?? 0) + item.clawback}
+                            fractionDigits={2}
+                            className="font-bold text-foreground"
+                          />
+                        </div>
+                        {/* WHT */}
+                        {item.withholdingTax !== undefined && item.withholdingTax > 0 && (
+                          <div className="flex justify-between px-3 py-2 border-t border-border/40 text-destructive/80">
+                            <span className="font-medium">{t("dashboardEarnings.withholdingTax")}</span>
+                            <span className="font-semibold flex items-center gap-0.5">
+                              −<AnimatedCurrencyCounter value={item.withholdingTax} fractionDigits={2} />
+                            </span>
+                          </div>
+                        )}
+                        {/* Net payout — highlighted */}
+                        {item.netPayout !== undefined && (
+                          <div className="flex justify-between px-3 py-2.5 bg-brand-500/5 border-t-2 border-brand-500/20">
+                            <span className="font-black text-foreground">{t("dashboardEarnings.netPayout")}</span>
+                            <AnimatedCurrencyCounter value={item.netPayout} fractionDigits={2} className="font-black text-brand-600 dark:text-brand-400" />
+                          </div>
+                        )}
+                      </div>
+                      {item.payoutDocument?.transferStatus && item.payoutLineId && (
+                        <TransferStatusBadge
+                          payoutLineId={item.payoutLineId}
+                          initialStatus={item.payoutDocument.transferStatus}
+                          initialTransferredAt={item.payoutDocument.transferredAt}
+                        />
+                      )}
+                      {item.payoutDocument && (
+                        <div className="mt-2 flex items-center justify-between flex-wrap gap-2">
+                          <div className="text-[10px] font-bold text-muted-foreground/60 tracking-wider">
+                            {t("dashboardEarnings.documentPrefix")} {item.payoutDocument.documentNumber}
+                          </div>
+                          {item.status === "approved" && (item.withholdingTax ?? 0) > 0 && (
+                            <Tawi50DownloadButton
+                              href={`/api/documents/tawi50?documentNumber=${encodeURIComponent(item.payoutDocument.documentNumber)}&gross=${Math.round(item.direct + item.network + (item.badgeBonus ?? 0) + item.clawback)}&wht=${Math.round(item.withholdingTax ?? 0)}&net=${Math.round(item.netPayout ?? 0)}&period=${encodeURIComponent(item.date)}&issuedAt=${encodeURIComponent(item.payoutDocument.issuedAt ?? "")}&paidDate=${encodeURIComponent(item.payoutDocument.transferredAt ?? "")}`}
+                              filename={`tawi50-${item.payoutDocument.documentNumber}.pdf`}
+                              settings={user?.settings ?? null}
+                              isVerified={user?.verificationStatus === "VERIFIED"}
+                            />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Bottom row: Current Commission */}
+        <div className="md:col-span-12 animate-slide-up" style={{ animationDelay: '150ms' }}>
           <Card className="border border-brand-500/20 bg-gradient-to-br from-brand-500/5 via-card to-card hover:shadow-lg rounded-3xl shadow-sm transition-all duration-300 overflow-hidden relative">
             <CardHeader className="pb-3 pt-5 px-5 sm:px-6">
               <CardTitle className="text-sm font-bold text-foreground flex items-center justify-between">
@@ -313,179 +487,9 @@ export default async function EarningsPage() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Right column */}
-        <div className="md:col-span-5 space-y-6 lg:space-y-8 animate-slide-up" style={{ animationDelay: '100ms' }}>
-          <Card className="border border-border/40 hover:shadow-md rounded-3xl shadow-sm bg-card overflow-hidden transition-all duration-300">
-            <CardHeader className="py-4 px-5 flex flex-row items-center justify-between border-b border-border/40">
-              <CardTitle className="text-sm font-bold text-foreground">
-                {t("dashboardEarnings.payoutHistory")}
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 gap-1 text-brand-500 hover:text-brand-600 hover:bg-brand-500/5 sm:hidden px-2 -mr-2 font-bold"
-              >
-                <Download className="h-4 w-4" />
-                CSV
-              </Button>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="divide-y divide-border/30">
-                {history.length === 0 && (
-                  <div className="p-6 text-center text-sm font-semibold text-muted-foreground">
-                    {t("dashboardEarnings.emptyPayoutHistory")}
-                  </div>
-                )}
-                {history.map((item, idx) => {
-                  // Use netPayout (post-WHT, includes all adjustments) when available.
-                  // Fallback to gross sum only for legacy records without netPayout.
-                  const total = item.netPayout !== undefined ? item.netPayout : item.direct + item.network + item.clawback;
-                  const status = statusMap[item.status] || {
-                    label: item.status,
-                    className: "bg-muted",
-                  };
-                  return (
-                    <div key={`${item.date}-${item.status}`} className="p-4 sm:p-5 hover:bg-brand-500/2 dark:hover:bg-brand-500/4 transition-colors relative group">
-                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-brand-500 transition-all duration-300" />
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm font-bold text-foreground">{item.date}</p>
-                        <span
-                          className={`px-2.5 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${status.className}`}
-                        >
-                          {status.label}
-                        </span>
-                      </div>
-
-                      <AnimatedCurrencyCounter
-                        value={total}
-                        className="text-xl font-black text-foreground block mb-3"
-                      />
-
-                      {/* Breakdown: accounting-style formula */}
-                      <div className="rounded-xl border border-border/30 bg-muted/20 overflow-hidden text-xs">
-                        {/* Components */}
-                        <div className="divide-y divide-border/20">
-                          <div className="flex justify-between px-3 py-2 text-muted-foreground">
-                            <span className="font-medium">{t("dashboardEarnings.settlementPayout")}</span>
-                            <AnimatedCurrencyCounter value={item.direct} className="font-semibold text-foreground" />
-                          </div>
-                          {item.network !== 0 && (
-                            <div className="flex justify-between px-3 py-2 text-muted-foreground">
-                              <span className="font-medium">{t("dashboardEarnings.networkBonus")}</span>
-                              <span className="font-bold text-brand-600 dark:text-brand-400 flex items-center gap-0.5">
-                                +<AnimatedCurrencyCounter value={item.network} />
-                              </span>
-                            </div>
-                          )}
-                          {(item.badgeBonus ?? 0) !== 0 && (
-                            <div className="flex justify-between px-3 py-2 text-muted-foreground">
-                              <span className="font-medium flex items-center gap-1">
-                                <Star className="h-3 w-3 text-amber-500 fill-amber-400" />
-                                {t("dashboardEarnings.badgeBonus")}
-                              </span>
-                              <span className="font-bold text-amber-600 dark:text-amber-400 flex items-center gap-0.5">
-                                +<AnimatedCurrencyCounter value={item.badgeBonus ?? 0} />
-                              </span>
-                            </div>
-                          )}
-                          {item.clawback !== 0 && (
-                            <div className="flex justify-between px-3 py-2 text-destructive/80">
-                              <span className="font-medium flex items-center gap-1">
-                                <AlertCircle className="h-3 w-3" />
-                                {t("dashboardEarnings.clawback")}
-                              </span>
-                              <AnimatedCurrencyCounter value={item.clawback} className="font-bold text-destructive" />
-                            </div>
-                          )}
-                        </div>
-                        {/* Gross subtotal */}
-                        <div className="flex justify-between px-3 py-2 bg-muted/40 border-t border-border/40 text-muted-foreground">
-                          <span className="font-semibold">{t("dashboardEarnings.grossBeforeWHT")}</span>
-                          <AnimatedCurrencyCounter
-                            value={item.direct + item.network + (item.badgeBonus ?? 0) + item.clawback}
-                            className="font-bold text-foreground"
-                          />
-                        </div>
-                        {/* WHT */}
-                        {item.withholdingTax !== undefined && item.withholdingTax > 0 && (
-                          <div className="flex justify-between px-3 py-2 border-t border-border/40 text-destructive/80">
-                            <span className="font-medium">{t("dashboardEarnings.withholdingTax")}</span>
-                            <span className="font-semibold flex items-center gap-0.5">
-                              −<AnimatedCurrencyCounter value={item.withholdingTax} />
-                            </span>
-                          </div>
-                        )}
-                        {/* Net payout — highlighted */}
-                        {item.netPayout !== undefined && (
-                          <div className="flex justify-between px-3 py-2.5 bg-brand-500/5 border-t-2 border-brand-500/20">
-                            <span className="font-black text-foreground">{t("dashboardEarnings.netPayout")}</span>
-                            <AnimatedCurrencyCounter value={item.netPayout} className="font-black text-brand-600 dark:text-brand-400" />
-                          </div>
-                        )}
-                      </div>
-                      {item.payoutDocument?.transferStatus && item.payoutLineId && (
-                        <TransferStatusBadge
-                          payoutLineId={item.payoutLineId}
-                          initialStatus={item.payoutDocument.transferStatus}
-                          initialTransferredAt={item.payoutDocument.transferredAt}
-                        />
-                      )}
-                      {item.payoutDocument && (
-                        <div className="mt-2 flex items-center justify-between flex-wrap gap-2">
-                          <div className="text-[10px] font-bold text-muted-foreground/60 tracking-wider">
-                            {t("dashboardEarnings.documentPrefix")} {item.payoutDocument.documentNumber}
-                          </div>
-                          {item.status === "approved" && (item.withholdingTax ?? 0) > 0 && (
-                            <Tawi50DownloadButton
-                              href={`/api/documents/tawi50?documentNumber=${encodeURIComponent(item.payoutDocument.documentNumber)}&gross=${Math.round(item.direct + item.network + (item.badgeBonus ?? 0) + item.clawback)}&wht=${Math.round(item.withholdingTax ?? 0)}&net=${Math.round(item.netPayout ?? 0)}&period=${encodeURIComponent(item.date)}&issuedAt=${encodeURIComponent(item.payoutDocument.issuedAt ?? "")}&paidDate=${encodeURIComponent(item.payoutDocument.transferredAt ?? "")}`}
-                              filename={`tawi50-${item.payoutDocument.documentNumber}.pdf`}
-                              settings={user?.settings ?? null}
-                            />
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
       </div>
 
-      {clawbacks.length > 0 && (
-        <Card className="border border-destructive/20 bg-destructive/5 rounded-3xl shadow-sm overflow-hidden animate-scale-in">
-          <CardHeader className="pb-3 px-5 sm:px-6">
-            <CardTitle className="text-sm font-bold flex items-center gap-2 text-foreground">
-              <AlertCircle className="h-4 w-4 text-destructive animate-pulse" />
-              {t("dashboardEarnings.clawbackDetails")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="px-5 sm:px-6 pb-5 sm:pb-6">
-            <div className="divide-y divide-border/30 -mx-6 px-6 sm:mx-0 sm:px-0">
-              {clawbacks.map((item, index) => (
-                <div
-                  key={`${item.date}-${index}`}
-                  className="flex items-start justify-between py-3 gap-3"
-                >
-                  <div className="space-y-1">
-                    <p className="text-sm font-bold text-foreground leading-tight">{item.reason}</p>
-                    <p className="text-[11px] font-semibold text-muted-foreground">{t("dashboardEarnings.billingPeriodPrefix")} {item.date}</p>
-                  </div>
-                  <AnimatedCurrencyCounter
-                    value={item.amount}
-                    className="text-sm font-black text-destructive shrink-0 bg-destructive/10 px-2.5 py-1 rounded-lg"
-                  />
-                </div>
-              ))}
-            </div>
-            <p className="text-[11px] font-semibold text-muted-foreground/60 mt-4 leading-relaxed">
-              {t("dashboardEarnings.clawbackNote")}
-            </p>
-          </CardContent>
-        </Card>
-      )}
+
     </PageTransition>
   );
 }

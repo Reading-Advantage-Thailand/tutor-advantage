@@ -93,3 +93,42 @@ export async function submitGuardianConsent(
     });
   }
 }
+
+export async function submitUserConsent(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  try {
+    const userId = req.user?.userId;
+    const { consentType } = req.body;
+
+    if (!userId) {
+      return res.status(401).json({
+        error: { code: "UNAUTHORIZED", message: "User ID missing from token" },
+      });
+    }
+
+    if (!consentType || consentType !== "TERMS_AND_PRIVACY") {
+      return res.status(400).json({
+        error: { code: "BAD_REQUEST", message: "Invalid or missing consentType" },
+      });
+    }
+
+    await prisma.userConsent.create({
+      data: {
+        userId,
+        consentType,
+        status: "ACCEPTED",
+        effectiveAt: new Date(),
+      },
+    });
+
+    return res.status(200).json({ message: "Consent recorded successfully" });
+  } catch (error) {
+    const err = error as Error;
+    logger.error("Submit User Consent Error:", err);
+    return res.status(500).json({
+      error: { code: "INTERNAL_SERVER_ERROR", message: "Could not record user consent" },
+    });
+  }
+}

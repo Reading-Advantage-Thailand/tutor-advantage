@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.autoRunSettlement = autoRunSettlement;
 exports.previewSettlement = previewSettlement;
+exports.refreshSettlement = refreshSettlement;
 exports.submitSettlement = submitSettlement;
 exports.rejectSettlement = rejectSettlement;
 exports.exportSettlementCsv = exportSettlementCsv;
@@ -137,7 +138,47 @@ async function previewSettlement(req, res) {
         return res.status(500).json({
             error: {
                 code: "INTERNAL_SERVER_ERROR",
-                message: "Could not generate settlement preview",
+                message: "Failed to generate settlement preview",
+                details: error.message,
+                requestId: req.id,
+            },
+        });
+    }
+}
+async function refreshSettlement(req, res) {
+    try {
+        const { role } = req.user;
+        const { snapshotId } = req.params;
+        if (role !== "ADMIN") {
+            return res.status(403).json({
+                error: {
+                    code: "UNAUTHORIZED_ROLE",
+                    message: "Only admins can refresh settlements",
+                    requestId: req.id,
+                },
+            });
+        }
+        const preview = await settlementService_1.SettlementService.refreshSettlementRun(snapshotId);
+        return res.status(200).json({
+            message: "Settlement refreshed",
+            preview,
+        });
+    }
+    catch (error_err) {
+        const error = error_err;
+        if (error.message === "NOT_FOUND") {
+            return res.status(404).json({
+                error: {
+                    code: "NOT_FOUND",
+                    message: "Settlement run not found",
+                    requestId: req.id,
+                },
+            });
+        }
+        return res.status(500).json({
+            error: {
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Failed to refresh settlement",
                 details: error.message,
                 requestId: req.id,
             },

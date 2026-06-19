@@ -153,7 +153,54 @@ export async function previewSettlement(
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
-        message: "Could not generate settlement preview",
+        message: "Failed to generate settlement preview",
+        details: error.message,
+        requestId: req.id,
+      },
+    });
+  }
+}
+
+export async function refreshSettlement(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  try {
+    const { role } = req.user!;
+    const { snapshotId } = req.params;
+
+    if (role !== "ADMIN") {
+      return res.status(403).json({
+        error: {
+          code: "UNAUTHORIZED_ROLE",
+          message: "Only admins can refresh settlements",
+          requestId: req.id,
+        },
+      });
+    }
+
+    const preview = await SettlementService.refreshSettlementRun(snapshotId);
+
+    return res.status(200).json({
+      message: "Settlement refreshed",
+      preview,
+    });
+  } catch (error_err) {
+    const error = error_err as Error & { code?: string; details?: string; };
+    if (error.message === "NOT_FOUND") {
+      return res.status(404).json({
+        error: {
+          code: "NOT_FOUND",
+          message: "Settlement run not found",
+          requestId: req.id,
+        },
+      });
+    }
+
+    return res.status(500).json({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to refresh settlement",
         details: error.message,
         requestId: req.id,
       },

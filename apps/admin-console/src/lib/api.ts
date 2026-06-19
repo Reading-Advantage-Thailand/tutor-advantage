@@ -125,3 +125,15 @@ export function getAdminUserId(): string {
   const match = document.cookie.match(/(?:^|; )admin_user_id=([^;]*)/);
   return match ? decodeURIComponent(match[1]) : "";
 }
+
+export function getAdminName(): string {
+  if (typeof document === "undefined") return "";
+  const match = document.cookie.match(/(?:^|; )admin_name=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : "";
+}
+
+export function getAdminPicture(): string {
+  if (typeof document === "undefined") return "";
+  const match = document.cookie.match(/(?:^|; )admin_picture=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : "";
+}

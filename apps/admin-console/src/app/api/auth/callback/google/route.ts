@@ -98,7 +98,7 @@ export async function GET(request: Request) {
     // 3. Verify user exists in DB with an admin role
     const dbUser = await prisma.user.findUnique({
       where: { email },
-      select: { userId: true, role: true, isActive: true },
+      select: { userId: true, role: true, isActive: true, displayName: true, profilePictureUrl: true },
     });
 
     const ALLOWED_ROLES = ["ADMIN", "FINANCE_CHECKER"];
@@ -107,6 +107,22 @@ export async function GET(request: Request) {
         `Unauthorized access attempt from: ${email} with role: ${dbUser?.role}`
       );
       return NextResponse.redirect(new URL("/unauthorized", publicBase));
+    }
+
+    // Update placeholder displayName and profile picture
+    const updateData: Record<string, unknown> = {};
+    if (name && dbUser.displayName?.toLowerCase() === email.toLowerCase()) {
+      updateData.displayName = name;
+    }
+    if (profile.picture && !dbUser.profilePictureUrl) {
+      updateData.profilePictureUrl = profile.picture;
+    }
+
+    if (Object.keys(updateData).length > 0) {
+      await prisma.user.update({
+        where: { userId: dbUser.userId },
+        data: updateData,
+      });
     }
 
     const { role, userId } = dbUser;
@@ -137,6 +153,27 @@ export async function GET(request: Request) {
     });
 
     response.cookies.set("admin_email", email, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 12,
+      path: "/",
+    });
+
+    // Determine the most up-to-date name and picture to use
+    // Using dbUser values since we updated them earlier if needed
+    const finalName = dbUser.displayName || name || email;
+    const finalPicture = dbUser.profilePictureUrl || profile.picture || "";
+
+    response.cookies.set("admin_name", finalName, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 12,
+      path: "/",
+    });
+
+    response.cookies.set("admin_picture", finalPicture, {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

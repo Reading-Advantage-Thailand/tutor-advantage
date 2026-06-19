@@ -514,6 +514,8 @@ export class SettlementService {
 
       const payoutDocumentByLineId = new Map<string, Awaited<ReturnType<typeof tx.payoutDocument.upsert>>>();
       for (const line of approvedRun.payoutLines) {
+        if (line.payoutAmountMinor <= 0n) continue;
+
         const payoutDocument = await tx.payoutDocument.upsert({
           where: { payoutLineId: line.payoutLineId },
           update: {},

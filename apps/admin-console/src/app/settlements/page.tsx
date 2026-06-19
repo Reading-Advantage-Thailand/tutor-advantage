@@ -44,6 +44,7 @@ import {
   Send,
   X,
 } from "lucide-react";
+import { toast } from "sonner";
 
 import { t } from "@/lib/i18n";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -79,8 +80,6 @@ export default function SettlementsPage() {
   const [loading, setLoading] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
   const [result, setResult] = useState<SettlementPreview | null>(null);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
   const [list, setList] = useState<SettlementPreview[]>([]);
   const [listLoading, setListLoading] = useState(false);
@@ -93,6 +92,7 @@ export default function SettlementsPage() {
   const [linesLoadingId, setLinesLoadingId] = useState<string | null>(null);
   const [transferLoadingId, setTransferLoadingId] = useState<string | null>(null);
   const [syncLoadingId, setSyncLoadingId] = useState<string | null>(null);
+  const [refreshLoading, setRefreshLoading] = useState(false);
 
   // Confirm dialog state
   const [confirmAction, setConfirmAction] = useState<{
@@ -103,14 +103,6 @@ export default function SettlementsPage() {
   useEffect(() => {
     setUserRole(getAdminRole());
   }, []);
-
-  // Auto-dismiss success after 5s
-  useEffect(() => {
-    if (success) {
-      const t = setTimeout(() => setSuccess(""), 5000);
-      return () => clearTimeout(t);
-    }
-  }, [success]);
 
   const loadSettlements = useCallback(async () => {
     setListLoading(true);
@@ -130,8 +122,6 @@ export default function SettlementsPage() {
 
   const handlePreview = async () => {
     setLoading(true);
-    setError("");
-    setSuccess("");
     setResult(null);
     try {
       const data = await fetchWithAuth("/v1/settlements/preview", {
@@ -142,7 +132,7 @@ export default function SettlementsPage() {
       loadSettlements();
     } catch (error) {
       const err = error as Error;
-      setError(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -154,13 +144,11 @@ export default function SettlementsPage() {
     action: "submit" | "approve" | "reject",
   ) => {
     setActionLoadingId(id);
-    setError("");
-    setSuccess("");
     try {
       await fetchWithAuth(`/v1/settlements/${id}/${action}`, { method: "POST" });
       const newStatus =
         action === "submit" ? "SUBMITTED" : action === "approve" ? "APPROVED" : "REJECTED";
-      setSuccess(
+      toast.success(
         action === "submit"
           ? t("settlements.submitSuccess")
           : `${t("settlements.actionSuccessPrefix")} ${action === "approve" ? t("settlements.approveAction") : t("settlements.rejectAction")} ${t("settlements.successSuffix")}`,
@@ -170,7 +158,7 @@ export default function SettlementsPage() {
         setResult({ ...result, status: newStatus });
       }
     } catch (error) {
-      setError((error as Error).message);
+      toast.error((error as Error).message);
     } finally {
       setActionLoadingId(null);
     }
@@ -178,23 +166,19 @@ export default function SettlementsPage() {
 
   const handleExport = async (id: string, periodMonth: string) => {
     setExportLoading(true);
-    setSuccess("");
-    setError("");
     try {
       const blob = await fetchBlobWithAuth(`/v1/settlements/${id}/export`);
       downloadBlob(blob, `settlement-${periodMonth}-${id.slice(0, 8)}.csv`);
-      setSuccess(t("settlements.exportSuccess"));
+      toast.success(t("settlements.exportSuccess"));
     } catch (error) {
       const err = error as Error;
-      setError(err.message);
+      toast.error(err.message);
     } finally {
       setExportLoading(false);
     }
   };
 
   const handleViewLines = async (id: string) => {
-    setSuccess("");
-    setError("");
     setLinesLoadingId(id);
     try {
       const data = await fetchWithAuth(`/v1/settlements/${id}/lines`);
@@ -202,7 +186,7 @@ export default function SettlementsPage() {
       setLinesOpen(true);
     } catch (err) {
       const e = err as Error;
-      setError(e.message);
+      toast.error(e.message);
     } finally {
       setLinesLoadingId(null);
     }
@@ -211,18 +195,16 @@ export default function SettlementsPage() {
   const handleRetryTransfer = async (row: PayoutLineRow) => {
     if (!linesData) return;
     setTransferLoadingId(row.payoutLineId);
-    setError("");
-    setSuccess("");
     try {
       await fetchWithAuth(
         `/v1/settlements/${linesData.snapshotId}/lines/${row.payoutLineId}/transfer`,
         { method: "POST" },
       );
-      setSuccess(t("settlements.transferSuccess"));
+      toast.success(t("settlements.transferSuccess"));
       await handleViewLines(linesData.snapshotId);
       await loadSettlements();
     } catch (err) {
-      setError((err as Error).message);
+      toast.error((err as Error).message);
     } finally {
       setTransferLoadingId(null);
     }
@@ -242,7 +224,6 @@ export default function SettlementsPage() {
   const handleSyncTransfer = async (row: PayoutLineRow) => {
     if (!linesData) return;
     setSyncLoadingId(row.payoutLineId);
-    setError("");
     try {
       await fetchWithAuth(
         `/v1/settlements/${linesData.snapshotId}/lines/${row.payoutLineId}/sync-transfer`,
@@ -250,9 +231,25 @@ export default function SettlementsPage() {
       );
       await reloadLinesSilently(linesData.snapshotId);
     } catch (err) {
-      setError((err as Error).message);
+      toast.error((err as Error).message);
     } finally {
       setSyncLoadingId(null);
+    }
+  };
+
+  const handleRefreshDraft = async () => {
+    if (!linesData) return;
+    setRefreshLoading(true);
+    try {
+      await fetchWithAuth(`/v1/settlements/${linesData.snapshotId}/refresh`, {
+        method: "POST",
+      });
+      await loadSettlements();
+      await reloadLinesSilently(linesData.snapshotId);
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setRefreshLoading(false);
     }
   };
 
@@ -410,32 +407,6 @@ export default function SettlementsPage() {
             )}
           </CardContent>
         </Card>
-      )}
-
-      {/* Alerts */}
-      {(error || success) && (
-        <div className="space-y-4">
-          {error && (
-            <Alert variant="destructive" className="rounded-2xl border-2 shadow-md relative">
-              <AlertCircle className="h-5 w-5" />
-              <AlertTitle className="font-bold">{t("settlements.errorTitle")}</AlertTitle>
-              <AlertDescription className="font-medium">{error}</AlertDescription>
-              <button onClick={() => setError("")} className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
-                <X className="h-4 w-4" />
-              </button>
-            </Alert>
-          )}
-          {success && (
-            <Alert className="rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/5 shadow-md relative">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-              <AlertTitle className="font-bold text-emerald-700">{t("settlements.successTitle")}</AlertTitle>
-              <AlertDescription className="font-medium text-emerald-700/80">{success}</AlertDescription>
-              <button onClick={() => setSuccess("")} className="absolute top-3 right-3 text-emerald-400 hover:text-emerald-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
-                <X className="h-4 w-4" />
-              </button>
-            </Alert>
-          )}
-        </div>
       )}
 
       {/* Settlement Preview Result */}
@@ -737,6 +708,8 @@ export default function SettlementsPage() {
         handleSyncTransfer={handleSyncTransfer}
         transferLoadingId={transferLoadingId}
         handleRetryTransfer={handleRetryTransfer}
+        handleRefreshDraft={handleRefreshDraft}
+        refreshLoading={refreshLoading}
       />
 
       {/* Confirm Dialog */}

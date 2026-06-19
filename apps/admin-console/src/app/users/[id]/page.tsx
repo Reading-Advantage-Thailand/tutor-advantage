@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -44,6 +43,7 @@ import {
   Save,
   X as XIcon,
 } from "lucide-react";
+import { toast } from "sonner";
 
 import { fetchWithAuth, getAdminRole } from "@/lib/api";
 import { useEffect, useState, useCallback, useRef } from "react";
@@ -78,8 +78,6 @@ export default function UserDetailPage() {
   const [user, setUser] = useState<UserDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [actionMessage, setActionMessage] = useState("");
-  const [actionError, setActionError] = useState("");
 
   const [verificationComment, setVerificationComment] = useState("");
   const [fieldComments, setFieldComments] = useState<
@@ -132,11 +130,6 @@ export default function UserDetailPage() {
     loadUser();
   }, [loadUser]);
 
-  const clearMessages = () => {
-    setActionMessage("");
-    setActionError("");
-  };
-
   const openImageViewer = (url: string, title: string) => {
     setImageViewer({ url, title });
     setImageZoom(1);
@@ -169,13 +162,12 @@ export default function UserDetailPage() {
           ? verificationComment.trim()
           : fieldComments[field].trim() || verificationComment.trim();
       if (!hasReason) {
-        setActionError("กรุณาระบุเหตุผลก่อนปฏิเสธ");
+        toast.error("กรุณาระบุเหตุผลก่อนปฏิเสธ");
         return;
       }
     }
 
     setIsVerifying(field);
-    clearMessages();
     try {
       await fetchWithAuth(`/v1/users/${user.id}/verify`, {
         method: "POST",
@@ -186,10 +178,10 @@ export default function UserDetailPage() {
           fieldComments,
         }),
       });
-      setActionMessage("อัปเดตสถานะการยืนยันตัวตนเรียบร้อยแล้ว");
+      toast.success("อัปเดตสถานะการยืนยันตัวตนเรียบร้อยแล้ว");
       await loadUser();
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
+      toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
     } finally {
       setIsVerifying(null);
     }
@@ -198,19 +190,18 @@ export default function UserDetailPage() {
   const handleSuspend = async () => {
     if (!user) return;
     setIsSuspending(true);
-    clearMessages();
     try {
       const resp = await fetchWithAuth(`/v1/users/${user.id}/suspend`, {
         method: "POST",
       });
-      setActionMessage(
+      toast.success(
         resp.isActive
           ? "เปิดใช้งานบัญชีเรียบร้อยแล้ว"
           : "ระงับบัญชีเรียบร้อยแล้ว",
       );
       await loadUser();
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
+      toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
     } finally {
       setIsSuspending(false);
     }
@@ -219,12 +210,11 @@ export default function UserDetailPage() {
   const handleDelete = async () => {
     if (!user || deleteConfirmText !== user.id) return;
     setIsDeleting(true);
-    clearMessages();
     try {
       await fetchWithAuth(`/v1/users/${user.id}/anonymize`, { method: "POST" });
       router.push("/users");
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
+      toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
       setIsDeleting(false);
     }
   };
@@ -232,17 +222,16 @@ export default function UserDetailPage() {
   const handleSaveOmiseRecipient = async () => {
     if (!user) return;
     setIsSavingOmise(true);
-    clearMessages();
     try {
       await fetchWithAuth(`/v1/users/${user.id}/omise-recipient`, {
         method: "PATCH",
         body: JSON.stringify({ omiseRecipientId: omiseRecipientInput }),
       });
-      setActionMessage("บันทึก Omise Recipient ID แล้ว");
+      toast.success("บันทึก Omise Recipient ID แล้ว");
       setIsEditingOmise(false);
       await loadUser();
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
+      toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
     } finally {
       setIsSavingOmise(false);
     }
@@ -376,11 +365,13 @@ export default function UserDetailPage() {
           <ArrowLeft className="h-4 w-4" />
           {t("userDetail.backToList")}
         </Button>
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>{t("userDetail.loadError")}</AlertTitle>
-          <AlertDescription>{loadError || t("userDetail.userNotFound")}</AlertDescription>
-        </Alert>
+        <div className="bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 p-4 rounded-xl border border-red-200 dark:border-red-900/30">
+          <div className="flex items-center gap-2 mb-2 font-bold">
+            <AlertTriangle className="h-4 w-4" />
+            <span>{t("userDetail.loadError")}</span>
+          </div>
+          <p className="text-sm font-medium">{loadError || t("userDetail.userNotFound")}</p>
+        </div>
         <Button
           onClick={() => {
             setLoading(true);
@@ -417,23 +408,6 @@ export default function UserDetailPage() {
         <ArrowLeft className="h-4 w-4" />
         {t("userDetail.back")}
       </Button>
-
-      {/* Action messages */}
-      {actionError && (
-        <Alert variant="destructive" className="rounded-2xl">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>{t("userDetail.errorTitle")}</AlertTitle>
-          <AlertDescription>{actionError}</AlertDescription>
-        </Alert>
-      )}
-      {actionMessage && (
-        <Alert className="rounded-2xl border-emerald-500/30 bg-emerald-500/5">
-          <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-          <AlertDescription className="text-emerald-700 font-medium">
-            {actionMessage}
-          </AlertDescription>
-        </Alert>
-      )}
 
       {/* Hero card */}
       <Card className="border-none shadow-lg rounded-3xl overflow-hidden bg-card">

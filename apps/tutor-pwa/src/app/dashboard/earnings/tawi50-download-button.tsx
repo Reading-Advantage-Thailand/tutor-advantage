@@ -19,15 +19,16 @@ type Tawi50DownloadButtonProps = {
   href: string;
   filename: string;
   settings: Tawi50RequiredSettings | null;
+  isVerified: boolean;
 };
 
-export function Tawi50DownloadButton({ href, filename, settings }: Tawi50DownloadButtonProps) {
+export function Tawi50DownloadButton({ href, filename, settings, isVerified }: Tawi50DownloadButtonProps) {
   const router = useRouter();
   const [showMissingFields, setShowMissingFields] = useState(false);
   const missingFields = getMissingTawi50Fields(settings);
 
   const handleClick = () => {
-    if (missingFields.length === 0) {
+    if (missingFields.length === 0 && isVerified) {
       const anchor = document.createElement("a");
       anchor.href = href;
       anchor.download = filename;
@@ -71,6 +72,12 @@ export function Tawi50DownloadButton({ href, filename, settings }: Tawi50Downloa
           <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3">
             <p className="text-xs font-bold text-foreground mb-2">ข้อมูลที่ยังขาด</p>
             <ul className="space-y-1">
+              {!isVerified && (
+                <li className="flex items-start gap-2 text-xs font-semibold text-muted-foreground">
+                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500 shrink-0" />
+                  <span>ยังไม่ผ่านการตรวจสอบยืนยันตัวตนจากแอดมิน</span>
+                </li>
+              )}
               {missingFields.map((field) => (
                 <li key={field.key} className="flex items-start gap-2 text-xs font-semibold text-muted-foreground">
                   <span className="mt-1 h-1.5 w-1.5 rounded-full bg-amber-500 shrink-0" />

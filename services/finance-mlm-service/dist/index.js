@@ -8,10 +8,10 @@ const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
 const database_1 = require("@tutor-advantage/database");
+const shared_config_1 = require("@tutor-advantage/shared-config");
 // Load root .env file
 dotenv_1.default.config({ path: path_1.default.resolve(__dirname, "../../../.env") });
 shared_config_1.logger.info(`[Finance] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
-const shared_config_1 = require("@tutor-advantage/shared-config");
 const authMiddleware_1 = require("./middlewares/authMiddleware");
 const paymentController_1 = require("./controllers/paymentController");
 const transferWebhookController_1 = require("./controllers/transferWebhookController");
@@ -87,9 +87,11 @@ app.get("/v1/payments/:paymentIntentId/status", authMiddleware_1.authMiddleware,
 app.get("/v1/payments/history", authMiddleware_1.authMiddleware, paymentController_1.getPaymentHistory);
 app.post("/v1/payments/webhook", paymentController_1.handleWebhook);
 app.post("/v1/webhooks/omise-transfer", transferWebhookController_1.handleTransferWebhook);
+const tutorSalesExportController_1 = require("./controllers/tutorSalesExportController");
 // ── Tutor Dashboard Routes ─────────────────────────────────────────────────
 app.get("/v1/tutors/earnings/summary", authMiddleware_1.authMiddleware, tutorEarningsController_1.getEarningsSummary);
 app.get("/v1/tutors/earnings/history", authMiddleware_1.authMiddleware, tutorEarningsController_1.getEarningsHistory);
+app.get("/v1/tutors/earnings/sales-csv", authMiddleware_1.authMiddleware, tutorSalesExportController_1.exportTutorSalesCsv);
 app.post("/v1/tutors/earnings/transfers/:payoutLineId/sync", authMiddleware_1.authMiddleware, tutorEarningsController_1.syncTutorTransfer);
 app.get("/v1/tutors/network", authMiddleware_1.authMiddleware, tutorNetworkController_1.getTutorNetwork);
 // ── Internal Routes (protected by X-Internal-Key, NOT JWT) ────────────────
@@ -100,6 +102,7 @@ app.post("/v1/internal/settlement/auto-run", settlementController_1.autoRunSettl
 app.get("/v1/settlements/summary", authMiddleware_1.authMiddleware, settlementController_1.getSettlementSummary);
 app.get("/v1/settlements", authMiddleware_1.authMiddleware, settlementController_1.getSettlements);
 app.post("/v1/settlements/preview", authMiddleware_1.authMiddleware, (0, auditMiddleware_1.auditTrailMiddleware)("PREVIEW_SETTLEMENT"), settlementController_1.previewSettlement);
+app.post("/v1/settlements/:snapshotId/refresh", authMiddleware_1.authMiddleware, (0, auditMiddleware_1.auditTrailMiddleware)("SETTLEMENT_REFRESH"), settlementController_1.refreshSettlement);
 app.post("/v1/settlements/:snapshotId/submit", authMiddleware_1.authMiddleware, (0, auditMiddleware_1.auditTrailMiddleware)("SUBMIT_SETTLEMENT"), settlementController_1.submitSettlement);
 app.post("/v1/settlements/:snapshotId/approve", authMiddleware_1.authMiddleware, (0, auditMiddleware_1.auditTrailMiddleware)("APPROVE_SETTLEMENT"), settlementController_1.approveSettlement);
 app.post("/v1/settlements/:snapshotId/reject", authMiddleware_1.authMiddleware, settlementController_1.rejectSettlement);

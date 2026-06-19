@@ -59,7 +59,6 @@ async function getEarningsHistory(req, res) {
                 where: {
                     tutorUserId: userId,
                     status: "APPROVED",
-                    amountMinor: { lt: 0 },
                     createdAt: { gte: monthStart, lte: monthEnd },
                 },
             }),
@@ -82,11 +81,15 @@ async function getEarningsHistory(req, res) {
         const badgeBonusSatang = currentBadges.reduce((sum, b) => sum + (BADGE_BONUS_SATANG[b.badgeCode] ?? 0), 0);
         const badgeBonusTHB = badgeBonusSatang / 100;
         const currentProjection = {
-            directSales: Math.round(projection.directSalesTHB),
-            networkBonus: Math.round(projection.networkBonusTHB),
-            badgeBonus: Math.round(badgeBonusTHB),
-            clawback: Math.round(currentClawbackTHB),
-            total: Math.round(projection.totalPayoutTHB + badgeBonusTHB + currentClawbackTHB),
+            directSales: projection.directSalesTHB,
+            networkBonus: projection.networkBonusTHB,
+            badgeBonus: badgeBonusTHB,
+            clawback: currentClawbackTHB,
+            adjustments: currentAdjustments.map(a => ({
+                reason: a.reason,
+                amount: Number(a.amountMinor) / 100
+            })),
+            total: projection.totalPayoutTHB + badgeBonusTHB + currentClawbackTHB,
         };
         // 2. Past History
         const pastLines = await database_1.prisma.payoutLine.findMany({
@@ -95,30 +98,39 @@ async function getEarningsHistory(req, res) {
             orderBy: { settlementRun: { createdAt: "desc" } },
         });
         const approvedAdjustments = await database_1.prisma.adjustment.findMany({
-            where: { tutorUserId: userId, status: "APPROVED", amountMinor: { lt: 0 } },
+            where: { tutorUserId: userId, status: "APPROVED" },
             orderBy: { createdAt: "desc" },
         });
+        const adjustmentsByRun = new Map();
         const clawbackByRun = new Map();
         for (const adjustment of approvedAdjustments) {
             const current = clawbackByRun.get(adjustment.settlementRunId) || 0;
             clawbackByRun.set(adjustment.settlementRunId, current + Number(adjustment.amountMinor) / 100);
+            if (!adjustmentsByRun.has(adjustment.settlementRunId)) {
+                adjustmentsByRun.set(adjustment.settlementRunId, []);
+            }
+            adjustmentsByRun.get(adjustment.settlementRunId).push(adjustment);
         }
         const history = await Promise.all(pastLines.map(async (line) => {
             const totalAmount = Number(line.payoutAmountMinor) / 100;
             const periodProjection = await calculateTutorPeriodProjection(userId, line.settlementRun.periodMonth);
             const networkAmount = Math.min(totalAmount, Math.max(0, periodProjection.networkBonusTHB));
             const clawback = clawbackByRun.get(line.settlementRunId) || 0;
-            const badgeBonus = Math.round(Number(line.badgeBonusMinor) / 100);
+            const badgeBonus = Number(line.badgeBonusMinor) / 100;
             return {
                 date: line.settlementRun.periodMonth,
                 payoutLineId: line.payoutLineId,
                 // Separate badge bonus out of direct so the frontend can show it as its own line
-                direct: Math.round(totalAmount - networkAmount - badgeBonus),
-                network: Math.round(networkAmount),
+                direct: totalAmount - networkAmount - badgeBonus,
+                network: networkAmount,
                 badgeBonus,
-                clawback: Math.round(clawback),
-                withholdingTax: Math.round(Number(line.withholdingTaxMinor) / 100),
-                netPayout: Math.round(Number(line.netPayoutMinor) / 100),
+                clawback: clawback,
+                adjustments: (adjustmentsByRun.get(line.settlementRunId) || []).map(a => ({
+                    reason: a.reason,
+                    amount: Number(a.amountMinor) / 100
+                })),
+                withholdingTax: Number(line.withholdingTaxMinor) / 100,
+                netPayout: Number(line.netPayoutMinor) / 100,
                 payoutDocument: line.payoutDocument
                     ? {
                         documentNumber: line.payoutDocument.documentNumber,

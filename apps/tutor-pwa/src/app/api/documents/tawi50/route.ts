@@ -63,6 +63,16 @@ export async function GET(req: NextRequest) {
   const tutorAddress   = (settings.address as string) ?? "";
   const missingFields = getMissingTawi50Fields(settings);
 
+  if (user.verificationStatus !== "VERIFIED") {
+    return NextResponse.json(
+      {
+        error: "UNVERIFIED",
+        message: "You must be verified by an admin to download Form 50 Tawi",
+      },
+      { status: 403 },
+    );
+  }
+
   if (missingFields.length > 0) {
     return NextResponse.json(
       {

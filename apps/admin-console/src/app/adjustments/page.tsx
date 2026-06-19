@@ -12,15 +12,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  AlertCircle,
-  CheckCircle2,
-  XCircle,
   FilePenLine,
   RefreshCw,
   ShieldAlert,
@@ -28,7 +23,10 @@ import {
   PlusCircle,
   MinusCircle,
   X,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -60,12 +58,9 @@ export default function AdjustmentsPage() {
   const [amountBaht, setAmountBaht] = useState("");
   const [reason, setReason] = useState("");
   const [submitLoading, setSubmitLoading] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-  const [submitSuccess, setSubmitSuccess] = useState("");
 
   const [pendingList, setPendingList] = useState<Adjustment[]>([]);
   const [listLoading, setListLoading] = useState(false);
-  const [listError, setListError] = useState("");
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string>("");
   const [currentUserId, setCurrentUserId] = useState<string>("");
@@ -82,17 +77,8 @@ export default function AdjustmentsPage() {
     setCurrentUserId(getAdminUserId());
   }, []);
 
-  // Auto-dismiss success after 5s
-  useEffect(() => {
-    if (submitSuccess) {
-      const timer = setTimeout(() => setSubmitSuccess(""), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [submitSuccess]);
-
   const loadPending = useCallback(async () => {
     setListLoading(true);
-    setListError("");
     try {
       const params = new URLSearchParams({ page: page.toString(), pageSize: "50" });
       if (statusFilter !== "ALL") params.set("status", statusFilter);
@@ -101,7 +87,7 @@ export default function AdjustmentsPage() {
       setTotalPages(data.pagination?.totalPages ?? 1);
     } catch (err) {
       const error = err as Error;
-      setListError(error.message);
+      toast.error(error.message);
     } finally {
       setListLoading(false);
     }
@@ -115,12 +101,10 @@ export default function AdjustmentsPage() {
     e.preventDefault();
     const bahtValue = parseFloat(amountBaht);
     if (isNaN(bahtValue) || bahtValue === 0) {
-      setSubmitError(t("adjustments.validation.amountRequired"));
+      toast.error(t("adjustments.validation.amountRequired"));
       return;
     }
     setSubmitLoading(true);
-    setSubmitError("");
-    setSubmitSuccess("");
     try {
       await fetchWithAuth("/v1/adjustments", {
         method: "POST",
@@ -131,14 +115,14 @@ export default function AdjustmentsPage() {
           reason,
         }),
       });
-      setSubmitSuccess(t("adjustments.submitSuccess"));
+      toast.success(t("adjustments.submitSuccess"));
       setTutorUserId("");
       setAmountBaht("");
       setReason("");
       loadPending();
     } catch (err) {
       const error = err as Error;
-      setSubmitError(error.message);
+      toast.error(error.message);
     } finally {
       setSubmitLoading(false);
     }
@@ -146,15 +130,15 @@ export default function AdjustmentsPage() {
 
   const executeAction = async (id: string, action: "approve" | "reject") => {
     setActionLoadingId(id);
-    setListError("");
     try {
       await fetchWithAuth(`/v1/adjustments/${id}/${action}`, {
         method: "POST",
       });
       loadPending();
+      toast.success(action === "approve" ? "Approved" : "Rejected");
     } catch (err) {
       const error = err as Error;
-      setListError(error.message);
+      toast.error(error.message);
     } finally {
       setActionLoadingId(null);
     }
@@ -255,28 +239,6 @@ export default function AdjustmentsPage() {
                     />
                   </div>
 
-                  {submitError && (
-                    <Alert variant="destructive" className="rounded-xl border-2 relative">
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertTitle className="font-bold">{t("adjustments.errorTitle")}</AlertTitle>
-                      <AlertDescription className="font-medium">{submitError}</AlertDescription>
-                      <button onClick={() => setSubmitError("")} className="absolute top-2.5 right-2.5 text-red-400 hover:text-red-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
-                        <X className="h-3.5 w-3.5" />
-                      </button>
-                    </Alert>
-                  )}
-                  {submitSuccess && (
-                    <Alert className="rounded-xl border-2 border-emerald-500/30 bg-emerald-500/5 relative">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                      <AlertDescription className="font-medium text-emerald-700 dark:text-emerald-400">
-                        {submitSuccess}
-                      </AlertDescription>
-                      <button onClick={() => setSubmitSuccess("")} className="absolute top-2.5 right-2.5 text-emerald-400 hover:text-emerald-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
-                        <X className="h-3.5 w-3.5" />
-                      </button>
-                    </Alert>
-                  )}
-
                   <Button
                     type="submit"
                     disabled={submitLoading}
@@ -349,17 +311,7 @@ export default function AdjustmentsPage() {
             </div>
           </div>
 
-          {listError && (
-            <Alert variant="destructive" className="rounded-2xl border-2 shadow-sm relative">
-              <AlertCircle className="h-5 w-5" />
-              <AlertDescription className="font-medium">{listError}</AlertDescription>
-              <button onClick={() => setListError("")} className="absolute top-3 right-3 text-red-400 hover:text-red-600 transition-colors" aria-label="ปิดการแจ้งเตือน">
-                <X className="h-4 w-4" />
-              </button>
-            </Alert>
-          )}
-
-          {!listLoading && pendingList.length === 0 && !listError && (
+          {!listLoading && pendingList.length === 0 && (
             <Card className="border-none shadow-sm rounded-3xl bg-muted/20 border-2 border-dashed">
               <CardContent className="flex flex-col items-center justify-center py-20 text-center">
                 <Scale className="h-12 w-12 text-muted-foreground/30 mb-4" />

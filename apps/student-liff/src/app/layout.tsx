@@ -1,10 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { LiffProvider } from "@/components/providers/LiffProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { ConsentProvider } from "@/components/providers/consent-provider";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { t } from "@/lib/i18n";
 import { DevToolbar } from "@/components/dev/DevToolbar";
+import { cookies } from "next/headers";
+import { IDENTITY_URL } from "@/lib/service-urls";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -31,9 +34,30 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("student-session")?.value;
+  let hasConsent = true;
+
+  if (token) {
+    try {
+      const res = await fetch(`${IDENTITY_URL}/v1/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        hasConsent = data.user?.userConsents?.some(
+          (c: { consentType: string; status: string }) => c.consentType === "TERMS_AND_PRIVACY" && c.status === "ACCEPTED"
+        ) ?? false;
+      }
+    } catch {
+      // Allow fallback if network fails
+    }
+  }
+
   return (
     <html
       lang="th"
@@ -44,9 +68,11 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <LiffProvider>
-            <div className="liff-root">{children}</div>
-            <Toaster position="top-center" richColors />
-            {process.env.NODE_ENV === "development" && <DevToolbar />}
+            <ConsentProvider hasConsent={hasConsent}>
+              <div className="liff-root">{children}</div>
+              <Toaster position="top-center" richColors />
+              {process.env.NODE_ENV === "development" && <DevToolbar />}
+            </ConsentProvider>
           </LiffProvider>
         </ThemeProvider>
       </body>

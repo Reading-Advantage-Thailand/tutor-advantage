@@ -28,6 +28,7 @@ import {
 import { handleTransferWebhook } from "./controllers/transferWebhookController";
 import {
   previewSettlement,
+  refreshSettlement,
   submitSettlement,
   approveSettlement,
   rejectSettlement,
@@ -164,9 +165,12 @@ app.get("/v1/payments/history", authMiddleware, getPaymentHistory);
 app.post("/v1/payments/webhook", handleWebhook);
 app.post("/v1/webhooks/omise-transfer", handleTransferWebhook);
 
+import { exportTutorSalesCsv } from "./controllers/tutorSalesExportController";
+
 // ── Tutor Dashboard Routes ─────────────────────────────────────────────────
 app.get("/v1/tutors/earnings/summary", authMiddleware, getEarningsSummary);
 app.get("/v1/tutors/earnings/history", authMiddleware, getEarningsHistory);
+app.get("/v1/tutors/earnings/sales-csv", authMiddleware, exportTutorSalesCsv);
 app.post("/v1/tutors/earnings/transfers/:payoutLineId/sync", authMiddleware, syncTutorTransfer);
 app.get("/v1/tutors/network", authMiddleware, getTutorNetwork);
 
@@ -184,6 +188,13 @@ app.post(
   authMiddleware,
   auditTrailMiddleware("PREVIEW_SETTLEMENT"),
   previewSettlement,
+);
+
+app.post(
+  "/v1/settlements/:snapshotId/refresh",
+  authMiddleware,
+  auditTrailMiddleware("SETTLEMENT_REFRESH"),
+  refreshSettlement,
 );
 
 app.post(

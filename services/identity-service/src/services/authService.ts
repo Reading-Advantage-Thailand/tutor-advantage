@@ -52,6 +52,9 @@ export async function processOAuthLogin(
       updateData.role = "TUTOR";
       roleUpgraded = true;
     }
+    if (name && user.displayName?.toLowerCase() === user.email?.toLowerCase()) {
+      updateData.displayName = name;
+    }
     if (Object.keys(updateData).length > 0) {
       user = await prisma.user.update({ where: { userId: user.userId }, data: updateData });
     }
@@ -86,11 +89,19 @@ export async function processOAuthLogin(
       });
     } else {
       // User exists by email, but new provider linkage
-      // Optionally update picture if they don't have one
+      // Optionally update picture or displayName if they were placeholder
+      const updateData: Record<string, unknown> = {};
       if (picture && !user.profilePictureUrl) {
+        updateData.profilePictureUrl = picture;
+      }
+      if (name && user.displayName?.toLowerCase() === user.email?.toLowerCase()) {
+        updateData.displayName = name;
+      }
+
+      if (Object.keys(updateData).length > 0) {
         user = await prisma.user.update({
           where: { userId: user.userId },
-          data: { profilePictureUrl: picture },
+          data: updateData,
         });
       }
 

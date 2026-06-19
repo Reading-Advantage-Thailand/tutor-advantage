@@ -110,6 +110,7 @@ export function AnimatedCurrencyCounter({
       value={value}
       duration={duration}
       className={className}
+      fractionDigits={fractionDigits}
       formatter={(v) =>
         v.toLocaleString("th-TH", {
           style: "currency",

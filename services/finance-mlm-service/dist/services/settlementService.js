@@ -408,6 +408,8 @@ class SettlementService {
             });
             const payoutDocumentByLineId = new Map();
             for (const line of approvedRun.payoutLines) {
+                if (line.payoutAmountMinor <= 0n)
+                    continue;
                 const payoutDocument = await tx.payoutDocument.upsert({
                     where: { payoutLineId: line.payoutLineId },
                     update: {},

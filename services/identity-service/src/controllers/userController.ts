@@ -29,6 +29,11 @@ export async function getCurrentUser(req: AuthenticatedRequest, res: Response) {
         verificationStatus: true,
         verificationComment: true,
         createdAt: true,
+        userConsents: {
+          where: { consentType: "TERMS_AND_PRIVACY", status: "ACCEPTED" },
+          orderBy: { effectiveAt: "desc" },
+          take: 1,
+        },
       },
     });
 

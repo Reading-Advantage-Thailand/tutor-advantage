@@ -26,6 +26,8 @@ interface SettlementDetailsModalProps {
   handleSyncTransfer: (row: PayoutLineRow) => void;
   transferLoadingId: string | null;
   handleRetryTransfer: (row: PayoutLineRow) => void;
+  handleRefreshDraft?: () => void;
+  refreshLoading?: boolean;
 }
 
 export function SettlementDetailsModal({
@@ -38,6 +40,8 @@ export function SettlementDetailsModal({
   handleSyncTransfer,
   transferLoadingId,
   handleRetryTransfer,
+  handleRefreshDraft,
+  refreshLoading,
 }: SettlementDetailsModalProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -63,19 +67,37 @@ export function SettlementDetailsModal({
                 <span className="font-bold text-foreground">{linesData?.status}</span>
               </SheetDescription>
             </div>
-            {linesData && linesData.status === "APPROVED" && (
-              <Button
-                size="sm"
-                variant="outline"
-                className="rounded-xl font-bold"
-                onClick={() =>
-                  handleExport(linesData.snapshotId, linesData.periodMonth)
-                }
-              >
-                <Download className="h-4 w-4 mr-2" />
-                ดาวน์โหลด CSV
-              </Button>
-            )}
+            <div className="flex gap-2">
+              {linesData && linesData.status === "DRAFT" && handleRefreshDraft && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="rounded-xl font-bold"
+                  disabled={refreshLoading}
+                  onClick={handleRefreshDraft}
+                >
+                  {refreshLoading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                  )}
+                  รีเฟรชข้อมูล
+                </Button>
+              )}
+              {linesData && linesData.status === "APPROVED" && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="rounded-xl font-bold"
+                  onClick={() =>
+                    handleExport(linesData.snapshotId, linesData.periodMonth)
+                  }
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  ดาวน์โหลด CSV
+                </Button>
+              )}
+            </div>
           </div>
         </SheetHeader>
 
