@@ -109,12 +109,28 @@ export default function SchedulePage() {
             nextSession: string;
             startsAt?: string | null;
             endsAt?: string | null;
+            isDemo?: boolean;
           }) => {
             const schedStr = cls.nextSession || "";
             const { days, timeRange } = parseThaiSchedule(schedStr);
 
+            const clsStart = cls.startsAt ? new Date(cls.startsAt) : new Date();
+
+            if (cls.isDemo) {
+              const dStr = toLocalDateStr(clsStart);
+              generatedEvents.push({
+                id: `${cls.id}-${dStr}`,
+                classId: cls.id,
+                title: cls.name,
+                tutor: cls.tutorName,
+                time: timeRange,
+                type: "class",
+                dateStr: dStr,
+              });
+              return;
+            }
+
             // Respect class start/end dates — clamp to window bounds
-            const clsStart = cls.startsAt ? new Date(cls.startsAt) : startDate;
             const clsEnd   = cls.endsAt   ? new Date(cls.endsAt)   : endDate;
             const loopStart = clsStart > startDate ? clsStart : startDate;
             const loopEnd   = clsEnd   < endDate   ? clsEnd   : endDate;

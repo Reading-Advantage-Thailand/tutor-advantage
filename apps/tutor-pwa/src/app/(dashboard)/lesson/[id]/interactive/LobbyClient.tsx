@@ -104,6 +104,7 @@ export default function TutorLobbyClient({
     error,
     flagCounts,
     changePhase,
+    syncActiveSentence,
     nudgeStudent,
     kickStudent,
     deleteSession,
@@ -160,6 +161,7 @@ export default function TutorLobbyClient({
               articleData={articleData ?? undefined}
               flagCounts={flagCounts}
               changePhase={changePhase}
+              syncActiveSentence={syncActiveSentence}
               onFinishSession={() => {
                 deleteSession();
                 router.push(backHref);

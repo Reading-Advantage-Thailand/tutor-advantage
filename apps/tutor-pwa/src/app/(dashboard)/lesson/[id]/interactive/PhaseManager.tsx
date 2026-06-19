@@ -45,6 +45,7 @@ interface PhaseManagerProps {
   allAnsweredData: AnswerData[];
   articleData?: ArticleData;
   changePhase: (phase: number) => void;
+  syncActiveSentence: (index: number) => void;
   sessionData?: TutorSessionData;
   onFinishSession?: () => void;
   flagCounts?: Record<number, number>;
@@ -271,6 +272,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   allAnsweredData,
   articleData,
   changePhase,
+  syncActiveSentence,
   sessionData,
   onFinishSession,
   flagCounts,
@@ -434,6 +436,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       articleData={articleData}
       phase={currentPhase}
       flagCounts={flagCounts}
+      onActiveIdxChange={(idx) => {
+        if (sessionData?.activeSentenceIndex !== idx) {
+          syncActiveSentence(idx);
+        }
+      }}
     />
   );
 
@@ -1519,8 +1526,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   // ── Step 12: Language Questions (teacher-mediated AI) ──
   const renderLanguageQuestions = () => {
     const questions = allAnsweredData
-      .map((a) => (typeof a.answer === "object" ? a.answer?.text : a.answer))
-      .filter(Boolean);
+      .map((a) => (typeof a.answer === "object" ? a.answer : { text: a.answer }))
+      .filter((q: any) => Boolean(q.text));
     return (
       <div className="flex-1 flex gap-5 overflow-hidden min-h-0">
         <div className="flex-1 flex flex-col items-center justify-center gap-5 min-w-0">
@@ -1537,13 +1544,26 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               {t("lesson.interactive.languageQuestionsHeading")}
             </p>
             {questions.length > 0 ? (
-              <ul className="space-y-2 max-h-[40vh] overflow-y-auto">
-                {questions.map((q, i) => (
+              <ul className="space-y-3 max-h-[40vh] overflow-y-auto px-1 pb-1">
+                {questions.map((q: any, i) => (
                   <li
                     key={i}
-                    className="text-foreground text-sm bg-muted/50 rounded-xl px-4 py-2.5"
+                    className="relative group text-foreground text-sm bg-muted/50 rounded-xl px-4 py-3 border border-transparent hover:border-violet-500/30 transition-all cursor-help"
                   >
-                    ❓ {q}
+                    <div className="flex items-start gap-2">
+                      <span className="text-lg shrink-0">❓</span>
+                      <span className="mt-0.5 leading-relaxed">{q.text}</span>
+                    </div>
+                    {q.languageAnswer && (
+                      <div className="absolute left-1/2 -translate-x-1/2 bottom-[105%] mb-2 hidden group-hover:block w-[400px] max-w-[50vw] z-50 bg-violet-900/95 dark:bg-violet-950/95 text-white p-4 rounded-2xl shadow-2xl border border-violet-400/30 pointer-events-none animate-in fade-in zoom-in-95 duration-200">
+                        <div className="flex items-center gap-2 mb-2 border-b border-violet-700/50 pb-2">
+                          <span className="text-xl">🤖</span>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-violet-200">AI คำตอบที่แนะนำ</span>
+                        </div>
+                        <p className="text-sm leading-relaxed text-violet-50 whitespace-pre-wrap">{q.languageAnswer}</p>
+                        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-violet-900/95 dark:bg-violet-950/95 border-b border-r border-violet-400/30 rotate-45 pointer-events-none" />
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>

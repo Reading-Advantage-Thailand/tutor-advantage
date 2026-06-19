@@ -28,9 +28,9 @@ export interface LessonPair {
 export interface LessonSessionData {
   sessionId: string;
   currentPhase: number;
-  phaseSelectedIndices?: Record<number, number>;
   articleData?: LessonArticleData;
-  // Step 14 (Pair Conversation) random pairs, present while phase 15 is active
+  activeSentenceIndex?: number;
+  phaseSelectedIndices?: Record<number, number>;
   pairs?: LessonPair[] | null;
 }
 
@@ -169,6 +169,10 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
       setLanguageAnswer(null);
       // Sentence flags reset at the start of a fresh instructional cycle
       if (data.phase === 1) setFlagCounts({});
+    });
+
+    newSocket.on('active_sentence_synced', (data: { activeSentenceIndex: number }) => {
+      setSessionData(prev => prev ? { ...prev, activeSentenceIndex: data.activeSentenceIndex } : null);
     });
 
     newSocket.on('flags_updated', (data: { flagCounts: Record<number, number> }) => {

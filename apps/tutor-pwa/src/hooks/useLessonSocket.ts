@@ -157,6 +157,12 @@ export const useLessonSocket = (
     }
   };
 
+  const syncActiveSentence = (index: number) => {
+    if (socketRef.current && sessionData) {
+      socketRef.current.emit('sync_active_sentence', { sessionId: sessionData.sessionId, index });
+    }
+  };
+
   const nudgeStudent = (studentId: string) => {
     if (socketRef.current && sessionData) {
       socketRef.current.emit('nudge_student', { sessionId: sessionData.sessionId, studentId });
@@ -188,6 +194,7 @@ export const useLessonSocket = (
     error,
     flagCounts,
     changePhase,
+    syncActiveSentence,
     nudgeStudent,
     kickStudent,
     deleteSession

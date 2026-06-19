@@ -374,6 +374,15 @@ export const setupLessonSocket = (io: Server) => {
       }
     });
 
+    socket.on("sync_active_sentence", ({ sessionId, index }) => {
+      const session = lessonSessionService.syncActiveSentence(sessionId, index);
+      if (session) {
+        io.to(sessionId).emit("active_sentence_synced", {
+          activeSentenceIndex: index,
+        });
+      }
+    });
+
     // Student submits answer
     socket.on("submit_answer", async ({ sessionId, studentId, answer, question, expectedAnswer }) => {
       // AI-evaluated phases: 8=Guided Response (short answer), 12=Guided Writing

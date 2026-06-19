@@ -8,12 +8,14 @@ interface ArticleDisplayProps {
   articleData?: ArticleData;
   phase: number;
   flagCounts?: Record<number, number>;
+  onActiveIdxChange?: (idx: number) => void;
 }
 
 export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   articleData,
   phase,
   flagCounts,
+  onActiveIdxChange,
 }) => {
   const words = useMemo(() => articleData?.words || [], [articleData?.words]);
   const sentences = useMemo(() => articleData?.sentences || [], [articleData?.sentences]);
@@ -110,6 +112,14 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     const el = document.getElementById(`read-sentence-${activeIdx}`);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [activeIdx, phase]);
+
+  const lastReportedIdxRef = useRef(-2);
+  useEffect(() => {
+    if (phase === 3 && onActiveIdxChange && activeIdx !== lastReportedIdxRef.current) {
+      lastReportedIdxRef.current = activeIdx;
+      onActiveIdxChange(activeIdx);
+    }
+  }, [activeIdx, phase, onActiveIdxChange]);
 
   // Auto-translate vocab words and English definitions
   useEffect(() => {
@@ -942,7 +952,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
         {/* Floating mini audio player - bottom-center */}
         {audioUrl && (
-          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2">
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2">
             {/* Translation tooltip above player */}
             {activeEnText && (
               <div

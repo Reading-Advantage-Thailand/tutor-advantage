@@ -709,31 +709,47 @@ function PlayLessonContent() {
               <h2 className="text-lg font-black text-teal-600 dark:text-teal-400">อ่านบทความ · ออกเสียง</h2>
               <p className="text-muted-foreground text-xs font-medium mt-1">แตะประโยคที่อยากให้คุณครูช่วยออกเสียง 🚩</p>
             </div>
-            <div className="bg-card rounded-2xl border border-border shadow-sm p-3">
-              {(articleData?.sentences || []).map((s, idx) => {
+            <div className="bg-card rounded-2xl border border-border shadow-md p-4 flex items-center gap-3 shrink-0">
+              <div className="size-11 rounded-xl bg-teal-500/10 border-teal-500/30 border flex items-center justify-center text-xl shrink-0">👆</div>
+              <div>
+                <p className="font-black text-foreground text-sm">{t("interactivePlay.lookAtScreen")}</p>
+                <p className="text-teal-600 dark:text-teal-400 text-xs font-bold mt-0.5">อ่านบทความ</p>
+              </div>
+            </div>
+            <div className="bg-card rounded-2xl border border-border shadow-sm p-3 min-h-[120px] flex flex-col items-center justify-center">
+              {(() => {
+                const activeIdx = sessionData?.activeSentenceIndex ?? -1;
+                if (activeIdx < 0) {
+                   return (
+                     <div className="text-center">
+                       <p className="text-muted-foreground text-sm font-bold animate-pulse">รอคุณครูเล่นเสียงบทความ...</p>
+                     </div>
+                   );
+                }
+                const s = articleData?.sentences?.[activeIdx];
+                if (!s) return null;
                 const text = typeof s === 'object' ? s.sentences : s;
-                const isFlagged = myFlags.has(idx);
-                const count = flagCounts?.[idx] || 0;
+                const isFlagged = myFlags.has(activeIdx);
+                const count = flagCounts?.[activeIdx] || 0;
                 return (
                   <button
-                    key={idx}
-                    onClick={() => handleFlagToggle(idx)}
-                    className={`w-full text-left rounded-xl px-3 py-2.5 mb-1.5 last:mb-0 transition-all flex items-start gap-2 ${
+                    onClick={() => handleFlagToggle(activeIdx)}
+                    className={`w-full text-left rounded-xl px-4 py-6 transition-all flex items-start gap-3 shadow-md ${
                       isFlagged
                         ? 'bg-rose-500/15 border border-rose-400/50'
-                        : 'bg-muted/40 border border-transparent active:bg-muted'
+                        : 'bg-teal-50/50 dark:bg-teal-900/20 border border-teal-500/20 active:scale-95'
                     }`}
                   >
-                    <span className="text-base shrink-0 mt-0.5">{isFlagged ? '🚩' : '🔖'}</span>
-                    <span className={`flex-1 text-sm leading-relaxed ${isFlagged ? 'text-rose-700 dark:text-rose-300 font-semibold' : 'text-foreground'}`}>
+                    <span className="text-2xl shrink-0 mt-1">{isFlagged ? '🚩' : '🔖'}</span>
+                    <span className={`flex-1 text-lg leading-relaxed ${isFlagged ? 'text-rose-700 dark:text-rose-300 font-bold' : 'text-foreground font-semibold'}`}>
                       {text}
                     </span>
                     {count > 0 && (
-                      <span className="text-[10px] font-black text-rose-500 bg-rose-500/10 rounded-full px-1.5 py-0.5 shrink-0">{count}</span>
+                      <span className="text-xs font-black text-rose-500 bg-rose-500/10 rounded-full px-2 py-1 shrink-0">{count}</span>
                     )}
                   </button>
                 );
-              })}
+              })()}
             </div>
           </div>
         )}

@@ -25,6 +25,7 @@ export interface LessonSession {
   currentPhase: number;
   participants: Map<string, SessionParticipant>;
   status: 'LOBBY' | 'ACTIVE' | 'FINISHED';
+  activeSentenceIndex?: number;
   phaseSelectedIndices?: Record<number, number>;
   // Step 3 (Read the Article) Sentence Flags: sentenceIndex -> set of studentIds who flagged it
   sentenceFlags?: Map<number, Set<string>>;
@@ -173,6 +174,7 @@ class LessonSessionService {
       currentPhase: 0,
       participants: new Map(),
       status: 'LOBBY',
+      activeSentenceIndex: -1,
       phaseSelectedIndices,
       sentenceFlags: new Map(),
       isDemo: isDemo ?? false,
@@ -346,6 +348,14 @@ class LessonSessionService {
         };
       }),
     }));
+  }
+
+  syncActiveSentence(sessionId: string, index: number): LessonSession | null {
+    const session = this.sessions.get(sessionId);
+    if (session) {
+      session.activeSentenceIndex = index;
+    }
+    return session || null;
   }
 
   submitAnswer(sessionId: string, studentId: string, answer: any): { session: LessonSession, allAnswered: boolean } | undefined {
