@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-const FINANCE_API_URL = process.env.FINANCE_API_URL || "http://localhost:3003";
-const IDENTITY_API_URL = process.env.IDENTITY_API_URL || "http://localhost:3001";
-const LEARNING_API_URL = process.env.LEARNING_API_URL || "http://localhost:3002";
+const isProd = process.env.NODE_ENV === "production";
+const FINANCE_API_URL = process.env.FINANCE_API_URL || (isProd ? "https://finance-mlm-service-1090865515742.asia-southeast1.run.app" : "http://localhost:3003");
+const IDENTITY_API_URL = process.env.IDENTITY_API_URL || (isProd ? "https://identity-service-1090865515742.asia-southeast1.run.app" : "http://localhost:3001");
+const LEARNING_API_URL = process.env.LEARNING_API_URL || (isProd ? "https://learning-service-1090865515742.asia-southeast1.run.app" : "http://localhost:3002");
 
 function resolveTargetUrl(pathParts: string[], search: string) {
   const targetPath = "/" + pathParts.join("/");
