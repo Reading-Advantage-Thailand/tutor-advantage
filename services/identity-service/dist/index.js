@@ -8,13 +8,13 @@ const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
 const database_1 = require("@tutor-advantage/database");
+const shared_config_1 = require("@tutor-advantage/shared-config");
 // Load root .env file
 dotenv_1.default.config({
     path: path_1.default.resolve(__dirname, "../../../.env"),
     override: process.env.NODE_ENV !== "production",
 });
 shared_config_1.logger.info(`[Identity] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
-const shared_config_1 = require("@tutor-advantage/shared-config");
 const authController_1 = require("./controllers/authController");
 const sessionController_1 = require("./controllers/sessionController");
 const consentController_1 = require("./controllers/consentController");

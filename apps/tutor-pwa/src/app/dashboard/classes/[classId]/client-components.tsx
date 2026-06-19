@@ -804,14 +804,15 @@ export function RescheduleClassButton({
       if (t) accumulatedHours += diffHours(t.start, t.end);
     });
 
-    while (accumulatedHours < MAX_CLASS_HOURS) {
+    const maxHours = MAX_CLASS_HOURS + (freeHours || 0);
+    while (accumulatedHours < maxHours) {
       const dayName = dayNames[cur.getDay()];
       if (tpl.days.includes(dayName)) {
         const d = new Date(cur);
         newDates.push(d);
         
         const templateHours = diffHours(tpl.startTime, tpl.endTime);
-        const hoursNeeded = MAX_CLASS_HOURS - accumulatedHours;
+        const hoursNeeded = maxHours - accumulatedHours;
         
         if (hoursNeeded >= templateHours) {
           nextTimes[format(d, 'yyyy-MM-dd')] = { start: tpl.startTime, end: tpl.endTime };
@@ -971,7 +972,7 @@ export function RescheduleClassButton({
               <Label className="text-xs font-bold text-muted-foreground uppercase">เพิ่มวันสอนแบบอัตโนมัติ (Template)</Label>
               <div className="grid grid-cols-1 gap-3">
                 <div className="space-y-1.5">
-                  <Label className="text-[11px]">เริ่มสอนตั้งแต่วันที่ (ระบบจะคำนวณวันให้จนครบ {MAX_CLASS_HOURS} ชม.)</Label>
+                  <Label className="text-[11px]">เริ่มสอนตั้งแต่วันที่ (ระบบจะคำนวณวันให้จนครบ {MAX_CLASS_HOURS + (freeHours || 0)} ชม.)</Label>
                   <Input type="date" value={genStart} onChange={e => setGenStart(e.target.value)} className="h-8 text-xs" />
                 </div>
               </div>

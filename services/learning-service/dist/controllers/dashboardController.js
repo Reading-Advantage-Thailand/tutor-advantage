@@ -8,6 +8,7 @@ const shared_config_1 = require("@tutor-advantage/shared-config");
 const database_1 = require("@tutor-advantage/database");
 const LessonSessionService_1 = require("../services/LessonSessionService");
 const ReadingAdvantageDB_1 = require("../services/ReadingAdvantageDB");
+const classController_1 = require("./classController");
 const uuid_1 = require("uuid");
 const STUDENT_APP_PROD_URL = "https://student-liff-1090865515742.asia-southeast1.run.app";
 const STUDENT_APP_DEV_URL = "https://resource-pushpin-tabby.ngrok-free.dev";
@@ -175,7 +176,7 @@ async function getDashboardSummary(req, res) {
                     name: e.class.title || e.class.book?.title || "Untitled Class",
                     status: e.class.status.toLowerCase(),
                     tutorName,
-                    nextSession: e.class.scheduleDescription || "ตามนัดหมาย",
+                    nextSession: (0, classController_1.formatNextSession)(e.class.scheduleDescription, e.class.scheduleData),
                     progress: actualProgress,
                     isLive: !!session,
                     bookName: e.class.book?.title,
@@ -197,7 +198,7 @@ async function getDashboardSummary(req, res) {
                     name: `${cls.title || cycle.book?.title || "Untitled Class"} / ${cycle.book?.title || "New Book"}`,
                     status: pkg.status,
                     tutorName,
-                    nextSession: cls.scheduleDescription || "ตามนัดหมาย",
+                    nextSession: (0, classController_1.formatNextSession)(cls.scheduleDescription, cls.scheduleData),
                     progress: 0,
                     isLive: false,
                     bookName: cycle.book?.title,
@@ -244,7 +245,7 @@ async function getDashboardSummary(req, res) {
             name: c.title || c.book?.title || "Untitled Class",
             status: c.status.toLowerCase(), // OPEN -> open
             students: c.enrolledCount,
-            nextSession: "ตามนัดหมาย", // Mock static text for now
+            nextSession: (0, classController_1.formatNextSession)(c.scheduleDescription, c.scheduleData),
         }));
         const unreadMessages = await getUnreadMessageCount(userId);
         const classesThisWeek = classes.length > 0 ? Math.min(classes.length, 5) : 0;

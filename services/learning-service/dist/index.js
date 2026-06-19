@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
+const shared_config_1 = require("@tutor-advantage/shared-config");
 // Load the monorepo .env file from both ts-node src/ and compiled dist/ starts.
 dotenv_1.default.config({
     path: path_1.default.resolve(__dirname, "../../../.env"),
@@ -16,7 +17,6 @@ shared_config_1.logger.info(`[Learning] Loaded DATABASE_URL starting with: ${pro
 const { prisma } = require("@tutor-advantage/database");
 const http_1 = require("http");
 const socket_io_1 = require("socket.io");
-const shared_config_1 = require("@tutor-advantage/shared-config");
 const authMiddleware_1 = require("./middlewares/authMiddleware");
 const classController_1 = require("./controllers/classController");
 const demoController_1 = require("./controllers/demoController");
@@ -80,6 +80,7 @@ app.get("/v1/classes/:classId", authMiddleware_1.authMiddleware, classController
 app.delete("/v1/classes/:classId", authMiddleware_1.authMiddleware, classController_1.deleteClass);
 app.patch("/v1/classes/:classId/meeting-url", authMiddleware_1.authMiddleware, classController_1.updateMeetingUrl);
 app.patch("/v1/classes/:classId/schedule", authMiddleware_1.authMiddleware, classController_1.rescheduleClass);
+app.patch("/v1/classes/:classId/status", authMiddleware_1.authMiddleware, classController_1.updateClassStatus);
 app.get("/v1/classes/:classId/articles", authMiddleware_1.authMiddleware, classController_1.getClassArticles);
 app.post("/v1/classes/:classId/book-cycles", authMiddleware_1.authMiddleware, classController_1.createClassBookCycle);
 app.post("/v1/classes/:classId/book-cycles/:cycleId/access", authMiddleware_1.authMiddleware, classController_1.prepareClassBookCycleAccess);

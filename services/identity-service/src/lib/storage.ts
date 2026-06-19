@@ -3,15 +3,11 @@ import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import { logger } from "@tutor-advantage/shared-config";
 
-// Dynamically resolve service account path if it's relative in .env
-let keyFilename: string | undefined = process.env.GCP_KEY_FILEPATH;
-if (!keyFilename && process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-  // If relative path, resolve from project root.
-  if (process.env.GOOGLE_APPLICATION_CREDENTIALS.startsWith(".")) {
-    keyFilename = path.resolve(__dirname, "../../../../", process.env.GOOGLE_APPLICATION_CREDENTIALS);
-  } else {
-    keyFilename = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-  }
+let keyFilename: string | undefined = process.env.GCP_KEY_FILEPATH || process.env.GOOGLE_APPLICATION_CREDENTIALS;
+if (keyFilename && keyFilename.startsWith(".")) {
+  // If relative path, resolve from project root (4 levels up from this file, or using process.cwd() if run from root)
+  // Assuming this file is in services/identity-service/src/lib/storage.ts
+  keyFilename = path.resolve(__dirname, "../../../../", keyFilename);
 }
 
 // Initialize GCS

@@ -81,21 +81,21 @@ export default function NewClassPage() {
     
     let accumulatedHours = 0;
 
-    // Generate dates until we perfectly hit MAX_CLASS_HOURS (e.g. 22 hours)
-    while (accumulatedHours < MAX_CLASS_HOURS) {
+    // Generate dates until we perfectly hit maxHours (e.g. 22 hours + freeHours)
+    while (accumulatedHours < maxHours) {
       const dayName = dayNames[cur.getDay()];
       if (tpl.days.includes(dayName)) {
         const d = new Date(cur);
         newDates.push(d);
         
         const templateHours = diffHours(tpl.startTime, tpl.endTime);
-        const hoursNeeded = MAX_CLASS_HOURS - accumulatedHours;
+        const hoursNeeded = maxHours - accumulatedHours;
         
         if (hoursNeeded >= templateHours) {
           nextTimes[format(d, 'yyyy-MM-dd')] = { start: tpl.startTime, end: tpl.endTime };
           accumulatedHours += templateHours;
         } else {
-          // Adjust the end time for the final day to exactly reach MAX_CLASS_HOURS
+          // Adjust the end time for the final day to exactly reach maxHours
           const [sh, sm] = tpl.startTime.split(":").map(Number);
           const totalMinutes = (sh * 60 + sm) + (hoursNeeded * 60);
           const eh = Math.floor(totalMinutes / 60);
@@ -195,10 +195,15 @@ export default function NewClassPage() {
     const newErrors: Record<string, string> = {};
     if (!form.name.trim()) newErrors.name = t("tutorClass.newClass.classNamePlaceholder") + " (จำเป็น)";
     if (!form.book) newErrors.book = t("tutorClass.newClass.selectBook") + " (จำเป็น)";
-    if (!form.schedule) newErrors.schedule = t("tutorClass.newClass.scheduleRequired");
+    if (!form.schedule) newErrors.schedule = "โปรดระบุวันและเวลาสอน (จำเป็น)";
     if (overLimit) newErrors.schedule = t("tutorClass.newClass.hoursOverLimit");
     setFieldErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) return;
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrorText("โปรดกรอกข้อมูลที่จำเป็นให้ครบถ้วน");
+      return;
+    }
+    
     setLoading(true);
     setErrorText("");
     try {
@@ -432,7 +437,7 @@ export default function NewClassPage() {
                     <Label className="text-xs font-bold text-muted-foreground uppercase">เพิ่มวันสอนแบบอัตโนมัติ (Template)</Label>
                     <div className="grid grid-cols-1 gap-3">
                       <div className="space-y-1.5">
-                        <Label className="text-[11px]">เริ่มสอนตั้งแต่วันที่ (ระบบจะคำนวณวันให้จนครบ {MAX_CLASS_HOURS} ชม.)</Label>
+                        <Label className="text-[11px]">เริ่มสอนตั้งแต่วันที่ (ระบบจะคำนวณวันให้จนครบ {maxHours} ชม.)</Label>
                         <Input type="date" value={genStart} onChange={e => setGenStart(e.target.value)} className="h-8 text-xs" />
                       </div>
                     </div>
@@ -462,12 +467,15 @@ export default function NewClassPage() {
 
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <Label className="text-sm font-bold">เลือกวันสอนบนปฏิทิน</Label>
+                      <Label className={`text-sm font-bold ${fieldErrors.schedule ? 'text-destructive' : ''}`}>เลือกวันสอนบนปฏิทิน</Label>
                       <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-1 rounded-md">
                         {selectedDates.length > 0 ? `เลือกแล้ว ${selectedDates.length} วัน` : "ยังไม่ได้เลือกวัน"}
                       </span>
                     </div>
-                    <div className="w-full flex justify-center p-2 sm:p-6 rounded-xl border bg-background shadow-sm overflow-x-auto">
+                    {fieldErrors.schedule && (
+                      <p className="text-xs text-destructive font-semibold">{fieldErrors.schedule}</p>
+                    )}
+                    <div className={`w-full flex justify-center p-2 sm:p-6 rounded-xl border bg-background shadow-sm overflow-x-auto ${fieldErrors.schedule ? 'border-destructive ring-1 ring-destructive/30' : ''}`}>
                       <Calendar
                         mode="multiple"
                         locale={th}

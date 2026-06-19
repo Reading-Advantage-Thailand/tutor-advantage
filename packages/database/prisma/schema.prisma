@@ -180,6 +180,7 @@ model Class {
   conversations Conversation[]
   transfers     ClassTransferRequest[]
   reviews       TutorReview[]
+  interactiveSessions InteractiveSession[]
 
   @@index([tutorUserId, status])
   @@map("classes")
@@ -198,7 +199,7 @@ model ClassBookCycle {
   createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt         DateTime  @default(now()) @map("updated_at") @db.Timestamptz
 
-  class   Class   @relation(fields: [classId], references: [classId])
+  class   Class   @relation(fields: [classId], references: [classId], onDelete: Cascade)
   book    Book    @relation(fields: [bookId], references: [bookId])
   access  EnrollmentPackage[]
 
@@ -219,7 +220,7 @@ model Referral {
   expiresAt     DateTime? @map("expires_at") @db.Timestamptz
   createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz
 
-  class Class @relation(fields: [classId], references: [classId])
+  class Class @relation(fields: [classId], references: [classId], onDelete: Cascade)
 
   @@map("referrals")
   @@schema("learning")
@@ -305,6 +306,7 @@ model InteractiveSession {
   updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz
 
   tutor        User     @relation(fields: [tutorUserId], references: [userId])
+  class        Class?   @relation(fields: [classId], references: [classId], onDelete: Cascade)
   participants SessionParticipant[]
   answers      SessionAnswer[]
 
@@ -321,7 +323,7 @@ model SessionParticipant {
   score         Int      @default(0)
   joinedAt      DateTime @default(now()) @map("joined_at") @db.Timestamptz
 
-  session InteractiveSession @relation(fields: [sessionId], references: [sessionId])
+  session InteractiveSession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
   student User               @relation(fields: [studentUserId], references: [userId])
 
   @@unique([sessionId, studentUserId])
@@ -345,7 +347,7 @@ model SessionAnswer {
   aiFeedback    String?  @map("ai_feedback")
   answeredAt    DateTime @default(now()) @map("answered_at") @db.Timestamptz
 
-  session InteractiveSession @relation(fields: [sessionId], references: [sessionId])
+  session InteractiveSession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
   student User               @relation(fields: [studentUserId], references: [userId])
 
   @@map("session_answers")
@@ -385,7 +387,7 @@ model Conversation {
   createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamptz
 
-  class        Class?                    @relation(fields: [classId], references: [classId])
+  class        Class?                    @relation(fields: [classId], references: [classId], onDelete: Cascade)
   participants ConversationParticipant[]
   messages     Message[]
 
@@ -400,7 +402,7 @@ model ConversationParticipant {
   joinedAt       DateTime  @default(now()) @map("joined_at") @db.Timestamptz
   lastReadAt     DateTime? @map("last_read_at") @db.Timestamptz
 
-  conversation Conversation @relation(fields: [conversationId], references: [conversationId])
+  conversation Conversation @relation(fields: [conversationId], references: [conversationId], onDelete: Cascade)
   user         User         @relation(fields: [userId], references: [userId])
 
   @@unique([conversationId, userId])
@@ -418,7 +420,7 @@ model Message {
   createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamptz
 
-  conversation Conversation @relation(fields: [conversationId], references: [conversationId])
+  conversation Conversation @relation(fields: [conversationId], references: [conversationId], onDelete: Cascade)
   sender       User         @relation(fields: [senderId], references: [userId])
 
   @@index([conversationId, createdAt], map: "messages_conversation_created_idx")
@@ -442,7 +444,7 @@ model ClassTransferRequest {
   createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt        DateTime  @default(now()) @map("updated_at") @db.Timestamptz
 
-  class Class @relation(fields: [classId], references: [classId])
+  class Class @relation(fields: [classId], references: [classId], onDelete: Cascade)
 
   @@map("class_transfer_requests")
   @@schema("learning")
@@ -477,7 +479,7 @@ model TutorReview {
 
   tutor   User  @relation("TutorReviews", fields: [tutorUserId], references: [userId])
   student User  @relation("StudentReviews", fields: [studentUserId], references: [userId])
-  class   Class @relation(fields: [classId], references: [classId])
+  class   Class @relation(fields: [classId], references: [classId], onDelete: Cascade)
 
   @@unique([studentUserId, classId])
   @@index([tutorUserId])

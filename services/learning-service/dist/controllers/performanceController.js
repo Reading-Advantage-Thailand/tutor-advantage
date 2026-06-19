@@ -213,8 +213,8 @@ const getPerformanceSummary = async (req, res) => {
             // Teaching hours come from actual scheduled time across all classes that
             // have both a start and end — not just CLOSED ones (book.classHours).
             prisma.class.findMany({
-                where: { tutorUserId: userId, startsAt: { not: null }, endsAt: { not: null } },
-                select: { startsAt: true, endsAt: true },
+                where: { tutorUserId: userId, status: { not: "CANCELLED" }, isDemo: false },
+                select: { scheduleData: true, book: { select: { classHours: true } }, status: true, endsAt: true },
             }),
             prisma.enrollment.count({
                 where: { class: { tutorUserId: userId }, referralToken: { not: null } },
@@ -227,9 +227,31 @@ const getPerformanceSummary = async (req, res) => {
                 orderBy: { unlockedAt: "desc" },
             }),
         ]);
+        const now = new Date().getTime();
         const totalHours = Math.round(scheduledClasses.reduce((sum, cls) => {
-            const durationMs = cls.endsAt.getTime() - cls.startsAt.getTime();
-            return durationMs > 0 ? sum + durationMs / 3_600_000 : sum;
+            if (Array.isArray(cls.scheduleData) && cls.scheduleData.length > 0) {
+                let classTotal = 0;
+                for (const s of cls.scheduleData) {
+                    const session = s;
+                    if (session?.date && session?.start && session?.end) {
+                        const sessionEndTime = new Date(`${session.date}T${session.end}:00`).getTime();
+                        if (sessionEndTime <= now) {
+                            const [sh, sm] = session.start.split(":").map(Number);
+                            const [eh, em] = session.end.split(":").map(Number);
+                            if (!isNaN(sh) && !isNaN(eh)) {
+                                classTotal += (eh + (em || 0) / 60) - (sh + (sm || 0) / 60);
+                            }
+                        }
+                    }
+                }
+                if (classTotal > 0)
+                    return sum + classTotal;
+            }
+            // Fallback for classes without scheduleData
+            if (cls.status === "CLOSED" || cls.status === "closed" || (cls.endsAt && cls.endsAt.getTime() <= now)) {
+                return sum + (cls.book?.classHours || 0);
+            }
+            return sum;
         }, 0));
         const completedClassCount = completedClasses.length;
         const unlockedCodes = new Set(badges.map(b => b.badgeCode));

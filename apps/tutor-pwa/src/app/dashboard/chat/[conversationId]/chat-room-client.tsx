@@ -203,7 +203,7 @@ export default function ChatRoomClient({
 
   // Modern chat layout specifically for mobile PWA
   return (
-    <div className="fixed inset-0 z-[60] flex flex-col bg-background lg:relative lg:inset-auto lg:z-auto lg:h-full lg:max-w-2xl lg:mx-auto lg:border-x lg:border-b lg:border-border lg:shadow-lg sm:static sm:h-[calc(100vh-4rem)] sm:max-w-2xl sm:mx-auto sm:border-x sm:border-b sm:border-border sm:rounded-b-none sm:shadow-lg sm:my-0 sm:-mx-8">
+    <div className="fixed inset-0 z-[60] flex flex-col bg-background lg:relative lg:inset-auto lg:z-auto lg:h-[calc(100vh-6rem)] lg:max-w-none lg:mx-0 lg:border lg:rounded-xl lg:shadow-md lg:overflow-hidden sm:static sm:h-[calc(100vh-6rem)] sm:max-w-none sm:mx-0 sm:border sm:rounded-xl sm:shadow-md sm:my-0 sm:overflow-hidden">
       
       {/* Header - Fixed at top on mobile */}
       <div className="flex items-center justify-between px-4 py-3 sm:py-4 border-b bg-background/95 backdrop-blur-md shrink-0 safe-top">

@@ -31,7 +31,7 @@ export default async function ChatPage() {
   const conversations = await getConversations();
 
   return (
-    <PageTransition variant="slide-up" stagger className="space-y-6 max-w-2xl mx-auto w-full pb-24 sm:pb-12">
+    <PageTransition variant="slide-up" stagger className="space-y-6 w-full pb-24 sm:pb-12">
       <div>
         <h1 className="text-3xl font-black tracking-tight text-foreground">{t("dashboardChat.title")}</h1>
         <p className="text-sm font-medium text-muted-foreground mt-1">

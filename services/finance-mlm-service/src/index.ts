@@ -4,16 +4,17 @@ import dotenv from "dotenv";
 import path from "path";
 import { prisma } from "@tutor-advantage/database";
 
-// Load root .env file
-dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
-logger.info(`[Finance] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
-
 import {
   requestLoggerMiddleware,
   requestIdMiddleware,
   errorHandlerMiddleware,
   logger,
 } from "@tutor-advantage/shared-config";
+
+// Load root .env file
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
+logger.info(`[Finance] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
+
 import { authMiddleware } from "./middlewares/authMiddleware";
 import {
   createPaymentIntent,

@@ -123,45 +123,57 @@ export default function DemoPage() {
       )}
 
       {/* Create demo room */}
-      <Card className="border-2 border-violet-500/30 mb-6">
-        <CardContent className="p-5">
-          <h2 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
-            <Plus className="h-4 w-4 text-violet-500" />
-            สร้างห้อง Demo ใหม่
-          </h2>
+      {activeClasses.length === 0 ? (
+        <Card className="border-2 border-violet-500/30 mb-6">
+          <CardContent className="p-5">
+            <h2 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+              <Plus className="h-4 w-4 text-violet-500" />
+              สร้างห้อง Demo ใหม่
+            </h2>
 
-          {loading ? (
-            <div className="h-10 bg-muted/40 rounded-lg animate-pulse" />
-          ) : (
-            <div className="flex gap-2">
-              <select
-                className="flex-1 text-sm border border-border rounded-lg px-3 py-2 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-violet-500/50"
-                value={selectedBookId ?? ""}
-                onChange={(e) => setSelectedBookId(e.target.value || null)}
-              >
-                <option value="">เลือกหนังสือ...</option>
-                {books.map((book) => (
-                  <option key={book.bookId} value={book.bookId}>
-                    [{book.cefrLevel}] {book.title}
-                  </option>
-                ))}
-              </select>
-              <Button
-                onClick={handleCreate}
-                disabled={!selectedBookId || creating}
-                className="gap-1.5 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white shrink-0"
-              >
-                <Plus className="h-4 w-4" />
-                {creating ? "กำลังสร้าง..." : "สร้างห้อง"}
-              </Button>
+            {loading ? (
+              <div className="h-10 bg-muted/40 rounded-lg animate-pulse" />
+            ) : (
+              <div className="flex gap-2">
+                <select
+                  className="flex-1 text-sm border border-border rounded-lg px-3 py-2 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-violet-500/50"
+                  value={selectedBookId ?? ""}
+                  onChange={(e) => setSelectedBookId(e.target.value || null)}
+                >
+                  <option value="">เลือกหนังสือ...</option>
+                  {books.map((book) => (
+                    <option key={book.bookId} value={book.bookId}>
+                      [{book.cefrLevel}] {book.title}
+                    </option>
+                  ))}
+                </select>
+                <Button
+                  onClick={handleCreate}
+                  disabled={!selectedBookId || creating}
+                  className="gap-1.5 bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white shrink-0"
+                >
+                  <Plus className="h-4 w-4" />
+                  {creating ? "กำลังสร้าง..." : "สร้างห้อง"}
+                </Button>
+              </div>
+            )}
+
+            <p className="text-xs text-muted-foreground mt-2">
+              * ระบบจะใช้บทความแรกของหนังสือที่เลือก นักเรียนเข้าเรียนฟรีผ่านลิงก์ referral
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="border-border/40 bg-amber-500/5 mb-6">
+          <CardContent className="py-6 text-center flex flex-col items-center gap-2">
+            <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center mb-1">
+              <Sparkles className="h-5 w-5 text-amber-500" />
             </div>
-          )}
-
-          <p className="text-xs text-muted-foreground mt-2">
-            * ระบบจะใช้บทความแรกของหนังสือที่เลือก นักเรียนเข้าเรียนฟรีผ่านลิงก์ referral
-          </p>
-        </CardContent>
-      </Card>
+            <p className="text-sm font-bold text-amber-600 dark:text-amber-400">คุณมีห้อง Demo ที่กำลังเปิดใช้งานอยู่แล้ว 1 ห้อง</p>
+            <p className="text-xs text-muted-foreground">ไม่สามารถสร้างเพิ่มได้จนกว่าห้องเดิมจะหมดอายุ (หรือคุณสามารถกดลบห้องเดิมทิ้งในหน้ารายละเอียดคลาส)</p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Active demo classes */}
       {!loading && activeClasses.length > 0 && (

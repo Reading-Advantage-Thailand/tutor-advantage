@@ -4,6 +4,7 @@ import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { lessonSessionService } from "../services/LessonSessionService";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
+import { formatNextSession } from "./classController";
 import { v4 as uuidv4 } from "uuid";
 
 const STUDENT_APP_PROD_URL = "https://student-liff-1090865515742.asia-southeast1.run.app";
@@ -199,7 +200,7 @@ export async function getDashboardSummary(
           name: e.class.title || e.class.book?.title || "Untitled Class",
           status: e.class.status.toLowerCase(),
           tutorName,
-          nextSession: e.class.scheduleDescription || "ตามนัดหมาย",
+          nextSession: formatNextSession(e.class.scheduleDescription, (e.class as any).scheduleData),
           progress: actualProgress,
           isLive: !!session,
           bookName: e.class.book?.title,
@@ -223,7 +224,7 @@ export async function getDashboardSummary(
           name: `${cls.title || cycle.book?.title || "Untitled Class"} / ${cycle.book?.title || "New Book"}`,
           status: pkg.status,
           tutorName,
-          nextSession: cls.scheduleDescription || "ตามนัดหมาย",
+          nextSession: formatNextSession(cls.scheduleDescription, (cls as any).scheduleData),
           progress: 0,
           isLive: false,
           bookName: cycle.book?.title,
@@ -276,7 +277,7 @@ export async function getDashboardSummary(
       name: c.title || c.book?.title || "Untitled Class",
       status: c.status.toLowerCase(), // OPEN -> open
       students: c.enrolledCount,
-      nextSession: "ตามนัดหมาย", // Mock static text for now
+      nextSession: formatNextSession(c.scheduleDescription, (c as any).scheduleData),
     }));
 
     const unreadMessages = await getUnreadMessageCount(userId);

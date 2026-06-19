@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createClass = createClass;
+exports.formatNextSession = formatNextSession;
 exports.closeClass = closeClass;
+exports.updateClassStatus = updateClassStatus;
 exports.getClasses = getClasses;
 exports.getClassById = getClassById;
 exports.getAvailableClasses = getAvailableClasses;
@@ -99,6 +101,23 @@ async function createClass(req, res) {
                     error: {
                         code: "NO_ARTICLE",
                         message: "This book has no articles available for demo",
+                        requestId: req.id,
+                    },
+                });
+            }
+            // Limit 1 active demo per tutor
+            const activeDemoCount = await database_1.prisma.class.count({
+                where: {
+                    tutorUserId: userId,
+                    isDemo: true,
+                    expiresAt: { gt: new Date() },
+                },
+            });
+            if (activeDemoCount >= 1) {
+                return res.status(403).json({
+                    error: {
+                        code: "LIMIT_EXCEEDED",
+                        message: "You can only have 1 active demo class at a time.",
                         requestId: req.id,
                     },
                 });
@@ -214,6 +233,18 @@ function mapClassStatus(status, enrolledCount, capacity) {
         return status.toLowerCase();
     return enrolledCount >= capacity ? "full" : "open";
 }
+function formatNextSession(scheduleDesc, scheduleData) {
+    let base = scheduleDesc || "ตามนัดหมาย";
+    if (Array.isArray(scheduleData) && scheduleData.length > 0) {
+        const first = scheduleData[0];
+        if (first && first.start && first.end) {
+            if (!base.includes("เวลา") && !base.includes(first.start)) {
+                base += ` เวลา ${first.start}-${first.end} น.`;
+            }
+        }
+    }
+    return base;
+}
 function getInitials(name) {
     if (!name)
         return "TA";
@@ -321,6 +352,56 @@ async function closeClass(req, res) {
         });
     }
 }
+async function updateClassStatus(req, res) {
+    try {
+        const userId = req.user?.userId;
+        const { classId } = req.params;
+        const { status } = req.body;
+        if (!userId) {
+            return res.status(401).json({
+                error: { code: "UNAUTHORIZED", message: "User ID missing from token", requestId: req.id },
+            });
+        }
+        if (!status || !["open", "full", "closed"].includes(status.toLowerCase())) {
+            return res.status(400).json({
+                error: { code: "BAD_REQUEST", message: "Invalid status provided", requestId: req.id },
+            });
+        }
+        const existingClass = await database_1.prisma.class.findUnique({
+            where: { classId },
+        });
+        if (!existingClass) {
+            return res.status(404).json({
+                error: { code: "NOT_FOUND", message: "Class not found", requestId: req.id },
+            });
+        }
+        if (existingClass.tutorUserId !== userId) {
+            return res.status(403).json({
+                error: { code: "FORBIDDEN", message: "You can only update your own classes", requestId: req.id },
+            });
+        }
+        const updatedClass = await database_1.prisma.class.update({
+            where: { classId },
+            data: { status: status.toUpperCase() },
+        });
+        return res.status(200).json({
+            message: "Class status updated successfully",
+            class: updatedClass,
+        });
+    }
+    catch (error_err) {
+        const error = error_err;
+        shared_config_1.logger.error("Update Class Status Error:", error);
+        return res.status(500).json({
+            error: {
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Could not update class status",
+                details: error.message,
+                requestId: req.id,
+            },
+        });
+    }
+}
 async function getClasses(req, res) {
     try {
         const userId = req.user?.userId;
@@ -378,7 +459,7 @@ async function getClasses(req, res) {
             packagePriceSatang: Number(c.packagePriceMinor),
             tutorUserId: c.tutorUserId,
             tutorName: tutorMap.get(c.tutorUserId) || "Unknown Tutor",
-            nextSession: c.scheduleDescription || "ยังไม่ได้กำหนด",
+            nextSession: formatNextSession(c.scheduleDescription, c.scheduleData),
             scheduleData: c.scheduleData || null,
             startsAt: c.startsAt ?? null,
             endsAt: c.endsAt ?? null,
@@ -556,7 +637,7 @@ async function getClassById(req, res) {
                     },
                 };
             }),
-            nextSession: cls.scheduleDescription || "ยังไม่ได้กำหนด",
+            nextSession: formatNextSession(cls.scheduleDescription, cls.scheduleData),
             startsAt: cls.startsAt,
             endsAt: cls.endsAt,
             schedule: cls.scheduleDescription || "ยังไม่ได้กำหนด",
@@ -686,7 +767,7 @@ async function getAvailableClasses(req, res) {
                 capacity: c.capacity,
                 price: Number(c.packagePriceMinor) / 100,
                 packagePriceSatang: Number(c.packagePriceMinor),
-                nextSession: c.scheduleDescription || "ยังไม่ได้กำหนด",
+                nextSession: formatNextSession(c.scheduleDescription, c.scheduleData),
             };
         });
         return res.status(200).json({ classes: mappedClasses });
@@ -739,7 +820,6 @@ async function deleteClass(req, res) {
             where: { classId },
             include: {
                 enrollments: true,
-                conversations: true,
             },
         });
         if (!cls || cls.tutorUserId !== userId) {
@@ -754,7 +834,6 @@ async function deleteClass(req, res) {
             });
         }
         const enrollmentIds = cls.enrollments.map((e) => e.enrollmentId);
-        const conversationIds = cls.conversations.map((c) => c.conversationId);
         shared_config_1.logger.info(`[DELETE_CLASS] Starting deletion for class: ${classId}`);
         // Break down into smaller steps for better error visibility
         try {
@@ -776,26 +855,15 @@ async function deleteClass(req, res) {
                 });
                 shared_config_1.logger.info(`[DELETE_CLASS] Deleted ${intentsDeleted.count} payment intents`);
             }
-            shared_config_1.logger.info(`[DELETE_CLASS] Step 2: Cleaning up Chat records...`);
-            if (conversationIds.length > 0) {
-                await database_1.prisma.message.deleteMany({
-                    where: { conversationId: { in: conversationIds } },
-                });
-                await database_1.prisma.conversationParticipant.deleteMany({
-                    where: { conversationId: { in: conversationIds } },
-                });
-                await database_1.prisma.conversation.deleteMany({
-                    where: { conversationId: { in: conversationIds } },
-                });
-            }
+            shared_config_1.logger.info(`[DELETE_CLASS] Step 2: Cleaning up Chat records (handled by CASCADE)...`);
             shared_config_1.logger.info(`[DELETE_CLASS] Step 3: Cleaning up Learning relations...`);
+            // Enrollment packages and Enrollments still need manual cleanup (as per Option A)
             await database_1.prisma.enrollmentPackage.deleteMany({
                 where: { enrollmentId: { in: enrollmentIds } },
             });
             await database_1.prisma.enrollment.deleteMany({ where: { classId } });
-            await database_1.prisma.referral.deleteMany({ where: { classId } });
-            await database_1.prisma.classTransferRequest.deleteMany({ where: { classId } });
-            await database_1.prisma.classBookCycle.deleteMany({ where: { classId } });
+            // InteractiveSession, SessionAnswer, SessionParticipant, Referral, ClassTransferRequest, ClassBookCycle, TutorReview 
+            // are now handled by PostgreSQL ON DELETE CASCADE.
             shared_config_1.logger.info(`[DELETE_CLASS] Step 4: Deleting the Class record itself...`);
             await database_1.prisma.class.delete({
                 where: { classId },

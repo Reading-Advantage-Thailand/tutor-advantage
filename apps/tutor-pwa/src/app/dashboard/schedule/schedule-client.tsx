@@ -44,6 +44,30 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
     endDate.setDate(endDate.getDate() + 90); // future 90 days
 
     initialClasses.forEach((cls) => {
+      // 1a. Handle Demo Class specifically: Show only once on the day it was created
+      if (cls.isDemo) {
+        // Creation date is approx 24h before expiry
+        const createDate = cls.expiresAt ? new Date(new Date(cls.expiresAt).getTime() - 24 * 60 * 60 * 1000) : new Date();
+        const dStr = toLocalDateStr(createDate);
+        
+        // Ensure it fits inside the calendar window bounds
+        if (createDate >= startDate && createDate <= endDate) {
+          events.push({
+            id: `${cls.id}-${dStr}`,
+            classId: cls.id,
+            title: cls.name,
+            book: cls.book,
+            students: cls.students,
+            time: "ตลอดวัน (24 ชม.)",
+            dateStr: dStr,
+            schedule: "ห้อง Demo",
+            startsAt: cls.startsAt ?? null,
+            endsAt: cls.endsAt ?? null,
+          });
+        }
+        return; // Skip normal schedule generation for Demo classes
+      }
+
       const { days, timeRange } = parseThaiSchedule(cls.nextSession || "");
 
       // Respect class start/end dates — clamp to window bounds
@@ -260,6 +284,13 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
                         <ExternalLink className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-brand-500/70 shrink-0" />
                       </h4>
                     </Link>
+                    <button
+                      onClick={() => cancelICS(ev)}
+                      className="flex items-center justify-center shrink-0 w-8 h-8 rounded-full bg-red-50 dark:bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white transition-colors"
+                      title={t("dashboardSchedule.removeFromCalendar")}
+                    >
+                      <CalendarPlus className="h-4 w-4 rotate-45" />
+                    </button>
                   </div>
 
                   <div className="space-y-2">
@@ -280,10 +311,10 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
                     </div>
 
                     {/* Calendar action buttons */}
-                    <div className="flex items-center gap-2 pt-2 border-t border-border/40 flex-wrap">
+                    <div className="flex items-center gap-1.5 pt-3 border-t border-border/40 overflow-x-auto pb-1 scrollbar-hide flex-nowrap">
                       <button
                         onClick={() => downloadICS(ev)}
-                        className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-muted hover:bg-brand-500/10 hover:text-brand-600 transition-colors"
+                        className="flex items-center justify-center whitespace-nowrap gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-muted hover:bg-brand-500/10 hover:text-brand-600 transition-colors flex-1"
                       >
                         <CalendarPlus className="h-3.5 w-3.5" />
                         {t("dashboardSchedule.addToCalendarICS")}
@@ -292,18 +323,11 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: any
                         href={googleCalUrl(ev)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-muted hover:bg-blue-500/10 hover:text-blue-600 transition-colors"
+                        className="flex items-center justify-center whitespace-nowrap gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-muted hover:bg-blue-500/10 hover:text-blue-600 transition-colors flex-1"
                       >
                         <CalendarPlus className="h-3.5 w-3.5" />
                         {t("dashboardSchedule.addToCalendarGoogle")}
                       </a>
-                      <button
-                        onClick={() => cancelICS(ev)}
-                        className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-muted hover:bg-red-500/10 hover:text-red-600 transition-colors ml-auto"
-                      >
-                        <CalendarPlus className="h-3.5 w-3.5 rotate-45" />
-                        {t("dashboardSchedule.removeFromCalendar")}
-                      </button>
                     </div>
                   </div>
                 </CardContent>
@@ -365,7 +389,7 @@ function parseThaiSchedule(scheduleStr: string) {
 }
 
 function extractTime(str: string) {
-  const regex = /(\d{1,2}[:.]\d{2})\s*[\u002d\u2013]\s*(\d{1,2}[:.]\d{2})/;
+  const regex = /(\d{1,2}[:.]\d{2})(?:\s*น\.?)?\s*[-–]\s*(\d{1,2}[:.]\d{2})(?:\s*น\.?)?/i;
   const match = str.match(regex);
   if (match) {
     return `${match[1].replace('.', ':')} - ${match[2].replace('.', ':')} ${t("tutorClass.scheduleSuffix")}`;

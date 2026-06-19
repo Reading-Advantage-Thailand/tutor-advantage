@@ -1,12 +1,17 @@
 # Build context: monorepo root
 # docker build -f apps/admin-console/Dockerfile .
 FROM node:22-slim AS builder
+RUN apt-get update -qq && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 COPY package.json package-lock.json ./
 COPY packages/shared-config/package.json ./packages/shared-config/
 COPY packages/database/package.json      ./packages/database/
 COPY apps/admin-console/package.json ./apps/admin-console/
+
+# Prisma schema must exist before npm ci: the database package's `prepare`
+# script runs `prisma generate` during install
+COPY packages/database/prisma ./packages/database/prisma
 
 RUN npm ci
 

@@ -4,6 +4,13 @@ import dotenv from "dotenv";
 import path from "path";
 import { prisma } from "@tutor-advantage/database";
 
+import {
+  requestLoggerMiddleware,
+  requestIdMiddleware,
+  errorHandlerMiddleware,
+  logger,
+} from "@tutor-advantage/shared-config";
+
 // Load root .env file
 dotenv.config({
   path: path.resolve(__dirname, "../../../.env"),
@@ -11,12 +18,6 @@ dotenv.config({
 });
 logger.info(`[Identity] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
 
-import {
-  requestLoggerMiddleware,
-  requestIdMiddleware,
-  errorHandlerMiddleware,
-  logger,
-} from "@tutor-advantage/shared-config";
 import { handleOAuthCallback } from "./controllers/authController";
 import { getSession } from "./controllers/sessionController";
 import { getGuardianConsentStatus, submitGuardianConsent } from "./controllers/consentController";

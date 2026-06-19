@@ -2,6 +2,12 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
+import {
+  requestLoggerMiddleware,
+  requestIdMiddleware,
+  errorHandlerMiddleware,
+  logger,
+} from "@tutor-advantage/shared-config";
 
 // Load the monorepo .env file from both ts-node src/ and compiled dist/ starts.
 dotenv.config({
@@ -14,12 +20,6 @@ const { prisma } = require("@tutor-advantage/database") as typeof import("@tutor
 
 import { createServer } from "http";
 import { Server } from "socket.io";
-import {
-  requestLoggerMiddleware,
-  requestIdMiddleware,
-  errorHandlerMiddleware,
-  logger,
-} from "@tutor-advantage/shared-config";
 import { authMiddleware } from "./middlewares/authMiddleware";
 import {
   createClass,
@@ -34,6 +34,7 @@ import {
   getClassArticles,
   createClassBookCycle,
   prepareClassBookCycleAccess,
+  updateClassStatus,
 } from "./controllers/classController";
 import { getDemoLessonCatalog } from "./controllers/demoController";
 import { generateReferral } from "./controllers/referralController";
@@ -127,6 +128,7 @@ app.get("/v1/classes/:classId", authMiddleware, getClassById);
 app.delete("/v1/classes/:classId", authMiddleware, deleteClass);
 app.patch("/v1/classes/:classId/meeting-url", authMiddleware, updateMeetingUrl);
 app.patch("/v1/classes/:classId/schedule", authMiddleware, rescheduleClass);
+app.patch("/v1/classes/:classId/status", authMiddleware, updateClassStatus);
 app.get("/v1/classes/:classId/articles", authMiddleware, getClassArticles);
 app.post("/v1/classes/:classId/book-cycles", authMiddleware, createClassBookCycle);
 app.post("/v1/classes/:classId/book-cycles/:cycleId/access", authMiddleware, prepareClassBookCycleAccess);

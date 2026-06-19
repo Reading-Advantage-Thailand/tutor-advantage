@@ -9,16 +9,11 @@ const storage_1 = require("@google-cloud/storage");
 const path_1 = __importDefault(require("path"));
 const uuid_1 = require("uuid");
 const shared_config_1 = require("@tutor-advantage/shared-config");
-// Dynamically resolve service account path if it's relative in .env
-let keyFilename = process.env.GCP_KEY_FILEPATH;
-if (!keyFilename && process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-    // If relative path, resolve from project root.
-    if (process.env.GOOGLE_APPLICATION_CREDENTIALS.startsWith(".")) {
-        keyFilename = path_1.default.resolve(__dirname, "../../../../", process.env.GOOGLE_APPLICATION_CREDENTIALS);
-    }
-    else {
-        keyFilename = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-    }
+let keyFilename = process.env.GCP_KEY_FILEPATH || process.env.GOOGLE_APPLICATION_CREDENTIALS;
+if (keyFilename && keyFilename.startsWith(".")) {
+    // If relative path, resolve from project root (4 levels up from this file, or using process.cwd() if run from root)
+    // Assuming this file is in services/identity-service/src/lib/storage.ts
+    keyFilename = path_1.default.resolve(__dirname, "../../../../", keyFilename);
 }
 // Initialize GCS
 const storage = new storage_1.Storage({
