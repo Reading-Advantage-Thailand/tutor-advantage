@@ -1,5 +1,6 @@
 import { Storage } from "@google-cloud/storage";
 import path from "path";
+import fs from "fs";
 import { v4 as uuidv4 } from "uuid";
 import { logger } from "@tutor-advantage/shared-config";
 
@@ -8,6 +9,12 @@ if (keyFilename && keyFilename.startsWith(".")) {
   // If relative path, resolve from project root (4 levels up from this file, or using process.cwd() if run from root)
   // Assuming this file is in services/identity-service/src/lib/storage.ts
   keyFilename = path.resolve(__dirname, "../../../../", keyFilename);
+}
+
+// Verify keyFile exists, otherwise fallback to default auth (Workload Identity, ADC)
+if (keyFilename && !fs.existsSync(keyFilename)) {
+  logger.warn(`GCP keyfile not found at ${keyFilename}, falling back to Application Default Credentials`);
+  keyFilename = undefined;
 }
 
 // Initialize GCS

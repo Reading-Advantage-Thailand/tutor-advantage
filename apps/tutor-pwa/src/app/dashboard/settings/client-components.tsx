@@ -561,11 +561,15 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
         if (field === 'idCard' && idCardFile) {
           const idCardFormData = new FormData();
           idCardFormData.append("file", idCardFile);
-          idCardUrl = await uploadFileAction(idCardFormData);
+          const uploadResult = await uploadFileAction(idCardFormData);
+          if (!uploadResult.success) throw new Error(uploadResult.error);
+          idCardUrl = uploadResult.url;
         } else if (field === 'bankBook' && bankBookFile) {
           const bankBookFormData = new FormData();
           bankBookFormData.append("file", bankBookFile);
-          bankBookUrl = await uploadFileAction(bankBookFormData);
+          const uploadResult = await uploadFileAction(bankBookFormData);
+          if (!uploadResult.success) throw new Error(uploadResult.error);
+          bankBookUrl = uploadResult.url;
         } else if (field === 'address') {
           addr = address.trim();
         }

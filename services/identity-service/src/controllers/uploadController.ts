@@ -21,7 +21,7 @@ export async function uploadFile(req: AuthenticatedRequest, res: Response) {
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",
-        message: "Could not upload file",
+        message: `Could not upload file: ${err.message}`,
         requestId: req.id,
       },
     });

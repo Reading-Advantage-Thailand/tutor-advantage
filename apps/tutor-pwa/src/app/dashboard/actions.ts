@@ -86,23 +86,35 @@ export async function submitVerificationAction(
 export async function uploadFileAction(formData: FormData) {
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value;
-  if (!token) throw new Error("Unauthorized");
+  if (!token) return { success: false, error: "Unauthorized" };
 
-  const res = await fetch(`${IDENTITY_URL}/v1/upload`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  });
+  try {
+    const res = await fetch(`${IDENTITY_URL}/v1/upload`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
 
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.error?.message || "Failed to upload file");
+    if (!res.ok) {
+      let errorMessage = "Failed to upload file";
+      try {
+        const error = await res.json();
+        if (error.error?.message) {
+          errorMessage = error.error.message;
+        }
+      } catch (e) {
+        // Fallback to generic message if json parse fails
+      }
+      return { success: false, error: errorMessage };
+    }
+
+    const data = await res.json();
+    return { success: true, url: data.url };
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : "Unknown error occurred" };
   }
-
-  const data = await res.json();
-  return data.url;
 }
 
 export async function saveTaxInfoAction(taxName: string, nationalId: string) {
