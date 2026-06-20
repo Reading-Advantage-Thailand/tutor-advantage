@@ -3,7 +3,7 @@
 # Build context must be the monorepo root:
 #   docker build -f services/learning-service/Dockerfile .
 # =============================================================
-FROM node:22-slim AS builder
+FROM node:20-slim AS builder
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
@@ -36,7 +36,7 @@ RUN npm run build -w learning-service
 # =============================================================
 # Stage 2: Runner (lean production image)
 # =============================================================
-FROM node:22-slim AS runner
+FROM node:20-slim AS runner
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
