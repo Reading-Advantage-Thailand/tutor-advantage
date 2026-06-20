@@ -138,4 +138,94 @@ describe("processOAuthLogin", () => {
       data: { profilePictureUrl: "avatar.png" },
     });
   });
+
+  it("creates a new student with no email but a phone number", async () => {
+    prisma.oAuthIdentity.findUnique.mockResolvedValue(null);
+    prisma.user.findFirst.mockResolvedValue(null);
+    prisma.user.create.mockResolvedValue({
+      userId: "student-2",
+      displayName: "Phone Student",
+      role: "STUDENT",
+      email: null,
+      phoneNumber: "+66899999999",
+      sponsorTutorId: null,
+      sponsorLockedAt: null,
+    });
+
+    const result = await processOAuthLogin(
+      "line",
+      "line-subject-1",
+      undefined,
+      "Phone Student",
+      "avatar.png",
+      null,
+      undefined,
+      "+66899999999",
+    );
+
+    expect(prisma.user.findFirst).toHaveBeenCalledWith({
+      where: { phoneNumber: "+66899999999" },
+    });
+    expect(prisma.user.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        role: "STUDENT",
+        displayName: "Phone Student",
+        email: null,
+        phoneNumber: "+66899999999",
+        oauthIdentities: {
+          create: {
+            provider: "line",
+            providerSubject: "line-subject-1",
+          },
+        },
+      }),
+    });
+    expect(result.user.id).toBe("student-2");
+  });
+
+  it("links a new OAuth provider by matching existing phone number when email is missing", async () => {
+    prisma.oAuthIdentity.findUnique.mockResolvedValue(null);
+    prisma.user.findFirst.mockResolvedValue({
+      userId: "user-2",
+      displayName: "Phone Student",
+      email: null,
+      phoneNumber: "+66899999999",
+      role: "STUDENT",
+      profilePictureUrl: null,
+    });
+    prisma.user.update.mockResolvedValue({
+      userId: "user-2",
+      displayName: "Phone Student",
+      email: null,
+      phoneNumber: "+66899999999",
+      role: "STUDENT",
+      profilePictureUrl: "avatar.png",
+    });
+
+    await processOAuthLogin(
+      "line",
+      "line-subject-2",
+      undefined,
+      "Phone Student",
+      "avatar.png",
+      null,
+      undefined,
+      "+66899999999",
+    );
+
+    expect(prisma.user.findFirst).toHaveBeenCalledWith({
+      where: { phoneNumber: "+66899999999" },
+    });
+    expect(prisma.oAuthIdentity.create).toHaveBeenCalledWith({
+      data: {
+        userId: "user-2",
+        provider: "line",
+        providerSubject: "line-subject-2",
+      },
+    });
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: { userId: "user-2" },
+      data: { profilePictureUrl: "avatar.png" },
+    });
+  });
 });

@@ -116,6 +116,7 @@ describe("handleOAuthCallback", () => {
       "avatar.png",
       "tutor-1",
       undefined,
+      undefined,
     );
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ sessionToken: "session-token" }));
@@ -138,5 +139,42 @@ describe("handleOAuthCallback", () => {
         requestId: "req-1",
       },
     });
+  });
+
+  it("verifies LINE profiles with phone number but no email and returns login result", async () => {
+    verifyLineToken.mockResolvedValue({
+      id: "line-subject",
+      name: "Line Student",
+      picture: "line-avatar.png",
+      phoneNumber: "+66899999999",
+    });
+    processOAuthLogin.mockResolvedValue({
+      sessionToken: "session-token-line",
+      user: { id: "user-2", name: "Line Student", role: "STUDENT", requiresGuardian: false },
+    });
+    const req = {
+      id: "req-2",
+      body: {
+        provider: "line",
+        code: "line-code-token",
+      },
+    };
+    const res = createResponse();
+
+    await handleOAuthCallback(req as never, res as never);
+
+    expect(verifyLineToken).toHaveBeenCalledWith("line-code-token");
+    expect(processOAuthLogin).toHaveBeenCalledWith(
+      "line",
+      "line-subject",
+      undefined,
+      "Line Student",
+      "line-avatar.png",
+      null,
+      undefined,
+      "+66899999999",
+    );
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ sessionToken: "session-token-line" }));
   });
 });

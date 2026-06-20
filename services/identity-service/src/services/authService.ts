@@ -22,9 +22,12 @@ export async function processOAuthLogin(
   picture: string = "",
   sponsorTutorId?: string | null,
   defaultRole?: string,
+  phoneNumber?: string,
 ): Promise<AuthResult> {
   let user;
   let roleUpgraded = false;
+  const normalizedEmail = (email && email.trim() !== "") ? email.trim() : null;
+  const normalizedPhone = (phoneNumber && phoneNumber.trim() !== "") ? phoneNumber.trim() : null;
   const invitedSponsorId =
     provider !== "line" && sponsorTutorId
       ? await resolveActiveTutorSponsorId(sponsorTutorId)
@@ -48,21 +51,26 @@ export async function processOAuthLogin(
 
     const updateData: Record<string, unknown> = {};
     if (picture && !user.profilePictureUrl) updateData.profilePictureUrl = picture;
+    if (normalizedPhone && !user.phoneNumber) updateData.phoneNumber = normalizedPhone;
     if (defaultRole === "TUTOR" && user.role !== "TUTOR") {
       updateData.role = "TUTOR";
       roleUpgraded = true;
     }
-    if (name && user.displayName?.toLowerCase() === user.email?.toLowerCase()) {
+    if (name && (user.displayName?.toLowerCase() === user.email?.toLowerCase() || !user.displayName)) {
       updateData.displayName = name;
     }
     if (Object.keys(updateData).length > 0) {
       user = await prisma.user.update({ where: { userId: user.userId }, data: updateData });
     }
   } else {
-    // 2. If no identity, check if user exists by email (if email is provided by OAuth)
-    if (email) {
+    // 2. If no identity, check if user exists by email, fallback to checking phone number
+    if (normalizedEmail) {
       user = await prisma.user.findUnique({
-        where: { email },
+        where: { email: normalizedEmail },
+      });
+    } else if (normalizedPhone) {
+      user = await prisma.user.findFirst({
+        where: { phoneNumber: normalizedPhone },
       });
     }
 
@@ -75,7 +83,8 @@ export async function processOAuthLogin(
         data: {
           role,
           displayName: name,
-          email: email,
+          email: normalizedEmail,
+          phoneNumber: normalizedPhone,
           profilePictureUrl: picture || null,
           sponsorTutorId: null,
           sponsorLockedAt: null,
@@ -88,13 +97,16 @@ export async function processOAuthLogin(
         },
       });
     } else {
-      // User exists by email, but new provider linkage
-      // Optionally update picture or displayName if they were placeholder
+      // User exists by email/phone, but new provider linkage
+      // Optionally update picture, phone number, or displayName if they were placeholder/missing
       const updateData: Record<string, unknown> = {};
       if (picture && !user.profilePictureUrl) {
         updateData.profilePictureUrl = picture;
       }
-      if (name && user.displayName?.toLowerCase() === user.email?.toLowerCase()) {
+      if (normalizedPhone && !user.phoneNumber) {
+        updateData.phoneNumber = normalizedPhone;
+      }
+      if (name && (user.displayName?.toLowerCase() === user.email?.toLowerCase() || !user.displayName)) {
         updateData.displayName = name;
       }
 

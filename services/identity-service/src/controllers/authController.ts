@@ -7,7 +7,7 @@ import { logger } from "@tutor-advantage/shared-config";
 export async function handleOAuthCallback(req: Request, res: Response) {
   try {
     // The request body matches the OpenAPI definition: { provider, code }
-    const { provider, code, sponsorTutorId, codeVerifier, defaultRole } = req.body;
+    const { provider, code, sponsorTutorId, codeVerifier, defaultRole, phoneNumber } = req.body;
 
     // Allow frontend to explicitly pass the exact redirectUri used, or fallback
     const baseUrl = process.env.OAUTH_REDIRECT_URI || "http://localhost:3000/api/auth/callback";
@@ -34,9 +34,10 @@ export async function handleOAuthCallback(req: Request, res: Response) {
     }
 
     let providerSubject = "";
-    let email = "";
+    let email: string | undefined = undefined;
     let name = "";
     let picture = "";
+    let profilePhoneNumber: string | undefined = undefined;
 
     // Route to appropriate OAuth handler
     if (provider === "google") {
@@ -48,9 +49,10 @@ export async function handleOAuthCallback(req: Request, res: Response) {
     } else if (provider === "line") {
       const profile = await verifyLineToken(code); // For LINE, code is the ID token
       providerSubject = profile.id;
-      email = profile.email || "";
+      email = profile.email;
       name = profile.name;
       picture = profile.picture || "";
+      profilePhoneNumber = profile.phoneNumber;
     } else {
       // Unsupported provider
       return res.status(400).json({
@@ -70,6 +72,7 @@ export async function handleOAuthCallback(req: Request, res: Response) {
       picture,
       typeof sponsorTutorId === "string" ? sponsorTutorId : null,
       typeof defaultRole === "string" ? defaultRole : undefined,
+      typeof phoneNumber === "string" ? phoneNumber : profilePhoneNumber,
     );
 
     return res.status(200).json(authResult);

@@ -3,10 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 const IDENTITY_URL =
   process.env.IDENTITY_SERVICE_URL || "http://localhost:3001";
 
-// Receives a LINE ID token from the client, exchanges it with identity-service,
-// and stores the resulting JWT in a cookie instead of localStorage.
 export async function POST(req: NextRequest) {
-  const { idToken } = await req.json();
+  const { idToken, phoneNumber } = await req.json();
 
   if (!idToken || typeof idToken !== "string") {
     return NextResponse.json({ error: "Missing idToken" }, { status: 400 });
@@ -18,7 +16,7 @@ export async function POST(req: NextRequest) {
     response = await fetch(`${IDENTITY_URL}/v1/auth/callback`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ provider: "line", code: idToken }),
+      body: JSON.stringify({ provider: "line", code: idToken, phoneNumber }),
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Failed to reach identity service";

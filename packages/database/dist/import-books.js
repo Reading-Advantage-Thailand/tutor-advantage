@@ -37,38 +37,24 @@ const client_1 = require("@prisma/client");
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const prisma = new client_1.PrismaClient();
-const seriesMetadata = {
-    "Origins": { cefrLevel: "A1", raLevelStart: 1, raLevelEnd: 3, tagline: "Your journey starts here" },
-    "Quest": { cefrLevel: "A2", raLevelStart: 4, raLevelEnd: 6, tagline: "Your quest awaits" },
-    "Adventure": { cefrLevel: "B1", raLevelStart: 7, raLevelEnd: 9, tagline: "Your adventure's in sight" },
-    "Hero": { cefrLevel: "B2", raLevelStart: 10, raLevelEnd: 12, tagline: "You're the hero in the story" },
-    "Legend": { cefrLevel: "C1", raLevelStart: 13, raLevelEnd: 15, tagline: "Legendary stories" }
-};
 async function main() {
     console.log("🚀 Starting book import...");
-    // 1. Read book.json
     const bookJsonPath = path.resolve(__dirname, "../book.json");
     if (!fs.existsSync(bookJsonPath)) {
         console.error(`❌ Error: book.json not found at ${bookJsonPath}`);
         return;
     }
     const data = JSON.parse(fs.readFileSync(bookJsonPath, "utf-8"));
-    // 2. Clean up old data (Learning Domain)
-    console.log("🧹 Cleaning up old books and classes...");
-    // Order matters due to foreign key constraints
-    await prisma.enrollment.deleteMany({});
-    await prisma.referral.deleteMany({});
-    await prisma.conversationParticipant.deleteMany({});
-    await prisma.message.deleteMany({});
-    await prisma.conversation.deleteMany({});
-    await prisma.classTransferRequest.deleteMany({});
-    await prisma.article.deleteMany({});
-    await prisma.class.deleteMany({});
-    await prisma.book.deleteMany({});
-    await prisma.series.deleteMany({});
-    console.log("✨ Data cleaned.");
-    // 3. Create Series and Books
-    for (const [seriesName, meta] of Object.entries(seriesMetadata)) {
+    // Safety guard: this script only builds an EMPTY catalog. It must never
+    // wipe live data — abort if any series/books already exist.
+    const existingSeries = await prisma.series.count();
+    const existingBooks = await prisma.book.count();
+    if (existingSeries > 0 || existingBooks > 0) {
+        console.error(`❌ Catalog is not empty (series=${existingSeries}, books=${existingBooks}). ` +
+            "Aborting to avoid duplicating or clobbering data.");
+        process.exit(1);
+    }
+    for (const [seriesName, meta] of Object.entries(data.series)) {
         console.log(`📦 Creating series: ${seriesName}`);
         const series = await prisma.series.create({
             data: {
@@ -77,49 +63,48 @@ async function main() {
                 cefrLevel: meta.cefrLevel,
                 raLevelStart: meta.raLevelStart,
                 raLevelEnd: meta.raLevelEnd,
-                tagline: meta.tagline
-            }
+                tagline: meta.tagline,
+            },
         });
-        // 4. Find books in the JSON that match this series
-        for (const bookKey of Object.keys(data)) {
-            if (bookKey.startsWith(seriesName)) {
-                const jsonArticles = data[bookKey];
-                // Extract level number from bookKey
-                const match = bookKey.match(/([0-9]+)/);
-                const levelNumber = match ? parseInt(match[1]) : 1;
-                console.log(`📖 Adding book: ${bookKey} (Articles: ${jsonArticles.length})`);
-                const book = await prisma.book.create({
-                    data: {
-                        seriesId: series.seriesId,
-                        bookCode: bookKey,
-                        title: bookKey,
-                        levelNumber: levelNumber,
-                        articleCount: jsonArticles.length,
-                        classHours: 25
-                    }
+        // Per-book hours come from the series totals spread over the planned book count
+        const classHours = Math.round(meta.classHoursTotal / meta.plannedBooks);
+        const independentHours = Math.round(meta.independentHoursTotal / meta.plannedBooks);
+        for (const [bookKey, jsonArticles] of Object.entries(data.books)) {
+            if (!bookKey.startsWith(seriesName))
+                continue;
+            // De-duplicate within the same book
+            const seenIds = new Set();
+            const uniqueArticles = jsonArticles.filter((a) => {
+                if (!a.id || seenIds.has(a.id))
+                    return false;
+                seenIds.add(a.id);
+                return true;
+            });
+            // Level number = first number in the book key ("Origins 3.1" -> 3)
+            const match = bookKey.match(/([0-9]+)/);
+            const levelNumber = match ? parseInt(match[1]) : 1;
+            console.log(`📖 Adding book: ${bookKey} (Articles: ${uniqueArticles.length})`);
+            const book = await prisma.book.create({
+                data: {
+                    seriesId: series.seriesId,
+                    bookCode: bookKey,
+                    title: bookKey,
+                    levelNumber,
+                    articleCount: uniqueArticles.length,
+                    classHours,
+                    independentHours,
+                },
+            });
+            if (uniqueArticles.length > 0) {
+                await prisma.article.createMany({
+                    data: uniqueArticles.map((a) => ({
+                        articleId: a.id,
+                        bookId: book.bookId,
+                        title: a.title,
+                        type: a.type,
+                        genre: a.genre,
+                    })),
                 });
-                // 5. Create Articles
-                if (jsonArticles && jsonArticles.length > 0) {
-                    // De-duplicate within the same book
-                    const seenIds = new Set();
-                    const uniqueArticles = [];
-                    for (const a of jsonArticles) {
-                        const articleId = a.id || `missing-${Math.random()}`;
-                        if (!seenIds.has(articleId)) {
-                            seenIds.add(articleId);
-                            uniqueArticles.push({
-                                articleId: articleId,
-                                bookId: book.bookId,
-                                title: a.title,
-                                type: a.type,
-                                genre: a.genre
-                            });
-                        }
-                    }
-                    await prisma.article.createMany({
-                        data: uniqueArticles
-                    });
-                }
             }
         }
     }

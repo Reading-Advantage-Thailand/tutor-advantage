@@ -147,7 +147,7 @@ export default function RolesPage() {
                 </tr>
               ) : (
                 filteredUsers.map((user) => {
-                  const isPending = user.displayName === user.email.toLowerCase();
+                  const isPending = user.displayName === user.email?.toLowerCase();
                   return (
                     <tr key={user.userId} className="border-b transition-colors hover:bg-slate-100/50 data-[state=selected]:bg-slate-100 dark:hover:bg-slate-800/50 dark:data-[state=selected]:bg-slate-800">
                       <td className="p-2 align-middle [&:has([role=checkbox])]:pr-0 font-medium">

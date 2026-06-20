@@ -5,6 +5,7 @@ export interface LineProfile {
   name: string;
   email?: string;
   picture?: string;
+  phoneNumber?: string;
 }
 
 interface LineVerifyResponse {
@@ -12,6 +13,7 @@ interface LineVerifyResponse {
   name?: string;
   email?: string;
   picture?: string;
+  phone_number?: string;
   error?: string;
   error_description?: string;
 }
@@ -115,6 +117,7 @@ export async function verifyLineToken(idToken: string): Promise<LineProfile> {
       name: decoded.name || "LINE User",
       email: decoded.email,
       picture: decoded.picture,
+      phoneNumber: decoded.phone_number,
     };
   } catch (error) {
     const err = error as Error;

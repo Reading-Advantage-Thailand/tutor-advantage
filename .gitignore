@@ -5,6 +5,7 @@ coverage
 # Cloud SQL Proxy
 cloud-sql-proxy.exe
 start-proxy.ps1
+cloud-sql-proxy
 
 # Environment variables
 .env
