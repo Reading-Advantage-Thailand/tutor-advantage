@@ -18,6 +18,7 @@ import {
   AnswerData,
   ArticleData,
 } from "@/lib/lesson-types";
+import { useThaiTranslations } from "@/hooks/useThaiTranslations";
 
 function seededShuffle<T>(array: T[], seedInput: string): T[] {
   const result = [...array];
@@ -36,6 +37,42 @@ function seededShuffle<T>(array: T[], seedInput: string): T[] {
     [result[i], result[j]] = [result[j], result[i]];
   }
   return result;
+}
+
+function AnswerTranslations({
+  items,
+}: {
+  items: Array<{ label: string; text: string }>;
+}) {
+  const texts = items.map((item) => item.text);
+  const { translations, loading } = useThaiTranslations(texts, {
+    enabled: texts.some(Boolean),
+  });
+
+  if (!loading && translations.every((item) => !item)) return null;
+
+  return (
+    <div className="mt-2 space-y-2">
+      <p className="text-[10px] font-black uppercase tracking-widest text-white/70 mb-1">
+        Thai Translation
+      </p>
+      {items.map((item, index) => (
+        <div
+          key={`${item.label}-${item.text}`}
+          className="rounded-2xl border border-white/20 bg-white/15 px-4 py-3 backdrop-blur"
+        >
+          {item.label && (
+            <p className="text-[10px] font-black uppercase tracking-widest text-white/60 mb-1">
+              {item.label}
+            </p>
+          )}
+          <p className="text-white text-sm font-semibold leading-relaxed">
+            {translations[index] || (loading ? "Translating answer..." : "-")}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 interface PhaseManagerProps {
@@ -448,6 +485,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     question: string,
     mappedOptions: Record<string, string>,
     correctAnswer: string,
+    answerTranslationItems: Array<{ label: string; text: string }> = [],
   ) => {
     if (allAnsweredData.length > 0) {
       // Show results chart — EduPop colors
@@ -475,22 +513,27 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       return (
         <div className="flex-1 flex flex-col items-center gap-5 px-2">
           {/* Correct answer reveal banner */}
-          <div className="w-full max-w-3xl bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl p-5 text-white flex items-center gap-4 shadow-xl shadow-emerald-500/20">
-            <div className="size-14 rounded-2xl bg-white/20 flex items-center justify-center text-3xl shrink-0">
-              ✅
+          <div className="w-full max-w-3xl bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl p-5 text-white flex flex-col gap-4 shadow-xl shadow-emerald-500/20">
+            <div className="flex items-center gap-4 w-full">
+              <div className="size-14 rounded-2xl bg-white/20 flex items-center justify-center text-3xl shrink-0">
+                ✅
+              </div>
+              <div>
+                <p className="text-emerald-100 text-xs font-bold uppercase tracking-widest mb-1">
+                  {t("lesson.interactive.correctAnswer")}
+                </p>
+                <h3 className="text-2xl font-black leading-snug">
+                  {correctAnswer}: {mappedOptions[correctAnswer]}
+                </h3>
+              </div>
+              <div className="ml-auto text-center shrink-0 bg-white/20 rounded-2xl px-5 py-3">
+                <p className="text-5xl font-black">{accuracy}%</p>
+                <p className="text-emerald-100 text-xs font-bold">Accuracy</p>
+              </div>
             </div>
-            <div>
-              <p className="text-emerald-100 text-xs font-bold uppercase tracking-widest mb-1">
-                {t("lesson.interactive.correctAnswer")}
-              </p>
-              <h3 className="text-2xl font-black leading-snug">
-                {correctAnswer}: {mappedOptions[correctAnswer]}
-              </h3>
-            </div>
-            <div className="ml-auto text-center shrink-0 bg-white/20 rounded-2xl px-5 py-3">
-              <p className="text-5xl font-black">{accuracy}%</p>
-              <p className="text-emerald-100 text-xs font-bold">Accuracy</p>
-            </div>
+            {answerTranslationItems.length > 0 && (
+              <AnswerTranslations items={answerTranslationItems} />
+            )}
           </div>
 
           <div className="w-full max-w-3xl grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-5">
@@ -770,7 +813,10 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       mappedOptions[label] = val;
     });
 
-    return renderKahootGame(question, mappedOptions, correctLabel);
+    return renderKahootGame(question, mappedOptions, correctLabel, [
+      { label: "Vocab Word", text: String(targetWord.vocabulary || targetWord.word || targetWord.text) },
+      { label: "Translation", text: correctTranslation },
+    ]);
   };
 
   const renderSentenceFlashcardKahoot = () => {
@@ -829,7 +875,10 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       mappedOptions[label] = val;
     });
 
-    return renderKahootGame(question, mappedOptions, correctLabel);
+    return renderKahootGame(question, mappedOptions, correctLabel, [
+      { label: "Full sentence", text: String(targetSentence) },
+      { label: "Answer word", text: correctWord },
+    ]);
   };
 
   const renderSentenceOrderingKahoot = () => {
@@ -894,7 +943,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       scrambled === targetSentence
         ? `${t("lesson.interactive.orderSentencePrefix")} ${[...words].reverse().join(" / ")}`
         : question;
-    return renderKahootGame(finalQuestion, mappedOptions, correctLabel);
+    return renderKahootGame(finalQuestion, mappedOptions, correctLabel, [
+      { label: "Sentence", text: String(targetSentence) },
+    ]);
   };
 
   const renderShortAnswer = () => {
@@ -1504,13 +1555,16 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       <div className="flex-1 flex gap-5 overflow-hidden min-h-0">
         <div className="flex-1 flex flex-col items-center justify-center gap-5 min-w-0">
           <div className="w-full max-w-3xl rounded-3xl overflow-hidden shadow-xl border border-sky-500/20">
-            <div className="bg-gradient-to-r from-sky-500 to-blue-600 px-8 py-5">
-              <span className="text-white/80 text-xs font-bold uppercase tracking-widest">
-                {t("lesson.interactive.writingTitle")}
-              </span>
-              <h2 className="text-2xl font-black text-white leading-snug mt-2">
-                {prompt}
-              </h2>
+            <div className="bg-gradient-to-r from-sky-500 to-blue-600 px-8 py-5 flex flex-col gap-2">
+              <div>
+                <span className="text-white/80 text-xs font-bold uppercase tracking-widest">
+                  {t("lesson.interactive.writingTitle")}
+                </span>
+                <h2 className="text-2xl font-black text-white leading-snug mt-1">
+                  {prompt}
+                </h2>
+              </div>
+              <AnswerTranslations items={[{ label: "", text: prompt }]} />
             </div>
           </div>
           <p className="text-muted-foreground text-sm text-center max-w-xl">

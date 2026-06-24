@@ -4,6 +4,28 @@ const LEARNING_API_BASE = '/api/learning';
 const IDENTITY_API_BASE = '/api/identity';
 const FINANCE_API_BASE = '/api/finance';
 
+type ApiErrorEnvelope = {
+  error?: {
+    code?: string;
+    message?: string;
+  };
+};
+
+export class StudentApiError extends Error {
+  status: number;
+  code?: string;
+  data: unknown;
+
+  constructor(status: number, data: unknown) {
+    const envelope = data as ApiErrorEnvelope;
+    super(envelope?.error?.message || `API Error ${status}`);
+    this.name = "StudentApiError";
+    this.status = status;
+    this.code = envelope?.error?.code;
+    this.data = data;
+  }
+}
+
 function getSessionToken(): string | null {
   if (typeof document === "undefined") return null;
   const match = document.cookie.match(/(?:^|; )student-session=([^;]*)/);
@@ -43,12 +65,18 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {},
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error(`[studentApi] Error ${response.status}:`, errorData);
-      throw new Error((errorData as { error?: { message?: string } }).error?.message || `API Error ${response.status}`);
+      if (!isServer && response.status >= 500) {
+        console.error(`[studentApi] Error ${response.status}:`, errorData);
+      }
+      throw new StudentApiError(response.status, errorData);
     }
 
     return await response.json();
   } catch (err: unknown) {
+    if (err instanceof StudentApiError) {
+      throw err;
+    }
+
     if (!isServer) {
       console.error(`[studentApi] Fetch failed for ${url}:`, err);
       try {

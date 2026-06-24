@@ -104,7 +104,7 @@ export default function ClassesPage() {
         }
       }
     } catch (err) {
-      // Users might cancel scanning, safe to ignore
+      toast.error(t("classes.qrScanError"));
     }
   };
 
