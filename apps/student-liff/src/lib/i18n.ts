@@ -592,6 +592,7 @@ export const th = {
     qrUnsupported:
       "⚠️ อุปกรณ์หรือเวอร์ชันของ LINE ไม่รองรับการสแกนในหน้าแอปนี้",
     qrInvalid: "❌ รูปแบบ QR Code ไม่ถูกต้อง (ไม่พบข้อมูลคลาสเรียน)",
+    qrScanError: "เกิดข้อผิดพลาดในการสแกน QR Code กรุณาลองใหม่อีกครั้ง",
     statusOpen: "รับสมัคร",
     statusFull: "เต็มแล้ว",
     statusClosed: "ปิดรับ",

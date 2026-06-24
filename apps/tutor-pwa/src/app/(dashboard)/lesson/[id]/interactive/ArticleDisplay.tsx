@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import { t } from "@/lib/i18n";
 import { Volume2 } from "lucide-react";
+import { useThaiTranslations } from "@/hooks/useThaiTranslations";
 
 import { ArticleData } from "@/lib/lesson-types";
 
@@ -9,6 +10,48 @@ interface ArticleDisplayProps {
   phase: number;
   flagCounts?: Record<number, number>;
   onActiveIdxChange?: (idx: number) => void;
+}
+
+function speakEnglish(text: string) {
+  if (typeof window === "undefined" || !window.speechSynthesis || !text.trim()) {
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "en-US";
+  utterance.rate = 0.85;
+  window.speechSynthesis.speak(utterance);
+}
+
+function GuideQuestionCard({ label, question }: { label: string; question: string }) {
+  const { translations, loading } = useThaiTranslations([question], {
+    enabled: Boolean(question),
+  });
+  const thaiQuestion = translations[0];
+
+  return (
+    <div className="bg-card rounded-xl p-3 border border-border">
+      <div className="flex items-start gap-2">
+        <p className="text-foreground text-xs font-semibold leading-relaxed flex-1">
+          {label}. {question}
+        </p>
+        <button
+          type="button"
+          onClick={() => speakEnglish(question)}
+          title={t("lesson.interactive.speakTitle")}
+          className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-300 transition-all hover:bg-teal-500/20 active:scale-95"
+        >
+          <Volume2 size={14} />
+        </button>
+      </div>
+      {(thaiQuestion || loading) && (
+        <p className="mt-2 text-[11px] font-medium leading-relaxed text-teal-700 dark:text-teal-300">
+          {thaiQuestion || "Translating question..."}
+        </p>
+      )}
+    </div>
+  );
 }
 
 export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
@@ -36,9 +79,33 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   const [activeIdx, setActiveIdx] = useState(-1);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [autoThaiSentences, setAutoThaiSentences] = useState<string[]>([]);
   const [autoVocabTh, setAutoVocabTh] = useState<Record<number, string>>({});
   const [autoVocabEnTh, setAutoVocabEnTh] = useState<Record<number, string>>({});
+
+  const sentenceTexts = useMemo(
+    () =>
+      sentences.map((sentence: any) =>
+        typeof sentence === "object" ? String(sentence.sentences || "") : String(sentence || ""),
+      ),
+    [sentences],
+  );
+  const storedThaiSentences = useMemo(
+    () =>
+      Array.isArray(articleData?.translated_passage?.th)
+        ? articleData.translated_passage.th
+        : [],
+    [articleData?.translated_passage],
+  );
+  const shouldTranslateArticle = Boolean(articleData && [3, 4, 5, 6].includes(phase));
+  const { translations: thaiSentences, loading: translatingArticle } =
+    useThaiTranslations(sentenceTexts, {
+      enabled: shouldTranslateArticle,
+      initialTranslations: storedThaiSentences,
+    });
+  const thaiPassage = useMemo(
+    () => thaiSentences.filter(Boolean).join(" "),
+    [thaiSentences],
+  );
 
   const audioUrl = articleData?.id
     ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/tts/${articleData.id}.mp3`
@@ -179,26 +246,6 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     }
   }, [phase, words]);
 
-  // Auto-translate sentences when no Thai translation available
-  useEffect(() => {
-    if (!articleData || phase !== 3) return;
-    const hasThai = (articleData.translated_passage?.th?.length ?? 0) > 0;
-    if (hasThai || sentences.length === 0) return;
-    const texts = sentences.map((s: any) =>
-      typeof s === "object" ? s.sentences : s
-    );
-    fetch("/api/translate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ texts }),
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.translations) setAutoThaiSentences(data.translations);
-      })
-      .catch(() => {}); // silently fail
-  }, [phase, articleData, sentences]);
-
   if (!articleData) {
     return (
       <div className="flex-1 flex items-center justify-center text-muted-foreground">
@@ -206,6 +253,31 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       </div>
     );
   }
+
+  const renderThaiPassageCard = (
+    className = "",
+    textClassName = "text-foreground/90",
+    titleClassName = "text-emerald-700 dark:text-emerald-300"
+  ) => {
+    if (!thaiPassage && !translatingArticle) return null;
+
+    return (
+      <div className={`rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 ${className}`}>
+        <p className={`text-[11px] font-black uppercase tracking-widest mb-2 ${titleClassName}`}>
+          Thai Translation
+        </p>
+        {thaiPassage ? (
+          <p className={`${textClassName} text-sm leading-relaxed`}>
+            {thaiPassage}
+          </p>
+        ) : (
+          <p className={`${textClassName} text-sm italic opacity-80`}>
+            Translating article...
+          </p>
+        )}
+      </div>
+    );
+  };
 
   /* ─── Phase 1: Introduction ──────────────────────────────── */
   if (phase === 1) {
@@ -516,6 +588,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               >
                 {highlightPassage(articleData.passage)}
               </p>
+              {renderThaiPassageCard("mt-5")}
             </div>
           </div>
 
@@ -605,6 +678,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               >
                 {articleData.passage}
               </p>
+              {renderThaiPassageCard(
+                "mt-6 bg-teal-500/10 border-teal-400/30",
+                "text-teal-50",
+                "text-teal-400"
+              )}
             </div>
           </div>
 
@@ -620,14 +698,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               {comprehensionQuestions.length > 0 ? (
                 <div className="space-y-3">
                   {comprehensionQuestions.map((q: any, i: number) => (
-                    <div
+                    <GuideQuestionCard
                       key={i}
-                      className="bg-card rounded-xl p-3 border border-border"
-                    >
-                      <p className="text-foreground text-xs font-semibold">
-                        Q{i + 1}. {q.question}
-                      </p>
-                    </div>
+                      label={`Q${i + 1}`}
+                      question={q.question}
+                    />
                   ))}
                 </div>
               ) : (
@@ -731,7 +806,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       .sort((a, b) => b.score - a.score || a.index - b.index)
       .slice(0, keySentenceLimit)
       .sort((a, b) => a.index - b.index)
-      .map(({ item }) => item);
+      .map(({ item, index }) => ({ item, index }));
 
     // Helper: highlight vocab words inside a sentence
     const highlightVocab = (text: string) => {
@@ -775,9 +850,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             <div className="relative">
               <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-green-500/30" />
               <div className="space-y-4">
-                {keySentences.map((item: any, index: number) => {
+                {keySentences.map(({ item, index: sentenceIndex }: any, index: number) => {
                   const sentenceText =
                     typeof item === "object" ? item.sentences : item;
+                  const thaiText = thaiSentences[sentenceIndex];
                   const c = sentenceColors[index % sentenceColors.length];
                   const d = dotColors[index % dotColors.length];
                   return (
@@ -797,6 +873,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                         <p className="text-foreground font-semibold text-base leading-relaxed">
                           {highlightVocab(String(sentenceText))}
                         </p>
+                        {thaiText && (
+                          <p className="mt-2 text-emerald-700 dark:text-emerald-300 text-sm font-medium leading-relaxed">
+                            {thaiText}
+                          </p>
+                        )}
                       </div>
                     </div>
                   );
@@ -819,6 +900,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               <p className="text-foreground text-base leading-[2.2]">
                 {articleData.passage}
               </p>
+              {renderThaiPassageCard("mt-5")}
             </div>
             <div className="mt-4 bg-green-500/10 border border-green-500/20 rounded-xl p-4">
               <p className="text-green-800 dark:text-green-300 text-xs font-bold mb-1">
@@ -837,10 +919,6 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   /* ─── Step 3: Read the Article + Audio Player + Sentence Flag ───────────────── */
   if (phase === 3) {
     const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
-    const thaiSentences: string[] =
-      (articleData.translated_passage?.th?.length ?? 0) > 0
-        ? articleData.translated_passage.th
-        : autoThaiSentences;
     const fmtTime = (s: number) =>
       `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
@@ -1044,6 +1122,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           <p className="text-foreground leading-[2.4] text-xl font-medium">
             {articleData.passage}
           </p>
+          {renderThaiPassageCard("mt-6")}
         </div>
       )}
     </div>

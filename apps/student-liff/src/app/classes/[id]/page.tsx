@@ -8,7 +8,7 @@ import {
   Loader2, AlertCircle, ChevronRight, BookOpen, Sparkles, CalendarPlus,
 } from "lucide-react";
 import { toast } from "sonner";
-import { studentApi } from "@/lib/api";
+import { StudentApiError, studentApi } from "@/lib/api";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
@@ -511,7 +511,7 @@ export default function ClassDetailPage({ params }: PageProps) {
   useEffect(() => {
     if (!isReady || !id || !cls) return;
     const selectedCycle = cls.bookCycles?.find((cycle) => cycle.id === selectedCycleId);
-    if (cls.isEnrolled && selectedCycle && !selectedCycle.hasAccess) {
+    if (selectedCycle && !selectedCycle.hasAccess) {
       setArticles([]);
       setArticlesLoading(false);
       return;
@@ -521,7 +521,11 @@ export default function ClassDetailPage({ params }: PageProps) {
       .then(data => {
         setArticles(data.articles || []);
       })
-      .catch(() => {
+      .catch((err) => {
+        if (err instanceof StudentApiError && err.status === 402) {
+          setArticles([]);
+          return;
+        }
         // silently fallback — basic preview still shows from cls.articles
       })
       .finally(() => setArticlesLoading(false));
