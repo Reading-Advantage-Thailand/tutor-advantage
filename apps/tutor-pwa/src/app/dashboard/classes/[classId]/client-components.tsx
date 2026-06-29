@@ -22,6 +22,9 @@ import {
   CalendarClock,
   Calendar as CalendarIcon,
   Ticket,
+  List,
+  LayoutGrid,
+  MoreVertical,
 } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
@@ -68,6 +71,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 export { ClassStatusToggle } from "./components/ClassStatusToggle";
 
@@ -112,6 +116,7 @@ export function ArticleSelector({
   const [creatingCycle, setCreatingCycle] = useState(false);
   const [openBookDialogOpen, setOpenBookDialogOpen] = useState(false);
   const [toast, setToast] = useState<ToastState | null>(null);
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
 
   const showToast = (nextToast: ToastState) => {
     setToast(nextToast);
@@ -260,32 +265,41 @@ export function ArticleSelector({
         </div>
       )}
       <CardHeader className="pb-4 shrink-0">
-        <CardTitle className="text-base font-bold flex items-center gap-2.5 text-foreground">
-          <span className="p-1.5 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-            <BookOpen className="h-4.5 w-4.5" />
-          </span>
-          {t("tutorClass.detail.articleTitle")}
-        </CardTitle>
-        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-          {t("tutorClass.detail.articleDescription")}
-        </p>
-        <div className="mt-3 flex flex-col gap-2">
-          <div className="flex gap-2">
-            <select
-              value={selectedCycleId}
-              onChange={(event) => setSelectedCycleId(event.target.value)}
-              className="flex-1 h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground"
-            >
-              {bookCycles.map((cycle) => (
-                <option key={cycle.id} value={cycle.id}>
-                  เล่ม {cycle.sequence}: {cycle.title}
-                </option>
-              ))}
-            </select>
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 w-full">
+          <div>
+            <CardTitle className="text-base font-bold flex items-center gap-2.5 text-foreground">
+              <BookOpen className="h-5 w-5 text-emerald-600" />
+              {t("tutorClass.detail.articleTitle")}
+            </CardTitle>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+              {t("tutorClass.detail.articleDescription")}
+            </p>
+          </div>
+          <div className="flex items-center gap-2 self-start">
+            <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-lg border border-border/50">
+              <Button
+                variant={viewMode === "list" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("list")}
+                className={`h-8 px-3 text-xs gap-1.5 ${viewMode === "list" ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                <List className="h-4 w-4" />
+                รายการ
+              </Button>
+              <Button
+                variant={viewMode === "grid" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("grid")}
+                className={`h-8 px-3 text-xs gap-1.5 ${viewMode === "grid" ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                <LayoutGrid className="h-4 w-4" />
+                คอลัมน์
+              </Button>
+            </div>
             <Dialog open={openBookDialogOpen} onOpenChange={setOpenBookDialogOpen}>
               <DialogTrigger
                 render={
-                  <Button variant="outline" size="sm" className="h-10 shrink-0">
+                  <Button variant="outline" size="sm" className="h-9 px-4 text-xs font-medium">
                     เปิดเล่มใหม่
                   </Button>
                 }
@@ -333,109 +347,211 @@ export function ArticleSelector({
             </Dialog>
           </div>
         </div>
+        
+        <div className="mt-4 flex flex-col gap-2">
+          <select
+            value={selectedCycleId}
+            onChange={(event) => setSelectedCycleId(event.target.value)}
+            className="w-full md:w-[400px] h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground focus:ring-1 focus:ring-emerald-500"
+          >
+            {bookCycles.map((cycle) => (
+              <option key={cycle.id} value={cycle.id}>
+                เล่ม {cycle.sequence}: {cycle.title}
+              </option>
+            ))}
+          </select>
+        </div>
       </CardHeader>
 
       <CardContent className="pb-6 flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto pr-2 min-h-0 scrollbar-thin">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 pb-2">
           {fetching ? (
-            <div className="py-24 flex flex-col items-center justify-center text-center gap-2 col-span-full">
-              <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
+            <div className="py-24 flex flex-col items-center justify-center text-center gap-2">
+              <div className="animate-spin h-6 w-6 border-2 border-emerald-600 border-t-transparent rounded-full" />
               <p className="text-xs text-muted-foreground font-medium">
                 {t("tutorClass.detail.articleLoading")}
               </p>
             </div>
           ) : error ? (
-            <div className="py-24 flex flex-col items-center justify-center text-center gap-2 col-span-full">
+            <div className="py-24 flex flex-col items-center justify-center text-center gap-2">
               <p className="text-xs text-destructive font-medium">{error}</p>
             </div>
           ) : articles.length === 0 ? (
-            <div className="py-24 flex flex-col items-center justify-center text-center gap-2 col-span-full">
+            <div className="py-24 flex flex-col items-center justify-center text-center gap-2">
               <p className="text-xs text-muted-foreground font-medium">
                 {t("tutorClass.detail.articleEmpty")}
               </p>
             </div>
+          ) : viewMode === "list" ? (
+            <div className="w-full rounded-md border border-border/60 overflow-hidden bg-card">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs text-muted-foreground bg-muted/30 border-b border-border/60">
+                  <tr>
+                    <th className="px-4 py-3 font-medium w-12 text-center"></th>
+                    <th className="px-4 py-3 font-medium w-24">บทที่</th>
+                    <th className="px-4 py-3 font-medium">บทความ</th>
+                    <th className="px-4 py-3 font-medium w-24 text-center">ระดับ</th>
+                    <th className="px-4 py-3 font-medium w-32">ประเภท</th>
+                    <th className="px-4 py-3 font-medium w-32">เวลาที่แนะนำ</th>
+                    <th className="px-4 py-3 font-medium w-12 text-center"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {articles.map((article: any, idx: number) => (
+                    <tr 
+                      key={article.id}
+                      onClick={() => setSelectedArticle(article.id)}
+                      className={`border-b border-border/60 last:border-0 hover:bg-muted/30 cursor-pointer transition-colors ${selectedArticle === article.id ? "bg-emerald-50/50 dark:bg-emerald-950/20" : ""} ${article.isCompleted ? "opacity-80" : ""}`}
+                    >
+                      <td className="px-4 py-4 text-center align-middle">
+                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${selectedArticle === article.id ? 'border-emerald-600 bg-emerald-600' : 'border-input bg-background'}`}>
+                          {selectedArticle === article.id && <div className="w-2 h-2 rounded-full bg-white" />}
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 align-middle whitespace-nowrap text-muted-foreground">
+                        บทที่ {idx + 1}
+                      </td>
+                      <td className="px-4 py-4 align-middle">
+                        <div className="flex items-center gap-4">
+                          {article.imageUrl && (
+                            <div className="w-16 h-12 rounded bg-muted/40 overflow-hidden shrink-0 border border-border/50 relative">
+                              <img 
+                                src={article.imageUrl} 
+                                alt="" 
+                                className="w-full h-full object-cover" 
+                                loading="lazy"
+                              />
+                              {article.isCompleted && (
+                                <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
+                                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          <div className="min-w-0 flex flex-col justify-center">
+                            <p className={`font-bold leading-snug truncate ${selectedArticle === article.id ? "text-emerald-700 dark:text-emerald-400" : "text-foreground"}`}>
+                              {article.title}
+                            </p>
+                            {article.summary && (
+                              <p className="text-xs text-muted-foreground truncate mt-0.5">
+                                {article.summary}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 align-middle text-center whitespace-nowrap">
+                        {article.cefrLevel && (
+                          <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full">
+                            CEFR {article.cefrLevel}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-4 align-middle text-muted-foreground text-xs whitespace-nowrap">
+                        {article.type || (idx % 2 === 0 ? "เนื้อเรื่อง" : "ชีวประวัติ")}
+                      </td>
+                      <td className="px-4 py-4 align-middle text-muted-foreground text-xs whitespace-nowrap">
+                        {article.recommendedTime || "10 นาที"}
+                      </td>
+                      <td className="px-4 py-4 align-middle text-center">
+                        <button className="text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-muted">
+                          <MoreVertical className="h-4 w-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ) : (
-            articles.map((article: any, idx: number) => (
-              <div
-                key={article.id}
-                onClick={() => setSelectedArticle(article.id)}
-                className={`group border rounded-xl p-4 transition-all duration-300 relative overflow-hidden cursor-pointer flex flex-col h-full ${
-                  selectedArticle === article.id
-                    ? "border-primary/50 bg-primary/[0.04] shadow-md ring-2 ring-primary/20"
-                    : "border-border/60 bg-card hover:bg-muted/40 hover:border-primary/30 hover:shadow-sm"
-                } ${article.isCompleted ? "opacity-85 saturate-[0.9]" : ""}`}
-              >
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 pb-2">
+              {articles.map((article: any, idx: number) => (
                 <div
-                  className={`absolute top-0 bottom-0 left-0 w-1.5 transition-all duration-300 z-10 ${
+                  key={article.id}
+                  onClick={() => setSelectedArticle(article.id)}
+                  className={`group border rounded-xl p-4 transition-all duration-300 relative overflow-hidden cursor-pointer flex flex-col h-full ${
                     selectedArticle === article.id
-                      ? "bg-primary"
-                      : "bg-transparent group-hover:bg-primary/40"
-                  }`}
-                />
-                
-                {article.imageUrl && (
-                  <div className="w-full h-36 rounded-lg bg-muted/40 overflow-hidden mb-4 relative shrink-0 border border-border/50 shadow-sm group-hover:shadow-md transition-shadow">
-                    <img 
-                      src={article.imageUrl} 
-                      alt={article.title} 
-                      className={`w-full h-full object-cover transition-transform duration-700 ease-out ${selectedArticle === article.id ? 'scale-105' : 'group-hover:scale-105'}`} 
-                      loading="lazy"
-                    />
-                    {article.isCompleted && (
-                      <div className="absolute inset-0 bg-background/20 backdrop-blur-[2px] flex items-center justify-center">
-                        <span className="bg-emerald-500/90 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5">
-                          <CheckCircle2 className="h-3.5 w-3.5" />
+                      ? "border-emerald-600/50 bg-emerald-50/50 shadow-md ring-1 ring-emerald-600/20"
+                      : "border-border/60 bg-card hover:bg-muted/40 hover:border-emerald-600/30 hover:shadow-sm"
+                  } ${article.isCompleted ? "opacity-85 saturate-[0.9]" : ""}`}
+                >
+                  <div
+                    className={`absolute top-0 bottom-0 left-0 w-1.5 transition-all duration-300 z-10 ${
+                      selectedArticle === article.id
+                        ? "bg-emerald-600"
+                        : "bg-transparent group-hover:bg-emerald-600/40"
+                    }`}
+                  />
+                  
+                  {article.imageUrl && (
+                    <div className="w-full h-36 rounded-lg bg-muted/40 overflow-hidden mb-4 relative shrink-0 border border-border/50 shadow-sm group-hover:shadow-md transition-shadow">
+                      <img 
+                        src={article.imageUrl} 
+                        alt={article.title} 
+                        className={`w-full h-full object-cover transition-transform duration-700 ease-out ${selectedArticle === article.id ? 'scale-105' : 'group-hover:scale-105'}`} 
+                        loading="lazy"
+                      />
+                      {article.isCompleted && (
+                        <div className="absolute inset-0 bg-background/20 backdrop-blur-[2px] flex items-center justify-center">
+                          <span className="bg-emerald-500/90 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5">
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            {t("tutorClass.detail.taught")}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="pl-2 flex flex-col flex-1">
+                    <div className="flex items-center flex-wrap gap-2 mb-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground px-2 py-0.5 rounded-md border border-border/40">
+                        {t("tutorClass.detail.chapterPrefix")} {idx + 1}
+                      </span>
+                      {!article.imageUrl && article.isCompleted && (
+                        <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 flex items-center gap-1">
+                          <div className="w-1 h-1 rounded-full bg-emerald-500" />
                           {t("tutorClass.detail.taught")}
                         </span>
-                      </div>
+                      )}
+                      {article.cefrLevel && (
+                        <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20">
+                          CEFR {article.cefrLevel}
+                        </span>
+                      )}
+                    </div>
+                    <h3
+                      className={`text-sm font-bold leading-snug transition-colors line-clamp-2 ${selectedArticle === article.id ? "text-emerald-700" : "text-foreground group-hover:text-emerald-700/80"}`}
+                    >
+                      {article.title}
+                    </h3>
+                    {article.summary && (
+                      <p className="text-xs text-muted-foreground font-medium line-clamp-3 mt-2 leading-relaxed flex-1">
+                        {article.summary}
+                      </p>
                     )}
                   </div>
-                )}
-
-                <div className="pl-2 flex flex-col flex-1">
-                  <div className="flex items-center flex-wrap gap-2 mb-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground px-2 py-0.5 rounded-md border border-border/40">
-                      {t("tutorClass.detail.chapterPrefix")} {idx + 1}
-                    </span>
-                    {!article.imageUrl && article.isCompleted && (
-                      <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 flex items-center gap-1">
-                        <div className="w-1 h-1 rounded-full bg-emerald-500" />
-                        {t("tutorClass.detail.taught")}
-                      </span>
-                    )}
-                    {article.cefrLevel && (
-                      <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20">
-                        CEFR {article.cefrLevel}
-                      </span>
-                    )}
-                  </div>
-                  <h3
-                    className={`text-sm font-bold leading-snug transition-colors line-clamp-2 ${selectedArticle === article.id ? "text-primary" : "text-foreground group-hover:text-primary/80"}`}
-                  >
-                    {article.title}
-                  </h3>
-                  {article.summary && (
-                    <p className="text-xs text-muted-foreground font-medium line-clamp-3 mt-2 leading-relaxed flex-1">
-                      {article.summary}
-                    </p>
-                  )}
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
-          </div>
         </div>
 
-        <div className="pt-4 shrink-0">
-          <Button
-            className="w-full gap-2 font-bold shadow-md transition-all duration-300 py-5"
-            disabled={!selectedArticle || loading || fetching}
-            onClick={handleStartLesson}
-          >
-            {loading ? t("tutorClass.detail.creatingRoom") : t("tutorClass.detail.createRoom")}
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+        <div className="pt-4 shrink-0 flex items-center justify-between border-t border-border/60 mt-2">
+          <p className="text-sm font-medium text-emerald-700">
+            แสดงเพิ่มเติม (ทั้งหมด {articles.length} บทความ)
+          </p>
+          <div className="flex items-center gap-4">
+            <p className="text-sm font-medium text-emerald-700">
+              เลือกแล้ว {selectedArticle ? 1 : 0} บทความ
+            </p>
+            <Button
+              className="gap-2 font-bold shadow-md transition-all duration-300 bg-emerald-600 hover:bg-emerald-700 text-white"
+              disabled={!selectedArticle || loading || fetching}
+              onClick={handleStartLesson}
+            >
+              {loading ? "กำลังสร้างห้องเรียน..." : "สร้างห้องเรียน & เริ่มสอน >"}
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
@@ -535,9 +651,11 @@ export function DeleteClassButton({ classId, className }: { classId: string; cla
 export function MeetingUrlEditor({
   classId,
   initialUrl,
+  className,
 }: {
   classId: string;
   initialUrl: string;
+  className?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState(initialUrl);
@@ -566,12 +684,17 @@ export function MeetingUrlEditor({
   };
 
   return (
-    <Card className="border-primary/20 bg-primary/5 h-full flex flex-col">
-      <CardContent className="p-4 flex flex-col h-full">
-        <div className="flex flex-col flex-1">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
-              <Video className="h-5 w-5 text-primary" />
+    <Card
+      className={cn(
+        "h-full min-h-[220px] rounded-2xl border-border/60 bg-card/95 shadow-sm",
+        className,
+      )}
+    >
+      <CardContent className="flex h-full flex-col p-4 sm:p-5">
+        <div className="flex h-full flex-col">
+          <div className="flex items-start gap-3 min-w-0">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50">
+              <Video className="h-5 w-5 text-emerald-600" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-bold text-foreground">
@@ -593,14 +716,14 @@ export function MeetingUrlEditor({
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-2 w-full mt-auto pt-4">
+          <div className="mt-auto flex w-full flex-col gap-2 border-t border-border/50 pt-4">
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger
                 render={
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full h-10 px-3 text-xs bg-background font-medium"
+                    className="h-9 w-full bg-background px-3 text-xs font-medium text-emerald-600 border-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"
                   >
                     {t("tutorClass.detail.editLink")}
                   </Button>
@@ -649,7 +772,7 @@ export function MeetingUrlEditor({
                 <Button
                   id="btn-join-meeting"
                   size="sm"
-                  className="w-full h-10 gap-2 font-medium"
+                  className="h-9 w-full gap-2 font-medium"
                 >
                   {t("tutorClass.detail.enterRoom")} <ExternalLink className="h-3.5 w-3.5" />
                 </Button>
@@ -689,9 +812,9 @@ export function CouponExtendButton({ classId }: { classId: string }) {
     <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setError(""); }}>
       <DialogTrigger
         render={
-          <Button variant="outline" size="sm" className="w-full h-10 text-xs bg-background font-medium gap-2">
+          <Button variant="outline" size="sm" className="h-9 w-full gap-2 bg-background text-xs font-medium text-emerald-600 border-emerald-600 hover:bg-emerald-50 hover:text-emerald-700">
             <Ticket className="h-4 w-4" />
-            {t("tutorClass.detail.couponButton")}
+            ข้อมูลเพิ่มเติม
           </Button>
         }
       />
@@ -941,7 +1064,7 @@ export function RescheduleClassButton({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button variant="outline" size="sm" className="w-full h-10 text-xs bg-background font-medium gap-2">
+          <Button variant="outline" size="sm" className="h-9 w-full gap-2 bg-background text-xs font-medium text-emerald-600 border-emerald-600 hover:bg-emerald-50 hover:text-emerald-700">
             <CalendarClock className="h-4 w-4" />
             {t("tutorClass.detail.rescheduleButton")}
           </Button>

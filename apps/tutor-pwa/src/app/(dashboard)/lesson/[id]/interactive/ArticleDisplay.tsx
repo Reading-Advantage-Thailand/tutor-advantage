@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import { t } from "@/lib/i18n";
-import { Volume2 } from "lucide-react";
+import { BookOpen, Volume2 } from "lucide-react";
 import { useThaiTranslations } from "@/hooks/useThaiTranslations";
 
 import { ArticleData } from "@/lib/lesson-types";
@@ -13,7 +13,11 @@ interface ArticleDisplayProps {
 }
 
 function speakEnglish(text: string) {
-  if (typeof window === "undefined" || !window.speechSynthesis || !text.trim()) {
+  if (
+    typeof window === "undefined" ||
+    !window.speechSynthesis ||
+    !text.trim()
+  ) {
     return;
   }
 
@@ -24,7 +28,13 @@ function speakEnglish(text: string) {
   window.speechSynthesis.speak(utterance);
 }
 
-function GuideQuestionCard({ label, question }: { label: string; question: string }) {
+function GuideQuestionCard({
+  label,
+  question,
+}: {
+  label: string;
+  question: string;
+}) {
   const { translations, loading } = useThaiTranslations([question], {
     enabled: Boolean(question),
   });
@@ -61,10 +71,14 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   onActiveIdxChange,
 }) => {
   const words = useMemo(() => articleData?.words || [], [articleData?.words]);
-  const sentences = useMemo(() => articleData?.sentences || [], [articleData?.sentences]);
+  const sentences = useMemo(
+    () => articleData?.sentences || [],
+    [articleData?.sentences],
+  );
 
   // "A0" is a placeholder beginner level from the article source; display it as A1 to match the rest of the app.
-  const displayCefr = articleData?.cefr_level === "A0" ? "A1" : articleData?.cefr_level;
+  const displayCefr =
+    articleData?.cefr_level === "A0" ? "A1" : articleData?.cefr_level;
 
   // Article image URL from GCS
   const articleImageUrl = articleData?.id
@@ -73,6 +87,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   // ── Audio state for Phase 9 ─────────────────────────────────
   const audioRef = useRef<HTMLAudioElement>(null);
+  const phase4PassageRef = useRef<HTMLDivElement>(null);
+  const phase4VocabRef = useRef<HTMLDivElement>(null);
   const stopAtRef = useRef<number>(Infinity); // for single-sentence mode
   const isSeekingRef = useRef(false); // prevent highlight flickering during seek
   const [isPlaying, setIsPlaying] = useState(false);
@@ -80,12 +96,16 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [autoVocabTh, setAutoVocabTh] = useState<Record<number, string>>({});
-  const [autoVocabEnTh, setAutoVocabEnTh] = useState<Record<number, string>>({});
+  const [autoVocabEnTh, setAutoVocabEnTh] = useState<Record<number, string>>(
+    {},
+  );
 
   const sentenceTexts = useMemo(
     () =>
       sentences.map((sentence: any) =>
-        typeof sentence === "object" ? String(sentence.sentences || "") : String(sentence || ""),
+        typeof sentence === "object"
+          ? String(sentence.sentences || "")
+          : String(sentence || ""),
       ),
     [sentences],
   );
@@ -96,7 +116,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         : [],
     [articleData?.translated_passage],
   );
-  const shouldTranslateArticle = Boolean(articleData && [3, 4, 5, 6].includes(phase));
+  const shouldTranslateArticle = Boolean(
+    articleData && [3, 4, 5, 6].includes(phase),
+  );
   const { translations: thaiSentences, loading: translatingArticle } =
     useThaiTranslations(sentenceTexts, {
       enabled: shouldTranslateArticle,
@@ -106,6 +128,38 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     () => thaiSentences.filter(Boolean).join(" "),
     [thaiSentences],
   );
+
+  useEffect(() => {
+    if (phase !== 4) return;
+
+    const passage = phase4PassageRef.current;
+    const vocab = phase4VocabRef.current;
+    if (!passage || !vocab) return;
+
+    const syncPanelHeight = () => {
+      if (window.innerWidth < 1024) {
+        vocab.style.height = "";
+        vocab.style.maxHeight = "";
+        return;
+      }
+
+      const height = passage.getBoundingClientRect().height;
+      vocab.style.height = `${height}px`;
+      vocab.style.maxHeight = `${height}px`;
+    };
+
+    syncPanelHeight();
+    const observer = new ResizeObserver(syncPanelHeight);
+    observer.observe(passage);
+    window.addEventListener("resize", syncPanelHeight);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", syncPanelHeight);
+      vocab.style.height = "";
+      vocab.style.maxHeight = "";
+    };
+  }, [phase, thaiPassage, words.length]);
 
   const audioUrl = articleData?.id
     ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/tts/${articleData.id}.mp3`
@@ -126,7 +180,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     // Find the last sentence whose timeSeconds <= current time
     let idx = -1;
     for (let i = 0; i < sentences.length; i++) {
-      const ts = typeof sentences[i] === "object" ? sentences[i].timeSeconds : 0;
+      const ts =
+        typeof sentences[i] === "object" ? sentences[i].timeSeconds : 0;
       if (ts <= t) idx = i;
       else break;
     }
@@ -138,11 +193,13 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     if (!audioRef.current) return;
     isSeekingRef.current = true;
     const item = sentences[sentenceIdx];
-    const ts: number = typeof item === "object" ? item.timeSeconds ?? 0 : 0;
+    const ts: number = typeof item === "object" ? (item.timeSeconds ?? 0) : 0;
     // Stop 0.5s before the NEXT sentence starts (natural pause)
     const nextItem = sentences[sentenceIdx + 1];
     const nextTs = nextItem
-      ? (typeof nextItem === "object" ? nextItem.timeSeconds : Infinity)
+      ? typeof nextItem === "object"
+        ? nextItem.timeSeconds
+        : Infinity
       : Infinity;
     stopAtRef.current = nextTs === Infinity ? Infinity : nextTs - 0.5;
     audioRef.current.currentTime = ts;
@@ -182,7 +239,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   const lastReportedIdxRef = useRef(-2);
   useEffect(() => {
-    if (phase === 3 && onActiveIdxChange && activeIdx !== lastReportedIdxRef.current) {
+    if (
+      phase === 3 &&
+      onActiveIdxChange &&
+      activeIdx !== lastReportedIdxRef.current
+    ) {
       lastReportedIdxRef.current = activeIdx;
       onActiveIdxChange(activeIdx);
     }
@@ -195,7 +256,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     // 1. Find words missing a short Thai translation (definition.th)
     const missingTh: { index: number; text: string }[] = [];
     words.forEach((item: any, i: number) => {
-      const wordText = typeof item === "object" ? item.vocabulary || item.word || item.text : item;
+      const wordText =
+        typeof item === "object"
+          ? item.vocabulary || item.word || item.text
+          : item;
       const hasTh = typeof item === "object" && item.definition?.th;
       if (!hasTh && wordText) {
         missingTh.push({ index: i, text: String(wordText) });
@@ -205,7 +269,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     // 2. Find words with English definitions (definition.en) to translate to Thai explanations
     const missingEnTh: { index: number; text: string }[] = [];
     words.forEach((item: any, i: number) => {
-      const enText = typeof item === "object" && item.definition?.en ? item.definition.en : null;
+      const enText =
+        typeof item === "object" && item.definition?.en
+          ? item.definition.en
+          : null;
       if (enText) {
         missingEnTh.push({ index: i, text: enText });
       }
@@ -222,7 +289,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         .then((data) => {
           if (!data.translations) return;
           const map: Record<number, string> = {};
-          missingTh.forEach((m, j) => { map[m.index] = data.translations[j]; });
+          missingTh.forEach((m, j) => {
+            map[m.index] = data.translations[j];
+          });
           setAutoVocabTh((prev) => ({ ...prev, ...map }));
         })
         .catch(() => {});
@@ -239,7 +308,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         .then((data) => {
           if (!data.translations) return;
           const map: Record<number, string> = {};
-          missingEnTh.forEach((m, j) => { map[m.index] = data.translations[j]; });
+          missingEnTh.forEach((m, j) => {
+            map[m.index] = data.translations[j];
+          });
           setAutoVocabEnTh(map);
         })
         .catch(() => {});
@@ -257,13 +328,17 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   const renderThaiPassageCard = (
     className = "",
     textClassName = "text-foreground/90",
-    titleClassName = "text-emerald-700 dark:text-emerald-300"
+    titleClassName = "text-emerald-700 dark:text-emerald-300",
   ) => {
     if (!thaiPassage && !translatingArticle) return null;
 
     return (
-      <div className={`rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 ${className}`}>
-        <p className={`text-[11px] font-black uppercase tracking-widest mb-2 ${titleClassName}`}>
+      <div
+        className={`rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 ${className}`}
+      >
+        <p
+          className={`text-[11px] font-black uppercase tracking-widest mb-2 ${titleClassName}`}
+        >
           Thai Translation
         </p>
         {thaiPassage ? (
@@ -291,8 +366,15 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               alt={articleData.title}
               className="w-full h-full object-cover"
               onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-                ((e.target as HTMLImageElement).parentElement as HTMLElement).classList.add('bg-gradient-to-br', 'from-indigo-600', 'via-purple-600', 'to-fuchsia-600');
+                (e.target as HTMLImageElement).style.display = "none";
+                (
+                  (e.target as HTMLImageElement).parentElement as HTMLElement
+                ).classList.add(
+                  "bg-gradient-to-br",
+                  "from-indigo-600",
+                  "via-purple-600",
+                  "to-fuchsia-600",
+                );
               }}
             />
           ) : (
@@ -318,15 +400,23 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           {/* Stat chips at bottom of image */}
           <div className="absolute bottom-0 left-0 right-0 p-4 flex items-center gap-3">
             <div className="bg-black/40 backdrop-blur rounded-xl px-3 py-2 text-center">
-              <p className="text-white/60 text-[10px] uppercase tracking-wider">{t("lesson.interactive.vocabulary")}</p>
+              <p className="text-white/60 text-[10px] uppercase tracking-wider">
+                {t("lesson.interactive.vocabulary")}
+              </p>
               <p className="text-white font-black text-xl">{words.length}</p>
             </div>
             <div className="bg-black/40 backdrop-blur rounded-xl px-3 py-2 text-center">
-              <p className="text-white/60 text-[10px] uppercase tracking-wider">{t("lesson.interactive.keySentences")}</p>
-              <p className="text-white font-black text-xl">{sentences.length}</p>
+              <p className="text-white/60 text-[10px] uppercase tracking-wider">
+                {t("lesson.interactive.keySentences")}
+              </p>
+              <p className="text-white font-black text-xl">
+                {sentences.length}
+              </p>
             </div>
             <div className="bg-black/40 backdrop-blur rounded-xl px-3 py-2 text-center">
-              <p className="text-white/60 text-[10px] uppercase tracking-wider">Step</p>
+              <p className="text-white/60 text-[10px] uppercase tracking-wider">
+                Step
+              </p>
               <p className="text-white font-black text-xl">1 / 13</p>
             </div>
           </div>
@@ -336,8 +426,12 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         <div className="flex-1 flex flex-col justify-center gap-5">
           {/* Badge row */}
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="bg-indigo-500 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">{t("lesson.interactive.step1")}</span>
-            <span className="bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-xs font-bold px-3 py-1 rounded-full border border-indigo-500/20">{t("lesson.interactive.period1")}</span>
+            <span className="bg-indigo-500 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
+              {t("lesson.interactive.step1")}
+            </span>
+            <span className="bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-xs font-bold px-3 py-1 rounded-full border border-indigo-500/20">
+              {t("lesson.interactive.period1")}
+            </span>
           </div>
 
           {/* Title */}
@@ -353,9 +447,24 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           {/* Tutor Checklist */}
           <div className="space-y-3 mt-2">
             {[
-              { num: "1", emoji: "💬", title: t("lesson.interactive.introChecklistIntroduceTitle"), desc: t("lesson.interactive.introChecklistIntroduceDesc") },
-              { num: "2", emoji: "🎯", title: t("lesson.interactive.introChecklistGoalTitle"), desc: t("lesson.interactive.introChecklistGoalDesc") },
-              { num: "3", emoji: "✨", title: t("lesson.interactive.introChecklistSparkTitle"), desc: t("lesson.interactive.introChecklistSparkDesc") },
+              {
+                num: "1",
+                emoji: "💬",
+                title: t("lesson.interactive.introChecklistIntroduceTitle"),
+                desc: t("lesson.interactive.introChecklistIntroduceDesc"),
+              },
+              {
+                num: "2",
+                emoji: "🎯",
+                title: t("lesson.interactive.introChecklistGoalTitle"),
+                desc: t("lesson.interactive.introChecklistGoalDesc"),
+              },
+              {
+                num: "3",
+                emoji: "✨",
+                title: t("lesson.interactive.introChecklistSparkTitle"),
+                desc: t("lesson.interactive.introChecklistSparkDesc"),
+              },
             ].map((item, i) => (
               <div
                 key={i}
@@ -366,8 +475,12 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                   {item.emoji}
                 </div>
                 <div>
-                  <p className="font-bold text-foreground text-sm">{item.title}</p>
-                  <p className="text-indigo-600 dark:text-indigo-400 text-xs mt-0.5">{item.desc}</p>
+                  <p className="font-bold text-foreground text-sm">
+                    {item.title}
+                  </p>
+                  <p className="text-indigo-600 dark:text-indigo-400 text-xs mt-0.5">
+                    {item.desc}
+                  </p>
                 </div>
               </div>
             ))}
@@ -558,87 +671,121 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     };
 
     return (
-      <div className="flex-1 flex flex-col items-center py-8 px-6 w-full animate-in fade-in duration-500">
-        <div className="flex items-center gap-3 mb-6 w-full max-w-5xl">
-          <span className="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+      <div className="flex-1 flex w-full flex-col items-center px-2 py-4 sm:px-3 animate-in fade-in duration-500">
+        <div className="mb-4 flex w-full flex-wrap items-center gap-3">
+          <span className="rounded-full bg-amber-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
             Phase 4
           </span>
-          <span className="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-xs font-bold px-3 py-1 rounded-full border border-amber-500/20">
+          <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-4 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-400">
             Vocabulary Focus
           </span>
-          <p className="text-muted-foreground text-sm ml-2">
+          <p className="text-sm text-muted-foreground sm:ml-1">
             {t("lesson.interactive.wordPrefix")}{" "}
-            <mark className="bg-[var(--highlight-bg)] text-[var(--highlight-text)] px-1 rounded not-italic">
-              highlight
-            </mark>{" "}
+            <span className="font-semibold text-foreground">highlight</span>{" "}
             {t("lesson.interactive.vocabInLessonSuffix")}
           </p>
         </div>
 
-        <div className="w-full max-w-5xl grid grid-cols-12 gap-6">
+        <div className="grid w-full grid-cols-1 items-stretch gap-4 lg:grid-cols-[1.12fr_1fr]">
           {/* Passage with highlights */}
-          <div className="col-span-12 md:col-span-7">
-            <div className="bg-card rounded-2xl shadow-xl border-t-4 border-amber-400 p-8">
-              <h3 className="text-sm font-bold text-amber-600 uppercase tracking-widest mb-4">
-                Reading Passage
-              </h3>
-              <p
-                className="text-foreground text-lg leading-[2.4] font-medium"
-                style={{ fontFamily: "Georgia, serif" }}
-              >
-                {highlightPassage(articleData.passage)}
-              </p>
-              {renderThaiPassageCard("mt-5")}
+          <div
+            ref={phase4PassageRef}
+            className="flex self-start flex-col rounded-2xl border border-border border-t-2 border-t-amber-400 bg-card p-5 shadow-lg shadow-slate-900/5 sm:p-6"
+          >
+            <h3 className="mb-4 flex items-center gap-3 text-sm font-bold uppercase tracking-wider text-amber-600">
+              <span className="inline-flex size-9 items-center justify-center rounded-full bg-amber-500 text-white">
+                <BookOpen size={18} />
+              </span>
+              Reading Passage
+            </h3>
+            <p
+              className="text-[15px] font-medium leading-[2] text-foreground sm:text-base sm:leading-[2.05]"
+              style={{ fontFamily: "Georgia, serif" }}
+            >
+              {highlightPassage(articleData.passage)}
+            </p>
+            <div className="pt-5">
+              {renderThaiPassageCard("bg-emerald-50/80 dark:bg-emerald-950/25")}
             </div>
           </div>
 
           {/* Vocab sidebar */}
-          <div className="col-span-12 md:col-span-5">
-            <div className="bg-purple-500/10 border-2 border-purple-500/20 rounded-2xl p-5 sticky top-4">
-              <h3 className="text-sm font-bold text-purple-800 dark:text-purple-300 uppercase tracking-widest mb-4 flex items-center gap-2">
-                <span>📚</span> Vocabulary List
-              </h3>
-              <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
-                {words.map((item: any, i: number) => {
-                  const wordText =
-                    typeof item === "object"
-                      ? item.vocabulary || item.word || item.text
-                      : item;
-                  const defTh =
-                    typeof item === "object" && item.definition
-                      ? item.definition.th || autoVocabTh[i] || null
-                      : autoVocabTh[i] || null;
-                  const defEn =
-                    typeof item === "object" && item.definition
-                      ? item.definition.en
-                      : null;
-                  return (
-                    <div
-                      key={i}
-                      className="bg-card rounded-xl p-3 border border-purple-500/20 shadow-sm"
-                    >
-                      <p className="font-black text-purple-900 dark:text-purple-100 text-base">
-                        {String(wordText)}
-                      </p>
+          <div
+            ref={phase4VocabRef}
+            className="flex min-h-0 flex-col overflow-hidden rounded-2xl border border-purple-500/20 bg-purple-500/[0.06] p-4 shadow-lg shadow-purple-900/5 sm:p-5"
+          >
+            <h3 className="mb-4 flex items-center gap-3 text-sm font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300">
+              <span className="inline-flex size-8 items-center justify-center rounded-full bg-purple-500/10 text-purple-600">
+                <BookOpen size={17} />
+              </span>
+              Vocabulary List
+            </h3>
+            <div className="flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto pr-1">
+              {words.map((item: any, i: number) => {
+                const wordText =
+                  typeof item === "object"
+                    ? item.vocabulary || item.word || item.text
+                    : item;
+                const defTh =
+                  typeof item === "object" && item.definition
+                    ? item.definition.th || autoVocabTh[i] || null
+                    : autoVocabTh[i] || null;
+                const defEn =
+                  typeof item === "object" && item.definition
+                    ? item.definition.en
+                    : null;
+                const partOfSpeech =
+                  typeof item === "object"
+                    ? item.partOfSpeech || item.part_of_speech || item.pos
+                    : null;
+                return (
+                  <div
+                    key={i}
+                    className="grid min-h-[72px] flex-1 grid-cols-[auto_1fr_auto] gap-x-3 rounded-xl border border-purple-500/15 bg-card px-3 py-3 shadow-sm sm:grid-cols-[auto_minmax(0,1fr)_minmax(180px,.9fr)_auto] sm:items-center sm:px-4"
+                  >
+                    <span className="mt-0.5 inline-flex size-5 items-center justify-center rounded-full bg-purple-600 text-[10px] font-bold text-white sm:mt-0">
+                      {i + 1}
+                    </span>
+                    <div className="min-w-0 sm:pr-4">
+                      <div className="flex flex-wrap items-baseline gap-2">
+                        <p className="font-black text-purple-700 dark:text-purple-200">
+                          {String(wordText)}
+                        </p>
+                        {partOfSpeech && (
+                          <span className="text-xs text-muted-foreground">
+                            ({String(partOfSpeech)})
+                          </span>
+                        )}
+                      </div>
+                      {defEn && (
+                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-[13px]">
+                          {defEn}
+                        </p>
+                      )}
+                    </div>
+                    <div className="col-start-2 mt-2 min-w-0 border-t border-purple-500/10 pt-2 sm:col-start-auto sm:mt-0 sm:border-l sm:border-t-0 sm:py-1 sm:pl-5">
                       {defTh && (
-                        <p className="text-purple-700 dark:text-purple-300 text-sm font-medium mt-0.5">
+                        <p className="text-sm font-bold text-purple-600 dark:text-purple-300">
                           {defTh}
                         </p>
                       )}
-                      {defEn && (
-                        <div className="mt-1 space-y-1">
-                          <p className="text-muted-foreground text-xs italic">{defEn}</p>
-                          {autoVocabEnTh[i] && (
-                            <p className="text-purple-600 dark:text-purple-400 font-semibold text-xs border-t border-purple-500/20 pt-1">
-                              {autoVocabEnTh[i]}
-                            </p>
-                          )}
-                        </div>
+                      {autoVocabEnTh[i] && (
+                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-[13px]">
+                          {autoVocabEnTh[i]}
+                        </p>
                       )}
                     </div>
-                  );
-                })}
-              </div>
+                    <button
+                      type="button"
+                      onClick={() => speakEnglish(String(wordText))}
+                      title={t("lesson.interactive.speakTitle")}
+                      className="col-start-3 row-start-1 inline-flex size-9 items-center justify-center self-center rounded-full bg-purple-500/10 text-purple-600 transition-all hover:bg-purple-500/20 active:scale-95 sm:col-start-auto sm:row-start-auto"
+                    >
+                      <Volume2 size={16} />
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -652,43 +799,43 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       articleData.shortAnswerQuestions?.slice(0, 3) || [];
 
     return (
-      <div className="flex-1 flex flex-col items-center py-8 px-6 w-full animate-in fade-in duration-500">
-        <div className="flex items-center gap-3 mb-6 w-full max-w-5xl">
-          <span className="bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+      <div className="flex-1 flex w-full flex-col items-center px-2 py-4 sm:px-3 animate-in fade-in duration-500">
+        <div className="mb-4 flex w-full flex-wrap items-center gap-3">
+          <span className="rounded-full bg-teal-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
             Phase 5
           </span>
-          <span className="bg-teal-500/10 text-teal-700 dark:text-teal-400 text-xs font-bold px-3 py-1 rounded-full border border-teal-500/20">
+          <span className="rounded-full border border-teal-500/20 bg-teal-500/10 px-4 py-1.5 text-xs font-bold text-teal-700 dark:text-teal-400">
             Deep Reading
           </span>
-          <span className="bg-muted text-muted-foreground text-xs font-medium px-3 py-1 rounded-full">
+          <span className="rounded-full bg-muted px-4 py-1.5 text-xs font-medium text-muted-foreground">
             Analytical Mode
           </span>
         </div>
 
-        <div className="w-full max-w-5xl grid grid-cols-12 gap-6">
+        <div className="grid w-full grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1.8fr)_minmax(360px,.8fr)]">
           {/* Passage - high contrast indigo-950 deep */}
-          <div className="col-span-12 md:col-span-8">
-            <div className="bg-indigo-950 rounded-2xl shadow-2xl p-10 border-t-4 border-teal-400">
-              <h3 className="text-teal-400 text-xs font-bold uppercase tracking-widest mb-6">
+          <div className="min-w-0">
+            <div className="rounded-2xl border-t-4 border-teal-400 bg-indigo-950 p-5 shadow-2xl sm:p-7">
+              <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-teal-400">
                 {articleData.title}
               </h3>
               <p
-                className="text-indigo-100 text-xl leading-[2.4] font-medium"
+                className="text-base font-medium leading-[2] text-indigo-100 sm:text-lg sm:leading-[2.05]"
                 style={{ fontFamily: "Georgia, serif" }}
               >
                 {articleData.passage}
               </p>
               {renderThaiPassageCard(
-                "mt-6 bg-teal-500/10 border-teal-400/30",
+                "mt-5 bg-teal-500/10 border-teal-400/30",
                 "text-teal-50",
-                "text-teal-400"
+                "text-teal-400",
               )}
             </div>
           </div>
 
           {/* Comprehension Guide */}
-          <div className="col-span-12 md:col-span-4 space-y-4">
-            <div className="bg-muted border-2 border-border rounded-2xl p-5">
+          <div className="min-w-0 space-y-4">
+            <div className="rounded-2xl border-2 border-border bg-muted p-5">
               <h4 className="font-bold text-foreground text-sm mb-3 flex items-center gap-2">
                 <span>Guide</span> Comprehension Guide
               </h4>
@@ -781,25 +928,28 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     );
 
     // Score sentences by vocab coverage and teachability, then keep a compact set.
-    const scoredKeySentences: Array<{ item: any; index: number; score: number }> = sentences
-      .map((item: any, index: number) => {
-        const sentenceText = getSentenceText(item);
-        const matchedVocab = vocabPatterns.filter(({ pattern }) =>
-          pattern.test(sentenceText),
-        );
-        const wordCount = getWordCount(sentenceText);
-        const readableLengthBonus =
-          wordCount >= 8 && wordCount <= 28 ? 1 : wordCount < 5 ? -1 : 0;
+    const scoredKeySentences: Array<{
+      item: any;
+      index: number;
+      score: number;
+    }> = sentences.map((item: any, index: number) => {
+      const sentenceText = getSentenceText(item);
+      const matchedVocab = vocabPatterns.filter(({ pattern }) =>
+        pattern.test(sentenceText),
+      );
+      const wordCount = getWordCount(sentenceText);
+      const readableLengthBonus =
+        wordCount >= 8 && wordCount <= 28 ? 1 : wordCount < 5 ? -1 : 0;
 
-        return {
-          item,
-          index,
-          score:
-            matchedVocab.length * 3 +
-            matchedVocab.length / Math.max(wordCount, 1) +
-            readableLengthBonus,
-        };
-      });
+      return {
+        item,
+        index,
+        score:
+          matchedVocab.length * 3 +
+          matchedVocab.length / Math.max(wordCount, 1) +
+          readableLengthBonus,
+      };
+    });
 
     const keySentences = scoredKeySentences
       .filter(({ score }) => score > 0)
@@ -828,60 +978,63 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     };
 
     return (
-      <div className="flex-1 flex flex-col items-center py-8 px-6 w-full animate-in fade-in duration-500">
-        <div className="flex items-center gap-3 mb-6 w-full max-w-5xl">
-          <span className="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+      <div className="flex-1 flex w-full flex-col items-center px-2 py-4 sm:px-3 animate-in fade-in duration-500">
+        <div className="mb-4 flex w-full flex-wrap items-center gap-3">
+          <span className="rounded-full bg-green-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
             Phase 6
           </span>
-          <span className="bg-green-500/10 text-green-700 dark:text-green-400 text-xs font-bold px-3 py-1 rounded-full border border-green-500/20">
+          <span className="rounded-full border border-green-500/20 bg-green-500/10 px-4 py-1.5 text-xs font-bold text-green-700 dark:text-green-400">
             Key Sentences
           </span>
-          <p className="text-muted-foreground text-xs ml-2">
-            {keySentences.length} {t("lesson.interactive.keySentenceCountSuffix")}
+          <p className="text-xs text-muted-foreground sm:ml-1">
+            {keySentences.length}{" "}
+            {t("lesson.interactive.keySentenceCountSuffix")}
           </p>
         </div>
 
-        <div className="w-full max-w-5xl grid grid-cols-12 gap-6">
+        <div className="grid w-full grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)]">
           {/* Timeline */}
-          <div className="col-span-12 md:col-span-6">
+          <div className="min-w-0">
             <h3 className="text-sm font-bold text-green-800 dark:text-green-300 uppercase tracking-widest mb-4 flex items-center gap-2">
               <span>List</span> Key Sentences Timeline
             </h3>
-            <div className="relative">
+            <div className="relative lg:max-h-[68vh] lg:overflow-y-auto lg:pr-2">
               <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-green-500/30" />
               <div className="space-y-4">
-                {keySentences.map(({ item, index: sentenceIndex }: any, index: number) => {
-                  const sentenceText =
-                    typeof item === "object" ? item.sentences : item;
-                  const thaiText = thaiSentences[sentenceIndex];
-                  const c = sentenceColors[index % sentenceColors.length];
-                  const d = dotColors[index % dotColors.length];
-                  return (
-                    <div
-                      key={index}
-                      className="flex gap-4 items-start animate-in slide-in-from-left duration-500"
-                      style={{ animationDelay: `${index * 80}ms` }}
-                    >
+                {keySentences.map(
+                  ({ item, index: sentenceIndex }: any, index: number) => {
+                    const sentenceText =
+                      typeof item === "object" ? item.sentences : item;
+                    const thaiText = thaiSentences[sentenceIndex];
+                    const c = sentenceColors[index % sentenceColors.length];
+                    const d = dotColors[index % dotColors.length];
+                    return (
                       <div
-                        className={`relative z-10 w-8 h-8 rounded-full ${d} flex items-center justify-center text-white text-xs font-black shrink-0 shadow-md`}
+                        key={index}
+                        className="flex gap-4 items-start animate-in slide-in-from-left duration-500"
+                        style={{ animationDelay: `${index * 80}ms` }}
                       >
-                        {index + 1}
-                      </div>
-                      <div
-                        className={`flex-1 border-l-4 rounded-xl p-4 shadow-sm ${c}`}
-                      >
-                        <p className="text-foreground font-semibold text-base leading-relaxed">
-                          {highlightVocab(String(sentenceText))}
-                        </p>
-                        {thaiText && (
-                          <p className="mt-2 text-emerald-700 dark:text-emerald-300 text-sm font-medium leading-relaxed">
-                            {thaiText}
+                        <div
+                          className={`relative z-10 w-8 h-8 rounded-full ${d} flex items-center justify-center text-white text-xs font-black shrink-0 shadow-md`}
+                        >
+                          {index + 1}
+                        </div>
+                        <div
+                          className={`flex-1 border-l-4 rounded-xl p-4 shadow-sm ${c}`}
+                        >
+                          <p className="text-foreground font-semibold text-base leading-relaxed">
+                            {highlightVocab(String(sentenceText))}
                           </p>
-                        )}
+                          {thaiText && (
+                            <p className="mt-2 text-emerald-700 dark:text-emerald-300 text-sm font-medium leading-relaxed">
+                              {thaiText}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  },
+                )}
                 {keySentences.length === 0 && (
                   <p className="text-muted-foreground text-sm pl-10">
                     {t("lesson.interactive.noKeySentences")}
@@ -892,12 +1045,12 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           </div>
 
           {/* Passage with context */}
-          <div className="col-span-12 md:col-span-6">
+          <div className="min-w-0">
             <h3 className="text-sm font-bold text-green-800 dark:text-green-300 uppercase tracking-widest mb-4 flex items-center gap-2">
               <span>Article</span> Passage Reference
             </h3>
-            <div className="bg-card rounded-2xl shadow-xl border-t-4 border-green-400 p-6">
-              <p className="text-foreground text-base leading-[2.2]">
+            <div className="rounded-2xl border-t-4 border-green-400 bg-card p-5 shadow-xl sm:p-6 lg:max-h-[62vh] lg:overflow-y-auto">
+              <p className="text-base leading-[2] text-foreground sm:text-lg sm:leading-[2.05]">
                 {articleData.passage}
               </p>
               {renderThaiPassageCard("mt-5")}
@@ -930,27 +1083,31 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
     // Assign sentences to paragraphs by matching text content
     let sentIdx = 0;
-    const paragraphGroups: { idx: number; text: string; ts: number }[][] = rawParagraphs.map((para) => {
-      const group: { idx: number; text: string; ts: number }[] = [];
-      while (sentIdx < sentences.length) {
-        const item = sentences[sentIdx];
-        const text: string = typeof item === "object" ? item.sentences : item;
-        const ts: number = typeof item === "object" ? item.timeSeconds ?? 0 : 0;
-        const cleanText = text.replace(/^[""]|[""]$/g, "").trim();
-        if (para.includes(cleanText) || para.includes(text.trim())) {
-          group.push({ idx: sentIdx, text, ts });
-          sentIdx++;
-        } else {
-          break;
+    const paragraphGroups: { idx: number; text: string; ts: number }[][] =
+      rawParagraphs.map((para) => {
+        const group: { idx: number; text: string; ts: number }[] = [];
+        while (sentIdx < sentences.length) {
+          const item = sentences[sentIdx];
+          const text: string = typeof item === "object" ? item.sentences : item;
+          const ts: number =
+            typeof item === "object" ? (item.timeSeconds ?? 0) : 0;
+          const cleanText = text.replace(/^[""]|[""]$/g, "").trim();
+          if (para.includes(cleanText) || para.includes(text.trim())) {
+            group.push({ idx: sentIdx, text, ts });
+            sentIdx++;
+          } else {
+            break;
+          }
         }
-      }
-      return group;
-    });
+        return group;
+      });
 
     const activeSentence = activeIdx >= 0 ? sentences[activeIdx] : null;
     const activeThText = activeIdx >= 0 ? thaiSentences[activeIdx] : null;
     const activeEnText = activeSentence
-      ? typeof activeSentence === "object" ? activeSentence.sentences : activeSentence
+      ? typeof activeSentence === "object"
+        ? activeSentence.sentences
+        : activeSentence
       : null;
 
     return (
@@ -961,16 +1118,20 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             ref={audioRef}
             src={audioUrl}
             onTimeUpdate={handleTimeUpdate}
-            onSeeked={() => { isSeekingRef.current = false; }}
-            onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
+            onSeeked={() => {
+              isSeekingRef.current = false;
+            }}
+            onLoadedMetadata={() =>
+              setDuration(audioRef.current?.duration || 0)
+            }
             onEnded={() => setIsPlaying(false)}
           />
         )}
 
         {/* Scrollable article area */}
-        <div className="flex-1 overflow-y-auto px-6 py-8 pb-48">
+        <div className="flex-1 overflow-y-auto px-2 py-5 pb-40 sm:px-3">
           {/* Header */}
-          <div className="max-w-3xl mx-auto mb-8">
+          <div className="mx-auto mb-5 w-full max-w-[1500px]">
             <div className="flex items-center gap-3 mb-4">
               <span className="bg-orange-500 text-white text-sm font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow">
                 {t("lesson.interactive.step3")}
@@ -979,50 +1140,59 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 {t("lesson.interactive.period1")}
               </span>
             </div>
-            <h2 className="text-3xl font-black text-foreground mb-1">{articleData.title}</h2>
+            <h2 className="text-3xl font-black text-foreground mb-1">
+              {articleData.title}
+            </h2>
             {articleData.genre && (
-              <p className="text-muted-foreground text-sm">{articleData.genre} / CEFR {displayCefr}</p>
+              <p className="text-muted-foreground text-sm">
+                {articleData.genre} / CEFR {displayCefr}
+              </p>
             )}
           </div>
 
           {/* Article body - flowing paragraphs with inline highlights */}
           <div
-            className="max-w-3xl mx-auto bg-card rounded-3xl shadow-xl border border-border p-10"
+            className="mx-auto w-full max-w-[1500px] rounded-3xl border border-border bg-card p-6 shadow-xl sm:p-8"
             style={{ fontFamily: "Georgia, serif" }}
           >
             {paragraphGroups.map((group, pIdx) => (
-              <p key={pIdx} className="text-xl leading-[2.2] mb-6 last:mb-0">
-                {group.length > 0
-                  ? group.map(({ idx, text, ts }) => {
-                      const isActive = idx === activeIdx;
-                      const flagCount = flagCounts?.[idx] || 0;
-                      const isFlagged = flagCount > 0;
-                      return (
-                        <span
-                          id={`read-sentence-${idx}`}
-                          key={idx}
-                          onClick={() => seekToSentence(idx)}
-                          className={`cursor-pointer rounded-lg px-0.5 transition-all duration-200 ${
-                            isActive
-                              ? "bg-orange-400 text-white font-bold px-2 py-0.5 rounded-xl shadow-md"
-                              : isFlagged
+              <p
+                key={pIdx}
+                className="mb-5 text-base leading-[2] last:mb-0 sm:text-lg sm:leading-[2.05]"
+              >
+                {group.length > 0 ? (
+                  group.map(({ idx, text, ts }) => {
+                    const isActive = idx === activeIdx;
+                    const flagCount = flagCounts?.[idx] || 0;
+                    const isFlagged = flagCount > 0;
+                    return (
+                      <span
+                        id={`read-sentence-${idx}`}
+                        key={idx}
+                        onClick={() => seekToSentence(idx)}
+                        className={`cursor-pointer rounded-lg px-0.5 transition-all duration-200 ${
+                          isActive
+                            ? "bg-orange-400 text-white font-bold px-2 py-0.5 rounded-xl shadow-md"
+                            : isFlagged
                               ? "bg-rose-500/15 text-rose-700 dark:text-rose-300 font-semibold rounded-lg px-1 ring-1 ring-rose-400/50"
                               : "text-foreground hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400"
-                          }`}
-                        >
-                          {text}
-                          {isFlagged && (
-                            <sup className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 align-super not-italic">
-                              🚩{flagCount}
-                            </sup>
-                          )}
-                          {" "}
-                        </span>
-                      );
-                    })
-                  : // Fallback for unmatched paragraph text
-                    <span className="text-foreground">{rawParagraphs[pIdx]} </span>
-                }
+                        }`}
+                      >
+                        {text}
+                        {isFlagged && (
+                          <sup className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 align-super not-italic">
+                            🚩{flagCount}
+                          </sup>
+                        )}{" "}
+                      </span>
+                    );
+                  })
+                ) : (
+                  // Fallback for unmatched paragraph text
+                  <span className="text-foreground">
+                    {rawParagraphs[pIdx]}{" "}
+                  </span>
+                )}
               </p>
             ))}
           </div>
@@ -1037,16 +1207,22 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 className="bg-card border border-orange-200 rounded-2xl shadow-xl px-4 py-3 max-w-xs animate-in slide-in-from-bottom duration-200"
                 style={{ fontFamily: "Georgia, serif" }}
               >
-                <p className="text-foreground font-semibold text-sm leading-snug">{activeEnText}</p>
+                <p className="text-foreground font-semibold text-sm leading-snug">
+                  {activeEnText}
+                </p>
                 {activeThText ? (
-                  <p className="text-orange-600 text-xs mt-1 leading-snug">{activeThText}</p>
+                  <p className="text-orange-600 text-xs mt-1 leading-snug">
+                    {activeThText}
+                  </p>
                 ) : (
-                  <p className="text-slate-300 text-xs mt-1 italic">{t("lesson.interactive.translateSentencePrompt")}</p>
+                  <p className="text-slate-300 text-xs mt-1 italic">
+                    {t("lesson.interactive.translateSentencePrompt")}
+                  </p>
                 )}
               </div>
             )}
 
-              {/* Player pill */}
+            {/* Player pill */}
             <div className="bg-card border-2 border-orange-500/40 rounded-2xl shadow-2xl px-5 py-4 flex items-center gap-4 w-[500px]">
               {/* Skip prev */}
               <button
@@ -1070,7 +1246,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               {/* Skip next */}
               <button
                 onClick={() => {
-                  if (activeIdx < sentences.length - 1) seekToSentence(activeIdx + 1);
+                  if (activeIdx < sentences.length - 1)
+                    seekToSentence(activeIdx + 1);
                 }}
                 disabled={activeIdx >= sentences.length - 1}
                 className="w-11 h-11 rounded-full bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center hover:bg-orange-500/30 transition-all disabled:opacity-30 text-xl shrink-0"
@@ -1100,7 +1277,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>{fmtTime(currentTime)}</span>
                   <span className="text-orange-500 font-bold truncate mx-1">
-                    {activeIdx >= 0 ? `${t("lesson.interactive.sentencePrefix")} ${activeIdx + 1} / ${sentences.length}` : "-"}
+                    {activeIdx >= 0
+                      ? `${t("lesson.interactive.sentencePrefix")} ${activeIdx + 1} / ${sentences.length}`
+                      : "-"}
                   </span>
                   <span>{fmtTime(duration)}</span>
                 </div>
@@ -1111,8 +1290,6 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       </div>
     );
   }
-
-
 
   /* ─── Default Fallback ───────────────────────────────────── */
   return (
