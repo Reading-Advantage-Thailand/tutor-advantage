@@ -65,6 +65,16 @@ function clearSession(response: NextResponse) {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // A production build leaves the generated worker in public/. Do not let a
+  // stale worker reinstall itself while the app is running in development.
+  if (process.env.NODE_ENV === "development" && pathname === "/sw.js") {
+    return new NextResponse(null, {
+      status: 410,
+      headers: { "Cache-Control": "no-store" },
+    });
+  }
+
   const sessionToken = request.cookies.get("tutor_session")?.value;
   const isAuthPage = pathname === "/";
   const isProtectedRoute = PROTECTED_ROUTES.some((r) => pathname.startsWith(r));
@@ -94,5 +104,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/dashboard/:path*", "/lesson/:path*"],
+  matcher: ["/", "/dashboard/:path*", "/lesson/:path*", "/sw.js"],
 };

@@ -8,8 +8,25 @@ const withPWA = require("@ducanh2912/next-pwa").default({
   cacheOnFrontEndNav: true,
   aggressiveFrontEndNavCaching: true,
   reloadOnOnline: true,
+  // PDF templates are server-side generation inputs, not app-shell assets.
+  // Precaching them makes every visitor download the blank 50 Tawi form,
+  // including unauthenticated users on the login page.
+  publicExcludes: ["!documents/**/*"],
+  extendDefaultRuntimeCaching: true,
   workboxOptions: {
     disableDevLogs: true,
+    // Authenticated API responses (including generated tax documents) must
+    // never be persisted in the shared service-worker cache.
+    runtimeCaching: [
+      {
+        urlPattern: ({ sameOrigin, url }) =>
+          sameOrigin && url.pathname.startsWith("/api/"),
+        handler: "NetworkOnly",
+        options: {
+          cacheName: "apis",
+        },
+      },
+    ],
   },
 });
 
