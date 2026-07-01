@@ -11,6 +11,56 @@ import { LineNotificationService } from "../services/LineNotificationService";
 import { checkAndUnlockBadges } from "../services/BadgeService";
 import { prisma } from "@tutor-advantage/database";
 
+type SocketActor = {
+  userId: string;
+  role: string;
+};
+
+type LessonSessionAuthorization = {
+  tutorId?: string;
+  tutorSocketId?: string;
+  participants: Map<string, unknown>;
+};
+
+export function verifySocketActor(token: string, secret: string): SocketActor {
+  const decoded = jwt.verify(token, secret);
+  if (
+    typeof decoded === "string" ||
+    typeof decoded.userId !== "string" ||
+    typeof decoded.role !== "string"
+  ) {
+    throw new Error("Invalid token claims");
+  }
+
+  return {
+    userId: decoded.userId,
+    role: decoded.role,
+  };
+}
+
+export function isTutorSessionOwner(
+  actor: SocketActor | undefined,
+  socketId: string,
+  session: LessonSessionAuthorization | undefined,
+) {
+  return Boolean(
+    actor?.role === "TUTOR" &&
+      session &&
+      session.tutorId === actor.userId &&
+      session.tutorSocketId === socketId,
+  );
+}
+
+export function isStudentSessionParticipant(
+  actor: SocketActor | undefined,
+  session: LessonSessionAuthorization | undefined,
+) {
+  return Boolean(
+    actor?.role === "STUDENT" &&
+      session?.participants.has(actor.userId),
+  );
+}
+
 function seededShuffle<T>(array: T[], seedInput: string): T[] {
   const result = [...array];
   if (!seedInput) return result;
@@ -39,7 +89,7 @@ export const setupLessonSocket = (io: Server) => {
     
     try {
       const secret = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
-      jwt.verify(token, secret);
+      socket.data.actor = verifySocketActor(String(token), secret);
       next();
     } catch (err) {
       return next(new Error("Authentication error: Invalid or expired token"));
@@ -47,13 +97,44 @@ export const setupLessonSocket = (io: Server) => {
   });
 
   io.on("connection", (socket: Socket) => {
+    const actor = socket.data.actor as SocketActor;
+    const rejectForbidden = (action: string) => {
+      logger.warn(
+        `[Socket] Forbidden ${action} by ${actor.role} ${actor.userId} (${socket.id})`,
+      );
+      socket.emit("error", { message: "You are not allowed to perform this action." });
+    };
+
     logger.info(`Socket connected: ${socket.id}`);
 
     // Tutor creates a new session
-    socket.on("create_session", async ({ tutorId, articleId, classId, classBookCycleId, bookId, demo }) => {
+    socket.on("create_session", async ({ articleId, classId, classBookCycleId, bookId, demo }) => {
+      if (actor.role !== "TUTOR") {
+        rejectForbidden("create_session");
+        return;
+      }
+
+      const tutorId = actor.userId;
       const isDemo = demo === true;
       logger.info(`[Socket] Tutor ${tutorId} creating ${isDemo ? "DEMO " : ""}session for class: ${classId}`);
       try {
+        const ownedClass = classId
+          ? await prisma.class.findFirst({
+              where: { classId, tutorUserId: tutorId },
+              select: {
+                classId: true,
+                isDemo: true,
+                expiresAt: true,
+                bookId: true,
+              },
+            })
+          : null;
+
+        if (classId && !ownedClass) {
+          rejectForbidden("create_session for unowned class");
+          return;
+        }
+
         // Demo mode: zero-cost preview. Fixed bundled content, no class/cycle,
         // no DB persistence, no AI scoring (solo tutor, no student answers).
         if (isDemo) {
@@ -88,11 +169,8 @@ export const setupLessonSocket = (io: Server) => {
 
         // Demo classes are locked to one fixed lesson: the first article of the
         // class book. They also stop accepting sessions once expired.
-        if (classId) {
-          const cls = await prisma.class.findUnique({
-            where: { classId },
-            select: { isDemo: true, expiresAt: true, bookId: true },
-          });
+        if (ownedClass) {
+          const cls = ownedClass;
           if (cls?.isDemo) {
             if (cls.expiresAt && cls.expiresAt.getTime() < Date.now()) {
               socket.emit("error", { message: "ห้องเรียน Demo นี้หมดอายุแล้ว ไม่สามารถเริ่มสอนได้" });
@@ -167,9 +245,15 @@ export const setupLessonSocket = (io: Server) => {
     });
 
     // Student joins a session using classId.
-    socket.on("join_class", async ({ classId, studentId, name, pictureUrl }) => {
+    socket.on("join_class", async ({ classId, name, pictureUrl }) => {
+      if (actor.role !== "STUDENT") {
+        rejectForbidden("join_class");
+        return;
+      }
+
+      const studentId = actor.userId;
       logger.info(`[Socket] Student ${name} (${studentId}) attempting to join class: ${classId}`);
-      const resolvedStudentId = await dbWriter.resolveUserId(studentId);
+      const resolvedStudentId = studentId;
 
       if (!resolvedStudentId) {
         logger.warn(`[Socket] Join denied: could not resolve student ${studentId}`);
@@ -277,7 +361,14 @@ export const setupLessonSocket = (io: Server) => {
     });
 
     // Toggle Ready status
-    socket.on("toggle_ready", ({ sessionId, studentId }) => {
+    socket.on("toggle_ready", ({ sessionId }) => {
+      const activeSession = lessonSessionService.getSession(sessionId);
+      if (!isStudentSessionParticipant(actor, activeSession)) {
+        rejectForbidden("toggle_ready");
+        return;
+      }
+
+      const studentId = actor.userId;
       logger.info(`[Socket] Student ${studentId} toggled ready for session ${sessionId}`);
       const session = lessonSessionService.toggleReady(sessionId, studentId);
       if (session) {
@@ -289,6 +380,12 @@ export const setupLessonSocket = (io: Server) => {
 
     // Tutor changes phase
     socket.on("change_phase", ({ sessionId, phase }) => {
+      const authorizedSession = lessonSessionService.getSession(sessionId);
+      if (!isTutorSessionOwner(actor, socket.id, authorizedSession)) {
+        rejectForbidden("change_phase");
+        return;
+      }
+
       const session = lessonSessionService.setPhase(sessionId, phase);
       if (session) {
         // --- CRITICAL: DYNAMIC RESTART RECORDING ---
@@ -375,6 +472,12 @@ export const setupLessonSocket = (io: Server) => {
     });
 
     socket.on("sync_active_sentence", ({ sessionId, index }) => {
+      const activeSession = lessonSessionService.getSession(sessionId);
+      if (!isTutorSessionOwner(actor, socket.id, activeSession)) {
+        rejectForbidden("sync_active_sentence");
+        return;
+      }
+
       const session = lessonSessionService.syncActiveSentence(sessionId, index);
       if (session) {
         io.to(sessionId).emit("active_sentence_synced", {
@@ -384,7 +487,14 @@ export const setupLessonSocket = (io: Server) => {
     });
 
     // Student submits answer
-    socket.on("submit_answer", async ({ sessionId, studentId, answer, question, expectedAnswer }) => {
+    socket.on("submit_answer", async ({ sessionId, answer, question, expectedAnswer }) => {
+      const authorizedSession = lessonSessionService.getSession(sessionId);
+      if (!isStudentSessionParticipant(actor, authorizedSession)) {
+        rejectForbidden("submit_answer");
+        return;
+      }
+
+      const studentId = actor.userId;
       // AI-evaluated phases: 8=Guided Response (short answer), 12=Guided Writing
       let evaluatedAnswer = answer;
       const session = lessonSessionService.getSession(sessionId);
@@ -669,7 +779,14 @@ export const setupLessonSocket = (io: Server) => {
     });
 
     // Student toggles a sentence flag during Step 3 (Read the Article) to ask the tutor about pronunciation
-    socket.on("flag_sentence", ({ sessionId, studentId, sentenceIndex }) => {
+    socket.on("flag_sentence", ({ sessionId, sentenceIndex }) => {
+      const activeSession = lessonSessionService.getSession(sessionId);
+      if (!isStudentSessionParticipant(actor, activeSession)) {
+        rejectForbidden("flag_sentence");
+        return;
+      }
+
+      const studentId = actor.userId;
       const result = lessonSessionService.toggleSentenceFlag(sessionId, studentId, sentenceIndex);
       if (result) {
         const flagCounts = lessonSessionService.getFlagCounts(result.session);
@@ -681,6 +798,11 @@ export const setupLessonSocket = (io: Server) => {
     // Tutor nudges a student to get ready
     socket.on("nudge_student", ({ sessionId, studentId }) => {
       const session = lessonSessionService.getSession(sessionId);
+      if (!isTutorSessionOwner(actor, socket.id, session)) {
+        rejectForbidden("nudge_student");
+        return;
+      }
+
       if (session) {
         const participant = session.participants.get(studentId);
         if (participant) {
@@ -693,6 +815,11 @@ export const setupLessonSocket = (io: Server) => {
     // Tutor kicks a student
     socket.on("kick_student", ({ sessionId, studentId }) => {
       const session = lessonSessionService.getSession(sessionId);
+      if (!isTutorSessionOwner(actor, socket.id, session)) {
+        rejectForbidden("kick_student");
+        return;
+      }
+
       if (session) {
         const participant = session.participants.get(studentId);
         if (participant) {
@@ -709,6 +836,11 @@ export const setupLessonSocket = (io: Server) => {
     // Tutor deletes session
     socket.on("delete_session", ({ sessionId }) => {
       const session = lessonSessionService.getSession(sessionId);
+      if (!isTutorSessionOwner(actor, socket.id, session)) {
+        rejectForbidden("delete_session");
+        return;
+      }
+
       if (session) {
         io.to(sessionId).emit("session_deleted", { message: "เซสชันถูกยกเลิกโดยคุณครู" });
         lessonSessionService.deleteSession(sessionId);
