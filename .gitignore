@@ -9,6 +9,7 @@ cloud-sql-proxy
 
 # Environment variables
 .env
+.env.integration
 
 # Services account keys
 service-account.json

@@ -10,6 +10,7 @@
   "scripts": {
     "build": "npm run build -w student-liff && npm run build -w tutor-pwa && npm run build -w admin-console",
     "build:services": "concurrently \"npm run build -w identity-service\" \"npm run build -w learning-service\" \"npm run build -w finance-mlm-service\"",
+    "lint": "npm run lint -w student-liff && npm run lint -w tutor-pwa && npm run lint -w admin-console",
     "dev:services": "concurrently \"npm run dev -w identity-service\" \"npm run dev -w learning-service\" \"npm run dev -w finance-mlm-service\"",
     "dev": "concurrently -n \"services,student-liff,ngrok,tutor-pwa,admin-console\" -c \"magenta,green,blue,cyan,yellow,red\" \"npm run dev:services\" \"npm run dev -w student-liff\" \"ngrok http 3004\" \"npm run dev -w tutor-pwa\" \"npm run dev -w admin-console\"",
     "test": "vitest run",

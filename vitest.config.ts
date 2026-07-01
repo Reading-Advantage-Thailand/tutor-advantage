@@ -16,5 +16,13 @@ export default defineConfig({
     ],
     restoreMocks: true,
     clearMocks: true,
+    coverage: {
+      thresholds: {
+        statements: 55,
+        branches: 45,
+        functions: 50,
+        lines: 55,
+      },
+    },
   },
 });

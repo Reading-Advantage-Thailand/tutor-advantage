@@ -17,13 +17,13 @@ export default defineConfig({
     globals: true,
     environment: "node",
     include: ["tests/integration/**/*.test.ts"],
+    globalSetup: ["tests/integration/globalSetup.ts"],
     // Long timeout because each test makes real DB round-trips
     testTimeout: 60_000,
     hookTimeout: 30_000,
     // Integration tests must not share mock state with unit tests
     restoreMocks: false,
     clearMocks: false,
-    // Load the integration env file if present; fall back to .env
     env: {
       NODE_ENV: "test",
     },

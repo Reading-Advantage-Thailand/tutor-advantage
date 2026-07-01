@@ -47,3 +47,25 @@ export function authMiddleware(
     });
   }
 }
+
+export function requireRoles(...allowedRoles: string[]) {
+  const allowed = new Set(allowedRoles);
+
+  return function roleMiddleware(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ) {
+    if (!req.user || !allowed.has(req.user.role)) {
+      return res.status(403).json({
+        error: {
+          code: "FORBIDDEN",
+          message: "You do not have permission to access this resource",
+          requestId: req.id,
+        },
+      });
+    }
+
+    next();
+  };
+}

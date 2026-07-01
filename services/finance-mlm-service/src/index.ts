@@ -15,7 +15,7 @@ import {
 dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 logger.info(`[Finance] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
 
-import { authMiddleware } from "./middlewares/authMiddleware";
+import { authMiddleware, requireRoles } from "./middlewares/authMiddleware";
 import {
   createPaymentIntent,
   confirmMockPayment,
@@ -99,6 +99,13 @@ if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
 
 const app = express();
 const port = process.env.PORT || 3003;
+const adminOnly = requireRoles("ADMIN");
+const financeStaffOnly = requireRoles("ADMIN", "FINANCE_CHECKER");
+const adjustmentStaffOnly = requireRoles(
+  "ADMIN",
+  "FINANCE_MAKER",
+  "FINANCE_CHECKER",
+);
 
 const ALLOWED_ORIGINS = (
   process.env.ALLOWED_ORIGINS || "http://localhost:3005"
@@ -148,12 +155,12 @@ app.get("/version", (_req: Request, res: Response) => {
   res.status(200).json({ version: "1.0.0", service: "finance-mlm-service" });
 });
 
-app.get("/v1/admin/overview", authMiddleware, getAdminOverview);
+app.get("/v1/admin/overview", authMiddleware, financeStaffOnly, getAdminOverview);
 
 // ── Coupon Routes (admin) ──────────────────────────────────────────────────
-app.post("/v1/coupons", authMiddleware, createCoupon);
-app.get("/v1/coupons", authMiddleware, getCoupons);
-app.post("/v1/coupons/:couponId/void", authMiddleware, voidCoupon);
+app.post("/v1/coupons", authMiddleware, adminOnly, createCoupon);
+app.get("/v1/coupons", authMiddleware, adminOnly, getCoupons);
+app.post("/v1/coupons/:couponId/void", authMiddleware, adminOnly, voidCoupon);
 
 // ── Payment Routes ─────────────────────────────────────────────────────────
 app.post("/v1/payments/intent", authMiddleware, createPaymentIntent);
@@ -180,12 +187,13 @@ app.post("/v1/internal/settlement/auto-run", autoRunSettlement);
 
 // ── Settlement Routes ──────────────────────────────────────────────────────
 // NOTE: /summary ต้องอยู่ก่อน /:snapshotId เพื่อไม่ให้ express match "summary" เป็น param
-app.get("/v1/settlements/summary", authMiddleware, getSettlementSummary);
-app.get("/v1/settlements", authMiddleware, getSettlements);
+app.get("/v1/settlements/summary", authMiddleware, financeStaffOnly, getSettlementSummary);
+app.get("/v1/settlements", authMiddleware, financeStaffOnly, getSettlements);
 
 app.post(
   "/v1/settlements/preview",
   authMiddleware,
+  financeStaffOnly,
   auditTrailMiddleware("PREVIEW_SETTLEMENT"),
   previewSettlement,
 );
@@ -193,6 +201,7 @@ app.post(
 app.post(
   "/v1/settlements/:snapshotId/refresh",
   authMiddleware,
+  financeStaffOnly,
   auditTrailMiddleware("SETTLEMENT_REFRESH"),
   refreshSettlement,
 );
@@ -200,6 +209,7 @@ app.post(
 app.post(
   "/v1/settlements/:snapshotId/submit",
   authMiddleware,
+  financeStaffOnly,
   auditTrailMiddleware("SUBMIT_SETTLEMENT"),
   submitSettlement,
 );
@@ -207,6 +217,7 @@ app.post(
 app.post(
   "/v1/settlements/:snapshotId/approve",
   authMiddleware,
+  financeStaffOnly,
   auditTrailMiddleware("APPROVE_SETTLEMENT"),
   approveSettlement,
 );
@@ -214,18 +225,21 @@ app.post(
 app.post(
   "/v1/settlements/:snapshotId/reject",
   authMiddleware,
+  financeStaffOnly,
   rejectSettlement,
 );
 
 app.get(
   "/v1/settlements/:snapshotId/lines",
   authMiddleware,
+  financeStaffOnly,
   getSettlementLines,
 );
 
 app.post(
   "/v1/settlements/:snapshotId/lines/:payoutLineId/transfer",
   authMiddleware,
+  financeStaffOnly,
   auditTrailMiddleware("RETRY_PAYOUT_TRANSFER"),
   retryPayoutTransfer,
 );
@@ -233,63 +247,70 @@ app.post(
 app.post(
   "/v1/settlements/:snapshotId/lines/:payoutLineId/sync-transfer",
   authMiddleware,
+  financeStaffOnly,
   syncPayoutTransfer,
 );
 
 app.get(
   "/v1/settlements/:snapshotId/export",
   authMiddleware,
+  financeStaffOnly,
   exportSettlementCsv,
 );
 
 // ── Adjustment Routes ──────────────────────────────────────────────────────
-app.get("/v1/adjustments", authMiddleware, getAdjustments);
-app.post("/v1/adjustments", authMiddleware, createAdjustment);
+app.get("/v1/adjustments", authMiddleware, adjustmentStaffOnly, getAdjustments);
+app.post("/v1/adjustments", authMiddleware, adjustmentStaffOnly, createAdjustment);
 app.post(
   "/v1/adjustments/:adjustmentId/approve",
   authMiddleware,
+  adjustmentStaffOnly,
   approveAdjustment,
 );
 app.post(
   "/v1/adjustments/:adjustmentId/reject",
   authMiddleware,
+  adjustmentStaffOnly,
   rejectAdjustment,
 );
 
-app.get("/v1/audit-logs", authMiddleware, getAuditLogs);
+app.get("/v1/audit-logs", authMiddleware, financeStaffOnly, getAuditLogs);
 
 // ── Operations Routes ──────────────────────────────────────────────────────
-app.get("/v1/operations/exceptions", authMiddleware, getExceptions);
+app.get("/v1/operations/exceptions", authMiddleware, financeStaffOnly, getExceptions);
 app.post(
   "/v1/operations/exceptions/:id/:action",
   authMiddleware,
+  financeStaffOnly,
   resolveException,
 );
 
 app.get(
   "/v1/operations/legacy-links/unresolved",
   authMiddleware,
+  financeStaffOnly,
   getUnresolvedLinks,
 );
-app.get("/v1/operations/legacy-links/mappings", authMiddleware, getMappings);
-app.post("/v1/operations/legacy-links/mappings", authMiddleware, createMapping);
+app.get("/v1/operations/legacy-links/mappings", authMiddleware, financeStaffOnly, getMappings);
+app.post("/v1/operations/legacy-links/mappings", authMiddleware, financeStaffOnly, createMapping);
 app.delete(
   "/v1/operations/legacy-links/mappings/:id",
   authMiddleware,
+  financeStaffOnly,
   deleteMapping,
 );
 
 // ── Users Routes ───────────────────────────────────────────────────────────
-app.get("/v1/users", authMiddleware, getUsers);
-app.get("/v1/users/:id", authMiddleware, getUserDetails);
-app.post("/v1/users/:id/verify", authMiddleware, verifyUser);
-app.post("/v1/users/:id/suspend", authMiddleware, suspendUser);
-app.post("/v1/users/:id/anonymize", authMiddleware, anonymizeUser);
-app.patch("/v1/users/:id/omise-recipient", authMiddleware, updateOmiseRecipient);
+app.get("/v1/users", authMiddleware, financeStaffOnly, getUsers);
+app.get("/v1/users/:id", authMiddleware, financeStaffOnly, getUserDetails);
+app.post("/v1/users/:id/verify", authMiddleware, financeStaffOnly, verifyUser);
+app.post("/v1/users/:id/suspend", authMiddleware, adminOnly, suspendUser);
+app.post("/v1/users/:id/anonymize", authMiddleware, adminOnly, anonymizeUser);
+app.patch("/v1/users/:id/omise-recipient", authMiddleware, adminOnly, updateOmiseRecipient);
 
 // ── Fraud Routes ───────────────────────────────────────────────────────────
-app.get("/v1/fraud-flags", authMiddleware, getFraudFlags);
-app.post("/v1/fraud-flags/:id/action", authMiddleware, triggerFraudAction);
+app.get("/v1/fraud-flags", authMiddleware, financeStaffOnly, getFraudFlags);
+app.post("/v1/fraud-flags/:id/action", authMiddleware, financeStaffOnly, triggerFraudAction);
 
 // ── Dev-only Routes (blocked in production) ────────────────────────────────
 const devOnly = (_req: Request, res: Response, next: () => void) => {

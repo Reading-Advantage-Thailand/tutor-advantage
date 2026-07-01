@@ -103,7 +103,7 @@ export default function ClassesPage() {
           toast.error(t("classes.qrInvalid"));
         }
       }
-    } catch (err) {
+    } catch {
       toast.error(t("classes.qrScanError"));
     }
   };

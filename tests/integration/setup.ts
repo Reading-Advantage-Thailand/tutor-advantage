@@ -58,6 +58,10 @@ export function createIdTracker() {
    * Failures in individual deletes are logged but do not abort the rest.
    */
   async function cleanup() {
+    if (registry.size === 0) {
+      return;
+    }
+
     const del = async (fn: () => Promise<unknown>) => {
       try {
         await fn();

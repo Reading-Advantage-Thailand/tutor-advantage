@@ -23,7 +23,22 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      "public/sw.js",
+      "public/workbox-*.js",
+      "public/swe-worker-*.js",
     ],
+  },
+  {
+    files: [
+      "inspect_article.js",
+      "inspect_article_keys.js",
+      "inspect_article_type.js",
+      "inspect_tables.js",
+      "replace_theme.js",
+    ],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
   },
   {
     rules: {
