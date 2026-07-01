@@ -1,5 +1,10 @@
 import { prisma } from "@tutor-advantage/database";
 import jwt from "jsonwebtoken";
+import {
+  CONSENT_STATUS_GRANTED,
+  GUARDIAN_CONSENT_TYPE,
+  requiresGuardianConsent,
+} from "@tutor-advantage/shared-config";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
 
@@ -10,6 +15,7 @@ export interface AuthResult {
     id: string;
     name: string;
     role: string;
+    dateOfBirth: string | null;
     requiresGuardian: boolean;
   };
 }
@@ -150,6 +156,17 @@ export async function processOAuthLogin(
     { expiresIn: "7d" },
   );
 
+  const existingConsent =
+    user.role === "STUDENT" && user.dateOfBirth
+      ? await prisma.userConsent.findFirst({
+          where: {
+            userId: user.userId,
+            consentType: GUARDIAN_CONSENT_TYPE,
+            status: CONSENT_STATUS_GRANTED,
+          },
+        })
+      : null;
+
   return {
     sessionToken,
     roleUpgraded,
@@ -157,7 +174,12 @@ export async function processOAuthLogin(
       id: user.userId,
       name: user.displayName || "",
       role: user.role,
-      requiresGuardian: false,
+      dateOfBirth: user.dateOfBirth?.toISOString().slice(0, 10) ?? null,
+      requiresGuardian: requiresGuardianConsent(
+        user.role,
+        user.dateOfBirth,
+        Boolean(existingConsent),
+      ),
     },
   };
 }

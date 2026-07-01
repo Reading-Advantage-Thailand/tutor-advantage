@@ -1,7 +1,12 @@
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
-import { logger } from "@tutor-advantage/shared-config";
+import {
+  CONSENT_STATUS_GRANTED,
+  GUARDIAN_CONSENT_TYPE,
+  logger,
+  requiresGuardianConsent,
+} from "@tutor-advantage/shared-config";
 
 export async function getSession(req: AuthenticatedRequest, res: Response) {
   try {
@@ -31,38 +36,27 @@ export async function getSession(req: AuthenticatedRequest, res: Response) {
       });
     }
 
-    // Determine if guardian consent is required
-    // Default rule: Students under 15 require consent. Tutors and Admins do not.
-    let requiresGuardian = false;
-
-    if (user.role === "STUDENT") {
-      if (!user.dateOfBirth) {
-        // If we don't know the DOB yet, enforce guardian just to be safe or prompt for DOB
-        requiresGuardian = true;
-      } else {
-        const ageDifMs = Date.now() - user.dateOfBirth.getTime();
-        const ageDate = new Date(ageDifMs);
-        const age = Math.abs(ageDate.getUTCFullYear() - 1970);
-
-        if (age < 15) {
-          // Check if consent has already been given and not revoked
-          const existingConsent = await prisma.userConsent.findFirst({
+    const existingConsent =
+      user.role === "STUDENT" && user.dateOfBirth
+        ? await prisma.userConsent.findFirst({
             where: {
               userId: user.userId,
-              consentType: "GUARDIAN_CONTACT_PAYMENT",
-              status: "granted",
+              consentType: GUARDIAN_CONSENT_TYPE,
+              status: CONSENT_STATUS_GRANTED,
             },
-          });
-
-          requiresGuardian = !existingConsent;
-        }
-      }
-    }
+          })
+        : null;
+    const requiresGuardian = requiresGuardianConsent(
+      user.role,
+      user.dateOfBirth,
+      Boolean(existingConsent),
+    );
 
     return res.status(200).json({
       id: user.userId,
       name: user.displayName || "",
       role: user.role,
+      dateOfBirth: user.dateOfBirth?.toISOString().slice(0, 10) ?? null,
       requiresGuardian,
     });
   } catch (error) {

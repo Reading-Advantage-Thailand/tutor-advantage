@@ -102,6 +102,12 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {},
 }
 
 export const studentApi = {
+  getCurrentUser: () => fetchWithAuth('/users/me', {}, IDENTITY_API_BASE),
+  updateProfile: (dateOfBirth: string) => fetchWithAuth('/users/me/profile', {
+    method: 'PATCH',
+    body: JSON.stringify({ dateOfBirth }),
+  }, IDENTITY_API_BASE),
+
   // Learning
   getDashboard: (params?: { historyFrom?: string; historyTo?: string }) => {
     const qp = new URLSearchParams();

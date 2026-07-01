@@ -2,7 +2,12 @@ import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { deleteFromGCS } from "../lib/storage";
-import { logger } from "@tutor-advantage/shared-config";
+import {
+  CONSENT_STATUS_GRANTED,
+  GUARDIAN_CONSENT_TYPE,
+  logger,
+  requiresGuardianConsent,
+} from "@tutor-advantage/shared-config";
 
 export async function getCurrentUser(req: AuthenticatedRequest, res: Response) {
   try {
@@ -21,6 +26,7 @@ export async function getCurrentUser(req: AuthenticatedRequest, res: Response) {
         email: true,
         phoneNumber: true,
         profilePictureUrl: true,
+        dateOfBirth: true,
         role: true,
         isActive: true,
         settings: true,
@@ -43,7 +49,29 @@ export async function getCurrentUser(req: AuthenticatedRequest, res: Response) {
       });
     }
 
-    return res.status(200).json({ user });
+    const guardianConsent =
+      user.role === "STUDENT" && user.dateOfBirth
+        ? await prisma.userConsent.findFirst({
+            where: {
+              userId: user.userId,
+              consentType: GUARDIAN_CONSENT_TYPE,
+              status: CONSENT_STATUS_GRANTED,
+            },
+            select: { userConsentId: true },
+          })
+        : null;
+
+    return res.status(200).json({
+      user: {
+        ...user,
+        dateOfBirth: user.dateOfBirth?.toISOString().slice(0, 10) ?? null,
+        requiresGuardian: requiresGuardianConsent(
+          user.role,
+          user.dateOfBirth,
+          Boolean(guardianConsent),
+        ),
+      },
+    });
   } catch (error) {
     const err = error as Error;
     logger.error("Get Current User Error:", err);
@@ -55,6 +83,84 @@ export async function getCurrentUser(req: AuthenticatedRequest, res: Response) {
       },
     });
   }
+}
+
+export async function updateCurrentUserProfile(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({
+        error: { code: "UNAUTHORIZED", message: "User not identified" },
+      });
+    }
+
+    const dateOfBirth = parseDateOnly(req.body?.dateOfBirth);
+    if (!dateOfBirth) {
+      return res.status(400).json({
+        error: {
+          code: "INVALID_DATE_OF_BIRTH",
+          message: "dateOfBirth must be a valid YYYY-MM-DD date not in the future",
+          requestId: req.id,
+        },
+      });
+    }
+
+    const user = await prisma.user.update({
+      where: { userId },
+      data: { dateOfBirth },
+      select: { userId: true, role: true, dateOfBirth: true },
+    });
+    const guardianConsent =
+      user.role === "STUDENT"
+        ? await prisma.userConsent.findFirst({
+            where: {
+              userId,
+              consentType: GUARDIAN_CONSENT_TYPE,
+              status: CONSENT_STATUS_GRANTED,
+            },
+            select: { userConsentId: true },
+          })
+        : null;
+
+    return res.status(200).json({
+      user: {
+        id: user.userId,
+        dateOfBirth: user.dateOfBirth?.toISOString().slice(0, 10) ?? null,
+        requiresGuardian: requiresGuardianConsent(
+          user.role,
+          user.dateOfBirth,
+          Boolean(guardianConsent),
+        ),
+      },
+    });
+  } catch (error) {
+    logger.error("Update Current User Profile Error:", error);
+    return res.status(500).json({
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Could not update user profile",
+        requestId: req.id,
+      },
+    });
+  }
+}
+
+export function parseDateOnly(value: unknown): Date | null {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return null;
+  }
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  if (
+    Number.isNaN(parsed.getTime()) ||
+    parsed.toISOString().slice(0, 10) !== value ||
+    parsed.getTime() > Date.now()
+  ) {
+    return null;
+  }
+  return parsed;
 }
 
 export async function submitVerification(req: AuthenticatedRequest, res: Response) {

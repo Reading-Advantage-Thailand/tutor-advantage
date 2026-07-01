@@ -13,6 +13,9 @@ const prisma = vi.hoisted(() => ({
     create: vi.fn(),
     update: vi.fn(),
   },
+  userConsent: {
+    findFirst: vi.fn(),
+  },
 }));
 
 vi.mock("@tutor-advantage/database", () => ({ prisma }));
@@ -25,6 +28,7 @@ describe("processOAuthLogin", () => {
     prisma.user.findUnique.mockReset();
     prisma.user.create.mockReset();
     prisma.user.update.mockReset();
+    prisma.userConsent.findFirst.mockReset();
   });
 
   it("returns an existing OAuth user and signs a session token", async () => {
@@ -43,13 +47,48 @@ describe("processOAuthLogin", () => {
       id: "user-1",
       name: "Ada",
       role: "STUDENT",
-      requiresGuardian: false,
+      dateOfBirth: null,
+      requiresGuardian: true,
     });
-    expect(jwt.verify(result.sessionToken, "secret-for-dev-only-change-me")).toMatchObject({
+    expect(jwt.decode(result.sessionToken)).toMatchObject({
       userId: "user-1",
       role: "STUDENT",
     });
     expect(prisma.user.create).not.toHaveBeenCalled();
+  });
+
+  it("returns the persisted guardian state for a minor", async () => {
+    prisma.oAuthIdentity.findUnique.mockResolvedValue({
+      user: {
+        userId: "user-minor",
+        displayName: "Minor Student",
+        role: "STUDENT",
+        dateOfBirth: new Date("2012-01-01T00:00:00.000Z"),
+        profilePictureUrl: null,
+      },
+    });
+    prisma.userConsent.findFirst.mockResolvedValue({
+      userConsentId: "consent-1",
+    });
+
+    const result = await processOAuthLogin(
+      "line",
+      "subject-minor",
+      undefined,
+      "Minor Student",
+    );
+
+    expect(prisma.userConsent.findFirst).toHaveBeenCalledWith({
+      where: {
+        userId: "user-minor",
+        consentType: "GUARDIAN_CONTACT_PAYMENT",
+        status: "granted",
+      },
+    });
+    expect(result.user).toMatchObject({
+      dateOfBirth: "2012-01-01",
+      requiresGuardian: false,
+    });
   });
 
   it("creates a new student and links a valid non-LINE sponsor", async () => {

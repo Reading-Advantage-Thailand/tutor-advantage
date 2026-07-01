@@ -23,6 +23,8 @@ import {
   formatCardExpiry,
   formatCardNumber,
   getReturnedPaymentStep,
+  isUnder18,
+  isValidDateOfBirth,
   mergeCheckoutDetails,
   shouldLoadPromptPayQr,
   type CheckoutDetails,
@@ -143,16 +145,22 @@ function PaymentFlow() {
   }, [classId, cycleId]);
 
   // Age / Guardian states
-  const [isAdult, setIsAdult] = useState<boolean | null>(null);
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [guardianName, setGuardianName] = useState("");
   const [guardianRelation, setGuardianRelation] = useState("");
   const [consentAlreadyGiven, setConsentAlreadyGiven] = useState(false);
 
-  // Check if guardian consent was already submitted in a previous purchase
+  // Load persisted age and consent state before checkout.
   useEffect(() => {
-    studentApi.checkGuardianConsent()
-      .then((data: { hasConsent: boolean }) => {
-        if (data.hasConsent) setConsentAlreadyGiven(true);
+    Promise.all([
+      studentApi.getCurrentUser(),
+      studentApi.checkGuardianConsent(),
+    ])
+      .then(([profile, consent]) => {
+        if (profile?.user?.dateOfBirth) {
+          setDateOfBirth(profile.user.dateOfBirth);
+        }
+        setConsentAlreadyGiven(Boolean(consent?.hasConsent));
       })
       .catch(() => {
         // Non-critical: if check fails, fall through to age-check as normal
@@ -160,8 +168,8 @@ function PaymentFlow() {
   }, []);
 
   const handleProceed = () => {
-    if (consentAlreadyGiven) {
-      // Skip age-check — consent on file, go straight to payment method
+    const minor = isUnder18(dateOfBirth);
+    if (minor === false || (minor === true && consentAlreadyGiven)) {
       setStep(method === "promptpay" ? "qr" : "card-form");
     } else {
       setStep("age-check");
@@ -169,17 +177,22 @@ function PaymentFlow() {
   };
 
   const handleAgeCheckSubmit = async () => {
-    if (isAdult === null) return;
+    if (!isValidDateOfBirth(dateOfBirth)) {
+      toast.error(t("payment.errors.dateOfBirthRequired"));
+      return;
+    }
 
     setLoading(true);
     try {
-      if (isAdult === false) {
+      const profile = await studentApi.updateProfile(dateOfBirth);
+      if (profile?.user?.requiresGuardian) {
         if (!guardianName.trim() || !guardianRelation.trim()) {
           toast.error(t("payment.errors.guardianRequired"));
           setLoading(false);
           return;
         }
         await studentApi.submitGuardianConsent(guardianName, guardianRelation);
+        setConsentAlreadyGiven(true);
       }
       setStep(method === "promptpay" ? "qr" : "card-form");
     } catch (error) {
@@ -667,69 +680,29 @@ function PaymentFlow() {
                 marginBottom: 16,
               }}
             >
-              {t("payment.ageCheck.adultQuestion")}
+              {t("payment.ageCheck.dateOfBirthLabel")}
             </p>
 
-            <div
+            <input
+              type="date"
+              className="input-field"
+              value={dateOfBirth}
+              max={new Date().toISOString().slice(0, 10)}
+              onChange={(event) => setDateOfBirth(event.target.value)}
+              aria-label={t("payment.ageCheck.dateOfBirthLabel")}
+              style={{ borderRadius: 12 }}
+            />
+            <p
               style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: 12,
+                marginTop: 8,
+                fontSize: "0.75rem",
+                color: "var(--text-secondary)",
               }}
             >
-              <button
-                onClick={() => setIsAdult(true)}
-                style={{
-                  padding: "14px",
-                  borderRadius: "12px",
-                  border:
-                    isAdult === true
-                      ? "2px solid var(--brand-500)"
-                      : "1px solid var(--surface-border)",
-                  background:
-                    isAdult === true
-                      ? "var(--brand-50)"
-                      : "var(--surface-card)",
-                  fontSize: "0.875rem",
-                  fontWeight: 600,
-                  color:
-                    isAdult === true
-                      ? "var(--brand-700)"
-                      : "var(--text-secondary)",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                }}
-              >
-                {t("payment.ageCheck.adultYes")}
-              </button>
-              <button
-                onClick={() => setIsAdult(false)}
-                style={{
-                  padding: "14px",
-                  borderRadius: "12px",
-                  border:
-                    isAdult === false
-                      ? "2px solid var(--brand-500)"
-                      : "1px solid var(--surface-border)",
-                  background:
-                    isAdult === false
-                      ? "var(--brand-50)"
-                      : "var(--surface-card)",
-                  fontSize: "0.875rem",
-                  fontWeight: 600,
-                  color:
-                    isAdult === false
-                      ? "var(--brand-700)"
-                      : "var(--text-secondary)",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                }}
-              >
-                {t("payment.ageCheck.adultNo")}
-              </button>
-            </div>
+              {t("payment.ageCheck.dateOfBirthHint")}
+            </p>
 
-            {isAdult === false && (
+            {isUnder18(dateOfBirth) === true && !consentAlreadyGiven && (
               <div
                 className="animate-slide-up"
                 style={{
@@ -793,8 +766,9 @@ function PaymentFlow() {
             onClick={handleAgeCheckSubmit}
             disabled={
               loading ||
-              isAdult === null ||
-              (isAdult === false &&
+              !isValidDateOfBirth(dateOfBirth) ||
+              (isUnder18(dateOfBirth) === true &&
+                !consentAlreadyGiven &&
                 (!guardianName.trim() || !guardianRelation.trim()))
             }
             style={{ borderRadius: 18, marginTop: 8 }}

@@ -1,7 +1,12 @@
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
-import { logger } from "@tutor-advantage/shared-config";
+import {
+  CONSENT_STATUS_GRANTED,
+  GUARDIAN_CONSENT_TYPE,
+  isUnderGuardianAge,
+  logger,
+} from "@tutor-advantage/shared-config";
 
 export async function getGuardianConsentStatus(
   req: AuthenticatedRequest,
@@ -13,9 +18,13 @@ export async function getGuardianConsentStatus(
       return res.status(401).json({ error: { code: "UNAUTHORIZED", message: "User ID missing from token" } });
     }
 
-    const existing = await prisma.guardianConsent.findFirst({
-      where: { studentUserId: userId },
-      select: { consentId: true },
+    const existing = await prisma.userConsent.findFirst({
+      where: {
+        userId,
+        consentType: GUARDIAN_CONSENT_TYPE,
+        status: CONSENT_STATUS_GRANTED,
+      },
+      select: { userConsentId: true },
     });
 
     return res.status(200).json({ hasConsent: !!existing });
@@ -54,6 +63,44 @@ export async function submitGuardianConsent(
       });
     }
 
+    const student = await prisma.user.findUnique({
+      where: { userId },
+      select: { role: true, dateOfBirth: true },
+    });
+    if (!student?.dateOfBirth) {
+      return res.status(400).json({
+        error: {
+          code: "DATE_OF_BIRTH_REQUIRED",
+          message: "Date of birth is required before guardian consent",
+          requestId: req.id,
+        },
+      });
+    }
+    if (student.role !== "STUDENT" || !isUnderGuardianAge(student.dateOfBirth)) {
+      return res.status(400).json({
+        error: {
+          code: "GUARDIAN_CONSENT_NOT_REQUIRED",
+          message: "Guardian consent is only required for students under 18",
+          requestId: req.id,
+        },
+      });
+    }
+
+    const existingConsent = await prisma.userConsent.findFirst({
+      where: {
+        userId,
+        consentType: GUARDIAN_CONSENT_TYPE,
+        status: CONSENT_STATUS_GRANTED,
+      },
+      select: { userConsentId: true },
+    });
+    if (existingConsent) {
+      return res.status(200).json({
+        message: "Consent already recorded",
+        alreadyRecorded: true,
+      });
+    }
+
     // Execute within a transaction to ensure both records are created
     await prisma.$transaction(async (tx) => {
       // 1. Record the Guardian relationship explicitly
@@ -70,8 +117,8 @@ export async function submitGuardianConsent(
       await tx.userConsent.create({
         data: {
           userId: userId,
-          consentType: "GUARDIAN_CONTACT_PAYMENT",
-          status: "granted",
+          consentType: GUARDIAN_CONSENT_TYPE,
+          status: CONSENT_STATUS_GRANTED,
           effectiveAt: new Date(),
         },
       });
@@ -79,6 +126,7 @@ export async function submitGuardianConsent(
 
     return res.status(200).json({
       message: "Consent recorded successfully",
+      alreadyRecorded: false,
     });
   } catch (error) {
     const err = error as Error;

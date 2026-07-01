@@ -3,6 +3,24 @@ import { t } from "./i18n";
 export type PaymentMethod = "promptpay" | "card";
 export type PaymentStep = "select" | "age-check" | "qr" | "card-form" | "success";
 
+export function isValidDateOfBirth(value: string, now: Date = new Date()) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  return (
+    !Number.isNaN(parsed.getTime()) &&
+    parsed.toISOString().slice(0, 10) === value &&
+    parsed.getTime() <= now.getTime()
+  );
+}
+
+export function isUnder18(value: string, now: Date = new Date()) {
+  if (!isValidDateOfBirth(value, now)) return null;
+  const [year, month, day] = value.split("-").map(Number);
+  const adultDate = new Date(year + 18, month - 1, day);
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return adultDate.getTime() > today.getTime();
+}
+
 export type OrderSummary = {
   id: string;
   name: string;

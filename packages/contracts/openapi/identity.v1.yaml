@@ -64,6 +64,29 @@ paths:
                 $ref: "#/components/schemas/User"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+  /v1/users/me/profile:
+    patch:
+      summary: Update Current User Profile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [dateOfBirth]
+              properties:
+                dateOfBirth:
+                  type: string
+                  format: date
+      responses:
+        "200":
+          description: Profile and guardian requirement updated
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
   /v1/guardian/consent:
     post:
       summary: Submit Guardian Consent
@@ -107,6 +130,9 @@ components:
         role:
           type: string
           enum: [STUDENT, TUTOR, ADMIN]
+        dateOfBirth:
+          type: [string, "null"]
+          format: date
         requiresGuardian:
           type: boolean
     ErrorEnvelope:

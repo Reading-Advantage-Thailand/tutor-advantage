@@ -5,6 +5,8 @@ import {
   formatCardExpiry,
   formatCardNumber,
   getReturnedPaymentStep,
+  isUnder18,
+  isValidDateOfBirth,
   mergeCheckoutDetails,
   parseClassIdFromQrText,
   shouldLoadPromptPayQr,
@@ -12,6 +14,15 @@ import {
 } from "./paymentFlow";
 
 describe("paymentFlow helpers", () => {
+  it("validates dates of birth and distinguishes ages 17 and 18", () => {
+    const now = new Date("2026-07-01T12:00:00.000Z");
+
+    expect(isUnder18("2008-07-02", now)).toBe(true);
+    expect(isUnder18("2008-07-01", now)).toBe(false);
+    expect(isValidDateOfBirth("2027-01-01", now)).toBe(false);
+    expect(isValidDateOfBirth("2026-02-30", now)).toBe(false);
+  });
+
   it("builds default and API-backed order summaries", () => {
     expect(createDefaultOrderSummary("class-1")).toMatchObject({
       id: "class-1",

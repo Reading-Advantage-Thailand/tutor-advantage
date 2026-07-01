@@ -440,6 +440,7 @@ export const th = {
     defaultClassName: "Reading Advantage Class",
     errors: {
       loadOmiseScript: "โหลด Omise.js ไม่สำเร็จ",
+      dateOfBirthRequired: "กรุณากรอกวันเกิดที่ถูกต้อง",
       guardianRequired: "กรุณากรอกข้อมูลให้ครบถ้วน",
       consentFailed: "เกิดข้อผิดพลาดในการยืนยันตัวตน",
       omiseNotConfigured: "Omise ยังไม่ได้ตั้งค่า public/private key",
@@ -469,9 +470,8 @@ export const th = {
       title: "ยืนยันข้อมูลผู้เรียน",
       pdpaTitle: "ตรวจสอบสิทธิ์ตามกฎหมาย (PDPA)",
       pdpaSubtitle: "เพื่อความปลอดภัยในการชำระเงิน",
-      adultQuestion: "ขณะนี้คุณมีอายุครบ 18 ปีบริบูรณ์แล้วใช่หรือไม่?",
-      adultYes: "ใช่ เกิน 18 ปีแล้ว",
-      adultNo: "ยังไม่ถึง 18 ปี",
+      dateOfBirthLabel: "วันเดือนปีเกิดของผู้เรียน",
+      dateOfBirthHint: "ระบบใช้ข้อมูลนี้เพื่อตรวจสอบว่าจำเป็นต้องได้รับความยินยอมจากผู้ปกครองหรือไม่",
       guardianNotice: "คุณจำเป็นต้องให้ผู้ปกครองรับทราบ",
       guardianInstruction:
         "กรุณากรอกข้อมูลผู้ปกครองเพื่อใช้ประกอบความยินยอมทางกฎหมาย",

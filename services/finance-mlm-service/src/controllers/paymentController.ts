@@ -1,4 +1,9 @@
-import { logger } from "@tutor-advantage/shared-config";
+import {
+  CONSENT_STATUS_GRANTED,
+  GUARDIAN_CONSENT_TYPE,
+  isUnderGuardianAge,
+  logger,
+} from "@tutor-advantage/shared-config";
 import { Request, Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -153,29 +158,15 @@ export async function createPaymentIntent(
       });
     }
 
-    const student = await prisma.user.findUnique({
-      where: { userId },
-      select: { dateOfBirth: true },
-    });
-
-    if (student?.dateOfBirth && isUnderage(student.dateOfBirth)) {
-      const guardianConsent = await prisma.userConsent.findFirst({
-        where: {
-          userId,
-          consentType: "GUARDIAN_CONTACT_PAYMENT",
-          status: "granted",
+    const guardianGate = await getPaymentGuardianGate(userId);
+    if (guardianGate) {
+      return res.status(guardianGate.status).json({
+        error: {
+          code: guardianGate.code,
+          message: guardianGate.message,
+          requestId: req.id,
         },
       });
-
-      if (!guardianConsent) {
-        return res.status(403).json({
-          error: {
-            code: "GUARDIAN_CONSENT_REQUIRED",
-            message: "Guardian consent is required before payment",
-            requestId: req.id,
-          },
-        });
-      }
     }
 
     if (amountSatang <= 0) {
@@ -978,11 +969,34 @@ function getClientIp(req: Request) {
   return req.ip;
 }
 
-function isUnderage(dateOfBirth: Date) {
-  const now = new Date();
-  const eighteenthBirthday = new Date(dateOfBirth);
-  eighteenthBirthday.setFullYear(eighteenthBirthday.getFullYear() + 18);
-  return eighteenthBirthday > now;
+export async function getPaymentGuardianGate(userId: string) {
+  const student = await prisma.user.findUnique({
+    where: { userId },
+    select: { dateOfBirth: true },
+  });
+  if (!student?.dateOfBirth) {
+    return {
+      status: 400,
+      code: "DATE_OF_BIRTH_REQUIRED",
+      message: "Date of birth is required before payment",
+    } as const;
+  }
+  if (!isUnderGuardianAge(student.dateOfBirth)) return null;
+
+  const guardianConsent = await prisma.userConsent.findFirst({
+    where: {
+      userId,
+      consentType: GUARDIAN_CONSENT_TYPE,
+      status: CONSENT_STATUS_GRANTED,
+    },
+  });
+  if (guardianConsent) return null;
+
+  return {
+    status: 403,
+    code: "GUARDIAN_CONSENT_REQUIRED",
+    message: "Guardian consent is required before payment",
+  } as const;
 }
 
 function getNextIctPeriodMonth() {
