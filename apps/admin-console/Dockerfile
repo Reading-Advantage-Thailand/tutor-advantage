@@ -48,4 +48,4 @@ EXPOSE 8080
 ENV PORT=8080
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "apps/admin-console/server.js"]
+CMD ["sh", "-c", "if [ ${#JWT_SECRET} -lt 32 ]; then echo 'FATAL: JWT_SECRET must be at least 32 characters' >&2; exit 1; fi; exec node apps/admin-console/server.js"]

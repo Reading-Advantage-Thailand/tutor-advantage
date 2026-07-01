@@ -1,11 +1,8 @@
 import { NextResponse, NextRequest } from "next/server";
 import { jwtVerify } from "jose/jwt/verify";
+import { getJwtSecret } from "./lib/security";
 
-const jwtSecretRaw = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
-if (jwtSecretRaw === "secret-for-dev-only-change-me" && process.env.NODE_ENV === "production") {
-  console.error("[SECURITY] JWT_SECRET is using the default dev fallback in production! Set a strong secret via environment variables.");
-}
-const JWT_SECRET = new TextEncoder().encode(jwtSecretRaw);
+const jwtSecret = () => new TextEncoder().encode(getJwtSecret());
 
 const PRIVATE_ROUTES = [
   "/dashboard",
@@ -105,7 +102,7 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-      await jwtVerify(token, JWT_SECRET);
+      await jwtVerify(token, jwtSecret());
     } catch {
       const response = createLoginRedirect(request);
       response.cookies.delete("student-session");

@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { prisma } from "@tutor-advantage/database";
+import { getJwtSecret } from "@/lib/security";
 
-const JWT_SECRET = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -130,7 +130,7 @@ export async function GET(request: Request) {
     // 4. Issue JWT stored only in an httpOnly cookie
     const token = jwt.sign(
       { userId, email, name, role, iss: "admin-console" },
-      JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: "12h" }
     );
 

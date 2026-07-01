@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose/jwt/verify";
+import { getJwtSecret } from "./lib/security";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "secret-for-dev-only-change-me"
-);
+const jwtSecret = () => new TextEncoder().encode(getJwtSecret());
 
 const PROTECTED_ROUTES = ["/dashboard", "/lesson"];
 const IDENTITY_URL = process.env.IDENTITY_SERVICE_URL || "http://localhost:3001";
@@ -31,7 +30,7 @@ function withSecurityHeaders(response: NextResponse) {
 
 async function validateTutorSession(token: string): Promise<SessionValidation> {
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, jwtSecret());
     if (payload.role !== "TUTOR") return { ok: false };
   } catch {
     return { ok: false };

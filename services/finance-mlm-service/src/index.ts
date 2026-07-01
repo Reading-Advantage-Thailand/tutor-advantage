@@ -1,5 +1,7 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
+import helmet from "helmet";
+import { rateLimit } from "express-rate-limit";
 import dotenv from "dotenv";
 import path from "path";
 import { prisma } from "@tutor-advantage/database";
@@ -8,6 +10,10 @@ import {
   requestLoggerMiddleware,
   requestIdMiddleware,
   errorHandlerMiddleware,
+  areDevRoutesEnabled,
+  assertProductionSecurityConfig,
+  getAllowedOrigins,
+  isOriginAllowed,
   logger,
 } from "@tutor-advantage/shared-config";
 
@@ -92,13 +98,9 @@ import {
 import { getEarningsSummary, getEarningsHistory, syncTutorTransfer } from "./controllers/tutorEarningsController";
 import { getTutorNetwork } from "./controllers/tutorNetworkController";
 
-if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
-  logger.error("FATAL: JWT_SECRET must be set in production");
-  process.exit(1);
-}
-
 const app = express();
 const port = process.env.PORT || 3003;
+assertProductionSecurityConfig();
 const adminOnly = requireRoles("ADMIN");
 const financeStaffOnly = requireRoles("ADMIN", "FINANCE_CHECKER");
 const adjustmentStaffOnly = requireRoles(
@@ -107,23 +109,26 @@ const adjustmentStaffOnly = requireRoles(
   "FINANCE_CHECKER",
 );
 
-const ALLOWED_ORIGINS = (
-  process.env.ALLOWED_ORIGINS || "http://localhost:3005"
-).split(",").map((o) => o.trim());
+const ALLOWED_ORIGINS = getAllowedOrigins();
+const paymentLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 30,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+});
+const webhookLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 300,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+});
 
-const ALLOWED_ORIGIN_PATTERNS = [
-  /^https?:\/\/.*\.ngrok-free\.app$/,
-  /^https?:\/\/.*\.ngrok-free\.dev$/,
-  /^https?:\/\/.*\.ngrok\.io$/,
-];
-
+app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {
       // Allow server-to-server calls (no origin header) and whitelisted origins
-      if (!origin) return callback(null, true);
-      if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
-      if (ALLOWED_ORIGIN_PATTERNS.some((re) => re.test(origin))) return callback(null, true);
+      if (isOriginAllowed(origin, ALLOWED_ORIGINS)) return callback(null, true);
       callback(new Error(`CORS: origin ${origin} not allowed`));
     },
     credentials: true,
@@ -131,6 +136,7 @@ app.use(
 );
 app.use(
   express.json({
+    limit: "1mb",
     verify: (req, _res, buf) => {
       (req as Request & { rawBody?: string }).rawBody = buf.toString("utf8");
     },
@@ -163,14 +169,13 @@ app.get("/v1/coupons", authMiddleware, adminOnly, getCoupons);
 app.post("/v1/coupons/:couponId/void", authMiddleware, adminOnly, voidCoupon);
 
 // ── Payment Routes ─────────────────────────────────────────────────────────
-app.post("/v1/payments/intent", authMiddleware, createPaymentIntent);
-app.post("/v1/payments/confirm-mock", authMiddleware, confirmMockPayment);
+app.post("/v1/payments/intent", paymentLimiter, authMiddleware, createPaymentIntent);
 app.get("/v1/payments/config", authMiddleware, getPaymentConfig);
 app.get("/v1/payments/:paymentIntentId/qr-code", authMiddleware, getPromptPayQrCode);
 app.get("/v1/payments/:paymentIntentId/status", authMiddleware, getPaymentStatus);
 app.get("/v1/payments/history", authMiddleware, getPaymentHistory);
-app.post("/v1/payments/webhook", handleWebhook);
-app.post("/v1/webhooks/omise-transfer", handleTransferWebhook);
+app.post("/v1/payments/webhook", webhookLimiter, handleWebhook);
+app.post("/v1/webhooks/omise-transfer", webhookLimiter, handleTransferWebhook);
 
 import { exportTutorSalesCsv } from "./controllers/tutorSalesExportController";
 
@@ -313,28 +318,22 @@ app.get("/v1/fraud-flags", authMiddleware, financeStaffOnly, getFraudFlags);
 app.post("/v1/fraud-flags/:id/action", authMiddleware, financeStaffOnly, triggerFraudAction);
 
 // ── Dev-only Routes (blocked in production) ────────────────────────────────
-const devOnly = (_req: Request, res: Response, next: () => void) => {
-  if (process.env.NODE_ENV === "production") {
-    return res.status(404).json({ error: "Not found" });
-  }
-  next();
-};
-// User CRUD
-app.get("/v1/dev/users", devOnly, devListUsers);
-app.post("/v1/dev/users", devOnly, devCreateUser);
-app.patch("/v1/dev/users/:id", devOnly, devUpdateUser);
-app.delete("/v1/dev/users/:id", devOnly, devDeleteUser);
-// State & Actions
-app.get("/v1/dev/state", devOnly, devGetState);
-app.post("/v1/dev/actions/settlement", devOnly, devRunSettlement);
-app.post("/v1/dev/actions/fraud-flag", devOnly, devSeedFraudFlag);
-app.delete("/v1/dev/actions/fraud-flag/:id", devOnly, devDeleteFraudFlag);
-app.post("/v1/dev/actions/adjustment", devOnly, devSeedAdjustment);
-app.post("/v1/dev/actions/purge", devOnly, devPurge);
-// Tutor simulation
-app.get("/v1/dev/tutor-badges/:tutorUserId", devOnly, devGetTutorBadges);
-app.post("/v1/dev/actions/add-volume", devOnly, devAddVolume);
-app.post("/v1/dev/actions/toggle-badge", devOnly, devToggleBadge);
+if (areDevRoutesEnabled()) {
+  app.post("/v1/payments/confirm-mock", paymentLimiter, authMiddleware, adminOnly, confirmMockPayment);
+  app.get("/v1/dev/users", authMiddleware, adminOnly, devListUsers);
+  app.post("/v1/dev/users", authMiddleware, adminOnly, devCreateUser);
+  app.patch("/v1/dev/users/:id", authMiddleware, adminOnly, devUpdateUser);
+  app.delete("/v1/dev/users/:id", authMiddleware, adminOnly, devDeleteUser);
+  app.get("/v1/dev/state", authMiddleware, adminOnly, devGetState);
+  app.post("/v1/dev/actions/settlement", authMiddleware, adminOnly, devRunSettlement);
+  app.post("/v1/dev/actions/fraud-flag", authMiddleware, adminOnly, devSeedFraudFlag);
+  app.delete("/v1/dev/actions/fraud-flag/:id", authMiddleware, adminOnly, devDeleteFraudFlag);
+  app.post("/v1/dev/actions/adjustment", authMiddleware, adminOnly, devSeedAdjustment);
+  app.post("/v1/dev/actions/purge", authMiddleware, adminOnly, devPurge);
+  app.get("/v1/dev/tutor-badges/:tutorUserId", authMiddleware, adminOnly, devGetTutorBadges);
+  app.post("/v1/dev/actions/add-volume", authMiddleware, adminOnly, devAddVolume);
+  app.post("/v1/dev/actions/toggle-badge", authMiddleware, adminOnly, devToggleBadge);
+}
 
 // Apply error handler last
 app.use(errorHandlerMiddleware);

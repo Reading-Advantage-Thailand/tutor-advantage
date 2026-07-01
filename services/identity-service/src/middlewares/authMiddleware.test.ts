@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { getJwtSecret } from "@tutor-advantage/shared-config";
 import { describe, expect, it, vi } from "vitest";
 import { authMiddleware, type AuthenticatedRequest } from "./authMiddleware";
 
@@ -29,7 +30,7 @@ describe("identity authMiddleware", () => {
   });
 
   it("attaches decoded JWT user details", () => {
-    const token = jwt.sign({ userId: "user-1", role: "STUDENT" }, "secret-for-dev-only-change-me");
+    const token = jwt.sign({ userId: "user-1", role: "STUDENT" }, getJwtSecret());
     const req = {
       id: "req-1",
       headers: { authorization: `Bearer ${token}` },

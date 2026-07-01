@@ -2,8 +2,9 @@ import { describe, expect, it } from "vitest";
 import { NextRequest } from "next/server";
 import { SignJWT } from "jose/jwt/sign";
 import { middleware } from "./middleware";
+import { getJwtSecret } from "./lib/security";
 
-const JWT_SECRET = new TextEncoder().encode("secret-for-dev-only-change-me");
+const JWT_SECRET = new TextEncoder().encode(getJwtSecret());
 
 async function createSessionToken() {
   return new SignJWT({ userId: "ST-99999", role: "STUDENT" })

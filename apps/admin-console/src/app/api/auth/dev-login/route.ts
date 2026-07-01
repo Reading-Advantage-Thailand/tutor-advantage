@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
+import { devRoutesEnabled, getJwtSecret } from "@/lib/security";
 
-const JWT_SECRET = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
 const DEV_IDENTITIES = {
   ADMIN: {
     userId: "00000000-0000-4000-8000-000000000001",
@@ -14,7 +14,7 @@ const DEV_IDENTITIES = {
 } as const;
 
 export async function POST(req: Request) {
-  if (process.env.NODE_ENV !== "development") {
+  if (!devRoutesEnabled()) {
     return NextResponse.json(
       { error: "Endpoint disabled in production" },
       { status: 403 }
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     const identity = DEV_IDENTITIES[role as keyof typeof DEV_IDENTITIES];
     const token = jwt.sign(
       { userId: identity.userId, email: identity.email, role, iss: "admin-console" },
-      JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: "12h" }
     );
 

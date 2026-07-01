@@ -3,10 +3,9 @@ import jwt from "jsonwebtoken";
 import {
   CONSENT_STATUS_GRANTED,
   GUARDIAN_CONSENT_TYPE,
+  getJwtSecret,
   requiresGuardianConsent,
 } from "@tutor-advantage/shared-config";
-
-const JWT_SECRET = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
 
 export interface AuthResult {
   sessionToken: string;
@@ -152,7 +151,7 @@ export async function processOAuthLogin(
   // Generate JWT token
   const sessionToken = jwt.sign(
     { userId: user.userId, role: user.role },
-    JWT_SECRET,
+    getJwtSecret(),
     { expiresIn: "7d" },
   );
 

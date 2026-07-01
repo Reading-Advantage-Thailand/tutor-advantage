@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose/jwt/verify";
+import { getJwtSecret } from "./lib/security";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "secret-for-dev-only-change-me"
-);
+const jwtSecret = () => new TextEncoder().encode(getJwtSecret());
 
 // Routes that require ADMIN role (FINANCE_CHECKER is denied)
 const ADMIN_ONLY_ROUTES = ["/users", "/fraud"];
@@ -24,7 +23,7 @@ export async function middleware(request: NextRequest) {
 
   if (token && !isAuthPage) {
     try {
-      const { payload } = await jwtVerify(token, JWT_SECRET);
+      const { payload } = await jwtVerify(token, jwtSecret());
 
       const isAdminOnly = ADMIN_ONLY_ROUTES.some((route) =>
         pathname.startsWith(route)

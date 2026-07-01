@@ -1,10 +1,9 @@
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose/jwt/verify";
 import { IDENTITY_URL } from "@/lib/service-urls";
+import { getJwtSecret } from "@/lib/security";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "secret-for-dev-only-change-me"
-);
+const jwtSecret = () => new TextEncoder().encode(getJwtSecret());
 
 export type ActiveTutorSession = {
   token: string;
@@ -23,7 +22,7 @@ export async function getActiveTutorSession(): Promise<ActiveTutorSession | null
   if (!token) return null;
 
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, jwtSecret());
     if (payload.role !== "TUTOR") return null;
   } catch {
     return null;

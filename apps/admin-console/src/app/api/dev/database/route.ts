@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose/jwt/verify";
 import { prisma, type Prisma } from "@tutor-advantage/database";
+import { devRoutesEnabled, getJwtSecret } from "@/lib/security";
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "secret-for-dev-only-change-me",
-);
+const jwtSecret = () => new TextEncoder().encode(getJwtSecret());
 
 const TARGET_SCHEMAS = ["identity", "learning", "finance_mlm", "public"];
 const RESET_SCHEMAS = ["identity", "learning", "finance_mlm"];
@@ -46,7 +45,7 @@ async function requireDevAdmin() {
   }
 
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, jwtSecret());
     if (payload.role !== "ADMIN") {
       return NextResponse.json({ error: "Admin role required" }, { status: 403 });
     }
@@ -84,6 +83,9 @@ async function loadTables(): Promise<DbTable[]> {
 }
 
 export async function GET() {
+  if (!devRoutesEnabled()) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
   const guard = await requireDevAdmin();
   if (guard) return guard;
 
@@ -172,6 +174,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  if (!devRoutesEnabled()) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
   const guard = await requireDevAdmin();
   if (guard) return guard;
 

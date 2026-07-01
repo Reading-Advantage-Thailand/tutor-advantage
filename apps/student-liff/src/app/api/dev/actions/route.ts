@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { FINANCE_URL, LEARNING_URL } from "@/lib/service-urls";
+import { devRoutesEnabled } from "@/lib/security";
 
 type DevAction =
   | { action: "confirmPayment"; paymentIntentId: string }
@@ -12,7 +13,7 @@ type DevAction =
   | { action: "clearSession" };
 
 export async function POST(req: NextRequest) {
-  if (process.env.NODE_ENV !== "development") {
+  if (!devRoutesEnabled()) {
     return NextResponse.json({ error: "Not available in production" }, { status: 403 });
   }
 

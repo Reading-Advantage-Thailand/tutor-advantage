@@ -19,3 +19,4 @@ __exportStar(require("./middlewares/logger"), exports);
 __exportStar(require("./middlewares/errorHandler"), exports);
 __exportStar(require("./env"), exports);
 __exportStar(require("./guardianPolicy"), exports);
+__exportStar(require("./securityConfig"), exports);

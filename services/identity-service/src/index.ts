@@ -1,5 +1,7 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
+import helmet from "helmet";
+import { rateLimit } from "express-rate-limit";
 import dotenv from "dotenv";
 import path from "path";
 import { prisma } from "@tutor-advantage/database";
@@ -8,6 +10,9 @@ import {
   requestLoggerMiddleware,
   requestIdMiddleware,
   errorHandlerMiddleware,
+  assertProductionSecurityConfig,
+  getAllowedOrigins,
+  isOriginAllowed,
   logger,
 } from "@tutor-advantage/shared-config";
 
@@ -24,40 +29,46 @@ import { getGuardianConsentStatus, submitGuardianConsent, submitUserConsent } fr
 import { getCurrentUser, submitVerification, updateCurrentUserProfile } from "./controllers/userController";
 import { getSettings, updateSettings } from "./controllers/settingController";
 import { uploadFile } from "./controllers/uploadController";
-import { authMiddleware } from "./middlewares/authMiddleware";
+import { authMiddleware, requireRoles } from "./middlewares/authMiddleware";
 import multer from "multer";
 
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
+    fields: 10,
+    files: 1,
   },
 });
 
 const app = express();
+assertProductionSecurityConfig();
 
-const ALLOWED_ORIGINS = (
-  process.env.ALLOWED_ORIGINS || "https://student-liff-1090865515742.asia-southeast1.run.app,https://resource-pushpin-tabby.ngrok-free.dev,http://localhost:3004,http://localhost:3005,http://localhost:3006"
-).split(",").map((o) => o.trim());
+const ALLOWED_ORIGINS = getAllowedOrigins();
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 30,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+});
+const uploadLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+});
 
-const ALLOWED_ORIGIN_PATTERNS = [
-  /^https?:\/\/.*\.ngrok-free\.app$/,
-  /^https?:\/\/.*\.ngrok-free\.dev$/,
-  /^https?:\/\/.*\.ngrok\.io$/,
-];
-
+app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
-      if (ALLOWED_ORIGIN_PATTERNS.some((re) => re.test(origin))) return callback(null, true);
+      if (isOriginAllowed(origin, ALLOWED_ORIGINS)) return callback(null, true);
       callback(new Error(`CORS: origin ${origin} not allowed`));
     },
     credentials: true,
   }),
 );
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
 
 // Apply shared middleware
 app.use(requestIdMiddleware);
@@ -79,7 +90,7 @@ app.get("/version", (_req: Request, res: Response) => {
 });
 
 // OAuth Callback Endpoint
-app.post("/v1/auth/callback", handleOAuthCallback);
+app.post("/v1/auth/callback", authLimiter, handleOAuthCallback);
 
 import { getSystemRoles, upsertSystemRole } from "./controllers/roleController";
 
@@ -90,14 +101,14 @@ app.patch("/v1/users/me/profile", authMiddleware, updateCurrentUserProfile);
 app.get("/v1/users/me/settings", authMiddleware, getSettings);
 app.patch("/v1/users/me/settings", authMiddleware, updateSettings);
 app.post("/v1/users/me/verification", authMiddleware, submitVerification);
-app.post("/v1/upload", authMiddleware, upload.single("file"), uploadFile);
+app.post("/v1/upload", uploadLimiter, authMiddleware, upload.single("file"), uploadFile);
 app.get("/v1/guardian/consent", authMiddleware, getGuardianConsentStatus);
 app.post("/v1/guardian/consent", authMiddleware, submitGuardianConsent);
 app.post("/v1/users/me/consents", authMiddleware, submitUserConsent);
 
 // Admin Routes
-app.get("/v1/admin/roles", authMiddleware, getSystemRoles);
-app.post("/v1/admin/roles", authMiddleware, upsertSystemRole);
+app.get("/v1/admin/roles", authMiddleware, requireRoles("ADMIN"), getSystemRoles);
+app.post("/v1/admin/roles", authMiddleware, requireRoles("ADMIN"), upsertSystemRole);
 
 // Root API
 app.get("/", (_req: Request, res: Response) => {

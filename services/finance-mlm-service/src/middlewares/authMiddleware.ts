@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-
-const JWT_SECRET = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
+import { getJwtSecret } from "@tutor-advantage/shared-config";
 
 export interface AuthenticatedRequest extends Request {
   id: string;
@@ -31,7 +30,7 @@ export function authMiddleware(
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as {
+    const decoded = jwt.verify(token, getJwtSecret()) as {
       userId: string;
       role: string;
     };

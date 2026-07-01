@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { FINANCE_URL } from "@/lib/service-urls";
 import { getActiveTutorSession } from "@/lib/tutor-session";
+import { devRoutesEnabled } from "@/lib/security";
 
 type DevAction =
   | { action: "addVolume"; amountTHB: number }
@@ -8,7 +9,7 @@ type DevAction =
   | { action: "clearVolume" };
 
 export async function POST(req: NextRequest) {
-  if (process.env.NODE_ENV !== "development") {
+  if (!devRoutesEnabled()) {
     return NextResponse.json({ error: "Not available in production" }, { status: 403 });
   }
 

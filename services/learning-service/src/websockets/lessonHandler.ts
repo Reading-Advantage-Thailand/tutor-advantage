@@ -1,4 +1,4 @@
-import { logger } from "@tutor-advantage/shared-config";
+import { getJwtSecret, logger } from "@tutor-advantage/shared-config";
 import { Server, Socket } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
@@ -88,8 +88,7 @@ export const setupLessonSocket = (io: Server) => {
     }
     
     try {
-      const secret = process.env.JWT_SECRET || "secret-for-dev-only-change-me";
-      socket.data.actor = verifySocketActor(String(token), secret);
+      socket.data.actor = verifySocketActor(String(token), getJwtSecret());
       next();
     } catch (err) {
       return next(new Error("Authentication error: Invalid or expired token"));

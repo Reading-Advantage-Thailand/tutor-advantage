@@ -1,11 +1,17 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
+import helmet from "helmet";
+import { rateLimit } from "express-rate-limit";
 import dotenv from "dotenv";
 import path from "path";
 import {
   requestLoggerMiddleware,
   requestIdMiddleware,
   errorHandlerMiddleware,
+  areDevRoutesEnabled,
+  assertProductionSecurityConfig,
+  getAllowedOrigins,
+  isOriginAllowed,
   logger,
 } from "@tutor-advantage/shared-config";
 
@@ -20,7 +26,7 @@ const { prisma } = require("@tutor-advantage/database") as typeof import("@tutor
 
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { authMiddleware } from "./middlewares/authMiddleware";
+import { authMiddleware, requireRoles } from "./middlewares/authMiddleware";
 import {
   createClass,
   closeClass,
@@ -64,7 +70,6 @@ import {
 } from "./controllers/couponController";
 import { getStudentLessonHistory, getLessonSessionDetails } from "./controllers/lessonHistoryController";
 import {
-  devOnly,
   devSeedLessonHistory,
   devPurgeLessonHistory,
   devActivateEnrollments,
@@ -74,30 +79,31 @@ import {
 
 const app = express();
 const port = process.env.PORT || 3002;
+assertProductionSecurityConfig();
 
-const ALLOWED_ORIGINS = (
-  process.env.ALLOWED_ORIGINS || "https://student-liff-1090865515742.asia-southeast1.run.app,https://resource-pushpin-tabby.ngrok-free.dev,http://localhost:3000,http://localhost:3004,http://localhost:3005,http://localhost:3006"
-).split(",").map((o) => o.trim());
+const ALLOWED_ORIGINS = getAllowedOrigins();
 
-const ALLOWED_ORIGIN_PATTERNS = [
-  /^https?:\/\/.*\.ngrok-free\.app$/,
-  /^https?:\/\/.*\.ngrok-free\.dev$/,
-  /^https?:\/\/.*\.ngrok\.io$/,
-];
-
+app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {
       // Allow server-to-server calls (no origin) and whitelisted origins
-      if (!origin) return callback(null, true);
-      if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
-      if (ALLOWED_ORIGIN_PATTERNS.some((re) => re.test(origin))) return callback(null, true);
+      if (isOriginAllowed(origin, ALLOWED_ORIGINS)) return callback(null, true);
       callback(new Error(`CORS: origin ${origin} not allowed`));
     },
     credentials: true,
   }),
 );
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
+app.use(
+  "/v1",
+  rateLimit({
+    windowMs: 60 * 1000,
+    limit: 300,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+  }),
+);
 
 // Apply shared middleware
 app.use(requestIdMiddleware);
@@ -192,12 +198,14 @@ app.get("/v1/coupons/mine", authMiddleware, getMyCoupons);
 app.post("/v1/coupons/validate", authMiddleware, validateCouponCode);
 app.post("/v1/classes/:classId/apply-coupon", authMiddleware, applyCouponToClass);
 
-// Dev-only routes (blocked in production by devOnly middleware)
-app.post("/v1/dev/seed/lesson-history", devOnly, authMiddleware, devSeedLessonHistory);
-app.delete("/v1/dev/seed/lesson-history", devOnly, authMiddleware, devPurgeLessonHistory);
-app.post("/v1/dev/seed/full-progress", devOnly, authMiddleware, devSeedFullProgress);
-app.post("/v1/dev/seed/enrollments/activate", devOnly, authMiddleware, devActivateEnrollments);
-app.post("/v1/dev/seed/class-all-progress", devOnly, authMiddleware, devSeedClassAllProgress);
+if (areDevRoutesEnabled()) {
+  const adminOnly = requireRoles("ADMIN");
+  app.post("/v1/dev/seed/lesson-history", authMiddleware, adminOnly, devSeedLessonHistory);
+  app.delete("/v1/dev/seed/lesson-history", authMiddleware, adminOnly, devPurgeLessonHistory);
+  app.post("/v1/dev/seed/full-progress", authMiddleware, adminOnly, devSeedFullProgress);
+  app.post("/v1/dev/seed/enrollments/activate", authMiddleware, adminOnly, devActivateEnrollments);
+  app.post("/v1/dev/seed/class-all-progress", authMiddleware, adminOnly, devSeedClassAllProgress);
+}
 
 // Apply error handler last
 app.use(errorHandlerMiddleware);
@@ -208,9 +216,7 @@ const io = new Server(httpServer, {
   addTrailingSlash: false,
   cors: {
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
-      if (ALLOWED_ORIGIN_PATTERNS.some((re) => re.test(origin))) return callback(null, true);
+      if (isOriginAllowed(origin, ALLOWED_ORIGINS)) return callback(null, true);
       callback(new Error(`CORS: origin ${origin} not allowed`));
     },
     methods: ["GET", "POST"],

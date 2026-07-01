@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { IDENTITY_URL, FINANCE_URL, LEARNING_URL } from "@/lib/service-urls";
 import { getActiveTutorSession } from "@/lib/tutor-session";
+import { devRoutesEnabled } from "@/lib/security";
 
 export async function GET() {
-  if (process.env.NODE_ENV !== "development") {
+  if (!devRoutesEnabled()) {
     return NextResponse.json({ error: "Not available in production" }, { status: 403 });
   }
 
