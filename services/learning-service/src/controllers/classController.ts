@@ -42,12 +42,12 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
 
     if (
       !isCouponClass && !isDemoClass &&
-      (!Number.isInteger(packagePriceSatang) || packagePriceSatang <= 0)
+      (!Number.isSafeInteger(packagePriceSatang) || packagePriceSatang <= 0)
     ) {
       return res.status(400).json({
         error: {
           code: "INVALID_PRICE",
-          message: "packagePriceSatang must be a positive integer",
+          message: "packagePriceSatang must be a positive safe integer",
           requestId: req.id,
         },
       });

@@ -12,6 +12,7 @@ COPY services/finance-mlm-service/package.json ./services/finance-mlm-service/
 # Prisma schema must exist before npm ci: the database package's `prepare`
 # script runs `prisma generate` during install
 COPY packages/database/prisma ./packages/database/prisma
+COPY packages/contracts/openapi ./packages/contracts/openapi
 
 RUN npm ci
 
@@ -45,6 +46,7 @@ COPY --from=builder /app/packages/database/dist      ./packages/database/dist
 COPY --from=builder /app/services/finance-mlm-service/dist ./services/finance-mlm-service/dist
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
+COPY --from=builder /app/packages/contracts/openapi ./packages/contracts/openapi
 
 EXPOSE 8080
 

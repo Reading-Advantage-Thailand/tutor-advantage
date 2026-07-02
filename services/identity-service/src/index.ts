@@ -14,6 +14,8 @@ import {
   getAllowedOrigins,
   isOriginAllowed,
   logger,
+  createOpenApiMiddleware,
+  openApiValidationErrorHandler,
 } from "@tutor-advantage/shared-config";
 
 // Load root .env file
@@ -73,6 +75,11 @@ app.use(express.json({ limit: "1mb" }));
 // Apply shared middleware
 app.use(requestIdMiddleware);
 app.use(requestLoggerMiddleware);
+app.use(
+  createOpenApiMiddleware(
+    path.resolve(process.cwd(), "packages/contracts/openapi/identity.v1.yaml"),
+  ),
+);
 
 // Health Check Endpoint — verifies DB connectivity
 app.get("/health", async (_req: Request, res: Response) => {
@@ -116,6 +123,7 @@ app.get("/", (_req: Request, res: Response) => {
 });
 
 // Error handling middleware (Must be last)
+app.use(openApiValidationErrorHandler);
 app.use(errorHandlerMiddleware);
 
 const port = process.env.PORT || 3001;

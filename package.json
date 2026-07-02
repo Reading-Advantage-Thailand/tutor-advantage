@@ -9,20 +9,24 @@
   ],
   "scripts": {
     "build": "npm run build -w student-liff && npm run build -w tutor-pwa && npm run build -w admin-console",
-    "build:services": "concurrently \"npm run build -w identity-service\" \"npm run build -w learning-service\" \"npm run build -w finance-mlm-service\"",
+    "build:services": "npm run build -w @tutor-advantage/shared-config && concurrently \"npm run build -w identity-service\" \"npm run build -w learning-service\" \"npm run build -w finance-mlm-service\"",
     "lint": "npm run lint -w student-liff && npm run lint -w tutor-pwa && npm run lint -w admin-console",
     "dev:services": "concurrently \"npm run dev -w identity-service\" \"npm run dev -w learning-service\" \"npm run dev -w finance-mlm-service\"",
     "dev": "concurrently -n \"services,student-liff,ngrok,tutor-pwa,admin-console\" -c \"magenta,green,blue,cyan,yellow,red\" \"npm run dev:services\" \"npm run dev -w student-liff\" \"ngrok http 3004\" \"npm run dev -w tutor-pwa\" \"npm run dev -w admin-console\"",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
-    "test:integration": "vitest run --config vitest.config.integration.ts"
+    "test:integration": "vitest run --config vitest.config.integration.ts",
+    "contract:check": "node scripts/check-openapi-routes.mjs"
   },
   "devDependencies": {
+    "@types/supertest": "^6.0.3",
     "@vitest/coverage-v8": "^4.1.6",
     "concurrently": "^9.2.1",
     "jsdom": "^29.1.1",
+    "supertest": "^7.2.2",
     "ts-node-dev": "^2.0.0",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.6",
+    "yaml": "^2.9.0"
   }
 }

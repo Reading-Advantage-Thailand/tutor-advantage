@@ -15,6 +15,8 @@ import {
   getAllowedOrigins,
   isOriginAllowed,
   logger,
+  createOpenApiMiddleware,
+  openApiValidationErrorHandler,
 } from "@tutor-advantage/shared-config";
 
 // Load root .env file
@@ -146,6 +148,11 @@ app.use(
 // Apply shared middleware
 app.use(requestIdMiddleware);
 app.use(requestLoggerMiddleware);
+app.use(
+  createOpenApiMiddleware(
+    path.resolve(process.cwd(), "packages/contracts/openapi/finance-mlm.v1.yaml"),
+  ),
+);
 
 // Base endpoints — health check verifies DB connectivity
 app.get("/health", async (_req: Request, res: Response) => {
@@ -336,6 +343,7 @@ if (areDevRoutesEnabled()) {
 }
 
 // Apply error handler last
+app.use(openApiValidationErrorHandler);
 app.use(errorHandlerMiddleware);
 
 const server = app.listen(port, () => {

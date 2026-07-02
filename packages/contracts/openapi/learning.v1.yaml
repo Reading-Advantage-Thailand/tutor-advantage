@@ -30,14 +30,19 @@ paths:
           application/json:
             schema:
               type: object
-              required: [title, maxStudents]
+              additionalProperties: true
+              required: [bookId, title, capacity]
               properties:
+                bookId:
+                  type: string
                 title:
                   type: string
-                description:
-                  type: string
-                maxStudents:
+                  minLength: 1
+                capacity:
                   type: integer
+                  minimum: 1
+                packagePriceSatang:
+                  $ref: "#/components/schemas/NonNegativeSatang"
       responses:
         "201":
           description: Class created
@@ -100,6 +105,22 @@ paths:
       responses:
         "200":
           description: Enrollment successful (Primary or Fallback)
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [message, enrollmentId, classId, placement]
+                properties:
+                  message:
+                    type: string
+                  enrollmentId:
+                    type: string
+                  classId:
+                    type: string
+                  placement:
+                    type: string
+                    enum: [PRIMARY, FALLBACK]
         "400":
           description: Invalid token or full class without fallback
           content:
@@ -114,6 +135,11 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    NonNegativeSatang:
+      type: integer
+      minimum: 0
+      maximum: 9007199254740991
+      description: Integer amount in Satang within JavaScript's safe integer range.
     ErrorEnvelope:
       type: object
       properties:

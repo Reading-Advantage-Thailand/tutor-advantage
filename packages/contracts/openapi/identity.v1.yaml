@@ -29,6 +29,7 @@ paths:
           application/json:
             schema:
               type: object
+              additionalProperties: false
               required: [provider, code]
               properties:
                 provider:
@@ -36,6 +37,18 @@ paths:
                   enum: [facebook, google, line]
                 code:
                   type: string
+                  minLength: 1
+                sponsorTutorId:
+                  type: string
+                codeVerifier:
+                  type: string
+                defaultRole:
+                  type: string
+                phoneNumber:
+                  type: string
+                redirectUri:
+                  type: string
+                  format: uri
       responses:
         "200":
           description: Authentication successful
@@ -43,9 +56,12 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [sessionToken, roleUpgraded, user]
                 properties:
                   sessionToken:
                     type: string
+                  roleUpgraded:
+                    type: boolean
                   user:
                     $ref: "#/components/schemas/User"
         "400":
@@ -75,6 +91,7 @@ paths:
           application/json:
             schema:
               type: object
+              additionalProperties: false
               required: [dateOfBirth]
               properties:
                 dateOfBirth:
@@ -122,6 +139,8 @@ components:
   schemas:
     User:
       type: object
+      additionalProperties: false
+      required: [id, name, role, dateOfBirth, requiresGuardian]
       properties:
         id:
           type: string
@@ -129,7 +148,7 @@ components:
           type: string
         role:
           type: string
-          enum: [STUDENT, TUTOR, ADMIN]
+          enum: [STUDENT, TUTOR, ADMIN, FINANCE_MAKER, FINANCE_CHECKER]
         dateOfBirth:
           type: [string, "null"]
           format: date

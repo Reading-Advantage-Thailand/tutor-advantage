@@ -14,7 +14,7 @@ function canCheckAdjustment(role?: string) {
 
 function normalizeAmountSatang(value: unknown) {
   if (typeof value === "bigint") return value;
-  if (typeof value === "number" && Number.isInteger(value)) return BigInt(value);
+  if (typeof value === "number" && Number.isSafeInteger(value)) return BigInt(value);
   if (typeof value === "string" && /^-?\d+$/.test(value)) return BigInt(value);
   throw new Error("INVALID_AMOUNT");
 }

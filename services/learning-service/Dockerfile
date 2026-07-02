@@ -18,6 +18,7 @@ COPY services/learning-service/package.json ./services/learning-service/
 # Prisma schema must exist before npm ci: the database package's `prepare`
 # script runs `prisma generate` during install
 COPY packages/database/prisma ./packages/database/prisma
+COPY packages/contracts/openapi ./packages/contracts/openapi
 
 # Install ALL workspace dependencies (hoisted to root node_modules)
 RUN npm ci
@@ -64,6 +65,7 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 # Copy Prisma schema (needed for migrations at runtime if required)
 COPY --from=builder /app/packages/database/prisma ./packages/database/prisma
+COPY --from=builder /app/packages/contracts/openapi ./packages/contracts/openapi
 
 # Cloud Run injects PORT env var (default 8080), service also accepts 3002
 EXPOSE 8080

@@ -4,3 +4,4 @@ export * from "./middlewares/errorHandler";
 export * from "./env";
 export * from "./guardianPolicy";
 export * from "./securityConfig";
+export * from "./middlewares/openapi";

@@ -34,6 +34,9 @@ jobs:
       - name: Run unit tests with coverage thresholds
         run: npm run test:coverage
 
+      - name: Check OpenAPI route contracts
+        run: npm run contract:check
+
       - name: Run service builds
         run: npm run build:services
 

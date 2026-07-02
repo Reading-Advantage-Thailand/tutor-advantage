@@ -134,11 +134,11 @@ export async function createPaymentIntent(
     }
 
     // Amount must be an integer represented in Satang
-    if (!Number.isInteger(amountSatang)) {
+    if (!Number.isSafeInteger(amountSatang)) {
       return res.status(400).json({
         error: {
           code: "INVALID_AMOUNT",
-          message: "amountSatang must be an integer",
+          message: "amountSatang must be a safe integer",
           requestId: req.id,
         },
       });
