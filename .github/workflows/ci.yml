@@ -40,9 +40,6 @@ jobs:
       - name: Run service builds
         run: npm run build:services
 
-      - name: Build shared config
-        run: npm run build -w @tutor-advantage/shared-config
-
       - name: Build frontend applications
         run: npm run build
 

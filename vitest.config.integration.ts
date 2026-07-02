@@ -38,6 +38,10 @@ export default defineConfig({
         __dirname,
         "packages/database/src/index.ts",
       ),
+      "@tutor-advantage/shared-config": path.resolve(
+        __dirname,
+        "packages/shared-config/src/index.ts",
+      ),
     },
   },
 });

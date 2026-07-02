@@ -20,46 +20,45 @@ Ship the first milestone baseline:
 
 ## Deliverables
 
-- [ ] `backend/contracts/openapi/identity.v1.yaml`
-- [ ] `backend/contracts/openapi/learning.v1.yaml`
-- [ ] `backend/contracts/openapi/finance-mlm.v1.yaml`
-- [ ] `backend/schemas/001_schemas_and_roles.sql`
-- [ ] `backend/schemas/identity.sql`
-- [ ] `backend/schemas/learning.sql`
-- [ ] `backend/schemas/finance_mlm.sql`
+- [x] `packages/contracts/openapi/identity.v1.yaml`
+- [x] `packages/contracts/openapi/learning.v1.yaml`
+- [x] `packages/contracts/openapi/finance-mlm.v1.yaml`
+- [x] Prisma schema at `packages/database/prisma/schema.prisma`
+- [x] Ordered migrations at `packages/database/prisma/migrations`
 
 ## Work Breakdown
 
 ### A. Service Workspace Baseline
 
-- [ ] Define service folder convention and naming
-- [ ] Add shared config conventions (`env`, `logging`, `request-id`, `error envelope`)
-- [ ] Add health endpoint contract for all services
-- [ ] Add version endpoint contract for all services
+- [x] Define service folder convention and naming
+- [x] Add shared config conventions (`env`, `logging`, `request-id`, `error envelope`)
+- [x] Add health endpoint contract for all services
+- [x] Add version endpoint contract for all services
 
 Verification:
 
-- [ ] Health and version contract tests pass for each service
+- [x] Health and version routes are represented in each OpenAPI contract
 
 ### B. Contract-First API Definitions
 
-- [ ] Identity contract drafted (auth callback/session/profile/guardian)
-- [ ] Learning contract drafted (class lifecycle/referral/enrollment)
-- [ ] Finance contract drafted (payments/settlement/payout approval/audit)
-- [ ] Common error schema standardized across services
-- [ ] Idempotency key header policy documented where required
+- [x] Identity contract drafted (auth callback/session/profile/guardian)
+- [x] Learning contract drafted (class lifecycle/referral/enrollment)
+- [x] Finance contract drafted (payments/settlement/payout approval/audit)
+- [x] Common error schema standardized across services
+- [x] Payment idempotency field/header behavior implemented
 
 Verification:
 
-- [ ] OpenAPI files validate syntactically
-- [ ] Required V1 endpoint groups exist
+- [x] OpenAPI files validate through contract middleware tests
+- [x] Required V1 endpoint groups exist
+- [x] CI checks documented critical routes against implementations
 
 ### C. Cloud SQL Schema Boundary Setup
 
-- [ ] Create domain schemas (`identity`, `learning`, `finance_mlm`, `legacy_bridge`)
+- [x] Create domain schemas (`identity`, `learning`, `finance_mlm`, `legacy_bridge`)
 - [ ] Define service DB roles with least privilege
 - [ ] Define default privileges and sequence usage policies
-- [ ] Document migration ordering and ownership boundaries
+- [x] Migration ordering is enforced by Prisma migration history and deployment gates
 
 Verification:
 
@@ -75,9 +74,9 @@ Verification:
 ## Open Decisions (Must Close Before Phase 2 Build)
 
 - [ ] Exact OAuth callback URL matrix by environment
-- [ ] Payment gateway webhook verification mechanism details
-- [ ] Settlement run scheduling strategy (cron/job runner implementation)
-- [ ] Final decimal precision and rounding scale in persistence layer
+- [x] Payment gateway webhook signature and replay handling
+- [x] Settlement scheduling through authenticated Cloud Scheduler job
+- [x] Currency represented as integer Satang with safe-integer API contracts
 
 ## Done Definition
 

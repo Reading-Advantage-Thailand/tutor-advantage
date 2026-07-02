@@ -2,7 +2,8 @@
 
 ## Guiding Rules
 
-1. `plan.md` is the source of truth for execution order and status.
+1. The active track checklist under `conductor/tracks/` is the source of truth
+   for execution order and status.
 2. Follow TDD: write failing tests, implement, then refactor.
 3. Keep service boundaries intact (`identity`, `learning`, `finance/mlm`).
 4. Use non-interactive CI-safe commands.
@@ -10,7 +11,7 @@
 
 ## Task Lifecycle
 
-1. Select next pending task from `plan.md`.
+1. Select the next pending task from the active track checklist.
 2. Mark task `[~]` before coding.
 3. Write failing tests (red).
 4. Implement minimal passing code (green).
@@ -42,6 +43,13 @@
 
 ```bash
 npm run lint
-npm run build
 npm test
+npm run test:coverage
+npm run contract:check
+npm run build:services
+npm run build
+npm run test:integration
 ```
+
+Shared packages are compiled by the root test/build lifecycle. Generated
+`dist/` artifacts are ignored and must never be committed.
