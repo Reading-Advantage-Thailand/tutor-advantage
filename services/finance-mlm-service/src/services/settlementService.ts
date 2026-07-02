@@ -206,6 +206,22 @@ export class SettlementService {
       }
     }
 
+    // Validate every component before root-based traversal. A closed sponsor
+    // cycle has no root, so checking only while calculating payouts would skip it.
+    const graphState = new Map<string, "VISITING" | "VISITED">();
+    const validateSponsorTree = (userId: string) => {
+      const state = graphState.get(userId);
+      if (state === "VISITING") throw new Error("SPONSOR_TREE_CYCLE");
+      if (state === "VISITED") return;
+
+      graphState.set(userId, "VISITING");
+      for (const childId of childMap.get(userId) || []) {
+        if (nodes.has(childId)) validateSponsorTree(childId);
+      }
+      graphState.set(userId, "VISITED");
+    };
+    for (const userId of nodes.keys()) validateSponsorTree(userId);
+
     // Recursive function to calculate GV bottom-up
     const calculateGV = (userId: string): bigint => {
       const node = nodes.get(userId)!;

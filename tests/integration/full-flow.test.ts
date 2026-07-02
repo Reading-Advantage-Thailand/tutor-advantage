@@ -20,6 +20,27 @@ import {
   seedTutor,
 } from "./setup";
 import { SettlementService } from "../../services/finance-mlm-service/src/services/settlementService";
+import { rejectSettlement } from "../../services/finance-mlm-service/src/controllers/settlementController";
+import { handleWebhook } from "../../services/finance-mlm-service/src/controllers/paymentController";
+
+function responseRecorder() {
+  const result = { statusCode: 200, body: undefined as unknown };
+  const response = {
+    status(code: number) {
+      result.statusCode = code;
+      return response;
+    },
+    json(body: unknown) {
+      result.body = body;
+      return response;
+    },
+    send(body: unknown) {
+      result.body = body;
+      return response;
+    },
+  };
+  return { response, result };
+}
 
 // ---------------------------------------------------------------------------
 // Guard — skip if not targeting a real DB
@@ -202,6 +223,118 @@ describe.skipIf(SKIP)("Full referral → payment → settlement flow", () => {
     await expect(
       SettlementService.previewSettlement(PERIOD_MONTH, "integration-test-admin"),
     ).rejects.toThrow("DRAFT_EXISTS");
+  });
+
+  it("approves the submitted settlement and creates an unsent payout document", async () => {
+    await prisma.settlementRun.update({
+      where: { settlementRunId },
+      data: { status: "SUBMITTED" },
+    });
+
+    await SettlementService.approveSettlement(
+      settlementRunId,
+      "integration-finance-checker",
+    );
+
+    const line = await prisma.payoutLine.findFirstOrThrow({
+      where: { settlementRunId, tutorUserId: tutorId },
+      include: { payoutDocument: true },
+    });
+    ids.track("payoutLine", line.payoutLineId);
+    if (line.payoutDocument) {
+      ids.track("payoutDocument", line.payoutLineId);
+    }
+
+    expect(line.payoutDocument).toMatchObject({
+      transferStatus: "NOT_SENT",
+      netAmountMinor: line.netPayoutMinor,
+    });
+    await expect(
+      SettlementService.retryPayoutTransfer(line.payoutLineId, settlementRunId),
+    ).rejects.toThrow("OMISE_PAYOUTS_NOT_CONFIGURED");
+  });
+
+  it("ignores a replayed payment webhook without creating another event", async () => {
+    const providerEventId = `evt-replay-${paymentIntentId}`;
+    await prisma.paymentEvent.create({
+      data: {
+        paymentIntentId,
+        providerEventId,
+        eventType: "charge.complete",
+        rawPayload: { id: providerEventId },
+        occurredAt: new Date(),
+      },
+    });
+    ids.track("paymentEvent", paymentIntentId);
+
+    const before = await prisma.paymentEvent.count({ where: { providerEventId } });
+    const { response, result } = responseRecorder();
+    await handleWebhook(
+      {
+        body: {
+          id: providerEventId,
+          key: "charge.complete",
+          data: {
+            id: "charge-replay",
+            status: "successful",
+            metadata: { paymentIntentId },
+          },
+        },
+        headers: {},
+      } as never,
+      response as never,
+    );
+    const after = await prisma.paymentEvent.count({ where: { providerEventId } });
+
+    expect(result).toEqual({
+      statusCode: 200,
+      body: "Webhook replay ignored",
+    });
+    expect(after).toBe(before);
+  });
+});
+
+describe.skipIf(SKIP)("Settlement rejection flow", () => {
+  const ids = createIdTracker();
+  let settlementRunId: string;
+
+  beforeAll(async () => {
+    const run = await prisma.settlementRun.create({
+      data: {
+        periodMonth: "2099-03",
+        status: "SUBMITTED",
+        createdBy: "integration-test-admin",
+        previewPayload: {},
+      },
+    });
+    settlementRunId = run.settlementRunId;
+    ids.track("settlementRun", settlementRunId);
+  });
+
+  afterAll(() => ids.cleanup());
+
+  it("allows a finance checker to reject a submitted settlement", async () => {
+    const { response, result } = responseRecorder();
+    await rejectSettlement(
+      {
+        params: { snapshotId: settlementRunId },
+        user: { userId: "integration-finance-checker", role: "FINANCE_CHECKER" },
+        id: "integration-reject",
+      } as never,
+      response as never,
+    );
+
+    const run = await prisma.settlementRun.findUniqueOrThrow({
+      where: { settlementRunId },
+    });
+    const audit = await prisma.auditEvent.findFirst({
+      where: { entityType: "SettlementRun", entityId: settlementRunId },
+    });
+    if (audit) ids.track("auditEvent", audit.auditEventId);
+
+    expect(result.statusCode).toBe(200);
+    expect(run.status).toBe("REJECTED");
+    expect(audit).toMatchObject({ action: "REJECT" });
   });
 });
 
