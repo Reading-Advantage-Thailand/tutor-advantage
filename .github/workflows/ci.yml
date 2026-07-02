@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
           cache: npm
 
       - name: Install dependencies
@@ -70,14 +70,24 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
           cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Create test database schema
-        run: npx prisma db push --schema=packages/database/prisma/schema.prisma
+      - name: Apply migration chain to clean database
+        run: npx prisma migrate deploy --schema=packages/database/prisma/schema.prisma
+
+      - name: Verify migration status
+        run: npx prisma migrate status --schema=packages/database/prisma/schema.prisma
+
+      - name: Check schema drift
+        run: >-
+          npx prisma migrate diff
+          --from-url "$DATABASE_URL"
+          --to-schema-datamodel packages/database/prisma/schema.prisma
+          --exit-code
 
       - name: Run integration tests
         run: npm run test:integration

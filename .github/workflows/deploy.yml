@@ -1,10 +1,13 @@
 name: Deploy to Cloud Run
 
 on:
-  push:
-    branches:
-      - main
-      - master
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+concurrency:
+  group: deploy-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
 
 env:
   PROJECT_ID: reading-advantage
@@ -18,6 +21,10 @@ jobs:
   changes:
     name: Detect changes
     runs-on: ubuntu-latest
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      (github.event.workflow_run.head_branch == 'main' ||
+      github.event.workflow_run.head_branch == 'master')
     outputs:
       learning-service: ${{ steps.filter.outputs.learning-service }}
       identity-service: ${{ steps.filter.outputs.identity-service }}
@@ -27,28 +34,111 @@ jobs:
       admin-console: ${{ steps.filter.outputs.admin-console }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 2
+      - name: Resolve comparison commit
+        id: refs
+        shell: bash
+        run: echo "base=$(git rev-parse HEAD^)" >> "$GITHUB_OUTPUT"
       - uses: dorny/paths-filter@v3
         id: filter
         with:
+          base: ${{ steps.refs.outputs.base }}
+          ref: ${{ github.event.workflow_run.head_sha }}
           filters: |
             learning-service:
               - 'services/learning-service/**'
               - 'packages/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - '.github/workflows/deploy.yml'
             identity-service:
               - 'services/identity-service/**'
               - 'packages/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - '.github/workflows/deploy.yml'
             finance-mlm-service:
               - 'services/finance-mlm-service/**'
               - 'packages/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - '.github/workflows/deploy.yml'
             tutor-pwa:
               - 'apps/tutor-pwa/**'
               - 'packages/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - '.github/workflows/deploy.yml'
             student-liff:
               - 'apps/student-liff/**'
               - 'packages/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - '.github/workflows/deploy.yml'
             admin-console:
               - 'apps/admin-console/**'
               - 'packages/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - '.github/workflows/deploy.yml'
+
+  migrate:
+    name: Apply database migrations
+    runs-on: ubuntu-latest
+    needs: changes
+    if: >-
+      needs.changes.outputs.learning-service == 'true' ||
+      needs.changes.outputs.identity-service == 'true' ||
+      needs.changes.outputs.finance-mlm-service == 'true'
+    steps:
+      - name: Checkout validated commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Build and push migration image
+        env:
+          DEPLOY_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          docker build \
+            -f packages/database/Dockerfile.migrate \
+            -t ${{ env.REGISTRY }}/database-migrate:${DEPLOY_SHA} \
+            .
+          docker push ${{ env.REGISTRY }}/database-migrate:${DEPLOY_SHA}
+
+      - name: Deploy migration job
+        env:
+          DEPLOY_SHA: ${{ github.event.workflow_run.head_sha }}
+          DATABASE_SECRET: ${{ secrets.DATABASE_URL_SECRET_NAME || 'DATABASE_URL' }}
+        run: |
+          gcloud run jobs deploy tutor-advantage-db-migrate \
+            --image=${{ env.REGISTRY }}/database-migrate:${DEPLOY_SHA} \
+            --region=${{ env.REGION }} \
+            --add-cloudsql-instances=reading-advantage:asia-southeast1:cloud-sql \
+            --set-secrets=DATABASE_URL=${DATABASE_SECRET}:latest \
+            --max-retries=0 \
+            --task-timeout=10m \
+            --quiet
+
+      - name: Execute migration gate
+        run: |
+          gcloud run jobs execute tutor-advantage-db-migrate \
+            --region=${{ env.REGION }} \
+            --wait \
+            --quiet
 
   # -------------------------------------------------------
   # Build and deploy each service (only if changed)
@@ -56,14 +146,17 @@ jobs:
   deploy:
     name: Deploy ${{ matrix.service }}
     runs-on: ubuntu-latest
-    needs: changes
-    if: |
-      needs.changes.outputs.learning-service == 'true' ||
+    needs: [changes, migrate]
+    if: >-
+      always() &&
+      needs.changes.result == 'success' &&
+      (needs.migrate.result == 'success' || needs.migrate.result == 'skipped') &&
+      (needs.changes.outputs.learning-service == 'true' ||
       needs.changes.outputs.identity-service == 'true' ||
       needs.changes.outputs.finance-mlm-service == 'true' ||
       needs.changes.outputs.tutor-pwa == 'true' ||
       needs.changes.outputs.student-liff == 'true' ||
-      needs.changes.outputs.admin-console == 'true'
+      needs.changes.outputs.admin-console == 'true')
 
     strategy:
       fail-fast: false
@@ -102,6 +195,8 @@ jobs:
       - name: Checkout
         if: matrix.changed == 'true'
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Authenticate to Google Cloud
         if: matrix.changed == 'true'
@@ -119,22 +214,28 @@ jobs:
 
       - name: Build Docker image
         if: matrix.changed == 'true'
+        env:
+          DEPLOY_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
           docker build \
             -f ${{ matrix.dockerfile }} \
-            -t ${{ env.REGISTRY }}/${{ matrix.service }}:${{ github.sha }} \
+            -t ${{ env.REGISTRY }}/${{ matrix.service }}:${DEPLOY_SHA} \
             -t ${{ env.REGISTRY }}/${{ matrix.service }}:latest \
             --build-arg NEXT_PUBLIC_LIFF_ID=${{ secrets.NEXT_PUBLIC_LIFF_ID }} \
             .
 
       - name: Push Docker image
         if: matrix.changed == 'true'
+        env:
+          DEPLOY_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
-          docker push ${{ env.REGISTRY }}/${{ matrix.service }}:${{ github.sha }}
+          docker push ${{ env.REGISTRY }}/${{ matrix.service }}:${DEPLOY_SHA}
           docker push ${{ env.REGISTRY }}/${{ matrix.service }}:latest
 
       - name: Deploy to Cloud Run
         if: matrix.changed == 'true'
+        env:
+          DEPLOY_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
           CLOUDSQL_FLAG=""
           if [[ "${{ matrix.needs_db }}" == "true" ]]; then
@@ -144,7 +245,7 @@ jobs:
           fi
 
           gcloud run deploy ${{ matrix.service }} \
-            --image=${{ env.REGISTRY }}/${{ matrix.service }}:${{ github.sha }} \
+            --image=${{ env.REGISTRY }}/${{ matrix.service }}:${DEPLOY_SHA} \
             --region=${{ env.REGION }} \
             ${CLOUDSQL_FLAG} \
             --quiet
