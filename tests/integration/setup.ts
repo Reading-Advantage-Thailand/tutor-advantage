@@ -134,6 +134,11 @@ export function createIdTracker() {
         where: { bookId: { in: ids("book") } },
       }),
     );
+    await del(() =>
+      prisma.series.deleteMany({
+        where: { code: `INT-SERIES-${runTag()}` },
+      }),
+    );
     // identity — users last (FK parent)
     await del(() =>
       prisma.user.deleteMany({
@@ -161,6 +166,7 @@ export async function seedTutor(overrides: Partial<{
       email: `tutor-${uuidv4().slice(0, 8)}@integration.test`,
       isActive: true,
       sponsorTutorId: overrides.sponsorTutorId ?? null,
+      verificationStatus: "VERIFIED",
     },
   });
   return user.userId;
@@ -181,10 +187,24 @@ export async function seedStudent(): Promise<string> {
 
 /** Creates a Book and returns its bookId. */
 export async function seedBook(): Promise<string> {
+  const series = await prisma.series.upsert({
+    where: { code: `INT-SERIES-${runTag()}` },
+    update: {},
+    create: {
+      code: `INT-SERIES-${runTag()}`,
+      name: `Integration Test Series ${runTag()}`,
+      cefrLevel: "A1",
+      raLevelStart: 1,
+      raLevelEnd: 1,
+    },
+  });
   const book = await prisma.book.create({
     data: {
+      seriesId: series.seriesId,
       title: `Integration Test Book ${runTag()}`,
       bookCode: `INT-${runTag()}`,
+      levelNumber: 1,
+      articleCount: 0,
       classHours: 10,
     },
   });
@@ -254,9 +274,17 @@ export async function seedEnrollment(opts: {
       primaryClass.status !== "OPEN" ||
       primaryClass.enrolledCount >= primaryClass.capacity
     ) {
-      const fallback = await tx.class.findFirst({
-        where: { tutorUserId: primaryClass.tutorUserId, status: "OPEN" },
+      const candidates = await tx.class.findMany({
+        where: {
+          tutorUserId: primaryClass.tutorUserId,
+          status: "OPEN",
+          classId: { not: primaryClass.classId },
+          isDemo: false,
+        },
       });
+      const fallback = candidates.find(
+        (candidate) => candidate.enrolledCount < candidate.capacity,
+      );
       if (!fallback || fallback.enrolledCount >= fallback.capacity) {
         throw new Error("NO_FALLBACK_AVAILABLE");
       }

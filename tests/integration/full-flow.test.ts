@@ -231,27 +231,40 @@ describe.skipIf(SKIP)("Full referral → payment → settlement flow", () => {
       data: { status: "SUBMITTED" },
     });
 
-    await SettlementService.approveSettlement(
-      settlementRunId,
-      "integration-finance-checker",
-    );
+    const omisePrivateKey = process.env.OMISE_PRIVATE_KEY;
+    const omisePublicKey = process.env.OMISE_PUBLIC_KEY;
+    delete process.env.OMISE_PRIVATE_KEY;
+    delete process.env.OMISE_PUBLIC_KEY;
+    try {
+      await SettlementService.approveSettlement(
+        settlementRunId,
+        "integration-finance-checker",
+      );
 
-    const line = await prisma.payoutLine.findFirstOrThrow({
-      where: { settlementRunId, tutorUserId: tutorId },
-      include: { payoutDocument: true },
-    });
-    ids.track("payoutLine", line.payoutLineId);
-    if (line.payoutDocument) {
-      ids.track("payoutDocument", line.payoutLineId);
+      const line = await prisma.payoutLine.findFirstOrThrow({
+        where: { settlementRunId, tutorUserId: tutorId },
+        include: { payoutDocument: true },
+      });
+      ids.track("payoutLine", line.payoutLineId);
+      if (line.payoutDocument) {
+        ids.track("payoutDocument", line.payoutLineId);
+      }
+
+      expect(line.payoutDocument).toMatchObject({
+        transferStatus: "NOT_SENT",
+        netAmountMinor: line.netPayoutMinor,
+      });
+      await expect(
+        SettlementService.retryPayoutTransfer(line.payoutLineId, settlementRunId),
+      ).rejects.toThrow("OMISE_PAYOUTS_NOT_CONFIGURED");
+    } finally {
+      if (omisePrivateKey !== undefined) {
+        process.env.OMISE_PRIVATE_KEY = omisePrivateKey;
+      }
+      if (omisePublicKey !== undefined) {
+        process.env.OMISE_PUBLIC_KEY = omisePublicKey;
+      }
     }
-
-    expect(line.payoutDocument).toMatchObject({
-      transferStatus: "NOT_SENT",
-      netAmountMinor: line.netPayoutMinor,
-    });
-    await expect(
-      SettlementService.retryPayoutTransfer(line.payoutLineId, settlementRunId),
-    ).rejects.toThrow("OMISE_PAYOUTS_NOT_CONFIGURED");
   });
 
   it("ignores a replayed payment webhook without creating another event", async () => {
@@ -269,21 +282,31 @@ describe.skipIf(SKIP)("Full referral → payment → settlement flow", () => {
 
     const before = await prisma.paymentEvent.count({ where: { providerEventId } });
     const { response, result } = responseRecorder();
-    await handleWebhook(
-      {
-        body: {
-          id: providerEventId,
-          key: "charge.complete",
-          data: {
-            id: "charge-replay",
-            status: "successful",
-            metadata: { paymentIntentId },
+    const webhookSecret = process.env.OMISE_WEBHOOK_SECRET;
+    delete process.env.OMISE_WEBHOOK_SECRET;
+    try {
+      await handleWebhook(
+        {
+          body: {
+            id: providerEventId,
+            key: "charge.complete",
+            data: {
+              id: "charge-replay",
+              status: "successful",
+              metadata: { paymentIntentId },
+            },
           },
-        },
-        headers: {},
-      } as never,
-      response as never,
-    );
+          headers: {},
+        } as never,
+        response as never,
+      );
+    } finally {
+      if (webhookSecret === undefined) {
+        delete process.env.OMISE_WEBHOOK_SECRET;
+      } else {
+        process.env.OMISE_WEBHOOK_SECRET = webhookSecret;
+      }
+    }
     const after = await prisma.paymentEvent.count({ where: { providerEventId } });
 
     expect(result).toEqual({
