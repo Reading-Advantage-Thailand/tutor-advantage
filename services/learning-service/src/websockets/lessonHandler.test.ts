@@ -4,7 +4,7 @@ import {
   isStudentSessionParticipant,
   isTutorSessionOwner,
   verifySocketActor,
-} from "./lessonHandler";
+} from "./lessonAuthorization";
 
 function session(
   tutorId = "tutor-1",

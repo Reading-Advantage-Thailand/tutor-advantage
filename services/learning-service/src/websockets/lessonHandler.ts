@@ -1,7 +1,6 @@
 import { getJwtSecret, logger } from "@tutor-advantage/shared-config";
 import { Server, Socket } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
-import jwt from "jsonwebtoken";
 import { lessonSessionService } from "../services/LessonSessionService";
 import { evaluateShortAnswer, evaluateWriting, answerLanguageQuestion } from "../services/AIEvaluator";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
@@ -10,56 +9,18 @@ import * as dbWriter from "../services/SessionDBWriter";
 import { LineNotificationService } from "../services/LineNotificationService";
 import { checkAndUnlockBadges } from "../services/BadgeService";
 import { prisma } from "@tutor-advantage/database";
+import {
+  isStudentSessionParticipant,
+  isTutorSessionOwner,
+  SocketActor,
+  verifySocketActor,
+} from "./lessonAuthorization";
 
-type SocketActor = {
-  userId: string;
-  role: string;
-};
-
-type LessonSessionAuthorization = {
-  tutorId?: string;
-  tutorSocketId?: string;
-  participants: Map<string, unknown>;
-};
-
-export function verifySocketActor(token: string, secret: string): SocketActor {
-  const decoded = jwt.verify(token, secret);
-  if (
-    typeof decoded === "string" ||
-    typeof decoded.userId !== "string" ||
-    typeof decoded.role !== "string"
-  ) {
-    throw new Error("Invalid token claims");
-  }
-
-  return {
-    userId: decoded.userId,
-    role: decoded.role,
-  };
-}
-
-export function isTutorSessionOwner(
-  actor: SocketActor | undefined,
-  socketId: string,
-  session: LessonSessionAuthorization | undefined,
-) {
-  return Boolean(
-    actor?.role === "TUTOR" &&
-      session &&
-      session.tutorId === actor.userId &&
-      session.tutorSocketId === socketId,
-  );
-}
-
-export function isStudentSessionParticipant(
-  actor: SocketActor | undefined,
-  session: LessonSessionAuthorization | undefined,
-) {
-  return Boolean(
-    actor?.role === "STUDENT" &&
-      session?.participants.has(actor.userId),
-  );
-}
+export {
+  isStudentSessionParticipant,
+  isTutorSessionOwner,
+  verifySocketActor,
+} from "./lessonAuthorization";
 
 function seededShuffle<T>(array: T[], seedInput: string): T[] {
   const result = [...array];
