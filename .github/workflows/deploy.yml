@@ -127,7 +127,7 @@ jobs:
           gcloud run jobs deploy tutor-advantage-db-migrate \
             --image=${{ env.REGISTRY }}/database-migrate:${DEPLOY_SHA} \
             --region=${{ env.REGION }} \
-            --add-cloudsql-instances=reading-advantage:asia-southeast1:cloud-sql \
+            --set-cloudsql-instances=reading-advantage:asia-southeast1:cloud-sql \
             --set-secrets=DATABASE_URL=${DATABASE_SECRET}:latest \
             --max-retries=0 \
             --task-timeout=10m \
