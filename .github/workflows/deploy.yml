@@ -13,6 +13,13 @@ env:
   PROJECT_ID: reading-advantage
   REGION: asia-southeast1
   REGISTRY: asia-southeast1-docker.pkg.dev/reading-advantage/tutor-advantage
+  ALLOWED_ORIGINS: >-
+    https://student-liff-1090865515742.asia-southeast1.run.app,
+    https://student-liff-hxamzdhgwa-as.a.run.app,
+    https://tutor-pwa-1090865515742.asia-southeast1.run.app,
+    https://tutor-pwa-hxamzdhgwa-as.a.run.app,
+    https://admin-console-1090865515742.asia-southeast1.run.app,
+    https://admin-console-hxamzdhgwa-as.a.run.app
 
 jobs:
   # -------------------------------------------------------
@@ -237,17 +244,20 @@ jobs:
         env:
           DEPLOY_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
-          CLOUDSQL_FLAG=""
+          DEPLOY_FLAGS=()
           if [[ "${{ matrix.needs_db }}" == "true" ]]; then
             # DATABASE_URL is already set on Cloud Run as a Secret Manager reference — don't touch it.
-            # Only add the Cloud SQL Auth Proxy sidecar so 127.0.0.1:5432 is reachable.
-            CLOUDSQL_FLAG="--add-cloudsql-instances=reading-advantage:asia-southeast1:cloud-sql"
+            # Add the Cloud SQL sidecar and explicit production CORS allowlist.
+            DEPLOY_FLAGS+=(
+              "--add-cloudsql-instances=reading-advantage:asia-southeast1:cloud-sql"
+              "--update-env-vars=^@^ALLOWED_ORIGINS=${ALLOWED_ORIGINS}"
+            )
           fi
 
           gcloud run deploy ${{ matrix.service }} \
             --image=${{ env.REGISTRY }}/${{ matrix.service }}:${DEPLOY_SHA} \
             --region=${{ env.REGION }} \
-            ${CLOUDSQL_FLAG} \
+            "${DEPLOY_FLAGS[@]}" \
             --quiet
 
       - name: Show service URL
