@@ -122,7 +122,7 @@ jobs:
       - name: Deploy migration job
         env:
           DEPLOY_SHA: ${{ github.event.workflow_run.head_sha }}
-          DATABASE_SECRET: ${{ secrets.DATABASE_URL_SECRET_NAME || 'DATABASE_URL' }}
+          DATABASE_SECRET: ${{ secrets.DATABASE_URL_SECRET_NAME || 'ta-database_url' }}
         run: |
           gcloud run jobs deploy tutor-advantage-db-migrate \
             --image=${{ env.REGISTRY }}/database-migrate:${DEPLOY_SHA} \
