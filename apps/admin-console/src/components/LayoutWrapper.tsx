@@ -7,6 +7,7 @@ import { fetchWithAuth, getAdminRole, getAdminEmail, getAdminName, getAdminPictu
 import {
   LayoutDashboard,
   ReceiptText,
+  CreditCard,
   LogOut,
   ChevronsUpDown,
   ShieldCheck,
@@ -53,6 +54,7 @@ import { t } from "@/lib/i18n";
 
 const FINANCE_ITEMS = [
   { href: "/", label: t("layout.overview"), icon: LayoutDashboard },
+  { href: "/reconciliation", label: t("reconciliation.nav"), icon: CreditCard },
   { href: "/settlements", label: t("layout.settlements"), icon: ReceiptText },
   { href: "/adjustments", label: t("layout.adjustments"), icon: FilePenLine },
   { href: "/audit", label: t("layout.audit"), icon: ShieldCheck },
@@ -481,6 +483,7 @@ export default function LayoutWrapper({
 
   const PAGE_TITLES: Record<string, string> = {
     "/": t("layout.systemOverview"),
+    "/reconciliation": t("reconciliation.nav"),
     "/settlements": t("layout.settlements"),
     "/adjustments": t("layout.adjustments"),
     "/audit": t("layout.audit"),

@@ -77,7 +77,7 @@ app.use(requestIdMiddleware);
 app.use(requestLoggerMiddleware);
 app.use(
   createOpenApiMiddleware(
-    path.resolve(process.cwd(), "packages/contracts/openapi/identity.v1.yaml"),
+    path.resolve(__dirname, "../../../packages/contracts/openapi/identity.v1.yaml"),
   ),
 );
 

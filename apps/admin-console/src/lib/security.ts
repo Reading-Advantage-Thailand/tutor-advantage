@@ -12,8 +12,6 @@ export function getJwtSecret() {
 }
 
 export function devRoutesEnabled() {
-  return (
-    process.env.NODE_ENV !== "production" &&
-    process.env.ENABLE_DEV_ROUTES === "true"
-  );
+  if (process.env.NODE_ENV === "production") return false;
+  return process.env.ENABLE_DEV_ROUTES !== "false";
 }

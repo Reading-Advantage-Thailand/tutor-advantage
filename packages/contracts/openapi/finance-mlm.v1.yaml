@@ -97,6 +97,28 @@ paths:
       responses:
         "200":
           description: Webhook ingested successfully
+  /v1/reconciliation/payments:
+    get:
+      summary: Payment Reconciliation Dashboard Data
+      description: Returns payment, enrollment, and webhook reconciliation queues for finance/admin review.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: days
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 180
+      responses:
+        "200":
+          description: Reconciliation summary and queues.
   /v1/settlements/preview:
     post:
       summary: Preview Monthly Settlement

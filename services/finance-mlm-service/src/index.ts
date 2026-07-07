@@ -76,6 +76,7 @@ import {
   getFraudFlags,
   triggerFraudAction,
 } from "./controllers/fraudController";
+import { getPaymentReconciliation } from "./controllers/reconciliationController";
 import { getAdminOverview } from "./controllers/adminController";
 import {
   createCoupon,
@@ -150,7 +151,7 @@ app.use(requestIdMiddleware);
 app.use(requestLoggerMiddleware);
 app.use(
   createOpenApiMiddleware(
-    path.resolve(process.cwd(), "packages/contracts/openapi/finance-mlm.v1.yaml"),
+    path.resolve(__dirname, "../../../packages/contracts/openapi/finance-mlm.v1.yaml"),
   ),
 );
 
@@ -169,6 +170,7 @@ app.get("/version", (_req: Request, res: Response) => {
 });
 
 app.get("/v1/admin/overview", authMiddleware, financeStaffOnly, getAdminOverview);
+app.get("/v1/reconciliation/payments", authMiddleware, financeStaffOnly, getPaymentReconciliation);
 
 // ── Coupon Routes (admin) ──────────────────────────────────────────────────
 app.post("/v1/coupons", authMiddleware, adminOnly, createCoupon);
