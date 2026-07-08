@@ -12,7 +12,7 @@ function toNumber(value: bigint | number | null | undefined) {
   return Number(value);
 }
 
-function issueForPayment(
+export function issueForPayment(
   payment: {
     status: string;
     createdAt: Date;
@@ -22,6 +22,17 @@ function issueForPayment(
   enrollmentPackage?: { status: string; paymentTransactionId: string | null },
 ) {
   const target = payment.enrollmentPackageId ? enrollmentPackage : enrollment;
+
+  if (
+    (payment.status === "SUCCESS" || payment.status === "FAILED") &&
+    !target
+  ) {
+    return {
+      type: "ENROLLMENT_TARGET_NOT_FOUND",
+      severity: "HIGH",
+      description: "Payment references an enrollment target that could not be found.",
+    };
+  }
 
   if (payment.status === "SUCCESS" && target?.status !== "ACTIVE") {
     return {
@@ -251,6 +262,7 @@ export async function getPaymentReconciliation(
         successVolumeMinor: toNumber(totalVolume._sum.amountMinor) ?? 0,
         issueCount:
           (issueCounts.SUCCESS_NOT_ACTIVE ?? 0) +
+          (issueCounts.ENROLLMENT_TARGET_NOT_FOUND ?? 0) +
           (issueCounts.FAILED_ACTIVE ?? 0) +
           (issueCounts.STALE_PENDING ?? 0) +
           (issueCounts.MISSING_PAYMENT_REF ?? 0) +

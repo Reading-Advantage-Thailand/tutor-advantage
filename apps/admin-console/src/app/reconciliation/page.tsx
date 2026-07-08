@@ -138,6 +138,20 @@ function shortId(value: string | null | undefined) {
   return value.length > 16 ? `${value.slice(0, 12)}...` : value;
 }
 
+const ISSUE_DESCRIPTION_KEYS = {
+  OK: "reconciliation.issueOk",
+  ENROLLMENT_TARGET_NOT_FOUND: "reconciliation.issueEnrollmentTargetNotFound",
+  SUCCESS_NOT_ACTIVE: "reconciliation.issueSuccessNotActive",
+  FAILED_ACTIVE: "reconciliation.issueFailedActive",
+  STALE_PENDING: "reconciliation.issueStalePending",
+  MISSING_PAYMENT_REF: "reconciliation.issueMissingPaymentRef",
+} as const;
+
+function issueDescription(issue: ReconciliationIssue) {
+  const key = ISSUE_DESCRIPTION_KEYS[issue.type as keyof typeof ISSUE_DESCRIPTION_KEYS];
+  return key ? t(key) : t("reconciliation.issueFallback");
+}
+
 function MetricValue({ loading, children }: { loading: boolean; children: ReactNode }) {
   if (loading) return <Skeleton className="mt-4 h-10 w-32 rounded-xl" />;
   return <p className="mt-4 text-4xl font-black">{children}</p>;
@@ -397,7 +411,7 @@ export default function PaymentReconciliationPage() {
                       </div>
 
                       <p className="rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 p-3 text-sm font-medium text-red-800 dark:text-red-300">
-                        {item.issue.description}
+                        {issueDescription(item.issue)}
                       </p>
                     </div>
 

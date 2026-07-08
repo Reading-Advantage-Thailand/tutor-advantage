@@ -367,6 +367,13 @@ export const th = {
     alignedTitle: "รายการที่สอดคล้องล่าสุด",
     alignedDescription: "รายการปกติที่เก็บไว้ให้ตรวจทานและใช้เป็นบริบทสำหรับ audit",
     noAlignedPayments: "ไม่มีรายการชำระเงินที่สอดคล้องในช่วงเวลานี้",
+    issueOk: "สถานะการชำระเงินและการลงเรียนสอดคล้องกัน",
+    issueEnrollmentTargetNotFound: "รายการชำระเงินอ้างอิง enrollment หรือ package ที่ไม่พบในระบบ",
+    issueSuccessNotActive: "ชำระเงินสำเร็จแล้ว แต่สถานะการลงเรียนยังไม่เป็น ACTIVE",
+    issueFailedActive: "ชำระเงินล้มเหลว แต่สถานะการลงเรียนยังเป็น ACTIVE",
+    issueStalePending: "รายการชำระเงินค้างอยู่เกินเวลาที่ควรตรวจสอบ",
+    issueMissingPaymentRef: "ชำระเงินสำเร็จแล้ว แต่ยังไม่มีรหัสอ้างอิงผู้ให้บริการในรายการลงเรียน",
+    issueFallback: "รายการนี้ต้องตรวจสอบสถานะเพิ่มเติม",
   },
   audit: {
     title: "ประวัติกิจกรรม (Audit Trail)",
