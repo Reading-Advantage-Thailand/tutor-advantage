@@ -1,12 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { lessonSessionService as service } from "./LessonSessionService";
 
 describe("lessonSessionService", () => {
-  let service: typeof import("./LessonSessionService").lessonSessionService;
-
-  beforeEach(async () => {
-    vi.resetModules();
+  beforeEach(() => {
+    service.resetForTest();
     vi.spyOn(console, "log").mockImplementation(() => undefined);
-    service = (await import("./LessonSessionService")).lessonSessionService;
   });
 
   it("creates sessions, indexes them by class, and reuses active class sessions", () => {

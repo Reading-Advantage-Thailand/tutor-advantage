@@ -75,6 +75,12 @@ class LessonSessionService {
   private sessions: Map<string, LessonSession> = new Map();
   private classToSessionId: Map<string, string> = new Map(); // Map classId to active session
 
+  resetForTest() {
+    if (process.env.NODE_ENV === "production") return;
+    this.sessions.clear();
+    this.classToSessionId.clear();
+  }
+
   createSession(
     tutorId: string,
     tutorSocketId: string,
