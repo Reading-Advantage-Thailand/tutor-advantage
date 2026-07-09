@@ -12,7 +12,13 @@ import { MobileLeaderboard } from '@/components/lesson/MobileLeaderboard';
 import { LessonReflectionPhase } from '@/components/lesson/phases/LessonReflectionPhase';
 import { LessonPairPhase } from '@/components/lesson/phases/LessonPairPhase';
 import { LessonWrapUpPhase } from '@/components/lesson/phases/LessonWrapUpPhase';
+import { AdvantageArcadeRuntime } from '@/components/lesson/AdvantageArcadeRuntime';
 import { toast } from 'sonner';
+import { getGameById, getGamesByCategory } from '@/lib/liveLessonGames';
+
+const VOCAB_GAME_PHASE = 10;
+const SENTENCE_GAME_PHASE = 14;
+const FINAL_LEADERBOARD_PHASE = 18;
 
 // ── Phase Config (Look at Screen) ────────────────────────────────────────────
 const PHASE_CONFIG: Record<number, {
@@ -53,7 +59,9 @@ function PlayLessonContent() {
     submitAnswer,
     kicked,
     flagCounts,
-    flagSentence
+    flagSentence,
+    submitGameVote,
+    submitGameResult
   } = useLessonSocket(classId || undefined, studentId, name, profile?.pictureUrl);
 
   const [typedAnswer, setTypedAnswer] = useState('');
@@ -77,7 +85,10 @@ function PlayLessonContent() {
   // Dev-only: preview the Step 14 pair view without a real session.
   // 0 = off, 1 = pair (1 partner), 2 = group of three (2 partners)
   const [devPairPreview, setDevPairPreview] = useState<0 | 1 | 2>(0);
-  const currentPhase = devPairPreview ? 15 : (sessionData?.currentPhase ?? 0);
+  const currentPhase = devPairPreview ? 17 : (sessionData?.currentPhase ?? 0);
+  const gameState = sessionData?.gameState ?? null;
+  const [gameStartedAt, setGameStartedAt] = useState<number | null>(null);
+  const [gameSelections, setGameSelections] = useState<Record<number, string>>({});
 
   useEffect(() => {
     if (isEveryoneReady) {
@@ -110,6 +121,23 @@ function PlayLessonContent() {
   // Reset my sentence flags at the start of a fresh instructional cycle
   useEffect(() => { if (currentPhase === 1) setMyFlags(new Set()); }, [currentPhase]);
 
+  const [, setClockTick] = useState(0);
+  useEffect(() => {
+    if (gameState?.status !== "countdown") return;
+    const timer = window.setInterval(() => setClockTick((tick) => tick + 1), 250);
+    return () => window.clearInterval(timer);
+  }, [gameState?.status, gameState?.countdownEndsAt]);
+
+  useEffect(() => {
+    if (gameState?.status === "playing" && !gameStartedAt) {
+      setGameStartedAt(Date.now());
+    }
+    if (!gameState || gameState.phase !== currentPhase) {
+      setGameStartedAt(null);
+      setGameSelections({});
+    }
+  }, [gameState?.status, gameState?.phase, currentPhase, gameStartedAt]);
+
   useEffect(() => {
     if (sessionData && sessionData.currentPhase === 0 && classId) {
       router.push(`/lesson/${classId}`);
@@ -117,7 +145,7 @@ function PlayLessonContent() {
   }, [sessionData, classId, router]);
 
   useEffect(() => {
-    if (!classId || currentPhase !== 14 || reviewLoaded) return;
+    if (!classId || currentPhase !== 16 || reviewLoaded) return;
 
     studentApi.getClassReview(classId)
       .then((data) => {
@@ -308,15 +336,15 @@ function PlayLessonContent() {
       const w = articleData?.words?.[idx];
       questionText = `${t("interactivePlay.vocabMeaningPrefix")} "${w?.vocabulary || w?.word || w?.text}" ${t("interactivePlay.vocabMeaningSuffix")}`;
       expected = w?.definition?.th || w?.translation || "";
-    } else if (currentPhase === 10) {
-      const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
+    } else if (currentPhase === 11) {
+      const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
       const s = articleData?.sentences?.[idx];
       const targetStr = typeof s === 'object' ? s.sentences : s;
       const words = String(targetStr).split(' ');
       questionText = words.slice(0, words.length - 1).join(' ') + ' _____';
       expected = words[words.length - 1].replace(/[.,!?]/g, '');
-    } else if (currentPhase === 11) {
-      const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
+    } else if (currentPhase === 12) {
+      const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
       const s = articleData?.sentences?.[idx];
       const targetStr = typeof s === 'object' ? s.sentences : s;
       questionText = `${t("interactivePlay.orderSentencePrefix")} ${idx + 1}`;
@@ -355,7 +383,7 @@ function PlayLessonContent() {
     playSound('submit');
     setIsSubmitting(true);
     setSelectedChoice(writingDraft);
-    const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
     const prompt = articleData?.shortAnswerQuestions?.[idx]?.question || t("interactivePlay.writingTitle");
     submitAnswer(writingDraft, prompt, '');
   };
@@ -557,6 +585,236 @@ function PlayLessonContent() {
     }
   };
 
+  const buildGameQuestions = () => {
+    const words = articleData?.words || [];
+    const sentences = articleData?.sentences || [];
+    const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
+    if (gameState?.category === "vocabulary") {
+      return words.slice(0, 5).map((word, index) => {
+        const label = word.vocabulary || word.word || word.text || `Word ${index + 1}`;
+        const answer = word.definition?.th || word.translation || label;
+        const distractors = words
+          .map((item) => item.definition?.th || item.translation || item.vocabulary || item.word || item.text || "")
+          .filter((item) => item && item !== answer)
+          .slice(0, 6);
+        return { prompt: label, answer, options: shuffle([answer, ...distractors]).slice(0, 4) };
+      });
+    }
+    return sentences.slice(0, 5).map((sentence, index) => {
+      const text = typeof sentence === "object" ? sentence.sentences : sentence;
+      const parts = String(text).split(" ").filter(Boolean);
+      const rotated = parts.length > 1 ? [...parts.slice(1), parts[0]].join(" ") : String(text);
+      const reversed = parts.length > 1 ? [...parts].reverse().join(" ") : String(text);
+      const otherSentence = sentences
+        .map((item) => String(typeof item === "object" ? item.sentences : item))
+        .find((item) => item && item !== String(text));
+      return {
+        prompt: parts.length > 1 ? [...parts].reverse().join(" / ") : `Sentence ${index + 1}`,
+        answer: String(text),
+        options: shuffle([String(text), rotated, reversed, otherSentence || `${String(text)}.`]).slice(0, 4),
+      };
+    });
+  };
+
+  const handleQuickGameComplete = () => {
+    const questions = buildGameQuestions();
+    const total = Math.max(questions.length, 1);
+    const correct = questions.filter((question, index) => gameSelections[index] === question.answer).length;
+    submitGameResult({
+      gameId: gameState?.selectedGameId || "",
+      score: correct * 2,
+      correct,
+      total,
+      durationMs: gameStartedAt ? Date.now() - gameStartedAt : undefined,
+    });
+  };
+
+  const getArcadeTheme = (gameId?: string | null, category?: "vocabulary" | "sentence") => {
+    if (gameId?.includes("dragon")) {
+      return { arena: "from-sky-500 via-indigo-600 to-violet-700", panel: "bg-sky-500/15 border-sky-300/40", target: "bg-sky-500", shadow: "shadow-[0_8px_0_rgb(3,105,161)]", avatar: "DR", action: "Choose the flight gate" };
+    }
+    if (gameId?.includes("castle") || gameId?.includes("tower")) {
+      return { arena: "from-slate-800 via-rose-800 to-amber-700", panel: "bg-amber-500/15 border-amber-300/40", target: "bg-amber-500", shadow: "shadow-[0_8px_0_rgb(146,64,14)]", avatar: "CT", action: "Defend with the right answer" };
+    }
+    if (gameId?.includes("potion") || gameId?.includes("alchemist")) {
+      return { arena: "from-emerald-700 via-teal-700 to-cyan-700", panel: "bg-emerald-500/15 border-emerald-300/40", target: "bg-emerald-500", shadow: "shadow-[0_8px_0_rgb(4,120,87)]", avatar: "PX", action: "Brew the correct answer" };
+    }
+    if (gameId?.includes("rune") || gameId?.includes("spell")) {
+      return { arena: "from-violet-800 via-fuchsia-700 to-indigo-800", panel: "bg-violet-500/15 border-violet-300/40", target: "bg-violet-600", shadow: "shadow-[0_8px_0_rgb(91,33,182)]", avatar: "RN", action: "Activate the correct rune" };
+    }
+    if (gameId?.includes("shadow") || gameId?.includes("dungeon") || gameId?.includes("abyssal")) {
+      return { arena: "from-zinc-950 via-indigo-950 to-slate-900", panel: "bg-indigo-500/15 border-indigo-300/30", target: "bg-indigo-600", shadow: "shadow-[0_8px_0_rgb(49,46,129)]", avatar: "DG", action: "Escape with the correct answer" };
+    }
+    return {
+      arena: category === "vocabulary" ? "from-indigo-600 via-violet-700 to-fuchsia-700" : "from-rose-600 via-orange-600 to-amber-600",
+      panel: "bg-white/15 border-white/25",
+      target: category === "vocabulary" ? "bg-indigo-600" : "bg-rose-600",
+      shadow: category === "vocabulary" ? "shadow-[0_8px_0_rgb(67,56,202)]" : "shadow-[0_8px_0_rgb(190,18,60)]",
+      avatar: category === "vocabulary" ? "VX" : "SX",
+      action: category === "vocabulary" ? "Match the vocabulary" : "Build the sentence",
+    };
+  };
+
+  const renderGamePhaseMobile = () => {
+    if (!gameState) {
+      return <div className="phase-enter w-full max-w-sm rounded-3xl border border-border bg-card p-6 text-center shadow-xl"><p className="text-sm font-bold text-muted-foreground">กำลังเตรียมเกม...</p></div>;
+    }
+    const games = getGamesByCategory(gameState.category);
+    const selected = getGameById(gameState.selectedGameId);
+    const myVote = gameState.votes?.[studentId];
+    const myResult = gameState.results?.[studentId];
+    const countdownLeft = gameState.countdownEndsAt ? Math.max(0, Math.ceil((gameState.countdownEndsAt - Date.now()) / 1000)) : 0;
+
+    if (myResult) {
+      return (
+        <div className="phase-enter w-full max-w-sm flex flex-col gap-3">
+          <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center shadow-xl">
+            <p className="text-xs font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Game Complete</p>
+            <p className="mt-3 text-6xl font-black text-emerald-600 dark:text-emerald-400">{myResult.score}</p>
+            <p className="mt-2 text-sm font-bold text-muted-foreground">รอคุณครูไปหน้าถัดไป</p>
+          </div>
+          <MobileLeaderboard participants={participants} studentId={studentId} />
+        </div>
+      );
+    }
+
+    if (gameState.status === "voting") {
+      return (
+        <div className="phase-enter w-full max-w-sm flex flex-col gap-3">
+          <div className="text-center">
+            <p className="text-xs font-black uppercase tracking-widest text-indigo-500">{gameState.category === "vocabulary" ? "Vocabulary Game" : "Sentence Game"}</p>
+            <h2 className="mt-1 text-2xl font-black text-foreground">โหวตเกมที่อยากเล่น</h2>
+          </div>
+          {games.map((game) => (
+            <button key={game.id} onClick={() => submitGameVote(game.id)} className={`rounded-2xl border p-4 text-left shadow-sm active:scale-95 transition-all ${myVote === game.id ? "border-indigo-500 bg-indigo-500/10" : "border-border bg-card"}`}>
+              <p className="font-black text-foreground">{game.title}</p>
+              <p className="mt-1 text-xs font-semibold text-muted-foreground">{game.description}</p>
+            </button>
+          ))}
+        </div>
+      );
+    }
+
+    if (gameState.status === "countdown") {
+      return (
+        <div className="phase-enter w-full max-w-sm rounded-3xl border border-indigo-500/30 bg-indigo-500/10 p-8 text-center shadow-xl">
+          <p className="text-xs font-black uppercase tracking-widest text-indigo-500">Get Ready</p>
+          <p className="mt-4 text-7xl font-black text-indigo-600 dark:text-indigo-400">{countdownLeft}</p>
+          <p className="mt-3 text-sm font-bold text-muted-foreground">{selected?.title || "Game"}</p>
+        </div>
+      );
+    }
+
+    if (gameState.status === "playing") {
+      return (
+        <div className="phase-enter w-full max-w-3xl flex-1 min-h-0">
+          <AdvantageArcadeRuntime
+            key={`${gameState.phase}-${gameState.selectedGameId}`}
+            gameId={gameState.selectedGameId || ""}
+            category={gameState.category}
+            articleData={articleData}
+            onComplete={(result) => {
+              submitGameResult({
+                gameId: gameState.selectedGameId || "",
+                score: result.score,
+                correct: result.correct,
+                total: result.total,
+                durationMs: result.durationMs,
+              });
+            }}
+          />
+        </div>
+      );
+    }
+
+    const questions = buildGameQuestions();
+    const answeredCount = questions.filter((_question, index) => gameSelections[index]).length;
+    const liveCorrect = questions.filter((question, index) => gameSelections[index] === question.answer).length;
+    const activeIndex = Math.min(answeredCount, Math.max(questions.length - 1, 0));
+    const activeQuestion = questions[activeIndex];
+    const theme = getArcadeTheme(gameState.selectedGameId, gameState.category);
+    const progressPct = questions.length ? (answeredCount / questions.length) * 100 : 0;
+    return (
+      <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
+        <div className={`relative overflow-hidden rounded-[28px] border border-white/20 bg-gradient-to-br ${theme.arena} p-5 text-white shadow-2xl`}>
+          <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 18% 24%, white 2px, transparent 2px)", backgroundSize: "28px 28px" }} />
+          <div className="absolute -right-10 top-8 size-32 rounded-full bg-white/10 blur-sm" />
+          <div className="relative z-10 flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-white/70">{selected?.title || "Lesson Game"}</p>
+              <h2 className="mt-1 text-xl font-black leading-tight text-white">{theme.action}</h2>
+            </div>
+            <div className="rounded-2xl bg-black/25 px-3 py-2 text-right">
+              <p className="text-[9px] font-black uppercase text-white/60">Score</p>
+              <p className="text-2xl font-black tabular-nums">{liveCorrect * 2}</p>
+            </div>
+          </div>
+          <div className="relative z-10 mt-5 flex items-center gap-4">
+            <div className="relative flex size-20 shrink-0 items-center justify-center rounded-3xl border border-white/25 bg-white/20 shadow-xl arcade-float">
+              <span className="text-2xl font-black tracking-tight text-white">{theme.avatar}</span>
+              <span className="absolute -right-1 -top-1 size-4 rounded-full bg-emerald-300 shadow-[0_0_16px_rgba(110,231,183,0.9)]" />
+            </div>
+            <div className={`min-w-0 flex-1 rounded-3xl border p-4 backdrop-blur ${theme.panel}`}>
+              <p className="text-[10px] font-black uppercase tracking-widest text-white/60">Target {activeIndex + 1} / {Math.max(questions.length, 1)}</p>
+              <p className="mt-1 break-words text-base font-black leading-snug text-white">{activeQuestion?.prompt || "Ready"}</p>
+            </div>
+          </div>
+          <div className="relative z-10 mt-5">
+            <div className="h-3 overflow-hidden rounded-full bg-black/25">
+              <div className="h-full rounded-full bg-white transition-all duration-500" style={{ width: `${progressPct}%` }} />
+            </div>
+            <div className="mt-2 flex justify-between text-[10px] font-black uppercase tracking-widest text-white/70">
+              <span>Combo {liveCorrect}</span>
+              <span>{answeredCount}/{questions.length}</span>
+            </div>
+          </div>
+        </div>
+        <div className="rounded-3xl border border-border bg-card p-5 shadow-xl">
+          <p className="text-xs font-black uppercase tracking-widest text-indigo-500">{selected?.title || "Lesson Game"}</p>
+          <h2 className="mt-2 text-xl font-black text-foreground">ตอบให้ครบแล้วส่งคะแนน</h2>
+        </div>
+        <div className="space-y-2">
+          {questions.map((question, index) => (
+            <div key={`${question.prompt}-${index}`} className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">ข้อ {index + 1}</p>
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Stage {index + 1}</p>
+                {gameSelections[index] && (
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-black ${gameSelections[index] === question.answer ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-rose-500/10 text-rose-600 dark:text-rose-400"}`}>
+                    {gameSelections[index] === question.answer ? "HIT" : "MISS"}
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 text-sm font-black text-foreground">{question.prompt}</p>
+              <div className="mt-3 grid gap-2">
+                {question.options.map((option) => (
+                  <button
+                    key={option}
+                    onClick={() => setGameSelections((prev) => ({ ...prev, [index]: option }))}
+                    className={`btn-3d rounded-xl px-3 py-3 text-left text-xs font-black text-white transition-all ${theme.target} ${theme.shadow} ${
+                      gameSelections[index] === option
+                        ? "ring-4 ring-white/70 brightness-110"
+                        : "opacity-95"
+                    }`}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <button
+          onClick={handleQuickGameComplete}
+          disabled={questions.some((_question, index) => !gameSelections[index])}
+          className="w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 py-4 text-base font-black text-white shadow-lg active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          ส่งคะแนนเกม
+        </button>
+      </div>
+    );
+  };
+
   // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
@@ -701,6 +959,8 @@ function PlayLessonContent() {
           );
         })()}
 
+        {[VOCAB_GAME_PHASE, SENTENCE_GAME_PHASE].includes(currentPhase) && renderGamePhaseMobile()}
+
         {/* ─── Step 3: Read the Article + Sentence Flag ─── */}
         {currentPhase === 3 && (
           <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
@@ -755,8 +1015,8 @@ function PlayLessonContent() {
         )}
 
         {/* ─── Step 11: Guided Writing (phase 12) ─── */}
-        {currentPhase === 12 && (() => {
-          const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
+        {currentPhase === 13 && (() => {
+          const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
           const prompt = articleData?.shortAnswerQuestions?.[idx]?.question || t("interactivePlay.writingTitle");
           const frames = ['I think that…', 'One reason is…', 'For example,…', 'In conclusion,…'];
           return (
@@ -833,7 +1093,7 @@ function PlayLessonContent() {
         })()}
 
         {/* ─── Step 12: Language Questions (phase 13) ─── */}
-        {currentPhase === 13 && (
+        {currentPhase === 15 && (
           <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
             {languageSkipped ? (
               <div className="bg-card rounded-2xl border border-border shadow-sm p-5 text-center">
@@ -893,7 +1153,7 @@ function PlayLessonContent() {
         )}
 
         {/* ─── Step 13: Lesson Reflection (phase 14) ─── */}
-        {currentPhase === 14 && (
+        {currentPhase === 16 && (
           <LessonReflectionPhase
             hasAnswered={hasAnswered}
             reviewRating={reviewRating}
@@ -911,7 +1171,7 @@ function PlayLessonContent() {
           />
         )}
 
-        {currentPhase === 15 && (
+        {currentPhase === 17 && (
           <LessonPairPhase
             devPairPreview={devPairPreview}
             sessionData={sessionData}
@@ -920,7 +1180,7 @@ function PlayLessonContent() {
           />
         )}
 
-        {currentPhase === 16 && (
+        {currentPhase === FINAL_LEADERBOARD_PHASE && (
           <LessonWrapUpPhase
             participants={participants}
             studentId={studentId}
@@ -928,7 +1188,7 @@ function PlayLessonContent() {
         )}
 
         {/* ─── MCQ-style Phases: Comprehension(7), Vocab(9), Sentence fill(10), Sentence order(11) ─── */}
-        {[7, 9, 10, 11].includes(currentPhase) && (
+        {[7, 9, 11, 12].includes(currentPhase) && (
           <div className="phase-enter w-full max-w-md flex-1 flex flex-col gap-3 min-h-0">
             {hasAnswered ? (
               /* After answering: show result + leaderboard */
@@ -971,14 +1231,14 @@ function PlayLessonContent() {
                         const idx = sessionData?.phaseSelectedIndices?.[9] || 0;
                         const w = articleData?.words?.[idx];
                         return `${t("interactivePlay.vocabMeaningPrefix")} "${w?.vocabulary || w?.word || w?.text}" ${t("interactivePlay.vocabMeaningSuffix")}`;
-                      } else if (currentPhase === 10) {
-                        const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
+                      } else if (currentPhase === 11) {
+                        const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
                         const s = articleData?.sentences?.[idx];
                         const targetStr = typeof s === 'object' ? s.sentences : s;
                         const words = String(targetStr).split(' ');
                         return `${t("interactivePlay.fillBlankPrefix")} ${words.slice(0, words.length - 1).join(' ')} _____`;
-                      } else if (currentPhase === 11) {
-                        const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
+                      } else if (currentPhase === 12) {
+                        const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
                         return `${t("interactivePlay.orderSentencePrefix")} ${idx + 1}`;
                       }
                       return t("interactivePlay.defaultQuestion");

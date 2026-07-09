@@ -18,7 +18,13 @@ import {
   AnswerData,
   ArticleData,
 } from "@/lib/lesson-types";
+import { getGameById, getGamesByCategory } from "@/lib/liveLessonGames";
 import { useThaiTranslations } from "@/hooks/useThaiTranslations";
+
+const TOTAL_PHASES = 18;
+const VOCAB_GAME_PHASE = 10;
+const SENTENCE_GAME_PHASE = 14;
+const FINAL_LEADERBOARD_PHASE = 18;
 
 function seededShuffle<T>(array: T[], seedInput: string): T[] {
   const result = [...array];
@@ -83,6 +89,9 @@ interface PhaseManagerProps {
   articleData?: ArticleData;
   changePhase: (phase: number) => void;
   syncActiveSentence: (index: number) => void;
+  startGameVote: (phase?: number) => void;
+  lockGameVote: () => void;
+  startGameCountdown: (durationMs?: number) => void;
   sessionData?: TutorSessionData;
   onFinishSession?: () => void;
   flagCounts?: Record<number, number>;
@@ -310,6 +319,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   articleData,
   changePhase,
   syncActiveSentence,
+  startGameVote,
+  lockGameVote,
+  startGameCountdown,
   sessionData,
   onFinishSession,
   flagCounts,
@@ -330,15 +342,20 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     setIsChangingPhase(false);
   }, [currentPhase]);
 
-  const isInteractivePhase = [7, 8, 9, 10, 11, 12, 13, 14].includes(
+  const isGamePhase = [VOCAB_GAME_PHASE, SENTENCE_GAME_PHASE].includes(currentPhase);
+  const gameState = sessionData?.gameState ?? null;
+  const gameResultsCount = Object.keys(gameState?.results || {}).length;
+  const isInteractivePhase = [7, 8, 9, 11, 12, 13, 15, 16].includes(
     currentPhase,
   );
   const totalParticipants = participants.length;
 
   // Can proceed if everyone answered OR if results are already showing OR if no participants
   const canProceed =
-    !isInteractivePhase ||
+    (!isInteractivePhase && !isGamePhase) ||
     totalParticipants === 0 ||
+    (isGamePhase && gameState?.status === "results" && gameResultsCount > 0) ||
+    (isGamePhase && totalParticipants > 0 && gameResultsCount >= totalParticipants) ||
     totalAnswered >= totalParticipants ||
     (allAnsweredData && allAnsweredData.length > 0);
 
@@ -357,7 +374,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     if (!isChangingPhase && canProceedDelayed) {
       setIsChangingPhase(true);
       playSound("phaseChange");
-      if (currentPhase < 16) {
+      if (currentPhase < TOTAL_PHASES) {
         changePhase(currentPhase + 1);
       } else {
         // Safely loop back to lobby (Phase 0).
@@ -434,7 +451,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   // Confetti effect when results are ready
   React.useEffect(() => {
-    if ([7, 9, 10, 11].includes(currentPhase) && allAnsweredData.length > 0) {
+    if ([7, 9, 11, 12].includes(currentPhase) && allAnsweredData.length > 0) {
       confetti({
         particleCount: 150,
         spread: 80,
@@ -828,7 +845,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         </div>
       );
 
-    const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
     const targetSentence =
       typeof sentences[idx] === "object"
         ? sentences[idx].sentences
@@ -890,7 +907,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         </div>
       );
 
-    const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
     const targetSentence =
       typeof sentences[idx] === "object"
         ? sentences[idx].sentences
@@ -1521,7 +1538,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   // ── Step 11: Guided Writing (AI-scored) ──
   const renderWriting = () => {
-    const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
     const prompt =
       articleData?.shortAnswerQuestions?.[idx]?.question ||
       t("lesson.interactive.writingPromptLabel");
@@ -1764,18 +1781,126 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     );
   };
 
+  const renderGamePhase = (category: "vocabulary" | "sentence") => {
+    const games = getGamesByCategory(category);
+    const votes = gameState?.votes || {};
+    const results = Object.values(gameState?.results || {}).sort((a, b) => b.score - a.score);
+    const selectedGame = getGameById(gameState?.selectedGameId);
+    const voteCounts = games.map((game) => ({
+      ...game,
+      count: Object.values(votes).filter((gameId) => gameId === game.id).length,
+      voters: participants.filter((p) => votes[p.studentId] === game.id).map((p) => p.name),
+    }));
+    const countdownLeft = gameState?.countdownEndsAt
+      ? Math.max(0, Math.ceil((gameState.countdownEndsAt - Date.now()) / 1000))
+      : 0;
+
+    return (
+      <div className="flex-1 flex gap-5 overflow-hidden min-h-0">
+        <div className="flex-1 flex flex-col gap-5 min-w-0 overflow-y-auto pr-1">
+          <div className="rounded-3xl border border-border bg-card p-6 shadow-xl">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-black uppercase tracking-widest text-indigo-500">
+                  {category === "vocabulary" ? "Vocabulary Game" : "Sentence Game"}
+                </p>
+                <h2 className="mt-1 text-3xl font-black text-foreground">
+                  ให้นักเรียนโหวตเกม
+                </h2>
+                <p className="mt-2 text-sm font-semibold text-muted-foreground">
+                  {gameState?.status === "voting" && "กำลังเปิดโหวตบนมือถือนักเรียน"}
+                  {gameState?.status === "countdown" && `เริ่มเกมใน ${countdownLeft} วินาที`}
+                  {gameState?.status === "playing" && `กำลังเล่น ${selectedGame?.title || gameState?.selectedGameId}`}
+                  {gameState?.status === "results" && "จบเกมแล้ว ดูคะแนนด้านล่าง"}
+                </p>
+              </div>
+              <div className="flex flex-wrap justify-end gap-2">
+                <button
+                  onClick={() => startGameVote(currentPhase)}
+                  className="rounded-xl border border-border bg-background px-4 py-2 text-sm font-bold text-foreground hover:bg-muted"
+                >
+                  เปิดโหวตใหม่
+                </button>
+                <button
+                  onClick={lockGameVote}
+                  className="rounded-xl bg-indigo-500 px-4 py-2 text-sm font-bold text-white hover:bg-indigo-600"
+                >
+                  Lock Vote
+                </button>
+                <button
+                  onClick={() => startGameCountdown(5000)}
+                  className="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-bold text-white hover:bg-emerald-600"
+                >
+                  Countdown
+                </button>
+              </div>
+            </div>
+            {selectedGame && (
+              <div className="mt-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3">
+                <p className="text-xs font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+                  Selected Game
+                </p>
+                <p className="text-lg font-black text-foreground">{selectedGame.title}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+            {voteCounts.map((game) => (
+              <div key={game.id} className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="font-black text-foreground">{game.title}</h3>
+                    <p className="mt-1 text-xs font-semibold text-muted-foreground">{game.description}</p>
+                  </div>
+                  <div className="rounded-xl bg-indigo-500/10 px-3 py-2 text-center">
+                    <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{game.count}</p>
+                    <p className="text-[9px] font-bold uppercase text-muted-foreground">votes</p>
+                  </div>
+                </div>
+                <p className="mt-3 min-h-5 text-xs font-semibold text-muted-foreground">
+                  {game.voters.length ? game.voters.join(", ") : "ยังไม่มีโหวต"}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="rounded-3xl border border-border bg-card p-5 shadow-sm">
+            <h3 className="text-lg font-black text-foreground">Game Scoreboard</h3>
+            {results.length === 0 ? (
+              <p className="mt-3 text-sm font-semibold text-muted-foreground">รอคะแนนจากมือถือของนักเรียน</p>
+            ) : (
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2">
+                {results.map((result, index) => (
+                  <div key={result.studentId} className="flex items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3">
+                    <span className="w-8 text-center text-sm font-black text-muted-foreground">#{index + 1}</span>
+                    <span className="flex-1 truncate text-sm font-bold text-foreground">{result.name}</span>
+                    <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">{result.score}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+        <LiveLeaderboard participants={participants} />
+      </div>
+    );
+  };
+
   const renderPhaseContent = () => {
     if (currentPhase === 0 && participants.length === 0) return renderLobby();
     if (currentPhase === 7) return renderMCQ(); // Comprehension Check
     if (currentPhase === 8) return renderShortAnswer(); // Guided Response
     if (currentPhase === 9) return renderVocabKahoot(); // Vocabulary Practice
-    if (currentPhase === 10) return renderSentenceFlashcardKahoot(); // Sentence Practice (fill)
-    if (currentPhase === 11) return renderSentenceOrderingKahoot(); // Sentence Practice (order)
-    if (currentPhase === 12) return renderWriting(); // Guided Writing
-    if (currentPhase === 13) return renderLanguageQuestions(); // Language Questions
-    if (currentPhase === 14) return renderReflection(); // Lesson Reflection
-    if (currentPhase === 15) return renderPairConversation(); // Pair Conversation
-    if (currentPhase === 16) return renderLeaderboard(); // Wrap-up
+    if (currentPhase === VOCAB_GAME_PHASE) return renderGamePhase("vocabulary");
+    if (currentPhase === 11) return renderSentenceFlashcardKahoot(); // Sentence Practice (fill)
+    if (currentPhase === 12) return renderSentenceOrderingKahoot(); // Sentence Practice (order)
+    if (currentPhase === 13) return renderWriting(); // Guided Writing
+    if (currentPhase === SENTENCE_GAME_PHASE) return renderGamePhase("sentence");
+    if (currentPhase === 15) return renderLanguageQuestions(); // Language Questions
+    if (currentPhase === 16) return renderReflection(); // Lesson Reflection
+    if (currentPhase === 17) return renderPairConversation(); // Pair Conversation
+    if (currentPhase === FINAL_LEADERBOARD_PHASE) return renderLeaderboard(); // Wrap-up
 
     // Presentation phases 1-6 (Launch, Vocab, Read+audio, Collect Vocab, Deep Reading, Collect Sentences)
     return renderPresentation();
@@ -1798,28 +1923,28 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     },
     {
       label: t("lesson.interactive.period3"),
-      phases: [8, 9, 10, 11],
+      phases: [8, 9, 10, 11, 12, 13, 14],
       color: "bg-purple-500",
       lightColor: "bg-purple-100",
       textColor: "text-purple-700",
     },
     {
       label: t("lesson.interactive.period4"),
-      phases: [12, 13, 14, 15],
+      phases: [15, 16, 17],
       color: "bg-amber-500",
       lightColor: "bg-amber-100",
       textColor: "text-amber-700",
     },
     {
       label: t("lesson.interactive.wrapUp"),
-      phases: [16],
+      phases: [18],
       color: "bg-emerald-500",
       lightColor: "bg-emerald-100",
       textColor: "text-emerald-700",
     },
   ];
 
-  // phase 10 & 11 are both Step 10 (Sentence Practice); steps 11/12/13/14 live at phases 12/13/14/15
+  // phase 11 & 12 are both Step 10 (Sentence Practice); game phases live at 10 and 14
   const phaseNames: Record<number, string> = {
     0: "Lobby",
     1: t("lesson.interactive.step1"),
@@ -1831,13 +1956,15 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     7: t("lesson.interactive.step7"),
     8: t("lesson.interactive.step8"),
     9: t("lesson.interactive.step9"),
-    10: t("lesson.interactive.step10"),
+    10: "Vocabulary Game",
     11: t("lesson.interactive.step10"),
-    12: t("lesson.interactive.step11"),
-    13: t("lesson.interactive.step12"),
-    14: t("lesson.interactive.step13"),
-    15: t("lesson.interactive.step14"),
-    16: t("lesson.interactive.wrapUp"),
+    12: t("lesson.interactive.step10"),
+    13: t("lesson.interactive.step11"),
+    14: "Sentence Game",
+    15: t("lesson.interactive.step12"),
+    16: t("lesson.interactive.step13"),
+    17: t("lesson.interactive.step14"),
+    18: t("lesson.interactive.wrapUp"),
   };
 
   const renderPhaseProgressBar = () => {
@@ -1860,13 +1987,13 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             </span>
           </div>
           <span className="text-xs text-muted-foreground font-medium">
-            {currentPhase} / 16
+            {currentPhase} / {TOTAL_PHASES}
           </span>
         </div>
 
         {/* Phase dots */}
         <div className="flex items-center gap-1">
-          {Array.from({ length: 16 }, (_, i) => i + 1).map((p) => {
+          {Array.from({ length: TOTAL_PHASES }, (_, i) => i + 1).map((p) => {
             const group = phaseGroups.find((g) => g.phases.includes(p));
             const isPast = p < currentPhase;
             const isCurrent = p === currentPhase;
@@ -1992,7 +2119,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 {t("lesson.interactive.previous")}
               </button>
               <button
-                onClick={() => changePhase(Math.min(16, currentPhase + 1))}
+                onClick={() => changePhase(Math.min(TOTAL_PHASES, currentPhase + 1))}
                 className="px-3 py-1.5 bg-muted text-muted-foreground text-sm font-semibold rounded-lg hover:bg-accent transition-colors"
               >
                 {t("lesson.interactive.skipPhase")}
@@ -2009,7 +2136,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                     score: Math.floor(Math.random() * 60),
                   }));
                   setMockLeaderboard(mock);
-                  changePhase(16);
+                  changePhase(FINAL_LEADERBOARD_PHASE);
                 }}
                 className={`px-3 py-1.5 text-sm font-semibold rounded-lg transition-colors ${mockLeaderboard ? "bg-orange-500 text-white" : "bg-muted text-muted-foreground hover:bg-accent"}`}
               >
@@ -2035,7 +2162,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                     mock[mock.length - 1].members.push(students[students.length - 1]);
                   }
                   setMockPairs(mock);
-                  changePhase(15);
+                  changePhase(17);
                 }}
                 className={`px-3 py-1.5 text-sm font-semibold rounded-lg transition-colors ${mockPairs ? "bg-orange-500 text-white" : "bg-muted text-muted-foreground hover:bg-accent"}`}
               >
@@ -2071,7 +2198,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             </>
           ) : !canProceedDelayed ? (
             t("lesson.interactive.waitingAnswers")
-          ) : currentPhase === 16 ? (
+          ) : currentPhase === FINAL_LEADERBOARD_PHASE ? (
             <>
               <span className="flex items-center gap-1">
                 {t("lesson.interactive.startNewRound")}{" "}
