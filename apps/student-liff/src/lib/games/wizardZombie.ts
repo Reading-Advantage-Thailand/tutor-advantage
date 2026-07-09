@@ -39,6 +39,7 @@ export type WizardZombieState = {
   zombies: Zombie[];
   orbs: Orb[];
   targetWord: string;
+  answeredWords: string[];
   score: number;
   correctAnswers: number;
   totalAttempts: number;
@@ -105,6 +106,7 @@ export const createWizardZombieState = (
     zombies: [],
     orbs,
     targetWord: target.term,
+    answeredWords: [],
     score: 0,
     correctAnswers: 0,
     totalAttempts: 0,
@@ -220,6 +222,9 @@ function checkCollisions(
   if (collectedOrb) {
     state.totalAttempts += 1;
     if (collectedOrb.isCorrect) {
+      const answeredWords = Array.from(
+        new Set([...state.answeredWords, targetWord]),
+      );
       state.correctAnswers += 1;
       player = {
         ...player,
@@ -233,11 +238,19 @@ function checkCollisions(
 
       // Pick new target word
       if (vocabulary.length > 0) {
-        const nextTarget =
-          vocabulary[Math.floor(Math.random() * vocabulary.length)];
-        targetWord = nextTarget.term;
-        orbs = spawnOrbs(nextTarget, vocabulary, Math.random);
+        const remainingWords = vocabulary.filter(
+          (word) => !answeredWords.includes(word.term),
+        );
+        if (remainingWords.length === 0) {
+          status = "gameover";
+        } else {
+          const nextTarget =
+            remainingWords[Math.floor(Math.random() * remainingWords.length)];
+          targetWord = nextTarget.term;
+          orbs = spawnOrbs(nextTarget, vocabulary, Math.random);
+        }
       }
+      state.answeredWords = answeredWords;
     } else {
       // Incorrect: Just reshuffle same word + Penalty
       score = Math.max(0, score - 5);
@@ -278,6 +291,7 @@ function checkCollisions(
     orbs,
     score,
     targetWord,
+    answeredWords: state.answeredWords,
   };
 }
 

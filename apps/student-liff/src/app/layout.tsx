@@ -65,6 +65,26 @@ export default async function RootLayout({
       suppressHydrationWarning
       data-scroll-behavior="smooth"
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (typeof window !== 'undefined') {
+                const hook = window.__REACT_DEVTOOLS_GLOBAL_HOOK__;
+                if (hook) {
+                  const originalInject = hook.inject;
+                  hook.inject = function(renderer) {
+                    if (renderer && (renderer.version === undefined || renderer.version === null || renderer.version === '')) {
+                      renderer.version = '19.0.0';
+                    }
+                    return originalInject.apply(this, arguments);
+                  };
+                }
+              }
+            `,
+          }}
+        />
+      </head>
       <body>
         <ThemeProvider>
           <LiffProvider>

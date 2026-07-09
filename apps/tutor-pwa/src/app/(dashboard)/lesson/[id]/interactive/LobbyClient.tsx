@@ -106,7 +106,6 @@ export default function TutorLobbyClient({
     changePhase,
     syncActiveSentence,
     startGameVote,
-    lockGameVote,
     startGameCountdown,
     nudgeStudent,
     kickStudent,
@@ -166,7 +165,6 @@ export default function TutorLobbyClient({
               changePhase={changePhase}
               syncActiveSentence={syncActiveSentence}
               startGameVote={startGameVote}
-              lockGameVote={lockGameVote}
               startGameCountdown={startGameCountdown}
               onFinishSession={() => {
                 deleteSession();

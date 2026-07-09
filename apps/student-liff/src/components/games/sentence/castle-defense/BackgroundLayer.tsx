@@ -3,6 +3,7 @@
 import { Group, Image as KonvaImage } from "react-konva";
 import { useEffect, useState, useMemo } from "react";
 import { getRoadTileInfo, TILE_SIZE } from "@/lib/games/castleDefense";
+import { getCachedGameImage, loadGameImage } from "@/lib/games/gameAssetPreloader";
 
 const ASSETS = {
   grass: [
@@ -24,8 +25,19 @@ interface BackgroundLayerProps {
 }
 
 export function BackgroundLayer({ grassMap, path }: BackgroundLayerProps) {
-  const [images, setImages] = useState<Record<string, HTMLImageElement>>({});
-  const [loaded, setLoaded] = useState(false);
+  const [images, setImages] = useState<Record<string, HTMLImageElement>>(() => {
+    const cached: Record<string, HTMLImageElement> = {};
+    [...ASSETS.grass, ASSETS.road.EW, ASSETS.road.NS, ASSETS.road.CORNER].forEach((src) => {
+      const image = getCachedGameImage(src);
+      if (image) cached[src] = image;
+    });
+    return cached;
+  });
+  const [loaded, setLoaded] = useState(
+    [...ASSETS.grass, ASSETS.road.EW, ASSETS.road.NS, ASSETS.road.CORNER].every((src) =>
+      Boolean(getCachedGameImage(src)),
+    ),
+  );
 
   useEffect(() => {
     const toLoad = [
@@ -35,29 +47,23 @@ export function BackgroundLayer({ grassMap, path }: BackgroundLayerProps) {
       ASSETS.road.CORNER,
     ];
 
-    let count = 0;
-    const loadedImgs: Record<string, HTMLImageElement> = {};
+    let mounted = true;
 
-    toLoad.forEach((src) => {
-      const img = new window.Image();
-      img.src = src;
-      img.onload = () => {
-        loadedImgs[src] = img;
-        count++;
-        if (count === toLoad.length) {
-          setImages(loadedImgs);
-          setLoaded(true);
+    Promise.allSettled(toLoad.map((src) => loadGameImage(src))).then((results) => {
+      if (!mounted) return;
+      const loadedImgs: Record<string, HTMLImageElement> = {};
+      results.forEach((result, index) => {
+        if (result.status === "fulfilled") {
+          loadedImgs[toLoad[index]] = result.value;
         }
-      };
-      img.onerror = () => {
-        console.error(`BackgroundLayer: Failed to load image: ${src}`);
-        count++;
-        if (count === toLoad.length) {
-          setImages(loadedImgs);
-          setLoaded(true);
-        }
-      };
+      });
+      setImages(loadedImgs);
+      setLoaded(true);
     });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const tiles = useMemo(() => {

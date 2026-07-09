@@ -167,6 +167,10 @@ export type CastleDefenseState = {
   totalEnemiesDefeated: number;
   correctWordCollections: number;
   incorrectWordCollections: number;
+  completedSentences: number;
+  maxSentences: number;
+  durationMs: number;
+  usedSentenceTerms: string[];
   grassMap: number[][];
 };
 
@@ -192,14 +196,19 @@ const generateId = (): string =>
 const pickRandomSentence = (
   vocabulary: SentenceItem[],
   currentTerm?: string,
+  usedTerms: string[] = [],
   random: () => number = Math.random,
 ): SentenceItem => {
   if (vocabulary.length === 0) {
     return { term: "", translation: "" };
   }
-  let pool = vocabulary;
+  const used = new Set(usedTerms.filter(Boolean));
+  let pool = vocabulary.filter((item) => !used.has(item.term));
+  if (pool.length === 0) {
+    pool = vocabulary;
+  }
   if (currentTerm && vocabulary.length > 1) {
-    const filtered = vocabulary.filter((item) => item.term !== currentTerm);
+    const filtered = pool.filter((item) => item.term !== currentTerm);
     if (filtered.length > 0) {
       pool = filtered;
     }
@@ -402,7 +411,7 @@ export function getRoadTileInfo(
 // Create initial game state
 export function createCastleDefenseState(
   vocabulary: SentenceItem[],
-  options: { difficulty: "easy" | "medium" | "hard" } = {
+  options: { difficulty: "easy" | "medium" | "hard"; maxSentences?: number; durationMs?: number } = {
     difficulty: "medium",
   },
 ): CastleDefenseState {
@@ -414,6 +423,7 @@ export function createCastleDefenseState(
 
   const firstSentence = pickRandomSentence(vocabulary);
   const sentenceWords = parseSentenceWords(firstSentence.term);
+  const maxSentences = Math.max(1, Math.min(options.maxSentences ?? 10, vocabulary.length || 1));
 
   const mapConfig = MAP_CONFIGS[0] || {
     path: DEFAULT_PATH,
@@ -475,6 +485,10 @@ export function createCastleDefenseState(
     totalEnemiesDefeated: 0,
     correctWordCollections: 0,
     incorrectWordCollections: 0,
+    completedSentences: 0,
+    maxSentences,
+    durationMs: options.durationMs ?? 60_000,
+    usedSentenceTerms: firstSentence.term ? [firstSentence.term] : [],
     grassMap: Array.from({ length: 12 }, () =>
       Array.from({ length: 16 }, () => Math.floor(Math.random() * 4)),
     ),
@@ -710,22 +724,37 @@ export function spawnSentenceWords(
   random: () => number = Math.random,
 ): Word[] {
   const sentenceWords = parseSentenceWords(sentence);
-  const minX = GAME_WIDTH * 0.25 + WORD_RADIUS;
-  const maxX = GAME_WIDTH * 0.75 - WORD_RADIUS;
-  const minY = GAME_HEIGHT * 0.25 + WORD_RADIUS;
-  const maxY = GAME_HEIGHT * 0.75 - WORD_RADIUS;
+  const count = Math.max(sentenceWords.length, 1);
+  const columns = Math.ceil(Math.sqrt(count));
+  const rows = Math.ceil(count / columns);
+  const minX = GAME_WIDTH * 0.16;
+  const maxX = GAME_WIDTH * 0.84;
+  const minY = GAME_HEIGHT * 0.22;
+  const maxY = GAME_HEIGHT * 0.72;
+  const cellW = (maxX - minX) / columns;
+  const cellH = (maxY - minY) / rows;
 
-  return sentenceWords.map((word, index) => ({
-    id: generateId(),
-    x: minX + random() * (maxX - minX),
-    y: minY + random() * (maxY - minY),
-    radius: WORD_RADIUS,
-    term: word,
-    translation: word,
-    isCorrect: true,
-    isCollected: false,
-    sentenceIndex: index,
-  }));
+  return sentenceWords.map((word, index) => {
+    const col = index % columns;
+    const row = Math.floor(index / columns);
+    const radius = Math.max(WORD_RADIUS, Math.min(42, 18 + word.length * 4));
+    const jitterX = (random() - 0.5) * Math.max(0, cellW - radius * 2) * 0.45;
+    const jitterY = (random() - 0.5) * Math.max(0, cellH - radius * 2) * 0.45;
+    const x = minX + cellW * (col + 0.5) + jitterX;
+    const y = minY + cellH * (row + 0.5) + jitterY;
+
+    return {
+      id: generateId(),
+      x: Math.max(radius, Math.min(GAME_WIDTH - radius, x)),
+      y: Math.max(radius, Math.min(GAME_HEIGHT - radius, y)),
+      radius,
+      term: word,
+      translation: word,
+      isCorrect: true,
+      isCollected: false,
+      sentenceIndex: index,
+    };
+  });
 }
 
 // Check if player collects any words
@@ -838,6 +867,7 @@ export function buildTowerAtSlot(
   const nextSentence = pickRandomSentence(
     vocabulary,
     state.currentSentenceEnglish,
+    state.usedSentenceTerms,
   );
   const nextSentenceWords = parseSentenceWords(nextSentence.term);
   const nextWords = spawnSentenceWords(nextSentence.term);
@@ -867,6 +897,9 @@ export function buildTowerAtSlot(
     sentenceCompleted: false,
     words: nextWords,
     towers: [...state.towers, newTower],
+    usedSentenceTerms: nextSentence.term
+      ? [...state.usedSentenceTerms, nextSentence.term]
+      : state.usedSentenceTerms,
   };
 }
 
@@ -1147,6 +1180,7 @@ export function advanceCastleDefenseTime(
   let sentenceCompleted = state.sentenceCompleted;
   let correctWordCollections = state.correctWordCollections;
   let incorrectWordCollections = state.incorrectWordCollections;
+  let completedSentences = state.completedSentences;
 
   if (collection.collectedWord) {
     if (collection.invalidCollection) {
@@ -1209,6 +1243,7 @@ export function advanceCastleDefenseTime(
       currentSentenceEnglish = buildState.currentSentenceEnglish;
       currentSentenceThai = buildState.currentSentenceThai;
       sentenceWords = buildState.sentenceWords;
+      completedSentences = buildState.completedSentences;
     }
   }
 
@@ -1216,9 +1251,11 @@ export function advanceCastleDefenseTime(
   let enemies = state.enemies.map((e) => moveEnemy(e, state.path, dt));
 
   // 6. Check base damage from enemies reaching end
+  const enemiesCountBeforeBase = enemies.length;
   const baseDamage = checkBaseDamage(enemies, state.base, state.path);
   enemies = baseDamage.enemies;
   const base = baseDamage.base;
+  const enemiesReachedBase = enemiesCountBeforeBase - enemies.length;
 
   // 7. Update towers (shoot at enemies)
   let projectiles = state.projectiles;
@@ -1231,33 +1268,59 @@ export function advanceCastleDefenseTime(
   projectiles = projectileUpdate.projectiles;
   enemies = projectileUpdate.enemies;
 
-  // 9. Calculate score (10 points per enemy killed)
-  const enemiesKilled =
-    state.enemies.length -
-    enemies.length -
-    (baseDamage.damage > 0 ? baseDamage.damage / 10 : 0);
-  let score =
-    state.score + (enemiesKilled > 0 ? Math.floor(enemiesKilled) * 10 : 0);
-  const totalEnemiesDefeated =
-    state.totalEnemiesDefeated + Math.max(0, Math.floor(enemiesKilled));
-
-  if (isSentenceComplete(collectedWordIndices, sentenceWords.length)) {
-    if (!sentenceCompleted) {
-      sentenceCompleted = true;
-      score += 50;
-    }
-  }
-
-  // 10. Spawn enemies
+  // 9. Track enemy stats (score comes from sentences only)
+  const totalEnemiesGone = state.enemies.length - enemies.length;
+  const enemiesKilledByTower = Math.max(0, totalEnemiesGone - enemiesReachedBase);
+  const totalEnemiesDefeated = state.totalEnemiesDefeated + enemiesKilledByTower;
   let spawnTimer = state.spawnTimer + dt;
   let enemiesSpawnedThisWave = state.enemiesSpawnedThisWave;
-  const enemiesKilledThisWave =
-    state.enemiesKilledThisWave + Math.max(0, Math.floor(enemiesKilled));
+  const enemiesKilledThisWave = state.enemiesKilledThisWave + enemiesKilledByTower;
   const waveConfig = WAVE_CONFIGS[state.wave - 1];
   let waveCompleteTimer = state.waveCompleteTimer;
   let waveMessage = state.waveMessage;
   const wavesCompleted = state.wavesCompleted;
 
+  // Score = number of completed sentences (1 pt each, max 10)
+  let score = Math.min(10, completedSentences);
+
+  if (isSentenceComplete(collectedWordIndices, sentenceWords.length)) {
+    if (!sentenceCompleted) {
+      sentenceCompleted = true;
+      completedSentences += 1;
+      score = Math.min(10, completedSentences);
+      if (completedSentences >= state.maxSentences) {
+        return {
+          ...state,
+          status: "victory",
+          player,
+          enemies,
+          towers,
+          projectiles,
+          words,
+          currentSentenceThai,
+          currentSentenceEnglish,
+          sentenceWords,
+          collectedWordIndices,
+          sentenceCompleted,
+          base,
+          score,
+          spawnTimer: state.spawnTimer,
+          enemiesSpawnedThisWave,
+          enemiesKilledThisWave,
+          gameTime,
+          waveCompleteTimer,
+          waveMessage,
+          wavesCompleted,
+          totalEnemiesDefeated,
+          correctWordCollections,
+          incorrectWordCollections,
+          completedSentences,
+        };
+      }
+    }
+  }
+
+  // 10. Wave complete / spawn / transition
   if (isWaveComplete({ ...state, enemies, enemiesSpawnedThisWave })) {
     if (waveCompleteTimer <= 0) {
       waveCompleteTimer = 2000;
@@ -1302,6 +1365,7 @@ export function advanceCastleDefenseTime(
       const nextSentence = pickRandomSentence(
         vocabulary,
         state.currentSentenceEnglish,
+        state.usedSentenceTerms,
       );
       const nextSentenceWords = parseSentenceWords(nextSentence.term);
       const nextTowerSlots = mapConfig.towerSlots.map((slot, i) => ({
@@ -1341,6 +1405,9 @@ export function advanceCastleDefenseTime(
         totalEnemiesDefeated,
         correctWordCollections,
         incorrectWordCollections,
+        usedSentenceTerms: nextSentence.term
+          ? [...state.usedSentenceTerms, nextSentence.term]
+          : state.usedSentenceTerms,
       };
     }
     return {
@@ -1364,12 +1431,15 @@ export function advanceCastleDefenseTime(
       totalEnemiesDefeated,
       correctWordCollections,
       incorrectWordCollections,
+      completedSentences,
     };
   }
 
   // 11. Check game over
   let status: CastleDefenseState["status"] = state.status;
-  if (base.hp <= 0) {
+  if (gameTime >= state.durationMs) {
+    status = "victory";
+  } else if (base.hp <= 0) {
     status = "gameover";
   }
 
@@ -1398,5 +1468,6 @@ export function advanceCastleDefenseTime(
     totalEnemiesDefeated,
     correctWordCollections,
     incorrectWordCollections,
+    completedSentences,
   };
 }

@@ -15,6 +15,8 @@ import { LessonWrapUpPhase } from '@/components/lesson/phases/LessonWrapUpPhase'
 import { AdvantageArcadeRuntime } from '@/components/lesson/AdvantageArcadeRuntime';
 import { toast } from 'sonner';
 import { getGameById, getGamesByCategory } from '@/lib/liveLessonGames';
+import { preloadGameAssets } from '@/lib/games/gameAssetPreloader';
+import { Lock } from 'lucide-react';
 
 const VOCAB_GAME_PHASE = 10;
 const SENTENCE_GAME_PHASE = 14;
@@ -87,6 +89,10 @@ function PlayLessonContent() {
   const [devPairPreview, setDevPairPreview] = useState<0 | 1 | 2>(0);
   const currentPhase = devPairPreview ? 17 : (sessionData?.currentPhase ?? 0);
   const gameState = sessionData?.gameState ?? null;
+  const gameActorId = sessionData?.currentStudentId || studentId;
+  const gameVoteForPreload = gameState?.votes?.[gameActorId] || gameState?.votes?.[studentId];
+  const gameIdForPreload = gameState?.selectedGameId || gameVoteForPreload;
+  const gameStatusForPreload = gameState?.status || "";
   const [gameStartedAt, setGameStartedAt] = useState<number | null>(null);
   const [gameSelections, setGameSelections] = useState<Record<number, string>>({});
 
@@ -127,6 +133,12 @@ function PlayLessonContent() {
     const timer = window.setInterval(() => setClockTick((tick) => tick + 1), 250);
     return () => window.clearInterval(timer);
   }, [gameState?.status, gameState?.countdownEndsAt]);
+
+  useEffect(() => {
+    if (!gameIdForPreload) return;
+    if (!["voting", "countdown", "playing", "results"].includes(gameStatusForPreload)) return;
+    void preloadGameAssets(gameIdForPreload);
+  }, [gameIdForPreload, gameStatusForPreload]);
 
   useEffect(() => {
     if (gameState?.status === "playing" && !gameStartedAt) {
@@ -631,19 +643,19 @@ function PlayLessonContent() {
 
   const getArcadeTheme = (gameId?: string | null, category?: "vocabulary" | "sentence") => {
     if (gameId?.includes("dragon")) {
-      return { arena: "from-sky-500 via-indigo-600 to-violet-700", panel: "bg-sky-500/15 border-sky-300/40", target: "bg-sky-500", shadow: "shadow-[0_8px_0_rgb(3,105,161)]", avatar: "DR", action: "Choose the flight gate" };
+        return { arena: "from-sky-500 via-indigo-600 to-violet-700", panel: "bg-sky-500/15 border-sky-300/40", target: "bg-sky-500", shadow: "shadow-[0_8px_0_rgb(3,105,161)]", avatar: "DR", action: t("interactivePlay.chooseCorrectAnswer") };
     }
     if (gameId?.includes("castle") || gameId?.includes("tower")) {
-      return { arena: "from-slate-800 via-rose-800 to-amber-700", panel: "bg-amber-500/15 border-amber-300/40", target: "bg-amber-500", shadow: "shadow-[0_8px_0_rgb(146,64,14)]", avatar: "CT", action: "Defend with the right answer" };
+        return { arena: "from-slate-800 via-rose-800 to-amber-700", panel: "bg-amber-500/15 border-amber-300/40", target: "bg-amber-500", shadow: "shadow-[0_8px_0_rgb(146,64,14)]", avatar: "CT", action: t("interactivePlay.chooseCorrectAnswer") };
     }
     if (gameId?.includes("potion") || gameId?.includes("alchemist")) {
-      return { arena: "from-emerald-700 via-teal-700 to-cyan-700", panel: "bg-emerald-500/15 border-emerald-300/40", target: "bg-emerald-500", shadow: "shadow-[0_8px_0_rgb(4,120,87)]", avatar: "PX", action: "Brew the correct answer" };
+        return { arena: "from-emerald-700 via-teal-700 to-cyan-700", panel: "bg-emerald-500/15 border-emerald-300/40", target: "bg-emerald-500", shadow: "shadow-[0_8px_0_rgb(4,120,87)]", avatar: "PX", action: t("interactivePlay.brewCorrectAnswer") };
     }
     if (gameId?.includes("rune") || gameId?.includes("spell")) {
-      return { arena: "from-violet-800 via-fuchsia-700 to-indigo-800", panel: "bg-violet-500/15 border-violet-300/40", target: "bg-violet-600", shadow: "shadow-[0_8px_0_rgb(91,33,182)]", avatar: "RN", action: "Activate the correct rune" };
+        return { arena: "from-violet-800 via-fuchsia-700 to-indigo-800", panel: "bg-violet-500/15 border-violet-300/40", target: "bg-violet-600", shadow: "shadow-[0_8px_0_rgb(91,33,182)]", avatar: "RN", action: t("interactivePlay.activateCorrectRune") };
     }
     if (gameId?.includes("shadow") || gameId?.includes("dungeon") || gameId?.includes("abyssal")) {
-      return { arena: "from-zinc-950 via-indigo-950 to-slate-900", panel: "bg-indigo-500/15 border-indigo-300/30", target: "bg-indigo-600", shadow: "shadow-[0_8px_0_rgb(49,46,129)]", avatar: "DG", action: "Escape with the correct answer" };
+        return { arena: "from-zinc-950 via-indigo-950 to-slate-900", panel: "bg-indigo-500/15 border-indigo-300/30", target: "bg-indigo-600", shadow: "shadow-[0_8px_0_rgb(49,46,129)]", avatar: "DG", action: t("interactivePlay.escapeCorrectAnswer") };
     }
     return {
       arena: category === "vocabulary" ? "from-indigo-600 via-violet-700 to-fuchsia-700" : "from-rose-600 via-orange-600 to-amber-600",
@@ -651,27 +663,27 @@ function PlayLessonContent() {
       target: category === "vocabulary" ? "bg-indigo-600" : "bg-rose-600",
       shadow: category === "vocabulary" ? "shadow-[0_8px_0_rgb(67,56,202)]" : "shadow-[0_8px_0_rgb(190,18,60)]",
       avatar: category === "vocabulary" ? "VX" : "SX",
-      action: category === "vocabulary" ? "Match the vocabulary" : "Build the sentence",
+      action: category === "vocabulary" ? t("interactivePlay.matchVocabulary") : t("interactivePlay.buildSentence"),
     };
   };
 
   const renderGamePhaseMobile = () => {
     if (!gameState) {
-      return <div className="phase-enter w-full max-w-sm rounded-3xl border border-border bg-card p-6 text-center shadow-xl"><p className="text-sm font-bold text-muted-foreground">กำลังเตรียมเกม...</p></div>;
+      return <div className="phase-enter w-full max-w-sm rounded-3xl border border-border bg-card p-6 text-center shadow-xl"><p className="text-sm font-bold text-muted-foreground">{t("interactivePlay.gamePreparing")}</p></div>;
     }
     const games = getGamesByCategory(gameState.category);
     const selected = getGameById(gameState.selectedGameId);
-    const myVote = gameState.votes?.[studentId];
-    const myResult = gameState.results?.[studentId];
+    const myVote = gameState.votes?.[gameActorId] || gameState.votes?.[studentId];
+    const myResult = gameState.results?.[gameActorId] || gameState.results?.[studentId];
     const countdownLeft = gameState.countdownEndsAt ? Math.max(0, Math.ceil((gameState.countdownEndsAt - Date.now()) / 1000)) : 0;
 
     if (myResult) {
       return (
-        <div className="phase-enter w-full max-w-sm flex flex-col gap-3">
+        <div className="phase-enter flex w-full max-w-sm flex-1 min-h-0 flex-col gap-4 overflow-hidden">
           <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center shadow-xl">
-            <p className="text-xs font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Game Complete</p>
+            <p className="text-xs font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">{t("interactivePlay.gameComplete")}</p>
             <p className="mt-3 text-6xl font-black text-emerald-600 dark:text-emerald-400">{myResult.score}</p>
-            <p className="mt-2 text-sm font-bold text-muted-foreground">รอคุณครูไปหน้าถัดไป</p>
+            <p className="mt-2 text-sm font-bold text-muted-foreground">{t("interactivePlay.gameWaitTeacher")}</p>
           </div>
           <MobileLeaderboard participants={participants} studentId={studentId} />
         </div>
@@ -680,34 +692,124 @@ function PlayLessonContent() {
 
     if (gameState.status === "voting") {
       return (
-        <div className="phase-enter w-full max-w-sm flex flex-col gap-3">
-          <div className="text-center">
-            <p className="text-xs font-black uppercase tracking-widest text-indigo-500">{gameState.category === "vocabulary" ? "Vocabulary Game" : "Sentence Game"}</p>
-            <h2 className="mt-1 text-2xl font-black text-foreground">โหวตเกมที่อยากเล่น</h2>
+        <div className="phase-enter flex w-full max-w-sm flex-1 min-h-0 flex-col gap-4 overflow-hidden">
+          <div className="shrink-0 text-center">
+            <p className="text-xs font-black uppercase tracking-widest text-indigo-500">{gameState.category === "vocabulary" ? t("interactivePlay.vocabularyGame") : t("interactivePlay.sentenceGame")}</p>
+            <h2 className="mt-1 text-2xl font-black text-foreground">{t("interactivePlay.gameVoteTitle")}</h2>
           </div>
-          {games.map((game) => (
-            <button key={game.id} onClick={() => submitGameVote(game.id)} className={`rounded-2xl border p-4 text-left shadow-sm active:scale-95 transition-all ${myVote === game.id ? "border-indigo-500 bg-indigo-500/10" : "border-border bg-card"}`}>
-              <p className="font-black text-foreground">{game.title}</p>
-              <p className="mt-1 text-xs font-semibold text-muted-foreground">{game.description}</p>
+          <div className="mobile-game-deck -mx-4 flex snap-x gap-4 overflow-x-auto px-4 pb-5 pt-1">
+          {games.map((game, index) => {
+            const isLocked = game.enabled === false;
+            return (
+            <button
+              key={game.id}
+              onClick={() => {
+                if (!isLocked) submitGameVote(game.id);
+              }}
+              disabled={isLocked}
+              aria-disabled={isLocked}
+              className={`mobile-game-card group relative flex h-[430px] w-[282px] shrink-0 snap-center flex-col overflow-hidden rounded-[30px] border text-left shadow-2xl transition-all duration-300 ${
+                isLocked
+                  ? "cursor-not-allowed border-white/20 opacity-65 grayscale"
+                  : `active:scale-[0.98] ${myVote === game.id ? "border-indigo-300 ring-4 ring-indigo-400/35" : "border-white/40"}`
+              }`}
+              style={{ animationDelay: `${index * 55}ms` }}
+            >
+              <Image src={game.cover} alt={game.title} fill sizes="282px" className="object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/5" />
+              {isLocked && (
+                <div className="absolute inset-0 z-10 bg-black/58 text-white backdrop-blur-[2px]">
+                  <div className="absolute left-1/2 top-[28%] flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-2">
+                  <div className="flex size-16 items-center justify-center rounded-full border border-white/25 bg-white/15">
+                    <Lock size={30} />
+                  </div>
+                  <p className="text-lg font-black">{t("interactivePlay.comingSoon")}</p>
+                  </div>
+                </div>
+              )}
+              <div className="absolute left-4 top-4 rounded-full border border-white/25 bg-black/35 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white backdrop-blur">
+                {gameState.category === "vocabulary" ? t("interactivePlay.gameCategoryVocab") : t("interactivePlay.gameCategorySentence")}
+              </div>
+              {myVote === game.id && (
+                <div className="absolute right-4 top-4 rounded-full bg-emerald-400 px-3 py-1 text-[10px] font-black uppercase text-emerald-950 shadow-lg">
+                  {t("interactivePlay.selected")}
+                </div>
+              )}
+              <div className="relative z-10 mt-auto p-5 text-white">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/55">
+                  {t("interactivePlay.gameCard")}
+                </p>
+                <h3 className="mt-2 text-2xl font-black leading-tight text-white">
+                  {game.title}
+                </h3>
+                <p className="mt-2 line-clamp-3 text-sm font-semibold leading-relaxed text-white/75">
+                  {game.description}
+                </p>
+                <div className={`mt-5 flex items-center justify-center gap-2 rounded-2xl py-3 text-sm font-black shadow-lg transition-colors ${
+                  isLocked
+                    ? "bg-white/15 text-white"
+                    : myVote === game.id
+                      ? "bg-emerald-400 text-emerald-950"
+                      : "bg-white text-slate-950 group-active:bg-indigo-100"
+                }`}>
+                  {isLocked && <Lock size={16} />}
+                  {isLocked
+                    ? t("interactivePlay.comingSoon")
+                    : myVote === game.id
+                      ? t("interactivePlay.voteDone")
+                      : t("interactivePlay.chooseThisGame")}
+                </div>
+              </div>
             </button>
-          ))}
+            );
+          })}
+          </div>
+          <div className="shrink-0 rounded-3xl border border-border bg-card p-4 text-center shadow-lg">
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+              {t("interactivePlay.yourVote")}
+            </p>
+            <p className="mt-1 text-sm font-black text-foreground">
+              {myVote ? getGameById(myVote)?.title || myVote : t("interactivePlay.noGameSelected")}
+            </p>
+          </div>
         </div>
       );
     }
 
     if (gameState.status === "countdown") {
       return (
-        <div className="phase-enter w-full max-w-sm rounded-3xl border border-indigo-500/30 bg-indigo-500/10 p-8 text-center shadow-xl">
-          <p className="text-xs font-black uppercase tracking-widest text-indigo-500">Get Ready</p>
-          <p className="mt-4 text-7xl font-black text-indigo-600 dark:text-indigo-400">{countdownLeft}</p>
-          <p className="mt-3 text-sm font-bold text-muted-foreground">{selected?.title || "Game"}</p>
+        <div className="phase-enter fixed inset-0 z-50 flex h-dvh w-screen items-center justify-center overflow-hidden bg-slate-950 p-6 text-center text-white">
+          {selected?.cover && (
+            <Image
+              src={selected.cover}
+              alt={selected.title}
+              fill
+              sizes="100vw"
+              className="absolute inset-0 size-full object-cover opacity-35"
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-slate-950/70 to-slate-950/50" />
+          <div className="relative z-10 flex w-full max-w-sm flex-col items-center">
+            <p className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.24em] text-white/70 backdrop-blur">
+              {t("interactivePlay.getReady")}
+            </p>
+            <p className="mt-8 text-[clamp(6rem,34vw,12rem)] font-black leading-none text-white drop-shadow-2xl">
+              {countdownLeft}
+            </p>
+            <p className="mt-5 text-2xl font-black leading-tight text-white">
+              {selected?.title || "Game"}
+            </p>
+            <p className="mt-2 text-sm font-bold text-white/60">
+              {t("interactivePlay.gameStartsAutomatically")}
+            </p>
+          </div>
         </div>
       );
     }
 
     if (gameState.status === "playing") {
       return (
-        <div className="phase-enter w-full max-w-3xl flex-1 min-h-0">
+        <div className="phase-enter fixed inset-0 z-50 h-dvh w-screen overflow-hidden bg-background">
           <AdvantageArcadeRuntime
             key={`${gameState.phase}-${gameState.selectedGameId}`}
             gameId={gameState.selectedGameId || ""}
@@ -741,11 +843,11 @@ function PlayLessonContent() {
           <div className="absolute -right-10 top-8 size-32 rounded-full bg-white/10 blur-sm" />
           <div className="relative z-10 flex items-start justify-between gap-3">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-white/70">{selected?.title || "Lesson Game"}</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-white/70">{selected?.title || t("interactivePlay.lessonGame")}</p>
               <h2 className="mt-1 text-xl font-black leading-tight text-white">{theme.action}</h2>
             </div>
             <div className="rounded-2xl bg-black/25 px-3 py-2 text-right">
-              <p className="text-[9px] font-black uppercase text-white/60">Score</p>
+              <p className="text-[9px] font-black uppercase text-white/60">{t("interactivePlay.score")}</p>
               <p className="text-2xl font-black tabular-nums">{liveCorrect * 2}</p>
             </div>
           </div>
@@ -756,7 +858,7 @@ function PlayLessonContent() {
             </div>
             <div className={`min-w-0 flex-1 rounded-3xl border p-4 backdrop-blur ${theme.panel}`}>
               <p className="text-[10px] font-black uppercase tracking-widest text-white/60">Target {activeIndex + 1} / {Math.max(questions.length, 1)}</p>
-              <p className="mt-1 break-words text-base font-black leading-snug text-white">{activeQuestion?.prompt || "Ready"}</p>
+              <p className="mt-1 break-words text-base font-black leading-snug text-white">{activeQuestion?.prompt || t("interactivePlay.ready")}</p>
             </div>
           </div>
           <div className="relative z-10 mt-5">
@@ -770,7 +872,7 @@ function PlayLessonContent() {
           </div>
         </div>
         <div className="rounded-3xl border border-border bg-card p-5 shadow-xl">
-          <p className="text-xs font-black uppercase tracking-widest text-indigo-500">{selected?.title || "Lesson Game"}</p>
+          <p className="text-xs font-black uppercase tracking-widest text-indigo-500">{selected?.title || t("interactivePlay.lessonGame")}</p>
           <h2 className="mt-2 text-xl font-black text-foreground">ตอบให้ครบแล้วส่งคะแนน</h2>
         </div>
         <div className="space-y-2">

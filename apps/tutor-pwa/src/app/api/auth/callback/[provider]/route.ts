@@ -48,17 +48,19 @@ export async function GET(
     const identityServiceUrl =
       process.env.IDENTITY_SERVICE_URL || "http://localhost:3001";
 
+    const callbackBody: Record<string, string> = {
+      provider,
+      code,
+      defaultRole: "TUTOR",
+      redirectUri: `${publicBase}/api/auth/callback/${provider}`,
+    };
+    if (sponsorTutorId) callbackBody.sponsorTutorId = sponsorTutorId;
+    if (codeVerifier) callbackBody.codeVerifier = codeVerifier;
+
     const response = await fetch(`${identityServiceUrl}/v1/auth/callback`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        provider,
-        code,
-        sponsorTutorId,
-        codeVerifier,
-        defaultRole: "TUTOR",
-        redirectUri: `${publicBase}/api/auth/callback/${provider}`,
-      }),
+      body: JSON.stringify(callbackBody),
     });
 
     if (!response.ok) {

@@ -31,7 +31,7 @@ import { useDirectionalInput } from "@/hooks/useDirectionalInput";
 import { useGameFullscreen } from "@/hooks/useGameFullscreen";
 import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
 import { VirtualDPad } from "@/components/ui/VirtualDPad";
-import { withBasePath } from "@/lib/games/basePath";
+import { getCachedGameImage, loadGameImage } from "@/lib/games/gameAssetPreloader";
 import { motion } from "framer-motion";
 import { Book, BookOpen, Shield, Sparkles } from "lucide-react";
 
@@ -42,13 +42,15 @@ import { mapInputVectorToDirectional } from "./enchantedLibraryInput";
 import { VocabularyProgress } from "./VocabularyProgress";
 import { GameEndScreen } from "@/components/games/game/GameEndScreen";
 import { GameStartScreen } from "@/components/games/game/GameStartScreen";
-import { DifficultySelector } from "./DifficultySelector";
 import { RankingDisplay } from "./RankingDisplay";
 
 export type EnchantedLibraryGameResult = {
   xp: number;
   accuracy: number;
   gameTime: number;
+  correctAnswers?: number;
+  totalAttempts?: number;
+  durationMs?: number;
 };
 
 interface RankingEntry {
@@ -69,7 +71,28 @@ interface EnchantedLibraryGameProps {
     import("@/lib/games/enchantedLibrary").Difficulty,
     RankingEntry[]
   >;
+  autoStart?: boolean;
 }
+
+const LIVE_GAME_DURATION_MS = 60_000;
+const MAX_ROUND_WORDS = 10;
+const LIBRARY_ASSET_PATHS = {
+  player: "/games/vocabulary/enchanted-library/player_3x3_pose_sheet.png",
+  spirit: "/games/vocabulary/enchanted-library/spirit_3x3_pose_sheet.png",
+  book: "/games/vocabulary/enchanted-library/book_3x1_sheet.png",
+  floor: "/games/vocabulary/enchanted-library/library_background.png",
+};
+
+const buildRoundVocabulary = (items: VocabularyItem[]) =>
+  [...items].sort(() => Math.random() - 0.5).slice(0, MAX_ROUND_WORDS);
+
+const getCachedLibraryAssets = () => {
+  const player = getCachedGameImage(LIBRARY_ASSET_PATHS.player);
+  const spirit = getCachedGameImage(LIBRARY_ASSET_PATHS.spirit);
+  const book = getCachedGameImage(LIBRARY_ASSET_PATHS.book);
+  const floor = getCachedGameImage(LIBRARY_ASSET_PATHS.floor);
+  return player && spirit && book && floor ? { player, spirit, book, floor } : null;
+};
 
 // Sprite Helper
 const buildSpriteGrid = (width: number, height: number) => {
@@ -95,15 +118,19 @@ export function EnchantedLibraryGame({
   vocabulary,
   onComplete,
   difficulty,
-  onDifficultyChange,
   rankings,
+  autoStart = false,
 }: EnchantedLibraryGameProps) {
   const { playSound } = useSound();
   const { input, setVirtualInput, triggerCast, consumeCast } =
     useDirectionalInput();
   const { containerRef: fullscreenRef, enterFullscreen, exitFullscreen } =
     useGameFullscreen();
-  useAccessibilitySettings();
+  const { getEffectiveTouchTarget } = useAccessibilitySettings();
+  const gameVocabulary = useMemo(
+    () => buildRoundVocabulary(vocabulary),
+    [vocabulary],
+  );
 
   // Use a ref for authoritative game state to avoid stale closure issues in the game loop
   const gameStateRef = useRef<EnchantedLibraryState | null>(null);
@@ -114,7 +141,7 @@ export function EnchantedLibraryGame({
   );
 
   const [gamePhase, setGamePhase] = useState<"start" | "playing" | "ended">(
-    "start",
+    autoStart ? "playing" : "start",
   );
   const [results, setResults] = useState<EnchantedLibraryGameResult | null>(
     null,
@@ -144,7 +171,7 @@ export function EnchantedLibraryGame({
     spirit: HTMLImageElement;
     book: HTMLImageElement;
     floor: HTMLImageElement;
-  } | null>(null);
+  } | null>(() => getCachedLibraryAssets());
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -175,7 +202,7 @@ export function EnchantedLibraryGame({
 
   useEffect(() => { inputRef.current = input; }, [input]);
   useEffect(() => { assetsRef.current = assets; }, [assets]);
-  useEffect(() => { vocabularyRef.current = vocabulary; }, [vocabulary]);
+  useEffect(() => { vocabularyRef.current = gameVocabulary; }, [gameVocabulary]);
   useEffect(() => { difficultyRef.current = difficulty; }, [difficulty]);
   useEffect(() => { dimensionsRef.current = dimensions; }, [dimensions]);
   useEffect(() => { cameraRef.current = camera; }, [camera]);
@@ -194,26 +221,12 @@ export function EnchantedLibraryGame({
   useEffect(() => {
     let mounted = true;
     const load = async () => {
-      const loadImage = (src: string): Promise<HTMLImageElement> =>
-        new Promise((res, rej) => {
-          const img = new Image();
-          img.src = withBasePath(src);
-          img.onload = () => res(img);
-          img.onerror = rej;
-        });
-
       try {
         const [player, spirit, book, floor] = await Promise.all([
-          loadImage(
-            "/games/vocabulary/enchanted-library/player_3x3_pose_sheet.png",
-          ),
-          loadImage(
-            "/games/vocabulary/enchanted-library/spirit_3x3_pose_sheet.png",
-          ),
-          loadImage("/games/vocabulary/enchanted-library/book_3x1_sheet.png"),
-          loadImage(
-            "/games/vocabulary/enchanted-library/library_background.png",
-          ),
+          loadGameImage(LIBRARY_ASSET_PATHS.player),
+          loadGameImage(LIBRARY_ASSET_PATHS.spirit),
+          loadGameImage(LIBRARY_ASSET_PATHS.book),
+          loadGameImage(LIBRARY_ASSET_PATHS.floor),
         ]);
         if (mounted) setAssets({ player, spirit, book, floor });
       } catch (e) {
@@ -227,12 +240,15 @@ export function EnchantedLibraryGame({
   }, []);
 
   const resetGame = useCallback(() => {
-    if (vocabulary.length > 0) {
-      const initialState = createEnchantedLibraryState(vocabulary, {
+    if (gameVocabulary.length > 0) {
+      const initialState = createEnchantedLibraryState(gameVocabulary, {
         difficulty,
       });
-      gameStateRef.current = initialState;
-      setGameState(initialState);
+      const nextState = autoStart
+        ? { ...initialState, timeRemaining: LIVE_GAME_DURATION_MS }
+        : initialState;
+      gameStateRef.current = nextState;
+      setGameState(nextState);
       setTotalAttempts(0);
       setCorrectAnswers(0);
       setShowGrimoire(false);
@@ -241,12 +257,12 @@ export function EnchantedLibraryGame({
       setResults(null);
       hasReportedRef.current = false;
     }
-  }, [vocabulary, difficulty]);
+  }, [autoStart, gameVocabulary, difficulty]);
 
   useEffect(() => {
     resetGame();
-    setGamePhase("start");
-  }, [resetGame]);
+    setGamePhase(autoStart ? "playing" : "start");
+  }, [autoStart, resetGame]);
 
   // Fullscreen management
   useEffect(() => {
@@ -306,7 +322,11 @@ export function EnchantedLibraryGame({
         prevState,
         directionalInput,
         clampedDelta,
-        { vocabulary: currentVocabulary, difficulty: currentDifficulty },
+        {
+          vocabulary: currentVocabulary,
+          difficulty: currentDifficulty,
+          masteryTarget: autoStart ? 1 : 2,
+        },
       );
       gameStateRef.current = nextState;
       setGameState(nextState);
@@ -382,20 +402,32 @@ export function EnchantedLibraryGame({
     return () => {
       cancelAnimationFrame(rafRef.current);
     };
-  }, [gamePhase, assets, gameState?.status]);
+  }, [autoStart, gamePhase, assets, gameState?.status]);
 
   useEffect(() => {
     if (!gameState) return;
 
     // Handle victory
     if (gameState.status === "victory") {
-      const accuracy = totalAttempts > 0 ? correctAnswers / totalAttempts : 0;
+      const totalWords = Math.max(gameVocabulary.length, 1);
+      const correctWords = autoStart
+        ? Array.from(gameState.vocabularyProgress.values()).filter((count) => count >= 1).length
+        : correctAnswers;
+      const resultTotal = autoStart ? totalWords : Math.max(totalAttempts, 1);
+      const accuracy = resultTotal > 0 ? correctWords / resultTotal : 0;
       const xp = calculateEnchantedLibraryXP(
         gameState,
-        correctAnswers,
-        totalAttempts,
+        correctWords,
+        resultTotal,
       );
-      const nextResults = { xp, accuracy, gameTime: gameState.gameTime };
+      const nextResults = {
+        xp,
+        accuracy,
+        gameTime: gameState.gameTime,
+        correctAnswers: correctWords,
+        totalAttempts: resultTotal,
+        durationMs: Math.min(gameState.gameTime, LIVE_GAME_DURATION_MS),
+      };
       setResults(nextResults);
       if (!hasReportedRef.current) {
         onComplete(nextResults);
@@ -406,13 +438,25 @@ export function EnchantedLibraryGame({
 
     // Handle game over (mana depleted or time ran out)
     if (gameState.status === "gameover") {
-      const accuracy = totalAttempts > 0 ? correctAnswers / totalAttempts : 0;
+      const totalWords = Math.max(gameVocabulary.length, 1);
+      const correctWords = autoStart
+        ? Array.from(gameState.vocabularyProgress.values()).filter((count) => count >= 1).length
+        : correctAnswers;
+      const resultTotal = autoStart ? totalWords : Math.max(totalAttempts, 1);
+      const accuracy = resultTotal > 0 ? correctWords / resultTotal : 0;
       const xp = calculateEnchantedLibraryXP(
         gameState,
-        correctAnswers,
-        totalAttempts,
+        correctWords,
+        resultTotal,
       );
-      const nextResults = { xp, accuracy, gameTime: gameState.gameTime };
+      const nextResults = {
+        xp,
+        accuracy,
+        gameTime: gameState.gameTime,
+        correctAnswers: correctWords,
+        totalAttempts: resultTotal,
+        durationMs: Math.min(gameState.gameTime, LIVE_GAME_DURATION_MS),
+      };
       setResults(nextResults);
       if (!hasReportedRef.current) {
         onComplete(nextResults);
@@ -420,7 +464,7 @@ export function EnchantedLibraryGame({
       }
       setGamePhase("ended");
     }
-  }, [gameState, correctAnswers, totalAttempts, onComplete]);
+  }, [autoStart, gameState, correctAnswers, gameVocabulary.length, totalAttempts, onComplete]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -551,13 +595,17 @@ export function EnchantedLibraryGame({
     <div
       ref={mergedContainerRef}
       style={{ minHeight: "320px" }}
-      className="relative h-[80vh] sm:h-[70vh] w-full overflow-hidden rounded-3xl bg-slate-950 shadow-2xl touch-none md:aspect-video md:h-auto"
+      className={`relative w-full overflow-hidden bg-slate-950 shadow-2xl touch-none ${
+        autoStart
+          ? "h-dvh rounded-none"
+          : "h-[80vh] rounded-3xl sm:h-[70vh] md:aspect-video md:h-auto"
+      }`}
     >
-      {gamePhase === "start" && (
+      {gamePhase === "start" && !autoStart && (
         <GameStartScreen
           gameTitle={t("title")}
           gameSubtitle={t("subtitle")}
-          vocabulary={vocabulary}
+          vocabulary={gameVocabulary}
           instructions={[
             {
               step: 1,
@@ -599,12 +647,7 @@ export function EnchantedLibraryGame({
             resetGame();
             setGamePhase("playing");
           }}
-        >
-          <DifficultySelector
-            selected={difficulty}
-            onSelect={onDifficultyChange}
-          />
-        </GameStartScreen>
+        />
       )}
 
       {gamePhase === "playing" && gameState && grids && (
@@ -650,11 +693,11 @@ export function EnchantedLibraryGame({
             </div>
           </div>
 
-          <div className="absolute top-2 sm:top-4 left-1/2 -translate-x-1/2 z-10 bg-gradient-to-r from-yellow-400 to-amber-500 px-3 py-1.5 sm:px-6 sm:py-3 rounded-full border-2 border-yellow-300 backdrop-blur-sm pointer-events-none shadow-lg max-w-[55%] sm:max-w-none text-center">
-            <span className="text-white/90 mr-1 sm:mr-2 text-base">
+          <div className="absolute right-3 top-24 z-10 max-w-[42vw] rounded-2xl border border-yellow-300 bg-gradient-to-r from-yellow-400 to-amber-500 px-3 py-2 text-right shadow-lg backdrop-blur-sm pointer-events-none sm:right-5 sm:top-28 sm:max-w-[320px] sm:px-4">
+            <span className="block text-[10px] uppercase tracking-[0.18em] text-white/80 sm:text-xs">
               Find:
             </span>
-            <span className="text-base sm:text-xl md:text-2xl font-bold text-white drop-shadow-md">
+            <span className="block break-words text-sm font-bold leading-tight text-white drop-shadow-md sm:text-lg">
               {gameState.targetWord}
             </span>
           </div>
@@ -671,7 +714,7 @@ export function EnchantedLibraryGame({
 
           {gameState && (
             <VocabularyProgress
-              vocabulary={vocabulary}
+              vocabulary={gameVocabulary}
               progress={gameState.vocabularyProgress}
               isOpen={showGrimoire}
               onClose={() => setShowGrimoire(false)}
@@ -753,19 +796,28 @@ export function EnchantedLibraryGame({
           </div>
 
           {/* Virtual Controls */}
-          <div className="absolute bottom-3 right-3 sm:bottom-8 sm:right-8 z-20 flex flex-row items-end gap-3 sm:gap-6">
+          <div className="absolute bottom-0 left-1/2 z-20 -translate-x-1/2 sm:bottom-1">
+            <div style={{ transform: `scale(${getEffectiveTouchTarget(136) / 128})`, transformOrigin: "bottom center" }}>
+              <VirtualDPad onInput={setVirtualInput} />
+            </div>
+          </div>
+          <div className="absolute bottom-6 right-4 z-20 sm:bottom-7 sm:right-7">
             <button
               onClick={() => triggerCast()}
               disabled={gameState.player.shieldCharges === 0}
-              className={`w-14 h-14 sm:w-20 sm:h-20 rounded-full border-2 flex items-center justify-center font-bold text-base transition-all active:scale-95 ${
+              style={{
+                width: getEffectiveTouchTarget(82),
+                height: getEffectiveTouchTarget(82),
+              }}
+              className={`rounded-full border-2 flex flex-col items-center justify-center gap-0.5 font-black text-[12px] uppercase tracking-wide transition-all active:scale-95 ${
                 gameState.player.shieldCharges > 0
                   ? "bg-blue-600 border-blue-400 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]"
                   : "bg-slate-400 border-slate-300 text-slate-600 opacity-50"
               }`}
             >
-              SHIELD
+              <Shield className="h-5 w-5" />
+              Shield
             </button>
-            <VirtualDPad onInput={setVirtualInput} />
           </div>
 
           {/* Canvas */}
@@ -895,7 +947,7 @@ export function EnchantedLibraryGame({
           </Stage>
         </motion.div>
       )}
-      {gamePhase === "ended" && gameState && results && (
+      {gamePhase === "ended" && !autoStart && gameState && results && (
         <>
           <GameEndScreen
             status="complete"
@@ -907,7 +959,7 @@ export function EnchantedLibraryGame({
             customStats={[
               {
                 label: t("messages.wordsMastered"),
-                value: `${Array.from(gameState.vocabularyProgress.values()).filter((count) => count >= 2).length}/${vocabulary.length}`,
+                value: `${Array.from(gameState.vocabularyProgress.values()).filter((count) => count >= 2).length}/${gameVocabulary.length}`,
               },
               { label: t("messages.correctBooks"), value: correctAnswers },
               {

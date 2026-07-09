@@ -32,6 +32,7 @@ import { useInterval } from "@/hooks/useInterval";
 import { useSound } from "@/hooks/useSound";
 import { useAdaptiveDifficulty } from "@/hooks/useAdaptiveDifficulty";
 import { registerDifficultyParams } from "@/lib/adaptive-difficulty/registerDifficultyParams";
+import { t as appT } from "@/lib/i18n";
 
 type DragonFlightAssets = {
   gates: HTMLImageElement;
@@ -54,6 +55,7 @@ type DragonFlightGameProps = {
   onRestart?: () => void;
   preloadedAssets?: DragonFlightAssets;
   adaptive?: boolean;
+  autoStart?: boolean;
 };
 
 type GateFeedback = {
@@ -153,7 +155,8 @@ const ASSETS = {
 const DEFAULT_STAGE: StageSize = { width: 960, height: 540 };
 const TICK_MS = 60;
 const GATE_ANIM_MS = 160;
-const GATE_TRAVEL_MS = 7200;
+const MAX_ROUND_WORDS = 10;
+const MS_PER_WORD = 5000;
 const PLAYER_LERP = 0.22;
 const PLAYER_ANIM_MS = 120;
 const BOSS_ANIM_MS = 180;
@@ -399,7 +402,13 @@ const getGateLabels = (round: DragonFlightState["round"]) => {
 const pickRandomIndex = (max: number) =>
   Math.min(max - 1, Math.floor(Math.random() * max));
 
-const buildGateRound = (vocabulary: VocabularyItem[]): DragonFlightRound => {
+const shuffleVocabulary = (items: VocabularyItem[]) =>
+  [...items].sort(() => Math.random() - 0.5);
+
+const buildGateRound = (
+  vocabulary: VocabularyItem[],
+  preferredItem?: VocabularyItem,
+): DragonFlightRound => {
   if (vocabulary.length === 0) {
     return {
       term: "",
@@ -409,13 +418,13 @@ const buildGateRound = (vocabulary: VocabularyItem[]): DragonFlightRound => {
     };
   }
 
-  const correctIndex = pickRandomIndex(vocabulary.length);
+  const correctItem = preferredItem ?? vocabulary[pickRandomIndex(vocabulary.length)];
+  const correctIndex = vocabulary.findIndex((item) => item.id === correctItem.id);
   let decoyIndex = pickRandomIndex(vocabulary.length);
   if (decoyIndex === correctIndex && vocabulary.length > 1) {
     decoyIndex = (correctIndex + 1) % vocabulary.length;
   }
 
-  const correctItem = vocabulary[correctIndex];
   const decoyItem = vocabulary[decoyIndex];
 
   return {
@@ -441,12 +450,19 @@ export function DragonFlightGame({
   onRestart,
   preloadedAssets,
   adaptive = false,
+  autoStart = false,
 }: DragonFlightGameProps) {
   const t = useScopedI18n("pages.student.gamesPage");
   const [DIFFICULTY_SETTINGS] = useState(() => getDifficultySettings(t));
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [difficulty, setDifficulty] = useState<Difficulty>("normal");
   const [showRanking, setShowRanking] = useState(false);
+  const gameVocabulary = useMemo(
+    () => shuffleVocabulary(vocabulary).slice(0, MAX_ROUND_WORDS),
+    [vocabulary],
+  );
+  const gameDurationMs =
+    durationMs ?? Math.max(MS_PER_WORD, gameVocabulary.length * MS_PER_WORD);
 
   const [stageSize, setStageSize] = useState<StageSize>(DEFAULT_STAGE);
   const [assets, setAssets] = useState<DragonFlightAssets | null>(
@@ -454,17 +470,17 @@ export function DragonFlightGame({
   );
   const [isLoading, setIsLoading] = useState(!preloadedAssets);
   const [state, setState] = useState<DragonFlightState>(() => {
-    return createDragonFlightState(vocabulary, {
-      durationMs: durationMs ?? DIFFICULTY_SETTINGS.normal.durationMs,
+    return createDragonFlightState(gameVocabulary, {
+      durationMs: gameDurationMs,
     });
   });
 
   // Register adaptive difficulty params for dragon-flight
   useMemo(() => {
     registerDifficultyParams('dragon-flight', {
-      durationMs: { current: durationMs ?? DIFFICULTY_SETTINGS.normal.durationMs, min: 15000, max: 120000, default: DIFFICULTY_SETTINGS.normal.durationMs, step: 5000 },
+      durationMs: { current: gameDurationMs, min: MS_PER_WORD, max: MAX_ROUND_WORDS * MS_PER_WORD, default: MAX_ROUND_WORDS * MS_PER_WORD, step: MS_PER_WORD },
     });
-  }, [durationMs, DIFFICULTY_SETTINGS.normal.durationMs]);
+  }, [gameDurationMs]);
 
   const { recordResponse: recordAdaptiveResponse } = useAdaptiveDifficulty({
     gameId: 'dragon-flight',
@@ -481,7 +497,7 @@ export function DragonFlightGame({
   const [playerFrame, setPlayerFrame] = useState(0);
   const [bossFrame, setBossFrame] = useState(0);
   const [playerX, setPlayerX] = useState(DEFAULT_STAGE.width / 2);
-  const [hasStarted, setHasStarted] = useState(false);
+  const [hasStarted, setHasStarted] = useState(autoStart);
   const [lockedPairId, setLockedPairId] = useState<string | null>(null);
   const [displayDragonCount, setDisplayDragonCount] = useState(1);
   const [bossHealth, setBossHealth] = useState(0);
@@ -489,7 +505,7 @@ export function DragonFlightGame({
   const [bossSequenceDone, setBossSequenceDone] = useState(false);
 
   useEffect(() => {
-    if (!hasStarted) {
+    if (!hasStarted && !autoStart) {
       const settings = DIFFICULTY_SETTINGS[difficulty];
       setState((prev) =>
         prev.durationMs === settings.durationMs
@@ -497,11 +513,21 @@ export function DragonFlightGame({
           : { ...prev, durationMs: settings.durationMs },
       );
     }
-  }, [difficulty, hasStarted, DIFFICULTY_SETTINGS]);
+  }, [autoStart, difficulty, hasStarted, DIFFICULTY_SETTINGS]);
   const { playSound } = useSound();
   const resultsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingSelectionRef = useRef<PendingSelection | null>(null);
   const playerTargetRef = useRef<number | null>(null);
+  const answeredPairIdsRef = useRef<Set<string>>(new Set());
+  const questionQueueRef = useRef<VocabularyItem[]>([]);
+
+  const getNextVocabularyItem = useCallback(() => {
+    if (gameVocabulary.length === 0) return undefined;
+    if (questionQueueRef.current.length === 0) {
+      questionQueueRef.current = shuffleVocabulary(gameVocabulary);
+    }
+    return questionQueueRef.current.shift();
+  }, [gameVocabulary]);
 
   const measureStage = useCallback(() => {
     const element = containerRef.current;
@@ -544,9 +570,8 @@ export function DragonFlightGame({
   }, [preloadedAssets]);
 
   const resetGame = useCallback(() => {
-    const settings = DIFFICULTY_SETTINGS[difficulty];
-    const nextState = createDragonFlightState(vocabulary, {
-      durationMs: durationMs ?? settings.durationMs,
+    const nextState = createDragonFlightState(gameVocabulary, {
+      durationMs: gameDurationMs,
     });
     initialRoundRef.current = nextState.round;
     setState(nextState);
@@ -561,10 +586,19 @@ export function DragonFlightGame({
     setBossSequenceDone(false);
     pendingSelectionRef.current = null;
     playerTargetRef.current = null;
-  }, [vocabulary, difficulty, DIFFICULTY_SETTINGS, durationMs]);
+    answeredPairIdsRef.current = new Set();
+    questionQueueRef.current = shuffleVocabulary(gameVocabulary);
+  }, [gameVocabulary, gameDurationMs]);
 
   // Initialize game on mount only - do not auto-reset to avoid loops
   // hasStarted is already false from useState(false)
+
+  useEffect(() => {
+    if (autoStart && !hasStarted) {
+      resetGame();
+      setHasStarted(true);
+    }
+  }, [autoStart, hasStarted, resetGame]);
 
   useEffect(() => {
     if (isLoading) return;
@@ -672,13 +706,19 @@ export function DragonFlightGame({
 
       const gateStartY = -layout.leftGate.height;
       const gateEndY = stageSize.height + layout.leftGate.height;
-      const gateSpeed = (gateEndY - gateStartY) / (GATE_TRAVEL_MS / 1000);
+      const gateSpeed = (gateEndY - gateStartY) / (MS_PER_WORD / 1000);
       const deltaSeconds = TICK_MS / 1000;
 
       setGatePairs((prev) => {
         const nextPairs = prev
           .map((pair) => ({ ...pair, y: pair.y + gateSpeed * deltaSeconds }))
           .filter((pair) => pair.y <= gateEndY);
+        const visibleIds = new Set(nextPairs.map((pair) => pair.id));
+        answeredPairIdsRef.current.forEach((pairId) => {
+          if (!visibleIds.has(pairId)) {
+            answeredPairIdsRef.current.delete(pairId);
+          }
+        });
 
         if (nextPairs.length === 0) {
           const nextPair = createGatePair();
@@ -770,16 +810,17 @@ export function DragonFlightGame({
 
   const createGatePair = useCallback(
     (round?: DragonFlightRound) => {
-      if (!layout || vocabulary.length === 0) return null;
+      if (!layout || gameVocabulary.length === 0) return null;
+      const nextWord = round ? undefined : getNextVocabularyItem();
 
       gateIdRef.current += 1;
       return {
         id: `gate-${gateIdRef.current}`,
-        round: round ?? buildGateRound(vocabulary),
+        round: round ?? buildGateRound(gameVocabulary, nextWord),
         y: -layout.leftGate.height,
       };
     },
-    [layout, vocabulary],
+    [gameVocabulary, getNextVocabularyItem, layout],
   );
 
   useEffect(() => {
@@ -816,7 +857,7 @@ export function DragonFlightGame({
       if (!layout) return;
       const gateStartY = -layout.leftGate.height;
       const gateEndY = stageSize.height + layout.leftGate.height;
-      const gateSpeed = (gateEndY - gateStartY) / (GATE_TRAVEL_MS / 1000);
+      const gateSpeed = (gateEndY - gateStartY) / (MS_PER_WORD / 1000);
       const deltaSeconds = TICK_MS / 1000;
       const targetY = layout.playerY;
 
@@ -930,6 +971,7 @@ export function DragonFlightGame({
 
       const pair = activePair;
       if (!pair || !layout) return;
+      if (answeredPairIdsRef.current.has(pair.id)) return;
 
       const isCorrect = side === pair.round.correctSide;
       const targetX =
@@ -943,6 +985,7 @@ export function DragonFlightGame({
         outcome: isCorrect ? "correct" : "incorrect",
       };
       playerTargetRef.current = targetX;
+      answeredPairIdsRef.current.add(pair.id);
 
       setLockedPairId(pair.id);
       setFeedback(null);
@@ -984,7 +1027,7 @@ export function DragonFlightGame({
   if (!assets && !isLoading) {
     return (
       <div className="rounded-3xl border border-red-500/40 bg-red-950/30 p-6 text-sm text-red-200">
-        Unable to load Dragon Flight assets. Please refresh to try again.
+        {appT("interactivePlay.dragonFlightAssetError")}
       </div>
     );
   }
@@ -1001,7 +1044,11 @@ export function DragonFlightGame({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full h-[calc(90svh-56px)] sm:h-[70vh] min-h-[480px] sm:max-h-[760px] overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 shadow-[0_20px_60px_rgba(15,23,42,0.45)] ${hasStarted ? "touch-none select-none" : ""}`}
+      className={`relative w-full overflow-hidden bg-slate-900 shadow-[0_20px_60px_rgba(15,23,42,0.45)] ${
+        hasStarted
+          ? "h-dvh min-h-0 max-h-none touch-none select-none rounded-none border-0"
+          : "h-[calc(90svh-56px)] min-h-[480px] rounded-3xl border border-slate-800 sm:h-[70vh] sm:max-h-[760px]"
+      }`}
       data-testid="dragon-flight"
       data-status={statusLabel}
     >
@@ -1036,23 +1083,23 @@ export function DragonFlightGame({
       {canRenderGame && (
         <div className="absolute inset-0 z-10 pointer-events-none p-2 sm:p-6 flex flex-col justify-between">
           {/* Top HUD Bar */}
-          <div className="flex w-full items-start justify-between gap-2 sm:gap-4">
+          <div className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 sm:gap-4">
             {/* Left: Prompt */}
-            <div className="rounded-2xl border border-white/10 bg-black/40 px-3 py-2 sm:px-5 sm:py-3 backdrop-blur-md shadow-lg">
+            <div className="min-w-[84px] rounded-2xl border border-white/10 bg-black/40 px-3 py-2 sm:px-5 sm:py-3 backdrop-blur-md shadow-lg">
               <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-white/60 mb-0.5">
                 {t("dragonFlight.prompt")}
               </div>
-              <div className="text-base sm:text-2xl font-bold text-white leading-none">
+              <div className="text-base sm:text-2xl font-bold text-white leading-tight">
                 {promptRound.term || "—"}
               </div>
             </div>
 
             {/* Center: Progress Bar */}
-            <div className="mt-1 sm:mt-4 flex-1 max-w-2xl px-2 sm:px-4">
+            <div className="mt-1 min-w-0 px-1 sm:mt-4 sm:px-4">
               <div
                 className="relative h-5 sm:h-6 w-full overflow-hidden rounded-full bg-black/30 backdrop-blur-sm border border-white/10"
                 role="progressbar"
-                aria-label="Run timer"
+                aria-label={appT("interactivePlay.runTimer")}
                 aria-valuenow={Math.max(0, Math.ceil((state.durationMs - state.elapsedMs) / 1000))}
                 aria-valuemin={0}
                 aria-valuemax={Math.ceil(state.durationMs / 1000)}
@@ -1075,7 +1122,7 @@ export function DragonFlightGame({
             </div>
 
             {/* Right: Dragon Count */}
-            <div className="rounded-2xl border border-white/10 bg-black/40 px-3 py-2 sm:px-5 sm:py-3 backdrop-blur-md shadow-lg text-right">
+            <div className="min-w-[84px] rounded-2xl border border-white/10 bg-black/40 px-3 py-2 sm:px-5 sm:py-3 backdrop-blur-md shadow-lg text-right">
               <div className="flex items-center justify-end gap-1 sm:gap-1.5 mb-0.5">
                 <Flame className="h-3 w-3 text-amber-400" />
                 <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-white/60">
@@ -1101,7 +1148,7 @@ export function DragonFlightGame({
                 type="button"
                 className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-white backdrop-blur-md transition-all hover:bg-white/20 active:scale-95 shadow-lg"
                 onPointerDown={() => handleGateSelection("left")}
-                aria-label="Choose left gate"
+                aria-label={appT("interactivePlay.chooseLeftGate")}
               >
                 <ArrowLeft size={24} className="sm:hidden" />
                 <ArrowLeft size={32} className="hidden sm:block" />
@@ -1110,7 +1157,7 @@ export function DragonFlightGame({
                 type="button"
                 className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-white backdrop-blur-md transition-all hover:bg-white/20 active:scale-95 shadow-lg"
                 onPointerDown={() => handleGateSelection("right")}
-                aria-label="Choose right gate"
+                aria-label={appT("interactivePlay.chooseRightGate")}
               >
                 <ArrowRight size={24} className="sm:hidden" />
                 <ArrowRight size={32} className="hidden sm:block" />
@@ -1152,10 +1199,12 @@ export function DragonFlightGame({
                 transition={{ duration: 0.2 }}
               >
                 {feedback.outcome === "correct"
-                  ? "+1 Dragon"
+                  ? appT("interactivePlay.plusDragon")
                   : DIFFICULTY_SETTINGS[difficulty].gameOverOnMiss
                     ? "GAME OVER"
-                    : `-${DIFFICULTY_SETTINGS[difficulty].penalty} Dragons`}
+                    : DIFFICULTY_SETTINGS[difficulty].penalty === 1
+                      ? appT("interactivePlay.minusDragon")
+                      : `-${DIFFICULTY_SETTINGS[difficulty].penalty} ${appT("interactivePlay.dragons")}`}
               </motion.div>
             )}
           </AnimatePresence>
@@ -1174,7 +1223,7 @@ export function DragonFlightGame({
                 transition={{ duration: 0.3 }}
                 data-testid="dragon-flight-boss"
               >
-                Skeleton King Approaches
+                {appT("interactivePlay.bossApproaches")}
               </motion.div>
             )}
           </AnimatePresence>

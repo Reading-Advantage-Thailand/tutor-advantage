@@ -33,9 +33,8 @@ import { registerDifficultyParams } from "@/lib/adaptive-difficulty/registerDiff
 import { useGameDimensions } from "@/hooks/useGameDimensions";
 import { VirtualDPad } from "@/components/ui/VirtualDPad";
 import { calculateIndicators } from "@/lib/games/wizardZombieIndicators";
-import { withBasePath } from "@/lib/games/basePath";
+import { getCachedGameImage, loadGameImage } from "@/lib/games/gameAssetPreloader";
 import { GameStartScreen } from "@/components/games/game/GameStartScreen";
-import { GameEndScreen } from "@/components/games/game/GameEndScreen";
 import { useGameFullscreen } from "@/hooks/useGameFullscreen";
 import {
   Shield,
@@ -51,6 +50,7 @@ export type WizardZombieGameResult = {
   correctAnswers: number;
   totalAttempts: number;
   difficulty: Difficulty;
+  durationMs?: number;
 };
 
 type FloatingText = {
@@ -67,7 +67,28 @@ interface WizardZombieGameProps {
   vocabulary: VocabularyItem[];
   onComplete: (results: WizardZombieGameResult) => void;
   adaptive?: boolean;
+  autoStart?: boolean;
 }
+
+const GAME_DURATION_MS = 60_000;
+const MAX_ROUND_WORDS = 10;
+const WIZARD_ASSET_PATHS = {
+  player: "/games/vocabulary/wizard-vs-zombie/player_3x3_pose_sheet.png",
+  zombie: "/games/vocabulary/wizard-vs-zombie/zombie_3x3_pose_sheet.png",
+  orb: "/games/vocabulary/wizard-vs-zombie/orb_3x3_pose_sheet.png",
+  floor: "/games/vocabulary/wizard-vs-zombie/tile-ruins.png",
+};
+
+const buildRoundVocabulary = (items: VocabularyItem[]) =>
+  [...items].sort(() => Math.random() - 0.5).slice(0, MAX_ROUND_WORDS);
+
+const getCachedWizardAssets = () => {
+  const player = getCachedGameImage(WIZARD_ASSET_PATHS.player);
+  const zombie = getCachedGameImage(WIZARD_ASSET_PATHS.zombie);
+  const orb = getCachedGameImage(WIZARD_ASSET_PATHS.orb);
+  const floor = getCachedGameImage(WIZARD_ASSET_PATHS.floor);
+  return player && zombie && orb && floor ? { player, zombie, orb, floor } : null;
+};
 
 // Sprite Helper
 const buildSpriteGrid = (width: number, height: number) => {
@@ -87,6 +108,7 @@ export function WizardZombieGame({
   vocabulary,
   onComplete,
   adaptive = false,
+  autoStart = false,
 }: WizardZombieGameProps) {
   const t = useScopedI18n("pages.student.gamesPage");
   const { playSound } = useSound();
@@ -95,13 +117,21 @@ export function WizardZombieGame({
   const { getEffectiveTouchTarget, getEffectiveTextSize } =
     useAccessibilitySettings();
   const { containerRef, enterFullscreen, exitFullscreen } = useGameFullscreen();
+  const gameVocabulary = useMemo(() => buildRoundVocabulary(vocabulary), [vocabulary]);
 
-  const [gamePhase, setGamePhase] = useState<"start" | "playing" | "ended">("start");
-  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>("medium");
+  const [gamePhase, setGamePhase] = useState<"start" | "playing" | "ended">(
+    autoStart ? "playing" : "start",
+  );
+  const selectedDifficulty: Difficulty = "medium";
 
-  const [gameState, setGameState] = useState<WizardZombieState | null>(null);
+  const [gameState, setGameState] = useState<WizardZombieState | null>(() =>
+    autoStart && gameVocabulary.length > 0
+      ? createWizardZombieState(gameVocabulary, { difficulty: "medium" })
+      : null,
+  );
   const gameStateRef = useRef(gameState);
   useEffect(() => { gameStateRef.current = gameState; }, [gameState]);
+  const completedRef = useRef(false);
 
   // Register adaptive difficulty params for wizard-vs-zombie
   useMemo(() => {
@@ -122,7 +152,8 @@ export function WizardZombieGame({
     adaptive,
   });
 
-  const touchTarget = getEffectiveTouchTarget(56); // base size for buttons
+  const dpadSize = getEffectiveTouchTarget(136);
+  const castButtonSize = getEffectiveTouchTarget(82);
   const textScale = getEffectiveTextSize(16); // base font size in pixels
 
   const [assets, setAssets] = useState<{
@@ -130,7 +161,7 @@ export function WizardZombieGame({
     zombie: HTMLImageElement;
     orb: HTMLImageElement;
     floor: HTMLImageElement;
-  } | null>(null);
+  } | null>(() => getCachedWizardAssets());
   const assetsRef = useRef(assets);
   useEffect(() => { assetsRef.current = assets; }, [assets]);
 
@@ -159,26 +190,12 @@ export function WizardZombieGame({
   useEffect(() => {
     let mounted = true;
     const load = async () => {
-      const loadImage = (src: string): Promise<HTMLImageElement> =>
-        new Promise((res, rej) => {
-          const img = new Image();
-          img.src = withBasePath(src);
-          img.onload = () => res(img);
-          img.onerror = rej;
-        });
-
       try {
         const [player, zombie, orb, floor] = await Promise.all([
-          loadImage(
-            "/games/vocabulary/wizard-vs-zombie/player_3x3_pose_sheet.png",
-          ),
-          loadImage(
-            "/games/vocabulary/wizard-vs-zombie/zombie_3x3_pose_sheet.png",
-          ),
-          loadImage(
-            "/games/vocabulary/wizard-vs-zombie/orb_3x3_pose_sheet.png",
-          ),
-          loadImage("/games/vocabulary/wizard-vs-zombie/tile-ruins.png"),
+          loadGameImage(WIZARD_ASSET_PATHS.player),
+          loadGameImage(WIZARD_ASSET_PATHS.zombie),
+          loadGameImage(WIZARD_ASSET_PATHS.orb),
+          loadGameImage(WIZARD_ASSET_PATHS.floor),
         ]);
         if (mounted) setAssets({ player, zombie, orb, floor });
       } catch (e) {
@@ -192,45 +209,47 @@ export function WizardZombieGame({
   }, []);
 
   const startGame = useCallback(() => {
-    if (vocabulary.length > 0) {
-      const state = createWizardZombieState(vocabulary, { difficulty: selectedDifficulty });
+    if (gameVocabulary.length > 0) {
+      const state = createWizardZombieState(gameVocabulary, { difficulty: selectedDifficulty });
       setGameState(state);
       setGamePhase("playing");
+      completedRef.current = false;
       setFloatingTexts([]);
       setScreenShake(0);
       setScreenShakeOffset({ x: 0, y: 0 });
       setDamageFlash(0);
       setShockwaveRing(0);
     }
-  }, [vocabulary, selectedDifficulty]);
+  }, [gameVocabulary, selectedDifficulty]);
 
-  const handleRestart = useCallback(() => {
-    setGamePhase("start");
-    setGameState(null);
-  }, []);
-
-  const handleExit = useCallback(() => {
+  const completeGame = useCallback(() => {
+    if (completedRef.current) return;
     if (gameStateRef.current) {
       const state = gameStateRef.current;
+      completedRef.current = true;
+      const totalWords = Math.max(gameVocabulary.length, 1);
+      const correctWords = Math.min(state.correctAnswers, totalWords);
       const results: WizardZombieGameResult = {
         xp: calculateXP(
           state.score,
-          state.correctAnswers,
-          state.totalAttempts,
+          correctWords,
+          totalWords,
         ),
-        accuracy:
-          state.totalAttempts > 0
-            ? state.correctAnswers / state.totalAttempts
-            : 0,
-        correctAnswers: state.correctAnswers,
-        totalAttempts: state.totalAttempts,
+        accuracy: correctWords / totalWords,
+        correctAnswers: correctWords,
+        totalAttempts: totalWords,
         difficulty: selectedDifficulty,
+        durationMs: Math.min(state.gameTime, GAME_DURATION_MS),
       };
       onComplete(results);
     }
-    setGamePhase("start");
-    setGameState(null);
-  }, [onComplete, selectedDifficulty]);
+  }, [gameVocabulary.length, onComplete, selectedDifficulty]);
+
+  useEffect(() => {
+        if (!autoStart) return;
+        if (gameState || gameVocabulary.length === 0) return;
+        startGame();
+  }, [autoStart, gameState, gameVocabulary.length, startGame]);
 
   useEffect(() => {
     if (gamePhase === "playing") {
@@ -274,21 +293,25 @@ export function WizardZombieGame({
         currentState,
         clampedDt,
         currentInput,
-        vocabulary,
+        gameVocabulary,
       );
+      const timeLimitedState =
+        nextState.gameTime >= GAME_DURATION_MS
+          ? { ...nextState, status: "gameover" as const }
+          : nextState;
 
       // Diffing for Juice
       // Damage check
-      if (nextState.player.hp < currentState.player.hp) {
+      if (timeLimitedState.player.hp < currentState.player.hp) {
         setScreenShake(10);
         setDamageFlash(0.5);
         setFloatingTexts((prev) => [
           ...prev,
           {
             id: Math.random().toString(),
-            x: nextState.player.x,
-            y: nextState.player.y - 20,
-            text: `-${currentState.player.hp - nextState.player.hp}`,
+            x: timeLimitedState.player.x,
+            y: timeLimitedState.player.y - 20,
+            text: `-${currentState.player.hp - timeLimitedState.player.hp}`,
             color: "#ef4444",
             life: 1.0,
             velocity: { x: (Math.random() - 0.5) * 2, y: -3 },
@@ -296,14 +319,14 @@ export function WizardZombieGame({
         ]);
       }
       // Score check
-      if (nextState.score > currentState.score) {
+      if (timeLimitedState.score > currentState.score) {
         setFloatingTexts((prev) => [
           ...prev,
           {
             id: Math.random().toString(),
-            x: nextState.player.x,
-            y: nextState.player.y - 40,
-            text: `+${nextState.score - currentState.score}`,
+            x: timeLimitedState.player.x,
+            y: timeLimitedState.player.y - 40,
+            text: `+${timeLimitedState.score - currentState.score}`,
             color: "#fbbf24",
             life: 1.0,
             velocity: { x: (Math.random() - 0.5) * 2, y: -4 },
@@ -311,14 +334,14 @@ export function WizardZombieGame({
         ]);
       }
       // Penalty check
-      if (nextState.score < currentState.score) {
+      if (timeLimitedState.score < currentState.score) {
         setFloatingTexts((prev) => [
           ...prev,
           {
             id: Math.random().toString(),
-            x: nextState.player.x,
-            y: nextState.player.y - 40,
-            text: `${nextState.score - currentState.score}`,
+            x: timeLimitedState.player.x,
+            y: timeLimitedState.player.y - 40,
+            text: `${timeLimitedState.score - currentState.score}`,
             color: "#ef4444",
             life: 1.0,
             velocity: { x: (Math.random() - 0.5) * 2, y: -2 },
@@ -326,8 +349,8 @@ export function WizardZombieGame({
         ]);
       }
       // Adaptive difficulty: track orb collection
-      if (nextState.totalAttempts > currentState.totalAttempts) {
-        const isCorrect = nextState.correctAnswers > currentState.correctAnswers;
+      if (timeLimitedState.totalAttempts > currentState.totalAttempts) {
+        const isCorrect = timeLimitedState.correctAnswers > currentState.correctAnswers;
         recordAdaptiveResponse(isCorrect, 1000);
       }
 
@@ -357,7 +380,7 @@ export function WizardZombieGame({
           .filter((ft) => ft.life > 0),
       );
 
-      setGameState(nextState);
+      setGameState(timeLimitedState);
 
       if (currentInput.cast) {
         consumeCast();
@@ -369,8 +392,8 @@ export function WizardZombieGame({
         const scaleY = dimensions.height / GAME_HEIGHT;
         const scale = Math.max(scaleY, 0.8);
 
-        let camX = dimensions.width / 2 - nextState.player.x * scale;
-        let camY = dimensions.height / 2 - nextState.player.y * scale;
+        let camX = dimensions.width / 2 - timeLimitedState.player.x * scale;
+        let camY = dimensions.height / 2 - timeLimitedState.player.y * scale;
 
         const minX = dimensions.width - GAME_WIDTH * scale;
         const minY = dimensions.height - GAME_HEIGHT * scale;
@@ -384,8 +407,10 @@ export function WizardZombieGame({
         setCamera({ x: camX, y: camY, scale });
       }
 
-      if (nextState.status === "gameover") {
+      if (timeLimitedState.status === "gameover") {
         setGamePhase("ended");
+        gameStateRef.current = timeLimitedState;
+        completeGame();
       }
 
       rafId = requestAnimationFrame(loop);
@@ -393,7 +418,7 @@ export function WizardZombieGame({
 
     rafId = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(rafId);
-  }, [gamePhase, vocabulary, dimensions.width, dimensions.height, consumeCast, playSound, recordAdaptiveResponse]);
+  }, [gamePhase, gameVocabulary, dimensions.width, dimensions.height, consumeCast, playSound, recordAdaptiveResponse, completeGame]);
 
   // Calculate indicators
   const indicators =
@@ -431,7 +456,7 @@ export function WizardZombieGame({
         <GameStartScreen
           gameTitle="Wizard vs Zombie"
           gameSubtitle="Arcane Defense"
-          vocabulary={vocabulary}
+          vocabulary={gameVocabulary}
           instructions={[
             { step: 1, text: "The horde is endless. Survive as long as possible by collecting Healing Orbs.", icon: Shield },
             { step: 2, text: "Match the Target Word shown at the bottom to heal (+10 HP).", icon: Zap },
@@ -446,26 +471,7 @@ export function WizardZombieGame({
           startButtonText={t("common.startSurvival")}
           icon={Sword}
           onStart={startGame}
-        >
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-slate-400" style={{ fontSize: getEffectiveTextSize(16) }}>Difficulty:</span>
-            <div className="flex gap-2">
-              {(["easy", "medium", "hard"] as Difficulty[]).map((d) => (
-                <button
-                  key={d}
-                  onClick={() => setSelectedDifficulty(d)}
-                  className={`rounded-lg px-4 py-2 text-sm font-bold uppercase tracking-wider transition-colors min-h-[44px] min-w-[44px] ${
-                    selectedDifficulty === d
-                      ? "bg-emerald-500 text-white"
-                      : "bg-slate-800 text-slate-400 hover:bg-slate-700"
-                  }`}
-                >
-                  {d}
-                </button>
-              ))}
-            </div>
-          </div>
-        </GameStartScreen>
+        />
       </div>
     );
   }
@@ -474,36 +480,10 @@ export function WizardZombieGame({
     <div
       ref={containerRef}
       style={{ minHeight: "400px", height: "100%" }}
-      className="relative w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none"
+      className="relative w-full overflow-hidden rounded-none bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none sm:rounded-3xl"
     >
       {gameState && grids && (
         <>
-          {/* Game Over Overlay */}
-          {gamePhase === "ended" && (
-            <GameEndScreen
-              status="defeat"
-              score={gameState.score}
-              xp={calculateXP(
-                gameState.score,
-                gameState.correctAnswers,
-                gameState.totalAttempts,
-              )}
-              accuracy={
-                gameState.totalAttempts > 0
-                  ? gameState.correctAnswers / gameState.totalAttempts
-                  : 0
-              }
-              onRestart={handleRestart}
-              onExit={handleExit}
-              title="Survival Failed"
-              subtitle="The horde has overwhelmed you."
-              restartButtonText={t("common.playAgain")}
-              showLeaderboardLink
-              gameId="wizard-vs-zombie"
-              gameName="Wizard vs Zombie"
-            />
-          )}
-
           {/* HUD Overlay */}
           <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-10 flex flex-col gap-0.5 sm:gap-1 text-white font-bold text-sm sm:text-lg pointer-events-none drop-shadow-md">
             <div>HP: {Math.ceil(gameState.player.hp)}</div>
@@ -528,13 +508,25 @@ export function WizardZombieGame({
           <div className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10 text-white font-bold text-sm sm:text-lg pointer-events-none drop-shadow-md">
             {t("common.score")}: {gameState.score}
           </div>
+          <div className="absolute top-2 sm:top-4 left-1/2 z-10 -translate-x-1/2 rounded-full border border-white/15 bg-black/55 px-4 py-1.5 text-center font-black text-white shadow-lg backdrop-blur-sm pointer-events-none">
+            <div className="text-[10px] uppercase tracking-[0.18em] text-white/60">
+              Time
+            </div>
+            <div className="text-lg leading-none tabular-nums text-cyan-300">
+              {Math.max(
+                0,
+                Math.ceil((GAME_DURATION_MS - gameState.gameTime) / 1000),
+              )}
+              s
+            </div>
+          </div>
 
           {/* Target Word - centered below HUD, above virtual controls */}
-          <div className="absolute bottom-28 sm:bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 z-10 bg-black/60 px-4 sm:px-6 py-1.5 sm:py-2 rounded-full border border-white/20 backdrop-blur-sm pointer-events-none whitespace-nowrap">
-            <span className="text-white/70 mr-1 sm:mr-2 text-sm sm:text-base">
+          <div className="absolute right-3 top-20 z-10 max-w-[42vw] rounded-2xl border border-white/20 bg-black/65 px-3 py-2 text-right shadow-lg backdrop-blur-sm pointer-events-none sm:right-5 sm:top-24 sm:max-w-[320px] sm:px-4">
+            <span className="block text-[10px] uppercase tracking-[0.18em] text-white/60 sm:text-xs">
               Find:
             </span>
-            <span className="text-base sm:text-xl font-bold text-yellow-400">
+            <span className="block break-words text-sm font-bold leading-tight text-yellow-400 sm:text-lg">
               {gameState.targetWord}
             </span>
           </div>
@@ -570,26 +562,29 @@ export function WizardZombieGame({
           ))}
 
           {/* Virtual Controls */}
-          <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 z-20 flex flex-row items-end gap-2 sm:gap-4">
+          <div className="absolute bottom-4 left-1/2 z-20 -translate-x-1/2 sm:bottom-5">
+            <div style={{ transform: `scale(${dpadSize / 128})`, transformOrigin: 'bottom center' }}>
+              <VirtualDPad onInput={setVirtualInput} />
+            </div>
+          </div>
+          <div className="absolute bottom-6 right-4 z-20 sm:bottom-7 sm:right-7">
             <button
               onClick={() => triggerCast()}
               disabled={gameState.player.shockwaveCharges === 0}
               style={{
-                width: touchTarget,
-                height: touchTarget,
-                fontSize: `${textScale * 0.875}rem`,
+                width: castButtonSize,
+                height: castButtonSize,
+                fontSize: `${Math.max(13, textScale * 0.875)}px`,
               }}
-              className={`rounded-full border-2 flex items-center justify-center font-bold transition-all active:scale-95 ${
+              className={`rounded-full border-2 flex flex-col items-center justify-center gap-0.5 font-black uppercase tracking-wide transition-all active:scale-95 ${
                 gameState.player.shockwaveCharges > 0
                   ? "bg-blue-600 border-blue-400 text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]"
                   : "bg-slate-800 border-slate-700 text-slate-500 opacity-50"
               }`}
             >
-              CAST
+              <Zap className="h-5 w-5" />
+              Cast
             </button>
-            <div style={{ transform: `scale(${touchTarget / 128})`, transformOrigin: 'bottom right' }}>
-              <VirtualDPad onInput={setVirtualInput} />
-            </div>
           </div>
 
           {/* Canvas */}

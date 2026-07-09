@@ -306,6 +306,7 @@ export const setupLessonSocket = (io: Server) => {
         socket.join(session.sessionId);
         socket.emit("join_success", {
           sessionId: session.sessionId,
+          currentStudentId: studentId,
           currentPhase: session.currentPhase,
           articleData: session.articleData,
           phaseSelectedIndices: session.phaseSelectedIndices,

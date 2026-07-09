@@ -42,6 +42,8 @@ export interface Ingredient {
   type: 'potion' | 'mushroom' | 'mineral' | 'herb'
   width: number
   isDragging: boolean
+  isHeld?: boolean
+  holdingSlotIndex?: number
 }
 
 export type PotionRushEffectType = 'SPLASH' | 'SMOKE' | 'SUCCESS'
@@ -112,6 +114,8 @@ interface PotionRushState {
   discardIngredient: (ingredientId: string) => void
   setIngredientDragging: (ingredientId: string, isDragging: boolean) => void
   spawnEffect: (type: PotionRushEffectType, x: number, y: number) => void
+  handleHoldIngredient: (ingredientId: string, slotIndex: number) => void
+  releaseHold: (ingredientId: string) => void
   
   // Helpers
   reset: () => void
@@ -160,10 +164,10 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
   
   startGame: (vocabList, difficulty = 'normal') => {
     const diffSettings = {
-      easy: { baseBeltSpeed: 35, spawnRate: 2800 },
-      normal: { baseBeltSpeed: 50, spawnRate: 2100 },
-      hard: { baseBeltSpeed: 70, spawnRate: 1600 },
-      extreme: { baseBeltSpeed: 90, spawnRate: 1200 },
+      easy: { baseBeltSpeed: 70, spawnRate: 1500 },
+      normal: { baseBeltSpeed: 100, spawnRate: 1000 },
+      hard: { baseBeltSpeed: 130, spawnRate: 800 },
+      extreme: { baseBeltSpeed: 160, spawnRate: 600 },
     }[difficulty]
 
     set({
@@ -312,7 +316,7 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
       
       // A. Customer Spawning
       const currentPatience = BASE_PATIENCE * Math.pow(0.9, completedSentences)
-      const customerSpawnInterval = currentPatience / 3
+      const customerSpawnInterval = Math.max(9, currentPatience / 5)
       
       let nextCustomerTimer = timeToNextCustomerSpawn - dt
       if (nextCustomerTimer <= 0 && vocabList.length > 0) {
@@ -355,7 +359,7 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
       const nextItems: Ingredient[] = []
       
       conveyorItems.forEach(item => {
-          if (item.isDragging) {
+          if (item.isDragging || item.isHeld) {
               nextItems.push(item)
           } else {
               const nextX = item.x - (targetSpeed * dt)
@@ -449,7 +453,7 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
         .map(effect => ({ ...effect, age: effect.age + dt }))
         .filter(effect => effect.age < effect.duration)
       
-      if (nextReputation <= 0) {
+      if (nextReputation <= 0 || nextGameTime >= 60) {
            set({ gameState: 'GAME_OVER', reputation: nextReputation, effects: nextEffects, gameTime: nextGameTime, angryCustomers: nextAngryCustomers, totalCustomerSpawns: nextTotalCustomerSpawns })
        } else {
            set({
@@ -558,7 +562,7 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
   },
 
   handleServeCustomer: (customerId, cauldronIndex, servePosition) => {
-     const { customers, cauldrons, score, activeWordPool, completedSentences } = get()
+     const { customers, cauldrons, score, activeWordPool, completedSentences, vocabList } = get()
      const cauldron = cauldrons[cauldronIndex]
      
      if (cauldron.state !== 'COMPLETED') return
@@ -591,25 +595,27 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
          shake: false
      }
 
-      // SCORING LOGIC
-      // Score = Remaining Seconds (Patience)
-      const points = Math.floor(customer.patience)
-      const newCompletedSentences = completedSentences + 1
-      const newScore = score + points
-      
-      // Update state first
-      set({ 
-          customers: nextCustomers, 
-          cauldrons: nextCauldrons, 
-          score: newScore,
-          activeWordPool: nextActiveWordPool,
-          completedSentences: newCompletedSentences
-      })
-      
-      // Calculate XP based on updated state
-      const updatedState = get()
-      const xp = calculatePotionRushXP(updatedState)
-      set({ totalXpEarned: xp })
+       // SCORING LOGIC
+       // Score = completed sentences, max 10. Game ends in victory when 10 sentences are completed.
+       const newCompletedSentences = completedSentences + 1
+       const newScore = Math.min(10, newCompletedSentences)
+       const maxSentencesTarget = Math.min(10, vocabList.length || 10)
+       const isWin = newCompletedSentences >= maxSentencesTarget
+
+       // Update state
+       set({ 
+           customers: nextCustomers, 
+           cauldrons: nextCauldrons, 
+           score: newScore,
+           activeWordPool: nextActiveWordPool,
+           completedSentences: newCompletedSentences,
+           gameState: isWin ? 'GAME_OVER' : 'PLAYING'
+       })
+       
+       // Calculate XP based on updated state
+       const updatedState = get()
+       const xp = calculatePotionRushXP(updatedState)
+       set({ totalXpEarned: xp })
 
      if (servePosition) {
        get().spawnEffect('SUCCESS', servePosition.x, servePosition.y)
@@ -628,6 +634,41 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
         item.id === ingredientId ? { ...item, isDragging } : item
       )
     })
+  },
+
+  handleHoldIngredient: (ingredientId, slotIndex) => {
+    const { conveyorItems } = get()
+    const item = conveyorItems.find(i => i.id === ingredientId)
+    if (!item) return
+
+    // Position of slot index:
+    // Slot 0: 85, Slot 1: 195, Slot 2: 305
+    const slotX = slotIndex === 0 ? 85 : slotIndex === 1 ? 195 : 305
+    const slotY = 510 // Hold slot Y coordinate
+
+    const nextItems = conveyorItems.map(i => {
+      // If another item is in the target holding slot, send it back to the conveyor belt
+      if (i.isHeld && i.holdingSlotIndex === slotIndex && i.id !== ingredientId) {
+        return { ...i, isHeld: false, holdingSlotIndex: undefined, y: BELT_Y }
+      }
+      if (i.id === ingredientId) {
+        return { ...i, isHeld: true, holdingSlotIndex: slotIndex, x: slotX, y: slotY }
+      }
+      return i
+    })
+
+    set({ conveyorItems: nextItems })
+  },
+
+  releaseHold: (ingredientId) => {
+    const { conveyorItems } = get()
+    const nextItems = conveyorItems.map(i => {
+      if (i.id === ingredientId) {
+        return { ...i, isHeld: false, holdingSlotIndex: undefined, y: BELT_Y }
+      }
+      return i
+    })
+    set({ conveyorItems: nextItems })
   },
 
   spawnEffect: (type, x, y) => {

@@ -21,6 +21,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { withBasePath } from "@/lib/games/basePath";
+import { t as appT } from "@/lib/i18n";
 import {
   advanceDragonRiderTime,
   calculateBossPower,
@@ -61,6 +62,7 @@ export type DragonRiderGameProps = {
   onComplete: (results: DragonRiderResults) => void;
   preloadedAssets?: DragonRiderAssets | null;
   durationMs?: number;
+  autoStart?: boolean;
 };
 
 type GateFeedback = {
@@ -164,6 +166,8 @@ const GATE_SCALE_FACTOR = 0.5;
 const PLAYER_BASE_SCALE = 0.22;
 const BOSS_BASE_SCALE = 0.55;
 const ARMY_BASE_SCALE = 0.12;
+const MAX_ROUND_WORDS = 10;
+const MS_PER_WORD = 5000;
 
 const buildSpriteGrid = (width: number, height: number): SpriteGrid => {
   const columnBase = Math.floor(width / 3);
@@ -344,7 +348,13 @@ const getGateLabels = (round: DragonRiderState["round"]) => {
 const pickRandomIndex = (max: number) =>
   Math.min(max - 1, Math.floor(Math.random() * max));
 
-const buildGateRound = (vocabulary: VocabularyItem[]): DragonRiderRound => {
+const shuffleVocabulary = (vocabulary: VocabularyItem[]) =>
+  [...vocabulary].sort(() => Math.random() - 0.5);
+
+const buildGateRound = (
+  vocabulary: VocabularyItem[],
+  preferredItem?: VocabularyItem,
+): DragonRiderRound => {
   if (vocabulary.length === 0) {
     return {
       term: "",
@@ -354,13 +364,17 @@ const buildGateRound = (vocabulary: VocabularyItem[]): DragonRiderRound => {
     };
   }
 
-  const correctIndex = pickRandomIndex(vocabulary.length);
+  const correctItem =
+    preferredItem ?? vocabulary[pickRandomIndex(vocabulary.length)];
+  const correctIndex = Math.max(
+    0,
+    vocabulary.findIndex((item) => item.id === correctItem.id && item.term === correctItem.term),
+  );
   let decoyIndex = pickRandomIndex(vocabulary.length);
   if (decoyIndex === correctIndex && vocabulary.length > 1) {
     decoyIndex = (correctIndex + 1) % vocabulary.length;
   }
 
-  const correctItem = vocabulary[correctIndex];
   const decoyItem = vocabulary[decoyIndex];
 
   return {
@@ -384,14 +398,21 @@ export function DragonRiderGame({
   onComplete,
   preloadedAssets,
   durationMs,
+  autoStart = false,
 }: DragonRiderGameProps) {
   const t = useScopedI18n("pages.student.gamesPage.dragonRider");
   const { containerRef, enterFullscreen, exitFullscreen } = useGameFullscreen();
   const { getEffectiveTextSize } = useAccessibilitySettings();
+  const gameVocabulary = useMemo(
+    () => shuffleVocabulary(vocabulary).slice(0, MAX_ROUND_WORDS),
+    [vocabulary],
+  );
+  const gameDurationMs =
+    durationMs ?? Math.max(MS_PER_WORD, gameVocabulary.length * MS_PER_WORD);
 
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
   const [gamePhase, setGamePhase] = useState<"start" | "playing" | "ended">(
-    "start",
+    autoStart ? "playing" : "start",
   );
   const [showRanking, setShowRanking] = useState(false);
   const [results, setResults] = useState<DragonRiderResults | null>(null);
@@ -401,8 +422,8 @@ export function DragonRiderGame({
   );
   const [isLoading, setIsLoading] = useState(!preloadedAssets);
   const [state, setState] = useState<DragonRiderState>(() => {
-    return createDragonRiderState(vocabulary, {
-      durationMs: durationMs ?? 150000,
+    return createDragonRiderState(gameVocabulary, {
+      durationMs: gameDurationMs,
     });
   });
   const initialRoundRef = useRef<DragonRiderRound>(state.round);
@@ -424,6 +445,16 @@ export function DragonRiderGame({
   const resultsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingSelectionRef = useRef<PendingSelection | null>(null);
   const playerTargetRef = useRef<number | null>(null);
+  const answeredPairIdsRef = useRef<Set<string>>(new Set());
+  const questionQueueRef = useRef<VocabularyItem[]>([]);
+
+  const getNextVocabularyItem = useCallback(() => {
+    if (gameVocabulary.length === 0) return undefined;
+    if (questionQueueRef.current.length === 0) {
+      questionQueueRef.current = shuffleVocabulary(gameVocabulary);
+    }
+    return questionQueueRef.current.shift();
+  }, [gameVocabulary]);
 
   const measureStage = useCallback(() => {
     const element = containerRef.current;
@@ -463,8 +494,8 @@ export function DragonRiderGame({
   }, [preloadedAssets]);
 
   const resetGame = useCallback(() => {
-    const nextState = createDragonRiderState(vocabulary, {
-      durationMs: durationMs ?? 150000,
+    const nextState = createDragonRiderState(gameVocabulary, {
+      durationMs: gameDurationMs,
     });
     initialRoundRef.current = nextState.round;
     setState(nextState);
@@ -480,12 +511,14 @@ export function DragonRiderGame({
     setBossBattleStarted(false);
     pendingSelectionRef.current = null;
     playerTargetRef.current = null;
-  }, [vocabulary, durationMs]);
+    answeredPairIdsRef.current = new Set();
+    questionQueueRef.current = shuffleVocabulary(gameVocabulary);
+  }, [gameDurationMs, gameVocabulary]);
 
   useEffect(() => {
     resetGame();
-    setGamePhase("start");
-  }, [resetGame]);
+    setGamePhase(autoStart ? "playing" : "start");
+  }, [autoStart, resetGame]);
 
   useEffect(() => {
     if (gamePhase === "playing") {
@@ -602,17 +635,19 @@ export function DragonRiderGame({
       const gateStartY = -layout.leftGate.height;
       const gateEndY = stageSize.height + layout.leftGate.height;
 
-      let travelMs = 7200;
-      if (difficulty === "easy") travelMs = 9000;
-      else if (difficulty === "hard") travelMs = 5500;
-
-      const gateSpeed = (gateEndY - gateStartY) / (travelMs / 1000);
+      const gateSpeed = (gateEndY - gateStartY) / (MS_PER_WORD / 1000);
       const deltaSeconds = TICK_MS / 1000;
 
       setGatePairs((prev) => {
         const nextPairs = prev
           .map((pair) => ({ ...pair, y: pair.y + gateSpeed * deltaSeconds }))
           .filter((pair) => pair.y <= gateEndY);
+        const nextPairIds = new Set(nextPairs.map((pair) => pair.id));
+        answeredPairIdsRef.current.forEach((pairId) => {
+          if (!nextPairIds.has(pairId)) {
+            answeredPairIdsRef.current.delete(pairId);
+          }
+        });
 
         if (nextPairs.length === 0) {
           const nextPair = createGatePair();
@@ -669,17 +704,18 @@ export function DragonRiderGame({
 
   const createGatePair = useCallback(
     (round?: DragonRiderRound) => {
-      if (!layout || vocabulary.length === 0) return null;
+      if (!layout || gameVocabulary.length === 0) return null;
 
       gateIdRef.current += 1;
+      const nextWord = round ? undefined : getNextVocabularyItem();
       return {
         id: `gate-${gateIdRef.current}`,
-        round: round ?? buildGateRound(vocabulary),
+        round: round ?? buildGateRound(gameVocabulary, nextWord),
         y: -layout.leftGate.height,
         gateRow: Math.floor(Math.random() * 3), // Random gate visual (0, 1, or 2)
       };
     },
-    [layout, vocabulary],
+    [gameVocabulary, getNextVocabularyItem, layout],
   );
 
   useEffect(() => {
@@ -712,11 +748,7 @@ export function DragonRiderGame({
       const gateStartY = -layout.leftGate.height;
       const gateEndY = stageSize.height + layout.leftGate.height;
 
-      let travelMs = 7200;
-      if (difficulty === "easy") travelMs = 9000;
-      else if (difficulty === "hard") travelMs = 5500;
-
-      const gateSpeed = (gateEndY - gateStartY) / (travelMs / 1000);
+      const gateSpeed = (gateEndY - gateStartY) / (MS_PER_WORD / 1000);
       const deltaSeconds = TICK_MS / 1000;
       const targetY = stageSize.height * 0.45; // Stop boss at 45% down the screen
 
@@ -842,6 +874,7 @@ export function DragonRiderGame({
 
       const pair = activePair;
       if (!pair || !layout) return;
+      if (answeredPairIdsRef.current.has(pair.id)) return;
 
       const isCorrect = side === pair.round.correctSide;
       const targetX =
@@ -854,6 +887,7 @@ export function DragonRiderGame({
         side,
         outcome: isCorrect ? "correct" : "incorrect",
       };
+      answeredPairIdsRef.current.add(pair.id);
       playerTargetRef.current = targetX;
 
       setLockedPairId(pair.id);
@@ -897,7 +931,7 @@ export function DragonRiderGame({
   if (!assets && !isLoading) {
     return (
       <div className="rounded-3xl border border-red-500/40 bg-red-950/30 p-6 text-sm text-red-200">
-        Unable to load Dragon Rider assets. Please refresh to try again.
+        {appT("interactivePlay.dragonRiderAssetError")}
       </div>
     );
   }
@@ -941,7 +975,11 @@ export function DragonRiderGame({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full h-[80vh] min-h-[320px] sm:min-h-[400px] md:min-h-[480px] max-h-[760px] overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 shadow-[0_20px_60px_rgba(15,23,42,0.45)] ${gamePhase !== "start" ? "touch-none select-none" : ""}`}
+      className={`relative w-full overflow-hidden bg-slate-900 shadow-[0_20px_60px_rgba(15,23,42,0.45)] ${
+        gamePhase === "start"
+          ? "h-[80vh] min-h-[320px] max-h-[760px] rounded-3xl border border-slate-800 sm:min-h-[400px] md:min-h-[480px]"
+          : "h-dvh min-h-0 max-h-none touch-none select-none rounded-none border-0"
+      }`}
       data-testid="dragon-rider"
       data-status={statusLabel}
     >
@@ -974,22 +1012,33 @@ export function DragonRiderGame({
 
       {canRenderGame && (
         <div className="absolute inset-0 z-10 pointer-events-none">
-          <div className="flex items-start justify-between p-2 sm:p-4 md:p-6">
-            <div className="max-w-[60%] rounded-2xl border border-white/10 bg-white/10 px-3 py-1.5 sm:px-5 sm:py-3 backdrop-blur">
-              <div className="text-xs sm:text-sm uppercase tracking-[0.2em] text-white/70" style={{ fontSize: getEffectiveTextSize(12) }}>
-                Prompt
-              </div>
-              <div className="text-base sm:text-xl md:text-2xl font-semibold text-white">
-                {promptRound.term || "—"}
-              </div>
+          <div className="absolute left-0 right-0 top-0 z-20">
+            <div
+              className="h-2 w-full overflow-hidden bg-white/10"
+              role="progressbar"
+              aria-label="Run timer"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(remainingRatio * 100)}
+            >
+              <motion.div
+                className="h-full bg-gradient-to-r from-emerald-400 via-sky-400 to-indigo-400"
+                initial={{ width: "100%" }}
+                animate={{ width: `${remainingRatio * 100}%` }}
+                transition={{ duration: 0.2, ease: "linear" }}
+                data-testid="dragon-rider-timer"
+              />
             </div>
+          </div>
+
+          <div className="flex items-start justify-end p-2 sm:p-4 md:p-6">
             <div className="flex items-center gap-1.5 sm:gap-2 rounded-full border border-white/10 bg-white/10 px-2 sm:px-4 py-1.5 sm:py-2 text-white backdrop-blur">
               <Flame
                 className="h-3 w-3 sm:h-4 sm:w-4 text-amber-300"
                 aria-hidden="true"
               />
               <span className="hidden xs:inline text-base uppercase tracking-[0.2em] text-white/70" style={{ fontSize: getEffectiveTextSize(16) }}>
-                Dragons
+                {appT("interactivePlay.dragons")}
               </span>
               <motion.span
                 key={dragonCountDisplay}
@@ -1004,22 +1053,20 @@ export function DragonRiderGame({
             </div>
           </div>
 
-          <div className="absolute left-2 right-2 sm:left-4 sm:right-4 md:left-6 md:right-6 top-[60px] sm:top-[72px] md:top-[88px]">
-            <div
-              className="h-2 w-full overflow-hidden rounded-full bg-white/10"
-              role="progressbar"
-              aria-label="Run timer"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={Math.round(remainingRatio * 100)}
-            >
-              <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-sky-400 to-indigo-400"
-                initial={{ width: "100%" }}
-                animate={{ width: `${remainingRatio * 100}%` }}
-                transition={{ duration: 0.2, ease: "linear" }}
-                data-testid="dragon-rider-timer"
-              />
+          <div className="absolute left-1/2 top-14 sm:top-16 md:top-20 w-[min(520px,calc(100%-48px))] -translate-x-1/2 text-center">
+            <div className="rounded-[28px] border border-white/20 bg-slate-950/75 px-5 py-3 shadow-2xl backdrop-blur-md">
+              <div
+                className="text-[10px] sm:text-xs uppercase tracking-[0.24em] text-sky-200/75"
+                style={{ fontSize: getEffectiveTextSize(11) }}
+              >
+                {appT("interactivePlay.chooseMeaning")}
+              </div>
+              <div
+                className="mt-1 break-words text-2xl sm:text-3xl md:text-4xl font-black leading-tight text-white"
+                style={{ fontSize: getEffectiveTextSize(30) }}
+              >
+                {promptRound.term || "—"}
+              </div>
             </div>
           </div>
 
@@ -1035,7 +1082,7 @@ export function DragonRiderGame({
                   top: arrowTop,
                 }}
                 onPointerDown={() => handleGateSelection("left")}
-                aria-label="Choose left gate"
+                aria-label={appT("interactivePlay.chooseLeftGate")}
               >
                 <ArrowLeft size={arrowSize * 0.55} aria-hidden="true" />
               </button>
@@ -1049,7 +1096,7 @@ export function DragonRiderGame({
                   top: arrowTop,
                 }}
                 onPointerDown={() => handleGateSelection("right")}
-                aria-label="Choose right gate"
+                aria-label={appT("interactivePlay.chooseRightGate")}
               >
                 <ArrowRight size={arrowSize * 0.55} aria-hidden="true" />
               </button>
@@ -1091,7 +1138,7 @@ export function DragonRiderGame({
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.2 }}
               >
-                {feedback.outcome === "correct" ? "+1 Dragon" : "-1 Dragon"}
+                {feedback.outcome === "correct" ? appT("interactivePlay.plusDragon") : appT("interactivePlay.minusDragon")}
               </motion.div>
             )}
           </AnimatePresence>
@@ -1122,7 +1169,7 @@ export function DragonRiderGame({
                 >
                   <div className="rounded-lg border border-white/10 bg-slate-900/70 p-2 sm:p-3 backdrop-blur">
                     <div className="text-base uppercase tracking-[0.2em] text-white/70 mb-1" style={{ fontSize: getEffectiveTextSize(16) }}>
-                      Boss Health
+                      {appT("interactivePlay.bossHealth")}
                     </div>
                     <div className="h-4 w-full overflow-hidden rounded-full bg-white/10">
                       <motion.div
@@ -1149,7 +1196,7 @@ export function DragonRiderGame({
         <GameStartScreen
           gameTitle={t("startScreen.title")}
           gameSubtitle={t("startScreen.description")}
-          vocabulary={vocabulary}
+          vocabulary={gameVocabulary}
           instructions={[
             {
               step: 1,

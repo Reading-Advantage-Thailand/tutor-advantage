@@ -30,7 +30,7 @@ import { VirtualDPad } from "@/components/games/ui/VirtualDPad";
 import { useDirectionalInput } from "@/hooks/useDirectionalInput";
 import { useGameFullscreen } from "@/hooks/useGameFullscreen";
 import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
-import { withBasePath } from "@/lib/games/basePath";
+import { getCachedGameImage, loadGameImage } from "@/lib/games/gameAssetPreloader";
 
 import {
   GAME_WIDTH,
@@ -75,13 +75,57 @@ type Props = {
   vocabulary: SentenceItem[];
   onComplete?: (results: {
     xp: number;
+    score?: number;
     accuracy: number;
+    correctAnswers?: number;
+    totalAttempts?: number;
     difficulty: string;
+    durationMs?: number;
   }) => void;
+  autoStart?: boolean;
 };
 
-export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
+const GAME_DURATION_MS = 60_000;
+const MAX_ROUND_SENTENCES = 10;
+const CASTLE_ASSET_PATHS = {
+  player: "/games/sentence/castle-defense/player_3x3_pose_sheet.png",
+  soldier: "/games/sentence/castle-defense/goblin_3x3_pose_sheet.png",
+  tank: "/games/sentence/castle-defense/orc_3x3_pose_sheet.png",
+  boss: "/games/sentence/castle-defense/troll_3x3_pose_sheet.png",
+  towerBase: "/games/sentence/castle-defense/tower-base.png",
+  towerBuilt: "/games/sentence/castle-defense/tower-built.png",
+  base: "/games/sentence/castle-defense/player-castle.png",
+};
+
+const buildRoundSentences = (items: SentenceItem[]) => {
+  const seen = new Set<string>();
+  return [...items]
+    .sort(() => Math.random() - 0.5)
+    .filter((item) => {
+      const key = item.term.trim().toLowerCase();
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, MAX_ROUND_SENTENCES);
+};
+
+const getCachedCastleAssets = (): GameAssets | null => {
+  const player = getCachedGameImage(CASTLE_ASSET_PATHS.player);
+  const soldier = getCachedGameImage(CASTLE_ASSET_PATHS.soldier);
+  const tank = getCachedGameImage(CASTLE_ASSET_PATHS.tank);
+  const boss = getCachedGameImage(CASTLE_ASSET_PATHS.boss);
+  const towerBase = getCachedGameImage(CASTLE_ASSET_PATHS.towerBase);
+  const towerBuilt = getCachedGameImage(CASTLE_ASSET_PATHS.towerBuilt);
+  const base = getCachedGameImage(CASTLE_ASSET_PATHS.base);
+  return player && soldier && tank && boss && towerBase && towerBuilt && base
+    ? { player, soldier, tank, boss, towerBase, towerBuilt, base }
+    : null;
+};
+
+export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false }: Props) {
   const t = useScopedI18n("pages.student.gamesPage.castleDefense");
+  const gameVocabulary = useMemo(() => buildRoundSentences(vocabulary), [vocabulary]);
 
   const CASTLE_DEFENSE_INSTRUCTIONS: Instruction[] = [
     { step: 1, text: t("instructions.step1") },
@@ -108,11 +152,9 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
   ];
 
   const [gameState, setGameState] = useState<CastleDefenseState | null>(null);
-  const [difficulty, setDifficulty] = useState<
-    "easy" | "medium" | "hard"
-  >("medium");
+  const difficulty: "easy" | "medium" | "hard" = "medium";
   const [showRanking, setShowRanking] = useState(false);
-  const [assets, setAssets] = useState<GameAssets | null>(null);
+  const [assets, setAssets] = useState<GameAssets | null>(() => getCachedCastleAssets());
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [camera, setCamera] = useState({ x: 0, y: 0, scale: 1 });
   const [hasStarted, setHasStarted] = useState(false);
@@ -131,13 +173,20 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
   const buildEffectsRef = useRef(buildEffects);
   const gameStateRef = useRef(gameState);
   const onCompleteRef = useRef(onComplete);
-
+  const completedRef = useRef(false);
+  // Keep input in a ref so the game loop doesn't restart on every D-pad move
+  const inputRef = useRef({ dx: 0, dy: 0, cast: false });
   const { enterFullscreen, exitFullscreen } = useGameFullscreen();
   const { getEffectiveTextSize } = useAccessibilitySettings();
 
-  const { input, setVirtualInput, consumeCast } = useDirectionalInput();
+  const { input, setVirtualInput, triggerCast, consumeCast } = useDirectionalInput();
 
-  // Keep refs in sync
+  // Sync input into a ref so the game loop reads it without depending on it
+  useEffect(() => {
+    inputRef.current = { dx: input.dx, dy: input.dy, cast: !!input.cast };
+  });
+
+  // Keep buildEffects ref in sync
   useEffect(() => {
     buildEffectsRef.current = buildEffects;
   }, [buildEffects]);
@@ -153,36 +202,23 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
   const handleBackToMenu = useCallback(() => {
     setHasStarted(false);
     setGameState(null);
+    completedRef.current = false;
   }, []);
 
   useEffect(() => {
     let mounted = true;
 
-    const loadImage = (src: string): Promise<HTMLImageElement> =>
-      new Promise((res, rej) => {
-        const img = new Image();
-        img.src = withBasePath(src);
-        img.onload = () => res(img);
-        img.onerror = rej;
-      });
-
     const load = async () => {
       try {
         const [player, soldier, tank, boss, towerBase, towerBuilt, base] =
           await Promise.all([
-            loadImage(
-              "/games/sentence/castle-defense/player_3x3_pose_sheet.png",
-            ),
-            loadImage(
-              "/games/sentence/castle-defense/goblin_3x3_pose_sheet.png",
-            ),
-            loadImage("/games/sentence/castle-defense/orc_3x3_pose_sheet.png"),
-            loadImage(
-              "/games/sentence/castle-defense/troll_3x3_pose_sheet.png",
-            ),
-            loadImage("/games/sentence/castle-defense/tower-base.png"),
-            loadImage("/games/sentence/castle-defense/tower-built.png"),
-            loadImage("/games/sentence/castle-defense/player-castle.png"),
+            loadGameImage(CASTLE_ASSET_PATHS.player),
+            loadGameImage(CASTLE_ASSET_PATHS.soldier),
+            loadGameImage(CASTLE_ASSET_PATHS.tank),
+            loadGameImage(CASTLE_ASSET_PATHS.boss),
+            loadGameImage(CASTLE_ASSET_PATHS.towerBase),
+            loadGameImage(CASTLE_ASSET_PATHS.towerBuilt),
+            loadGameImage(CASTLE_ASSET_PATHS.base),
           ]);
         if (mounted) {
           setAssets({
@@ -258,13 +294,23 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("orientationchange", handleResize);
     };
-  }, [hasStarted]);
+  }, [hasStarted, assets]);
 
   const startGame = useCallback(() => {
-    setGameState(createCastleDefenseState(vocabulary, { difficulty }));
+    completedRef.current = false;
+    setGameState(createCastleDefenseState(gameVocabulary, {
+      difficulty,
+      maxSentences: Math.min(MAX_ROUND_SENTENCES, gameVocabulary.length || 1),
+      durationMs: GAME_DURATION_MS,
+    }));
     setHasStarted(true);
     enterFullscreen();
-  }, [vocabulary, difficulty, enterFullscreen]);
+  }, [gameVocabulary, difficulty, enterFullscreen]);
+
+  useEffect(() => {
+    if (!autoStart || hasStarted || gameVocabulary.length === 0) return;
+    startGame();
+  }, [autoStart, gameVocabulary.length, hasStarted, startGame]);
 
   // Game loop with requestAnimationFrame
   useEffect(() => {
@@ -280,11 +326,12 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
       setGameState((prevState) => {
         if (!prevState || prevState.status !== "playing") return prevState;
 
+        const currentInput = inputRef.current;
         const nextState = advanceCastleDefenseTime(
           prevState,
           clampedDelta,
-          { dx: input.dx, dy: input.dy, drop: input.cast },
-          vocabulary,
+          { dx: currentInput.dx, dy: currentInput.dy, drop: currentInput.cast },
+          gameVocabulary,
         );
 
         // Update camera
@@ -324,8 +371,10 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
         // Handle game end
         if (
           (nextState.status === "gameover" || nextState.status === "victory") &&
-          onCompleteRef.current
+          onCompleteRef.current &&
+          !completedRef.current
         ) {
+          completedRef.current = true;
           const totalAttempts =
             nextState.correctWordCollections +
             nextState.incorrectWordCollections;
@@ -335,13 +384,17 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
               : 0;
           onCompleteRef.current({
             xp: calculateCastleDefenseXP(nextState),
+            score: nextState.score,
             accuracy,
+            correctAnswers: nextState.completedSentences,
+            totalAttempts: nextState.maxSentences,
             difficulty: nextState.difficulty,
+            durationMs: Math.min(GAME_DURATION_MS, Math.max(0, nextState.gameTime)),
           });
           exitFullscreen();
         }
 
-        if (input.cast) {
+        if (inputRef.current.cast) {
           consumeCast();
         }
 
@@ -357,7 +410,7 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
       lastFrameRef.current = 0;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameState?.status, assets, hasStarted, input.dx, input.dy, input.cast, vocabulary, dimensions.width, dimensions.height, consumeCast, exitFullscreen]);
+  }, [gameState?.status, assets, hasStarted, gameVocabulary, dimensions.width, dimensions.height, consumeCast, exitFullscreen]);
 
   const grids = useMemo(() => {
     if (!assets) return null;
@@ -388,6 +441,9 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
   }, [gameState?.sentenceCompleted, gameState?.towerSlots, gameState?.towers, gameState?.player.x, gameState?.player.y]);
 
   if (!assets) {
+    if (autoStart) {
+      return <div className="h-dvh w-screen bg-slate-950" />;
+    }
     return (
       <div className="relative h-[60vh] w-full overflow-hidden rounded-2xl bg-slate-950 flex items-center justify-center border border-white/10 md:aspect-video md:h-auto">
         <div className="text-white animate-pulse font-mono tracking-widest uppercase" style={{ fontSize: getEffectiveTextSize(16) }}>
@@ -398,13 +454,16 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
   }
 
   if (!hasStarted) {
+    if (autoStart) {
+      return <div className="h-dvh w-screen bg-slate-950" />;
+    }
     return (
       <div className="relative h-[60vh] w-full overflow-hidden rounded-2xl bg-slate-950 border border-white/10 md:aspect-video md:h-auto">
         <GameStartScreen
           gameTitle={t("title")}
           gameSubtitle={t("subtitle")}
           icon={Shield}
-          vocabulary={vocabulary}
+          vocabulary={gameVocabulary}
           instructions={CASTLE_DEFENSE_INSTRUCTIONS}
           proTip={t("proTip")}
           controls={CASTLE_DEFENSE_CONTROLS}
@@ -412,22 +471,6 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
           onStart={startGame}
         >
           <div className="flex items-center gap-2">
-            <div className="flex gap-1 bg-slate-900/80 p-1 rounded-lg border border-white/10">
-              {(["easy", "medium", "hard"] as const).map((d) => (
-                <button
-                  key={d}
-                  onClick={() => setDifficulty(d)}
-                  className={`px-3 py-1.5 rounded-md text-[10px] uppercase font-bold tracking-wider transition-colors ${
-                    difficulty === d
-                      ? "bg-amber-500 text-slate-900"
-                      : "text-slate-400 hover:text-white hover:bg-white/10"
-                  }`}
-                  style={{ minHeight: getEffectiveTextSize(44), minWidth: getEffectiveTextSize(44) }}
-                >
-                  {t(`difficulty.${d}` as "difficulty.easy" | "difficulty.medium" | "difficulty.hard")}
-                </button>
-              ))}
-            </div>
             <button
               onClick={() => setShowRanking(true)}
               className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-amber-400 transition-colors border border-white/10"
@@ -450,6 +493,19 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
   }
 
   if (gameState?.status === "gameover" || gameState?.status === "victory") {
+    if (autoStart) {
+      return (
+        <div className="flex h-dvh w-full items-center justify-center bg-slate-950 text-white">
+          <div className="rounded-3xl border border-white/10 bg-white/10 px-6 py-5 text-center shadow-2xl backdrop-blur">
+            <p className="text-sm font-black uppercase tracking-[0.2em] text-white/60">
+              Castle Defense
+            </p>
+            <p className="mt-2 text-3xl font-black">{gameState.score}</p>
+          </div>
+        </div>
+      );
+    }
+
     const totalAttempts =
       gameState.correctWordCollections + gameState.incorrectWordCollections;
     const accuracy =
@@ -492,7 +548,7 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
   return (
     <div
       ref={containerRef}
-      className="relative h-[calc(100svh-8rem)] w-full overflow-hidden rounded-3xl bg-slate-900 touch-none md:aspect-video md:h-auto select-none"
+      className="relative overflow-hidden bg-slate-900 touch-none select-none h-dvh w-screen rounded-none"
     >
       {gameState && dimensions.width > 0 && dimensions.height > 0 && (
         <Stage width={dimensions.width} height={dimensions.height}>
@@ -667,7 +723,7 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
                   />
                   <Text
                     text={word.translation}
-                    fontSize={getEffectiveTextSize(16)}
+                    fontSize={getEffectiveTextSize(Math.max(12, Math.min(18, Math.floor((word.radius * 1.45) / Math.max(word.translation.length, 1)) * 2)))}
                     fontStyle="bold"
                     fill="black"
                     offsetX={word.radius}
@@ -676,6 +732,8 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
                     height={word.radius * 2}
                     align="center"
                     verticalAlign="middle"
+                    wrap="none"
+                    ellipsis
                   />
                 </Group>
               ))}
@@ -703,19 +761,63 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
       )}
 
       {gameState && (
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 z-20 pointer-events-none flex flex-col items-center gap-1 md:gap-2 w-[min(92vw,560px)]">
+        <div className="absolute top-[max(0.5rem,env(safe-area-inset-top))] inset-x-0 z-20 pointer-events-none flex flex-col items-center gap-1.5 px-3">
+
+          {/* Top status bar: Score | Timer | Castle HP */}
+          <div className="flex w-full items-center justify-between gap-2">
+            {/* Score */}
+            <div className="flex flex-col items-center bg-slate-950/80 border border-white/10 px-2.5 py-1 rounded-xl shadow-lg backdrop-blur min-w-[52px]">
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">{t("hud.score")}</span>
+              <span className="text-sm font-black text-white leading-tight">{gameState.score}</span>
+            </div>
+
+            {/* Center: Timer + Sentences */}
+            <div className="flex items-center gap-1.5">
+              <div className="rounded-full border border-white/10 bg-slate-950/80 px-3 py-1 text-[11px] font-black text-white shadow-lg backdrop-blur">
+                ⏱ {Math.max(0, Math.ceil((gameState.durationMs - gameState.gameTime) / 1000))}s
+              </div>
+              <div className="rounded-full border border-white/10 bg-slate-950/80 px-3 py-1 text-[11px] font-black text-white shadow-lg backdrop-blur">
+                {gameState.completedSentences}/{gameState.maxSentences}
+              </div>
+            </div>
+
+            {/* Castle HP */}
+            <div className="flex flex-col items-center bg-slate-950/80 border border-white/10 px-2.5 py-1 rounded-xl shadow-lg backdrop-blur min-w-[52px]">
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">{t("hud.castleHp")}</span>
+              <span className="text-sm font-black text-rose-400 leading-tight">{gameState.base.hp}</span>
+              <div className="w-10 h-1 bg-slate-700 rounded-full overflow-hidden mt-0.5">
+                <div
+                  className="h-full bg-rose-500 transition-all duration-300"
+                  style={{ width: `${((gameState.base.hp || 0) / (gameState.base.maxHp || 100)) * 100}%` }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Wave info */}
+          <div className="bg-slate-950/70 border border-white/10 px-3 py-0.5 rounded-full shadow-lg text-white text-[10px] font-bold uppercase tracking-widest">
+            {t("hud.wave", {
+              current: gameState.wave,
+              killed: gameState.enemiesKilledThisWave,
+              total: gameState.totalEnemiesThisWave,
+            })}
+          </div>
+
+          {/* Thai sentence prompt */}
           {gameState.currentSentenceThai && (
-            <div className="bg-blue-900/90 border border-blue-400/40 px-3 py-1.5 md:px-5 md:py-2 rounded-2xl shadow-xl backdrop-blur-md w-full">
-              <div className="text-white text-xs md:text-xl font-black text-center leading-snug" style={{ fontSize: getEffectiveTextSize(16) }}>
+            <div className="bg-blue-900/90 border border-blue-400/40 px-3 py-1.5 rounded-2xl shadow-xl backdrop-blur-md w-full">
+              <div className="text-white text-sm font-black text-center leading-snug" style={{ fontSize: getEffectiveTextSize(15) }}>
                 {gameState.currentSentenceThai}
               </div>
             </div>
           )}
-          <div className="bg-slate-950/70 border border-white/10 px-3 py-1 md:px-4 md:py-2 rounded-xl shadow-lg backdrop-blur-md text-center w-full">
-            <span className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest block leading-none mb-0.5" style={{ fontSize: getEffectiveTextSize(16) }}>
+
+          {/* Progress (blank slots) */}
+          <div className="bg-slate-950/70 border border-white/10 px-3 py-1 rounded-xl shadow-lg backdrop-blur-md text-center w-full">
+            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block leading-none mb-0.5">
               {t("hud.progress")}
             </span>
-            <div className="text-xs md:text-base font-semibold text-white" style={{ fontSize: getEffectiveTextSize(16) }}>
+            <div className="text-xs font-semibold text-white">
               {gameState.sentenceWords.map((word, idx) => (
                 <span
                   key={`${word}-${idx}`}
@@ -725,59 +827,22 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
                       : "text-slate-400"
                   }
                 >
-                  {gameState.collectedWordIndices.includes(idx)
-                    ? word
-                    : "___"}{" "}
+                  {gameState.collectedWordIndices.includes(idx) ? word : "___"}{" "}
                 </span>
               ))}
             </div>
           </div>
+
+          {/* Sentence complete badge */}
           {gameState.sentenceCompleted && (
-            <div className="bg-emerald-600/90 border border-emerald-300/60 px-3 py-0.5 rounded-full shadow-lg text-white text-[10px] font-black uppercase tracking-widest" style={{ fontSize: getEffectiveTextSize(16) }}>
+            <div className="bg-emerald-600/90 border border-emerald-300/60 px-3 py-0.5 rounded-full shadow-lg text-white text-[10px] font-black uppercase tracking-widest">
               {t("messages.sentenceComplete")}
             </div>
           )}
-          <div className="bg-slate-950/70 border border-white/10 px-3 py-0.5 rounded-full shadow-lg text-white text-[10px] font-bold uppercase tracking-widest" style={{ fontSize: getEffectiveTextSize(16) }}>
-            {t("hud.wave", {
-              current: gameState.wave,
-              killed: gameState.enemiesKilledThisWave,
-              total: gameState.totalEnemiesThisWave,
-            })}
-          </div>
         </div>
       )}
 
-      <div className="absolute bottom-[6.5rem] left-3 z-30 pointer-events-none md:bottom-auto md:top-4 md:left-4">
-        <div className="bg-slate-900/90 border border-slate-700/50 px-2 py-1 md:px-4 md:py-2 rounded-xl md:rounded-2xl shadow-xl backdrop-blur-md">
-          <span className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest block leading-none mb-0.5" style={{ fontSize: getEffectiveTextSize(16) }}>
-            {t("hud.score")}
-          </span>
-          <span className="text-base md:text-xl font-black text-white leading-none" style={{ fontSize: getEffectiveTextSize(20) }}>
-            {gameState?.score || 0}
-          </span>
-        </div>
-      </div>
-
-      <div className="absolute bottom-[6.5rem] right-3 z-30 pointer-events-none md:bottom-auto md:top-4 md:right-4">
-        <div className="bg-slate-900/90 border border-slate-700/50 px-2 py-1 md:px-4 md:py-2 rounded-xl md:rounded-2xl shadow-xl backdrop-blur-md text-right">
-          <span className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest block leading-none mb-0.5" style={{ fontSize: getEffectiveTextSize(16) }}>
-            {t("hud.castleHp")}
-          </span>
-          <div className="flex items-center gap-1 md:gap-2">
-            <span className="text-base md:text-xl font-black text-rose-500 leading-none" style={{ fontSize: getEffectiveTextSize(20) }}>
-              {gameState?.base.hp || 0}
-            </span>
-            <div className="w-12 md:w-16 h-2 bg-slate-800 rounded-full overflow-hidden border border-slate-700">
-              <div
-                className="h-full bg-rose-500 transition-all duration-300"
-                style={{
-                  width: `${((gameState?.base.hp || 0) / (gameState?.base.maxHp || 100)) * 100}%`,
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Score and Castle HP are now rendered in the top HUD bar above */}
 
       {activeBuildSlot && (
         <div className="absolute bottom-24 md:bottom-28 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
@@ -796,11 +861,22 @@ export function CastleDefenseGame({ vocabulary, onComplete }: Props) {
       )}
 
       <div
-        className="absolute bottom-6 right-6 z-30 pointer-events-auto"
+        className="absolute bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] left-1/2 z-30 -translate-x-1/2 scale-90 pointer-events-auto md:scale-100"
         data-testid="virtual-dpad"
       >
         <VirtualDPad onInput={setVirtualInput} />
       </div>
+
+      <button
+        type="button"
+        onPointerDown={(event) => {
+          event.preventDefault();
+          triggerCast();
+        }}
+        className="absolute bottom-[calc(env(safe-area-inset-bottom)+2.25rem)] right-5 z-30 flex size-16 items-center justify-center rounded-full border-2 border-emerald-300/60 bg-emerald-500 text-xs font-black text-white shadow-2xl shadow-emerald-950/40 active:scale-95 md:bottom-8 md:right-8 md:size-20 md:text-sm"
+      >
+        {t("controls.build")}
+      </button>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useRef } from "react"
+import { useEffect, useMemo, useRef } from "react"
 
 import { AbyssalWellGame } from "@/components/games/sentence/abyssal-well/AbyssalWellGame"
 import { CastleDefenseGame } from "@/components/games/sentence/castle-defense/CastleDefenseGame"
@@ -21,7 +21,6 @@ import { VillageGuardianGame } from "@/components/games/sentence/village-guardia
 import { AlchemistsSynthesisGame } from "@/components/games/vocabulary/alchemists-synthesis/AlchemistsSynthesisGame"
 import { ArchersRevengeGame } from "@/components/games/vocabulary/archers-revenge/ArchersRevengeGame"
 import { DragonFlightGame } from "@/components/games/vocabulary/dragon-flight/DragonFlightGame"
-import { DragonRiderGame } from "@/components/games/vocabulary/dragon-rider/DragonRiderGame"
 import { EnchantedLibraryGame } from "@/components/games/vocabulary/enchanted-library/EnchantedLibraryGame"
 import { PaladinsTwinSoulGame } from "@/components/games/vocabulary/paladins-twin-soul/PaladinsTwinSoulGame"
 import { RuneMatchGame } from "@/components/games/vocabulary/rune-match/RuneMatchGame"
@@ -60,12 +59,14 @@ type ArcadeResult = {
   totalAttempts?: number
   correctWords?: number
   total?: number
+  durationMs?: number
 }
 
 type AdvantageArcadeRuntimeProps = {
   gameId: string
   category: LiveLessonGameCategory
   articleData?: ArticleData | null
+  autoStart?: boolean
   onComplete: (result: {
     score: number
     correct: number
@@ -77,8 +78,9 @@ type AdvantageArcadeRuntimeProps = {
 const resolveGameId = (gameId: string, category: LiveLessonGameCategory) => {
   const aliases: Record<string, string> = {
     "vocabulary-matching": "rune-match",
-    "vocabulary-flashcard": "dragon-rider",
+    "vocabulary-flashcard": "dragon-flight",
     "vocabulary-cloze": "enchanted-library",
+    "dragon-rider": "dragon-flight",
     "sentence-order-word": "dungeon-liberator",
     "sentence-order-sentence": "haunted-library",
     "sentence-cloze": "potion-rush",
@@ -152,12 +154,58 @@ export function AdvantageArcadeRuntime({
   gameId,
   category,
   articleData,
+  autoStart = true,
   onComplete,
 }: AdvantageArcadeRuntimeProps) {
   const startedAt = useRef(Date.now())
+  const rootRef = useRef<HTMLDivElement>(null)
   const resolvedGameId = resolveGameId(gameId, category)
   const vocabulary = useMemo(() => buildVocabulary(articleData), [articleData])
   const sentences = useMemo(() => buildSentences(articleData), [articleData])
+
+  useEffect(() => {
+    if (!autoStart) return
+
+    const startPatterns = [
+      /start/i,
+      /begin/i,
+      /play/i,
+      /ready/i,
+      /battle/i,
+      /defense/i,
+      /survival/i,
+      /flight/i,
+      /tower/i,
+      /brew/i,
+      /storm/i,
+      /enter/i,
+      /run/i,
+    ]
+    const blockedPatterns = [/again/i, /restart/i, /ranking/i, /leaderboard/i, /back/i, /home/i]
+
+    const clickStartButton = () => {
+      const root = rootRef.current
+      if (!root) return false
+
+      const buttons = Array.from(root.querySelectorAll("button")) as HTMLButtonElement[]
+      const startButton = buttons.find((button) => {
+        if (button.disabled) return false
+        const text = (button.textContent || button.getAttribute("aria-label") || "").trim()
+        if (!text) return false
+        if (blockedPatterns.some((pattern) => pattern.test(text))) return false
+        return startPatterns.some((pattern) => pattern.test(text))
+      })
+
+      if (!startButton) return false
+      startButton.click()
+      return true
+    }
+
+    const timers = [120, 450, 900, 1400].map((delay) =>
+      window.setTimeout(clickStartButton, delay),
+    )
+    return () => timers.forEach((timer) => window.clearTimeout(timer))
+  }, [autoStart, resolvedGameId])
 
   const handleComplete = (result: ArcadeResult) => {
     const total = Math.max(result.totalAttempts ?? result.total ?? 1, 1)
@@ -171,22 +219,19 @@ export function AdvantageArcadeRuntime({
       score: Math.max(0, Math.round(rawScore)),
       correct: Math.max(0, correct),
       total,
-      durationMs: Date.now() - startedAt.current,
+      durationMs: Math.max(0, Math.round(result.durationMs ?? Date.now() - startedAt.current)),
     })
   }
 
-  const commonClass = "h-[calc(100dvh-96px)] min-h-[640px] w-full overflow-hidden rounded-2xl bg-background"
+  const commonClass = "h-dvh min-h-0 w-full overflow-hidden bg-background"
 
   return (
-    <div className={commonClass}>
-      {resolvedGameId === "dragon-rider" && (
-        <DragonRiderGame vocabulary={vocabulary} onComplete={handleComplete} />
-      )}
+    <div ref={rootRef} className={commonClass}>
       {resolvedGameId === "dragon-flight" && (
-        <DragonFlightGame vocabulary={vocabulary} onComplete={handleComplete} />
+        <DragonFlightGame vocabulary={vocabulary} autoStart={autoStart} onComplete={handleComplete} />
       )}
       {resolvedGameId === "wizard-vs-zombie" && (
-        <WizardZombieGame vocabulary={vocabulary} onComplete={handleComplete} />
+        <WizardZombieGame vocabulary={vocabulary} autoStart={autoStart} onComplete={handleComplete} />
       )}
       {resolvedGameId === "enchanted-library" && (
         <EnchantedLibraryGame
@@ -194,6 +239,7 @@ export function AdvantageArcadeRuntime({
           difficulty="normal"
           onDifficultyChange={() => undefined}
           rankings={{ easy: [], normal: [], hard: [], extreme: [] }}
+          autoStart={autoStart}
           onComplete={handleComplete}
         />
       )}
@@ -210,10 +256,10 @@ export function AdvantageArcadeRuntime({
         <PaladinsTwinSoulGame vocabulary={vocabulary} onComplete={handleComplete} />
       )}
       {resolvedGameId === "castle-defense" && (
-        <CastleDefenseGame vocabulary={sentences} onComplete={handleComplete} />
+        <CastleDefenseGame vocabulary={sentences} autoStart={autoStart} onComplete={handleComplete} />
       )}
       {resolvedGameId === "potion-rush" && (
-        <PotionRushGame vocabList={sentences} difficulty="normal" onComplete={handleComplete} />
+        <PotionRushGame vocabList={sentences} difficulty="normal" autoStart={autoStart} onComplete={handleComplete} />
       )}
       {resolvedGameId === "dungeon-liberator" && (
         <DungeonLiberatorGame vocabulary={sentences} onComplete={handleComplete} />

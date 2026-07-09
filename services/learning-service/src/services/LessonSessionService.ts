@@ -103,10 +103,24 @@ export const SENTENCE_GAME_PHASE = 14;
 export const PAIR_CONVERSATION_PHASE = 17;
 export const FINAL_LEADERBOARD_PHASE = 18;
 
-const DEFAULT_GAME_BY_CATEGORY: Record<GameCategory, string> = {
-  vocabulary: "rune-match",
-  sentence: "dungeon-liberator",
+const ENABLED_GAME_BY_CATEGORY: Record<GameCategory, Set<string>> = {
+  vocabulary: new Set(["dragon-flight", "wizard-vs-zombie", "enchanted-library"]),
+  sentence: new Set(["castle-defense", "potion-rush"]),
 };
+
+const DEFAULT_GAME_BY_CATEGORY: Partial<Record<GameCategory, string>> = {
+  vocabulary: "dragon-flight",
+  sentence: "castle-defense",
+};
+
+function isEnabledGameForCategory(category: GameCategory, gameId?: string | null): boolean {
+  return !!gameId && ENABLED_GAME_BY_CATEGORY[category].has(gameId);
+}
+
+function getDefaultGameForCategory(category: GameCategory): string | undefined {
+  const defaultGameId = DEFAULT_GAME_BY_CATEGORY[category];
+  return isEnabledGameForCategory(category, defaultGameId) ? defaultGameId : undefined;
+}
 
 export function getGameCategoryForPhase(phase: number): GameCategory | null {
   if (phase === VOCABULARY_GAME_PHASE) return "vocabulary";
@@ -396,6 +410,7 @@ class LessonSessionService {
   submitGameVote(sessionId: string, studentId: string, gameId: string): GamePhaseState | null {
     const session = this.sessions.get(sessionId);
     if (!session?.gameState || session.gameState.status !== "voting") return null;
+    if (!isEnabledGameForCategory(session.gameState.category, gameId)) return null;
     session.gameState.votes[studentId] = gameId;
     if (!session.gameState.voteFirstSeen[gameId]) {
       session.gameState.voteFirstSeen[gameId] = Date.now();
@@ -410,10 +425,11 @@ class LessonSessionService {
     for (const gameId of Object.values(session.gameState.votes)) {
       counts.set(gameId, (counts.get(gameId) || 0) + 1);
     }
-    let selectedGameId = DEFAULT_GAME_BY_CATEGORY[session.gameState.category];
+    let selectedGameId = getDefaultGameForCategory(session.gameState.category);
     let selectedCount = -1;
     let selectedFirstSeen = Number.POSITIVE_INFINITY;
     for (const [gameId, count] of counts.entries()) {
+      if (!isEnabledGameForCategory(session.gameState.category, gameId)) continue;
       const firstSeen = session.gameState.voteFirstSeen[gameId] || Number.POSITIVE_INFINITY;
       if (count > selectedCount || (count === selectedCount && firstSeen < selectedFirstSeen)) {
         selectedGameId = gameId;
@@ -421,7 +437,11 @@ class LessonSessionService {
         selectedFirstSeen = firstSeen;
       }
     }
-    session.gameState.selectedGameId = selectedGameId;
+    if (selectedGameId) {
+      session.gameState.selectedGameId = selectedGameId;
+    } else {
+      delete session.gameState.selectedGameId;
+    }
     return this.getGameStatePayload(session);
   }
 
@@ -431,6 +451,7 @@ class LessonSessionService {
     if (!session.gameState.selectedGameId) {
       this.lockGameVote(sessionId);
     }
+    if (!session.gameState.selectedGameId) return null;
     session.gameState.status = "countdown";
     session.gameState.countdownEndsAt = Date.now() + durationMs;
     return this.getGameStatePayload(session);
@@ -462,7 +483,8 @@ class LessonSessionService {
     const participant = session.participants.get(studentId);
     if (!participant) return null;
     const score = Math.max(0, Math.round(Number(result.score || 0)));
-    const gameId = result.gameId || gameState.selectedGameId || DEFAULT_GAME_BY_CATEGORY[gameState.category];
+    const gameId = gameState.selectedGameId;
+    if (!gameId || !isEnabledGameForCategory(gameState.category, gameId)) return null;
     participant.score = (participant.score || 0) + score;
     participant.hasAnsweredCurrentPhase = true;
     participant.latestAnswer = { gameId, score, correct: result.correct, total: result.total };

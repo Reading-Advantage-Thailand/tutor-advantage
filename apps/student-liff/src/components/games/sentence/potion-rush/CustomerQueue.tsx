@@ -23,6 +23,7 @@ export default function CustomerQueue({ y, width }: CustomerQueueProps) {
   const slotWidth = width / 3
 
   const [images, setImages] = useState<Record<string, HTMLImageElement>>({})
+  const [focusedIndex, setFocusedIndex] = useState<number>(0)
 
   useEffect(() => {
     const assets = {
@@ -45,32 +46,59 @@ export default function CustomerQueue({ y, width }: CustomerQueueProps) {
     })
   }, [])
 
+  // Create render order: put the focused slot index last so it gets rendered on top in Konva
+  const renderOrder = [0, 1, 2]
+  if (customers[focusedIndex]) {
+    const idx = renderOrder.indexOf(focusedIndex)
+    if (idx > -1) {
+      renderOrder.splice(idx, 1)
+      renderOrder.push(focusedIndex)
+    }
+  } else {
+    // If current focused is empty, find first active and make it last
+    const firstActive = customers.findIndex(c => c !== null)
+    if (firstActive > -1) {
+      const idx = renderOrder.indexOf(firstActive)
+      if (idx > -1) {
+        renderOrder.splice(idx, 1)
+        renderOrder.push(firstActive)
+      }
+    }
+  }
+
   return (
     <Group y={y}>
-        {customers.map((customer, i) => {
+        {renderOrder.map((i) => {
+             const customer = customers[i]
              if (!customer) return null
              
              return (
-                 <SingleCustomer 
-                    key={customer.id} 
-                    customer={customer} 
-                    x={slotWidth * i + slotWidth / 2} 
-                    y={0} 
-                    sheet={images[CUSTOMER_ASSETS[customer.type].sheetKey]}
-                    row={CUSTOMER_ASSETS[customer.type].row}
-                 />
+                  <SingleCustomer 
+                     key={customer.id} 
+                     customer={customer} 
+                     x={slotWidth * i + slotWidth / 2} 
+                     y={0} 
+                     sheet={images[CUSTOMER_ASSETS[customer.type].sheetKey]}
+                     row={CUSTOMER_ASSETS[customer.type].row}
+                     index={i}
+                     isFocused={i === focusedIndex}
+                     onClick={() => setFocusedIndex(i)}
+                  />
              )
         })}
     </Group>
   )
 }
 
-function SingleCustomer({ customer, x, y, sheet, row }: { 
+function SingleCustomer({ customer, x, y, sheet, row, index, isFocused, onClick }: { 
     customer: Customer, 
     x: number, 
     y: number, 
     sheet: HTMLImageElement | undefined,
-    row: number
+    row: number,
+    index: number,
+    isFocused: boolean,
+    onClick: () => void
 }) {
     const isAngry = customer.state === 'LEAVING_ANGRY'
     const isHappy = customer.state === 'LEAVING_HAPPY'
@@ -84,7 +112,7 @@ function SingleCustomer({ customer, x, y, sheet, row }: {
     const patienceColor = patienceRatio > 0.5 ? '#22c55e' : patienceRatio > 0.2 ? '#facc15' : '#ef4444'
 
     return (
-        <Group x={x} y={y} opacity={isHappy ? 0.5 : 1}>
+        <Group x={x} y={y} opacity={isHappy ? 0.5 : 1} onClick={onClick} onTouchStart={onClick}>
             {sheet ? (
                 <KonvaImage 
                     image={sheet}
@@ -108,9 +136,20 @@ function SingleCustomer({ customer, x, y, sheet, row }: {
                 <Rect x={-40} width={80 * patienceRatio} height={10} fill={patienceColor} cornerRadius={5} />
             </Group>
 
-            <Group x={40} y={-180}>
+            <Group 
+                x={index === 0 ? 10 : index === 1 ? -80 : -170} 
+                y={-180}
+            >
                 <Rect width={160} height={60} fill="white" stroke="black" strokeWidth={2} cornerRadius={10} />
-                <Line points={[0, 30, -15, 30, 0, 40]} fill="white" stroke="black" strokeWidth={2} closed tension={0} />
+                {index === 0 && (
+                    <Line points={[0, 30, -15, 30, 0, 40]} fill="white" stroke="black" strokeWidth={2} closed tension={0} />
+                )}
+                {index === 1 && (
+                    <Line points={[80, 60, 80, 75, 90, 60]} fill="white" stroke="black" strokeWidth={2} closed tension={0} />
+                )}
+                {index === 2 && (
+                    <Line points={[160, 30, 175, 30, 160, 40]} fill="white" stroke="black" strokeWidth={2} closed tension={0} />
+                )}
                 <Text 
                     text={customer.request.translation} 
                     width={150} 

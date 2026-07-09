@@ -68,6 +68,7 @@ export type EnchantedLibraryConfig = {
   rng?: () => number;
   vocabulary?: VocabularyItem[];
   difficulty?: Difficulty;
+  masteryTarget?: number;
 };
 
 export type DirectionalInput = {
@@ -462,12 +463,12 @@ export const checkBookCollisions = (
 export const selectNextTargetWord = (
   state: EnchantedLibraryState,
   vocabulary: VocabularyItem[],
-  { rng = Math.random }: EnchantedLibraryConfig = {},
+  { rng = Math.random, masteryTarget = 2 }: EnchantedLibraryConfig = {},
 ): string => {
-  // Filter words that haven't been collected 2x yet
+  const targetCount = Math.max(1, masteryTarget);
   const incompleteWords = vocabulary.filter((vocab) => {
     const progress = state.vocabularyProgress.get(vocab.term) || 0;
-    return progress < 2;
+    return progress < targetCount;
   });
 
   if (incompleteWords.length === 0) {
@@ -487,10 +488,11 @@ export const selectNextTargetWord = (
  */
 export const checkVictoryCondition = (
   state: EnchantedLibraryState,
+  masteryTarget = 2,
 ): boolean => {
   // Check if all words have been collected 2x
   for (const [, count] of state.vocabularyProgress.entries()) {
-    if (count < 2) {
+    if (count < masteryTarget) {
       return false;
     }
   }
@@ -699,7 +701,7 @@ export const advanceEnchantedLibraryTime = (
   }
 
   // Check victory condition
-  if (checkVictoryCondition(newState)) {
+  if (checkVictoryCondition(newState, config.masteryTarget ?? 2)) {
     newState = {
       ...newState,
       status: "victory",

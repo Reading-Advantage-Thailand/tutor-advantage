@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Stage, Layer, Image as KonvaImage } from "react-konva";
+import { Stage, Layer, Image as KonvaImage, Group, Rect, Text } from "react-konva";
 import { usePotionRushStore, SentenceItem } from "@/store/usePotionRushStore";
 import { withBasePath } from "@/lib/games/basePath";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
@@ -23,18 +23,23 @@ export interface PotionRushGameResult {
   accuracy: number;
   difficulty: "easy" | "normal" | "hard" | "extreme";
   score: number;
+  correctAnswers?: number;
+  totalAttempts?: number;
+  durationMs?: number;
 }
 
 interface PotionRushGameProps {
   vocabList: SentenceItem[];
   difficulty: "easy" | "normal" | "hard" | "extreme";
   onComplete: (results: PotionRushGameResult) => void;
+  autoStart?: boolean;
 }
 
 export default function PotionRushGame({
   vocabList,
   difficulty,
   onComplete,
+  autoStart = false,
 }: PotionRushGameProps) {
   const t = useScopedI18n("pages.student.gamesPage.potionRush");
   const router = useRouter();
@@ -45,6 +50,8 @@ export default function PotionRushGame({
   useAccessibilitySettings(); // Verify hook is integrated
 
   const [images, setImages] = useState<Record<string, HTMLImageElement>>({});
+  const assetsLoaded = Object.keys(images).length === 3;
+
 
   useEffect(() => {
     const assets = {
@@ -87,6 +94,7 @@ export default function PotionRushGame({
     (state) => state.completedSentences,
   );
   const totalXpEarned = usePotionRushStore((state) => state.totalXpEarned);
+  const gameTime = usePotionRushStore((state) => state.gameTime);
 
   const controls = useAnimation();
   const prevReputation = useRef(reputation);
@@ -106,9 +114,12 @@ export default function PotionRushGame({
         accuracy: Math.max(0, Math.min(reputation, 100)) / 100,
         difficulty: difficulty,
         score: score,
+        correctAnswers: completedSentences,
+        totalAttempts: Math.min(10, vocabList.length || 10),
+        durationMs: Math.round(gameTime * 1000),
       });
     }
-  }, [gameState, totalXpEarned, reputation, difficulty, score, onComplete, exitFullscreen]);
+  }, [gameState, totalXpEarned, reputation, difficulty, score, completedSentences, vocabList.length, gameTime, onComplete, exitFullscreen]);
 
   // Mobile-first portrait reference: 390x844
   const VIRTUAL_WIDTH = 390;
@@ -122,14 +133,14 @@ export default function PotionRushGame({
   const stageY = (dimensions.height - VIRTUAL_HEIGHT * scale) / 2;
 
   const LAYOUT = {
-    wallH: 320,
-    floorH: 320,
-    counterY: 200,
-    customerY: 201,
-    cauldronY: 300,
-    beltY: 560,
+    wallH: 420,
+    floorH: 424,
+    counterY: 300,
+    customerY: 301,
+    cauldronY: 400,
+    beltY: 720,
     trashX: 195,
-    trashY: 440,
+    trashY: 620,
     isPortrait: true,
   };
 
@@ -182,14 +193,22 @@ export default function PotionRushGame({
     return () => reset();
   }, [reset]);
 
+  useEffect(() => {
+    if (autoStart && assetsLoaded && !hasStarted && vocabList.length > 0) {
+      setHasStarted(true);
+      enterFullscreen();
+      startGame(vocabList, difficulty);
+    }
+  }, [autoStart, assetsLoaded, hasStarted, vocabList, difficulty, enterFullscreen, startGame]);
+
   if (dimensions.width === 0)
-    return <div ref={containerRef} className="w-full h-full" />;
+    return <div ref={containerRef} className="w-screen h-dvh bg-slate-950" />;
 
   return (
     <div ref={(node) => {
       (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
       (fsContainerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-    }} className="w-full h-full relative font-sans">
+    }} className="w-screen h-dvh relative font-sans overflow-hidden bg-slate-950 rounded-none touch-none select-none">
       <PotionRushSoundController />
 
       <AnimatePresence>
@@ -236,6 +255,9 @@ export default function PotionRushGame({
             <div className="text-xs sm:text-sm text-slate-300 drop-shadow-md">
               {t("hud.reputation")}: {Math.max(0, Math.round(reputation))}%
             </div>
+          </div>
+          <div className="text-lg sm:text-2xl font-bold text-amber-400 drop-shadow-lg bg-black/40 border border-amber-500/35 px-3 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-sm">
+            ⏱️ {Math.max(0, Math.ceil(60 - gameTime))}s
           </div>
           <div className="text-lg sm:text-2xl font-bold text-white drop-shadow-lg bg-black/30 px-2 sm:px-4 py-1 rounded-full">
             {t("hud.served")}: {completedSentences}
@@ -298,6 +320,38 @@ export default function PotionRushGame({
             />
 
             <TrashPortal x={LAYOUT.trashX} y={LAYOUT.trashY} />
+
+            {/* Word Holding Area (3 slots) */}
+            <Group y={510}>
+              {[0, 1, 2].map((i) => {
+                const slotX = i === 0 ? 85 : i === 1 ? 195 : 305;
+                return (
+                  <Group key={i} x={slotX}>
+                    <Rect
+                      x={-40}
+                      y={-30}
+                      width={80}
+                      height={60}
+                      fill="rgba(0, 0, 0, 0.4)"
+                      stroke="rgba(255, 255, 255, 0.25)"
+                      strokeWidth={2}
+                      cornerRadius={10}
+                      dash={[6, 4]}
+                    />
+                    <Text
+                      text="HOLD"
+                      fontSize={11}
+                      fontStyle="bold"
+                      fill="rgba(255, 255, 255, 0.35)"
+                      align="center"
+                      width={80}
+                      x={-40}
+                      y={-6}
+                    />
+                  </Group>
+                );
+              })}
+            </Group>
 
             <ConveyorBelt
               y={LAYOUT.beltY}
