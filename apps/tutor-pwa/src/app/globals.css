@@ -57,6 +57,36 @@
   --color-brand-900: var(--brand-900);
 }
 
+@keyframes game-rank-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes game-rank-winner-pulse {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 24px 60px rgb(15 23 42 / 0.22);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 30px 80px rgb(99 102 241 / 0.28);
+  }
+}
+
+.game-rank-card {
+  animation: game-rank-card-in 420ms var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)) both;
+}
+
+.game-rank-winner {
+  animation: game-rank-winner-pulse 2.8s ease-in-out infinite;
+}
+
 /* ─── Design Tokens ───────────────────────────────────────────────────────── */
 :root {
   /* Brand palette — aligned with student-liff LINE green */

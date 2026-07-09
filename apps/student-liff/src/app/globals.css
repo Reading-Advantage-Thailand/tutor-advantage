@@ -1036,6 +1036,38 @@ body { background-color: var(--surface-bg); color: var(--text-primary); }
   animation: gentle-float 3s ease-in-out infinite;
 }
 
+@keyframes mobile-game-card-in {
+  from {
+    opacity: 0;
+    transform: translateX(18px) rotateY(-8deg) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) rotateY(0) scale(1);
+  }
+}
+
+.mobile-game-deck {
+  scrollbar-width: none;
+  perspective: 900px;
+}
+
+.mobile-game-deck::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-game-card {
+  animation: mobile-game-card-in 440ms var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)) both;
+}
+
+@keyframes arcade-float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+.arcade-float {
+  animation: arcade-float 2.4s ease-in-out infinite;
+}
+
 /* Celebration confetti particles */
 @keyframes confetti-drift {
   0% { transform: translateY(0) rotate(0deg); opacity: 1; }

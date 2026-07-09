@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getActiveTutorSession } from "@/lib/tutor-session";
 
+function isClientAbortError(e: unknown) {
+  if (!(e instanceof Error)) {
+    return false;
+  }
+
+  const code = "code" in e ? String(e.code) : "";
+  return e.message.includes("aborted") || code === "ECONNRESET";
+}
+
 export async function POST(req: NextRequest) {
   // Require an active session to prevent API key abuse
   const session = await getActiveTutorSession();
@@ -9,7 +18,20 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { texts } = await req.json();
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch (e: unknown) {
+      if (isClientAbortError(e)) {
+        return NextResponse.json({ error: "Client aborted request" }, { status: 499 });
+      }
+      return NextResponse.json(
+        { error: "Invalid or empty JSON body" },
+        { status: 400 },
+      );
+    }
+
+    const { texts } = body as { texts?: unknown };
 
     if (!Array.isArray(texts) || texts.length === 0) {
       return NextResponse.json(
@@ -50,6 +72,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ translations });
   } catch (e: unknown) {
     const message = e instanceof Error ? e.message : "Unknown error";
+    if (isClientAbortError(e)) {
+      return NextResponse.json({ error: "Client aborted request" }, { status: 499 });
+    }
     console.error("[translate] Exception:", e);
     return NextResponse.json({ error: message }, { status: 500 });
   }

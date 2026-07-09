@@ -83,6 +83,13 @@ const app = express();
 const port = process.env.PORT || 3002;
 assertProductionSecurityConfig();
 
+const trustProxy = process.env.TRUST_PROXY;
+if (trustProxy) {
+  app.set("trust proxy", trustProxy === "true" ? 1 : trustProxy);
+} else if (process.env.NODE_ENV !== "production") {
+  app.set("trust proxy", 1);
+}
+
 const ALLOWED_ORIGINS = getAllowedOrigins();
 
 app.use(helmet());

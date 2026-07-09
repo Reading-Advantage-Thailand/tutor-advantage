@@ -25,13 +25,39 @@ export interface LessonPair {
   members: { studentId: string; name: string; pictureUrl?: string }[];
 }
 
+export type GameCategory = "vocabulary" | "sentence";
+export type GamePhaseStatus = "voting" | "countdown" | "playing" | "results";
+
+export interface GamePhaseResult {
+  studentId: string;
+  name: string;
+  gameId: string;
+  score: number;
+  correct?: number;
+  total?: number;
+  durationMs?: number;
+  submittedAt: number;
+}
+
+export interface GamePhaseState {
+  phase: number;
+  category: GameCategory;
+  status: GamePhaseStatus;
+  votes: Record<string, string>;
+  selectedGameId?: string;
+  countdownEndsAt?: number;
+  results: Record<string, GamePhaseResult>;
+}
+
 export interface LessonSessionData {
   sessionId: string;
+  currentStudentId?: string;
   currentPhase: number;
   articleData?: LessonArticleData;
   activeSentenceIndex?: number;
   phaseSelectedIndices?: Record<number, number>;
   pairs?: LessonPair[] | null;
+  gameState?: GamePhaseState | null;
 }
 
 export interface LessonParticipant {
@@ -161,8 +187,8 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
       setPaymentRequired(data);
     });
 
-    newSocket.on('phase_changed', (data: { phase: number; phaseSelectedIndices?: Record<number, number>; pairs?: LessonPair[] | null }) => {
-      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null } : null);
+    newSocket.on('phase_changed', (data: { phase: number; phaseSelectedIndices?: Record<number, number>; pairs?: LessonPair[] | null; gameState?: GamePhaseState | null }) => {
+      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null } : null);
       setHasAnswered(false);
       setIsEveryoneReady(false);
       setAiFeedback(null);
@@ -193,6 +219,17 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     newSocket.on('language_answer_result', (data: { question: string; answer: string }) => {
       setLanguageAnswer(data);
     });
+
+    const handleGameState = (data: { gameState: GamePhaseState }) => {
+      setSessionData(prev => prev ? { ...prev, gameState: data.gameState } : prev);
+      if (data.gameState.results?.[studentId]) {
+        setHasAnswered(true);
+      }
+    };
+
+    newSocket.on('game_state_changed', handleGameState);
+    newSocket.on('game_votes_updated', handleGameState);
+    newSocket.on('game_results_updated', handleGameState);
 
     return () => {
       newSocket.disconnect();
@@ -230,6 +267,24 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     }
   };
 
+  const submitGameVote = (gameId: string) => {
+    if (socketRef.current && sessionData) {
+      socketRef.current.emit('submit_game_vote', {
+        sessionId: sessionData.sessionId,
+        gameId,
+      });
+    }
+  };
+
+  const submitGameResult = (result: { gameId: string; score: number; correct?: number; total?: number; durationMs?: number }) => {
+    if (socketRef.current && sessionData) {
+      socketRef.current.emit('submit_game_result', {
+        sessionId: sessionData.sessionId,
+        result,
+      });
+    }
+  };
+
   return {
     socket,
     sessionData,
@@ -246,6 +301,8 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     languageAnswer,
     submitAnswer,
     toggleReady,
-    flagSentence
+    flagSentence,
+    submitGameVote,
+    submitGameResult
   };
 };

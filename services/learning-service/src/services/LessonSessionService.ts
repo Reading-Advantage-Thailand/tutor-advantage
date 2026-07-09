@@ -13,6 +13,31 @@ export interface SessionParticipant {
   isReady: boolean;
 }
 
+export type GameCategory = "vocabulary" | "sentence";
+export type GamePhaseStatus = "voting" | "countdown" | "playing" | "results";
+
+export interface GamePhaseResult {
+  studentId: string;
+  name: string;
+  gameId: string;
+  score: number;
+  correct?: number;
+  total?: number;
+  durationMs?: number;
+  submittedAt: number;
+}
+
+export interface GamePhaseState {
+  phase: number;
+  category: GameCategory;
+  status: GamePhaseStatus;
+  votes: Record<string, string>;
+  selectedGameId?: string;
+  countdownEndsAt?: number;
+  results: Record<string, GamePhaseResult>;
+  voteFirstSeen: Record<string, number>;
+}
+
 export interface LessonSession {
   sessionId: string;
   classId?: string; // Added classId
@@ -31,6 +56,7 @@ export interface LessonSession {
   sentenceFlags?: Map<number, Set<string>>;
   // Step 14 (Pair Conversation): random pairs, regenerated every time phase 15 starts
   pairs?: { pairNumber: number; studentIds: string[] }[];
+  gameState?: GamePhaseState;
   currentDbSessionId?: string; // Track active DB ID for dynamic restarting
   // Demo sessions are ephemeral previews: never persisted, never AI-scored, no class.
   isDemo?: boolean;
@@ -69,6 +95,37 @@ function getRandomIndex(count: number, excludedIndex?: number): number {
 
   const candidates = Array.from({ length: count }, (_, index) => index).filter((index) => index !== excludedIndex);
   return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+export const LIVE_LESSON_TOTAL_PHASES = 18;
+export const VOCABULARY_GAME_PHASE = 10;
+export const SENTENCE_GAME_PHASE = 14;
+export const PAIR_CONVERSATION_PHASE = 17;
+export const FINAL_LEADERBOARD_PHASE = 18;
+
+const ENABLED_GAME_BY_CATEGORY: Record<GameCategory, Set<string>> = {
+  vocabulary: new Set(["dragon-flight", "wizard-vs-zombie", "enchanted-library"]),
+  sentence: new Set(["castle-defense", "potion-rush"]),
+};
+
+const DEFAULT_GAME_BY_CATEGORY: Partial<Record<GameCategory, string>> = {
+  vocabulary: "dragon-flight",
+  sentence: "castle-defense",
+};
+
+function isEnabledGameForCategory(category: GameCategory, gameId?: string | null): boolean {
+  return !!gameId && ENABLED_GAME_BY_CATEGORY[category].has(gameId);
+}
+
+function getDefaultGameForCategory(category: GameCategory): string | undefined {
+  const defaultGameId = DEFAULT_GAME_BY_CATEGORY[category];
+  return isEnabledGameForCategory(category, defaultGameId) ? defaultGameId : undefined;
+}
+
+export function getGameCategoryForPhase(phase: number): GameCategory | null {
+  if (phase === VOCABULARY_GAME_PHASE) return "vocabulary";
+  if (phase === SENTENCE_GAME_PHASE) return "sentence";
+  return null;
 }
 
 class LessonSessionService {
@@ -143,9 +200,9 @@ class LessonSessionService {
       }
     }
 
-    // 14-step / 4-period phase map. Interactive index slots:
+    // 18-phase map. Interactive index slots:
     //   7=Comprehension(MCQ) 8=GuidedResponse(ShortAnswer) 9=VocabPractice
-    //   10=SentencePractice(fill) 11=SentencePractice(order) 12=GuidedWriting(prompt)
+    //   11=SentencePractice(fill) 12=SentencePractice(order) 13=GuidedWriting(prompt)
     const phaseSelectedIndices: Record<number, number> = {};
     if (articleData?.multipleChoiceQuestions?.length) {
       phaseSelectedIndices[7] = Math.floor(Math.random() * articleData.multipleChoiceQuestions.length);
@@ -153,14 +210,14 @@ class LessonSessionService {
     if (articleData?.shortAnswerQuestions?.length) {
       const count = articleData.shortAnswerQuestions.length;
       phaseSelectedIndices[8] = getRandomIndex(count);
-      phaseSelectedIndices[12] = getRandomIndex(count); // Guided Writing prompt
+      phaseSelectedIndices[13] = getRandomIndex(count); // Guided Writing prompt
     }
     if (articleData?.words?.length) {
       phaseSelectedIndices[9] = Math.floor(Math.random() * articleData.words.length);
     }
     if (articleData?.sentences?.length) {
-      phaseSelectedIndices[10] = getRandomLongSentenceIndex(articleData.sentences);
       phaseSelectedIndices[11] = getRandomLongSentenceIndex(articleData.sentences);
+      phaseSelectedIndices[12] = getRandomLongSentenceIndex(articleData.sentences);
     }
 
     logger.info(`[Service] Available MCQ questions (Phase 7):`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
@@ -269,6 +326,7 @@ class LessonSessionService {
         participant.score = 0;
       }
     }
+    session.gameState = undefined;
 
     // Reset sentence flags at the start of a fresh instructional cycle
     if (phase === 1) {
@@ -280,22 +338,34 @@ class LessonSessionService {
     }
 
     // Force re-randomize every time we enter the phase
-    // 7=MCQ 8=ShortAnswer 9=VocabGame 10/11=SentenceGames 12=GuidedWriting prompt
+    // 7=MCQ 8=ShortAnswer 9=VocabPractice 11/12=SentenceGames 13=GuidedWriting prompt
     if (phase === 7) {
       const count = session.articleData?.multipleChoiceQuestions?.length || 1;
       session.phaseSelectedIndices[7] = Math.floor(Math.random() * count);
-    } else if (phase === 8 || phase === 12) {
+    } else if (phase === 8 || phase === 13) {
       const count = session.articleData?.shortAnswerQuestions?.length || 1;
       session.phaseSelectedIndices[phase] = getRandomIndex(count);
     } else if (phase === 9) {
       const count = session.articleData?.words?.length || 1;
       session.phaseSelectedIndices[9] = Math.floor(Math.random() * count);
-    } else if (phase === 10 || phase === 11) {
+    } else if (phase === 11 || phase === 12) {
       session.phaseSelectedIndices[phase] = getRandomLongSentenceIndex(session.articleData?.sentences || []);
     }
 
+    const gameCategory = getGameCategoryForPhase(phase);
+    if (gameCategory) {
+      session.gameState = {
+        phase,
+        category: gameCategory,
+        status: "voting",
+        votes: {},
+        results: {},
+        voteFirstSeen: {},
+      };
+    }
+
     // Step 14 (Pair Conversation): shuffle students into fresh pairs every entry
-    if (phase === 15) {
+    if (phase === PAIR_CONVERSATION_PHASE) {
       this.generatePairs(session);
     }
 
@@ -304,12 +374,137 @@ class LessonSessionService {
     }
 
     logger.info(`[Service] Session phase changed to: ${phase}`);
-    if ([7, 8, 9, 10, 11, 12].includes(phase)) {
+    if ([7, 8, 9, 11, 12, 13].includes(phase)) {
        const idx = session.phaseSelectedIndices?.[phase] || 0;
        logger.info(`[Service] Selected Question Index for Phase ${phase}:`, idx);
     }
 
     return session;
+  }
+
+  getGameStatePayload(session?: LessonSession): GamePhaseState | null {
+    if (!session?.gameState) return null;
+    return {
+      ...session.gameState,
+      votes: { ...session.gameState.votes },
+      results: { ...session.gameState.results },
+      voteFirstSeen: { ...session.gameState.voteFirstSeen },
+    };
+  }
+
+  startGameVote(sessionId: string, phase: number): GamePhaseState | null {
+    const session = this.sessions.get(sessionId);
+    const category = getGameCategoryForPhase(phase);
+    if (!session || !category) return null;
+    session.gameState = {
+      phase,
+      category,
+      status: "voting",
+      votes: {},
+      results: {},
+      voteFirstSeen: {},
+    };
+    return this.getGameStatePayload(session);
+  }
+
+  submitGameVote(sessionId: string, studentId: string, gameId: string): GamePhaseState | null {
+    const session = this.sessions.get(sessionId);
+    if (!session?.gameState || session.gameState.status !== "voting") return null;
+    if (!isEnabledGameForCategory(session.gameState.category, gameId)) return null;
+    session.gameState.votes[studentId] = gameId;
+    if (!session.gameState.voteFirstSeen[gameId]) {
+      session.gameState.voteFirstSeen[gameId] = Date.now();
+    }
+    return this.getGameStatePayload(session);
+  }
+
+  lockGameVote(sessionId: string): GamePhaseState | null {
+    const session = this.sessions.get(sessionId);
+    if (!session?.gameState) return null;
+    const counts = new Map<string, number>();
+    for (const gameId of Object.values(session.gameState.votes)) {
+      counts.set(gameId, (counts.get(gameId) || 0) + 1);
+    }
+    let selectedGameId = getDefaultGameForCategory(session.gameState.category);
+    let selectedCount = -1;
+    let selectedFirstSeen = Number.POSITIVE_INFINITY;
+    for (const [gameId, count] of counts.entries()) {
+      if (!isEnabledGameForCategory(session.gameState.category, gameId)) continue;
+      const firstSeen = session.gameState.voteFirstSeen[gameId] || Number.POSITIVE_INFINITY;
+      if (count > selectedCount || (count === selectedCount && firstSeen < selectedFirstSeen)) {
+        selectedGameId = gameId;
+        selectedCount = count;
+        selectedFirstSeen = firstSeen;
+      }
+    }
+    if (selectedGameId) {
+      session.gameState.selectedGameId = selectedGameId;
+    } else {
+      delete session.gameState.selectedGameId;
+    }
+    return this.getGameStatePayload(session);
+  }
+
+  startGameCountdown(sessionId: string, durationMs = 5000): GamePhaseState | null {
+    const session = this.sessions.get(sessionId);
+    if (!session?.gameState) return null;
+    if (!session.gameState.selectedGameId) {
+      this.lockGameVote(sessionId);
+    }
+    if (!session.gameState.selectedGameId) return null;
+    session.gameState.status = "countdown";
+    session.gameState.countdownEndsAt = Date.now() + durationMs;
+    return this.getGameStatePayload(session);
+  }
+
+  markGamePlaying(sessionId: string): GamePhaseState | null {
+    const session = this.sessions.get(sessionId);
+    if (!session?.gameState) return null;
+    session.gameState.status = "playing";
+    return this.getGameStatePayload(session);
+  }
+
+  submitGameResult(
+    sessionId: string,
+    studentId: string,
+    result: { gameId?: string; score?: number; correct?: number; total?: number; durationMs?: number },
+  ): { session: LessonSession; gameState: GamePhaseState; accepted: boolean; allSubmitted: boolean } | null {
+    const session = this.sessions.get(sessionId);
+    const gameState = session?.gameState;
+    if (!session || !gameState || !["playing", "results"].includes(gameState.status)) return null;
+    if (gameState.results[studentId]) {
+      return {
+        session,
+        gameState: this.getGameStatePayload(session)!,
+        accepted: false,
+        allSubmitted: Object.keys(gameState.results).length >= session.participants.size,
+      };
+    }
+    const participant = session.participants.get(studentId);
+    if (!participant) return null;
+    const score = Math.max(0, Math.round(Number(result.score || 0)));
+    const gameId = gameState.selectedGameId;
+    if (!gameId || !isEnabledGameForCategory(gameState.category, gameId)) return null;
+    participant.score = (participant.score || 0) + score;
+    participant.hasAnsweredCurrentPhase = true;
+    participant.latestAnswer = { gameId, score, correct: result.correct, total: result.total };
+    gameState.results[studentId] = {
+      studentId,
+      name: participant.name,
+      gameId,
+      score,
+      correct: result.correct,
+      total: result.total,
+      durationMs: result.durationMs,
+      submittedAt: Date.now(),
+    };
+    gameState.status = "results";
+    return {
+      session,
+      gameState: this.getGameStatePayload(session)!,
+      accepted: true,
+      allSubmitted: Object.keys(gameState.results).length >= session.participants.size,
+    };
   }
 
   // Step 14 (Pair Conversation): randomly pair up everyone in the room.

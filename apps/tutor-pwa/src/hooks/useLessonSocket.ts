@@ -9,6 +9,7 @@ import {
   TutorSessionData,
   AnswerData,
   ArticleData,
+  GamePhaseState,
 } from '@/lib/lesson-types';
 
 export const useLessonSocket = (
@@ -98,7 +99,7 @@ export const useLessonSocket = (
 
         socketInstance.on('phase_changed', (data) => {
           setSessionData(prev => {
-            const next = prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null } : null;
+            const next = prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null } : null;
             sessionDataRef.current = next;
             return next;
           });
@@ -119,6 +120,18 @@ export const useLessonSocket = (
         socketInstance.on('all_answered', (data) => {
           setAllAnsweredData(data.answers);
         });
+
+        const handleGameState = (data: { gameState: GamePhaseState }) => {
+          setSessionData(prev => {
+            const next = prev ? { ...prev, gameState: data.gameState } : prev;
+            sessionDataRef.current = next;
+            return next;
+          });
+        };
+
+        socketInstance.on('game_state_changed', handleGameState);
+        socketInstance.on('game_votes_updated', handleGameState);
+        socketInstance.on('game_results_updated', handleGameState);
 
         socketInstance.on('error', (data) => {
           setError(data.message);
@@ -163,6 +176,24 @@ export const useLessonSocket = (
     }
   };
 
+  const startGameVote = (phase?: number) => {
+    if (socketRef.current && sessionData) {
+      socketRef.current.emit('start_game_vote', { sessionId: sessionData.sessionId, phase: phase ?? sessionData.currentPhase });
+    }
+  };
+
+  const lockGameVote = () => {
+    if (socketRef.current && sessionData) {
+      socketRef.current.emit('lock_game_vote', { sessionId: sessionData.sessionId });
+    }
+  };
+
+  const startGameCountdown = (durationMs = 5000) => {
+    if (socketRef.current && sessionData) {
+      socketRef.current.emit('start_game_countdown', { sessionId: sessionData.sessionId, durationMs });
+    }
+  };
+
   const nudgeStudent = (studentId: string) => {
     if (socketRef.current && sessionData) {
       socketRef.current.emit('nudge_student', { sessionId: sessionData.sessionId, studentId });
@@ -195,6 +226,9 @@ export const useLessonSocket = (
     flagCounts,
     changePhase,
     syncActiveSentence,
+    startGameVote,
+    lockGameVote,
+    startGameCountdown,
     nudgeStudent,
     kickStudent,
     deleteSession

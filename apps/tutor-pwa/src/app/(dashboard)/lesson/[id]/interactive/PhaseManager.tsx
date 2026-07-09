@@ -8,7 +8,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { ArticleDisplay } from "./ArticleDisplay";
-import { ChevronRight, Check, Maximize2, Minimize2 } from "lucide-react";
+import { ChevronRight, Check, Eye, EyeOff, Lock, Maximize2, Minimize2 } from "lucide-react";
 import { playSound } from "@/lib/sounds";
 import { t } from "@/lib/i18n";
 import confetti from "canvas-confetti";
@@ -18,7 +18,13 @@ import {
   AnswerData,
   ArticleData,
 } from "@/lib/lesson-types";
+import { getGameById, getGamesByCategory } from "@/lib/liveLessonGames";
 import { useThaiTranslations } from "@/hooks/useThaiTranslations";
+
+const TOTAL_PHASES = 18;
+const VOCAB_GAME_PHASE = 10;
+const SENTENCE_GAME_PHASE = 14;
+const FINAL_LEADERBOARD_PHASE = 18;
 
 function seededShuffle<T>(array: T[], seedInput: string): T[] {
   const result = [...array];
@@ -83,6 +89,8 @@ interface PhaseManagerProps {
   articleData?: ArticleData;
   changePhase: (phase: number) => void;
   syncActiveSentence: (index: number) => void;
+  startGameVote: (phase?: number) => void;
+  startGameCountdown: (durationMs?: number) => void;
   sessionData?: TutorSessionData;
   onFinishSession?: () => void;
   flagCounts?: Record<number, number>;
@@ -310,6 +318,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   articleData,
   changePhase,
   syncActiveSentence,
+  startGameVote,
+  startGameCountdown,
   sessionData,
   onFinishSession,
   flagCounts,
@@ -317,6 +327,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   const [isChangingPhase, setIsChangingPhase] = React.useState(false);
   const [canProceedDelayed, setCanProceedDelayed] = React.useState(false);
   const [isFullscreen, setIsFullscreen] = React.useState(false);
+  const [isToolbarHidden, setIsToolbarHidden] = React.useState(false);
   // Dev-only: mock participant list to preview the wrap-up leaderboard
   const [mockLeaderboard, setMockLeaderboard] = React.useState<any[] | null>(null);
   // Dev-only: mock pairs to preview the Step 14 pair-conversation layout
@@ -330,15 +341,30 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     setIsChangingPhase(false);
   }, [currentPhase]);
 
-  const isInteractivePhase = [7, 8, 9, 10, 11, 12, 13, 14].includes(
+  const isGamePhase = [VOCAB_GAME_PHASE, SENTENCE_GAME_PHASE].includes(currentPhase);
+  const gameState = sessionData?.gameState ?? null;
+  const gameResultsCount = Object.keys(gameState?.results || {}).length;
+  const currentGameCategory =
+    currentPhase === VOCAB_GAME_PHASE
+      ? "vocabulary"
+      : currentPhase === SENTENCE_GAME_PHASE
+        ? "sentence"
+        : null;
+  const hasPlayableGameForPhase = currentGameCategory
+    ? getGamesByCategory(currentGameCategory).some((game) => game.enabled !== false)
+    : true;
+  const isInteractivePhase = [7, 8, 9, 11, 12, 13, 15, 16].includes(
     currentPhase,
   );
   const totalParticipants = participants.length;
 
   // Can proceed if everyone answered OR if results are already showing OR if no participants
   const canProceed =
-    !isInteractivePhase ||
+    (!isInteractivePhase && !isGamePhase) ||
     totalParticipants === 0 ||
+    (isGamePhase && !hasPlayableGameForPhase) ||
+    (isGamePhase && gameState?.status === "results" && gameResultsCount > 0) ||
+    (isGamePhase && totalParticipants > 0 && gameResultsCount >= totalParticipants) ||
     totalAnswered >= totalParticipants ||
     (allAnsweredData && allAnsweredData.length > 0);
 
@@ -357,7 +383,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     if (!isChangingPhase && canProceedDelayed) {
       setIsChangingPhase(true);
       playSound("phaseChange");
-      if (currentPhase < 16) {
+      if (currentPhase < TOTAL_PHASES) {
         changePhase(currentPhase + 1);
       } else {
         // Safely loop back to lobby (Phase 0).
@@ -367,6 +393,45 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       }
     }
   }, [currentPhase, isChangingPhase, canProceedDelayed, changePhase]);
+
+  const toggleMockLeaderboard = React.useCallback(() => {
+    if (mockLeaderboard) {
+      setMockLeaderboard(null);
+      return;
+    }
+
+    const mock = Array.from({ length: 14 }, (_, i) => ({
+      studentId: `mock-${i}`,
+      name: `Student ${i + 1}`,
+      score: Math.floor(Math.random() * 60),
+    }));
+    setMockLeaderboard(mock);
+    changePhase(FINAL_LEADERBOARD_PHASE);
+  }, [changePhase, mockLeaderboard]);
+
+  const toggleMockPairs = React.useCallback(() => {
+    if (mockPairs) {
+      setMockPairs(null);
+      return;
+    }
+
+    const students = Array.from({ length: 7 }, (_, i) => ({
+      studentId: `mock-pair-${i}`,
+      name: `Student ${i + 1}`,
+    }));
+    const mock: { pairNumber: number; members: { studentId: string; name: string }[] }[] = [];
+    for (let i = 0; i + 1 < students.length; i += 2) {
+      mock.push({
+        pairNumber: mock.length + 1,
+        members: [students[i], students[i + 1]],
+      });
+    }
+    if (students.length % 2 === 1) {
+      mock[mock.length - 1].members.push(students[students.length - 1]);
+    }
+    setMockPairs(mock);
+    changePhase(17);
+  }, [changePhase, mockPairs]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -434,7 +499,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   // Confetti effect when results are ready
   React.useEffect(() => {
-    if ([7, 9, 10, 11].includes(currentPhase) && allAnsweredData.length > 0) {
+    if ([7, 9, 11, 12].includes(currentPhase) && allAnsweredData.length > 0) {
       confetti({
         particleCount: 150,
         spread: 80,
@@ -828,7 +893,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         </div>
       );
 
-    const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
     const targetSentence =
       typeof sentences[idx] === "object"
         ? sentences[idx].sentences
@@ -890,7 +955,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         </div>
       );
 
-    const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
     const targetSentence =
       typeof sentences[idx] === "object"
         ? sentences[idx].sentences
@@ -1521,7 +1586,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   // ── Step 11: Guided Writing (AI-scored) ──
   const renderWriting = () => {
-    const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
     const prompt =
       articleData?.shortAnswerQuestions?.[idx]?.question ||
       t("lesson.interactive.writingPromptLabel");
@@ -1764,18 +1829,558 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     );
   };
 
+  const renderGamePhase = (category: "vocabulary" | "sentence") => {
+    const games = getGamesByCategory(category);
+    const enabledGames = games.filter((game) => game.enabled !== false);
+    const votes = gameState?.votes || {};
+    const results = Object.values(gameState?.results || {}).sort((a, b) => b.score - a.score);
+    const selectedGame = getGameById(gameState?.selectedGameId);
+    const voteCounts = games.map((game) => ({
+      ...game,
+      count: Object.values(votes).filter((gameId) => gameId === game.id).length,
+      voters: participants.filter((p) => votes[p.studentId] === game.id).map((p) => p.name),
+    }));
+    const rankedGames = [...voteCounts].sort(
+      (a, b) =>
+        Number(b.enabled !== false) - Number(a.enabled !== false) ||
+        b.count - a.count ||
+        games.findIndex((game) => game.id === a.id) -
+          games.findIndex((game) => game.id === b.id),
+    );
+    const leadingGame = rankedGames.find((game) => game.enabled !== false) || rankedGames[0];
+    const totalVotes = Object.keys(votes).length;
+    const countdownLeft = gameState?.countdownEndsAt
+      ? Math.max(0, Math.ceil((gameState.countdownEndsAt - Date.now()) / 1000))
+      : 0;
+    const showScoreRanking = results.length > 0 && ["playing", "results"].includes(gameState?.status || "");
+    const participantById = new Map(participants.map((participant) => [participant.studentId, participant]));
+    const rankedResults = results.map((result, index) => ({
+      ...result,
+      rank: index + 1,
+      pictureUrl: participantById.get(result.studentId)?.pictureUrl,
+      totalScore: participantById.get(result.studentId)?.score ?? result.score,
+    }));
+    const topScore = Math.max(...rankedResults.map((result) => result.score), 1);
+    const podiumResults = [rankedResults[1], rankedResults[0], rankedResults[2]].filter(Boolean);
+
+    return (
+      <div className="flex-1 flex gap-5 overflow-hidden min-h-0">
+        <div className="flex-1 flex flex-col gap-5 min-w-0 overflow-y-auto pr-1">
+          <div className={`rounded-3xl border border-border bg-card p-6 shadow-xl ${isFullscreen ? "hidden" : ""}`}>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-black uppercase tracking-widest text-indigo-500">
+                  {category === "vocabulary" ? "Vocabulary Game" : "Sentence Game"}
+                </p>
+                <h2 className="mt-1 text-3xl font-black text-foreground">
+                  ให้นักเรียนโหวตเกม
+                </h2>
+                <p className="mt-2 text-sm font-semibold text-muted-foreground">
+                  {gameState?.status === "voting" && "กำลังเปิดโหวตบนมือถือนักเรียน"}
+                  {gameState?.status === "countdown" && `เริ่มเกมใน ${countdownLeft} วินาที`}
+                  {gameState?.status === "playing" && `กำลังเล่น ${selectedGame?.title || gameState?.selectedGameId}`}
+                  {gameState?.status === "results" && "จบเกมแล้ว ดูคะแนนด้านล่าง"}
+                </p>
+              </div>
+            </div>
+            {selectedGame && (
+              <div className="mt-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3">
+                <p className="text-xs font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+                  {t("lesson.interactive.gameSelectedFallback")}
+                </p>
+                <p className="text-lg font-black text-foreground">{selectedGame.title}</p>
+              </div>
+            )}
+          </div>
+
+          {showScoreRanking ? (
+            <div className="overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-xl">
+              <div className="mb-5 flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-widest text-emerald-500">
+                    {t("lesson.interactive.gameRankingTitle")}
+                  </p>
+                  <h3 className="mt-1 text-3xl font-black text-foreground">
+                    {t("lesson.interactive.gameRankingHeading")}
+                  </h3>
+                  <p className="mt-1 text-sm font-semibold text-muted-foreground">
+                    {selectedGame?.title || t("lesson.interactive.gameSelectedFallback")} · {results.length} / {totalParticipants} {t("lesson.interactive.studentsSubmittedSuffix")}
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-emerald-500/10 px-4 py-3 text-center">
+                  <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
+                    {topScore}
+                  </p>
+                  <p className="text-[10px] font-black uppercase text-muted-foreground">
+                    {t("lesson.interactive.topScore")}
+                  </p>
+                </div>
+              </div>
+
+              <div className={`grid gap-4 ${isFullscreen ? "grid-cols-[minmax(420px,1fr)_minmax(420px,1.05fr)] min-h-[calc(100dvh-220px)]" : "grid-cols-1 xl:grid-cols-[0.95fr_1.05fr]"}`}>
+                <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-950 via-emerald-950 to-indigo-950 p-6 text-white shadow-2xl">
+                  {selectedGame?.cover && (
+                    <img
+                      src={selectedGame.cover}
+                      alt={selectedGame.title}
+                      className="absolute inset-0 size-full object-cover opacity-35"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/20" />
+                  <div className="absolute inset-x-10 top-8 h-24 rounded-full bg-emerald-300/20 blur-3xl" />
+                  <div className="relative z-10 flex h-full min-h-[420px] flex-col">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="inline-flex w-fit rounded-full bg-amber-400 px-3 py-1 text-xs font-black text-slate-950">
+                        {t("lesson.interactive.topPodium")}
+                      </div>
+                      <div className="rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-right backdrop-blur">
+                        <p className="text-[10px] font-black uppercase text-white/50">{t("lesson.interactive.submitted")}</p>
+                        <p className="text-lg font-black">{rankedResults.length}/{totalParticipants}</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-auto grid grid-cols-3 items-end gap-3 pt-8">
+                      {podiumResults.map((result) => {
+                        const isChampion = result.rank === 1;
+                        const heightClass = result.rank === 1 ? "h-44" : result.rank === 2 ? "h-32" : "h-24";
+                        return (
+                          <div
+                            key={result.studentId}
+                            className={`game-rank-card flex flex-col items-center ${isChampion ? "order-2" : result.rank === 2 ? "order-1" : "order-3"}`}
+                          >
+                            <div className={`relative rounded-full p-1 ${isChampion ? "bg-amber-300" : "bg-white/25"}`}>
+                              <div className={`${isChampion ? "size-24" : "size-20"} overflow-hidden rounded-full border-4 border-slate-950 bg-slate-800`}>
+                                {result.pictureUrl ? (
+                                  <img src={result.pictureUrl} alt={result.name} className="size-full object-cover" />
+                                ) : (
+                                  <div className="flex size-full items-center justify-center text-xl font-black text-white">
+                                    {result.name.slice(0, 1).toUpperCase()}
+                                  </div>
+                                )}
+                              </div>
+                              <div className="absolute -bottom-2 left-1/2 flex size-8 -translate-x-1/2 items-center justify-center rounded-full bg-white text-sm font-black text-slate-950 shadow-lg">
+                                #{result.rank}
+                              </div>
+                            </div>
+                            <p className="mt-5 max-w-full truncate text-center text-sm font-black text-white">
+                              {result.name}
+                            </p>
+                            <p className={`mt-1 font-black tabular-nums ${isChampion ? "text-5xl text-amber-300" : "text-3xl text-emerald-200"}`}>
+                              {result.score}
+                            </p>
+                            <div className={`mt-3 flex w-full items-end justify-center rounded-t-3xl border border-white/15 bg-white/12 backdrop-blur ${heightClass}`}>
+                              <p className="pb-4 text-3xl font-black text-white/30">#{result.rank}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="min-h-0 overflow-hidden rounded-[28px] border border-border bg-muted/30 p-4">
+                  <div className="grid max-h-full gap-3 overflow-y-auto pr-1">
+                    {rankedResults.map((result, index) => {
+                      const pct = Math.max(8, Math.round((result.score / topScore) * 100));
+                      const isWinner = index === 0;
+                      return (
+                        <div
+                          key={result.studentId}
+                          className={`game-rank-card flex items-center gap-4 rounded-2xl border px-4 py-3 shadow-sm ${
+                            isWinner
+                              ? "border-amber-300 bg-amber-50 shadow-amber-500/15 dark:bg-amber-500/10"
+                              : "border-border bg-card"
+                          }`}
+                          style={{ animationDelay: `${index * 50}ms` }}
+                        >
+                          <div className={`flex size-12 shrink-0 items-center justify-center rounded-2xl text-lg font-black ${
+                            isWinner
+                              ? "bg-amber-400 text-slate-950"
+                              : "bg-slate-950 text-white dark:bg-white dark:text-slate-950"
+                          }`}>
+                            #{index + 1}
+                          </div>
+                          <div className="size-14 shrink-0 overflow-hidden rounded-2xl border border-border bg-muted shadow-sm">
+                            {result.pictureUrl ? (
+                              <img src={result.pictureUrl} alt={result.name} className="size-full object-cover" />
+                            ) : (
+                              <div className="flex size-full items-center justify-center bg-gradient-to-br from-indigo-500 to-emerald-500 text-lg font-black text-white">
+                                {result.name.slice(0, 1).toUpperCase()}
+                              </div>
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-baseline justify-between gap-3">
+                              <p className="truncate text-base font-black text-foreground">
+                                {result.name}
+                              </p>
+                              <p className="text-2xl font-black tabular-nums text-emerald-600 dark:text-emerald-400">
+                                {result.score}
+                              </p>
+                            </div>
+                            <div className="mt-2 h-2 overflow-hidden rounded-full bg-border">
+                              <div
+                                className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400 transition-all duration-700"
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+                            <p className="mt-1 text-xs font-bold text-muted-foreground">
+                              {result.correct}/{result.total} {t("lesson.interactive.correctUnit")}
+                              {typeof result.durationMs === "number" && ` · ${(result.durationMs / 1000).toFixed(1)}s`}
+                              {typeof result.totalScore === "number" && ` · ${t("lesson.interactive.totalScoreShort")} ${result.totalScore}`}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+          <div className="overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-xl">
+            <div className="mb-5 flex items-center justify-between gap-3">
+              <div>
+                <h3 className="text-xl font-black text-foreground">{t("lesson.interactive.gameVoteStageTitle")}</h3>
+                <p className="text-sm font-semibold text-muted-foreground">
+                  {enabledGames.length
+                    ? t("lesson.interactive.gameVoteStageHelp")
+                    : t("lesson.interactive.gamesComingSoon")}
+                </p>
+              </div>
+              <div className="rounded-2xl bg-indigo-500/10 px-4 py-3 text-center">
+                <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{totalVotes}</p>
+                <p className="text-[10px] font-black uppercase text-muted-foreground">{t("lesson.interactive.votes")}</p>
+              </div>
+            </div>
+
+            <div className={`relative overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 px-6 py-8 ${isFullscreen ? "min-h-[calc(100dvh-170px)]" : "min-h-[520px]"}`}>
+              <div className="absolute inset-x-10 top-1/2 h-32 -translate-y-1/2 rounded-full bg-indigo-500/20 blur-3xl" />
+              <div className="absolute inset-x-16 bottom-8 h-8 rounded-full bg-black/35 blur-xl" />
+              <div className={`relative z-10 grid h-full grid-cols-[1fr_minmax(300px,390px)_1fr] items-center gap-5 ${isFullscreen ? "min-h-[calc(100dvh-230px)]" : "min-h-[460px]"}`}>
+                <div className="flex flex-col items-end gap-3">
+                  {rankedGames.slice(1, 4).map((game, index) => {
+                    const pct = participants.length ? Math.round((game.count / participants.length) * 100) : 0;
+                    return (
+                      <div
+                        key={game.id}
+                        className={`game-rank-card group flex w-full max-w-[300px] items-center gap-3 rounded-2xl border border-white/15 p-3 text-white shadow-xl backdrop-blur transition-all duration-500 hover:-translate-y-1 ${
+                          game.enabled === false ? "bg-white/5 opacity-60 grayscale" : "bg-white/10"
+                        }`}
+                        style={{ animationDelay: `${index * 55}ms` }}
+                      >
+                        <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-xl bg-black/30">
+                          <img src={game.cover} alt={game.title} className="size-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                          {game.enabled === false && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/55">
+                              <Lock size={20} />
+                            </div>
+                          )}
+                          {game.enabled === false && (
+                            <div className="absolute right-1 top-1 flex items-center gap-1 rounded-full bg-rose-500 px-1.5 py-0.5 text-[8px] font-black uppercase text-white shadow-lg">
+                              <Lock size={8} />
+                              {t("lesson.interactive.locked")}
+                            </div>
+                          )}
+                          <div className="absolute left-1 top-1 rounded-full bg-black/60 px-1.5 py-0.5 text-[9px] font-black text-white">
+                            #{index + 2}
+                          </div>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="truncate text-sm font-black">{game.title}</h4>
+                          {game.enabled === false && (
+                            <div className="mt-1 inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-black text-white">
+                              <Lock size={10} />
+                              {t("lesson.interactive.comingSoon")}
+                            </div>
+                          )}
+                          <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/15">
+                            <div className="h-full rounded-full bg-cyan-300 transition-all duration-700" style={{ width: `${pct}%` }} />
+                          </div>
+                          <p className="mt-2 text-xs font-black text-white/75">{game.count} votes</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className={`game-rank-winner relative overflow-hidden rounded-[34px] bg-slate-950 text-white shadow-2xl ring-4 ring-amber-300/30 ${isFullscreen ? "h-[min(72dvh,620px)]" : "h-[470px]"}`}>
+                  {leadingGame?.cover && (
+                    <img src={leadingGame.cover} alt={leadingGame.title} className="absolute inset-0 size-full object-cover" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/10" />
+                  {leadingGame?.enabled === false && (
+                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-black/55 text-white backdrop-blur-[2px]">
+                      <div className="flex size-16 items-center justify-center rounded-full border border-white/25 bg-white/15">
+                        <Lock size={30} />
+                      </div>
+                      <div className="text-center">
+                        <p className="text-2xl font-black">{t("lesson.interactive.locked")}</p>
+                        <p className="mt-1 text-sm font-black text-white/75">{t("lesson.interactive.comingSoon")}</p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="absolute left-5 top-5 rounded-full bg-amber-400 px-3 py-1 text-xs font-black text-slate-950 shadow-lg">
+                    {leadingGame?.enabled === false ? t("lesson.interactive.locked") : `#1 ${t("lesson.interactive.mostVoted")}`}
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <p className="text-xs font-black uppercase tracking-[0.24em] text-white/60">
+                      {totalVotes} {t("lesson.interactive.totalVotes")}
+                    </p>
+                    <h3 className="mt-2 text-3xl font-black leading-tight text-white">
+                      {leadingGame?.title || t("lesson.interactive.waitingVotes")}
+                    </h3>
+                    <p className="mt-2 line-clamp-2 text-sm font-semibold text-white/75">
+                      {leadingGame?.enabled === false
+                        ? t("lesson.interactive.gamesComingSoon")
+                        : leadingGame?.description || t("lesson.interactive.gameVoteStageHelp")}
+                    </p>
+                    <div className="mt-5 flex items-end justify-between gap-3">
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-white/50">{t("lesson.interactive.votes")}</p>
+                        <p className="text-6xl font-black tabular-nums text-white">{leadingGame?.count || 0}</p>
+                      </div>
+                      <div className="rounded-2xl border border-white/20 bg-white/15 px-4 py-3 text-right backdrop-blur">
+                        <p className="text-[10px] font-black uppercase text-white/55">{t("lesson.interactive.voters")}</p>
+                        <p className="max-w-[150px] truncate text-sm font-black text-white">
+                          {leadingGame?.voters.length ? leadingGame.voters.join(", ") : t("lesson.interactive.noVotesYet")}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-start gap-3">
+                  {rankedGames.slice(4, 7).map((game, index) => {
+                    const pct = participants.length ? Math.round((game.count / participants.length) * 100) : 0;
+                    return (
+                      <div
+                        key={game.id}
+                        className={`game-rank-card group flex w-full max-w-[300px] items-center gap-3 rounded-2xl border border-white/15 p-3 text-white shadow-xl backdrop-blur transition-all duration-500 hover:-translate-y-1 ${
+                          game.enabled === false ? "bg-white/5 opacity-60 grayscale" : "bg-white/10"
+                        }`}
+                        style={{ animationDelay: `${(index + 3) * 55}ms` }}
+                      >
+                        <div className="relative h-24 w-16 shrink-0 overflow-hidden rounded-xl bg-black/30">
+                          <img src={game.cover} alt={game.title} className="size-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                          {game.enabled === false && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/55">
+                              <Lock size={20} />
+                            </div>
+                          )}
+                          {game.enabled === false && (
+                            <div className="absolute right-1 top-1 flex items-center gap-1 rounded-full bg-rose-500 px-1.5 py-0.5 text-[8px] font-black uppercase text-white shadow-lg">
+                              <Lock size={8} />
+                              {t("lesson.interactive.locked")}
+                            </div>
+                          )}
+                          <div className="absolute left-1 top-1 rounded-full bg-black/60 px-1.5 py-0.5 text-[9px] font-black text-white">
+                            #{index + 5}
+                          </div>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="truncate text-sm font-black">{game.title}</h4>
+                          {game.enabled === false && (
+                            <div className="mt-1 inline-flex items-center gap-1 rounded-full bg-white/15 px-2 py-0.5 text-[10px] font-black text-white">
+                              <Lock size={10} />
+                              {t("lesson.interactive.comingSoon")}
+                            </div>
+                          )}
+                          <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/15">
+                            <div className="h-full rounded-full bg-fuchsia-300 transition-all duration-700" style={{ width: `${pct}%` }} />
+                          </div>
+                          <p className="mt-2 text-xs font-black text-white/75">{game.count} votes</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {rankedGames.length > 7 && (
+                <div className="absolute bottom-5 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+                  {rankedGames.slice(7).map((game, index) => (
+                    <div
+                      key={game.id}
+                      className="game-rank-card relative h-16 w-12 overflow-hidden rounded-xl border border-white/20 bg-white/10 shadow-lg"
+                      style={{ animationDelay: `${(index + 6) * 45}ms` }}
+                      title={`${game.title}: ${game.count} votes`}
+                    >
+                      <img src={game.cover} alt={game.title} className="size-full object-cover" />
+                      {game.enabled === false && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-white">
+                          <Lock size={14} />
+                        </div>
+                      )}
+                      <div className="absolute inset-x-0 bottom-0 bg-black/70 py-0.5 text-center text-[9px] font-black text-white">
+                        {game.enabled === false ? t("lesson.interactive.locked") : game.count}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          )}
+
+          <div className="hidden overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-xl">
+            <div className="grid grid-cols-1 xl:grid-cols-[320px_1fr] gap-5 items-stretch">
+              <div className="game-rank-winner relative min-h-[420px] overflow-hidden rounded-[28px] bg-slate-950 text-white shadow-2xl">
+                {leadingGame?.cover && (
+                  <img src={leadingGame.cover} alt={leadingGame.title} className="absolute inset-0 size-full object-cover" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/10" />
+                <div className="absolute left-5 top-5 rounded-full bg-amber-400 px-3 py-1 text-xs font-black text-slate-950 shadow-lg">
+                  #1 {t("lesson.interactive.mostVoted")}
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-5">
+                  <p className="text-xs font-black uppercase tracking-[0.24em] text-white/60">
+                    {totalVotes} {t("lesson.interactive.totalVotes")}
+                  </p>
+                  <h3 className="mt-2 text-3xl font-black leading-tight text-white">
+                    {leadingGame?.title || t("lesson.interactive.waitingVotes")}
+                  </h3>
+                  <p className="mt-2 line-clamp-2 text-sm font-semibold text-white/75">
+                    {leadingGame?.description || t("lesson.interactive.gameVoteStageHelp")}
+                  </p>
+                  <div className="mt-5 flex items-end justify-between gap-3">
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-white/50">{t("lesson.interactive.votes")}</p>
+                      <p className="text-6xl font-black tabular-nums text-white">{leadingGame?.count || 0}</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/20 bg-white/15 px-4 py-3 text-right backdrop-blur">
+                      <p className="text-[10px] font-black uppercase text-white/55">{t("lesson.interactive.voters")}</p>
+                      <p className="max-w-[150px] truncate text-sm font-black text-white">
+                        {leadingGame?.voters.length ? leadingGame.voters.join(", ") : t("lesson.interactive.noVotesYet")}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="min-w-0">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-xl font-black text-foreground">{t("lesson.interactive.gameVoteStageTitle")}</h3>
+                    <p className="text-sm font-semibold text-muted-foreground">
+                      เกมที่นักเรียนเลือกมากที่สุดจะเด่นที่กลางกระดาน
+                    </p>
+                  </div>
+                  <div className="rounded-2xl bg-indigo-500/10 px-4 py-3 text-center">
+                    <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{totalVotes}</p>
+                    <p className="text-[10px] font-black uppercase text-muted-foreground">votes</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-3">
+                  {rankedGames.map((game, index) => {
+                    const pct = participants.length ? Math.round((game.count / participants.length) * 100) : 0;
+                    const isLeader = game.id === leadingGame?.id && game.count > 0;
+                    return (
+                      <div
+                        key={game.id}
+                        className={`game-rank-card group relative overflow-hidden rounded-2xl border bg-card shadow-sm transition-all duration-500 ${
+                          isLeader
+                            ? "border-amber-300 shadow-amber-500/20 ring-2 ring-amber-300/40"
+                            : "border-border"
+                        }`}
+                        style={{ animationDelay: `${index * 45}ms` }}
+                      >
+                        <div className="flex gap-3 p-3">
+                          <div className="relative h-28 w-20 shrink-0 overflow-hidden rounded-xl bg-muted shadow-md">
+                            <img src={game.cover} alt={game.title} className="size-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                            <div className="absolute left-1.5 top-1.5 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-black text-white">
+                              #{index + 1}
+                            </div>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0">
+                                <h4 className="truncate text-sm font-black text-foreground">{game.title}</h4>
+                                <p className="mt-1 line-clamp-2 text-[11px] font-semibold leading-snug text-muted-foreground">
+                                  {game.description}
+                                </p>
+                              </div>
+                              <div className="rounded-xl bg-indigo-500/10 px-3 py-2 text-center">
+                                <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{game.count}</p>
+                                <p className="text-[8px] font-black uppercase text-muted-foreground">votes</p>
+                              </div>
+                            </div>
+                            <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
+                              <div
+                                className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 transition-all duration-700"
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+                            <p className="mt-2 min-h-4 truncate text-[11px] font-bold text-muted-foreground">
+                              {game.voters.length ? game.voters.join(", ") : "ยังไม่มีโหวต"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="hidden grid-cols-1 lg:grid-cols-3 gap-3">
+            {voteCounts.map((game) => (
+              <div key={game.id} className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="font-black text-foreground">{game.title}</h3>
+                    <p className="mt-1 text-xs font-semibold text-muted-foreground">{game.description}</p>
+                  </div>
+                  <div className="rounded-xl bg-indigo-500/10 px-3 py-2 text-center">
+                    <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{game.count}</p>
+                    <p className="text-[9px] font-bold uppercase text-muted-foreground">votes</p>
+                  </div>
+                </div>
+                <p className="mt-3 min-h-5 text-xs font-semibold text-muted-foreground">
+                  {game.voters.length ? game.voters.join(", ") : "ยังไม่มีโหวต"}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className={`rounded-3xl border border-border bg-card p-5 shadow-sm ${isFullscreen || showScoreRanking ? "hidden" : ""}`}>
+            <h3 className="text-lg font-black text-foreground">{t("lesson.interactive.gameScoreboard")}</h3>
+            {results.length === 0 ? (
+              <p className="mt-3 text-sm font-semibold text-muted-foreground">{t("lesson.interactive.waitingGameScores")}</p>
+            ) : (
+              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2">
+                {results.map((result, index) => (
+                  <div key={result.studentId} className="flex items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3">
+                    <span className="w-8 text-center text-sm font-black text-muted-foreground">#{index + 1}</span>
+                    <span className="flex-1 truncate text-sm font-bold text-foreground">{result.name}</span>
+                    <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">{result.score}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+        {!isFullscreen && <LiveLeaderboard participants={participants} />}
+      </div>
+    );
+  };
+
   const renderPhaseContent = () => {
     if (currentPhase === 0 && participants.length === 0) return renderLobby();
     if (currentPhase === 7) return renderMCQ(); // Comprehension Check
     if (currentPhase === 8) return renderShortAnswer(); // Guided Response
     if (currentPhase === 9) return renderVocabKahoot(); // Vocabulary Practice
-    if (currentPhase === 10) return renderSentenceFlashcardKahoot(); // Sentence Practice (fill)
-    if (currentPhase === 11) return renderSentenceOrderingKahoot(); // Sentence Practice (order)
-    if (currentPhase === 12) return renderWriting(); // Guided Writing
-    if (currentPhase === 13) return renderLanguageQuestions(); // Language Questions
-    if (currentPhase === 14) return renderReflection(); // Lesson Reflection
-    if (currentPhase === 15) return renderPairConversation(); // Pair Conversation
-    if (currentPhase === 16) return renderLeaderboard(); // Wrap-up
+    if (currentPhase === VOCAB_GAME_PHASE) return renderGamePhase("vocabulary");
+    if (currentPhase === 11) return renderSentenceFlashcardKahoot(); // Sentence Practice (fill)
+    if (currentPhase === 12) return renderSentenceOrderingKahoot(); // Sentence Practice (order)
+    if (currentPhase === 13) return renderWriting(); // Guided Writing
+    if (currentPhase === SENTENCE_GAME_PHASE) return renderGamePhase("sentence");
+    if (currentPhase === 15) return renderLanguageQuestions(); // Language Questions
+    if (currentPhase === 16) return renderReflection(); // Lesson Reflection
+    if (currentPhase === 17) return renderPairConversation(); // Pair Conversation
+    if (currentPhase === FINAL_LEADERBOARD_PHASE) return renderLeaderboard(); // Wrap-up
 
     // Presentation phases 1-6 (Launch, Vocab, Read+audio, Collect Vocab, Deep Reading, Collect Sentences)
     return renderPresentation();
@@ -1798,28 +2403,28 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     },
     {
       label: t("lesson.interactive.period3"),
-      phases: [8, 9, 10, 11],
+      phases: [8, 9, 10, 11, 12, 13, 14],
       color: "bg-purple-500",
       lightColor: "bg-purple-100",
       textColor: "text-purple-700",
     },
     {
       label: t("lesson.interactive.period4"),
-      phases: [12, 13, 14, 15],
+      phases: [15, 16, 17],
       color: "bg-amber-500",
       lightColor: "bg-amber-100",
       textColor: "text-amber-700",
     },
     {
       label: t("lesson.interactive.wrapUp"),
-      phases: [16],
+      phases: [18],
       color: "bg-emerald-500",
       lightColor: "bg-emerald-100",
       textColor: "text-emerald-700",
     },
   ];
 
-  // phase 10 & 11 are both Step 10 (Sentence Practice); steps 11/12/13/14 live at phases 12/13/14/15
+  // phase 11 & 12 are both Step 10 (Sentence Practice); game phases live at 10 and 14
   const phaseNames: Record<number, string> = {
     0: "Lobby",
     1: t("lesson.interactive.step1"),
@@ -1831,13 +2436,15 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     7: t("lesson.interactive.step7"),
     8: t("lesson.interactive.step8"),
     9: t("lesson.interactive.step9"),
-    10: t("lesson.interactive.step10"),
+    10: "Vocabulary Game",
     11: t("lesson.interactive.step10"),
-    12: t("lesson.interactive.step11"),
-    13: t("lesson.interactive.step12"),
-    14: t("lesson.interactive.step13"),
-    15: t("lesson.interactive.step14"),
-    16: t("lesson.interactive.wrapUp"),
+    12: t("lesson.interactive.step10"),
+    13: t("lesson.interactive.step11"),
+    14: "Sentence Game",
+    15: t("lesson.interactive.step12"),
+    16: t("lesson.interactive.step13"),
+    17: t("lesson.interactive.step14"),
+    18: t("lesson.interactive.wrapUp"),
   };
 
   const renderPhaseProgressBar = () => {
@@ -1860,13 +2467,13 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             </span>
           </div>
           <span className="text-xs text-muted-foreground font-medium">
-            {currentPhase} / 16
+            {currentPhase} / {TOTAL_PHASES}
           </span>
         </div>
 
         {/* Phase dots */}
         <div className="flex items-center gap-1">
-          {Array.from({ length: 16 }, (_, i) => i + 1).map((p) => {
+          {Array.from({ length: TOTAL_PHASES }, (_, i) => i + 1).map((p) => {
             const group = phaseGroups.find((g) => g.phases.includes(p));
             const isPast = p < currentPhase;
             const isCurrent = p === currentPhase;
@@ -1903,12 +2510,227 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     );
   };
 
+  const renderControlToolbar = () => {
+    const isNextDisabled = !canProceedDelayed || isChangingPhase;
+    const gameStatus = gameState?.status;
+    const hasGameResults = isGamePhase && gameResultsCount > 0;
+    const useGamePrimaryAction = isGamePhase && !hasGameResults && hasPlayableGameForPhase;
+    const gamePrimaryLabel =
+      gameStatus === "voting" && !hasPlayableGameForPhase
+        ? t("lesson.interactive.gamesComingSoon")
+        :
+      !gameStatus || gameStatus === "voting"
+        ? gameStatus === "voting"
+          ? t("lesson.interactive.startGameCountdown")
+          : t("lesson.interactive.openGameVote")
+        : gameStatus === "countdown"
+          ? t("lesson.interactive.countdownInProgress")
+          : t("lesson.interactive.gamePlaying");
+    const isGamePrimaryDisabled =
+      gameStatus === "countdown" ||
+      gameStatus === "playing" ||
+      (gameStatus === "voting" && !hasPlayableGameForPhase);
+    const handleGamePrimaryAction = () => {
+      if (!gameStatus) {
+        startGameVote(currentPhase);
+        return;
+      }
+      if (gameStatus === "voting") {
+        startGameCountdown(5000);
+      }
+    };
+    const toolbarShellClass = isFullscreen
+      ? "absolute bottom-5 left-1/2 z-[120] w-[min(1180px,calc(100vw-40px))] -translate-x-1/2"
+      : "mt-auto shrink-0 border-t border-border pt-5";
+    const toolbarClass = isFullscreen
+      ? "border-white/15 bg-slate-950/78 text-white shadow-2xl backdrop-blur-xl"
+      : "border-border bg-slate-950 text-white shadow-xl";
+    const quietButtonClass =
+      "rounded-xl bg-white/10 px-3 py-2 text-xs font-black text-white transition-colors hover:bg-white/20";
+
+    if (isToolbarHidden) {
+      return (
+        <div
+          className={
+            isFullscreen
+              ? "absolute bottom-5 right-5 z-[120]"
+              : "mt-auto flex shrink-0 justify-end border-t border-border pt-5"
+          }
+        >
+          <button
+            onClick={() => setIsToolbarHidden(false)}
+            className="flex items-center gap-2 rounded-2xl border border-white/15 bg-slate-950/80 px-4 py-3 text-sm font-black text-white shadow-2xl backdrop-blur-xl transition-colors hover:bg-slate-900"
+          >
+            <Eye size={16} />
+            {t("lesson.interactive.showToolbar")}
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className={toolbarShellClass}>
+        <div
+          className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 ${toolbarClass}`}
+        >
+          <div className="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto pr-2">
+            <div className="shrink-0 rounded-xl bg-white/10 px-3 py-2">
+              <p className="text-[10px] font-black uppercase tracking-widest text-white/50">
+                {t("lesson.interactive.phaseLabel")}
+              </p>
+              <p className="text-sm font-black text-white">
+                {currentPhase} / {TOTAL_PHASES}
+              </p>
+            </div>
+            <div className="hidden shrink-0 rounded-xl bg-white/10 px-3 py-2 sm:block">
+              <p className="text-[10px] font-black uppercase tracking-widest text-white/50">
+                {t("lesson.interactive.studentsLabel")}
+              </p>
+              <p className="text-sm font-black text-white">
+                {totalParticipants}
+              </p>
+            </div>
+
+            <button
+              onClick={toggleFullscreen}
+              title={
+                isFullscreen
+                  ? t("lesson.interactive.exitFullscreen")
+                  : t("lesson.interactive.enterFullscreen")
+              }
+              className={`${quietButtonClass} shrink-0 flex items-center gap-1.5`}
+            >
+              {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+              <span className="hidden sm:inline">
+                {isFullscreen
+                  ? t("lesson.interactive.exitFullscreen")
+                  : t("lesson.interactive.enterFullscreen")}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setIsToolbarHidden(true)}
+              className={`${quietButtonClass} shrink-0 flex items-center gap-1.5`}
+            >
+              <EyeOff size={14} />
+              <span className="hidden sm:inline">{t("lesson.interactive.hideToolbar")}</span>
+            </button>
+
+            <button
+              onClick={() => changePhase(0)}
+              className="shrink-0 rounded-xl bg-rose-500/15 px-3 py-2 text-xs font-black text-rose-100 transition-colors hover:bg-rose-500/25"
+            >
+              {t("lesson.interactive.returnLobby")}
+            </button>
+
+            {process.env.NODE_ENV === "development" && (
+              <div className="flex shrink-0 items-center gap-2 border-l border-white/15 pl-3">
+                <span className="rounded bg-orange-400/15 px-2 py-1 text-[10px] font-black text-orange-200">
+                  DEV
+                </span>
+                <button
+                  onClick={() => changePhase(Math.max(1, currentPhase - 1))}
+                  className={quietButtonClass}
+                >
+                  Prev
+                </button>
+                <button
+                  onClick={() => changePhase(Math.min(TOTAL_PHASES, currentPhase + 1))}
+                  className={quietButtonClass}
+                >
+                  Skip
+                </button>
+                <button
+                  onClick={toggleMockLeaderboard}
+                  className={`rounded-xl px-3 py-2 text-xs font-black transition-colors ${
+                    mockLeaderboard
+                      ? "bg-orange-500 text-white"
+                      : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
+                >
+                  {mockLeaderboard ? "Mock ON" : "Mock LB"}
+                </button>
+                <button
+                  onClick={toggleMockPairs}
+                  className={`rounded-xl px-3 py-2 text-xs font-black transition-colors ${
+                    mockPairs
+                      ? "bg-orange-500 text-white"
+                      : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
+                >
+                  {mockPairs ? "Pairs ON" : "Mock Pairs"}
+                </button>
+              </div>
+            )}
+
+            <button
+              onClick={onFinishSession}
+              disabled={!onFinishSession}
+              className="flex shrink-0 items-center gap-1 rounded-xl bg-white/10 px-3 py-2 text-xs font-black text-white transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-45"
+            >
+              <Check size={14} />
+              {t("lesson.interactive.finishLesson")}
+            </button>
+          </div>
+
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              onClick={() => changePhase(Math.max(1, currentPhase - 1))}
+              className={quietButtonClass}
+            >
+              {t("lesson.interactive.previous")}
+            </button>
+            <button
+              onClick={useGamePrimaryAction ? handleGamePrimaryAction : handleNextPhase}
+              disabled={useGamePrimaryAction ? isGamePrimaryDisabled : isNextDisabled}
+              className={`flex items-center justify-center gap-2 rounded-xl px-5 py-2 text-sm font-black transition-all ${
+                (useGamePrimaryAction ? isGamePrimaryDisabled : isNextDisabled)
+                  ? "cursor-not-allowed bg-white/10 text-white/45"
+                  : useGamePrimaryAction
+                    ? "bg-emerald-500 text-white shadow-lg hover:bg-emerald-400 active:scale-95"
+                    : "bg-primary text-primary-foreground shadow-lg hover:opacity-90 active:scale-95"
+              }`}
+            >
+              {useGamePrimaryAction ? (
+                <>
+                  <span>{gamePrimaryLabel}</span>
+                  {gameStatus === "voting" && <ChevronRight size={18} />}
+                </>
+              ) : isChangingPhase ? (
+                <>
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
+                  {t("lesson.interactive.processing")}
+                </>
+              ) : !canProceedDelayed ? (
+                t("lesson.interactive.waitingAnswers")
+              ) : currentPhase === FINAL_LEADERBOARD_PHASE ? (
+                <>
+                  <span className="hidden sm:inline">
+                    {t("lesson.interactive.startNewRound")}
+                  </span>
+                  <ChevronRight size={18} />
+                </>
+              ) : (
+                <>
+                  <span className="hidden sm:inline">
+                    {t("lesson.interactive.nextPhase")}
+                  </span>
+                  <ChevronRight size={18} />
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div
       ref={fullscreenRef}
       className={`flex flex-col relative bg-background ${
         isFullscreen
-          ? "fixed inset-0 z-[100] h-dvh w-screen overflow-hidden p-3 md:p-5"
+          ? "fixed inset-0 z-[100] h-dvh w-screen overflow-hidden p-0"
           : "flex-1"
       }`}
     >
@@ -1938,7 +2760,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       <div
         className={
           isFullscreen
-            ? "shrink-0 [&>div]:mb-3 [&>div]:rounded-xl [&>div]:p-3"
+            ? "hidden"
             : "shrink-0"
         }
       >
@@ -1947,153 +2769,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       <FitToViewport enabled={isFullscreen}>
         {renderPhaseContent()}
       </FitToViewport>
-
-      <div
-        className={`${isFullscreen ? "mt-3 pt-3" : "mt-auto pt-6"} shrink-0 border-t border-border flex flex-col gap-3 lg:flex-row lg:justify-between lg:items-center`}
-      >
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="text-sm text-muted-foreground font-medium">
-            {totalParticipants} {t("lesson.interactive.studentsInClass")}
-          </div>
-
-          <button
-            onClick={toggleFullscreen}
-            title={
-              isFullscreen
-                ? t("lesson.interactive.exitFullscreen")
-                : t("lesson.interactive.enterFullscreen")
-            }
-            className="px-3 py-1.5 bg-primary/10 text-primary text-sm font-semibold rounded-lg hover:bg-primary/20 transition-colors flex items-center gap-1.5"
-          >
-            {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-            {isFullscreen
-              ? t("lesson.interactive.exitFullscreen")
-              : t("lesson.interactive.enterFullscreen")}
-          </button>
-
-          {/* Always Available Return to Lobby */}
-          <button
-            onClick={() => changePhase(0)}
-            className="px-3 py-1.5 bg-destructive/10 text-destructive text-sm font-semibold rounded-lg hover:bg-destructive/20 transition-colors"
-          >
-            {t("lesson.interactive.returnLobby")}
-          </button>
-
-          {/* Dev Mode Controls */}
-          {process.env.NODE_ENV === "development" && (
-            <div className="flex items-center gap-2 border-l border-border pl-4 ml-2">
-              <span className="text-[10px] font-bold text-orange-600 dark:text-orange-400 bg-orange-500/10 px-2 py-1 rounded">
-                DEV
-              </span>
-              <button
-                onClick={() => changePhase(Math.max(1, currentPhase - 1))}
-                className="px-3 py-1.5 bg-muted text-muted-foreground text-sm font-semibold rounded-lg hover:bg-accent transition-colors"
-              >
-                {t("lesson.interactive.previous")}
-              </button>
-              <button
-                onClick={() => changePhase(Math.min(16, currentPhase + 1))}
-                className="px-3 py-1.5 bg-muted text-muted-foreground text-sm font-semibold rounded-lg hover:bg-accent transition-colors"
-              >
-                {t("lesson.interactive.skipPhase")}
-              </button>
-              <button
-                onClick={() => {
-                  if (mockLeaderboard) {
-                    setMockLeaderboard(null);
-                    return;
-                  }
-                  const mock = Array.from({ length: 14 }, (_, i) => ({
-                    studentId: `mock-${i}`,
-                    name: `นักเรียน ${i + 1}`,
-                    score: Math.floor(Math.random() * 60),
-                  }));
-                  setMockLeaderboard(mock);
-                  changePhase(16);
-                }}
-                className={`px-3 py-1.5 text-sm font-semibold rounded-lg transition-colors ${mockLeaderboard ? "bg-orange-500 text-white" : "bg-muted text-muted-foreground hover:bg-accent"}`}
-              >
-                {mockLeaderboard ? "Mock: ON" : "Mock LB"}
-              </button>
-              <button
-                onClick={() => {
-                  if (mockPairs) {
-                    setMockPairs(null);
-                    return;
-                  }
-                  // 7 mock students -> 2 pairs + 1 triple, so the odd-count
-                  // note and the group-of-three card are visible too
-                  const students = Array.from({ length: 7 }, (_, i) => ({
-                    studentId: `mock-pair-${i}`,
-                    name: `นักเรียน ${i + 1}`,
-                  }));
-                  const mock = [];
-                  for (let i = 0; i + 1 < students.length; i += 2) {
-                    mock.push({ pairNumber: mock.length + 1, members: [students[i], students[i + 1]] });
-                  }
-                  if (students.length % 2 === 1) {
-                    mock[mock.length - 1].members.push(students[students.length - 1]);
-                  }
-                  setMockPairs(mock);
-                  changePhase(15);
-                }}
-                className={`px-3 py-1.5 text-sm font-semibold rounded-lg transition-colors ${mockPairs ? "bg-orange-500 text-white" : "bg-muted text-muted-foreground hover:bg-accent"}`}
-              >
-                {mockPairs ? "Pairs: ON" : "Mock Pairs"}
-              </button>
-            </div>
-          )}
-
-          {/* Standard Controls: Exit Session */}
-          <div className="flex items-center gap-2 pl-2 border-l border-border">
-            <button
-              onClick={onFinishSession}
-              className="px-3 py-1.5 bg-secondary/10 text-secondary-foreground text-xs font-bold rounded-lg hover:bg-secondary/20 transition-colors flex items-center gap-1"
-            >
-              <Check size={14} />
-              {t("lesson.interactive.finishLesson")}
-            </button>
-          </div>
-        </div>
-        <button
-          onClick={handleNextPhase}
-          disabled={!canProceedDelayed || isChangingPhase}
-          className={`px-8 py-3 rounded-xl font-bold text-lg transition-all duration-200 flex items-center justify-center gap-2 ${
-            !canProceedDelayed || isChangingPhase
-              ? "bg-muted text-muted-foreground cursor-not-allowed"
-              : "bg-primary text-primary-foreground hover:opacity-90 shadow-lg active:scale-95"
-          }`}
-        >
-          {isChangingPhase ? (
-            <>
-              <div className="animate-spin h-4 w-4 border-2 border-primary-foreground border-t-transparent rounded-full" />
-              {t("lesson.interactive.processing")}
-            </>
-          ) : !canProceedDelayed ? (
-            t("lesson.interactive.waitingAnswers")
-          ) : currentPhase === 16 ? (
-            <>
-              <span className="flex items-center gap-1">
-                {t("lesson.interactive.startNewRound")}{" "}
-                <kbd className="hidden md:inline-flex bg-primary-foreground/20 text-primary-foreground text-xs px-2 py-0.5 rounded ml-2 shadow-sm font-mono">
-                  →
-                </kbd>
-              </span>
-              <ChevronRight size={20} />
-            </>
-          ) : (
-            <>
-              <span className="flex items-center gap-1">
-                {t("lesson.interactive.nextPhase")}{" "}
-                <kbd className="hidden md:inline-flex bg-primary-foreground/20 text-primary-foreground text-xs px-2 py-0.5 rounded ml-2 shadow-sm font-mono">
-                  →
-                </kbd>
-              </span>
-              <ChevronRight size={20} />
-            </>
-          )}
-        </button>
-      </div>
+      {renderControlToolbar()}
     </div>
   );
 };

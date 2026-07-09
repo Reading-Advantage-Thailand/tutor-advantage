@@ -72,4 +72,55 @@ describe("lessonSessionService", () => {
     expect(service.getSession(session.sessionId)).toBeUndefined();
     expect(service.getSessionByClassId("class-1")).toBeUndefined();
   });
+
+  it("creates independent game phases for vocabulary and sentence rounds", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+    service.joinSessionByClassId("class-1", "student-2", "Bob", "socket-b");
+
+    service.setPhase(session.sessionId, 10);
+    expect(session.gameState).toMatchObject({ phase: 10, category: "vocabulary", status: "voting" });
+
+    service.submitGameVote(session.sessionId, "student-1", "dragon-flight");
+    service.submitGameVote(session.sessionId, "student-2", "dragon-flight");
+    expect(service.lockGameVote(session.sessionId)?.selectedGameId).toBe("dragon-flight");
+    service.markGamePlaying(session.sessionId);
+    const first = service.submitGameResult(session.sessionId, "student-1", {
+      gameId: "dragon-flight",
+      score: 8,
+      correct: 4,
+      total: 5,
+    });
+    const duplicate = service.submitGameResult(session.sessionId, "student-1", {
+      gameId: "dragon-flight",
+      score: 8,
+    });
+    expect(first?.accepted).toBe(true);
+    expect(duplicate?.accepted).toBe(false);
+    expect(session.participants.get("student-1")?.score).toBe(8);
+
+    service.setPhase(session.sessionId, 14);
+    expect(session.gameState).toMatchObject({ phase: 14, category: "sentence", status: "voting" });
+    expect(session.gameState?.results).toEqual({});
+  });
+
+  it("falls back to default games when no one votes", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+
+    service.setPhase(session.sessionId, 10);
+    expect(service.lockGameVote(session.sessionId)?.selectedGameId).toBe("dragon-flight");
+
+    service.setPhase(session.sessionId, 14);
+    expect(service.lockGameVote(session.sessionId)?.selectedGameId).toBe("castle-defense");
+  });
+
+  it("ignores votes for locked games", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+
+    service.setPhase(session.sessionId, 10);
+    expect(service.submitGameVote(session.sessionId, "student-1", "rune-match")).toBeNull();
+    expect(session.gameState?.votes).toEqual({});
+    expect(service.lockGameVote(session.sessionId)?.selectedGameId).toBe("dragon-flight");
+  });
 });

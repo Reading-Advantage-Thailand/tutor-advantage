@@ -105,6 +105,8 @@ export default function TutorLobbyClient({
     flagCounts,
     changePhase,
     syncActiveSentence,
+    startGameVote,
+    startGameCountdown,
     nudgeStudent,
     kickStudent,
     deleteSession,
@@ -162,6 +164,8 @@ export default function TutorLobbyClient({
               flagCounts={flagCounts}
               changePhase={changePhase}
               syncActiveSentence={syncActiveSentence}
+              startGameVote={startGameVote}
+              startGameCountdown={startGameCountdown}
               onFinishSession={() => {
                 deleteSession();
                 router.push(backHref);
