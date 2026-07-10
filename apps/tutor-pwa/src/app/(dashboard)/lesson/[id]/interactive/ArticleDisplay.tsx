@@ -28,6 +28,32 @@ function speakEnglish(text: string) {
   window.speechSynthesis.speak(utterance);
 }
 
+const TTS_RATES = [0.75, 0.85, 1, 1.15] as const;
+
+function speakEnglishWithRate(
+  text: string,
+  rate: number,
+  onDone?: () => void,
+) {
+  if (
+    typeof window === "undefined" ||
+    !window.speechSynthesis ||
+    !text.trim()
+  ) {
+    onDone?.();
+    return false;
+  }
+
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "en-US";
+  utterance.rate = rate;
+  utterance.onend = () => onDone?.();
+  utterance.onerror = () => onDone?.();
+  window.speechSynthesis.speak(utterance);
+  return true;
+}
+
 function GuideQuestionCard({
   label,
   question,
@@ -91,10 +117,13 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   const phase4VocabRef = useRef<HTMLDivElement>(null);
   const stopAtRef = useRef<number>(Infinity); // for single-sentence mode
   const isSeekingRef = useRef(false); // prevent highlight flickering during seek
+  const ttsRequestRef = useRef(0);
+  const sentenceTtsActiveRef = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [speechRate, setSpeechRate] = useState(0.75);
   const [autoVocabTh, setAutoVocabTh] = useState<Record<number, string>>({});
   const [autoVocabEnTh, setAutoVocabEnTh] = useState<Record<number, string>>(
     {},
@@ -165,6 +194,25 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/tts/${articleData.id}.mp3`
     : null;
 
+  const getSentenceText = (sentenceIdx: number) => {
+    const item = sentences[sentenceIdx];
+    return typeof item === "object"
+      ? String(item?.sentences || "")
+      : String(item || "");
+  };
+
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.playbackRate = speechRate;
+  }, [speechRate]);
+
+  useEffect(() => {
+    return () => {
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
   const handleTimeUpdate = () => {
     if (!audioRef.current) return;
     const t = audioRef.current.currentTime;
@@ -176,6 +224,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       setIsPlaying(false);
       return;
     }
+    if (sentenceTtsActiveRef.current && audioRef.current.paused) return;
     if (isSeekingRef.current) return;
     // Find the last sentence whose timeSeconds <= current time
     let idx = -1;
@@ -188,43 +237,46 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     setActiveIdx(idx);
   };
 
-  // Seek to a sentence index and play ONLY that sentence (single-sentence mode)
+  // Read a single sentence with browser TTS. This avoids relying on imperfect audio timestamps.
   const seekToSentence = (sentenceIdx: number) => {
-    if (!audioRef.current) return;
-    isSeekingRef.current = true;
+    const sentenceText = getSentenceText(sentenceIdx);
+    if (!sentenceText) return;
+    const requestId = ++ttsRequestRef.current;
     const item = sentences[sentenceIdx];
     const ts: number = typeof item === "object" ? (item.timeSeconds ?? 0) : 0;
-    // Stop 0.5s before the NEXT sentence starts (natural pause)
-    const nextItem = sentences[sentenceIdx + 1];
-    const nextTs = nextItem
-      ? typeof nextItem === "object"
-        ? nextItem.timeSeconds
-        : Infinity
-      : Infinity;
-    stopAtRef.current = nextTs === Infinity ? Infinity : nextTs - 0.5;
-    audioRef.current.currentTime = ts;
-    audioRef.current.play();
+    sentenceTtsActiveRef.current = true;
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = ts;
+    }
+    setCurrentTime(ts);
+    stopAtRef.current = Infinity;
+    isSeekingRef.current = false;
     setActiveIdx(sentenceIdx);
-    setIsPlaying(true);
-  };
-
-  // seekTo used by progress bar / metadata seek (continuous)
-  const seekTo = (timeSeconds: number) => {
-    if (!audioRef.current) return;
-    isSeekingRef.current = true;
-    stopAtRef.current = Infinity; // continuous mode
-    audioRef.current.currentTime = timeSeconds;
-    audioRef.current.play();
-    setIsPlaying(true);
+    setIsPlaying(false);
+    speakEnglishWithRate(sentenceText, speechRate, () => {
+      if (requestId === ttsRequestRef.current) setIsPlaying(false);
+    });
   };
 
   const togglePlay = () => {
     if (!audioRef.current) return;
     if (isPlaying) {
+      ttsRequestRef.current++;
       audioRef.current.pause();
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      sentenceTtsActiveRef.current = false;
       setIsPlaying(false);
     } else {
+      ttsRequestRef.current++;
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      sentenceTtsActiveRef.current = false;
       stopAtRef.current = Infinity; // always continuous when pressing Play
+      audioRef.current.playbackRate = speechRate;
       audioRef.current.play();
       setIsPlaying(true);
     }
@@ -1074,6 +1126,13 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
     const fmtTime = (s: number) =>
       `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+    const cycleSpeechRate = () => {
+      const currentIndex = TTS_RATES.findIndex((rate) => rate === speechRate);
+      const nextRate =
+        TTS_RATES[(currentIndex + 1) % TTS_RATES.length] ?? TTS_RATES[0];
+      setSpeechRate(nextRate);
+      if (audioRef.current) audioRef.current.playbackRate = nextRate;
+    };
 
     // Build paragraphs: split passage by newlines, then map each sentence to inline spans
     const rawParagraphs: string[] = (articleData.passage || "")
@@ -1223,7 +1282,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             )}
 
             {/* Player pill */}
-            <div className="bg-card border-2 border-orange-500/40 rounded-2xl shadow-2xl px-5 py-4 flex items-center gap-4 w-[500px]">
+            <div className="bg-card border-2 border-orange-500/40 rounded-2xl shadow-2xl px-5 py-4 flex items-center gap-4 w-[560px]">
               {/* Skip prev */}
               <button
                 onClick={() => {
@@ -1241,6 +1300,15 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 className="w-14 h-14 rounded-full bg-orange-500 text-white flex items-center justify-center text-2xl shadow-lg hover:bg-orange-600 active:scale-90 transition-all shrink-0"
               >
                 {isPlaying ? "⏸" : "▶"}
+              </button>
+
+              {/* Reading speed */}
+              <button
+                onClick={cycleSpeechRate}
+                title="Reading speed"
+                className="w-14 h-11 rounded-full bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center hover:bg-orange-500/30 transition-all active:scale-95 text-sm font-black shrink-0"
+              >
+                {speechRate}x
               </button>
 
               {/* Skip next */}
@@ -1263,6 +1331,15 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     const rect = e.currentTarget.getBoundingClientRect();
                     const ratio = (e.clientX - rect.left) / rect.width;
                     if (audioRef.current) {
+                      ttsRequestRef.current++;
+                      if (
+                        typeof window !== "undefined" &&
+                        window.speechSynthesis
+                      ) {
+                        window.speechSynthesis.cancel();
+                      }
+                      sentenceTtsActiveRef.current = false;
+                      audioRef.current.playbackRate = speechRate;
                       audioRef.current.currentTime = ratio * duration;
                       audioRef.current.play();
                       setIsPlaying(true);

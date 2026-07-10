@@ -49,28 +49,28 @@
   "books": {
     "Origins 1": [
       {
+        "type": "nonfiction",
+        "genre": "Parenting",
+        "title": "A Happy Day for Mia",
+        "id": "OyEA0jRP5GnpFZBCrgMl"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Travel",
+        "title": "Anna's First Trip to Japan",
+        "id": "lsiMiDgyCV9MbBjKjsyl"
+      },
+      {
         "type": "fiction",
         "genre": "Young Adult Fiction",
-        "title": "The Silent Truth",
-        "id": "MMmPVvbXr1LnBo7P0oTT"
-      },
-      {
-        "type": "fiction",
-        "genre": "Westerns",
-        "title": "The Prospector's Gamble",
-        "id": "Bm9w2y9wQAf1Fr4mYUzA"
+        "title": "Anna's Secret Garden",
+        "id": "KkJOkCCBrfYWBMtrw7AZ"
       },
       {
         "type": "nonfiction",
-        "genre": "Humor",
-        "title": "The Comedy of Errors: Funny Tales of Mistaken Identities",
-        "id": "4KEEDPYfLpRWutFuYceS"
-      },
-      {
-        "type": "nonfiction",
-        "genre": "Children's Nonfiction",
-        "title": "Phones and Our Feelings",
-        "id": "cmmki0z6z0002s60e30ppdzvg"
+        "genre": "Biographies",
+        "title": "Beyoncé: From Destiny's Child to Queen B",
+        "id": "MjtQFpxdhlewLdgvwZMx"
       },
       {
         "type": "fiction",
@@ -89,6 +89,54 @@
         "genre": "Children's Nonfiction",
         "title": "Our Earth is Too Warm",
         "id": "YbIjlPcIZbnBlcvJ1q9J"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Children's Nonfiction",
+        "title": "Phones and Our Feelings",
+        "id": "cmmki0z6z0002s60e30ppdzvg"
+      },
+      {
+        "type": "fiction",
+        "genre": "Adult Fiction",
+        "title": "The Book Thief",
+        "id": "juueom8cpLZvs4fZHdDd"
+      },
+      {
+        "type": "fiction",
+        "genre": "Romance",
+        "title": "The Businesswoman and Her Bodyguard",
+        "id": "vxElH4I71CEIAKxbU9bD"
+      },
+      {
+        "type": "nonfiction",
+        "genre": "Humor",
+        "title": "The Comedy of Errors: Funny Tales of Mistaken Identities",
+        "id": "4KEEDPYfLpRWutFuYceS"
+      },
+      {
+        "type": "fiction",
+        "genre": "Horror",
+        "title": "The Doll Factory",
+        "id": "cmjhremv1000ds60ew177qfxg"
+      },
+      {
+        "type": "fiction",
+        "genre": "Contemporary Fiction",
+        "title": "The Hate U Give",
+        "id": "b20DYB3KOU2GLYJv1Y1r"
+      },
+      {
+        "type": "fiction",
+        "genre": "Westerns",
+        "title": "The Prospector's Gamble",
+        "id": "Bm9w2y9wQAf1Fr4mYUzA"
+      },
+      {
+        "type": "fiction",
+        "genre": "Young Adult Fiction",
+        "title": "The Silent Truth",
+        "id": "MMmPVvbXr1LnBo7P0oTT"
       }
     ],
     "Origins 2": [

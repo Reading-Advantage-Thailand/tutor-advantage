@@ -3,24 +3,66 @@ import * as React from "react";
 const translationCache = new Map<string, string>();
 
 function normalizeText(text: unknown): string {
-  return String(text || "").trim();
+  return String(text || "")
+    .trim()
+    .replace(/(^|\n)\s*[0-9๐-๙]+[.)]\s*/g, "$1")
+    .trim();
+}
+
+function expandNumberedTranslations(
+  translations: string[] = [],
+  expectedLength: number,
+): string[] {
+  const hasNumberedBlock = translations.some(
+    (translation) =>
+      Array.from(
+        String(translation || "").matchAll(/(^|\n)\s*[0-9๐-๙]+[.)]\s*/g),
+      ).length > 1,
+  );
+
+  if (translations.length === expectedLength && !hasNumberedBlock) {
+    return translations.map(normalizeText);
+  }
+
+  const joined = translations.map(normalizeText).filter(Boolean).join("\n");
+  if (!joined) return translations;
+
+  const markers = Array.from(
+    joined.matchAll(/(^|\n)\s*[0-9๐-๙]+[.)]\s*/g),
+  );
+  if (markers.length < 2) return translations.map(normalizeText);
+
+  const expanded = markers.map((marker, index) => {
+    const start = (marker.index ?? 0) + marker[0].length;
+    const nextMarker = markers[index + 1];
+    const end = nextMarker?.index ?? joined.length;
+    return normalizeText(joined.slice(start, end));
+  });
+
+  return expanded.length >= expectedLength ? expanded : translations;
 }
 
 function getCachedTranslations(
   texts: string[],
   initialTranslations: string[] = [],
 ): string[] {
+  const expandedInitialTranslations = expandNumberedTranslations(
+    initialTranslations,
+    texts.length,
+  );
+
   return texts.map((text, index) => {
     const normalized = normalizeText(text);
     if (!normalized) return "";
 
-    const initial = normalizeText(initialTranslations[index]);
+    const initial = normalizeText(expandedInitialTranslations[index]);
     if (initial) {
       translationCache.set(normalized, initial);
       return initial;
     }
 
-    return translationCache.get(normalized) || "";
+    const cached = normalizeText(translationCache.get(normalized));
+    return cached.includes("\n") ? "" : cached;
   });
 }
 

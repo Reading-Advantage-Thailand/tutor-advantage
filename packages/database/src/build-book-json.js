@@ -20,13 +20,20 @@ const SERIES = {
 // [id, type, genre, title] — fallbacks only; RA DB values win when the id resolves.
 const BOOKS = {
   "Origins 1": [
-    ["MMmPVvbXr1LnBo7P0oTT", "Fiction", "Young adult fiction", "The Silent Truth"],
-    ["Bm9w2y9wQAf1Fr4mYUzA", "Fiction", "Western", "The Prospector's Gamble"],
-    ["4KEEDPYfLpRWutFuYceS", "Non-fiction", "Humor", "The Comedy of Errors: Funny Tales of Mistaken Identities"],
-    ["cmmki0z6z0002s60e30ppdzvg", "Non-fiction", "Children's Nonfiction", "Phones and Our Feelings"],
+    ["OyEA0jRP5GnpFZBCrgMl", "Non-fiction", "Parenting", "A Happy Day for Mia"],
+    ["lsiMiDgyCV9MbBjKjsyl", "Non-fiction", "Travel", "Anna's First Trip to Japan"],
+    ["KkJOkCCBrfYWBMtrw7AZ", "Fiction", "Young Adult Fiction", "Anna's Secret Garden"],
+    ["MjtQFpxdhlewLdgvwZMx", "Non-fiction", "Biographies", "Beyoncé: From Destiny's Child to Queen B"],
     ["cmn57x04l00f2s60et9r9k1c6", "Fiction", "Historical fiction", "Lucius's Choice"],
-    ["cmjhremv1000ds60ew177qfxg", "Fiction", "Horror", "The Doll Factory"],
     ["YbIjlPcIZbnBlcvJ1q9J", "Non-fiction", "Children's Nonfiction", "Our Earth is Too Warm"],
+    ["cmmki0z6z0002s60e30ppdzvg", "Non-fiction", "Children's Nonfiction", "Phones and Our Feelings"],
+    ["juueom8cpLZvs4fZHdDd", "Fiction", "Adult Fiction", "The Book Thief"],
+    ["vxElH4I71CEIAKxbU9bD", "Fiction", "Romance", "The Businesswoman and Her Bodyguard"],
+    ["4KEEDPYfLpRWutFuYceS", "Non-fiction", "Humor", "The Comedy of Errors: Funny Tales of Mistaken Identities"],
+    ["cmjhremv1000ds60ew177qfxg", "Fiction", "Horror", "The Doll Factory"],
+    ["b20DYB3KOU2GLYJv1Y1r", "Fiction", "Contemporary Fiction", "The Hate U Give"],
+    ["Bm9w2y9wQAf1Fr4mYUzA", "Fiction", "Western", "The Prospector's Gamble"],
+    ["MMmPVvbXr1LnBo7P0oTT", "Fiction", "Young adult fiction", "The Silent Truth"],
   ],
   "Origins 2": [
     ["AgYv5H7fCZL2u2N4qBwT", "Fiction", "Young adult fiction", "The Silent Rebellion"],

@@ -10,6 +10,85 @@ import { redeemCoupon, validateCoupon, CouponError } from "../services/couponSer
 // Maximum live-teaching hours allowed per class schedule
 const MAX_CLASS_HOURS = 22;
 
+const curatedArticleOrder = new Map<string, number>(
+  [
+    "cmjfm919v0232s60eo0tzv1x8",
+    "i4iNzw6AArWrTOU0SE6f",
+    "cmixr8kil000us60esgwguw0z",
+    "mQBtacaks53c7Djci9n6",
+    "cmgu0xb0i00rqs60e2djeq0xt",
+    "h31ImmMoHtDQS3jxOuOy",
+    "PfzjAu0eSyuUokFK2rnk",
+    "7UQDbGLuIPZbE7yYa33x",
+    "5a3MFFCMZSJLOc2CXiy2",
+    "ok5b5Be1QOBPzX2as2S4",
+    "BHusTKr0h8i6vOhbrfpx",
+    "rY1QKnciUBBhE9MyadbF",
+    "cmitgx6xd000ts60ew7qdd5a4",
+    "AEh9oRp1WDa8CApSdrCr",
+    "KzUwB5Uc6139Fw5fcnpx",
+    "cmkgrpes5003os60ex7cqbzva",
+    "9VRaZ4coQyiz4gJW91av",
+    "cml5szh5o00aas60e5wv1q9ez",
+    "XTXZcvdQ1juCo7wSnmtZ",
+    "iSYAqKTgtXABlx5IYuNY",
+    "CRiCha2pxDeP0xx1KqnS",
+    "xAo8XxZoSl5fpbkicsqe",
+    "4ZZeSspAGo285csIxNcc",
+    "gyWWNG0hzEt4bFEHkGX1",
+    "ayOLHwUR3JnnjVsY43yc",
+    "BwJEsTpAiGfxqxvSmRZ3",
+    "7MrOtihsv9tsz3SaBfVC",
+    "7apvHQXjJb8od9KowL92",
+    "0tVl8K7MCiecTPJ1lmdE",
+    "cmkmhgh5501lds60ev7s791s5",
+    "cmjw1t3ky00mps60etppweqpu",
+    "cmmscy4zq00wys60eetu0jbr2",
+    "5whpV1ZrLk7qb1lgAJnT",
+    "fzMRYypdLSTFhc8rdM7h",
+    "1lnzzXylJmtQWd39qmkQ",
+    "vGLJOdqIOYsJS0orm79e",
+    "ZT2sa9qiH0lHnYH9ayfF",
+    "cmmtse9p801a4s60en4k8d32q",
+    "nFZObhzKbSGn5IFMbmf4",
+    "AgYv5H7fCZL2u2N4qBwT",
+    "uT67FwqUlttv74p2snCr",
+    "OyEA0jRP5GnpFZBCrgMl",
+    "lsiMiDgyCV9MbBjKjsyl",
+    "KkJOkCCBrfYWBMtrw7AZ",
+    "MjtQFpxdhlewLdgvwZMx",
+    "cmn57x04l00f2s60et9r9k1c6",
+    "YbIjlPcIZbnBlcvJ1q9J",
+    "cmmki0z6z0002s60e30ppdzvg",
+    "juueom8cpLZvs4fZHdDd",
+    "vxElH4I71CEIAKxbU9bD",
+    "4KEEDPYfLpRWutFuYceS",
+    "cmjhremv1000ds60ew177qfxg",
+    "b20DYB3KOU2GLYJv1Y1r",
+    "Bm9w2y9wQAf1Fr4mYUzA",
+    "MMmPVvbXr1LnBo7P0oTT",
+  ].map((articleId, index) => [articleId, index]),
+);
+
+const hiddenCuratedArticleIds = new Set(["44QFyTUgeUGPKf9gfLlL"]);
+
+function compareArticlesByCatalogOrder<
+  T extends { articleId: string; createdAt?: Date | string | null },
+>(a: T, b: T) {
+  const aOrder = curatedArticleOrder.get(a.articleId);
+  const bOrder = curatedArticleOrder.get(b.articleId);
+
+  if (aOrder !== undefined || bOrder !== undefined) {
+    return (aOrder ?? Number.MAX_SAFE_INTEGER) - (bOrder ?? Number.MAX_SAFE_INTEGER);
+  }
+
+  const aCreatedAt = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+  const bCreatedAt = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+  if (aCreatedAt !== bCreatedAt) return aCreatedAt - bCreatedAt;
+
+  return a.articleId.localeCompare(b.articleId);
+}
+
 export async function createClass(req: AuthenticatedRequest, res: Response) {
   try {
     const userId = req.user?.userId;
@@ -1201,7 +1280,9 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
       ]
     });
 
-    let dbArticles = [...dbArticlesRaw];
+    let dbArticles = dbArticlesRaw
+      .filter((article) => !hiddenCuratedArticleIds.has(article.articleId))
+      .sort(compareArticlesByCatalogOrder);
 
     if (cls.isDemo) {
       dbArticles = dbArticles.slice(0, 1);

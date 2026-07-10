@@ -153,7 +153,7 @@ const ASSETS = {
 };
 
 const DEFAULT_STAGE: StageSize = { width: 960, height: 540 };
-const TICK_MS = 60;
+const TICK_MS = 1000 / 60;
 const GATE_ANIM_MS = 160;
 const MAX_ROUND_WORDS = 10;
 const MS_PER_WORD = 5000;
@@ -698,16 +698,41 @@ export function DragonFlightGame({
     setDisplayDragonCount(state.dragonCount);
   }, [state.dragonCount, state.status]);
 
-  useInterval(
-    () => {
-      setState((prev) => advanceDragonFlightTime(prev, TICK_MS));
+  const createGatePair = useCallback(
+    (round?: DragonFlightRound) => {
+      if (!layout || gameVocabulary.length === 0) return null;
+      const nextWord = round ? undefined : getNextVocabularyItem();
+
+      gateIdRef.current += 1;
+      return {
+        id: `gate-${gateIdRef.current}`,
+        round: round ?? buildGateRound(gameVocabulary, nextWord),
+        y: -layout.leftGate.height,
+      };
+    },
+    [gameVocabulary, getNextVocabularyItem, layout],
+  );
+
+  useEffect(() => {
+    if (state.status !== "running" || !layout || !hasStarted) {
+      return () => undefined;
+    }
+
+    let frameId = 0;
+    let lastFrameTime = performance.now();
+
+    const tick = (frameTime: number) => {
+      const deltaMs = Math.min(frameTime - lastFrameTime, 50);
+      lastFrameTime = frameTime;
+      const deltaSeconds = deltaMs / 1000;
+
+      setState((prev) => advanceDragonFlightTime(prev, deltaMs));
 
       if (!layout) return;
 
       const gateStartY = -layout.leftGate.height;
       const gateEndY = stageSize.height + layout.leftGate.height;
       const gateSpeed = (gateEndY - gateStartY) / (MS_PER_WORD / 1000);
-      const deltaSeconds = TICK_MS / 1000;
 
       setGatePairs((prev) => {
         const nextPairs = prev
@@ -730,7 +755,8 @@ export function DragonFlightGame({
 
       setPlayerX((prev) => {
         const target = playerTargetRef.current ?? layout.playerX;
-        const next = prev + (target - prev) * PLAYER_LERP;
+        const lerpAmount = 1 - Math.pow(1 - PLAYER_LERP, deltaMs / TICK_MS);
+        const next = prev + (target - prev) * lerpAmount;
         const isNearTarget = Math.abs(target - next) < 1.5;
 
         if (isNearTarget && pendingSelectionRef.current) {
@@ -804,24 +830,25 @@ export function DragonFlightGame({
 
         return isNearTarget ? target : next;
       });
-    },
-    state.status === "running" && layout && hasStarted ? TICK_MS : null,
-  );
 
-  const createGatePair = useCallback(
-    (round?: DragonFlightRound) => {
-      if (!layout || gameVocabulary.length === 0) return null;
-      const nextWord = round ? undefined : getNextVocabularyItem();
+      frameId = requestAnimationFrame(tick);
+    };
 
-      gateIdRef.current += 1;
-      return {
-        id: `gate-${gateIdRef.current}`,
-        round: round ?? buildGateRound(gameVocabulary, nextWord),
-        y: -layout.leftGate.height,
-      };
-    },
-    [gameVocabulary, getNextVocabularyItem, layout],
-  );
+    frameId = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
+  }, [
+    DIFFICULTY_SETTINGS,
+    createGatePair,
+    difficulty,
+    hasStarted,
+    layout,
+    playSound,
+    recordAdaptiveResponse,
+    stageSize.height,
+    state.status,
+  ]);
 
   useEffect(() => {
     if (!layout || gatePairs.length > 0) return;
@@ -852,22 +879,37 @@ export function DragonFlightGame({
     state.status === "boss" && hasStarted ? BOSS_ANIM_MS : null,
   );
 
-  useInterval(
-    () => {
+  useEffect(() => {
+    if (state.status !== "boss" || !layout || !hasStarted) {
+      return () => undefined;
+    }
+
+    let frameId = 0;
+    let lastFrameTime = performance.now();
+
+    const tick = (frameTime: number) => {
+      const deltaMs = Math.min(frameTime - lastFrameTime, 50);
+      lastFrameTime = frameTime;
       if (!layout) return;
       const gateStartY = -layout.leftGate.height;
       const gateEndY = stageSize.height + layout.leftGate.height;
       const gateSpeed = (gateEndY - gateStartY) / (MS_PER_WORD / 1000);
-      const deltaSeconds = TICK_MS / 1000;
+      const deltaSeconds = deltaMs / 1000;
       const targetY = layout.playerY;
 
       setBossY((prev) => {
         const next = prev + gateSpeed * deltaSeconds;
         return next >= targetY ? targetY : next;
       });
-    },
-    state.status === "boss" && layout && hasStarted ? TICK_MS : null,
-  );
+
+      frameId = requestAnimationFrame(tick);
+    };
+
+    frameId = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
+  }, [hasStarted, layout, stageSize.height, state.status]);
 
   useInterval(
     () => {
