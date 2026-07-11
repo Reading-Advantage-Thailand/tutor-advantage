@@ -101,10 +101,12 @@ export default function TutorLobbyClient({
     articleData,
     totalAnswered,
     allAnsweredData,
+    questionEnded,
     error,
     flagCounts,
     changePhase,
     syncActiveSentence,
+    endQuestion,
     startGameVote,
     startGameCountdown,
     nudgeStudent,
@@ -160,10 +162,12 @@ export default function TutorLobbyClient({
               participants={participants}
               totalAnswered={totalAnswered}
               allAnsweredData={allAnsweredData}
+              questionEnded={questionEnded}
               articleData={articleData ?? undefined}
               flagCounts={flagCounts}
               changePhase={changePhase}
               syncActiveSentence={syncActiveSentence}
+              endQuestion={endQuestion}
               startGameVote={startGameVote}
               startGameCountdown={startGameCountdown}
               onFinishSession={() => {

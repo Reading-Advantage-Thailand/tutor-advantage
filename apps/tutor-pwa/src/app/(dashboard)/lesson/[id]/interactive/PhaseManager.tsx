@@ -86,9 +86,11 @@ interface PhaseManagerProps {
   participants: Participant[];
   totalAnswered: number;
   allAnsweredData: AnswerData[];
+  questionEnded?: boolean;
   articleData?: ArticleData;
   changePhase: (phase: number) => void;
   syncActiveSentence: (index: number) => void;
+  endQuestion?: () => void;
   startGameVote: (phase?: number) => void;
   startGameCountdown: (durationMs?: number) => void;
   sessionData?: TutorSessionData;
@@ -315,9 +317,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   participants,
   totalAnswered,
   allAnsweredData,
+  questionEnded = false,
   articleData,
   changePhase,
   syncActiveSentence,
+  endQuestion,
   startGameVote,
   startGameCountdown,
   sessionData,
@@ -357,6 +361,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     currentPhase,
   );
   const totalParticipants = participants.length;
+  const showQuestionResults = questionEnded || allAnsweredData.length > 0;
 
   // Can proceed if everyone answered OR if results are already showing OR if no participants
   const canProceed =
@@ -365,8 +370,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     (isGamePhase && !hasPlayableGameForPhase) ||
     (isGamePhase && gameState?.status === "results" && gameResultsCount > 0) ||
     (isGamePhase && totalParticipants > 0 && gameResultsCount >= totalParticipants) ||
+    questionEnded ||
     totalAnswered >= totalParticipants ||
-    (allAnsweredData && allAnsweredData.length > 0);
+    showQuestionResults;
 
   React.useEffect(() => {
     if (canProceed) {
@@ -393,6 +399,12 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       }
     }
   }, [currentPhase, isChangingPhase, canProceedDelayed, changePhase]);
+
+  const handleEndQuestion = React.useCallback(() => {
+    if (!endQuestion || questionEnded || totalParticipants === 0) return;
+    playSound("submit");
+    endQuestion();
+  }, [endQuestion, questionEnded, totalParticipants]);
 
   const toggleMockLeaderboard = React.useCallback(() => {
     if (mockLeaderboard) {
@@ -499,7 +511,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   // Confetti effect when results are ready
   React.useEffect(() => {
-    if ([7, 9, 11, 12].includes(currentPhase) && allAnsweredData.length > 0) {
+    if ([7, 9, 11, 12].includes(currentPhase) && showQuestionResults) {
       confetti({
         particleCount: 150,
         spread: 80,
@@ -508,7 +520,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         disableForReducedMotion: true,
       });
     }
-  }, [currentPhase, allAnsweredData.length]);
+  }, [currentPhase, showQuestionResults]);
 
   const renderLobby = () => (
     <div className="flex-1 flex flex-col items-center justify-center">
@@ -552,7 +564,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     correctAnswer: string,
     answerTranslationItems: Array<{ label: string; text: string }> = [],
   ) => {
-    if (allAnsweredData.length > 0) {
+    if (showQuestionResults) {
       // Show results chart — EduPop colors
       const optionFills: Record<string, string> = {
         A: "#f43f5e",
@@ -1020,7 +1032,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       articleData?.shortAnswerQuestions?.[0];
 
     // ── Results view (after all students answered) ──────────────────────────
-    if (allAnsweredData.length > 0) {
+    if (showQuestionResults) {
       const excellentCount = allAnsweredData.filter(
         (a) => (a.answer?.aiScore || 0) >= 4,
       ).length;
@@ -1591,7 +1603,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       articleData?.shortAnswerQuestions?.[idx]?.question ||
       t("lesson.interactive.writingPromptLabel");
 
-    if (allAnsweredData.length > 0) {
+    if (showQuestionResults) {
       const sum = allAnsweredData.reduce(
         (acc, a) => acc + (a.answer?.aiScore || 0),
         0,
@@ -1710,7 +1722,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         <p className="text-xl font-bold text-foreground leading-snug">
           {t("lesson.interactive.reflectionPrompt")}
         </p>
-        {allAnsweredData.length > 0 && (
+        {showQuestionResults && (
           <p className="text-emerald-600 dark:text-emerald-400 font-semibold mt-4">
             {allAnsweredData.length}{" "}
             {t("lesson.interactive.reflectionSubmitted")}
@@ -2514,6 +2526,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const isNextDisabled = !canProceedDelayed || isChangingPhase;
     const gameStatus = gameState?.status;
     const hasGameResults = isGamePhase && gameResultsCount > 0;
+    const canEndQuestion =
+      isInteractivePhase &&
+      !questionEnded &&
+      totalParticipants > 0 &&
+      totalAnswered < totalParticipants;
     const useGamePrimaryAction = isGamePhase && !hasGameResults && hasPlayableGameForPhase;
     const gamePrimaryLabel =
       gameStatus === "voting" && !hasPlayableGameForPhase
@@ -2680,6 +2697,16 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             >
               {t("lesson.interactive.previous")}
             </button>
+            {canEndQuestion && (
+              <button
+                onClick={handleEndQuestion}
+                disabled={!endQuestion}
+                title={`แสดงผลจากคำตอบ ${totalAnswered}/${totalParticipants} คน`}
+                className="flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-2 text-sm font-black text-slate-950 shadow-lg transition-all hover:bg-amber-400 active:scale-95 disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                จบคำถาม
+              </button>
+            )}
             <button
               onClick={useGamePrimaryAction ? handleGamePrimaryAction : handleNextPhase}
               disabled={useGamePrimaryAction ? isGamePrimaryDisabled : isNextDisabled}

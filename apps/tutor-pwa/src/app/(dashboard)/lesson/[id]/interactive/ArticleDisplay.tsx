@@ -12,47 +12,34 @@ interface ArticleDisplayProps {
   onActiveIdxChange?: (idx: number) => void;
 }
 
-function speakEnglish(text: string) {
-  if (
-    typeof window === "undefined" ||
-    !window.speechSynthesis ||
-    !text.trim()
-  ) {
-    return;
-  }
+const AUDIO_RATES = [0.75, 0.85, 1, 1.15] as const;
+const READING_ADVANTAGE_BUCKET = "artifacts.reading-advantage.appspot.com";
+const SENTENCE_STOP_MARGIN_SECONDS = 0.06;
 
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "en-US";
-  utterance.rate = 0.85;
-  window.speechSynthesis.speak(utterance);
-}
+const readingAdvantageTtsUrl = (fileName: string, cacheKey: string) => {
+  const objectPath = fileName.startsWith("tts/") ? fileName : `tts/${fileName}`;
+  return `https://storage.googleapis.com/${READING_ADVANTAGE_BUCKET}/${objectPath}?v=${cacheKey}`;
+};
 
-const TTS_RATES = [0.75, 0.85, 1, 1.15] as const;
+const readingAdvantageWordAudioUrl = (fileName: string) => {
+  const objectPath = fileName.startsWith("audios-words/")
+    ? fileName
+    : `audios-words/${fileName}`;
+  return `https://storage.googleapis.com/${READING_ADVANTAGE_BUCKET}/${objectPath}`;
+};
 
-function speakEnglishWithRate(
-  text: string,
-  rate: number,
-  onDone?: () => void,
-) {
-  if (
-    typeof window === "undefined" ||
-    !window.speechSynthesis ||
-    !text.trim()
-  ) {
-    onDone?.();
-    return false;
-  }
+const getSentenceText = (sentence: any) =>
+  String(
+    typeof sentence === "object"
+      ? sentence.sentences || sentence.text || sentence.sentence || ""
+      : sentence || "",
+  );
 
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "en-US";
-  utterance.rate = rate;
-  utterance.onend = () => onDone?.();
-  utterance.onerror = () => onDone?.();
-  window.speechSynthesis.speak(utterance);
-  return true;
-}
+const getSentenceTime = (sentence: any) => {
+  if (typeof sentence !== "object") return 0;
+  const value = Number(sentence.timeSeconds ?? sentence.startTime ?? 0);
+  return Number.isFinite(value) ? value : 0;
+};
 
 function GuideQuestionCard({
   label,
@@ -72,14 +59,6 @@ function GuideQuestionCard({
         <p className="text-foreground text-xs font-semibold leading-relaxed flex-1">
           {label}. {question}
         </p>
-        <button
-          type="button"
-          onClick={() => speakEnglish(question)}
-          title={t("lesson.interactive.speakTitle")}
-          className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-300 transition-all hover:bg-teal-500/20 active:scale-95"
-        >
-          <Volume2 size={14} />
-        </button>
       </div>
       {(thaiQuestion || loading) && (
         <p className="mt-2 text-[11px] font-medium leading-relaxed text-teal-700 dark:text-teal-300">
@@ -113,12 +92,14 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   // ── Audio state for Phase 9 ─────────────────────────────────
   const audioRef = useRef<HTMLAudioElement>(null);
+  const clipAudioRef = useRef<HTMLAudioElement | null>(null);
+  const clipStopRafRef = useRef<number | null>(null);
   const phase4PassageRef = useRef<HTMLDivElement>(null);
   const phase4VocabRef = useRef<HTMLDivElement>(null);
   const stopAtRef = useRef<number>(Infinity); // for single-sentence mode
+  const sentenceStopRafRef = useRef<number | null>(null);
   const isSeekingRef = useRef(false); // prevent highlight flickering during seek
-  const ttsRequestRef = useRef(0);
-  const sentenceTtsActiveRef = useRef(false);
+  const audioRequestRef = useRef(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
   const [currentTime, setCurrentTime] = useState(0);
@@ -130,12 +111,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   );
 
   const sentenceTexts = useMemo(
-    () =>
-      sentences.map((sentence: any) =>
-        typeof sentence === "object"
-          ? String(sentence.sentences || "")
-          : String(sentence || ""),
-      ),
+    () => sentences.map((sentence: any) => getSentenceText(sentence)),
     [sentences],
   );
   const storedThaiSentences = useMemo(
@@ -190,61 +166,235 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     };
   }, [phase, thaiPassage, words.length]);
 
-  const audioUrl = articleData?.id
-    ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/tts/${articleData.id}.mp3`
-    : null;
+  const articleId = String(articleData?.id || articleData?.articleId || "");
+  const readingAdvantageAudioUrl = (() => {
+    if (!articleId) return null;
+    const rawAudioUrl = String(
+      articleData?.audio_url ||
+        articleData?.raAudioUrl ||
+        articleData?.readingAdvantageAudioUrl ||
+        "",
+    );
+    if (rawAudioUrl.startsWith("http")) return rawAudioUrl;
+    return readingAdvantageTtsUrl(rawAudioUrl || `${articleId}.mp3`, articleId);
+  })();
+  const readingAdvantageWordsAudioUrl = (() => {
+    if (!articleId) return "";
+    const rawAudioUrl = String(
+      articleData?.audio_word_url ||
+        articleData?.audioWordUrl ||
+        articleData?.readingAdvantageWordsAudioUrl ||
+        "",
+    );
+    if (rawAudioUrl.startsWith("http")) return rawAudioUrl;
+    return readingAdvantageWordAudioUrl(rawAudioUrl || `${articleId}.mp3`);
+  })();
 
-  const getSentenceText = (sentenceIdx: number) => {
-    const item = sentences[sentenceIdx];
-    return typeof item === "object"
-      ? String(item?.sentences || "")
-      : String(item || "");
+  const playClipUrl = (url?: string | null) => {
+    if (!url) return;
+    audioRequestRef.current++;
+    clearClipStopMonitor();
+    audioRef.current?.pause();
+    clipAudioRef.current?.pause();
+    const clip = new Audio(url);
+    clipAudioRef.current = clip;
+    clip.playbackRate = speechRate;
+    setIsPlaying(true);
+    clip.onended = () => setIsPlaying(false);
+    clip.onerror = () => setIsPlaying(false);
+    clip.play().catch(() => setIsPlaying(false));
   };
 
   useEffect(() => {
     if (audioRef.current) audioRef.current.playbackRate = speechRate;
+    if (clipAudioRef.current) clipAudioRef.current.playbackRate = speechRate;
   }, [speechRate]);
 
   useEffect(() => {
     return () => {
-      if (typeof window !== "undefined" && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
+      clearClipStopMonitor();
+      if (sentenceStopRafRef.current !== null) {
+        cancelAnimationFrame(sentenceStopRafRef.current);
       }
+      clipAudioRef.current?.pause();
+      clipAudioRef.current = null;
     };
   }, []);
+
+  const clearClipStopMonitor = () => {
+    if (clipStopRafRef.current !== null) {
+      cancelAnimationFrame(clipStopRafRef.current);
+      clipStopRafRef.current = null;
+    }
+  };
+
+  const getWordTime = (word: any, fallbackIndex: number) => {
+    const value = Number(word?.timeSeconds ?? word?.startTime ?? fallbackIndex * 2);
+    return Number.isFinite(value) ? value : fallbackIndex * 2;
+  };
+
+  const getWordEndTime = (index: number, start: number) => {
+    const nextWord = words[index + 1];
+    const rawEnd = nextWord ? getWordTime(nextWord, index + 1) : start + 2.5;
+    return Math.max(start + 0.1, rawEnd - SENTENCE_STOP_MARGIN_SECONDS);
+  };
+
+  const playWordFromReadingAdvantage = (index: number) => {
+    if (!readingAdvantageWordsAudioUrl) return;
+    const start = getWordTime(words[index], index);
+    const end = getWordEndTime(index, start);
+
+    audioRequestRef.current++;
+    audioRef.current?.pause();
+    clearClipStopMonitor();
+    clipAudioRef.current?.pause();
+
+    const clip = new Audio(readingAdvantageWordsAudioUrl);
+    clipAudioRef.current = clip;
+    clip.playbackRate = speechRate;
+    try {
+      clip.currentTime = start;
+    } catch {
+      // Some browsers only allow seeking after metadata is available.
+    }
+    clip.onloadedmetadata = () => {
+      clip.currentTime = start;
+    };
+    clip.onended = () => {
+      clearClipStopMonitor();
+      setIsPlaying(false);
+    };
+    clip.onerror = () => {
+      clearClipStopMonitor();
+      setIsPlaying(false);
+    };
+
+    const tick = () => {
+      if (clip.paused) {
+        clipStopRafRef.current = null;
+        return;
+      }
+      if (clip.currentTime >= end) {
+        clip.pause();
+        clearClipStopMonitor();
+        setIsPlaying(false);
+        return;
+      }
+      clipStopRafRef.current = requestAnimationFrame(tick);
+    };
+
+    setIsPlaying(true);
+    clip
+      .play()
+      .then(() => {
+        if (clip.readyState >= 1) clip.currentTime = start;
+        clipStopRafRef.current = requestAnimationFrame(tick);
+      })
+      .catch(() => setIsPlaying(false));
+  };
+
+  const clearSentenceStopMonitor = () => {
+    if (sentenceStopRafRef.current !== null) {
+      cancelAnimationFrame(sentenceStopRafRef.current);
+      sentenceStopRafRef.current = null;
+    }
+  };
+
+  const stopSingleSentencePlayback = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.pause();
+    audio.currentTime = stopAtRef.current;
+    stopAtRef.current = Infinity;
+    clearSentenceStopMonitor();
+    setIsPlaying(false);
+  };
+
+  const startSentenceStopMonitor = () => {
+    clearSentenceStopMonitor();
+    const tick = () => {
+      const audio = audioRef.current;
+      if (!audio || stopAtRef.current === Infinity || audio.paused) {
+        sentenceStopRafRef.current = null;
+        return;
+      }
+      if (audio.currentTime >= stopAtRef.current) {
+        stopSingleSentencePlayback();
+        return;
+      }
+      sentenceStopRafRef.current = requestAnimationFrame(tick);
+    };
+    sentenceStopRafRef.current = requestAnimationFrame(tick);
+  };
 
   const handleTimeUpdate = () => {
     if (!audioRef.current) return;
     const t = audioRef.current.currentTime;
     setCurrentTime(t);
-    // Stop at boundary (single-sentence mode)
+
     if (t >= stopAtRef.current) {
-      audioRef.current.pause();
-      stopAtRef.current = Infinity;
+      stopSingleSentencePlayback();
+      return;
+    }
+
+    const idx = findSentenceIndexAtTime(t);
+    if (idx !== activeIdx) setActiveIdx(idx);
+
+    if (isSeekingRef.current) return;
+  };
+
+  const findSentenceIndexAtTime = (time: number) => {
+    let idx = -1;
+    for (let i = 0; i < sentences.length; i++) {
+      const ts = getSentenceTime(sentences[i]);
+      if (ts <= time + 0.05) idx = i;
+      else break;
+    }
+    return idx;
+  };
+
+  const playAudioSentenceFallback = (sentenceIdx: number) => {
+    const audio = audioRef.current;
+    const item = sentences[sentenceIdx];
+    if (!audio || !item) {
       setIsPlaying(false);
       return;
     }
-    if (sentenceTtsActiveRef.current && audioRef.current.paused) return;
-    if (isSeekingRef.current) return;
-    // Find the last sentence whose timeSeconds <= current time
-    let idx = -1;
-    for (let i = 0; i < sentences.length; i++) {
-      const ts =
-        typeof sentences[i] === "object" ? sentences[i].timeSeconds : 0;
-      if (ts <= t) idx = i;
-      else break;
-    }
-    setActiveIdx(idx);
+
+    const start = Math.max(0, getSentenceTime(item));
+    const nextItem = sentences[sentenceIdx + 1];
+    const rawNextStart = nextItem
+      ? getSentenceTime(nextItem)
+      : Number.isFinite(duration) && duration > start
+        ? duration
+        : Infinity;
+    const nextStart = Number.isFinite(rawNextStart)
+      ? Math.max(start, rawNextStart - SENTENCE_STOP_MARGIN_SECONDS)
+      : rawNextStart;
+
+    stopAtRef.current = nextStart;
+    clearSentenceStopMonitor();
+    clipAudioRef.current?.pause();
+    audio.pause();
+    audio.playbackRate = speechRate;
+    audio.currentTime = start;
+    setCurrentTime(start);
+    setIsPlaying(true);
+    audio
+      .play()
+      .then(startSentenceStopMonitor)
+      .catch(() => {
+        stopAtRef.current = Infinity;
+        clearSentenceStopMonitor();
+        setIsPlaying(false);
+      });
   };
 
-  // Read a single sentence with browser TTS. This avoids relying on imperfect audio timestamps.
   const seekToSentence = (sentenceIdx: number) => {
-    const sentenceText = getSentenceText(sentenceIdx);
-    if (!sentenceText) return;
-    const requestId = ++ttsRequestRef.current;
+    const requestId = ++audioRequestRef.current;
     const item = sentences[sentenceIdx];
-    const ts: number = typeof item === "object" ? (item.timeSeconds ?? 0) : 0;
-    sentenceTtsActiveRef.current = true;
+    const ts = getSentenceTime(item);
+
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = ts;
@@ -253,32 +403,35 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     stopAtRef.current = Infinity;
     isSeekingRef.current = false;
     setActiveIdx(sentenceIdx);
-    setIsPlaying(false);
-    speakEnglishWithRate(sentenceText, speechRate, () => {
-      if (requestId === ttsRequestRef.current) setIsPlaying(false);
-    });
+
+    if (phase === 3) {
+      playAudioSentenceFallback(sentenceIdx);
+      return;
+    }
+
+    if (requestId === audioRequestRef.current) {
+      playAudioSentenceFallback(sentenceIdx);
+    }
   };
 
   const togglePlay = () => {
     if (!audioRef.current) return;
     if (isPlaying) {
-      ttsRequestRef.current++;
+      audioRequestRef.current++;
+      clearSentenceStopMonitor();
       audioRef.current.pause();
-      if (typeof window !== "undefined" && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
-      sentenceTtsActiveRef.current = false;
+      clipAudioRef.current?.pause();
       setIsPlaying(false);
     } else {
-      ttsRequestRef.current++;
-      if (typeof window !== "undefined" && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
-      sentenceTtsActiveRef.current = false;
+      audioRequestRef.current++;
+      clipAudioRef.current?.pause();
       stopAtRef.current = Infinity; // always continuous when pressing Play
+      clearSentenceStopMonitor();
       audioRef.current.playbackRate = speechRate;
-      audioRef.current.play();
-      setIsPlaying(true);
+      audioRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch(() => setIsPlaying(false));
     }
   };
 
@@ -619,13 +772,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             const c = cardColors[index % cardColors.length];
 
             const speak = () => {
-              if (typeof window !== "undefined" && window.speechSynthesis) {
-                window.speechSynthesis.cancel();
-                const utt = new SpeechSynthesisUtterance(String(wordText));
-                utt.lang = "en-US";
-                utt.rate = 0.85;
-                window.speechSynthesis.speak(utt);
-              }
+              playWordFromReadingAdvantage(index);
             };
 
             return (
@@ -643,6 +790,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                       #{index + 1}
                     </div>
                     <button
+                      type="button"
                       onClick={speak}
                       title={t("lesson.interactive.speakTitle")}
                       className={`w-8 h-8 rounded-full ${c.bg} text-white flex items-center justify-center shadow hover:opacity-80 active:scale-90 transition-all`}
@@ -829,7 +977,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     </div>
                     <button
                       type="button"
-                      onClick={() => speakEnglish(String(wordText))}
+                      onClick={() => playWordFromReadingAdvantage(i)}
                       title={t("lesson.interactive.speakTitle")}
                       className="col-start-3 row-start-1 inline-flex size-9 items-center justify-center self-center rounded-full bg-purple-500/10 text-purple-600 transition-all hover:bg-purple-500/20 active:scale-95 sm:col-start-auto sm:row-start-auto"
                     >
@@ -1124,12 +1272,13 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   /* ─── Step 3: Read the Article + Audio Player + Sentence Flag ───────────────── */
   if (phase === 3) {
     const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
+    const phase3AudioUrl = readingAdvantageAudioUrl;
     const fmtTime = (s: number) =>
       `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
     const cycleSpeechRate = () => {
-      const currentIndex = TTS_RATES.findIndex((rate) => rate === speechRate);
+      const currentIndex = AUDIO_RATES.findIndex((rate) => rate === speechRate);
       const nextRate =
-        TTS_RATES[(currentIndex + 1) % TTS_RATES.length] ?? TTS_RATES[0];
+        AUDIO_RATES[(currentIndex + 1) % AUDIO_RATES.length] ?? AUDIO_RATES[0];
       setSpeechRate(nextRate);
       if (audioRef.current) audioRef.current.playbackRate = nextRate;
     };
@@ -1147,9 +1296,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         const group: { idx: number; text: string; ts: number }[] = [];
         while (sentIdx < sentences.length) {
           const item = sentences[sentIdx];
-          const text: string = typeof item === "object" ? item.sentences : item;
-          const ts: number =
-            typeof item === "object" ? (item.timeSeconds ?? 0) : 0;
+          const text = getSentenceText(item);
+          const ts = getSentenceTime(item);
           const cleanText = text.replace(/^[""]|[""]$/g, "").trim();
           if (para.includes(cleanText) || para.includes(text.trim())) {
             group.push({ idx: sentIdx, text, ts });
@@ -1160,22 +1308,32 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         }
         return group;
       });
+    const mappedSentenceCount = paragraphGroups.reduce(
+      (total, group) => total + group.length,
+      0,
+    );
+    const readableParagraphGroups: { idx: number; text: string; ts: number }[][] =
+      mappedSentenceCount === sentences.length
+        ? paragraphGroups
+        : [
+            sentences.map((item: any, idx: number) => ({
+              idx,
+              text: getSentenceText(item),
+              ts: getSentenceTime(item),
+            })),
+          ];
 
     const activeSentence = activeIdx >= 0 ? sentences[activeIdx] : null;
     const activeThText = activeIdx >= 0 ? thaiSentences[activeIdx] : null;
-    const activeEnText = activeSentence
-      ? typeof activeSentence === "object"
-        ? activeSentence.sentences
-        : activeSentence
-      : null;
+    const activeEnText = activeSentence ? getSentenceText(activeSentence) : null;
 
     return (
       <div className="flex-1 flex flex-col w-full bg-muted relative">
         {/* Hidden audio */}
-        {audioUrl && (
+        {phase3AudioUrl && (
           <audio
             ref={audioRef}
-            src={audioUrl}
+            src={phase3AudioUrl}
             onTimeUpdate={handleTimeUpdate}
             onSeeked={() => {
               isSeekingRef.current = false;
@@ -1214,7 +1372,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             className="mx-auto w-full max-w-[1500px] rounded-3xl border border-border bg-card p-6 shadow-xl sm:p-8"
             style={{ fontFamily: "Georgia, serif" }}
           >
-            {paragraphGroups.map((group, pIdx) => (
+            {readableParagraphGroups.map((group, pIdx) => (
               <p
                 key={pIdx}
                 className="mb-5 text-base leading-[2] last:mb-0 sm:text-lg sm:leading-[2.05]"
@@ -1258,7 +1416,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         </div>
 
         {/* Floating mini audio player - bottom-center */}
-        {audioUrl && (
+        {phase3AudioUrl && (
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2">
             {/* Translation tooltip above player */}
             {activeEnText && (
@@ -1331,18 +1489,14 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     const rect = e.currentTarget.getBoundingClientRect();
                     const ratio = (e.clientX - rect.left) / rect.width;
                     if (audioRef.current) {
-                      ttsRequestRef.current++;
-                      if (
-                        typeof window !== "undefined" &&
-                        window.speechSynthesis
-                      ) {
-                        window.speechSynthesis.cancel();
-                      }
-                      sentenceTtsActiveRef.current = false;
+                      audioRequestRef.current++;
+                      clipAudioRef.current?.pause();
                       audioRef.current.playbackRate = speechRate;
                       audioRef.current.currentTime = ratio * duration;
-                      audioRef.current.play();
-                      setIsPlaying(true);
+                      audioRef.current
+                        .play()
+                        .then(() => setIsPlaying(true))
+                        .catch(() => setIsPlaying(false));
                     }
                   }}
                 >

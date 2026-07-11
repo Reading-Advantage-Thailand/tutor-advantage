@@ -27,6 +27,7 @@ export const useLessonSocket = (
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [totalAnswered, setTotalAnswered] = useState(0);
   const [allAnsweredData, setAllAnsweredData] = useState<AnswerData[]>([]);
+  const [questionEnded, setQuestionEnded] = useState(false);
   const [articleData, setArticleData] = useState<ArticleData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [flagCounts, setFlagCounts] = useState<Record<number, number>>({});
@@ -105,6 +106,7 @@ export const useLessonSocket = (
           });
           setTotalAnswered(0);
           setAllAnsweredData([]);
+          setQuestionEnded(false);
           // Sentence flags reset at the start of a fresh instructional cycle
           if (data.phase === 1) setFlagCounts({});
         });
@@ -119,6 +121,13 @@ export const useLessonSocket = (
 
         socketInstance.on('all_answered', (data) => {
           setAllAnsweredData(data.answers);
+          setQuestionEnded(true);
+        });
+
+        socketInstance.on('question_ended', (data) => {
+          setTotalAnswered(data.totalAnswered ?? data.answers?.length ?? 0);
+          setAllAnsweredData(data.answers || []);
+          setQuestionEnded(true);
         });
 
         const handleGameState = (data: { gameState: GamePhaseState }) => {
@@ -176,6 +185,12 @@ export const useLessonSocket = (
     }
   };
 
+  const endQuestion = () => {
+    if (socketRef.current && sessionData) {
+      socketRef.current.emit('end_question', { sessionId: sessionData.sessionId });
+    }
+  };
+
   const startGameVote = (phase?: number) => {
     if (socketRef.current && sessionData) {
       socketRef.current.emit('start_game_vote', { sessionId: sessionData.sessionId, phase: phase ?? sessionData.currentPhase });
@@ -221,11 +236,13 @@ export const useLessonSocket = (
     participants,
     totalAnswered,
     allAnsweredData,
+    questionEnded,
     articleData,
     error,
     flagCounts,
     changePhase,
     syncActiveSentence,
+    endQuestion,
     startGameVote,
     lockGameVote,
     startGameCountdown,

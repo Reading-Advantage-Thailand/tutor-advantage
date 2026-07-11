@@ -116,6 +116,8 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   const [paymentRequired, setPaymentRequired] = useState<PaymentRequiredData | null>(null);
   const [aiFeedback, setAiFeedback] = useState<{ score: number; feedback: string } | null>(null);
   const [hasAnswered, setHasAnswered] = useState(false);
+  const [questionEnded, setQuestionEnded] = useState(false);
+  const [missedQuestion, setMissedQuestion] = useState(false);
   const [isEveryoneReady, setIsEveryoneReady] = useState(false);
   const [nudgeMessage, setNudgeMessage] = useState<string | null>(null);
   const [kicked, setKicked] = useState<string | null>(null);
@@ -123,6 +125,11 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   const [languageAnswer, setLanguageAnswer] = useState<{ question: string; answer: string } | null>(null);
 
   const socketRef = useRef<Socket | null>(null);
+  const hasAnsweredRef = useRef(false);
+
+  useEffect(() => {
+    hasAnsweredRef.current = hasAnswered;
+  }, [hasAnswered]);
 
   useEffect(() => {
     if (!classId || !studentId) return;
@@ -176,6 +183,8 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
 
     newSocket.on('all_answered_broadcast', () => {
       setIsEveryoneReady(true);
+      setQuestionEnded(true);
+      setMissedQuestion(!hasAnsweredRef.current);
     });
 
     newSocket.on('error', (data: { message: string }) => {
@@ -190,6 +199,9 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     newSocket.on('phase_changed', (data: { phase: number; phaseSelectedIndices?: Record<number, number>; pairs?: LessonPair[] | null; gameState?: GamePhaseState | null }) => {
       setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null } : null);
       setHasAnswered(false);
+      hasAnsweredRef.current = false;
+      setQuestionEnded(false);
+      setMissedQuestion(false);
       setIsEveryoneReady(false);
       setAiFeedback(null);
       setLanguageAnswer(null);
@@ -207,6 +219,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
 
     newSocket.on('answer_received', () => {
       setHasAnswered(true);
+      hasAnsweredRef.current = true;
     });
 
     newSocket.on('ai_evaluation_result', (data: { aiScore: number; aiFeedback: string }) => {
@@ -224,6 +237,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
       setSessionData(prev => prev ? { ...prev, gameState: data.gameState } : prev);
       if (data.gameState.results?.[studentId]) {
         setHasAnswered(true);
+        hasAnsweredRef.current = true;
       }
     };
 
@@ -293,6 +307,8 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     error,
     paymentRequired,
     hasAnswered,
+    questionEnded,
+    missedQuestion,
     isEveryoneReady,
     aiFeedback,
     nudgeMessage,

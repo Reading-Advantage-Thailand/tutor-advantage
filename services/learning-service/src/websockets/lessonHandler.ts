@@ -562,6 +562,29 @@ export const setupLessonSocket = (io: Server) => {
       }
     });
 
+    socket.on("end_question", ({ sessionId }) => {
+      const activeSession = lessonSessionService.getSession(sessionId);
+      if (!isTutorSessionOwner(actor, socket.id, activeSession)) {
+        rejectForbidden("end_question");
+        return;
+      }
+
+      const result = lessonSessionService.endQuestion(sessionId);
+      if (result) {
+        io.to(result.session.tutorSocketId).emit("question_ended", {
+          answers: result.answers,
+          totalAnswered: result.answers.length,
+          totalParticipants: result.session.participants.size,
+        });
+        io.to(sessionId).emit("all_answered_broadcast", {
+          totalParticipants: result.session.participants.size,
+        });
+        logger.info(
+          `[Socket] Tutor ended question in session ${sessionId} phase ${result.session.currentPhase} with ${result.answers.length}/${result.session.participants.size} answers`,
+        );
+      }
+    });
+
     // Student submits answer
     socket.on("submit_answer", async ({ sessionId, answer, question, expectedAnswer }) => {
       const authorizedSession = lessonSessionService.getSession(sessionId);

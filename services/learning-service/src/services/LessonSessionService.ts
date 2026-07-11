@@ -587,6 +587,20 @@ class LessonSessionService {
     return { session, allAnswered };
   }
 
+  endQuestion(sessionId: string): { session: LessonSession; answers: Array<{ studentId: string; answer: any }> } | undefined {
+    const session = this.sessions.get(sessionId);
+    if (!session) return undefined;
+
+    const answers = Array.from(session.participants.values())
+      .filter((participant) => participant.hasAnsweredCurrentPhase)
+      .map((participant) => ({
+        studentId: participant.studentId,
+        answer: participant.latestAnswer,
+      }));
+
+    return { session, answers };
+  }
+
   // Toggle a student's flag on a sentence (Phase 7 Translation). Returns updated count for that sentence.
   toggleSentenceFlag(sessionId: string, studentId: string, sentenceIndex: number):
     { session: LessonSession; sentenceIndex: number; count: number; flagged: boolean } | undefined {

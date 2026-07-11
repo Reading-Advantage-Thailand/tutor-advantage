@@ -58,6 +58,7 @@ function PlayLessonContent() {
     isEveryoneReady,
     aiFeedback,
     languageAnswer,
+    missedQuestion,
     submitAnswer,
     kicked,
     flagCounts,
@@ -477,6 +478,28 @@ function PlayLessonContent() {
       </div>
     );
   };
+
+  const renderMissedQuestionSummary = () => (
+    <div className="flex flex-col items-stretch gap-3 w-full h-full overflow-y-auto pb-2">
+      <div className="bg-card rounded-3xl border-2 border-amber-400/40 shadow-xl overflow-hidden shrink-0">
+        <div className="bg-gradient-to-r from-amber-400 to-orange-500 px-5 py-3 text-center">
+          <span className="text-white text-xs font-black uppercase tracking-wider">
+            จบคำถามแล้ว
+          </span>
+        </div>
+        <div className="p-6 text-center">
+          <div className="text-4xl mb-2">⏰</div>
+          <h2 className="text-xl font-black text-foreground">
+            แย่จัง กดตอบคำถามไม่ทัน
+          </h2>
+          <p className="mt-2 text-sm font-semibold leading-relaxed text-muted-foreground">
+            คุณครูจบการถามแล้ว รอบนี้ระบบจะรอไปคำถามหรือกิจกรรมถัดไปนะ
+          </p>
+        </div>
+      </div>
+      <MobileLeaderboard participants={participants} studentId={studentId} />
+    </div>
+  );
 
   // ─── Compact lesson content shown on the student's phone per phase (static, follows phase only) ──
   const renderLessonContentMobile = () => {
@@ -1123,7 +1146,9 @@ function PlayLessonContent() {
           const frames = ['I think that…', 'One reason is…', 'For example,…', 'In conclusion,…'];
           return (
             <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
-              {aiFeedback ? (
+              {missedQuestion ? (
+                renderMissedQuestionSummary()
+              ) : aiFeedback ? (
                 <div className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden">
                   <div className="bg-gradient-to-r from-sky-500 to-blue-600 px-5 py-3 flex items-center gap-2">
                     <span className="text-white text-xs font-black uppercase tracking-wider">🤖 {t("interactivePlay.aiEvaluation")}</span>
@@ -1197,7 +1222,9 @@ function PlayLessonContent() {
         {/* ─── Step 12: Language Questions (phase 13) ─── */}
         {currentPhase === 15 && (
           <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
-            {languageSkipped ? (
+            {missedQuestion ? (
+              renderMissedQuestionSummary()
+            ) : languageSkipped ? (
               <div className="bg-card rounded-2xl border border-border shadow-sm p-5 text-center">
                 <div className="text-2xl mb-1">👌</div>
                 <h2 className="font-black text-foreground">{t("interactivePlay.languageSkipped")}</h2>
@@ -1292,7 +1319,9 @@ function PlayLessonContent() {
         {/* ─── MCQ-style Phases: Comprehension(7), Vocab(9), Sentence fill(10), Sentence order(11) ─── */}
         {[7, 9, 11, 12].includes(currentPhase) && (
           <div className="phase-enter w-full max-w-md flex-1 flex flex-col gap-3 min-h-0">
-            {hasAnswered ? (
+            {missedQuestion ? (
+              renderMissedQuestionSummary()
+            ) : hasAnswered ? (
               /* After answering: show result + leaderboard */
               <div className="flex flex-col items-stretch gap-3 w-full h-full overflow-y-auto pb-2">
                 {selectedChoice && (
@@ -1369,7 +1398,9 @@ function PlayLessonContent() {
         {currentPhase === 8 && (
           <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
 
-            {aiFeedback ? (
+            {missedQuestion ? (
+              renderMissedQuestionSummary()
+            ) : aiFeedback ? (
               /* AI Feedback result */
               <div className="bg-card rounded-3xl shadow-xl border border-border overflow-hidden">
                 <div className="bg-gradient-to-r from-violet-500 to-indigo-600 px-5 py-3 flex items-center gap-2">
