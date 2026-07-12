@@ -7,14 +7,6 @@ import { QrCode, Copy, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
 import { cn } from "@/lib/utils";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 
 export function ReferralLink({
   referralLink,
@@ -54,7 +46,19 @@ export function ReferralLink({
             </div>
           </div>
 
-          <div className="mt-auto flex w-full flex-col gap-2 border-t border-border/50 pt-4">
+          <div className="mt-4 flex flex-1 items-center justify-center rounded-xl border border-emerald-500/20 bg-white p-4 shadow-sm">
+            <QRCodeSVG
+              value={referralLink}
+              size={176}
+              level="M"
+              includeMargin={true}
+            />
+          </div>
+
+          <div className="mt-4 flex w-full flex-col gap-2 border-t border-border/50 pt-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              {t("tutorClass.detail.copy")}
+            </p>
             <div className="flex w-full items-center gap-2">
               <input
                 readOnly
@@ -73,57 +77,21 @@ export function ReferralLink({
                 )}
               </button>
             </div>
-
-            <Dialog>
-              <DialogTrigger
-                render={
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-9 w-full gap-2 border-emerald-600 bg-background text-xs font-medium text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"
-                  >
-                    <QrCode className="h-4 w-4" />
-                    {t("tutorClass.detail.showQr")}
-                  </Button>
-                }
-              />
-              <DialogContent className="sm:max-w-sm">
-                <DialogHeader>
-                  <DialogTitle>{t("tutorClass.detail.qrTitle")}</DialogTitle>
-                  <DialogDescription>
-                    {t("tutorClass.detail.qrDescription")}
-                  </DialogDescription>
-                </DialogHeader>
-
-                <div className="flex flex-col items-center justify-center space-y-6 p-4">
-                  <div className="rounded-xl border border-border/50 bg-white p-4 shadow-sm">
-                    <QRCodeSVG
-                      value={referralLink}
-                      size={220}
-                      level="M"
-                      includeMargin={true}
-                    />
-                  </div>
-
-                  <div className="flex w-full">
-                    <Button
-                      variant="outline"
-                      className="w-full gap-2"
-                      onClick={handleCopy}
-                    >
-                      {copied ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                      ) : (
-                        <Copy className="h-4 w-4" />
-                      )}
-                      {copied
-                        ? t("tutorClass.detail.copied")
-                        : t("tutorClass.detail.copy")}
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9 w-full gap-2 border-emerald-600 bg-background text-xs font-medium text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"
+              onClick={handleCopy}
+            >
+              {copied ? (
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+              {copied
+                ? t("tutorClass.detail.copied")
+                : t("tutorClass.detail.copy")}
+            </Button>
           </div>
         </div>
       </CardContent>

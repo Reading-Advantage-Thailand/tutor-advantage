@@ -19,10 +19,12 @@ import {
   BookOpen,
   Check,
   Copy,
+  QrCode,
   Sparkles,
   Users,
   X,
 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { studentApi } from "@/lib/api";
 import { t } from "@/lib/i18n";
 import { playSound } from "@/lib/sounds";
@@ -284,6 +286,8 @@ export default function DashboardPage() {
   const [copyState, setCopyState] = useState<'idle' | 'loading' | 'copied'>('idle');
   const [isClassPickerOpen, setIsClassPickerOpen] = useState(false);
   const [copyingClassId, setCopyingClassId] = useState<string | null>(null);
+  const [inviteUrl, setInviteUrl] = useState<string | null>(null);
+  const [inviteClassName, setInviteClassName] = useState<string>("");
 
   const prevUnreadRef = useRef<number | undefined>(undefined);
 
@@ -384,29 +388,33 @@ export default function DashboardPage() {
     return t("dashboard.evening");
   };
 
-  /* ── Referral copy handler ── */
-  const copyReferralForClass = async (classId?: string) => {
+  /* ── Referral invite handler ── */
+  const copyTextToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+  };
+
+  const openReferralForClass = async (classId?: string) => {
     if (copyState !== 'idle') return;
     setCopyState('loading');
     setCopyingClassId(classId ?? null);
     try {
-      const data = await studentApi.generateShareLink(classId);
-      // Use clipboard API with fallback for LINE WebView (WKWebView may not support it)
-      try {
-        await navigator.clipboard.writeText(data.url);
-      } catch {
-        const ta = document.createElement("textarea");
-        ta.value = data.url;
-        ta.style.position = "fixed";
-        ta.style.opacity = "0";
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        document.body.removeChild(ta);
-      }
+      const data = await studentApi.generateShareLink(classId) as { url: string };
+      const selectedClass = shareableClasses.find((cls) => cls.id === classId);
+      setInviteUrl(data.url);
+      setInviteClassName(selectedClass?.name ?? "");
       setIsClassPickerOpen(false);
-      setCopyState('copied');
-      setTimeout(() => setCopyState('idle'), 2500);
+      setCopyState('idle');
     } catch {
       setCopyState('idle');
     } finally {
@@ -414,7 +422,19 @@ export default function DashboardPage() {
     }
   };
 
-  const handleCopyReferral = async () => {
+  const copyCurrentInviteLink = async () => {
+    if (!inviteUrl || copyState !== 'idle') return;
+    setCopyState('loading');
+    try {
+      await copyTextToClipboard(inviteUrl);
+      setCopyState('copied');
+      setTimeout(() => setCopyState('idle'), 2500);
+    } catch {
+      setCopyState('idle');
+    }
+  };
+
+  const handleOpenReferralQr = async () => {
     if (copyState !== 'idle') return;
     if (shareableClasses.length === 0) {
       toast.info("ยังไม่ได้ลงทะเบียนคลาส");
@@ -424,7 +444,7 @@ export default function DashboardPage() {
       setIsClassPickerOpen(true);
       return;
     }
-    await copyReferralForClass(shareableClasses[0]?.id);
+    await openReferralForClass(shareableClasses[0]?.id);
   };
 
   /* ── Loading / Error ── */
@@ -620,7 +640,7 @@ export default function DashboardPage() {
         <section className="px-4">
           <div className="glass-card" style={{ padding: "14px 16px", display: "flex", alignItems: "center", gap: 12 }}>
             <div style={{ width: 42, height: 42, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, background: "rgba(6,199,85,0.12)", fontSize: "1.375rem" }}>
-              🔗
+              <QrCode size={22} style={{ color: "var(--brand-600)" }} />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <p style={{ fontWeight: 700, fontSize: "0.875rem", color: "var(--text-primary)", margin: 0 }}>{t("dashboard.shareTitle")}</p>
@@ -628,7 +648,7 @@ export default function DashboardPage() {
             </div>
             <button
               id="btn-copy-referral"
-              onClick={handleCopyReferral}
+              onClick={handleOpenReferralQr}
               disabled={copyState !== 'idle'}
               style={{
                 flexShrink: 0,
@@ -654,7 +674,7 @@ export default function DashboardPage() {
                 ? t("dashboard.referralCopied")
                 : shareableClasses.length > 1
                 ? t("dashboard.selectClass")
-                : t("dashboard.copyReferral")}
+                : "แสดง QR"}
             </button>
           </div>
         </section>
@@ -859,7 +879,7 @@ export default function DashboardPage() {
                     <button
                       key={getEnrollmentKey(cls, index)}
                       type="button"
-                      onClick={() => copyReferralForClass(cls.id)}
+                      onClick={() => openReferralForClass(cls.id)}
                       disabled={copyState !== 'idle'}
                       className="flex w-full items-center gap-3 rounded-2xl border border-border bg-background px-4 py-3 text-left transition active:scale-[0.99] disabled:opacity-60"
                     >
@@ -879,12 +899,85 @@ export default function DashboardPage() {
                         ) : copyState === 'copied' && copyingClassId === cls.id ? (
                           <Check size={16} />
                         ) : (
-                          <Copy size={16} />
+                          <QrCode size={16} />
                         )}
                       </div>
                     </button>
                   );
                 })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {inviteUrl && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="referral-qr-title"
+          className="fixed inset-0 z-[160] flex items-end"
+        >
+          <button
+            type="button"
+            aria-label={t("app.close")}
+            onClick={() => setInviteUrl(null)}
+            className="absolute inset-0 bg-black/45"
+          />
+          <div className="relative w-full rounded-t-3xl border border-border bg-card shadow-2xl">
+            <div className="flex items-center justify-between px-5 pt-4 pb-3">
+              <div className="min-w-0">
+                <h2 id="referral-qr-title" className="text-base font-black text-foreground">
+                  QR สำหรับชวนเพื่อน
+                </h2>
+                <p className="mt-0.5 truncate text-xs text-muted-foreground">
+                  {inviteClassName || "ให้เพื่อนสแกนผ่าน LINE เพื่อสมัครเรียน"}
+                </p>
+              </div>
+              <button
+                type="button"
+                aria-label={t("app.close")}
+                onClick={() => setInviteUrl(null)}
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground active:scale-95"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="px-5 pb-[calc(32px+env(safe-area-inset-bottom))]">
+              <div className="flex flex-col items-center gap-4 rounded-2xl border border-border bg-background px-4 py-5">
+                <div className="rounded-2xl border border-border bg-white p-4 shadow-sm">
+                  <QRCodeSVG value={inviteUrl} size={220} level="M" includeMargin={true} />
+                </div>
+                <p className="text-center text-xs leading-relaxed text-muted-foreground">
+                  ให้เพื่อนเปิด LINE แล้วสแกน QR นี้เพื่อเข้าหน้าสมัครเรียน
+                </p>
+                <div className="flex w-full items-center gap-2">
+                  <input
+                    readOnly
+                    value={inviteUrl}
+                    className="h-10 min-w-0 flex-1 truncate rounded-xl border border-input bg-muted px-3 font-mono text-xs text-foreground"
+                  />
+                  <button
+                    type="button"
+                    onClick={copyCurrentInviteLink}
+                    disabled={copyState !== 'idle'}
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-input bg-card text-muted-foreground active:scale-95 disabled:opacity-60"
+                    aria-label="คัดลอก invite link"
+                  >
+                    {copyState === 'copied' ? (
+                      <Check size={16} className="text-brand-600" />
+                    ) : copyState === 'loading' ? (
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-brand-200 border-t-brand-600" />
+                    ) : (
+                      <Copy size={16} />
+                    )}
+                  </button>
+                </div>
+                {copyState === 'copied' && (
+                  <p className="text-xs font-bold text-brand-600">
+                    คัดลอก invite link แล้ว
+                  </p>
+                )}
               </div>
             </div>
           </div>
