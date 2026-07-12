@@ -32,6 +32,7 @@ function isAccessCommand(text: string): boolean {
   const command = normalizeCommand(text);
   return [
     "เข้าใช้งาน",
+    "เริ่มใช้งาน",
     "เข้าใช้",
     "เปิดแอป",
     "เปิดapp",
@@ -69,12 +70,8 @@ function getStudentPortalUrl(): string {
 }
 
 function buildAccessMessages(portalUrl: string): LineMessage[] {
-  const fallbackText = portalUrl
-    ? `หากไม่เห็นการ์ด กดลิงก์นี้เพื่อเข้าใช้งาน Tutor Advantage:\n${portalUrl}`
-    : "ขออภัย ระบบยังไม่ได้ตั้งค่า LIFF URL สำหรับเข้าใช้งาน กรุณาติดต่อทีมงาน";
-
   if (!portalUrl) {
-    return [{ type: "text", text: fallbackText }];
+    return [{ type: "text", text: "Tutor Advantage is not ready. Please contact support." }];
   }
 
   return [
@@ -120,10 +117,6 @@ function buildAccessMessages(portalUrl: string): LineMessage[] {
           ],
         },
       },
-    },
-    {
-      type: "text",
-      text: fallbackText,
     },
   ];
 }
