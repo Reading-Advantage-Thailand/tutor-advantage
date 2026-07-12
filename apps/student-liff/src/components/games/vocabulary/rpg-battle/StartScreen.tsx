@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { VocabularyItem } from "@/store/useGameStore";
 import {
   Swords,
@@ -300,9 +301,12 @@ export function StartScreen({ vocabulary, onStart }: StartScreenProps) {
                             {index + 1}
                           </div>
                           {entry.image && (
-                            <img
+                            <Image
                               src={entry.image}
                               alt={entry.name}
+                              width={32}
+                              height={32}
+                              unoptimized
                               className="w-8 h-8 rounded-full"
                             />
                           )}

@@ -60,8 +60,7 @@ export function generateOptions(
 
 export function advanceAlchemistsSynthesisTime(
   state: AlchemistsSynthesisState,
-  deltaMs: number,
-  _vocabulary: VocabularyItem[]
+  deltaMs: number
 ): AlchemistsSynthesisState {
   if (state.status !== "playing") return state;
 

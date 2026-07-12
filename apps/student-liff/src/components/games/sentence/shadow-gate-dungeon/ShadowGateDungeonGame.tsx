@@ -15,7 +15,6 @@ import type { Difficulty } from '@/store/useGameStore'
 import type { CreatureType } from '@/lib/games/shadowGateDungeonConfig'
 import { useGameFullscreen } from '@/hooks/useGameFullscreen'
 import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings'
-import { useScopedI18n } from '@/locales/client'
 import { GameEndScreen } from '@/components/games/game/GameEndScreen'
 import { GameStartScreen } from '@/components/games/game/GameStartScreen'
 import { VirtualDPad } from '@/components/games/ui/VirtualDPad'
@@ -32,7 +31,6 @@ interface ShadowGateDungeonGameProps {
 }
 
 export function ShadowGateDungeonGame({ vocabulary, onComplete }: ShadowGateDungeonGameProps) {
-  const t = useScopedI18n('pages.student.gamesPage.shadowGateDungeon')
   const { getEffectiveTextSize } = useAccessibilitySettings()
   const { containerRef, enterFullscreen, exitFullscreen } = useGameFullscreen()
 

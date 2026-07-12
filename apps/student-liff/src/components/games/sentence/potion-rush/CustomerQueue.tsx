@@ -81,8 +81,7 @@ export default function CustomerQueue({ y, width }: CustomerQueueProps) {
                      sheet={images[CUSTOMER_ASSETS[customer.type].sheetKey]}
                      row={CUSTOMER_ASSETS[customer.type].row}
                      index={i}
-                     isFocused={i === focusedIndex}
-                     onClick={() => setFocusedIndex(i)}
+                    onClick={() => setFocusedIndex(i)}
                   />
              )
         })}
@@ -90,14 +89,13 @@ export default function CustomerQueue({ y, width }: CustomerQueueProps) {
   )
 }
 
-function SingleCustomer({ customer, x, y, sheet, row, index, isFocused, onClick }: { 
+function SingleCustomer({ customer, x, y, sheet, row, index, onClick }: { 
     customer: Customer, 
     x: number, 
     y: number, 
     sheet: HTMLImageElement | undefined,
     row: number,
     index: number,
-    isFocused: boolean,
     onClick: () => void
 }) {
     const isAngry = customer.state === 'LEAVING_ANGRY'

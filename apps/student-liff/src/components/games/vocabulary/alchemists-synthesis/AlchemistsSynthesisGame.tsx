@@ -112,8 +112,7 @@ export function AlchemistsSynthesisGame({
       const currentState = gameStateRef.current;
       const newState = advanceAlchemistsSynthesisTime(
         currentState,
-        deltaMs,
-        vocabularyRef.current
+        deltaMs
       );
 
       if (newState !== currentState) {

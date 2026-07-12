@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Trophy, Medal, Award, User } from "lucide-react";
 import { useState } from "react";
 import type { Difficulty } from "@/lib/games/enchantedLibrary";
@@ -108,9 +109,12 @@ export function RankingDisplay({
                 {/* Avatar */}
                 <div className="flex-shrink-0">
                   {entry.image ? (
-                    <img
+                    <Image
                       src={entry.image}
                       alt={entry.name}
+                      width={40}
+                      height={40}
+                      unoptimized
                       className="w-10 h-10 rounded-full border-2 border-amber-300"
                     />
                   ) : (

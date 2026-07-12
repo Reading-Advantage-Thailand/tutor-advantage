@@ -562,7 +562,7 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
   },
 
   handleServeCustomer: (customerId, cauldronIndex, servePosition) => {
-     const { customers, cauldrons, score, activeWordPool, completedSentences, vocabList } = get()
+     const { customers, cauldrons, activeWordPool, completedSentences, vocabList } = get()
      const cauldron = cauldrons[cauldronIndex]
      
      if (cauldron.state !== 'COMPLETED') return

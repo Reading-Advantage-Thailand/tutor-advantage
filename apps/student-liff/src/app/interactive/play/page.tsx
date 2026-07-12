@@ -149,7 +149,7 @@ function PlayLessonContent() {
       setGameStartedAt(null);
       setGameSelections({});
     }
-  }, [gameState?.status, gameState?.phase, currentPhase, gameStartedAt]);
+  }, [gameState, currentPhase, gameStartedAt]);
 
   useEffect(() => {
     if (sessionData && sessionData.currentPhase === 0 && classId) {

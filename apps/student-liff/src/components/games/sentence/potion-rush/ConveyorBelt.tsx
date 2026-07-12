@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import type Konva from 'konva'
 import { Group, Rect, Text, Image as KonvaImage, Circle } from 'react-konva'
 import { usePotionRushStore, Ingredient } from '@/store/usePotionRushStore'
 import { withBasePath } from '@/lib/games/basePath'
@@ -153,7 +154,7 @@ function IngredientItem({ item, onDrop, images, onDragStateChange, heldYOffset }
     const [isDragging, setIsDragging] = React.useState(false)
     const [dragPosition, setDragPosition] = React.useState<{ x: number; y: number } | null>(null)
     const img = images[item.type]
-    const groupRef = useRef<any>(null)
+    const groupRef = useRef<Konva.Group | null>(null)
 
     const renderX = isDragging && dragPosition ? dragPosition.x : item.x
     const renderY = isDragging && dragPosition ? dragPosition.y : (item.isHeld ? heldYOffset : 0)
