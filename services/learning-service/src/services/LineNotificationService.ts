@@ -3,9 +3,6 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
-const LIFF_URL = process.env.LIFF_URL ?? "";
-
 export interface NotificationOptions {
   type: "notifyClassReminders" | "notifyScoreUpdates" | "notifyLineMessages" | "notifyMarketing";
 }
@@ -16,6 +13,7 @@ export class LineNotificationService {
    * e.g. buildLiffDeepLink("/chat/abc123") → "https://liff.line.me/xxxx?redirect=%2Fchat%2Fabc123"
    */
   static buildLiffDeepLink(path: string): string {
+    const LIFF_URL = process.env.LIFF_URL ?? "";
     if (!LIFF_URL) return "";
     return `${LIFF_URL}?redirect=${encodeURIComponent(path)}`;
   }
@@ -29,6 +27,7 @@ export class LineNotificationService {
     options?: NotificationOptions
   ): Promise<boolean> {
     try {
+      const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
       if (!LINE_CHANNEL_ACCESS_TOKEN) {
         logger.warn("[LineNotificationService] LINE_CHANNEL_ACCESS_TOKEN is missing. Skipping.");
         return false;

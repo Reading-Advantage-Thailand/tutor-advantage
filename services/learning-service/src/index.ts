@@ -71,6 +71,7 @@ import {
   getMyCoupons,
 } from "./controllers/couponController";
 import { getStudentLessonHistory, getLessonSessionDetails } from "./controllers/lessonHistoryController";
+import { handleLineWebhook } from "./controllers/lineWebhookController";
 import {
   devSeedLessonHistory,
   devPurgeLessonHistory,
@@ -103,7 +104,14 @@ app.use(
     credentials: true,
   }),
 );
-app.use(express.json({ limit: "1mb" }));
+app.use(
+  express.json({
+    limit: "1mb",
+    verify: (req, _res, buf) => {
+      (req as Request & { rawBody?: Buffer }).rawBody = Buffer.from(buf);
+    },
+  }),
+);
 app.use(
   "/v1",
   rateLimit({
@@ -211,6 +219,9 @@ app.get("/v1/notifications/summary", authMiddleware, getNotificationSummary);
 app.get("/v1/coupons/mine", authMiddleware, getMyCoupons);
 app.post("/v1/coupons/validate", authMiddleware, validateCouponCode);
 app.post("/v1/classes/:classId/apply-coupon", authMiddleware, applyCouponToClass);
+
+// Public LINE OA webhook
+app.post("/v1/line/webhook", handleLineWebhook);
 
 if (areDevRoutesEnabled()) {
   const adminOnly = requireRoles("ADMIN");
