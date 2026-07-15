@@ -310,6 +310,7 @@ export async function getStudentProgress(
     }
 
     const requestedClassId = typeof req.query.classId === "string" ? req.query.classId : null;
+    const requestedCycleId = typeof req.query.cycleId === "string" ? req.query.cycleId : null;
 
     // 1. Fetch ALL active enrollments so the frontend can show a class picker
     const allEnrollments = await prisma.enrollment.findMany({
@@ -318,8 +319,13 @@ export async function getStudentProgress(
         class: {
           include: {
             book: { include: { series: true } },
+            bookCycles: {
+              include: { book: { include: { series: true } } },
+              orderBy: { sequence: "asc" },
+            },
           }
-        }
+        },
+        packageAccess: true,
       },
       orderBy: { createdAt: "desc" }
     }) as any[];
@@ -350,13 +356,42 @@ export async function getStudentProgress(
       ? allEnrollments.find((e: any) => e.class.classId === requestedClassId) || allEnrollments[0]
       : allEnrollments[0];
 
-    const book = enrollment.class.book;
+    const classCycles = enrollment.class.bookCycles?.length
+      ? enrollment.class.bookCycles
+      : [{
+          classBookCycleId: null,
+          bookId: enrollment.class.bookId,
+          sequence: 1,
+          status: "OPEN",
+          book: enrollment.class.book,
+        }];
+    const activeAccessCycleIds = new Set(
+      (enrollment.packageAccess || [])
+        .filter((access: any) => access.status === "ACTIVE")
+        .map((access: any) => access.classBookCycleId),
+    );
+    const canAccessCycle = (cycle: any) =>
+      cycle.sequence === 1 && cycle.bookId === enrollment.class.bookId ||
+      activeAccessCycleIds.has(cycle.classBookCycleId);
+    const selectedCycle = requestedCycleId
+      ? classCycles.find((cycle: any) => cycle.classBookCycleId === requestedCycleId && canAccessCycle(cycle))
+      : [...classCycles].reverse().find(canAccessCycle);
+    const activeCycle = selectedCycle || classCycles[0];
+    const book = activeCycle.book;
 
-    // 2. Get total read articles count and full history for weekly logic
-    const participations = await prisma.sessionParticipant.findMany({
-      where: { studentUserId: userId, session: { status: "FINISHED" } },
+    // 2. Only include sessions from the selected class. Progress must never bleed
+    // across another class that happens to use the same book.
+    const classParticipations = await prisma.sessionParticipant.findMany({
+      where: {
+        studentUserId: userId,
+        session: { status: "FINISHED", classId: enrollment.class.classId },
+      },
       include: { session: true }
     }) as any[];
+    const participations = classParticipations.filter((p) =>
+      p.session.bookId === book.bookId ||
+      (!p.session.bookId && activeCycle.sequence === 1),
+    );
 
     const distinctArticlesRead = new Set(
       participations.map(p => `${p.session.bookId || "legacy"}:${p.session.articleId}`),
@@ -385,13 +420,19 @@ export async function getStudentProgress(
     }
 
     // 3. Get Book Articles — natural sort on trailing number in articleId
-    const dbArticles = await prisma.article.findMany({
-      where: { bookId: book.bookId },
-      orderBy: [
-        { createdAt: "asc" },
-        { articleId: "asc" }
-      ],
-    });
+    const [dbArticles, cycleArticles] = await Promise.all([
+      prisma.article.findMany({
+        where: { bookId: book.bookId },
+        orderBy: [
+          { createdAt: "asc" },
+          { articleId: "asc" }
+        ],
+      }),
+      prisma.article.findMany({
+        where: { bookId: { in: classCycles.map((cycle: any) => cycle.bookId) } },
+        select: { bookId: true, articleId: true },
+      }),
+    ]);
 
     const articles = dbArticles.map((art, idx) => {
       const isRead =
@@ -459,6 +500,38 @@ export async function getStudentProgress(
 
     const articlesRead = articles.filter(a => a.done).length;
     const totalArticles = dbArticles.length || book.articleCount || 10;
+    const cycleArticleIds = new Map<string, Set<string>>();
+    for (const article of cycleArticles) {
+      const ids = cycleArticleIds.get(article.bookId) ?? new Set<string>();
+      ids.add(article.articleId);
+      cycleArticleIds.set(article.bookId, ids);
+    }
+    const bookCycles = classCycles.map((cycle: any) => {
+      const articleIds = cycleArticleIds.get(cycle.bookId) ?? new Set<string>();
+      const completedArticles = [...articleIds].filter((articleId) =>
+        classParticipations.some((p) =>
+          (p.session.bookId === cycle.bookId || (!p.session.bookId && cycle.sequence === 1)) &&
+          p.session.articleId === articleId,
+        ),
+      ).length;
+      const cycleTotal = articleIds.size || cycle.book?.articleCount || 0;
+      return {
+        id: cycle.classBookCycleId || `base-${cycle.bookId}`,
+        title: cycle.book?.title || "Untitled Book",
+        cefr: cycle.book?.series?.cefrLevel || "A1",
+        sequence: cycle.sequence,
+        status: String(cycle.status || "OPEN").toLowerCase(),
+        hasAccess: canAccessCycle(cycle),
+        completedArticles,
+        totalArticles: cycleTotal,
+        percent: cycleTotal ? Math.round((completedArticles / cycleTotal) * 100) : 0,
+        isComplete: cycleTotal > 0 && completedArticles >= cycleTotal,
+      };
+    });
+    const isBookComplete = totalArticles > 0 && articlesRead >= totalArticles;
+    const nextAvailableBookCycleId = isBookComplete
+      ? bookCycles.find((cycle: any) => cycle.sequence > activeCycle.sequence && cycle.hasAccess)?.id ?? null
+      : null;
 
     // Color varies by CEFR level
     const cefrColors: Record<string, string> = {
@@ -483,6 +556,9 @@ export async function getStudentProgress(
     return res.status(200).json({
       enrolledClasses,
       selectedClassId: enrollment.class.classId,
+      selectedBookCycleId: activeCycle.classBookCycleId || `base-${activeCycle.bookId}`,
+      bookCycles,
+      nextAvailableBookCycleId,
       stats: {
         articlesRead,
         totalArticles,
@@ -492,6 +568,7 @@ export async function getStudentProgress(
         cefr,
         seriesColor,
         nextMilestone,
+        isBookComplete,
       },
       weeklyActivity,
       articles,

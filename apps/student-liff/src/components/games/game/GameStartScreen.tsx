@@ -54,14 +54,14 @@ export function GameStartScreen({
       exit={{ opacity: 0 }}
       className="absolute inset-0 z-50 flex flex-col overflow-hidden bg-background"
     >
-      <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-8">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 sm:space-y-8">
         <header className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-border bg-secondary">
               <TitleIcon className="h-6 w-6 text-foreground" />
             </div>
             <div>
-              <h2 className="text-3xl font-bold tracking-tight text-foreground">
+              <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                 {gameTitle}
               </h2>
             </div>
@@ -112,7 +112,7 @@ export function GameStartScreen({
             ) : null}
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 min-w-0">
             <div className="flex items-center justify-between">
               <h3 className="flex items-center gap-2 font-semibold text-lg text-foreground">
                 <BookOpen className="w-5 h-5" /> Vocabulary
@@ -148,7 +148,7 @@ export function GameStartScreen({
         </div>
       </div>
 
-      <footer className="p-6 sm:p-8 border-t border-border bg-card flex flex-col gap-6">
+      <footer className="p-4 sm:p-8 border-t border-border bg-card flex flex-col gap-4 sm:gap-6">
         {hasControls ? (
           <div className="hidden sm:flex items-center gap-6 text-[10px] uppercase tracking-[0.2em] text-muted-foreground sm:text-xs flex-wrap">
             {controls?.map((control, index) => (
@@ -166,13 +166,13 @@ export function GameStartScreen({
           )
         )}
 
-        <div className="flex w-full items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-4">{children}</div>
+        <div className="flex w-full items-stretch justify-between gap-4 flex-col sm:flex-row sm:items-center">
+          <div className="flex min-w-0 flex-wrap items-center gap-3 sm:gap-4">{children}</div>
 
           <Button
             onClick={onStart}
             size="lg"
-            className="px-12 rounded-full"
+            className="w-full rounded-full px-8 sm:w-auto sm:px-12"
           >
             <Play className="w-4 h-4 fill-current mr-2" />
             {startButtonText}

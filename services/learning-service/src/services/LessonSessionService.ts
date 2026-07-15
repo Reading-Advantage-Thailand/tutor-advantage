@@ -104,7 +104,12 @@ export const PAIR_CONVERSATION_PHASE = 17;
 export const FINAL_LEADERBOARD_PHASE = 18;
 
 const ENABLED_GAME_BY_CATEGORY: Record<GameCategory, Set<string>> = {
-  vocabulary: new Set(["dragon-flight", "wizard-vs-zombie", "enchanted-library"]),
+  vocabulary: new Set([
+    "dragon-flight",
+    "wizard-vs-zombie",
+    "enchanted-library",
+    "rune-match",
+  ]),
   sentence: new Set(["castle-defense", "potion-rush"]),
 };
 

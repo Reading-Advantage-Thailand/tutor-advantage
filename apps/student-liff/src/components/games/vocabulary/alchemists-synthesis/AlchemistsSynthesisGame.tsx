@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Stage, Layer, Text, Group, Rect } from "react-konva";
 import type { VocabularyItem } from "@/store/useGameStore";
 import {
@@ -45,6 +45,7 @@ export function AlchemistsSynthesisGame({
   const [gameState, setGameState] = useState<AlchemistsSynthesisState>(() =>
     createAlchemistsSynthesisState(vocabulary, "normal")
   );
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   const gameStateRef = useRef(gameState);
   gameStateRef.current = gameState;
@@ -54,6 +55,24 @@ export function AlchemistsSynthesisGame({
 
   const lastTimeRef = useRef<number | null>(null);
   const rafIdRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const updateDimensions = () => {
+      const { width, height } = container.getBoundingClientRect();
+      if (width > 0 && height > 0) {
+        setDimensions({ width, height });
+      }
+    };
+
+    const observer = new ResizeObserver(updateDimensions);
+    observer.observe(container);
+    updateDimensions();
+
+    return () => observer.disconnect();
+  }, [containerRef]);
 
   const handleStart = useCallback(() => {
     const newState = createAlchemistsSynthesisState(
@@ -140,6 +159,10 @@ export function AlchemistsSynthesisGame({
 
   const textSize = getEffectiveTextSize(18);
   const touchTargetSize = getEffectiveTouchTarget(50);
+  const scale = useMemo(() => {
+    if (dimensions.width === 0 || dimensions.height === 0) return 1;
+    return Math.min(dimensions.width / GAME_WIDTH, dimensions.height / GAME_HEIGHT);
+  }, [dimensions]);
 
   const instructions = [
     {
@@ -154,7 +177,7 @@ export function AlchemistsSynthesisGame({
 
   if (gameState.status === "idle") {
     return (
-      <div ref={containerRef} className="relative w-full h-full">
+      <div ref={containerRef} className="relative h-dvh min-h-0 w-full overflow-hidden">
         <GameStartScreen
           gameTitle={t("title")}
           gameSubtitle={t("subtitle")}
@@ -169,7 +192,7 @@ export function AlchemistsSynthesisGame({
   if (gameState.status === "gameover" || gameState.status === "victory") {
     const results = getAlchemistsSynthesisResults(gameState);
     return (
-      <div ref={containerRef} className="relative w-full h-full">
+      <div ref={containerRef} className="relative h-dvh min-h-0 w-full overflow-hidden">
         <GameEndScreen
           status={gameState.status === "victory" ? "victory" : "defeat"}
           score={results.score}
@@ -182,18 +205,17 @@ export function AlchemistsSynthesisGame({
   }
 
   return (
-    <div ref={containerRef} className="relative w-full h-full">
+    <div ref={containerRef} className="relative h-dvh min-h-0 w-full overflow-hidden touch-none bg-[#1a1a2e]">
       <Stage
-        width={GAME_WIDTH}
-        height={GAME_HEIGHT}
+        width={dimensions.width || GAME_WIDTH}
+        height={dimensions.height || GAME_HEIGHT}
         style={{
           width: "100%",
           height: "100%",
-          maxWidth: `${GAME_WIDTH}px`,
           margin: "0 auto",
         }}
       >
-        <Layer>
+        <Layer scaleX={scale} scaleY={scale}>
           <Rect
             x={0}
             y={0}

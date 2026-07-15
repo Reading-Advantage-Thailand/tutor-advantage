@@ -116,8 +116,11 @@ export const studentApi = {
     const qs = qp.toString();
     return fetchWithAuth(`/dashboard/summary${qs ? `?${qs}` : ""}`);
   },
-  getStudentProgress: (classId?: string) => {
-    const qs = classId ? `?classId=${encodeURIComponent(classId)}` : "";
+  getStudentProgress: (classId?: string, cycleId?: string) => {
+    const params = new URLSearchParams();
+    if (classId) params.set("classId", classId);
+    if (cycleId) params.set("cycleId", cycleId);
+    const qs = params.toString() ? `?${params.toString()}` : "";
     return fetchWithAuth(`/student/progress${qs}`);
   },
   getStudentArticle: (articleId: string) => fetchWithAuth(`/student/articles/${articleId}`),

@@ -19,6 +19,10 @@ export type RuneMatchConfig = {
   player: {
     maxHp: number;
   };
+  game: {
+    durationMs: number;
+    targetMatches: number;
+  };
   monsters: Record<MonsterType, MonsterConfig>;
   combat: {
     attackIntervalMs: number;
@@ -43,13 +47,17 @@ export type RuneMatchConfig = {
 
 export const RUNE_MATCH_CONFIG: RuneMatchConfig = {
   player: {
-    maxHp: 100,
+    maxHp: 60000,
+  },
+  game: {
+    durationMs: 60000,
+    targetMatches: 10,
   },
   monsters: {
-    goblin: { hp: 50, attack: 2, xp: 3 },
-    skeleton: { hp: 80, attack: 4, xp: 6 },
-    orc: { hp: 120, attack: 6, xp: 9 },
-    dragon: { hp: 160, attack: 8, xp: 12 },
+    goblin: { hp: 90, attack: 2, xp: 3 },
+    skeleton: { hp: 130, attack: 4, xp: 6 },
+    orc: { hp: 180, attack: 6, xp: 9 },
+    dragon: { hp: 240, attack: 8, xp: 12 },
   },
   combat: {
     attackIntervalMs: 5000,
@@ -64,7 +72,7 @@ export const RUNE_MATCH_CONFIG: RuneMatchConfig = {
   powerUps: {
     healAmount: 5,
     shieldDuration: 1,
-    spawnRate: 0.1,
+    spawnRate: 0,
   },
   grid: {
     columns: 6,

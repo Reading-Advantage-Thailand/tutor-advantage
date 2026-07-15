@@ -24,6 +24,9 @@ interface PaladinsTwinSoulGameProps {
   onComplete: (results: { xp: number; accuracy: number }) => void;
 }
 
+const MOBILE_GAME_CONTAINER_CLASS =
+  "relative h-dvh min-h-[560px] w-full overflow-hidden rounded-none bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none sm:h-[75vh] sm:rounded-3xl md:aspect-video md:h-auto";
+
 export function PaladinsTwinSoulGame({ vocabulary, onComplete }: PaladinsTwinSoulGameProps) {
   const { containerRef, enterFullscreen, exitFullscreen } = useGameFullscreen();
   const { getEffectiveTextSize } = useAccessibilitySettings();
@@ -156,7 +159,7 @@ export function PaladinsTwinSoulGame({ vocabulary, onComplete }: PaladinsTwinSou
 
   if (gamePhase === "start") {
     return (
-      <div ref={containerRef} className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto">
+      <div ref={containerRef} className={MOBILE_GAME_CONTAINER_CLASS}>
         <GameStartScreen
           gameTitle="Paladin's Twin-Soul"
           gameSubtitle="Gargoyle Defense"
@@ -182,7 +185,7 @@ export function PaladinsTwinSoulGame({ vocabulary, onComplete }: PaladinsTwinSou
   const currentTarget = gameState?.vocabulary[gameState.targetWordIndex];
 
   return (
-    <div ref={containerRef} className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto">
+    <div ref={containerRef} className={MOBILE_GAME_CONTAINER_CLASS}>
       {gamePhase === "playing" && gameState && (
         <>
           <Stage width={dimensions.width} height={dimensions.height}>

@@ -13,6 +13,7 @@ export const PLAYABLE_LIVE_LESSON_GAME_IDS = new Set([
   "dragon-flight",
   "wizard-vs-zombie",
   "enchanted-library",
+  "rune-match",
   "castle-defense",
   "potion-rush",
 ])

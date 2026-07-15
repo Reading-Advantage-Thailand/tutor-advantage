@@ -11,6 +11,7 @@ export type VocabularyRune = {
   type: "vocabulary";
   wordId: string; // The unique English term
   text: string; // Thai or English display text
+  face: "term" | "translation";
 };
 
 export type PowerUpRune = {
@@ -75,6 +76,7 @@ export type RuneMatchState = {
   isFrozen: boolean; // Monster is frozen (won't attack next turn)
   hintCells: GridPosition[]; // Cells to highlight for hint
   hintsRemaining: number; // Max 2 hints per game
+  gameTimeMs: number;
 };
 
 export type RuneMatchConfig = {
@@ -85,6 +87,22 @@ const generateId = () => Math.random().toString(36).substring(2, 9);
 
 const getMatchKey = (rune: Rune) => {
   return rune.type === "vocabulary" ? rune.wordId : rune.type;
+};
+
+const wouldCreateLineOfThree = (
+  grid: (Rune | null)[][],
+  row: number,
+  col: number,
+  rune: Rune,
+) => {
+  const key = getMatchKey(rune);
+  const same = (other: Rune | null | undefined) =>
+    !!other && other.type === rune.type && getMatchKey(other) === key;
+
+  return (
+    (same(grid[row]?.[col - 1]) && same(grid[row]?.[col - 2])) ||
+    (same(grid[row - 1]?.[col]) && same(grid[row - 2]?.[col]))
+  );
 };
 
 // Create a grid and ensure it has at least one possible move
@@ -125,12 +143,7 @@ const createGridWithoutMatches = (
       while (!validRune && attempts < 100) {
         attempts++;
         const rune = createRandomRune(vocabulary, rng);
-        const hasHorizontalMatch =
-          c > 0 && getMatchKey(grid[r][c - 1]) === getMatchKey(rune);
-        const hasVerticalMatch =
-          r > 0 && getMatchKey(grid[r - 1][c]) === getMatchKey(rune);
-
-        if (!hasHorizontalMatch && !hasVerticalMatch) {
+        if (!wouldCreateLineOfThree(grid, r, c, rune)) {
           validRune = rune;
         }
       }
@@ -152,6 +165,7 @@ export const initializeEmptyGrid = (vocabulary: VocabularyItem[]): Rune[][] => {
         type: "vocabulary",
         wordId: `word-${r}-${c}`,
         text: item.term,
+        face: "term",
       };
     }
   }
@@ -193,32 +207,24 @@ export const findPossibleMoves = (
 
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      // Try swap right
-      if (c < cols - 1) {
-        const testGrid = swapRunes(
-          grid,
-          { row: r, col: c },
-          { row: r, col: c + 1 },
-        );
-        if (findMatches(testGrid).length > 0) {
-          moves.push({ from: { row: r, col: c }, to: { row: r, col: c + 1 } });
-        }
+      if (c < cols - 1 && isRunePairMatch(grid[r][c], grid[r][c + 1])) {
+        moves.push({ from: { row: r, col: c }, to: { row: r, col: c + 1 } });
       }
-      // Try swap down
-      if (r < rows - 1) {
-        const testGrid = swapRunes(
-          grid,
-          { row: r, col: c },
-          { row: r + 1, col: c },
-        );
-        if (findMatches(testGrid).length > 0) {
-          moves.push({ from: { row: r, col: c }, to: { row: r + 1, col: c } });
-        }
+      if (r < rows - 1 && isRunePairMatch(grid[r][c], grid[r + 1][c])) {
+        moves.push({ from: { row: r, col: c }, to: { row: r + 1, col: c } });
       }
     }
   }
   return moves;
 };
+
+export const isRunePairMatch = (first?: Rune, second?: Rune) =>
+  !!first &&
+  !!second &&
+  first.type === "vocabulary" &&
+  second.type === "vocabulary" &&
+  first.wordId === second.wordId &&
+  first.face !== second.face;
 
 export const findMatches = (grid: Rune[][]): MatchGroup[] => {
   const rows = grid.length;
@@ -234,7 +240,7 @@ export const findMatches = (grid: Rune[][]): MatchGroup[] => {
       if (r1 && r1.type === r2.type && getMatchKey(r1) === getMatchKey(r2)) {
         segment.push({ row: r, col: c });
       } else {
-        if (segment.length >= 2) horizontalMatches.push(segment);
+        if (segment.length >= 3) horizontalMatches.push(segment);
         if (c < cols) segment = [{ row: r, col: c }];
       }
     }
@@ -253,7 +259,7 @@ export const findMatches = (grid: Rune[][]): MatchGroup[] => {
       ) {
         segment.push({ row: r, col: c });
       } else {
-        if (segment.length >= 2) verticalMatches.push(segment);
+        if (segment.length >= 3) verticalMatches.push(segment);
         if (r < rows) segment = [{ row: r, col: c }];
       }
     }
@@ -333,12 +339,7 @@ export const applyGravity = (
         while (!validRune && attempts < 20) {
           attempts++;
           const rune = createRandomRune(vocabulary, rng);
-          const bottom = r < rows - 1 ? newGrid[r + 1][c] : null;
-          const left = c > 0 ? newGrid[r][c - 1] : null;
-          const matchBottom =
-            bottom && getMatchKey(bottom) === getMatchKey(rune);
-          const matchLeft = left && getMatchKey(left) === getMatchKey(rune);
-          if (!matchBottom && !matchLeft) validRune = rune;
+          if (!wouldCreateLineOfThree(newGrid, r, c, rune)) validRune = rune;
         }
         newGrid[r][c] = validRune || createRandomRune(vocabulary, rng);
       }
@@ -379,6 +380,16 @@ export const advanceTime = (
 ): RuneMatchState => {
   if (state.status !== "playing") return state;
   const newState = { ...state };
+  newState.gameTimeMs = state.gameTimeMs + deltaMs;
+  newState.player = {
+    ...newState.player,
+    hp: Math.max(0, RUNE_MATCH_CONFIG.game.durationMs - newState.gameTimeMs),
+  };
+
+  if (newState.gameTimeMs >= RUNE_MATCH_CONFIG.game.durationMs) {
+    newState.status = "defeat";
+    return newState;
+  }
 
   // Advance monster state
   if (newState.monsterStateTimer > 0) {
@@ -410,13 +421,10 @@ export const advanceTime = (
     })
     .filter((ft) => ft.duration > 0);
 
-  // Realtime Monster Attack
+  // Realtime monster pressure only shows feedback now; the 60s timer is HP.
   if (newState.monster && !newState.isFrozen && newState.status === "playing") {
     newState.nextAttackTimer -= deltaMs;
     if (newState.nextAttackTimer <= 0) {
-      // Attack!
-      const damage = Math.floor(state.rng() * newState.monster.attack) + 1;
-
       if (newState.player.hasShield) {
         newState.player = { ...newState.player, hasShield: false };
         newState.floatingTexts = [
@@ -436,15 +444,11 @@ export const advanceTime = (
           },
         ];
       } else {
-        newState.player = {
-          ...newState.player,
-          hp: Math.max(0, newState.player.hp - damage),
-        };
         newState.floatingTexts = [
           ...newState.floatingTexts,
           {
             id: generateId(),
-            text: `-${damage}`,
+            text: "HURRY!",
             x: -1,
             y: -1,
             offsetX: 0,
@@ -457,12 +461,10 @@ export const advanceTime = (
           },
         ];
         newState.shakeIntensity = 1.0;
-        if (newState.player.hp <= 0) newState.status = "defeat";
       }
 
       newState.monsterState = "attack";
       newState.monsterStateTimer = 500;
-      // Reset timer (3-5 seconds)
       newState.nextAttackTimer = 3000 + state.rng() * 2000;
     }
   }
@@ -537,12 +539,69 @@ export const calculateMatchDamage = (
 ): number => {
   const { combat } = RUNE_MATCH_CONFIG;
   let damage = 0;
-  if (runeCount === 2) damage = 3;
+  if (runeCount === 2) damage = combat.match3Damage;
   else if (runeCount === 3) damage = combat.match3Damage;
   else if (runeCount === 4) damage = combat.match4Damage;
   else if (runeCount >= 5) damage = combat.match5Damage;
   if (isPowerRune) damage *= combat.powerRuneMultiplier;
   return damage;
+};
+
+export const applyPairMatchResult = (
+  state: RuneMatchState,
+  first: GridPosition,
+  second: GridPosition,
+): RuneMatchState => {
+  if (state.status !== "playing") return state;
+
+  const firstRune = state.grid[first.row]?.[first.col];
+  const secondRune = state.grid[second.row]?.[second.col];
+  if (!isRunePairMatch(firstRune, secondRune)) return state;
+
+  const vocabulary = state.activeVocabulary || state.vocabulary;
+  const matchedWordId =
+    firstRune.type === "vocabulary" ? firstRune.wordId : "";
+  const matchedWord = vocabulary.find(
+    (word) => word.term.toLowerCase().trim() === matchedWordId,
+  );
+  const isPower = matchedWord?.translation === state.powerWord;
+  const damage = calculateMatchDamage(2, isPower);
+  const correctAnswers = state.correctAnswers + 1;
+  const totalAttempts = state.totalAttempts + 1;
+  const nextMonsterHp = Math.max(0, (state.monster?.hp || 0) - damage);
+  const isVictory = correctAnswers >= RUNE_MATCH_CONFIG.game.targetMatches;
+
+  return {
+    ...state,
+    grid: applyGravity(state.grid, [first, second], vocabulary, {
+      rng: state.rng,
+    }),
+    selectedCell: null,
+    status: isVictory ? "victory" : state.status,
+    monster: state.monster
+      ? { ...state.monster, hp: isVictory ? nextMonsterHp : Math.max(1, nextMonsterHp) }
+      : null,
+    correctAnswers,
+    totalAttempts,
+    monsterState: "hurt",
+    monsterStateTimer: 500,
+    floatingTexts: [
+      ...state.floatingTexts,
+      {
+        id: generateId(),
+        text: `${isPower ? "POWER! " : ""}+1 / ${damage}`,
+        x: second.col,
+        y: second.row,
+        offsetX: 0,
+        offsetY: 0,
+        color: isPower ? "#facc15" : "#22c55e",
+        opacity: 1,
+        scale: 1,
+        duration: 1800,
+        maxDuration: 1800,
+      },
+    ],
+  };
 };
 
 export const applyMatchResult = (
@@ -551,11 +610,11 @@ export const applyMatchResult = (
 ): RuneMatchState => {
   if (state.status !== "playing") return state;
   let monsterHp = state.monster?.hp || 0;
-  let playerHp = state.player.hp;
   let hasShield = state.player.hasShield;
   let correctAnswers = state.correctAnswers;
   const totalAttempts = state.totalAttempts + 1;
   let totalDamage = 0;
+  let hasVocabularyMatch = false;
   const newFloatingTexts = [...state.floatingTexts];
 
   for (const group of result.groups) {
@@ -565,7 +624,7 @@ export const applyMatchResult = (
 
     if (group.type === "vocabulary") {
       const isPower = group.wordId === state.powerWord;
-      if (isPower) correctAnswers++;
+      hasVocabularyMatch = true;
       const baseDamage = calculateMatchDamage(group.coords.length, isPower);
       const specialBonus = group.isSpecial
         ? RUNE_MATCH_CONFIG.combat.lShapeDamage
@@ -588,7 +647,6 @@ export const applyMatchResult = (
     } else if (group.type === "heal") {
       const healAmt =
         group.coords.length * RUNE_MATCH_CONFIG.powerUps.healAmount;
-      playerHp = Math.min(state.player.maxHp, playerHp + healAmt);
       newFloatingTexts.push({
         id: generateId(),
         text: `+${healAmt}`,
@@ -640,6 +698,8 @@ export const applyMatchResult = (
     }
   });
 
+  if (hasVocabularyMatch) correctAnswers++;
+
   monsterHp = Math.max(0, monsterHp - totalDamage);
 
   let status: RuneMatchState["status"] = state.status;
@@ -647,11 +707,12 @@ export const applyMatchResult = (
   let monsterStateTimer = state.monsterStateTimer;
 
   if (totalDamage > 0) {
-    if (monsterHp <= 0) {
+    if (correctAnswers >= RUNE_MATCH_CONFIG.game.targetMatches) {
       status = "victory";
       monsterState = "death";
       monsterStateTimer = 2000; // Show death pose for 2s
     } else {
+      monsterHp = Math.max(1, monsterHp);
       monsterState = "hurt";
       monsterStateTimer = 500;
     }
@@ -662,7 +723,7 @@ export const applyMatchResult = (
     grid: result.grid,
     status,
     monster: state.monster ? { ...state.monster, hp: monsterHp } : null,
-    player: { ...state.player, hp: playerHp, hasShield },
+    player: { ...state.player, hasShield },
     correctAnswers,
     totalAttempts,
     floatingTexts: newFloatingTexts,
@@ -682,12 +743,13 @@ const createRandomRune = (
 
   // Use the provided vocabulary (should already be limited/active subset)
   const item = vocabulary[Math.floor(rng() * vocabulary.length)];
-  const showTranslation = rng() > 0.5;
+  const face = rng() > 0.5 ? "translation" : "term";
   return {
     id: generateId(),
     type: "vocabulary",
     wordId: item.term.toLowerCase().trim(), // Use English term as key (normalized)
-    text: showTranslation ? item.translation : item.term,
+    text: face === "translation" ? item.translation : item.term,
+    face,
   };
 };
 
@@ -700,8 +762,8 @@ export const createRuneMatchState = (
   // Shuffle vocabulary to avoid repetitive words
   const shuffledVocab = [...vocabulary].sort(() => rng() - 0.5);
 
-  // Select active vocabulary (max 6 words)
-  const maxWords = Math.min(6, shuffledVocab.length);
+  // Select active vocabulary for the 10-match objective.
+  const maxWords = Math.min(10, shuffledVocab.length);
   const activeVocabulary = shuffledVocab.slice(0, maxWords);
 
   // Pick power word from active vocabulary
@@ -712,8 +774,8 @@ export const createRuneMatchState = (
     status: "selection",
     selectedMonster: null,
     player: {
-      hp: RUNE_MATCH_CONFIG.player.maxHp,
-      maxHp: RUNE_MATCH_CONFIG.player.maxHp,
+      hp: RUNE_MATCH_CONFIG.game.durationMs,
+      maxHp: RUNE_MATCH_CONFIG.game.durationMs,
       hasShield: false,
     },
     monster: null,
@@ -735,5 +797,6 @@ export const createRuneMatchState = (
     isFrozen: false,
     hintCells: [],
     hintsRemaining: 2,
+    gameTimeMs: 0,
   };
 };

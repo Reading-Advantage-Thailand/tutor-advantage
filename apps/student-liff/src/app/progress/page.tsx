@@ -33,6 +33,7 @@ interface ProgressStats {
     at: number;
     reward: string;
   };
+  isBookComplete?: boolean;
 }
 
 interface WeeklyActivity {
@@ -57,9 +58,25 @@ interface EnrolledClassOption {
   seriesColor: string;
 }
 
+interface BookCycleOption {
+  id: string;
+  title: string;
+  cefr: string;
+  sequence: number;
+  status: string;
+  hasAccess: boolean;
+  completedArticles: number;
+  totalArticles: number;
+  percent: number;
+  isComplete: boolean;
+}
+
 interface ProgressData {
   enrolledClasses?: EnrolledClassOption[];
   selectedClassId?: string | null;
+  selectedBookCycleId?: string | null;
+  bookCycles?: BookCycleOption[];
+  nextAvailableBookCycleId?: string | null;
   stats: ProgressStats;
   weeklyActivity: WeeklyActivity[];
   articles: ProgressArticle[];
@@ -452,6 +469,7 @@ export default function ProgressPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
+  const [selectedBookCycleId, setSelectedBookCycleId] = useState<string | null>(null);
   const [switching, setSwitching] = useState(false);
 
   useEffect(() => {
@@ -469,11 +487,17 @@ export default function ProgressPage() {
           throw new Error("Session unavailable");
         }
 
-        const result = await studentApi.getStudentProgress(selectedClassId || undefined) as ProgressData;
+        const result = await studentApi.getStudentProgress(
+          selectedClassId || undefined,
+          selectedBookCycleId || undefined,
+        ) as ProgressData;
         if (isMounted) {
           setData(result);
           if (!selectedClassId && result.selectedClassId) {
             setSelectedClassId(result.selectedClassId);
+          }
+          if (!selectedBookCycleId && result.selectedBookCycleId) {
+            setSelectedBookCycleId(result.selectedBookCycleId);
           }
         }
       } catch (err) {
@@ -488,7 +512,7 @@ export default function ProgressPage() {
 
     fetchData();
     return () => { isMounted = false; };
-  }, [isReady, selectedClassId]);
+  }, [isReady, selectedClassId, selectedBookCycleId]);
 
   if (!isReady || loading) {
     return (
@@ -508,7 +532,7 @@ export default function ProgressPage() {
     );
   }
 
-  const { stats, weeklyActivity, articles } = data;
+  const { stats, weeklyActivity, articles, bookCycles = [] } = data;
   const hasData = stats.totalArticles > 0 || articles.length > 0;
   const progressPct = stats.totalArticles > 0 ? Math.round((stats.articlesRead / stats.totalArticles) * 100) : 0;
   const maxMin = Math.max(...(weeklyActivity.map((d) => d.minutes) || [0]), 1);
@@ -536,7 +560,12 @@ export default function ProgressPage() {
               return (
                 <button
                   key={cls.classId}
-                  onClick={() => { if (!isActive && !switching) setSelectedClassId(cls.classId); }}
+                  onClick={() => {
+                    if (!isActive && !switching) {
+                      setSelectedBookCycleId(null);
+                      setSelectedClassId(cls.classId);
+                    }
+                  }}
                   disabled={switching}
                   style={{
                     flex: "0 0 auto",
@@ -586,6 +615,42 @@ export default function ProgressPage() {
         </div>
       )}
 
+      {/* Book selector for a class that continues through multiple books */}
+      {bookCycles.length > 1 && (
+        <div style={{ padding: "0 16px", paddingTop: 8 }}>
+          <div className="scrollbar-hide" style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4 }}>
+            {bookCycles.map((bookCycle) => {
+              const isActive = bookCycle.id === (data.selectedBookCycleId ?? selectedBookCycleId);
+              return (
+                <button
+                  key={bookCycle.id}
+                  onClick={() => {
+                    if (!isActive && bookCycle.hasAccess && !switching) setSelectedBookCycleId(bookCycle.id);
+                  }}
+                  disabled={!bookCycle.hasAccess || switching}
+                  style={{
+                    flex: "0 0 auto", display: "flex", alignItems: "center", gap: 6,
+                    padding: "6px 12px", borderRadius: "var(--radius-full, 9999px)",
+                    border: isActive ? `2px solid ${stats.seriesColor}` : "1.5px solid var(--surface-border)",
+                    background: isActive ? `${stats.seriesColor}12` : "var(--surface-card)",
+                    color: isActive ? stats.seriesColor : "var(--text-secondary)",
+                    fontSize: "0.75rem", fontWeight: isActive ? 700 : 600,
+                    cursor: !bookCycle.hasAccess || switching ? "not-allowed" : "pointer",
+                    opacity: bookCycle.hasAccess ? 1 : 0.5, whiteSpace: "nowrap",
+                  }}
+                >
+                  {bookCycle.hasAccess ? <BookOpen size={13} /> : <Lock size={13} />}
+                  {bookCycle.title}
+                  <span style={{ fontSize: "0.625rem", fontWeight: 800 }}>
+                    {bookCycle.isComplete ? "จบแล้ว" : `${bookCycle.completedArticles}/${bookCycle.totalArticles}`}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div style={{ padding: "16px 16px", display: "flex", flexDirection: "column", gap: 16, opacity: switching ? 0.5 : 1, transition: "opacity 0.2s" }}>
 
         {/* Main progress card */}
@@ -610,9 +675,19 @@ export default function ProgressPage() {
                 <div style={{ background: "rgba(255,255,255,0.1)", borderRadius: 14, padding: "10px 14px", display: "flex", alignItems: "center", gap: 10, border: "1px solid rgba(255,255,255,0.15)" }}>
                   <Target size={16} style={{ color: "#fbbf24", flexShrink: 0 }} />
                   <span style={{ color: "rgba(255,255,255,0.85)", fontSize: "0.8125rem" }}>
-                    {t("progress.remainingPrefix")} <strong>{stats.nextMilestone.at - stats.articlesRead} {t("progress.articleUnit")}</strong> {t("progress.receive")} {stats.nextMilestone.reward}
+                    {stats.isBookComplete
+                      ? "เรียนจบเล่มนี้แล้ว"
+                      : <>{t("progress.remainingPrefix")} <strong>{Math.max(0, stats.nextMilestone.at - stats.articlesRead)} {t("progress.articleUnit")}</strong> {t("progress.receive")} {stats.nextMilestone.reward}</>}
                   </span>
                 </div>
+                {stats.isBookComplete && data.nextAvailableBookCycleId && (
+                  <button
+                    onClick={() => setSelectedBookCycleId(data.nextAvailableBookCycleId ?? null)}
+                    style={{ marginTop: 12, background: "#fff", color: stats.seriesColor, border: "none", borderRadius: 10, padding: "8px 12px", fontSize: "0.75rem", fontWeight: 800, cursor: "pointer" }}
+                  >
+                    ไปเล่มถัดไป
+                  </button>
+                )}
               </>
             ) : (
               <>

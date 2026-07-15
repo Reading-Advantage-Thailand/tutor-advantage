@@ -119,7 +119,7 @@ describe("lessonSessionService", () => {
     service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
 
     service.setPhase(session.sessionId, 10);
-    expect(service.submitGameVote(session.sessionId, "student-1", "rune-match")).toBeNull();
+    expect(service.submitGameVote(session.sessionId, "student-1", "alchemists-synthesis")).toBeNull();
     expect(session.gameState?.votes).toEqual({});
     expect(service.lockGameVote(session.sessionId)?.selectedGameId).toBe("dragon-flight");
   });

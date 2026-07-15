@@ -16,15 +16,13 @@ import {
   Image as KonvaImage,
   Circle,
 } from "react-konva";
-import { AnimatePresence, motion } from "framer-motion";
 import { AlertCircle, RefreshCcw } from "lucide-react";
 import {
   createRuneMatchState,
   initializeGrid,
   swapRunes,
-  findMatches,
-  processMatches,
-  applyMatchResult,
+  applyPairMatchResult,
+  isRunePairMatch,
   advanceTime,
   shuffleGrid,
   freezeMonster,
@@ -38,13 +36,9 @@ import {
 } from "@/lib/games/runeMatchConfig";
 import type { VocabularyItem } from "@/store/useGameStore";
 import { withBasePath } from "@/lib/games/basePath";
-import { MonsterSelection } from "./MonsterSelection";
 import { Button } from "@/components/ui/button";
-import { useScopedI18n } from "@/locales/client";
 import { useGameFullscreen } from "@/hooks/useGameFullscreen";
 import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
-import { GameStartScreen } from "@/components/games/game/GameStartScreen";
-import { GameEndScreen } from "@/components/games/game/GameEndScreen";
 import { calculateXP } from "@/lib/games/xp";
 
 export type RuneMatchGameResult = {
@@ -59,6 +53,18 @@ export type RuneMatchGameResult = {
 export type RuneMatchGameProps = {
   vocabulary: VocabularyItem[];
   onComplete: (result: RuneMatchGameResult) => void;
+};
+
+const MOBILE_GAME_CONTAINER_CLASS =
+  "relative h-dvh min-h-[560px] w-full overflow-hidden rounded-none border border-white/10 bg-slate-900/40 backdrop-blur-sm sm:h-[80vh] sm:rounded-2xl md:aspect-video md:h-auto";
+
+const getRuneMatchScore = (state: RuneMatchState) => {
+  const defeatedBonus = state.status === "victory" ? state.monster?.xp || 0 : 0;
+  const accuracyBonus =
+    state.totalAttempts > 0
+      ? Math.round((state.correctAnswers / state.totalAttempts) * 10)
+      : 0;
+  return Math.max(0, state.correctAnswers * 10 + defeatedBonus + accuracyBonus);
 };
 
 type RuneMatchAssets = {
@@ -77,12 +83,11 @@ type RuneMatchAssets = {
 };
 
 export function RuneMatchGame({ vocabulary, onComplete }: RuneMatchGameProps) {
-  const t = useScopedI18n("pages.student.gamesPage");
   const [gameState, setGameState] = useState<RuneMatchState | null>(null);
   const [assets, setAssets] = useState<RuneMatchAssets | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
-  const [gameStarted, setGameStarted] = useState(false);
+  const hasReportedRef = useRef(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -239,124 +244,123 @@ export function RuneMatchGame({ vocabulary, onComplete }: RuneMatchGameProps) {
     };
   }, [retryCount]);
 
-  const resetGame = useCallback(() => {
-    if (vocabulary.length > 0) setGameState(createRuneMatchState(vocabulary));
+  const createPlayingGame = useCallback((monsterType: MonsterType = "goblin") => {
+    const config = RUNE_MATCH_CONFIG.monsters[monsterType];
+    const initialState = createRuneMatchState(vocabulary);
+    const vocabToUse = initialState.activeVocabulary || initialState.vocabulary;
+    return {
+      ...initialState,
+      status: "playing" as const,
+      selectedMonster: monsterType,
+      monster: {
+        type: monsterType,
+        hp: config.hp,
+        maxHp: config.hp,
+        attack: config.attack,
+        xp: config.xp,
+      },
+      grid: initializeGrid(vocabToUse, { rng: initialState.rng }),
+    };
   }, [vocabulary]);
 
-  const handleStartGame = useCallback(() => {
-    setGameStarted(true);
-    resetGame();
-  }, [resetGame]);
-
-  const handleSelectMonster = useCallback((monsterType: MonsterType) => {
-    const config = RUNE_MATCH_CONFIG.monsters[monsterType];
-    setGameState((prev) => {
-      if (!prev) return null;
-      // Use activeVocabulary if available, otherwise fallback to full vocab (should be there from createRuneMatchState)
-      const vocabToUse = prev.activeVocabulary || prev.vocabulary;
-      const grid = initializeGrid(vocabToUse, { rng: prev.rng });
-      return {
-        ...prev,
-        status: "playing",
-        selectedMonster: monsterType,
-        monster: {
-          type: monsterType,
-          hp: config.hp,
-          maxHp: config.hp,
-          attack: config.attack,
-          xp: config.xp,
-        },
-        grid,
-      };
-    });
-  }, []);
+  useEffect(() => {
+    if (vocabulary.length === 0) return;
+    hasReportedRef.current = false;
+    setGameState(createPlayingGame("goblin"));
+  }, [createPlayingGame, vocabulary.length]);
 
   const handleCellClick = useCallback((row: number, col: number) => {
     setGameState((prev) => {
       if (!prev || prev.status !== "playing") return prev;
       const selected = prev.selectedCell;
       if (!selected) return { ...prev, selectedCell: { row, col } };
+
+      if (selected.row === row && selected.col === col) {
+        return { ...prev, selectedCell: null };
+      }
+
       const isAdjacent =
         (Math.abs(selected.row - row) === 1 && selected.col === col) ||
         (Math.abs(selected.col - col) === 1 && selected.row === row);
-      if (isAdjacent) {
-        const gridAfterSwap = swapRunes(prev.grid, selected, { row, col });
-        const matches = findMatches(gridAfterSwap);
-        if (matches.length > 0) {
-          const vocabToUse = prev.activeVocabulary || prev.vocabulary;
-          const result = processMatches(gridAfterSwap, vocabToUse, {
-            rng: prev.rng,
-          });
-          const newState = {
-            ...applyMatchResult({ ...prev, grid: gridAfterSwap }, result),
-            selectedCell: null,
-            currentStreak: prev.currentStreak + 1, // Increment combo
-            hintCells: [], // Clear hints on match
-          };
 
-          // Award bomb for matching 5+ runes
-          const hasLargeMatch = result.groups.some((g) => g.coords.length >= 5);
-          if (hasLargeMatch) {
-            newState.specialMoves = {
-              ...newState.specialMoves,
-              bomb: newState.specialMoves.bomb + 1,
-            };
-          }
-
-          // Award freeze for matching shield
-          const hasShieldMatch = result.groups.some((g) => g.type === "shield");
-          if (hasShieldMatch && !newState.specialMoves.freeze) {
-            newState.specialMoves = {
-              ...newState.specialMoves,
-              freeze: newState.specialMoves.freeze + 1,
-            };
-          }
-
-          // Monster counter-attack removed (now realtime)
-
-          // Clear frozen after attack
-          if (newState.isFrozen) {
-            newState.isFrozen = false;
-          }
-
-          // Random new power word
-          newState.powerWord =
-            prev.vocabulary[
-              Math.floor(prev.rng() * prev.vocabulary.length)
-            ].translation;
-
-          return newState;
-        } else {
-          // No match: Allow swap but deduct 1 HP
-          const newHp = Math.max(0, prev.player.hp - 1);
-          return {
-            ...prev,
-            grid: gridAfterSwap,
-            player: { ...prev.player, hp: newHp },
-            selectedCell: null,
-            status: newHp <= 0 ? "defeat" : prev.status,
-            floatingTexts: [
-              ...prev.floatingTexts,
-              {
-                id: Math.random().toString(36).substring(2, 9),
-                text: "-1 HP",
-                x: col,
-                y: row,
-                offsetX: 0,
-                offsetY: 0,
-                color: "#ef4444",
-                opacity: 1,
-                scale: 1,
-                duration: 1500,
-                maxDuration: 1500,
-              },
-            ],
-            shakeIntensity: newHp < prev.player.hp ? 0.5 : prev.shakeIntensity,
-          };
-        }
-      } else {
+      if (!isAdjacent) {
         return { ...prev, selectedCell: { row, col } };
       }
+
+      const gridAfterSwap = swapRunes(prev.grid, selected, { row, col });
+      const firstRune = gridAfterSwap[selected.row]?.[selected.col];
+      const secondRune = gridAfterSwap[row]?.[col];
+
+      if (isRunePairMatch(firstRune, secondRune)) {
+        const vocabToUse = prev.activeVocabulary || prev.vocabulary;
+        const newState = {
+          ...applyPairMatchResult(
+            { ...prev, grid: gridAfterSwap },
+            selected,
+            { row, col },
+          ),
+          currentStreak: prev.currentStreak + 1,
+          hintCells: [],
+        };
+
+        if (findPossibleMoves(newState.grid).length === 0) {
+          newState.grid = initializeGrid(vocabToUse, { rng: prev.rng });
+          newState.floatingTexts = [
+            ...newState.floatingTexts,
+            {
+              id: Math.random().toString(36).substring(2, 9),
+              text: "RESHUFFLE!",
+              x: -1,
+              y: -1,
+              offsetX: 0,
+              offsetY: 0,
+              color: "#22c55e",
+              opacity: 1,
+              scale: 1,
+              duration: 1600,
+              maxDuration: 1600,
+            },
+          ];
+        }
+
+        if (newState.isFrozen) {
+          newState.isFrozen = false;
+        }
+
+        newState.powerWord =
+          prev.vocabulary[
+            Math.floor(prev.rng() * prev.vocabulary.length)
+          ].translation;
+
+        return newState;
+      }
+
+      return {
+        ...prev,
+        selectedCell: null,
+        totalAttempts:
+          firstRune?.type === "vocabulary" && secondRune?.type === "vocabulary"
+            ? prev.totalAttempts + 1
+            : prev.totalAttempts,
+        currentStreak: 0,
+        floatingTexts: [
+          ...prev.floatingTexts,
+          {
+            id: Math.random().toString(36).substring(2, 9),
+            text: "WRONG PAIR",
+            x: col,
+            y: row,
+            offsetX: 0,
+            offsetY: 0,
+            color: "#ef4444",
+            opacity: 1,
+            scale: 1,
+            duration: 1500,
+            maxDuration: 1500,
+          },
+        ],
+        shakeIntensity: 0.5,
+      };
     });
   }, []);
 
@@ -438,25 +442,16 @@ export function RuneMatchGame({ vocabulary, onComplete }: RuneMatchGameProps) {
     };
   }, []);
 
-  const handleRestart = useCallback(() => {
-    setGameStarted(false);
-    setGameState(null);
-    exitFullscreen();
-  }, [exitFullscreen]);
-
-  const handleExit = useCallback(() => {
-    setGameStarted(false);
-    setGameState(null);
-    exitFullscreen();
-  }, [exitFullscreen]);
-
   useEffect(() => {
     if (!gameState) return;
+    if (hasReportedRef.current) return;
     if (gameState.status === "victory" || gameState.status === "defeat") {
+      hasReportedRef.current = true;
+      const score = getRuneMatchScore(gameState);
       const xp =
         gameState.status === "victory"
           ? calculateXP(
-              gameState.monster?.xp || 0,
+              score,
               gameState.correctAnswers,
               gameState.totalAttempts,
             )
@@ -465,11 +460,11 @@ export function RuneMatchGame({ vocabulary, onComplete }: RuneMatchGameProps) {
         xp,
         accuracy:
           gameState.totalAttempts > 0
-            ? (gameState.correctAnswers / gameState.totalAttempts) * 100
+            ? gameState.correctAnswers / gameState.totalAttempts
             : gameState.status === "victory"
-              ? 100
+              ? 1
               : 0,
-        score: gameState.monster?.xp || 0,
+        score,
         correctAnswers: gameState.correctAnswers,
         totalAttempts: gameState.totalAttempts,
         monsterType: gameState.monster?.type,
@@ -481,39 +476,12 @@ export function RuneMatchGame({ vocabulary, onComplete }: RuneMatchGameProps) {
     }
   }, [gameState, onComplete]);
 
-  if (!gameStarted) {
-    return (
-      <div
-        ref={mergedRef}
-        data-testid="rune-match-container"
-        className="relative h-[80vh] w-full overflow-hidden rounded-2xl bg-slate-900/40 backdrop-blur-sm border border-white/10 md:aspect-video md:h-auto"
-      >
-        <GameStartScreen
-          gameTitle={t("games.runeMatch.title")}
-          vocabulary={vocabulary}
-          onStart={handleStartGame}
-          instructions={[
-            { step: 1, text: t("runeMatch.tip1") },
-            { step: 2, text: t("runeMatch.tip2") },
-            { step: 3, text: t("runeMatch.tip3") },
-            { step: 4, text: t("runeMatch.tip4") },
-          ]}
-        >
-          <MonsterSelection onSelect={(type) => {
-            handleStartGame();
-            setTimeout(() => handleSelectMonster(type), 0);
-          }} />
-        </GameStartScreen>
-      </div>
-    );
-  }
-
   if (!assets || !gameState || dimensions.width === 0) {
     return (
       <div
         ref={mergedRef}
         data-testid="rune-match-container"
-        className="relative h-[60vh] w-full overflow-hidden rounded-2xl bg-slate-950 flex items-center justify-center border border-white/10 md:aspect-video md:h-auto"
+        className="relative flex h-dvh min-h-[420px] w-full items-center justify-center overflow-hidden rounded-none border border-white/10 bg-slate-950 sm:h-[60vh] sm:rounded-2xl md:aspect-video md:h-auto"
       >
         <div className="flex flex-col items-center gap-4 text-center p-4">
           {loadError ? (
@@ -552,6 +520,10 @@ export function RuneMatchGame({ vocabulary, onComplete }: RuneMatchGameProps) {
   ) => {
     const height = 20;
     const progress = Math.max(0, Math.min(1, current / max));
+    const displayValue =
+      label === "TIME"
+        ? `${Math.ceil(current / 1000)}s`
+        : `${Math.ceil(current)}/${max}`;
     return (
       <Group x={x} y={y}>
         <Rect
@@ -569,7 +541,7 @@ export function RuneMatchGame({ vocabulary, onComplete }: RuneMatchGameProps) {
           cornerRadius={height / 2}
         />
         <Text
-          text={`${label}: ${Math.ceil(current)}/${max}`}
+          text={`${label}: ${displayValue}`}
           width={width}
           height={height}
           fontSize={getEffectiveTextSize(16)}
@@ -587,79 +559,8 @@ export function RuneMatchGame({ vocabulary, onComplete }: RuneMatchGameProps) {
     <div
       ref={mergedRef}
       data-testid="rune-match-container"
-      className="relative h-[80vh] w-full overflow-hidden rounded-2xl bg-slate-900/40 backdrop-blur-sm border border-white/10 md:aspect-video md:h-auto"
+      className={MOBILE_GAME_CONTAINER_CLASS}
     >
-      <AnimatePresence mode="wait">
-        {gameState.status === "selection" && (
-          <motion.div
-            key="selection"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute inset-0 z-10 flex items-start justify-center bg-slate-950/80 backdrop-blur-sm overflow-y-auto"
-          >
-            <MonsterSelection onSelect={handleSelectMonster} />
-          </motion.div>
-        )}
-        {gameState.status === "victory" && (
-          <GameEndScreen
-            status="victory"
-            score={gameState.monster?.xp || 0}
-            xp={calculateXP(
-              gameState.monster?.xp || 0,
-              gameState.correctAnswers,
-              gameState.totalAttempts,
-            )}
-            accuracy={
-              gameState.totalAttempts > 0
-                ? gameState.correctAnswers / gameState.totalAttempts
-                : 1
-            }
-            onRestart={handleRestart}
-            onExit={handleExit}
-            customStats={[
-              {
-                label: "Monster",
-                value: gameState.monster?.type || "",
-              },
-              {
-                label: "Difficulty",
-                value:
-                  MONSTER_DIFFICULTY[
-                    (gameState.monster?.type || "goblin") as MonsterType
-                  ],
-              },
-            ]}
-          />
-        )}
-        {gameState.status === "defeat" && (
-          <GameEndScreen
-            status="defeat"
-            score={0}
-            xp={0}
-            accuracy={
-              gameState.totalAttempts > 0
-                ? gameState.correctAnswers / gameState.totalAttempts
-                : 0
-            }
-            onRestart={handleRestart}
-            onExit={handleExit}
-            customStats={[
-              {
-                label: "Monster",
-                value: gameState.monster?.type || "",
-              },
-              {
-                label: "Difficulty",
-                value:
-                  MONSTER_DIFFICULTY[
-                    (gameState.monster?.type || "goblin") as MonsterType
-                  ],
-              },
-            ]}
-          />
-        )}
-      </AnimatePresence>
       <Stage width={dimensions.width} height={dimensions.height}>
         <Layer>
           <Group
@@ -756,8 +657,18 @@ export function RuneMatchGame({ vocabulary, onComplete }: RuneMatchGameProps) {
                       gameState.player.hp,
                       gameState.player.maxHp,
                       "#22c55e",
-                      "PLAYER",
+                      "TIME",
                     )}
+                    <Text
+                      text={`MATCHES ${gameState.correctAnswers}/${RUNE_MATCH_CONFIG.game.targetMatches}`}
+                      x={10}
+                      y={238}
+                      width={layout.sidebarWidth - 20}
+                      fontSize={getEffectiveTextSize(16)}
+                      fill="#22c55e"
+                      fontStyle="bold"
+                      align="center"
+                    />
                     {gameState.player.hasShield && (
                       <Text
                         text="🛡️ SHIELD"
@@ -984,8 +895,18 @@ export function RuneMatchGame({ vocabulary, onComplete }: RuneMatchGameProps) {
                       gameState.player.hp,
                       gameState.player.maxHp,
                       "#22c55e",
-                      "PLAYER",
+                      "TIME",
                     )}
+                    <Text
+                      text={`MATCHES ${gameState.correctAnswers}/${RUNE_MATCH_CONFIG.game.targetMatches}`}
+                      x={dimensions.width / 2 - 100}
+                      y={172}
+                      width={200}
+                      fontSize={getEffectiveTextSize(16)}
+                      fill="#22c55e"
+                      fontStyle="bold"
+                      align="center"
+                    />
                   </Group>
                 )}
                 <Rect

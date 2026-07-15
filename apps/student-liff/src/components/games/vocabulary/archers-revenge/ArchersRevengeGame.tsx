@@ -26,6 +26,9 @@ type ArchersRevengeGameProps = {
   onComplete?: (results: ArchersRevengeResults) => void;
 };
 
+const MOBILE_GAME_CONTAINER_CLASS =
+  "relative h-dvh min-h-[560px] w-full overflow-hidden rounded-none bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none sm:h-[75vh] sm:rounded-3xl md:aspect-video md:h-auto";
+
 export function ArchersRevengeGame({
   vocabulary,
   onComplete,
@@ -149,7 +152,7 @@ export function ArchersRevengeGame({
 
   if (gamePhase === "start") {
     return (
-      <div ref={containerRef} className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto">
+      <div ref={containerRef} className={MOBILE_GAME_CONTAINER_CLASS}>
         <GameStartScreen
           gameTitle="Archer's Revenge"
           gameSubtitle="Defend the Realm"
@@ -191,7 +194,7 @@ export function ArchersRevengeGame({
   }
 
   return (
-    <div ref={containerRef} className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto">
+    <div ref={containerRef} className={MOBILE_GAME_CONTAINER_CLASS}>
       {gamePhase === "playing" && gameState && (
         <>
           <Stage
