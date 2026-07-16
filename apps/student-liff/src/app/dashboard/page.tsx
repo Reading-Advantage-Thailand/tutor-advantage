@@ -377,7 +377,7 @@ export default function DashboardPage() {
     name: profile?.displayName || t("dashboard.loadingName"),
     avatar: profile?.pictureUrl || null,
     initials: profile?.displayName?.charAt(0) || "TA",
-    level: primaryClass.bookName || "Origins 1",
+    level: primaryClass.bookName || "Reading 3.1",
     cefr: primaryClass.seriesCefr || "A1",
   };
 

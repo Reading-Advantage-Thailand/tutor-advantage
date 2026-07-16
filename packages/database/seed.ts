@@ -569,7 +569,7 @@ async function main() {
       type: "PAYMENT_ANOMALY",
       severity: "MEDIUM",
       targetId: "cls_abc88",
-      targetName: "Origins Book 2",
+      targetName: "Reading 2",
       description:
         "Multiple failed payment attempts from identical IP before success.",
       status: "OPEN",

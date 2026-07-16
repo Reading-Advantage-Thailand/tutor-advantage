@@ -193,14 +193,15 @@ export default function LandingPage() {
 
         <div className="scrollbar-hide" style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 8, scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}>
           {[
-            { name: "Origins", cefr: "A1", levels: "1-3", tag: "Your journey starts here", color: "#06c755", gradient: "linear-gradient(135deg, #06c755, #049a42)" },
-            { name: "Quest", cefr: "A2", levels: "4-6", tag: "Your quest awaits", color: "#3b82f6", gradient: "linear-gradient(135deg, #3b82f6, #2563eb)" },
-            { name: "Adventure", cefr: "B1", levels: "7-9", tag: "Adventure's in sight", color: "#8b5cf6", gradient: "linear-gradient(135deg, #8b5cf6, #7c3aed)" },
-            { name: "Hero", cefr: "B2", levels: "10-12", tag: "You're the hero", color: "#f59e0b", gradient: "linear-gradient(135deg, #f59e0b, #d97706)" },
-            { name: "Legend", cefr: "C1", levels: "13-15", tag: "Legendary stories", color: "#ef4444", gradient: "linear-gradient(135deg, #ef4444, #dc2626)" },
+            { name: "Reading", cefr: "A1", levels: "3.1", tag: "Open now", color: "#06c755", gradient: "linear-gradient(135deg, #06c755, #049a42)", enabled: true },
+            { name: "Reading", cefr: "A1", levels: "1-3.2", tag: "More books coming soon", color: "#64748b", gradient: "linear-gradient(135deg, #64748b, #475569)", enabled: false },
+            { name: "Reading", cefr: "A2", levels: "4-6", tag: "More books coming soon", color: "#64748b", gradient: "linear-gradient(135deg, #64748b, #475569)", enabled: false },
+            { name: "Reading", cefr: "B1", levels: "7-9", tag: "More books coming soon", color: "#64748b", gradient: "linear-gradient(135deg, #64748b, #475569)", enabled: false },
+            { name: "Reading", cefr: "B2", levels: "10-12", tag: "More books coming soon", color: "#64748b", gradient: "linear-gradient(135deg, #64748b, #475569)", enabled: false },
+            { name: "Reading", cefr: "C1", levels: "13-15", tag: "More books coming soon", color: "#64748b", gradient: "linear-gradient(135deg, #64748b, #475569)", enabled: false },
           ].map((series) => (
             <div
-              key={series.name}
+              key={`${series.name}-${series.levels}`}
               style={{
                 minWidth: 140,
                 padding: "20px 16px",
@@ -211,6 +212,7 @@ export default function LandingPage() {
                 scrollSnapAlign: "start",
                 position: "relative",
                 overflow: "hidden",
+                opacity: series.enabled ? 1 : 0.72,
               }}
             >
               <div aria-hidden style={{ position: "absolute", top: -15, right: -15, width: 60, height: 60, borderRadius: "50%", background: "rgba(255,255,255,0.1)" }} />

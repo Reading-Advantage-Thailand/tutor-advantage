@@ -111,7 +111,7 @@ export const th = {
       subtitle: "กรอกรายละเอียดคลาสเพื่อเริ่มรับสมัครนักเรียน",
       classInfo: "ข้อมูลคลาส",
       className: "ชื่อคลาส",
-      classNamePlaceholder: "เช่น Origins 1 - กลุ่ม A",
+      classNamePlaceholder: "เช่น Reading 3.1 - กลุ่ม A",
       book: "หนังสือเรียน",
       selectBook: "เลือกหนังสือ...",
       schedule: "ตารางเรียน",

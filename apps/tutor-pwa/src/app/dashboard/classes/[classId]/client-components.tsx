@@ -124,7 +124,7 @@ export function ArticleSelector({
   };
 
   const getBookLabel = (book?: BookOption) =>
-    book ? `${book.title || "Untitled book"}${book.bookCode ? ` (${book.bookCode})` : ""}` : "the selected book";
+    book ? book.title || book.bookCode || "Untitled book" : "the selected book";
 
   const validateNewBookSelection = () => {
     const selectedBookIndex = books.findIndex((book) => book.bookId === newBookId);
@@ -323,7 +323,7 @@ export function ArticleSelector({
                       <option value="">เลือกหนังสือ</option>
                       {books.map((book) => (
                         <option key={book.bookId} value={book.bookId}>
-                          {book.title} ({book.bookCode})
+                          {book.title || book.bookCode}
                         </option>
                       ))}
                     </select>

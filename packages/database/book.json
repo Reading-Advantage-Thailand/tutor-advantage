@@ -47,7 +47,7 @@
     }
   },
   "books": {
-    "Origins 1": [
+    "Reading 1": [
       {
         "type": "nonfiction",
         "genre": "Parenting",
@@ -139,7 +139,7 @@
         "id": "MMmPVvbXr1LnBo7P0oTT"
       }
     ],
-    "Origins 2": [
+    "Reading 2": [
       {
         "type": "fiction",
         "genre": "Young Adult Fiction",
@@ -225,7 +225,7 @@
         "id": "cmkmhgh5501lds60ev7s791s5"
       }
     ],
-    "Origins 3.1": [
+    "Reading 3.1": [
       {
         "type": "fiction",
         "genre": "Children's Fiction",
@@ -311,7 +311,7 @@
         "id": "AEh9oRp1WDa8CApSdrCr"
       }
     ],
-    "Origins 3.2": [
+    "Reading 3.2": [
       {
         "type": "fiction",
         "genre": "Westerns",
@@ -397,7 +397,7 @@
         "id": "seLILcBfZNSfaapisRra"
       }
     ],
-    "Quest 4": [
+    "Reading 4": [
       {
         "type": "fiction",
         "genre": "Horror",
@@ -483,7 +483,7 @@
         "id": "cml5szh5o00aas60e5wv1q9ez"
       }
     ],
-    "Quest 5": [
+    "Reading 5": [
       {
         "type": "fiction",
         "genre": "Children's Fiction",
@@ -569,7 +569,7 @@
         "id": "mIGa1v9cgtJgkXAnmVGy"
       }
     ],
-    "Quest 6.1": [
+    "Reading 6.1": [
       {
         "type": "fiction",
         "genre": "Literary Fiction",
@@ -655,7 +655,7 @@
         "id": "iO4trC2AgGcR843wEx94"
       }
     ],
-    "Adventure 7.1": [
+    "Reading 7.1": [
       {
         "type": "fiction",
         "genre": "Children's Fiction",
@@ -735,7 +735,7 @@
         "id": "FWSuj1yh5kzajOz2ra4W"
       }
     ],
-    "Adventure 7.2": [
+    "Reading 7.2": [
       {
         "type": "fiction",
         "genre": "Children's Fiction",

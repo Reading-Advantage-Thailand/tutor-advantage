@@ -17,7 +17,7 @@ export default function ProfilePage() {
   const { liff, profile, isReady } = useLiff();
   const router = useRouter();
   const profileUserId = profile?.userId;
-  const [levelDisplay, setLevelDisplay] = useState("Origins 1");
+  const [levelDisplay, setLevelDisplay] = useState("Reading 3.1");
   const [cefrDisplay, setCefrDisplay] = useState("A1");
 
   useEffect(() => {

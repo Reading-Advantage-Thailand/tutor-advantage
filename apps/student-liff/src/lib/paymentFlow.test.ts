@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildOrderSummaryFromClass,
+  buildEnrollPathFromInviteText,
   createDefaultOrderSummary,
   formatCardExpiry,
   formatCardNumber,
@@ -8,6 +9,7 @@ import {
   isUnder18,
   isValidDateOfBirth,
   mergeCheckoutDetails,
+  parseInviteEnrollParams,
   parseClassIdFromQrText,
   shouldLoadPromptPayQr,
   type CheckoutDetails,
@@ -35,7 +37,7 @@ describe("paymentFlow helpers", () => {
         {
           id: "api-class",
           name: "Reading A1",
-          book: "Origins",
+          book: "Reading",
           packagePriceSatang: 320000,
           tutor: { name: "Teacher Ada" },
         },
@@ -47,7 +49,7 @@ describe("paymentFlow helpers", () => {
       price: 3200,
       priceSatang: 320000,
       tutor: "Teacher Ada",
-      cefr: "Origins",
+      cefr: "Reading",
     });
   });
 
@@ -95,5 +97,16 @@ describe("paymentFlow helpers", () => {
     expect(parseClassIdFromQrText("https://app.example.com/enroll?classId=class-1")).toBe("class-1");
     expect(parseClassIdFromQrText("/enroll?token=abc&classId=class%202")).toBe("class 2");
     expect(parseClassIdFromQrText("not a class QR")).toBeNull();
+  });
+
+  it("builds enroll paths from invite links without dropping referral tokens", () => {
+    expect(parseInviteEnrollParams("https://app.example.com/enroll?classId=class-1&referralToken=ref-1")).toEqual({
+      classId: "class-1",
+      referralToken: "ref-1",
+    });
+    expect(buildEnrollPathFromInviteText("/enroll?token=abc&classId=class%202")).toBe(
+      "/enroll?classId=class+2&referralToken=abc",
+    );
+    expect(buildEnrollPathFromInviteText("not a class QR")).toBeNull();
   });
 });

@@ -34,7 +34,7 @@ export const th = {
       "LINE login สำเร็จแล้ว แต่ระบบยังสร้าง session ไม่สำเร็จ กรุณาลองเข้าสู่ระบบใหม่",
     retryLogin: "ลองเข้าสู่ระบบใหม่",
     close: "ปิด",
-    programBadge: "โปรแกรมภาษาอังกฤษ Origins & Quest",
+    programBadge: "โปรแกรมภาษาอังกฤษ Reading",
     heroTitleLine1: "เรียนภาษาอังกฤษ",
     heroTitleLine2: "กับติวเตอร์ที่คุณ",
     heroTitleLine3: "ไว้วางใจ",
@@ -787,7 +787,7 @@ export const studyDemoLessons = [
 export const studentReadMockArticle = {
   title: "The Magic Garden",
   level: "A1",
-  series: "Origins",
+  series: "Reading",
   levelNum: 2,
   wordCount: 142,
   readTimeMin: 3,

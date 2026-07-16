@@ -27,6 +27,16 @@ interface BookArticle {
   id: string;
 }
 
+function toReadingCourseName(bookKey: string) {
+  const match = bookKey.match(/([0-9]+(?:\.[0-9]+)?)/);
+  return match ? `Reading ${match[1]}` : bookKey;
+}
+
+function getLevelNumber(bookKey: string) {
+  const match = bookKey.match(/([0-9]+)/);
+  return match ? parseInt(match[1]) : 1;
+}
+
 async function main() {
   console.log("🚀 Starting book import...");
 
@@ -70,7 +80,8 @@ async function main() {
     const independentHours = Math.round(meta.independentHoursTotal / meta.plannedBooks);
 
     for (const [bookKey, jsonArticles] of Object.entries(data.books)) {
-      if (!bookKey.startsWith(seriesName)) continue;
+      const levelNumber = getLevelNumber(bookKey);
+      if (levelNumber < meta.raLevelStart || levelNumber > meta.raLevelEnd) continue;
 
       // De-duplicate within the same book
       const seenIds = new Set<string>();
@@ -80,17 +91,16 @@ async function main() {
         return true;
       });
 
-      // Level number = first number in the book key ("Origins 3.1" -> 3)
-      const match = bookKey.match(/([0-9]+)/);
-      const levelNumber = match ? parseInt(match[1]) : 1;
+      // Level number = first number in the book key ("Reading 3.1" -> 3)
+      const courseName = toReadingCourseName(bookKey);
 
       console.log(`📖 Adding book: ${bookKey} (Articles: ${uniqueArticles.length})`);
 
       const book = await prisma.book.create({
         data: {
           seriesId: series.seriesId,
-          bookCode: bookKey,
-          title: bookKey,
+          bookCode: courseName,
+          title: courseName,
           levelNumber,
           articleCount: uniqueArticles.length,
           classHours,

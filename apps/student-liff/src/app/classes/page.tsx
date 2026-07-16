@@ -6,7 +6,7 @@ import { studentApi } from "@/lib/api";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { AlertCircle, QrCode } from "lucide-react";
 import { toast } from "sonner";
-import { parseClassIdFromQrText } from "@/lib/paymentFlow";
+import { buildEnrollPathFromInviteText } from "@/lib/paymentFlow";
 import { t } from "@/lib/i18n";
 
 interface ClassItem {
@@ -30,6 +30,7 @@ export default function ClassesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [inviteLinkInput, setInviteLinkInput] = useState("");
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
   useEffect(() => {
@@ -96,9 +97,9 @@ export default function ClassesPage() {
       }
 
       if (scannedText) {
-        const classId = parseClassIdFromQrText(scannedText);
-        if (classId) {
-          window.location.href = `/enroll?classId=${classId}`;
+        const enrollPath = buildEnrollPathFromInviteText(scannedText);
+        if (enrollPath) {
+          window.location.href = enrollPath;
         } else {
           toast.error(t("classes.qrInvalid"));
         }
@@ -106,6 +107,16 @@ export default function ClassesPage() {
     } catch {
       toast.error(t("classes.qrScanError"));
     }
+  };
+
+  const handleInviteLinkSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const enrollPath = buildEnrollPathFromInviteText(inviteLinkInput);
+    if (!enrollPath) {
+      toast.error(t("classes.qrInvalid"));
+      return;
+    }
+    window.location.href = enrollPath;
   };
 
   const statusMap = {
@@ -207,6 +218,83 @@ export default function ClassesPage() {
           </button>
         </div>
 
+        <form
+          onSubmit={handleInviteLinkSubmit}
+          className="glass-card"
+          style={{
+            padding: 14,
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+            border: "1px solid rgba(6,199,85,0.18)",
+            background: "linear-gradient(135deg, rgba(6,199,85,0.07), var(--surface-card))",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div
+              style={{
+                width: 30,
+                height: 30,
+                borderRadius: 10,
+                background: "rgba(6,199,85,0.12)",
+                color: "var(--brand-600)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <QrCode size={16} />
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <p style={{ fontSize: "0.8125rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
+                มีลิงก์ชวนเรียน?
+              </p>
+              <p style={{ fontSize: "0.6875rem", color: "var(--text-secondary)", margin: "1px 0 0" }}>
+                วาง invite link จากเพื่อนหรือครูเพื่อเปิดหน้าสมัครเรียน
+              </p>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <input
+              id="input-invite-link"
+              value={inviteLinkInput}
+              onChange={(event) => setInviteLinkInput(event.target.value)}
+              placeholder="https://.../enroll?classId=..."
+              className="input-field"
+              inputMode="url"
+              autoCapitalize="none"
+              autoCorrect="off"
+              style={{
+                flex: 1,
+                minWidth: 0,
+                height: 42,
+                borderRadius: 14,
+                background: "var(--surface-card)",
+              }}
+            />
+            <button
+              type="submit"
+              disabled={!inviteLinkInput.trim()}
+              style={{
+                height: 42,
+                padding: "0 14px",
+                borderRadius: 14,
+                border: "none",
+                background: "var(--brand-500)",
+                color: "#fff",
+                fontSize: "0.75rem",
+                fontWeight: 800,
+                cursor: inviteLinkInput.trim() ? "pointer" : "not-allowed",
+                opacity: inviteLinkInput.trim() ? 1 : 0.5,
+                flexShrink: 0,
+              }}
+            >
+              เปิดลิงก์
+            </button>
+          </div>
+        </form>
+
         {/* Filter chips */}
         <div
           className="scrollbar-hide"
@@ -219,11 +307,11 @@ export default function ClassesPage() {
         >
           {([
               { label: t("classes.allFilter"), value: null },
-              { label: "Origins A1", value: "A1" },
-              { label: "Quest A2", value: "A2" },
-              { label: "Adventure B1", value: "B1" },
-              { label: "Hero B2", value: "B2" },
-              { label: "Legend C1", value: "C1" },
+              { label: "Reading A1", value: "A1" },
+              { label: "Reading A2", value: "A2" },
+              { label: "Reading B1", value: "B1" },
+              { label: "Reading B2", value: "B2" },
+              { label: "Reading C1", value: "C1" },
             ] as { label: string; value: string | null }[]).map(({ label, value }) => {
               const isActive = activeFilter === value;
               return (

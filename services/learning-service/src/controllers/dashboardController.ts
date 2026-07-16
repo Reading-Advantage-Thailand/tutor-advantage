@@ -564,7 +564,7 @@ export async function getStudentProgress(
         totalArticles,
         weekStreak: streak,
         totalMinutes,
-        level: book.title || "Origins",
+        level: book.title || "Reading",
         cefr,
         seriesColor,
         nextMilestone,

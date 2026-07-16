@@ -9,6 +9,22 @@ import { redeemCoupon, validateCoupon, CouponError } from "../services/couponSer
 
 // Maximum live-teaching hours allowed per class schedule
 const MAX_CLASS_HOURS = 22;
+// Keep the legacy code until every deployed database has run the Reading rename migration.
+const AVAILABLE_BOOK_CODES = new Set(["Reading 3.1", "Origins 3.1"]);
+
+function isBookAvailable(book?: { bookCode?: string | null } | null) {
+  return Boolean(book?.bookCode && AVAILABLE_BOOK_CODES.has(book.bookCode));
+}
+
+function unavailableBookResponse(req: AuthenticatedRequest) {
+  return {
+    error: {
+      code: "BOOK_UNAVAILABLE",
+      message: "This course level is temporarily unavailable. Only Reading 3.1 is open right now.",
+      requestId: req.id,
+    },
+  };
+}
 
 const curatedArticleOrder = new Map<string, number>(
   [
@@ -167,6 +183,10 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
           requestId: req.id,
         },
       });
+    }
+
+    if (!isBookAvailable(book)) {
+      return res.status(403).json(unavailableBookResponse(req));
     }
 
     // Demo classes always teach the book's first article (fixed content),
@@ -722,7 +742,7 @@ export async function getClassById(req: AuthenticatedRequest, res: Response) {
       name: cls.title || cls.book?.title || "Untitled Class",
       book: cls.book?.title || "Unknown Book",
       bookCode: cls.book?.bookCode || null,
-      seriesName: series?.name || null,
+      seriesName: "Reading",
       seriesTagline: series?.tagline || null,
       status,
       students: activeOrPendingStudents,
@@ -906,7 +926,7 @@ export async function getAvailableClasses(
         tutorInitials: getInitials(tutorName),
         book: c.book?.title || "Unknown Book",
         bookCode: c.book?.bookCode || null,
-        seriesName: c.book?.series?.name || null,
+        seriesName: "Reading",
         articleCount: c.book?.articleCount || 0,
         totalHours: c.book?.classHours || 0,
         cefr: seriesCefr,
@@ -937,6 +957,9 @@ export async function getAvailableClasses(
 export async function getBooks(_req: AuthenticatedRequest, res: Response) {
   try {
     const books = await prisma.book.findMany({
+      where: {
+        bookCode: { in: Array.from(AVAILABLE_BOOK_CODES) },
+      },
       include: { series: true },
       orderBy: [
         { series: { raLevelStart: "asc" } },
@@ -1405,6 +1428,10 @@ export async function createClassBookCycle(req: AuthenticatedRequest, res: Respo
       return res.status(404).json({
         error: { code: "NOT_FOUND", message: "Book not found" },
       });
+    }
+
+    if (!isBookAvailable(book)) {
+      return res.status(403).json(unavailableBookResponse(req));
     }
 
     const result = await prisma.$transaction(async (tx) => {

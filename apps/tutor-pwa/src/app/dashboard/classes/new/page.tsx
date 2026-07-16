@@ -303,7 +303,7 @@ export default function NewClassPage() {
                     </option>
                     {books.map((book) => (
                       <option key={book.bookId} value={book.bookId} className="bg-background text-foreground">
-                        {book.series?.name} - {book.title}
+                        {book.title}
                       </option>
                     ))}
                   </select>

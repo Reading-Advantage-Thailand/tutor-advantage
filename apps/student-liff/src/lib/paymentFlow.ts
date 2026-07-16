@@ -120,15 +120,42 @@ export function formatCardExpiry(value: string): string {
     .replace(/(.{2})/, "$1/");
 }
 
-export function parseClassIdFromQrText(scannedText: string): string | null {
-  if (!scannedText.trim()) return null;
+export type InviteEnrollParams = {
+  classId: string | null;
+  referralToken: string | null;
+};
+
+export function parseInviteEnrollParams(inviteText: string): InviteEnrollParams | null {
+  const trimmed = inviteText.trim();
+  if (!trimmed) return null;
 
   try {
-    const parsedUrl = new URL(scannedText);
+    const parsedUrl = new URL(trimmed, "https://student-liff.local");
     const classId = parsedUrl.searchParams.get("classId");
-    return classId || null;
+    const referralToken =
+      parsedUrl.searchParams.get("referralToken") ?? parsedUrl.searchParams.get("token");
+    if (!classId && !referralToken) return null;
+    return { classId, referralToken };
   } catch {
-    const match = scannedText.match(/[?&]classId=([^&]+)/);
-    return match?.[1] ? decodeURIComponent(match[1]) : null;
+    const classIdMatch = trimmed.match(/[?&]classId=([^&]+)/);
+    const tokenMatch = trimmed.match(/[?&](?:referralToken|token)=([^&]+)/);
+    const classId = classIdMatch?.[1] ? decodeURIComponent(classIdMatch[1]) : null;
+    const referralToken = tokenMatch?.[1] ? decodeURIComponent(tokenMatch[1]) : null;
+    if (!classId && !referralToken) return null;
+    return { classId, referralToken };
   }
+}
+
+export function buildEnrollPathFromInviteText(inviteText: string): string | null {
+  const params = parseInviteEnrollParams(inviteText);
+  if (!params) return null;
+
+  const searchParams = new URLSearchParams();
+  if (params.classId) searchParams.set("classId", params.classId);
+  if (params.referralToken) searchParams.set("referralToken", params.referralToken);
+  return `/enroll?${searchParams.toString()}`;
+}
+
+export function parseClassIdFromQrText(scannedText: string): string | null {
+  return parseInviteEnrollParams(scannedText)?.classId ?? null;
 }

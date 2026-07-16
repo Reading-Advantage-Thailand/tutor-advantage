@@ -42,13 +42,13 @@ describe("tutorClassFlow helpers", () => {
   it("maps form data to the learning-service create class payload", () => {
     expect(
       buildCreateClassRequest({
-        name: "Origins A1",
+        name: "Reading A1",
         book: "book-1",
         schedule: "ทุกวันจันทร์ 19:00-21:00 น.",
         meetingUrl: "https://meet.google.com/abc-defg-hij",
       }),
     ).toEqual({
-      title: "Origins A1",
+      title: "Reading A1",
       bookId: "book-1",
       capacity: 30,
       scheduleDescription: "ทุกวันจันทร์ 19:00-21:00 น.",
