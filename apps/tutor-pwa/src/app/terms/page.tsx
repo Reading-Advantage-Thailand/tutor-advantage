@@ -51,7 +51,7 @@ export default function TermsPage() {
             ))}
             <div className="mt-12 py-6 border-t text-sm text-muted-foreground text-center">
               <a
-                href="https://lin.ee/zqTz6feg"
+                href="https://lin.ee/R7Dccj9"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary font-semibold hover:underline"

@@ -1,6 +1,7 @@
 import { logger } from "@tutor-advantage/shared-config";
 import { Response } from "express";
 import { randomUUID } from "crypto";
+// Prisma Client is generated from packages/database/prisma/schema.prisma.
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
@@ -543,6 +544,118 @@ export async function updateClassStatus(req: AuthenticatedRequest, res: Response
         details: error.message,
         requestId: req.id,
       },
+    });
+  }
+}
+
+export async function notifyClassLobby(req: AuthenticatedRequest, res: Response) {
+  try {
+    const userId = req.user?.userId;
+    const { classId } = req.params;
+    const articleTitle = typeof req.body.articleTitle === "string"
+      ? req.body.articleTitle.trim().slice(0, 120)
+      : "บทเรียนวันนี้";
+
+    if (!userId || req.user?.role !== "TUTOR") {
+      return res.status(401).json({
+        error: { code: "UNAUTHORIZED", message: "Only tutors can notify a class", requestId: req.id },
+      });
+    }
+
+    const cls = await prisma.class.findUnique({
+      where: { classId },
+      select: {
+        title: true,
+        tutorUserId: true,
+        enrollments: {
+          where: { status: "ACTIVE" },
+          select: { studentUserId: true },
+        },
+      },
+    });
+
+    if (!cls) {
+      return res.status(404).json({
+        error: { code: "NOT_FOUND", message: "Class not found", requestId: req.id },
+      });
+    }
+    if (cls.tutorUserId !== userId) {
+      return res.status(403).json({
+        error: { code: "FORBIDDEN", message: "You can only notify students in your own class", requestId: req.id },
+      });
+    }
+
+    const lessonUrl = LineNotificationService.buildLiffDeepLink(`/lesson/${classId}`);
+    if (!lessonUrl) {
+      return res.status(503).json({
+        error: { code: "LINE_LIFF_NOT_CONFIGURED", message: "LINE LIFF is not configured", requestId: req.id },
+      });
+    }
+
+    const card = {
+      type: "bubble",
+      header: {
+        type: "box",
+        layout: "vertical",
+        backgroundColor: "#06C755",
+        paddingAll: "16px",
+        contents: [{ type: "text", text: "Tutor Advantage", color: "#FFFFFF", weight: "bold", size: "lg" }],
+      },
+      body: {
+        type: "box",
+        layout: "vertical",
+        spacing: "md",
+        contents: [
+          { type: "text", text: "คุณครูเรียกเข้าเรียนแล้ว", weight: "bold", size: "xl", wrap: true },
+          { type: "text", text: cls.title, size: "sm", color: "#666666", wrap: true },
+          { type: "separator", margin: "md" },
+          { type: "text", text: articleTitle || "บทเรียนวันนี้", size: "md", weight: "bold", wrap: true },
+        ],
+      },
+      footer: {
+        type: "box",
+        layout: "vertical",
+        contents: [{
+          type: "button",
+          style: "primary",
+          color: "#06C755",
+          action: { type: "uri", label: "เข้าเรียนทันที", uri: lessonUrl },
+        }],
+      },
+    };
+
+    const results = await Promise.all(
+      cls.enrollments.map((enrollment) =>
+        LineNotificationService.sendFlexToUserWithResult(
+          enrollment.studentUserId,
+          `คุณครูเรียกเข้าเรียน: ${cls.title}`,
+          card,
+          { type: "notifyClassReminders" },
+        ),
+      ),
+    );
+    const sent = results.filter((result) => result.sent).length;
+    const failures = results.reduce<Record<string, number>>((summary, result) => {
+      if (!result.sent) {
+        const reason = result.reason === "LINE_API_ERROR" && result.lineStatus
+          ? `LINE_API_${result.lineStatus}`
+          : result.reason || "UNEXPECTED_ERROR";
+        summary[reason] = (summary[reason] || 0) + 1;
+      }
+      return summary;
+    }, {});
+
+    return res.status(200).json({
+      message: "Lobby notifications sent",
+      eligible: cls.enrollments.length,
+      sent,
+      failures,
+    });
+  } catch (error_err) {
+    const error = error_err as Error;
+    logger.error("Notify Class Lobby Error:", error);
+    return res.status(500).json({
+      error: { code: "INTERNAL_SERVER_ERROR", message: "Could not notify students", requestId: req.id },
     });
   }
 }

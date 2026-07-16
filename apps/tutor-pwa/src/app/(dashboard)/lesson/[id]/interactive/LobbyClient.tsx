@@ -13,6 +13,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { QRCodeSVG } from "qrcode.react";
 import { PhaseManager } from "./PhaseManager";
+import { sendLobbyNotifications } from "./actions";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { t } from "@/lib/i18n";
 
@@ -121,6 +122,25 @@ export default function TutorLobbyClient({
   const canStart = demo || isEveryoneReady;
   const canDevStart = process.env.NODE_ENV === "development" && !canStart;
   const [bypassEmptyStudentGuard, setBypassEmptyStudentGuard] = React.useState(false);
+  const [isSendingLobbyNotification, setIsSendingLobbyNotification] = React.useState(false);
+  const [lobbyNotificationStatus, setLobbyNotificationStatus] = React.useState<string | null>(null);
+
+  const handleSendLobbyNotification = async () => {
+    setIsSendingLobbyNotification(true);
+    setLobbyNotificationStatus(null);
+    try {
+      const result = await sendLobbyNotifications(classId, articleData?.title || "บทเรียนวันนี้");
+      setLobbyNotificationStatus(
+        result.sent > 0
+          ? `ส่ง LINE แล้ว ${result.sent}/${result.eligible} คน`
+          : formatLobbyNotificationFailure(result.failures),
+      );
+    } catch (error) {
+      setLobbyNotificationStatus(error instanceof Error ? error.message : "ส่ง LINE ไม่สำเร็จ");
+    } finally {
+      setIsSendingLobbyNotification(false);
+    }
+  };
 
   // Article image URL from GCS
   const primaryImageUrl = Array.isArray((articleData as any)?.image_urls)
@@ -345,6 +365,37 @@ export default function TutorLobbyClient({
           {/* Student invite: QR to scan from the projector + copyable link */}
           {!demo && referralLink && <LobbyInviteCard referralLink={referralLink} />}
 
+          {!demo && (
+            <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/5 p-5">
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5 rounded-xl bg-emerald-500/15 p-2 text-emerald-600 dark:text-emerald-400">
+                  <Bell size={18} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h4 className="text-sm font-bold text-foreground">เรียกนักเรียนผ่าน LINE</h4>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    ส่ง Card พร้อมปุ่มเข้าเรียนให้นักเรียนที่ลงทะเบียนในคลาส
+                  </p>
+                </div>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                className="mt-4 w-full border-emerald-500/40 text-emerald-700 hover:bg-emerald-500/10 dark:text-emerald-300"
+                disabled={isSendingLobbyNotification}
+                onClick={handleSendLobbyNotification}
+              >
+                <Bell className="mr-2 h-4 w-4" />
+                {isSendingLobbyNotification ? "กำลังส่ง LINE..." : "เรียกนักเรียนเข้าเรียน"}
+              </Button>
+              {lobbyNotificationStatus && (
+                <p className="mt-3 text-xs font-medium leading-relaxed text-muted-foreground">
+                  {lobbyNotificationStatus}
+                </p>
+              )}
+            </div>
+          )}
+
           <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/5 p-5">
             <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
               <ShieldCheck size={16} className="text-indigo-500" /> {t("lesson.interactive.tutorTips")}
@@ -493,4 +544,14 @@ export default function TutorLobbyClient({
       </main>
     </div>
   );
+}
+
+function formatLobbyNotificationFailure(failures?: Record<string, number>) {
+  const [reason, count = 0] = Object.entries(failures || {})[0] || [];
+  if (reason === "PREFERENCE_DISABLED") return `นักเรียนปิดการแจ้งเตือน ${count} คน`;
+  if (reason === "LINE_NOT_LINKED") return `นักเรียนยังไม่ได้เชื่อม LINE ${count} คน`;
+  if (reason === "LINE_API_400") return "LINE ไม่พบผู้รับใน OA นี้ — ให้ตรวจว่า LINE Login และ Messaging API อยู่ใน Provider เดียวกัน และนักเรียน add friend OA แล้ว";
+  if (reason?.startsWith("LINE_API_")) return `LINE ปฏิเสธการส่ง (${reason.replace("LINE_API_", "HTTP ")})`;
+  if (reason === "LINE_NOT_CONFIGURED") return "ยังไม่ได้ตั้งค่า LINE Messaging API ใน backend";
+  return "ยังส่ง LINE ไม่ได้ — ไม่พบผู้รับที่ส่งได้";
 }

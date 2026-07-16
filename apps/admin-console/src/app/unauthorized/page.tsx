@@ -62,7 +62,7 @@ export default function UnauthorizedPage() {
               className="w-full h-12 rounded-xl font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-md shadow-brand-500/20"
               asChild
             >
-              <Link href="https://lin.ee/zqTz6feg" target="_blank">
+              <Link href="https://lin.ee/R7Dccj9" target="_blank">
                 <MessageSquare className="mr-2 h-5 w-5" />
                 {t("unauthorized.support")}
               </Link>

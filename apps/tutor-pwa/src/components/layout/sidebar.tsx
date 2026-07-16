@@ -194,7 +194,7 @@ export function Sidebar({ notifications: initialNotifications }: SidebarProps) {
       <div className="p-4 space-y-2 mt-auto">
         <div className="backdrop-blur-sm bg-muted/20 rounded-3xl p-3 border border-border/30">
           <a
-            href="https://lin.ee/zqTz6feg"
+            href="https://lin.ee/R7Dccj9"
             target="_blank"
             rel="noopener noreferrer"
             id="nav-help"

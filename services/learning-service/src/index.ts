@@ -43,6 +43,7 @@ import {
   createClassBookCycle,
   prepareClassBookCycleAccess,
   updateClassStatus,
+  notifyClassLobby,
 } from "./controllers/classController";
 import { getDemoLessonCatalog } from "./controllers/demoController";
 import { generateReferral } from "./controllers/referralController";
@@ -157,6 +158,7 @@ app.delete("/v1/classes/:classId", authMiddleware, deleteClass);
 app.patch("/v1/classes/:classId/meeting-url", authMiddleware, updateMeetingUrl);
 app.patch("/v1/classes/:classId/schedule", authMiddleware, rescheduleClass);
 app.patch("/v1/classes/:classId/status", authMiddleware, updateClassStatus);
+app.post("/v1/classes/:classId/lobby-notifications", authMiddleware, notifyClassLobby);
 app.get("/v1/classes/:classId/articles", authMiddleware, getClassArticles);
 app.post("/v1/classes/:classId/book-cycles", authMiddleware, createClassBookCycle);
 app.post("/v1/classes/:classId/book-cycles/:cycleId/access", authMiddleware, prepareClassBookCycleAccess);

@@ -51,7 +51,7 @@ export default function PrivacyPage() {
             ))}
             <p className="mt-4 font-semibold text-primary">
               <a
-                href="https://lin.ee/zqTz6feg"
+                href="https://lin.ee/R7Dccj9"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:underline"

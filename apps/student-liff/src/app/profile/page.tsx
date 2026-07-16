@@ -77,7 +77,7 @@ export default function ProfilePage() {
     {
       title: t("profile.help"),
       items: [
-        { id: "menu-contact", Icon: MessageCircle, label: t("profile.contactTeam"), href: "https://lin.ee/zqTz6feg", iconBg: "rgba(99, 102, 241, 0.15)", iconColor: "rgb(99, 102, 241)" },
+        { id: "menu-contact", Icon: MessageCircle, label: t("profile.contactTeam"), href: "https://lin.ee/R7Dccj9", iconBg: "rgba(99, 102, 241, 0.15)", iconColor: "rgb(99, 102, 241)" },
         { id: "menu-terms", Icon: FileText, label: t("profile.terms"), href: "/terms", iconBg: "var(--neutral-100)", iconColor: "var(--neutral-500)" },
         { id: "menu-privacy", Icon: Shield, label: t("profile.privacy"), href: "/privacy", iconBg: "var(--neutral-100)", iconColor: "var(--neutral-500)" },
       ],

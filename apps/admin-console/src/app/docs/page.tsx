@@ -119,7 +119,7 @@ export default function DocsPage() {
             className="rounded-xl font-bold bg-white text-brand-900 hover:bg-brand-50 px-8 h-12"
             asChild
           >
-            <Link href="https://lin.ee/zqTz6feg" target="_blank">
+            <Link href="https://lin.ee/R7Dccj9" target="_blank">
               <MessageSquare className="h-5 w-5 mr-2" />
               {t("docs.support")}
             </Link>

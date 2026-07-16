@@ -7,6 +7,13 @@ export interface NotificationOptions {
   type: "notifyClassReminders" | "notifyScoreUpdates" | "notifyLineMessages" | "notifyMarketing";
 }
 
+type LineMessage = Record<string, unknown>;
+export type LineNotificationResult = {
+  sent: boolean;
+  reason?: "LINE_NOT_CONFIGURED" | "USER_NOT_FOUND" | "PREFERENCE_DISABLED" | "LINE_NOT_LINKED" | "LINE_API_ERROR" | "UNEXPECTED_ERROR";
+  lineStatus?: number;
+};
+
 export class LineNotificationService {
   /**
    * Builds a LIFF deep-link URL to a specific path inside the Student LIFF portal.
@@ -26,11 +33,37 @@ export class LineNotificationService {
     message: string, 
     options?: NotificationOptions
   ): Promise<boolean> {
+    return (await this.sendMessagesToUser(userId, [{ type: "text", text: message }], options)).sent;
+  }
+
+  static async sendFlexToUser(
+    userId: string,
+    altText: string,
+    contents: Record<string, unknown>,
+    options?: NotificationOptions,
+  ): Promise<boolean> {
+    return (await this.sendFlexToUserWithResult(userId, altText, contents, options)).sent;
+  }
+
+  static async sendFlexToUserWithResult(
+    userId: string,
+    altText: string,
+    contents: Record<string, unknown>,
+    options?: NotificationOptions,
+  ): Promise<LineNotificationResult> {
+    return this.sendMessagesToUser(userId, [{ type: "flex", altText, contents }], options);
+  }
+
+  private static async sendMessagesToUser(
+    userId: string,
+    messages: LineMessage[],
+    options?: NotificationOptions,
+  ): Promise<LineNotificationResult> {
     try {
       const LINE_CHANNEL_ACCESS_TOKEN = process.env.LINE_CHANNEL_ACCESS_TOKEN;
       if (!LINE_CHANNEL_ACCESS_TOKEN) {
         logger.warn("[LineNotificationService] LINE_CHANNEL_ACCESS_TOKEN is missing. Skipping.");
-        return false;
+        return { sent: false, reason: "LINE_NOT_CONFIGURED" };
       }
 
       // 1. Fetch user settings to check notification preference
@@ -41,7 +74,7 @@ export class LineNotificationService {
 
       if (!user) {
         logger.warn(`[LineNotificationService] User ${userId} not found.`);
-        return false;
+        return { sent: false, reason: "USER_NOT_FOUND" };
       }
 
       // Check user settings preference
@@ -53,7 +86,7 @@ export class LineNotificationService {
 
         if (!isEnabled) {
           logger.info(`[LineNotificationService] User ${userId} has disabled ${options.type}. Notification suppressed.`);
-          return false;
+          return { sent: false, reason: "PREFERENCE_DISABLED" };
         }
       }
 
@@ -67,7 +100,7 @@ export class LineNotificationService {
 
       if (!lineIdentity || !lineIdentity.providerSubject) {
         logger.info(`[LineNotificationService] No linked LINE identity found for user ${userId}. Cannot push.`);
-        return false;
+        return { sent: false, reason: "LINE_NOT_LINKED" };
       }
 
       const lineUserId = lineIdentity.providerSubject;
@@ -81,27 +114,22 @@ export class LineNotificationService {
         },
         body: JSON.stringify({
           to: lineUserId,
-          messages: [
-            {
-              type: "text",
-              text: message,
-            },
-          ],
+          messages,
         }),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
         logger.error(`[LineNotificationService] LINE API error: ${response.status}`, errorText);
-        return false;
+        return { sent: false, reason: "LINE_API_ERROR", lineStatus: response.status };
       }
 
       logger.info(`[LineNotificationService] Notification sent successfully to user ${userId} (LINE: ${lineUserId})`);
-      return true;
+      return { sent: true };
 
     } catch (error) {
       logger.error(`[LineNotificationService] Critical error sending notification to ${userId}:`, error);
-      return false;
+      return { sent: false, reason: "UNEXPECTED_ERROR" };
     }
   }
 }

@@ -380,7 +380,7 @@ export default function DashboardPage() {
                   <Link href="/docs">{t("dashboard.docs")}</Link>
                 </Button>
                 <Button variant="outline" size="sm" className="rounded-xl font-bold bg-transparent border-white/20 hover:bg-white/10 text-white dark:border-border dark:text-foreground dark:hover:bg-muted" asChild>
-                  <Link href="https://lin.ee/zqTz6feg" target="_blank">{t("dashboard.support")}</Link>
+                  <Link href="https://lin.ee/R7Dccj9" target="_blank">{t("dashboard.support")}</Link>
                 </Button>
               </div>
             </div>
