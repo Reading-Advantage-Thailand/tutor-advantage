@@ -13,7 +13,10 @@ const MAX_CLASS_HOURS = 22;
 const AVAILABLE_BOOK_CODES = new Set(["Reading 3.1", "Origins 3.1"]);
 
 function isBookAvailable(book?: { bookCode?: string | null } | null) {
-  return Boolean(book?.bookCode && AVAILABLE_BOOK_CODES.has(book.bookCode));
+  return Boolean(
+    book?.bookCode &&
+      (AVAILABLE_BOOK_CODES.has(book.bookCode) || book.bookCode.startsWith("Primary ")),
+  );
 }
 
 function unavailableBookResponse(req: AuthenticatedRequest) {
@@ -341,6 +344,15 @@ function getSeriesColor(cefrStr?: string | null) {
     default:
       return "#06c755";
   }
+}
+
+function normalizeCefrLevel(value: unknown, fallback = "A1") {
+  const normalized = String(value ?? fallback)
+    .trim()
+    .replace(/^CEFR\s*/i, "")
+    .replace(/[^a-zA-Z0-9]/g, "")
+    .toUpperCase();
+  return normalized || fallback;
 }
 
 function mapClassStatus(status: string, enrolledCount: number, capacity: number) {
@@ -958,7 +970,10 @@ export async function getBooks(_req: AuthenticatedRequest, res: Response) {
   try {
     const books = await prisma.book.findMany({
       where: {
-        bookCode: { in: Array.from(AVAILABLE_BOOK_CODES) },
+        OR: [
+          { bookCode: { in: Array.from(AVAILABLE_BOOK_CODES) } },
+          { bookCode: { startsWith: "Primary " } },
+        ],
       },
       include: { series: true },
       orderBy: [
@@ -1302,6 +1317,11 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
         { articleId: "asc" }
       ]
     });
+    const cycleBook = await prisma.book.findUnique({
+      where: { bookId: cycle.bookId },
+      select: { bookCode: true },
+    });
+    const isPrimaryBook = Boolean(cycleBook?.bookCode.startsWith("Primary "));
 
     let dbArticles = dbArticlesRaw
       .filter((article) => !hiddenCuratedArticleIds.has(article.articleId))
@@ -1327,7 +1347,7 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
 
     const articles = await Promise.all(
       dbArticles.map(async (art, index) => {
-        const details = await getArticleDetails(art.articleId).catch((error) => {
+        const details = await getArticleDetails(art.articleId, art.bookId).catch((error) => {
           logger.warn(`Could not fetch Reading Advantage details for article ${art.articleId}:`, error);
           return null;
         });
@@ -1352,12 +1372,13 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
           }
         }
 
-        let displayCefr = String(details?.cefr_level || "A1");
-        // Normalize non-standard CEFR strings:
-        // 1. If A0, convert to A1
-        if (displayCefr === "A0") displayCefr = "A1";
-        // 2. Strip non-alphanumeric characters (e.g. A1- to A1)
-        displayCefr = displayCefr.replace(/[^a-zA-Z0-9]/g, '');
+        const displayCefr = normalizeCefrLevel(details?.cefr_level);
+        const primaryImageUrls = Array.isArray((details as any)?.image_urls)
+          ? (details as any).image_urls.filter((url: unknown): url is string => typeof url === "string" && url.length > 0)
+          : [];
+        const imageUrl = primaryImageUrls[0] || (art.articleId.startsWith("workbook:")
+          ? null
+          : `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${art.articleId}.png`);
 
         return {
           id: art.articleId,
@@ -1367,8 +1388,10 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
           title: details?.title || art.title || "Untitled Article",
           summary: thaiSummary || "ไม่มีสรุปเนื้อหาสำหรับบทความนี้",
           passage: details?.passage ? `${details.passage.substring(0, 120)}...` : "", // Return a snippet for passage display
-          cefrLevel: displayCefr,
-          imageUrl: art.articleId ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${art.articleId}.png` : null,
+          cefrLevel: isPrimaryBook ? null : displayCefr,
+          showCefr: !isPrimaryBook,
+          imageUrl,
+          imageUrls: primaryImageUrls,
           isCompleted: completedArticleIds.has(art.articleId)
         };
       }),

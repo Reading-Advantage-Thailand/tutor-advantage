@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th" suppressHydrationWarning>
+    <html lang="th" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body>
         {process.env.NODE_ENV === "development" && (
           <script

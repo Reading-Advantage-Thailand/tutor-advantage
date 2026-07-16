@@ -8,10 +8,12 @@
     "build": "tsc",
     "prepare": "prisma generate",
     "generate": "prisma generate",
-    "seed": "npx tsx seed.ts"
+    "seed": "npx tsx seed.ts",
+    "import:primary-workbooks": "npx tsx --env-file-if-exists=../../.env import-primary-workbooks.ts"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0"
+    "@prisma/client": "^5.22.0",
+    "pg": "^8.20.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

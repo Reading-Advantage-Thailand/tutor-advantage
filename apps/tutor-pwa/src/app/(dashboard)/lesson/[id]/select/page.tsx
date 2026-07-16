@@ -15,6 +15,7 @@ interface Article {
   passage: string;
   summary?: string;
   cefrLevel?: string;
+  showCefr?: boolean;
   articleNumber: number;
   isCompleted?: boolean;
 }
@@ -155,7 +156,7 @@ export default function SelectLessonPage() {
                           {t("lesson.select.completed")}
                         </span>
                       )}
-                      {article.cefrLevel && (
+                      {article.showCefr !== false && article.cefrLevel && (
                         <span className="px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-medium">
                           CEFR: {article.cefrLevel}
                         </span>

@@ -1,5 +1,7 @@
 import { logger } from "@tutor-advantage/shared-config";
+import { prisma } from "@tutor-advantage/database";
 import { Pool } from "pg";
+import { getPrimaryArticleDetails } from "./PrimaryAdvantageDB";
 
 const connectionString =
   process.env.DATABASE_URL_READING_ADVANTAGE || process.env.DATABASE_URL;
@@ -174,7 +176,16 @@ const mockArticles: Record<string, any> = {
   },
 };
 
-export const getArticleDetails = async (articleId: string) => {
+export const getArticleDetails = async (articleId: string, bookId?: string) => {
+  if (bookId) {
+    const book = await prisma.book.findUnique({
+      where: { bookId },
+      select: { bookCode: true },
+    });
+    if (book?.bookCode.startsWith("Primary ")) {
+      return getPrimaryArticleDetails(articleId);
+    }
+  }
   // 1. Direct mock resolver for local development or empty databases
   if (mockArticles[articleId]) {
     logger.info(
@@ -208,10 +219,10 @@ export const getArticleDetails = async (articleId: string) => {
     }
 
     if (res.rows.length === 0) {
-      logger.warn(
-        `[ReadingAdvantageDB] Article ${articleId} not found, falling back to mock art-001`,
-      );
-      return mockArticles["art-001"];
+      const primaryArticle = await getPrimaryArticleDetails(articleId);
+      if (primaryArticle) return primaryArticle;
+      logger.warn(`[ReadingAdvantageDB] Article ${articleId} was not found`);
+      return null;
     }
 
     const article = res.rows[0];
@@ -268,10 +279,13 @@ export const getArticleDetails = async (articleId: string) => {
       shortAnswerQuestions: saqRes.rows,
     };
   } catch (error) {
-    logger.error(
-      "Error fetching article from Reading Advantage DB, falling back to mock art-001:",
-      error,
-    );
-    return mockArticles["art-001"];
+    try {
+      const primaryArticle = await getPrimaryArticleDetails(articleId);
+      if (primaryArticle) return primaryArticle;
+    } catch {
+      // Retain the original database failure below for actionable logs.
+    }
+    logger.error("Error fetching article from Reading Advantage DB:", error);
+    return null;
   }
 };

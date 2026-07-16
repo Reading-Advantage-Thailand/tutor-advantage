@@ -117,6 +117,17 @@ export function ArticleSelector({
   const [openBookDialogOpen, setOpenBookDialogOpen] = useState(false);
   const [toast, setToast] = useState<ToastState | null>(null);
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+  const isPrimaryCycle = Boolean(
+    bookCycles.find((cycle) => cycle.id === selectedCycleId)?.title.startsWith("Primary "),
+  );
+  const articleImageUrl = (article: any) =>
+    (Array.isArray(article.imageUrls) ? article.imageUrls[0] : null) || article.imageUrl || null;
+  const cycleLabel = (cycle: { sequence: number; title: string }) => {
+    const title = cycle.title.startsWith("Primary ")
+      ? cycle.title.replace(/\s*\([A-C]\d\)$/i, "")
+      : cycle.title;
+    return `เล่ม ${cycle.sequence}: ${title}`;
+  };
 
   const showToast = (nextToast: ToastState) => {
     setToast(nextToast);
@@ -356,7 +367,7 @@ export function ArticleSelector({
           >
             {bookCycles.map((cycle) => (
               <option key={cycle.id} value={cycle.id}>
-                เล่ม {cycle.sequence}: {cycle.title}
+                {cycleLabel(cycle)}
               </option>
             ))}
           </select>
@@ -390,7 +401,9 @@ export function ArticleSelector({
                     <th className="px-4 py-3 font-medium w-12 text-center"></th>
                     <th className="px-4 py-3 font-medium w-24">บทที่</th>
                     <th className="px-4 py-3 font-medium">บทความ</th>
-                    <th className="px-4 py-3 font-medium w-24 text-center">ระดับ</th>
+                    {!isPrimaryCycle && (
+                      <th className="px-4 py-3 font-medium w-24 text-center">ระดับ</th>
+                    )}
                     <th className="px-4 py-3 font-medium w-32">ประเภท</th>
                     <th className="px-4 py-3 font-medium w-32">เวลาที่แนะนำ</th>
                     <th className="px-4 py-3 font-medium w-12 text-center"></th>
@@ -413,13 +426,14 @@ export function ArticleSelector({
                       </td>
                       <td className="px-4 py-4 align-middle">
                         <div className="flex items-center gap-4">
-                          {article.imageUrl && (
+                          {articleImageUrl(article) && (
                             <div className="w-16 h-12 rounded bg-muted/40 overflow-hidden shrink-0 border border-border/50 relative">
                               <img 
-                                src={article.imageUrl} 
+                                src={articleImageUrl(article)}
                                 alt="" 
                                 className="w-full h-full object-cover" 
                                 loading="lazy"
+                                onError={(event) => event.currentTarget.parentElement?.remove()}
                               />
                               {article.isCompleted && (
                                 <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
@@ -440,13 +454,13 @@ export function ArticleSelector({
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4 align-middle text-center whitespace-nowrap">
-                        {article.cefrLevel && (
+                      {!isPrimaryCycle && <td className="px-4 py-4 align-middle text-center whitespace-nowrap">
+                        {article.showCefr !== false && article.cefrLevel && (
                           <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full">
                             CEFR {article.cefrLevel}
                           </span>
                         )}
-                      </td>
+                      </td>}
                       <td className="px-4 py-4 align-middle text-muted-foreground text-xs whitespace-nowrap">
                         {article.type || (idx % 2 === 0 ? "เนื้อเรื่อง" : "ชีวประวัติ")}
                       </td>
@@ -483,13 +497,14 @@ export function ArticleSelector({
                     }`}
                   />
                   
-                  {article.imageUrl && (
+                  {articleImageUrl(article) && (
                     <div className="w-full h-36 rounded-lg bg-muted/40 overflow-hidden mb-4 relative shrink-0 border border-border/50 shadow-sm group-hover:shadow-md transition-shadow">
                       <img 
-                        src={article.imageUrl} 
+                        src={articleImageUrl(article)}
                         alt={article.title} 
                         className={`w-full h-full object-cover transition-transform duration-700 ease-out ${selectedArticle === article.id ? 'scale-105' : 'group-hover:scale-105'}`} 
                         loading="lazy"
+                        onError={(event) => event.currentTarget.parentElement?.remove()}
                       />
                       {article.isCompleted && (
                         <div className="absolute inset-0 bg-background/20 backdrop-blur-[2px] flex items-center justify-center">
@@ -507,13 +522,13 @@ export function ArticleSelector({
                       <span className="text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground px-2 py-0.5 rounded-md border border-border/40">
                         {t("tutorClass.detail.chapterPrefix")} {idx + 1}
                       </span>
-                      {!article.imageUrl && article.isCompleted && (
+                      {!articleImageUrl(article) && article.isCompleted && (
                         <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 flex items-center gap-1">
                           <div className="w-1 h-1 rounded-full bg-emerald-500" />
                           {t("tutorClass.detail.taught")}
                         </span>
                       )}
-                      {article.cefrLevel && (
+                      {article.showCefr !== false && article.cefrLevel && (
                         <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20">
                           CEFR {article.cefrLevel}
                         </span>

@@ -26,6 +26,21 @@ npm ci
 npx prisma generate --schema=packages/database/prisma/schema.prisma
 ```
 
+## Importing Primary Advantage articles
+
+Primary course and article catalogues are read from the local Reading Advantage
+Workbook repository. Set `DATABASE_URL_PRIMARY_ADVANTAGE` when Primary's live
+content database is available, then run:
+
+```bash
+npm run import:primary-workbooks -w @tutor-advantage/database
+```
+
+The import is safe to re-run. It uses workbook titles and ordering to map to
+published Primary articles, then stores only the resulting Primary article IDs.
+All lesson details are read from the Primary database at runtime; users,
+classrooms, assignments, and progress are never copied.
+
 Generated `dist/`, `.next/`, coverage, service-worker, and Prisma client outputs
 are intentionally not committed.
 

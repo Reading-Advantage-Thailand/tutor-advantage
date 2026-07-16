@@ -176,7 +176,7 @@ export const setupLessonSocket = (io: Server) => {
           resolvedBookId = cycle?.bookId || resolvedBookId;
         }
 
-        const articleData = await getArticleDetails(resolvedArticleId);
+        const articleData = await getArticleDetails(resolvedArticleId, resolvedBookId);
         logger.info(`================= QUESTIONS LIST =================`);
         logger.info(`Available MCQ questions:`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
         logger.info(`Available SAQ questions:`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));

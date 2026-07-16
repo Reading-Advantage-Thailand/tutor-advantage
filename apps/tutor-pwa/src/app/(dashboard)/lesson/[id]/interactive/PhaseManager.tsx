@@ -96,6 +96,7 @@ interface PhaseManagerProps {
   sessionData?: TutorSessionData;
   onFinishSession?: () => void;
   flagCounts?: Record<number, number>;
+  bypassEmptyStudentGuard?: boolean;
 }
 
 // ── Live Leaderboard Sidebar (Desktop) ───────────────────────────────────────
@@ -327,6 +328,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   sessionData,
   onFinishSession,
   flagCounts,
+  bypassEmptyStudentGuard = false,
 }) => {
   const [isChangingPhase, setIsChangingPhase] = React.useState(false);
   const [canProceedDelayed, setCanProceedDelayed] = React.useState(false);
@@ -2762,7 +2764,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       }`}
     >
       {/* Warning Overlay when everyone left */}
-      {currentPhase > 0 && participants.length === 0 && (
+      {currentPhase > 0 && participants.length === 0 && !bypassEmptyStudentGuard && (
         <div className="absolute inset-0 z-50 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl animate-in fade-in">
           <div className="bg-card p-8 rounded-2xl shadow-2xl border border-destructive/20 flex flex-col items-center max-w-md text-center">
             <div className="w-16 h-16 bg-destructive/10 text-destructive rounded-full flex items-center justify-center mb-6 text-3xl">

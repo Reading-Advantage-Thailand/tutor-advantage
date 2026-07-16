@@ -119,12 +119,17 @@ export default function TutorLobbyClient({
   const isEveryoneReady = totalCount > 0 && readyCount === totalCount;
   // Demo is a solo walkthrough — the tutor can start without waiting for students.
   const canStart = demo || isEveryoneReady;
+  const canDevStart = process.env.NODE_ENV === "development" && !canStart;
+  const [bypassEmptyStudentGuard, setBypassEmptyStudentGuard] = React.useState(false);
 
   // Article image URL from GCS
-  const articleImgId = (articleData as any)?.id as string | undefined;
-  const articleImageUrl = articleImgId
-    ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${articleImgId}.png`
+  const primaryImageUrl = Array.isArray((articleData as any)?.image_urls)
+    ? (articleData as any).image_urls.find((url: unknown) => typeof url === "string" && url.length > 0)
     : null;
+  const articleImgId = (articleData as any)?.id as string | undefined;
+  const articleImageUrl = primaryImageUrl || (articleImgId
+    ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${articleImgId}.png`
+    : null);
 
   if (sessionData && sessionData.currentPhase > 0) {
     return (
@@ -170,6 +175,7 @@ export default function TutorLobbyClient({
               endQuestion={endQuestion}
               startGameVote={startGameVote}
               startGameCountdown={startGameCountdown}
+              bypassEmptyStudentGuard={bypassEmptyStudentGuard}
               onFinishSession={() => {
                 deleteSession();
                 router.push(backHref);
@@ -291,9 +297,9 @@ export default function TutorLobbyClient({
                 <span className="bg-white/20 backdrop-blur text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1.5">
                   <BookOpen size={10} /> {t("lesson.interactive.teaching")}
                 </span>
-                {articleData?.cefr_level && (
+                {articleData?.content_provider !== "PRIMARY_ADVANTAGE" && articleData?.cefr_level && (
                   <span className="bg-indigo-500/80 backdrop-blur text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
-                    CEFR {articleData.cefr_level === "A0" ? "A1" : articleData.cefr_level}
+                    CEFR {String(articleData.cefr_level).replace(/^CEFR\s*/i, "")}
                   </span>
                 )}
               </div>
@@ -462,6 +468,20 @@ export default function TutorLobbyClient({
               <p className="text-center text-xs text-muted-foreground mt-4">
                 {t("lesson.interactive.readyOnlyNote")}
               </p>
+            )}
+            {canDevStart && (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full mt-3 border-amber-400/70 text-amber-700 hover:bg-amber-50 dark:text-amber-300 dark:hover:bg-amber-950/30"
+                onClick={() => {
+                  setBypassEmptyStudentGuard(true);
+                  changePhase(1);
+                  playSound("phaseChange");
+                }}
+              >
+                DEV: เข้าเรียนทันที (ไม่ต้องรอนักเรียน)
+              </Button>
             )}
             {demo && (
               <p className="text-center text-xs text-muted-foreground mt-4">

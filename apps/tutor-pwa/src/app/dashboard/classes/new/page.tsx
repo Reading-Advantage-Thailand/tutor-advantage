@@ -48,6 +48,14 @@ export default function NewClassPage() {
   const [couponError, setCouponError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [books, setBooks] = useState<any[]>([]);
+  const booksByProgram = useMemo(() => ({
+    reading: books.filter((book) => !String(book.bookCode || "").startsWith("Primary ")),
+    primary: books.filter((book) => String(book.bookCode || "").startsWith("Primary ")),
+  }), [books]);
+  const bookLabel = (book: any) =>
+    String(book.bookCode || "").startsWith("Primary ")
+      ? String(book.title || "").replace(/\s*\([A-C]\d\)$/i, "")
+      : book.title;
 
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [dateTimes, setDateTimes] = useState<Record<string, { start: string; end: string }>>({});
@@ -301,11 +309,24 @@ export default function NewClassPage() {
                     <option value="" className="bg-background text-foreground">
                       {t("tutorClass.newClass.selectBook")}
                     </option>
-                    {books.map((book) => (
-                      <option key={book.bookId} value={book.bookId} className="bg-background text-foreground">
-                        {book.title}
-                      </option>
-                    ))}
+                    {booksByProgram.reading.length > 0 && (
+                      <optgroup label="Reading Advantage">
+                        {booksByProgram.reading.map((book) => (
+                          <option key={book.bookId} value={book.bookId} className="bg-background text-foreground">
+                            {bookLabel(book)}
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
+                    {booksByProgram.primary.length > 0 && (
+                      <optgroup label="Primary Advantage">
+                        {booksByProgram.primary.map((book) => (
+                          <option key={book.bookId} value={book.bookId} className="bg-background text-foreground">
+                            {bookLabel(book)}
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
                   </select>
                   {fieldErrors.book && (
                     <p className="text-xs text-destructive font-semibold">{fieldErrors.book}</p>
