@@ -117,6 +117,12 @@ export function ArticleSelector({
   const [openBookDialogOpen, setOpenBookDialogOpen] = useState(false);
   const [toast, setToast] = useState<ToastState | null>(null);
   const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+  const isPrimaryBook = (book: Pick<BookOption, "bookCode" | "title">) =>
+    String(book.bookCode || book.title || "").startsWith("Primary ");
+  const booksByProgram = {
+    reading: books.filter((book) => !isPrimaryBook(book)),
+    primary: books.filter((book) => isPrimaryBook(book)),
+  };
   const isPrimaryCycle = Boolean(
     bookCycles.find((cycle) => cycle.id === selectedCycleId)?.title.startsWith("Primary "),
   );
@@ -138,8 +144,7 @@ export function ArticleSelector({
     book ? book.title || book.bookCode || "Untitled book" : "the selected book";
 
   const validateNewBookSelection = () => {
-    const selectedBookIndex = books.findIndex((book) => book.bookId === newBookId);
-    const selectedBook = books[selectedBookIndex];
+    const selectedBook = books.find((book) => book.bookId === newBookId);
 
     if (!selectedBook) {
       return {
@@ -157,13 +162,23 @@ export function ArticleSelector({
       };
     }
 
+    // Primary Advantage and Reading Advantage are separate programmes: opening
+    // a Primary book must not prevent the tutor from starting Reading at book 1.
+    const selectedProgramIsPrimary = isPrimaryBook(selectedBook);
+    const programBooks = books.filter(
+      (book) => isPrimaryBook(book) === selectedProgramIsPrimary,
+    );
+    const selectedProgramBookIndex = programBooks.findIndex(
+      (book) => book.bookId === newBookId,
+    );
     const openedBookIndexes = bookCycles
-      .map((cycle) => books.findIndex((book) => book.bookId === cycle.bookId))
+      .filter((cycle) => cycle.title.startsWith("Primary ") === selectedProgramIsPrimary)
+      .map((cycle) => programBooks.findIndex((book) => book.bookId === cycle.bookId))
       .filter((index) => index >= 0);
     const highestOpenedBookIndex =
       openedBookIndexes.length > 0 ? Math.max(...openedBookIndexes) : -1;
 
-    if (selectedBookIndex < highestOpenedBookIndex) {
+    if (selectedProgramBookIndex < highestOpenedBookIndex) {
       return {
         type: "warning" as const,
         title: "Book is below current progress",
@@ -171,8 +186,8 @@ export function ArticleSelector({
       };
     }
 
-    if (selectedBookIndex > highestOpenedBookIndex + 1) {
-      const nextBook = books[highestOpenedBookIndex + 1];
+    if (selectedProgramBookIndex > highestOpenedBookIndex + 1) {
+      const nextBook = programBooks[highestOpenedBookIndex + 1];
       return {
         type: "warning" as const,
         title: "Cannot skip books",
@@ -332,11 +347,24 @@ export function ArticleSelector({
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground"
                     >
                       <option value="">เลือกหนังสือ</option>
-                      {books.map((book) => (
-                        <option key={book.bookId} value={book.bookId}>
-                          {book.title || book.bookCode}
-                        </option>
-                      ))}
+                      {booksByProgram.reading.length > 0 && (
+                        <optgroup label="Reading Advantage">
+                          {booksByProgram.reading.map((book) => (
+                            <option key={book.bookId} value={book.bookId}>
+                              {book.title || book.bookCode}
+                            </option>
+                          ))}
+                        </optgroup>
+                      )}
+                      {booksByProgram.primary.length > 0 && (
+                        <optgroup label="Primary Advantage">
+                          {booksByProgram.primary.map((book) => (
+                            <option key={book.bookId} value={book.bookId}>
+                              {book.title || book.bookCode}
+                            </option>
+                          ))}
+                        </optgroup>
+                      )}
                     </select>
                   </div>
                   <div className="space-y-2">
@@ -701,7 +729,7 @@ export function MeetingUrlEditor({
   return (
     <Card
       className={cn(
-        "h-full min-h-[220px] rounded-2xl border-border/60 bg-card/95 shadow-sm",
+        "h-full min-h-[184px] rounded-2xl border-border/60 bg-card/95 shadow-sm",
         className,
       )}
     >
@@ -715,20 +743,26 @@ export function MeetingUrlEditor({
               <p className="text-sm font-bold text-foreground">
                 {t("tutorClass.detail.onlineRoom")}
               </p>
-              <div className="flex items-center gap-2 mt-0.5">
-                <p className="text-xs text-muted-foreground truncate flex-1">
-                  {initialUrl || t("tutorClass.detail.missingMeetingUrl")}
-                </p>
-                {initialUrl && (
+              {initialUrl ? (
+                <div className="mt-2 flex w-full items-center gap-2">
+                  <input
+                    readOnly
+                    value={initialUrl}
+                    className="h-8 min-w-0 flex-1 truncate rounded-lg border border-input bg-muted px-2.5 font-mono text-[11px] text-foreground"
+                  />
                   <button
                     onClick={handleCopy}
-                    className="shrink-0 p-1 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground flex items-center justify-center"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-input transition-colors hover:bg-muted"
                     title={copied ? t("tutorClass.detail.copied") : t("tutorClass.detail.copy")}
                   >
                     {copied ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
                   </button>
-                )}
-              </div>
+                </div>
+              ) : (
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {t("tutorClass.detail.missingMeetingUrl")}
+                </p>
+              )}
             </div>
           </div>
           <div className="mt-auto flex w-full flex-col gap-2 border-t border-border/50 pt-4">
@@ -829,7 +863,7 @@ export function CouponExtendButton({ classId }: { classId: string }) {
         render={
           <Button variant="outline" size="sm" className="h-9 w-full gap-2 bg-background text-xs font-medium text-emerald-600 border-emerald-600 hover:bg-emerald-50 hover:text-emerald-700">
             <Ticket className="h-4 w-4" />
-            ข้อมูลเพิ่มเติม
+            ใส่คูปอง
           </Button>
         }
       />
@@ -1347,14 +1381,20 @@ export function FeatureLessonButton({
 
 export function StudentAvatars({
   enrolledStudents,
+  maxVisible,
 }: {
   enrolledStudents: any[];
+  maxVisible?: number;
 }) {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const visibleStudents = maxVisible
+    ? enrolledStudents.slice(0, maxVisible)
+    : enrolledStudents;
+  const remainingStudents = Math.max(0, enrolledStudents.length - visibleStudents.length);
 
   return (
     <div className="flex flex-wrap gap-3">
-      {enrolledStudents.map((s: any, idx: number) => (
+      {visibleStudents.map((s: any, idx: number) => (
         <div
           key={idx}
           className="relative flex flex-col items-center"
@@ -1409,7 +1449,50 @@ export function StudentAvatars({
           )}
         </div>
       ))}
+      {remainingStudents > 0 && (
+        <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-border/50 bg-muted text-xs font-bold text-muted-foreground">
+          +{remainingStudents}
+        </div>
+      )}
     </div>
+  );
+}
+
+export function StudentListButton({ enrolledStudents }: { enrolledStudents: any[] }) {
+  return (
+    <Dialog>
+      <DialogTrigger
+        render={
+          <Button variant="outline" size="sm" className="h-9 w-full border-emerald-600 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700">
+            ดูรายชื่อนักเรียน
+          </Button>
+        }
+      />
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>รายชื่อนักเรียน ({enrolledStudents.length} คน)</DialogTitle>
+          <DialogDescription>นักเรียนที่ลงทะเบียนในคลาสนี้</DialogDescription>
+        </DialogHeader>
+        <div className="max-h-[60vh] space-y-2 overflow-y-auto pr-1">
+          {enrolledStudents.length > 0 ? enrolledStudents.map((student: any, index: number) => (
+            <div key={`${student.name}-${index}`} className="flex items-center gap-3 rounded-xl border border-border/60 bg-muted/25 p-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-sm font-bold text-primary">
+                {student.avatarUrl ? <img src={student.avatarUrl} alt="" className="h-full w-full object-cover" /> : (student.name?.[0] || "?")}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold text-foreground">{student.name}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">ลงทะเบียน {student.enrolled}</p>
+              </div>
+              <span className={`text-xs font-semibold ${student.paid ? "text-emerald-600" : "text-amber-600"}`}>
+                {student.paid ? "ชำระแล้ว" : "รอชำระ"}
+              </span>
+            </div>
+          )) : (
+            <p className="py-8 text-center text-sm text-muted-foreground">ยังไม่มีนักเรียนในคลาส</p>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

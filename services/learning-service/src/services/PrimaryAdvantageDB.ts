@@ -91,7 +91,7 @@ export async function getPrimaryArticleDetails(articleId: string) {
         [articleId],
       ),
       pool.query(
-        `SELECT words, words_url
+        `SELECT sentence, audio_sentences_url, words, words_url
            FROM sentencs_and_words_for_flashcard
           WHERE article_id = $1
           LIMIT 1`,
@@ -103,12 +103,21 @@ export async function getPrimaryArticleDetails(articleId: string) {
     return {
       ...article,
       content_provider: "PRIMARY_ADVANTAGE",
-      // Primary stores its curated vocabulary separately from article.words.
+      // The Primary reader uses article.audio_url with article.sentences'
+      // startTime/endTime values. Flashcard audio is a separate, shorter set
+      // of selected sentences and is only used for vocabulary playback.
+      primary_audio: {
+        sentencesUrl: primaryStorageUrl(article.audio_url),
+        wordsUrl: primaryStorageUrl(flashcard?.words_url),
+        hasSentenceEndTimes: true,
+      },
+      // Curated vocabulary audio/timestamps are stored separately, while the
+      // article sentence timeline remains the full-reading source of truth.
       words: normaliseWords(article.words ?? flashcard?.words),
       sentences: normaliseSentences(article.sentences),
       translated_summary: normaliseTranslations(article.translated_summary),
       audio_url: primaryStorageUrl(article.audio_url),
-      audio_word_url: primaryStorageUrl(article.audio_word_url ?? flashcard?.words_url),
+      audio_word_url: primaryStorageUrl(flashcard?.words_url ?? article.audio_word_url),
       image_urls: [1, 2, 3].map(
         (index) => `https://storage.googleapis.com/primary-app-storage/images/${article.id}_${index}.png`,
       ),

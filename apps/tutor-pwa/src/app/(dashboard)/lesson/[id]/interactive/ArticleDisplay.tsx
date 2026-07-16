@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import React, { useRef, useState, useEffect, useMemo, useCallback } from "react";
 import { t } from "@/lib/i18n";
 import { BookOpen, Volume2 } from "lucide-react";
 import { useThaiTranslations } from "@/hooks/useThaiTranslations";
@@ -8,6 +8,7 @@ import { ArticleData } from "@/lib/lesson-types";
 interface ArticleDisplayProps {
   articleData?: ArticleData;
   phase: number;
+  isFullscreen?: boolean;
   flagCounts?: Record<number, number>;
   onActiveIdxChange?: (idx: number) => void;
 }
@@ -41,12 +42,84 @@ const getSentenceTime = (sentence: any) => {
   return Number.isFinite(value) ? value : 0;
 };
 
+// Kept in sync with Primary's student/read/[articleId] ArticleContent.  The
+// audio transcript and the rendered sentence occasionally tokenize
+// contractions differently, so a plain word-index lookup can highlight the
+// wrong display token.
+const normalizeAudioWord = (word: string) =>
+  word.toLowerCase().replace(/[\u2018\u2019'`]/g, "").replace(/[^a-z0-9]/g, "");
+
+const splitIntoDisplayParts = (text: string) =>
+  text.split(/(\s+|[.!?;:,"“”'`()[\]{}\-–—…]+)/);
+
+const isDisplayWord = (part: string) =>
+  /[\w]/.test(part) && /^[\w'-]+$/.test(part) && part.trim() !== "";
+
+const getTimedWords = (sentence: any): any[] =>
+  Array.isArray(sentence?.words) ? sentence.words : [];
+
+const getTimedWordStart = (word: any) =>
+  Number(word?.start ?? word?.startTime ?? word?.timeSeconds ?? NaN);
+
+const getTimedWordEnd = (word: any) =>
+  Number(word?.end ?? word?.endTime ?? NaN);
+
+const getTimedWordText = (word: any) =>
+  String(word?.word ?? word?.text ?? word?.vocabulary ?? "");
+
+function buildPrimaryWordMap(sentence: any) {
+  const displayWords = splitIntoDisplayParts(getSentenceText(sentence)).filter(isDisplayWord);
+  const audioWords = getTimedWords(sentence);
+  const audioToDisplay = new Map<number, number>();
+  const displayToAudio = new Map<number, number>();
+  let audioIndex = 0;
+
+  for (
+    let displayIndex = 0;
+    displayIndex < displayWords.length && audioIndex < audioWords.length;
+    displayIndex++
+  ) {
+    const displayWord = normalizeAudioWord(displayWords[displayIndex]);
+    let combined = "";
+    let matched = false;
+
+    // Primary's article reader combines up to three timeline tokens. This is
+    // required for entries such as "I'm" and "don't".
+    for (let next = audioIndex; next < Math.min(audioIndex + 3, audioWords.length); next++) {
+      combined += normalizeAudioWord(getTimedWordText(audioWords[next]));
+      if (combined === displayWord) {
+        for (let index = audioIndex; index <= next; index++) {
+          audioToDisplay.set(index, displayIndex);
+        }
+        displayToAudio.set(displayIndex, audioIndex);
+        audioIndex = next + 1;
+        matched = true;
+        break;
+      }
+    }
+
+    // Preserve Primary's safe positional fallback when the transcript has a
+    // spelling/tokenization mismatch.
+    if (!matched) {
+      audioToDisplay.set(audioIndex, displayIndex);
+      displayToAudio.set(displayIndex, audioIndex);
+      audioIndex++;
+    }
+  }
+
+  return { audioToDisplay, displayToAudio };
+}
+
 function GuideQuestionCard({
   label,
   question,
+  className = "",
+  large = false,
 }: {
   label: string;
   question: string;
+  className?: string;
+  large?: boolean;
 }) {
   const { translations, loading } = useThaiTranslations([question], {
     enabled: Boolean(question),
@@ -54,14 +127,14 @@ function GuideQuestionCard({
   const thaiQuestion = translations[0];
 
   return (
-    <div className="bg-card rounded-xl p-3 border border-border">
+    <div className={`bg-card rounded-xl border border-border p-3 ${className}`}>
       <div className="flex items-start gap-2">
-        <p className="text-foreground text-xs font-semibold leading-relaxed flex-1">
+        <p className={`flex-1 font-semibold text-foreground ${large ? "text-[clamp(16px,1.12vw,21px)] leading-snug" : "text-xs leading-relaxed"}`}>
           {label}. {question}
         </p>
       </div>
       {(thaiQuestion || loading) && (
-        <p className="mt-2 text-[11px] font-medium leading-relaxed text-teal-700 dark:text-teal-300">
+        <p className={`mt-2 font-medium text-teal-700 dark:text-teal-300 ${large ? "text-[clamp(14px,0.92vw,18px)] leading-snug" : "text-[11px] leading-relaxed"}`}>
           {thaiQuestion || "Translating question..."}
         </p>
       )}
@@ -72,6 +145,7 @@ function GuideQuestionCard({
 export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   articleData,
   phase,
+  isFullscreen = false,
   flagCounts,
   onActiveIdxChange,
 }) => {
@@ -80,19 +154,33 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     () => articleData?.sentences || [],
     [articleData?.sentences],
   );
+  const isPrimaryContent = articleData?.content_provider === "PRIMARY_ADVANTAGE";
 
   const displayCefr = String(articleData?.cefr_level || "").replace(/^CEFR\s*/i, "");
 
   // Article image URL from GCS
-  const primaryImageUrl = Array.isArray((articleData as any)?.image_urls)
-    ? (articleData as any).image_urls.find((url: unknown) => typeof url === "string" && url.length > 0)
-    : null;
+  const primaryImageUrls = Array.isArray((articleData as any)?.image_urls)
+    ? (articleData as any).image_urls.filter(
+        (url: unknown): url is string => typeof url === "string" && url.length > 0,
+      )
+    : [];
+  const primaryImageUrl = primaryImageUrls[0] ?? null;
   const articleImageUrl = primaryImageUrl || (articleData?.id
     ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${articleData.id}.png`
     : null);
 
   // ── Audio state for Phase 9 ─────────────────────────────────
   const audioRef = useRef<HTMLAudioElement>(null);
+  // Primary keeps one preloaded full-article audio element for seeking between
+  // sentence timestamps. This mirrors Primary's ArticleContent/useAudioPlayer.
+  const primaryArticleAudioRef = useRef<HTMLAudioElement>(null);
+  const primaryTrackingRafRef = useRef<number | null>(null);
+  const primarySentencePlaybackTokenRef = useRef(0);
+  const activeSentenceRef = useRef(-1);
+  const activeWordRef = useRef(-1);
+  const primaryWordMapsRef = useRef<Map<number, ReturnType<typeof buildPrimaryWordMap>>>(
+    new Map(),
+  );
   const clipAudioRef = useRef<HTMLAudioElement | null>(null);
   const clipStopRafRef = useRef<number | null>(null);
   const phase4PassageRef = useRef<HTMLDivElement>(null);
@@ -103,6 +191,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   const audioRequestRef = useRef(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
+  const [activeWordIdx, setActiveWordIdx] = useState(-1);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [speechRate, setSpeechRate] = useState(0.75);
@@ -110,6 +199,14 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   const [autoVocabEnTh, setAutoVocabEnTh] = useState<Record<number, string>>(
     {},
   );
+
+  useEffect(() => {
+    activeSentenceRef.current = activeIdx;
+  }, [activeIdx]);
+
+  useEffect(() => {
+    activeWordRef.current = activeWordIdx;
+  }, [activeWordIdx]);
 
   const sentenceTexts = useMemo(
     () => sentences.map((sentence: any) => getSentenceText(sentence)),
@@ -135,6 +232,22 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     [thaiSentences],
   );
 
+  // This is the same display-word/audio-word alignment Primary uses in its
+  // student article reader. It deliberately only applies to Primary content;
+  // Reading Advantage retains its existing, independent rendering flow.
+  useEffect(() => {
+    if (!isPrimaryContent) {
+      primaryWordMapsRef.current = new Map();
+      return;
+    }
+    primaryWordMapsRef.current = new Map(
+      sentences.map((sentence: any, index: number) => [
+        index,
+        buildPrimaryWordMap(sentence),
+      ]),
+    );
+  }, [isPrimaryContent, sentences]);
+
   useEffect(() => {
     if (phase !== 4) return;
 
@@ -143,7 +256,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     if (!passage || !vocab) return;
 
     const syncPanelHeight = () => {
-      if (window.innerWidth < 1024) {
+      // In fullscreen the Phase 4 grid owns the available viewport height.
+      // Matching the vocabulary panel to the passage's content height would
+      // leave a large unused area below both cards.
+      if (isFullscreen || window.innerWidth < 1024) {
         vocab.style.height = "";
         vocab.style.maxHeight = "";
         return;
@@ -165,11 +281,16 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       vocab.style.height = "";
       vocab.style.maxHeight = "";
     };
-  }, [phase, thaiPassage, words.length]);
+  }, [phase, thaiPassage, words.length, isFullscreen]);
 
   const articleId = String(articleData?.id || articleData?.articleId || "");
+  const sentenceStopMarginSeconds = SENTENCE_STOP_MARGIN_SECONDS;
   const readingAdvantageAudioUrl = (() => {
     if (!articleId) return null;
+    const primarySentenceAudioUrl = String(
+      (articleData as any)?.primary_audio?.sentencesUrl || "",
+    );
+    if (isPrimaryContent && primarySentenceAudioUrl) return primarySentenceAudioUrl;
     const rawAudioUrl = String(
       articleData?.audio_url ||
         articleData?.raAudioUrl ||
@@ -217,6 +338,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       if (sentenceStopRafRef.current !== null) {
         cancelAnimationFrame(sentenceStopRafRef.current);
       }
+      if (primaryTrackingRafRef.current !== null) {
+        cancelAnimationFrame(primaryTrackingRafRef.current);
+      }
       clipAudioRef.current?.pause();
       clipAudioRef.current = null;
     };
@@ -236,8 +360,114 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   const getWordEndTime = (index: number, start: number) => {
     const nextWord = words[index + 1];
-    const rawEnd = nextWord ? getWordTime(nextWord, index + 1) : start + 2.5;
-    return Math.max(start + 0.1, rawEnd - SENTENCE_STOP_MARGIN_SECONDS);
+    const rawEnd = nextWord
+      ? getWordTime(nextWord, index + 1)
+      : start + (isPrimaryContent ? 10 : 2.5);
+    return Math.max(start + 0.1, rawEnd - (isPrimaryContent ? 0.5 : sentenceStopMarginSeconds));
+  };
+
+  const getSentenceEndTime = (sentence: any, start: number, nextSentence?: any) => {
+    const explicitEnd = Number(sentence?.endTime);
+    if (isPrimaryContent && Number.isFinite(explicitEnd) && explicitEnd > start) {
+      return Math.max(start + 0.1, explicitEnd);
+    }
+    const nextStart = nextSentence ? getSentenceTime(nextSentence) : Infinity;
+    return Number.isFinite(nextStart)
+      ? Math.max(start + 0.1, nextStart - sentenceStopMarginSeconds)
+      : Infinity;
+  };
+
+  // Mirrors Primary's student/read/[articleId] useAudioPlayer flow exactly:
+  // seek the single, preloaded full-article MP3 to the sentence start, then
+  // continue normal article playback. Primary does not create a clip or apply
+  // artificial start/end offsets to its article narration.
+  const playPrimaryArticleSentence = (sentenceIndex: number) => {
+    const audio = primaryArticleAudioRef.current;
+    const sentence = sentences[sentenceIndex];
+    if (!audio || !sentence) return;
+
+    const seekAndPlay = () => {
+      audio.pause();
+      audio.currentTime = Math.max(0, getSentenceTime(sentence));
+      audio.playbackRate = speechRate;
+      audio.play()
+        .then(() => setIsPlaying(true))
+        .catch(() => setIsPlaying(false));
+    };
+
+    if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) {
+      seekAndPlay();
+    } else {
+      audio.addEventListener("loadedmetadata", seekAndPlay, { once: true });
+      audio.load();
+    }
+  };
+
+  // Phase 6 uses the article MP3 plus sentence timestamps, not browser TTS.
+  const playSentenceFromReadingAdvantage = (sentenceIndex: number) => {
+    if (!readingAdvantageAudioUrl || !sentences[sentenceIndex]) return;
+
+    const start = Math.max(0, getSentenceTime(sentences[sentenceIndex]));
+    const nextSentence = sentences[sentenceIndex + 1];
+
+    audioRequestRef.current++;
+    audioRef.current?.pause();
+    clearClipStopMonitor();
+    clipAudioRef.current?.pause();
+
+    const clip = isPrimaryContent && primaryArticleAudioRef.current
+      ? primaryArticleAudioRef.current
+      : new Audio(readingAdvantageAudioUrl);
+    clipAudioRef.current = clip;
+    clip.playbackRate = speechRate;
+
+    let end = getSentenceEndTime(sentences[sentenceIndex], start, nextSentence);
+
+    const beginPlayback = () => {
+      // Primary's full-reading MP3 has its own precise start/end timeline.
+      // Seeking before playback avoids an audible burst from 0:00 while the
+      // browser is still loading metadata from GCS.
+      clip.currentTime = start;
+      if (!Number.isFinite(end) && Number.isFinite(clip.duration)) {
+        end = Math.max(start + 0.1, clip.duration - sentenceStopMarginSeconds);
+      }
+      clip
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+          clipStopRafRef.current = requestAnimationFrame(tick);
+        })
+        .catch(() => setIsPlaying(false));
+    };
+    clip.onloadedmetadata = beginPlayback;
+    clip.onended = () => {
+      clearClipStopMonitor();
+      setIsPlaying(false);
+    };
+    clip.onerror = () => {
+      clearClipStopMonitor();
+      setIsPlaying(false);
+    };
+
+    const tick = () => {
+      if (clip.paused) {
+        clipStopRafRef.current = null;
+        return;
+      }
+      if (clip.currentTime >= end) {
+        clip.pause();
+        clearClipStopMonitor();
+        setIsPlaying(false);
+        return;
+      }
+      clipStopRafRef.current = requestAnimationFrame(tick);
+    };
+
+    if (clip.readyState >= HTMLMediaElement.HAVE_METADATA) {
+      beginPlayback();
+    } else {
+      clip.load();
+    }
   };
 
   const playWordFromReadingAdvantage = (index: number) => {
@@ -328,6 +558,32 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     sentenceStopRafRef.current = requestAnimationFrame(tick);
   };
 
+  const startPrimarySentenceStopMonitor = (token: number, endTime: number) => {
+    clearSentenceStopMonitor();
+    const tick = () => {
+      const audio = audioRef.current;
+      if (
+        !audio ||
+        audio.paused ||
+        token !== primarySentencePlaybackTokenRef.current
+      ) {
+        sentenceStopRafRef.current = null;
+        return;
+      }
+      if (audio.currentTime >= endTime) {
+        audio.pause();
+        audio.currentTime = endTime;
+        stopAtRef.current = Infinity;
+        setCurrentTime(endTime);
+        setIsPlaying(false);
+        sentenceStopRafRef.current = null;
+        return;
+      }
+      sentenceStopRafRef.current = requestAnimationFrame(tick);
+    };
+    sentenceStopRafRef.current = requestAnimationFrame(tick);
+  };
+
   const handleTimeUpdate = () => {
     if (!audioRef.current) return;
     const t = audioRef.current.currentTime;
@@ -337,6 +593,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       stopSingleSentencePlayback();
       return;
     }
+
+    // Primary tracks sentence/word highlighting via requestAnimationFrame in
+    // its ArticleContent hook. Let that loop be the sole source of truth here
+    // as well; the browser timeupdate event is too coarse for word timing.
+    if (isPrimaryContent) return;
 
     const idx = findSentenceIndexAtTime(t);
     if (idx !== activeIdx) setActiveIdx(idx);
@@ -354,6 +615,91 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     return idx;
   };
 
+  const findPrimaryAudioPosition = useCallback((time: number) => {
+    for (let sentenceIndex = 0; sentenceIndex < sentences.length; sentenceIndex++) {
+      const sentence = sentences[sentenceIndex] as any;
+      const start = getSentenceTime(sentence);
+      const end = Number(sentence?.endTime);
+      if (time < start || (Number.isFinite(end) && time > end)) continue;
+
+      const timedWords = getTimedWords(sentence);
+      for (let wordIndex = 0; wordIndex < timedWords.length; wordIndex++) {
+        const wordStart = getTimedWordStart(timedWords[wordIndex]);
+        const wordEnd = getTimedWordEnd(timedWords[wordIndex]);
+        if (Number.isFinite(wordStart) && Number.isFinite(wordEnd) && time >= wordStart && time < wordEnd) {
+          return { sentenceIndex, wordIndex };
+        }
+      }
+
+      // This gap behaviour is copied from Primary's useAudioPlayer: keep a
+      // nearby word highlighted only within 0.3 seconds of its timestamp.
+      let closestWordIndex = -1;
+      let minDistance = Infinity;
+      for (let wordIndex = 0; wordIndex < timedWords.length; wordIndex++) {
+        const wordStart = getTimedWordStart(timedWords[wordIndex]);
+        const wordEnd = getTimedWordEnd(timedWords[wordIndex]);
+        if (!Number.isFinite(wordStart) || !Number.isFinite(wordEnd)) continue;
+        const distance = time < wordStart ? wordStart - time : time - wordEnd;
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestWordIndex = wordIndex;
+        }
+      }
+      return {
+        sentenceIndex,
+        wordIndex: minDistance < 0.3 ? closestWordIndex : -1,
+      };
+    }
+    return { sentenceIndex: -1, wordIndex: -1 };
+  }, [sentences]);
+
+  // Exact Primary article-reader tracking model: requestAnimationFrame reads
+  // the full-article MP3 timeline and drives sentence and word highlights.
+  useEffect(() => {
+    if (!isPrimaryContent || phase !== 3 || !isPlaying) return;
+
+    const track = () => {
+      const audio = audioRef.current;
+      if (!audio || audio.paused) {
+        primaryTrackingRafRef.current = null;
+        return;
+      }
+
+      const time = audio.currentTime;
+      const { sentenceIndex, wordIndex } = findPrimaryAudioPosition(time);
+      const previousSentence = activeSentenceRef.current;
+      const effectiveSentence =
+        sentenceIndex === -1 && previousSentence !== -1
+          ? previousSentence
+          : sentenceIndex;
+      const effectiveWord =
+        wordIndex === -1
+          ? effectiveSentence !== previousSentence
+            ? -1
+            : activeWordRef.current
+          : wordIndex;
+
+      setCurrentTime(time);
+      if (effectiveSentence !== previousSentence) {
+        activeSentenceRef.current = effectiveSentence;
+        setActiveIdx(effectiveSentence);
+      }
+      if (effectiveWord !== activeWordRef.current) {
+        activeWordRef.current = effectiveWord;
+        setActiveWordIdx(effectiveWord);
+      }
+      primaryTrackingRafRef.current = requestAnimationFrame(track);
+    };
+
+    primaryTrackingRafRef.current = requestAnimationFrame(track);
+    return () => {
+      if (primaryTrackingRafRef.current !== null) {
+        cancelAnimationFrame(primaryTrackingRafRef.current);
+        primaryTrackingRafRef.current = null;
+      }
+    };
+  }, [isPrimaryContent, phase, isPlaying, findPrimaryAudioPosition]);
+
   const playAudioSentenceFallback = (sentenceIdx: number) => {
     const audio = audioRef.current;
     const item = sentences[sentenceIdx];
@@ -363,15 +709,45 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     }
 
     const start = Math.max(0, getSentenceTime(item));
+    if (isPrimaryContent) {
+      // In the Interactive reader, selecting a sentence is intentionally a
+      // single-sentence action (unlike Primary's Play-all control). Use the
+      // original PA timeline exactly, including its explicit endTime.
+      const end = getSentenceEndTime(item, start, sentences[sentenceIdx + 1]);
+      const playbackToken = ++primarySentencePlaybackTokenRef.current;
+      stopAtRef.current = end;
+      clearSentenceStopMonitor();
+      clipAudioRef.current?.pause();
+      audio.pause();
+      audio.playbackRate = speechRate;
+      const position = findPrimaryAudioPosition(start);
+      activeSentenceRef.current = sentenceIdx;
+      activeWordRef.current = position.wordIndex;
+      setActiveIdx(sentenceIdx);
+      setActiveWordIdx(position.wordIndex);
+      audio.currentTime = start;
+      setCurrentTime(start);
+      audio
+        .play()
+        .then(() => {
+          if (playbackToken !== primarySentencePlaybackTokenRef.current) return;
+          setIsPlaying(true);
+          startPrimarySentenceStopMonitor(playbackToken, end);
+        })
+        .catch(() => {
+          if (playbackToken !== primarySentencePlaybackTokenRef.current) return;
+          stopAtRef.current = Infinity;
+          setIsPlaying(false);
+        });
+      return;
+    }
     const nextItem = sentences[sentenceIdx + 1];
-    const rawNextStart = nextItem
-      ? getSentenceTime(nextItem)
+    const sentenceEnd = getSentenceEndTime(item, start, nextItem);
+    const nextStart = Number.isFinite(sentenceEnd)
+      ? sentenceEnd
       : Number.isFinite(duration) && duration > start
         ? duration
         : Infinity;
-    const nextStart = Number.isFinite(rawNextStart)
-      ? Math.max(start, rawNextStart - SENTENCE_STOP_MARGIN_SECONDS)
-      : rawNextStart;
 
     stopAtRef.current = nextStart;
     clearSentenceStopMonitor();
@@ -392,23 +768,24 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   };
 
   const seekToSentence = (sentenceIdx: number) => {
+    // Temporarily allow sentence selection only for the first Primary sentence.
+    // Full-article playback remains available through the audio controls.
+    if (isPrimaryContent && sentenceIdx !== 0) return;
+
     const requestId = ++audioRequestRef.current;
     const item = sentences[sentenceIdx];
+    if (!item) return;
     const ts = getSentenceTime(item);
 
     if (audioRef.current) {
       audioRef.current.pause();
-      audioRef.current.currentTime = ts;
     }
     setCurrentTime(ts);
-    stopAtRef.current = Infinity;
     isSeekingRef.current = false;
+    activeSentenceRef.current = sentenceIdx;
+    activeWordRef.current = -1;
     setActiveIdx(sentenceIdx);
-
-    if (phase === 3) {
-      playAudioSentenceFallback(sentenceIdx);
-      return;
-    }
+    setActiveWordIdx(-1);
 
     if (requestId === audioRequestRef.current) {
       playAudioSentenceFallback(sentenceIdx);
@@ -419,12 +796,14 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     if (!audioRef.current) return;
     if (isPlaying) {
       audioRequestRef.current++;
+      primarySentencePlaybackTokenRef.current++;
       clearSentenceStopMonitor();
       audioRef.current.pause();
       clipAudioRef.current?.pause();
       setIsPlaying(false);
     } else {
       audioRequestRef.current++;
+      primarySentencePlaybackTokenRef.current++;
       clipAudioRef.current?.pause();
       stopAtRef.current = Infinity; // always continuous when pressing Play
       clearSentenceStopMonitor();
@@ -533,7 +912,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   const renderThaiPassageCard = (
     className = "",
-    textClassName = "text-foreground/90",
+    textClassName = "text-foreground/90 text-sm leading-relaxed",
     titleClassName = "text-emerald-700 dark:text-emerald-300",
   ) => {
     if (!thaiPassage && !translatingArticle) return null;
@@ -548,11 +927,11 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           Thai Translation
         </p>
         {thaiPassage ? (
-          <p className={`${textClassName} text-sm leading-relaxed`}>
+          <p className={textClassName}>
             {thaiPassage}
           </p>
         ) : (
-          <p className={`${textClassName} text-sm italic opacity-80`}>
+          <p className={`${textClassName} italic opacity-80`}>
             Translating article...
           </p>
         )}
@@ -872,56 +1251,81 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     };
 
     return (
-      <div className="flex-1 flex w-full flex-col items-center px-2 py-4 sm:px-3 animate-in fade-in duration-500">
-        <div className="mb-4 flex w-full flex-wrap items-center gap-3">
+      <div
+        className={`flex h-full min-h-0 w-full flex-1 flex-col items-center animate-in fade-in duration-500 ${
+          isFullscreen ? "px-5 py-4 pb-32" : "px-2 py-4 sm:px-3"
+        }`}
+      >
+        <div className={`flex w-full flex-wrap items-center gap-3 ${isFullscreen ? "mb-2" : "mb-4"}`}>
           <span className="rounded-full bg-amber-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
             Phase 4
           </span>
           <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-4 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-400">
             Vocabulary Focus
           </span>
-          <p className="text-sm text-muted-foreground sm:ml-1">
+          <p className={`text-sm text-muted-foreground sm:ml-1 ${isFullscreen ? "hidden xl:block" : ""}`}>
             {t("lesson.interactive.wordPrefix")}{" "}
             <span className="font-semibold text-foreground">highlight</span>{" "}
             {t("lesson.interactive.vocabInLessonSuffix")}
           </p>
         </div>
 
-        <div className="grid w-full grid-cols-1 items-stretch gap-4 lg:grid-cols-[1.12fr_1fr]">
+        <div
+          className={`grid w-full min-h-0 flex-1 grid-cols-1 items-stretch gap-4 ${
+            isFullscreen
+              ? "lg:grid-cols-[1.08fr_1fr]"
+              : "lg:grid-cols-[1.12fr_1fr]"
+          }`}
+        >
           {/* Passage with highlights */}
           <div
             ref={phase4PassageRef}
-            className="flex self-start flex-col rounded-2xl border border-border border-t-2 border-t-amber-400 bg-card p-5 shadow-lg shadow-slate-900/5 sm:p-6"
+            className={`flex min-h-0 flex-col rounded-2xl border border-border border-t-2 border-t-amber-400 bg-card shadow-lg shadow-slate-900/5 ${
+              isFullscreen ? "h-full overflow-hidden p-4" : "overflow-y-auto p-5 sm:p-6"
+            }`}
           >
-            <h3 className="mb-4 flex items-center gap-3 text-sm font-bold uppercase tracking-wider text-amber-600">
+            <h3 className={`flex items-center gap-3 text-sm font-bold uppercase tracking-wider text-amber-600 ${isFullscreen ? "mb-2" : "mb-4"}`}>
               <span className="inline-flex size-9 items-center justify-center rounded-full bg-amber-500 text-white">
                 <BookOpen size={18} />
               </span>
               Reading Passage
             </h3>
             <p
-              className="text-[15px] font-medium leading-[2] text-foreground sm:text-base sm:leading-[2.05]"
+              className={isFullscreen
+                ? "flex-1 text-[clamp(15px,1.15vw,21px)] font-medium leading-[1.82] text-foreground"
+                : "text-[15px] font-medium leading-[2] text-foreground sm:text-base sm:leading-[2.05]"}
               style={{ fontFamily: "Georgia, serif" }}
             >
               {highlightPassage(articleData.passage)}
             </p>
-            <div className="pt-5">
-              {renderThaiPassageCard("bg-emerald-50/80 dark:bg-emerald-950/25")}
+            <div className={isFullscreen ? "pt-3" : "pt-5"}>
+              {renderThaiPassageCard(
+                isFullscreen
+                  ? "bg-emerald-50/80 p-3 dark:bg-emerald-950/25"
+                  : "bg-emerald-50/80 dark:bg-emerald-950/25",
+                isFullscreen
+                  ? "text-[clamp(12px,0.85vw,15px)] leading-[1.72] text-foreground/90"
+                  : undefined,
+              )}
             </div>
           </div>
 
           {/* Vocab sidebar */}
           <div
             ref={phase4VocabRef}
-            className="flex min-h-0 flex-col overflow-hidden rounded-2xl border border-purple-500/20 bg-purple-500/[0.06] p-4 shadow-lg shadow-purple-900/5 sm:p-5"
+            className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-purple-500/20 bg-purple-500/[0.06] p-4 shadow-lg shadow-purple-900/5 sm:p-5"
           >
-            <h3 className="mb-4 flex items-center gap-3 text-sm font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300">
+            <h3 className={`flex items-center gap-3 text-sm font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 ${isFullscreen ? "mb-2" : "mb-4"}`}>
               <span className="inline-flex size-8 items-center justify-center rounded-full bg-purple-500/10 text-purple-600">
                 <BookOpen size={17} />
               </span>
               Vocabulary List
             </h3>
-            <div className="flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto pr-1">
+            <div
+              className={isFullscreen
+                ? "grid min-h-0 flex-1 auto-rows-fr grid-cols-2 gap-2 overflow-hidden"
+                : "flex min-h-0 flex-1 flex-col gap-2.5 overflow-y-auto pr-1"}
+            >
               {words.map((item: any, i: number) => {
                 const wordText =
                   typeof item === "object"
@@ -942,14 +1346,22 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 return (
                   <div
                     key={i}
-                    className="grid min-h-[72px] flex-1 grid-cols-[auto_1fr_auto] gap-x-3 rounded-xl border border-purple-500/15 bg-card px-3 py-3 shadow-sm sm:grid-cols-[auto_minmax(0,1fr)_minmax(180px,.9fr)_auto] sm:items-center sm:px-4"
+                    className={`relative grid min-h-[96px] gap-x-3 rounded-xl border border-purple-500/15 bg-card px-3 py-3 shadow-sm ${
+                      isFullscreen
+                        ? "h-full min-h-0 grid-cols-[auto_minmax(0,1fr)_auto] content-center"
+                        : "shrink-0 grid-cols-[auto_1fr_auto] sm:grid-cols-[auto_minmax(0,1fr)_minmax(180px,.9fr)_auto] sm:items-center sm:px-4"
+                    }`}
                   >
-                    <span className="mt-0.5 inline-flex size-5 items-center justify-center rounded-full bg-purple-600 text-[10px] font-bold text-white sm:mt-0">
+                    <span
+                      className={isFullscreen
+                        ? "absolute left-3 top-3 inline-flex size-5 items-center justify-center rounded-full bg-purple-600 text-[10px] font-bold text-white"
+                        : "mt-0.5 inline-flex size-5 items-center justify-center rounded-full bg-purple-600 text-[10px] font-bold text-white sm:mt-0"}
+                    >
                       {i + 1}
                     </span>
-                    <div className="min-w-0 sm:pr-4">
+                    <div className={`min-w-0 ${isFullscreen ? "col-span-2 col-start-1 pl-8 pr-2" : "sm:pr-4"}`}>
                       <div className="flex flex-wrap items-baseline gap-2">
-                        <p className="font-black text-purple-700 dark:text-purple-200">
+                        <p className="break-words font-black text-purple-700 dark:text-purple-200">
                           {String(wordText)}
                         </p>
                         {partOfSpeech && (
@@ -959,19 +1371,23 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                         )}
                       </div>
                       {defEn && (
-                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-[13px]">
+                        <p className={`mt-1 break-words text-xs text-muted-foreground ${isFullscreen ? "leading-snug" : "leading-relaxed sm:text-[13px]"}`}>
                           {defEn}
                         </p>
                       )}
                     </div>
-                    <div className="col-start-2 mt-2 min-w-0 border-t border-purple-500/10 pt-2 sm:col-start-auto sm:mt-0 sm:border-l sm:border-t-0 sm:py-1 sm:pl-5">
+                    <div
+                      className={isFullscreen
+                        ? "col-span-2 col-start-1 mt-1 min-w-0 border-t border-purple-500/10 pl-8 pt-1.5 pr-2"
+                        : "col-start-2 mt-2 min-w-0 border-t border-purple-500/10 pt-2 sm:col-start-auto sm:mt-0 sm:border-l sm:border-t-0 sm:py-1 sm:pl-5"}
+                    >
                       {defTh && (
-                        <p className="text-sm font-bold text-purple-600 dark:text-purple-300">
+                        <p className="break-words text-sm font-bold text-purple-600 dark:text-purple-300">
                           {defTh}
                         </p>
                       )}
                       {autoVocabEnTh[i] && (
-                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-[13px]">
+                        <p className={`mt-1 break-words text-xs text-muted-foreground ${isFullscreen ? "leading-snug" : "leading-relaxed sm:text-[13px]"}`}>
                           {autoVocabEnTh[i]}
                         </p>
                       )}
@@ -980,7 +1396,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                       type="button"
                       onClick={() => playWordFromReadingAdvantage(i)}
                       title={t("lesson.interactive.speakTitle")}
-                      className="col-start-3 row-start-1 inline-flex size-9 items-center justify-center self-center rounded-full bg-purple-500/10 text-purple-600 transition-all hover:bg-purple-500/20 active:scale-95 sm:col-start-auto sm:row-start-auto"
+                      className={isFullscreen
+                        ? "absolute right-3 top-3 inline-flex size-8 items-center justify-center rounded-full bg-purple-500/10 text-purple-600 transition-all hover:bg-purple-500/20 active:scale-95"
+                        : "col-start-3 row-start-1 inline-flex size-9 items-center justify-center self-center rounded-full bg-purple-500/10 text-purple-600 transition-all hover:bg-purple-500/20 active:scale-95 sm:col-start-auto sm:row-start-auto"}
                     >
                       <Volume2 size={16} />
                     </button>
@@ -1000,56 +1418,68 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       articleData.shortAnswerQuestions?.slice(0, 3) || [];
 
     return (
-      <div className="flex-1 flex w-full flex-col items-center px-2 py-4 sm:px-3 animate-in fade-in duration-500">
-        <div className="mb-4 flex w-full flex-wrap items-center gap-3">
+      <div
+        className={`flex h-full min-h-0 w-full flex-1 flex-col items-center animate-in fade-in duration-500 ${
+          isFullscreen ? "px-5 py-4 pb-32" : "px-2 py-4 sm:px-3"
+        }`}
+      >
+        <div className={`flex w-full flex-wrap items-center gap-3 ${isFullscreen ? "mb-2" : "mb-4"}`}>
           <span className="rounded-full bg-teal-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
             Phase 5
           </span>
           <span className="rounded-full border border-teal-500/20 bg-teal-500/10 px-4 py-1.5 text-xs font-bold text-teal-700 dark:text-teal-400">
             Deep Reading
           </span>
-          <span className="rounded-full bg-muted px-4 py-1.5 text-xs font-medium text-muted-foreground">
+          <span className={`rounded-full bg-muted px-4 py-1.5 text-xs font-medium text-muted-foreground ${isFullscreen ? "hidden xl:inline-flex" : ""}`}>
             Analytical Mode
           </span>
         </div>
 
-        <div className="grid w-full grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1.8fr)_minmax(360px,.8fr)]">
+        <div className="grid w-full min-h-0 flex-1 grid-cols-1 items-stretch gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(390px,.85fr)]">
           {/* Passage - high contrast indigo-950 deep */}
-          <div className="min-w-0">
-            <div className="rounded-2xl border-t-4 border-teal-400 bg-indigo-950 p-5 shadow-2xl sm:p-7">
-              <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-teal-400">
+          <div className="min-h-0 min-w-0">
+            <div className={`flex h-full min-h-0 flex-col rounded-2xl border-t-4 border-teal-400 bg-indigo-950 shadow-2xl ${isFullscreen ? "overflow-hidden p-5" : "p-5 sm:p-7"}`}>
+              <h3 className={`text-xs font-bold uppercase tracking-widest text-teal-400 ${isFullscreen ? "mb-2" : "mb-4"}`}>
                 {articleData.title}
               </h3>
               <p
-                className="text-base font-medium leading-[2] text-indigo-100 sm:text-lg sm:leading-[2.05]"
+                className={isFullscreen
+                  ? "flex-1 text-[clamp(15px,1.06vw,20px)] font-medium leading-[1.82] text-indigo-100"
+                  : "text-base font-medium leading-[2] text-indigo-100 sm:text-lg sm:leading-[2.05]"}
                 style={{ fontFamily: "Georgia, serif" }}
               >
                 {articleData.passage}
               </p>
               {renderThaiPassageCard(
-                "mt-5 bg-teal-500/10 border-teal-400/30",
-                "text-teal-50",
+                isFullscreen
+                  ? "mt-3 border-teal-400/30 bg-teal-500/10 p-3"
+                  : "mt-5 bg-teal-500/10 border-teal-400/30",
+                isFullscreen
+                  ? "text-[clamp(12px,0.82vw,15px)] leading-[1.7] text-teal-50"
+                  : "text-teal-50 text-sm leading-relaxed",
                 "text-teal-400",
               )}
             </div>
           </div>
 
           {/* Comprehension Guide */}
-          <div className="min-w-0 space-y-4">
-            <div className="rounded-2xl border-2 border-border bg-muted p-5">
-              <h4 className="font-bold text-foreground text-sm mb-3 flex items-center gap-2">
+          <div className={`flex min-h-0 min-w-0 flex-col ${isFullscreen ? "gap-3" : "space-y-4"}`}>
+            <div className={`flex min-h-0 flex-1 flex-col rounded-2xl border-2 border-border bg-muted ${isFullscreen ? "p-4" : "p-5"}`}>
+              <h4 className={`mb-2 flex items-center gap-2 font-bold text-foreground ${isFullscreen ? "text-lg" : "text-sm"}`}>
                 <span>Guide</span> Comprehension Guide
               </h4>
-              <p className="text-muted-foreground text-xs mb-4">
+              <p className={`text-muted-foreground ${isFullscreen ? "mb-3 text-sm" : "mb-4 text-xs"}`}>
                 {t("lesson.interactive.comprehensionGuideHelp")}
               </p>
               {comprehensionQuestions.length > 0 ? (
-                <div className="space-y-3">
+                <div className={isFullscreen ? "grid min-h-0 flex-1 grid-rows-3 gap-2" : "space-y-3"}>
                   {comprehensionQuestions.map((q: any, i: number) => (
                     <GuideQuestionCard
                       key={i}
                       label={`Q${i + 1}`}
                       question={q.question}
+                      className={isFullscreen ? "h-full" : ""}
+                      large={isFullscreen}
                     />
                   ))}
                 </div>
@@ -1060,8 +1490,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               )}
             </div>
 
-            <div className="bg-card border border-border rounded-2xl p-5">
-              <h4 className="font-bold text-foreground text-sm mb-2">
+            <div className={`rounded-2xl border border-border bg-card ${isFullscreen ? "p-4" : "p-5"}`}>
+              <h4 className="mb-2 text-sm font-bold text-foreground">
                 Tutor Actions
               </h4>
               <ul className="text-muted-foreground text-xs space-y-2">
@@ -1179,8 +1609,20 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     };
 
     return (
-      <div className="flex-1 flex w-full flex-col items-center px-2 py-4 sm:px-3 animate-in fade-in duration-500">
-        <div className="mb-4 flex w-full flex-wrap items-center gap-3">
+      <div
+        className={`flex h-full min-h-0 w-full flex-1 flex-col items-center animate-in fade-in duration-500 ${
+          isFullscreen ? "px-5 py-4 pb-32" : "px-2 py-4 sm:px-3"
+        }`}
+      >
+        {isPrimaryContent && readingAdvantageAudioUrl && (
+          <audio
+            ref={primaryArticleAudioRef}
+            src={readingAdvantageAudioUrl}
+            preload="auto"
+            onEnded={() => setIsPlaying(false)}
+          />
+        )}
+        <div className={`flex w-full flex-wrap items-center gap-3 ${isFullscreen ? "mb-2" : "mb-4"}`}>
           <span className="rounded-full bg-green-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
             Phase 6
           </span>
@@ -1193,15 +1635,17 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           </p>
         </div>
 
-        <div className="grid w-full grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)]">
+        <div className="grid w-full min-h-0 flex-1 grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
           {/* Timeline */}
-          <div className="min-w-0">
-            <h3 className="text-sm font-bold text-green-800 dark:text-green-300 uppercase tracking-widest mb-4 flex items-center gap-2">
+          <div className={`min-h-0 min-w-0 ${isFullscreen ? "flex h-full flex-col" : ""}`}>
+            <h3 className={`flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-green-800 dark:text-green-300 ${isFullscreen ? "mb-2" : "mb-4"}`}>
               <span>List</span> Key Sentences Timeline
             </h3>
-            <div className="relative lg:max-h-[68vh] lg:overflow-y-auto lg:pr-2">
-              <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-green-500/30" />
-              <div className="space-y-4">
+            <div className={`relative min-h-0 ${isFullscreen ? "flex-1 overflow-hidden" : "lg:max-h-[68vh] lg:overflow-y-auto lg:pr-2"}`}>
+              <div
+                className={isFullscreen ? "grid h-full gap-3" : "space-y-4"}
+                style={isFullscreen ? { gridTemplateRows: `repeat(${Math.max(keySentences.length, 1)}, minmax(0, 1fr))` } : undefined}
+              >
                 {keySentences.map(
                   ({ item, index: sentenceIndex }: any, index: number) => {
                     const sentenceText =
@@ -1212,22 +1656,39 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     return (
                       <div
                         key={index}
-                        className="flex gap-4 items-start animate-in slide-in-from-left duration-500"
+                        className={`relative flex gap-4 animate-in slide-in-from-left duration-500 ${isFullscreen ? "min-h-0 items-stretch" : "items-start"}`}
                         style={{ animationDelay: `${index * 80}ms` }}
                       >
+                        {index < keySentences.length - 1 && (
+                          <div className="absolute left-4 top-8 bottom-[-0.75rem] w-0.5 bg-green-500/30" />
+                        )}
                         <div
-                          className={`relative z-10 w-8 h-8 rounded-full ${d} flex items-center justify-center text-white text-xs font-black shrink-0 shadow-md`}
+                          className={`relative z-10 flex size-8 shrink-0 items-center justify-center rounded-full ${d} text-xs font-black text-white shadow-md`}
                         >
                           {index + 1}
                         </div>
                         <div
-                          className={`flex-1 border-l-4 rounded-xl p-4 shadow-sm ${c}`}
+                          className={`flex-1 border-l-4 rounded-xl p-4 shadow-sm ${c} ${isFullscreen ? "min-h-0" : ""}`}
                         >
-                          <p className="text-foreground font-semibold text-base leading-relaxed">
+                          <div className="flex items-start gap-2">
+                            <p className={`min-w-0 flex-1 font-semibold text-foreground ${isFullscreen ? "text-[clamp(15px,1vw,19px)] leading-snug" : "text-base leading-relaxed"}`}>
                             {highlightVocab(String(sentenceText))}
-                          </p>
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                isPrimaryContent
+                                  ? playPrimaryArticleSentence(sentenceIndex)
+                                  : playSentenceFromReadingAdvantage(sentenceIndex)
+                              }
+                              title={t("lesson.interactive.speakTitle")}
+                              className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-green-500/15 text-green-700 transition-colors hover:bg-green-500/25 dark:text-green-300"
+                            >
+                              <Volume2 size={15} />
+                            </button>
+                          </div>
                           {thaiText && (
-                            <p className="mt-2 text-emerald-700 dark:text-emerald-300 text-sm font-medium leading-relaxed">
+                            <p className={`mt-2 font-medium text-emerald-700 dark:text-emerald-300 ${isFullscreen ? "text-[clamp(13px,0.84vw,16px)] leading-snug" : "text-sm leading-relaxed"}`}>
                               {thaiText}
                             </p>
                           )}
@@ -1246,17 +1707,22 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           </div>
 
           {/* Passage with context */}
-          <div className="min-w-0">
-            <h3 className="text-sm font-bold text-green-800 dark:text-green-300 uppercase tracking-widest mb-4 flex items-center gap-2">
+          <div className={`min-h-0 min-w-0 ${isFullscreen ? "flex h-full flex-col" : ""}`}>
+            <h3 className={`flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-green-800 dark:text-green-300 ${isFullscreen ? "mb-2" : "mb-4"}`}>
               <span>Article</span> Passage Reference
             </h3>
-            <div className="rounded-2xl border-t-4 border-green-400 bg-card p-5 shadow-xl sm:p-6 lg:max-h-[62vh] lg:overflow-y-auto">
-              <p className="text-base leading-[2] text-foreground sm:text-lg sm:leading-[2.05]">
+            <div className={`rounded-2xl border-t-4 border-green-400 bg-card shadow-xl ${isFullscreen ? "flex min-h-0 flex-1 flex-col overflow-hidden p-5" : "p-5 sm:p-6 lg:max-h-[62vh] lg:overflow-y-auto"}`}>
+              <p className={isFullscreen ? "flex-1 text-[clamp(15px,1vw,19px)] leading-[1.8] text-foreground" : "text-base leading-[2] text-foreground sm:text-lg sm:leading-[2.05]"}>
                 {articleData.passage}
               </p>
-              {renderThaiPassageCard("mt-5")}
+              {renderThaiPassageCard(
+                isFullscreen ? "mt-3 p-3" : "mt-5",
+                isFullscreen
+                  ? "text-[clamp(12px,0.78vw,15px)] leading-[1.65] text-foreground/90"
+                  : undefined,
+              )}
             </div>
-            <div className="mt-4 bg-green-500/10 border border-green-500/20 rounded-xl p-4">
+            <div className={`mt-3 rounded-xl border border-green-500/20 bg-green-500/10 ${isFullscreen ? "p-3" : "mt-4 p-4"}`}>
               <p className="text-green-800 dark:text-green-300 text-xs font-bold mb-1">
                 Tutor Tip
               </p>
@@ -1327,6 +1793,100 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     const activeSentence = activeIdx >= 0 ? sentences[activeIdx] : null;
     const activeThText = activeIdx >= 0 ? thaiSentences[activeIdx] : null;
     const activeEnText = activeSentence ? getSentenceText(activeSentence) : null;
+    const renderReadAlongText = (sentenceIndex: number, text: string) => {
+      if (!isPrimaryContent) return text;
+
+      let displayWordIndex = 0;
+      return splitIntoDisplayParts(text).map((part, partIndex) => {
+        const isWord = isDisplayWord(part);
+        const wordIndex = isWord ? displayWordIndex++ : -1;
+        const isCurrentWord =
+          isWord &&
+          sentenceIndex === activeIdx &&
+          wordIndex ===
+            (primaryWordMapsRef.current
+              .get(sentenceIndex)
+              ?.audioToDisplay.get(activeWordIdx) ?? activeWordIdx);
+
+        // The outer sentence owns the click. Keeping these word spans visual-only
+        // prevents a sentence click from becoming continuous word-level playback.
+        return (
+          <span
+            key={partIndex}
+            className={
+              isWord
+                ? `rounded transition-colors duration-150 ${
+                    isCurrentWord && isPlaying
+                      ? "bg-orange-600 text-white px-0.5"
+                      : ""
+                  }`
+                : undefined
+            }
+          >
+            {part}
+          </span>
+        );
+      });
+    };
+    const renderSentence = (idx: number, text: string) => {
+      const canSelectSentence = !isPrimaryContent || idx === 0;
+      const isActive = idx === activeIdx;
+      const flagCount = flagCounts?.[idx] || 0;
+      const isFlagged = flagCount > 0;
+
+      return (
+        <span
+          id={`read-sentence-${idx}`}
+          key={idx}
+          onClick={canSelectSentence ? () => seekToSentence(idx) : undefined}
+          className={`${canSelectSentence ? "cursor-pointer" : "cursor-default"} rounded-lg px-0.5 transition-all duration-200 ${
+            isActive
+              ? "bg-orange-400 text-white font-bold px-2 py-0.5 rounded-xl shadow-md"
+              : isFlagged
+                ? "bg-rose-500/15 text-rose-700 dark:text-rose-300 font-semibold rounded-lg px-1 ring-1 ring-rose-400/50"
+                : canSelectSentence
+                  ? "text-foreground hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400"
+                  : "text-foreground"
+          }`}
+        >
+          {renderReadAlongText(idx, text)}
+          {isFlagged && (
+            <sup className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 align-super not-italic">
+              🚩{flagCount}
+            </sup>
+          )}{" "}
+        </span>
+      );
+    };
+    // Primary stores most passages as one text block even though each article
+    // has three illustrations. Preserve an existing three-paragraph layout;
+    // otherwise divide the timed sentences into three reading pages.
+    const primaryReadingGroups = (() => {
+      if (readableParagraphGroups.length === 3) return readableParagraphGroups;
+      if (readableParagraphGroups.length > 3) {
+        return [
+          ...readableParagraphGroups.slice(0, 2),
+          readableParagraphGroups.slice(2).flat(),
+        ];
+      }
+
+      const allSentences = readableParagraphGroups.flat();
+      if (allSentences.length < 3) return readableParagraphGroups;
+      return Array.from({ length: 3 }, (_, pageIndex) =>
+        allSentences.slice(
+          Math.floor((pageIndex * allSentences.length) / 3),
+          Math.floor(((pageIndex + 1) * allSentences.length) / 3),
+        ),
+      );
+    })();
+    const activePrimaryPageIndex = primaryReadingGroups.findIndex((group) =>
+      group.some(({ idx }) => idx === activeIdx),
+    );
+    const primaryReadingPageIndex = Math.max(0, activePrimaryPageIndex);
+    const primaryReadingGroup =
+      primaryReadingGroups[primaryReadingPageIndex] ?? primaryReadingGroups[0] ?? [];
+    const primaryReadingImageUrl =
+      primaryImageUrls[primaryReadingPageIndex] ?? articleImageUrl;
 
     return (
       <div className="flex-1 flex flex-col w-full bg-muted relative">
@@ -1335,6 +1895,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           <audio
             ref={audioRef}
             src={phase3AudioUrl}
+            preload="auto"
             onTimeUpdate={handleTimeUpdate}
             onSeeked={() => {
               isSeekingRef.current = false;
@@ -1342,7 +1903,15 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             onLoadedMetadata={() =>
               setDuration(audioRef.current?.duration || 0)
             }
-            onEnded={() => setIsPlaying(false)}
+            onEnded={() => {
+              setIsPlaying(false);
+              if (isPrimaryContent) {
+                activeSentenceRef.current = -1;
+                activeWordRef.current = -1;
+                setActiveIdx(-1);
+                setActiveWordIdx(-1);
+              }
+            }}
           />
         )}
 
@@ -1368,8 +1937,34 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             )}
           </div>
 
-          {/* Article body - flowing paragraphs with inline highlights */}
-          <div
+          {isPrimaryContent ? (
+            <div
+              key={`primary-reading-page-${primaryReadingPageIndex}`}
+              className="mx-auto flex w-full max-w-5xl animate-in fade-in slide-in-from-right-8 duration-500 flex-col items-center"
+              style={{ fontFamily: "Georgia, serif" }}
+            >
+              {primaryReadingImageUrl && (
+                <img
+                  src={primaryReadingImageUrl}
+                  alt={`${articleData.title} — part ${primaryReadingPageIndex + 1}`}
+                  className="h-[clamp(260px,48vh,560px)] w-full rounded-3xl border border-border bg-card object-cover shadow-xl"
+                />
+              )}
+              <div className="mt-5 w-full rounded-3xl border border-border bg-card p-6 shadow-xl sm:p-8">
+                <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-orange-600 dark:text-orange-400">
+                  <span>Part {primaryReadingPageIndex + 1}</span>
+                  <span className="h-px flex-1 bg-orange-500/20" />
+                  <span>{primaryReadingGroups.length} Parts</span>
+                </div>
+                <p className="text-base leading-[2] sm:text-lg sm:leading-[2.05]">
+                  {primaryReadingGroup.length > 0
+                    ? primaryReadingGroup.map(({ idx, text }) => renderSentence(idx, text))
+                    : rawParagraphs[primaryReadingPageIndex]}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div
             className="mx-auto w-full max-w-[1500px] rounded-3xl border border-border bg-card p-6 shadow-xl sm:p-8"
             style={{ fontFamily: "Georgia, serif" }}
           >
@@ -1380,6 +1975,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               >
                 {group.length > 0 ? (
                   group.map(({ idx, text, ts }) => {
+                    const canSelectSentence = !isPrimaryContent || idx === 0;
                     const isActive = idx === activeIdx;
                     const flagCount = flagCounts?.[idx] || 0;
                     const isFlagged = flagCount > 0;
@@ -1387,16 +1983,18 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                       <span
                         id={`read-sentence-${idx}`}
                         key={idx}
-                        onClick={() => seekToSentence(idx)}
-                        className={`cursor-pointer rounded-lg px-0.5 transition-all duration-200 ${
+                        onClick={canSelectSentence ? () => seekToSentence(idx) : undefined}
+                        className={`${canSelectSentence ? "cursor-pointer" : "cursor-default"} rounded-lg px-0.5 transition-all duration-200 ${
                           isActive
                             ? "bg-orange-400 text-white font-bold px-2 py-0.5 rounded-xl shadow-md"
                             : isFlagged
                               ? "bg-rose-500/15 text-rose-700 dark:text-rose-300 font-semibold rounded-lg px-1 ring-1 ring-rose-400/50"
-                              : "text-foreground hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400"
+                              : canSelectSentence
+                                ? "text-foreground hover:bg-orange-500/10 hover:text-orange-600 dark:hover:text-orange-400"
+                                : "text-foreground"
                         }`}
                       >
-                        {text}
+                        {renderReadAlongText(idx, text)}
                         {isFlagged && (
                           <sup className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 align-super not-italic">
                             🚩{flagCount}
@@ -1414,6 +2012,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               </p>
             ))}
           </div>
+          )}
         </div>
 
         {/* Floating mini audio player - bottom-center */}
@@ -1491,6 +2090,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     const ratio = (e.clientX - rect.left) / rect.width;
                     if (audioRef.current) {
                       audioRequestRef.current++;
+                      primarySentencePlaybackTokenRef.current++;
+                      clearSentenceStopMonitor();
+                      stopAtRef.current = Infinity;
                       clipAudioRef.current?.pause();
                       audioRef.current.playbackRate = speechRate;
                       audioRef.current.currentTime = ratio * duration;

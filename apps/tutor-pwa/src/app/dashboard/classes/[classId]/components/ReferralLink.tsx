@@ -7,6 +7,14 @@ import { QrCode, Copy, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
 import { cn } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export function ReferralLink({
   referralLink,
@@ -26,15 +34,15 @@ export function ReferralLink({
   return (
     <Card
       className={cn(
-        "h-full min-h-[220px] rounded-2xl border-border/60 bg-card/95 shadow-sm",
+        "h-full min-h-[184px] rounded-2xl border-border/60 bg-card/95 shadow-sm",
         className,
       )}
     >
       <CardContent className="flex h-full flex-col p-4 sm:p-5">
         <div className="flex h-full flex-col">
           <div className="flex items-start gap-3 min-w-0">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50">
-              <QrCode className="h-5 w-5 text-emerald-600" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+              <QrCode className="h-5 w-5" />
             </div>
             <div className="min-w-0">
               <p className="truncate text-sm font-bold text-foreground">
@@ -46,19 +54,7 @@ export function ReferralLink({
             </div>
           </div>
 
-          <div className="mt-4 flex flex-1 items-center justify-center rounded-xl border border-emerald-500/20 bg-white p-4 shadow-sm">
-            <QRCodeSVG
-              value={referralLink}
-              size={176}
-              level="M"
-              includeMargin={true}
-            />
-          </div>
-
-          <div className="mt-4 flex w-full flex-col gap-2 border-t border-border/50 pt-4">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-              {t("tutorClass.detail.copy")}
-            </p>
+          <div className="mt-auto flex w-full flex-col gap-2 border-t border-border/50 pt-4">
             <div className="flex w-full items-center gap-2">
               <input
                 readOnly
@@ -76,6 +72,30 @@ export function ReferralLink({
                   <Copy className="h-4 w-4 text-muted-foreground" />
                 )}
               </button>
+              <Dialog>
+                <DialogTrigger
+                  render={
+                    <button
+                      type="button"
+                      title="แสดง QR Code"
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-input text-emerald-600 transition-colors hover:bg-emerald-50"
+                    >
+                      <QrCode className="h-4 w-4" />
+                    </button>
+                  }
+                />
+                <DialogContent className="max-w-sm">
+                  <DialogHeader>
+                    <DialogTitle>{t("tutorClass.detail.referralTitle")}</DialogTitle>
+                    <DialogDescription>
+                      ให้นักเรียนสแกน QR Code นี้เพื่อสมัครเข้าคลาส
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex justify-center rounded-xl border border-emerald-500/20 bg-white p-5">
+                    <QRCodeSVG value={referralLink} size={230} level="M" includeMargin />
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
             <Button
               variant="outline"

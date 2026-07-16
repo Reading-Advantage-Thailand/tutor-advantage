@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 import {
   Users,
@@ -19,6 +18,7 @@ import {
   RescheduleClassButton,
   CouponExtendButton,
   StudentAvatars,
+  StudentListButton,
   DevClassSimulator,
 } from "./client-components";
 import { notFound } from "next/navigation";
@@ -49,7 +49,7 @@ export default async function ClassDetailPage({
 
   const cls = response.class;
   const detailCardClassName =
-    "h-full min-h-[220px] rounded-2xl border-border/60 bg-card/95 shadow-sm";
+    "h-full min-h-[184px] rounded-2xl border-border/60 bg-card/95 shadow-sm";
   const detailCardContentClassName = "flex h-full flex-col p-4 sm:p-5";
 
   return (
@@ -103,38 +103,6 @@ export default async function ClassDetailPage({
                     </p>
                     <p className="mt-1 text-sm font-semibold leading-snug text-foreground">
                       {cls.schedule || t("tutorClass.classes.notSet")}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
-                  <div className="rounded-xl border border-border/60 bg-muted/35 px-3 py-2">
-                    <span className="font-medium text-muted-foreground">
-                      {t("tutorClass.classes.startsAt")}
-                    </span>
-                    <p className="mt-1 text-sm font-semibold text-foreground">
-                      {cls.startsAt
-                        ? new Date(cls.startsAt).toLocaleDateString("th-TH", {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          })
-                        : t("tutorClass.classes.notSet")}
-                    </p>
-                  </div>
-
-                  <div className="rounded-xl border border-border/60 bg-muted/35 px-3 py-2">
-                    <span className="font-medium text-muted-foreground">
-                      {t("tutorClass.classes.endsAt")}
-                    </span>
-                    <p className="mt-1 text-sm font-semibold text-foreground">
-                      {cls.endsAt
-                        ? new Date(cls.endsAt).toLocaleDateString("th-TH", {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          })
-                        : t("tutorClass.classes.notSet")}
                     </p>
                   </div>
                 </div>
@@ -224,17 +192,11 @@ export default async function ClassDetailPage({
                 </div>
 
                 <div className="mt-4 flex-1 content-start">
-                  <StudentAvatars enrolledStudents={cls.enrolledStudents} />
+                  <StudentAvatars enrolledStudents={cls.enrolledStudents} maxVisible={6} />
                 </div>
 
                 <div className="mt-4 border-t border-border/50 pt-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-9 w-full border-emerald-600 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"
-                  >
-                    ดูรายชื่อนักเรียน
-                  </Button>
+                  <StudentListButton enrolledStudents={cls.enrolledStudents} />
                 </div>
               </div>
             </CardContent>

@@ -1588,8 +1588,17 @@ export async function createClassBookCycle(req: AuthenticatedRequest, res: Respo
         throw new Error("BOOK_ALREADY_OPEN");
       }
 
-      const orderedBooks = await tx.book.findMany({
-        select: { bookId: true },
+        // Reading Advantage and Primary Advantage progress independently.  Do
+        // not let a book opened in one programme block book 1 of the other.
+        const isPrimaryBook = book.bookCode.startsWith("Primary ");
+        const orderedBooks = await tx.book.findMany({
+          where: isPrimaryBook
+            ? { bookCode: { startsWith: "Primary " } }
+            // Only enforce ordering against Reading books that tutors can
+            // currently select.  For example, Reading 3.1 can be the first
+            // available Reading book while earlier levels are not imported.
+            : { bookCode: { in: Array.from(AVAILABLE_BOOK_CODES) } },
+          select: { bookId: true },
         orderBy: [
           { series: { raLevelStart: "asc" } },
           { levelNumber: "asc" },
@@ -1597,8 +1606,12 @@ export async function createClassBookCycle(req: AuthenticatedRequest, res: Respo
         ],
       });
       const selectedBookIndex = orderedBooks.findIndex((item) => item.bookId === book.bookId);
-      const openedBookIndexes = cls.bookCycles
-        .map((cycle: any) => orderedBooks.findIndex((item) => item.bookId === cycle.bookId))
+        const openedBookIndexes = cls.bookCycles
+          .filter((cycle: any) => {
+            const openedBook = orderedBooks.find((item) => item.bookId === cycle.bookId);
+            return Boolean(openedBook);
+          })
+          .map((cycle: any) => orderedBooks.findIndex((item) => item.bookId === cycle.bookId))
         .filter((index: number) => index >= 0);
       const highestOpenedBookIndex =
         openedBookIndexes.length > 0 ? Math.max(...openedBookIndexes) : -1;

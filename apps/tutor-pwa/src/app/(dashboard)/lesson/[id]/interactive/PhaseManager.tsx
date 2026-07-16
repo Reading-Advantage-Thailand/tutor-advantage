@@ -551,6 +551,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     <ArticleDisplay
       articleData={articleData}
       phase={currentPhase}
+      isFullscreen={isFullscreen}
       flagCounts={flagCounts}
       onActiveIdxChange={(idx) => {
         if (sessionData?.activeSentenceIndex !== idx) {

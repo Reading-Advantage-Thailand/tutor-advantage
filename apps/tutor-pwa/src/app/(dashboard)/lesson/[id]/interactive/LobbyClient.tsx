@@ -296,7 +296,7 @@ export default function TutorLobbyClient({
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 lg:items-stretch gap-8">
         <div className="lg:col-span-4 space-y-5">
           {/* Article Hero Card */}
           <div className="overflow-hidden rounded-3xl border border-border/60 shadow-xl bg-card">
@@ -396,22 +396,9 @@ export default function TutorLobbyClient({
             </div>
           )}
 
-          <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/5 p-5">
-            <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
-              <ShieldCheck size={16} className="text-indigo-500" /> {t("lesson.interactive.tutorTips")}
-            </h4>
-            <ul className="text-xs text-muted-foreground space-y-2.5 list-none">
-              {[t("lesson.interactive.tipWaitReady"), t("lesson.interactive.tipNudge"), t("lesson.interactive.tipReconnect")].map((tip) => (
-                <li key={tip} className="flex gap-2.5 items-start">
-                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
-                  {tip}
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
 
-        <div className="lg:col-span-8 space-y-6">
+        <div className="lg:col-span-8 flex min-h-0 flex-col gap-6">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-bold text-foreground flex items-center gap-2.5">
               <Users className="text-primary" />
@@ -426,9 +413,9 @@ export default function TutorLobbyClient({
             </div>
           </div>
 
-          <div className={`grid gap-4 ${participants.length === 0 ? 'grid-cols-1' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'}`}>
+          <div className={`grid min-h-[28rem] flex-1 gap-4 ${participants.length === 0 ? 'grid-cols-1' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'}`}>
             {participants.length === 0 ? (
-              <div className="py-20 bg-card rounded-3xl border-2 border-dashed border-border flex flex-col items-center justify-center text-center">
+              <div className="h-full min-h-[28rem] bg-card rounded-3xl border-2 border-dashed border-border flex flex-col items-center justify-center text-center">
                 <div className="w-16 h-16 bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-4">
                   <Users className="text-indigo-500" size={28} />
                 </div>
@@ -498,7 +485,7 @@ export default function TutorLobbyClient({
             )}
           </div>
 
-          <div className="pt-6">
+          <div>
             <button
               className={`w-full py-5 rounded-2xl text-lg font-black flex items-center justify-center gap-3 shadow-xl transition-all duration-300 ${
                 canStart
@@ -539,6 +526,20 @@ export default function TutorLobbyClient({
                 {t("lesson.interactive.demoSoloNote")}
               </p>
             )}
+          </div>
+
+          <div className="rounded-2xl border border-indigo-500/20 bg-indigo-500/5 p-5">
+            <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+              <ShieldCheck size={16} className="text-indigo-500" /> {t("lesson.interactive.tutorTips")}
+            </h4>
+            <ul className="grid gap-2.5 text-xs text-muted-foreground sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+              {[t("lesson.interactive.tipWaitReady"), t("lesson.interactive.tipNudge"), t("lesson.interactive.tipReconnect")].map((tip) => (
+                <li key={tip} className="flex gap-2.5 rounded-xl bg-background/50 p-2.5">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />
+                  {tip}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </main>
