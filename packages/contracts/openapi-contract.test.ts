@@ -37,6 +37,15 @@ describe("identity OpenAPI contract", () => {
         requiresGuardian: true,
       });
     });
+    server.get("/v1/users/me/settings", (_req, res) => {
+      res.status(200).json({
+        settings: { notifications: { notifyClassReminders: false } },
+        lineConnected: true,
+      });
+    });
+    server.patch("/v1/users/me/settings", (req, res) => {
+      res.status(200).json({ settings: req.body });
+    });
   });
 
   it("rejects malformed dates before the profile handler", async () => {
@@ -49,6 +58,22 @@ describe("identity OpenAPI contract", () => {
 
   it("accepts the current-user response shape", async () => {
     await request(app).get("/v1/session").expect(200);
+  });
+
+  it("accepts notification settings and the linked LINE status", async () => {
+    await request(app).get("/v1/users/me/settings").expect(200);
+    await request(app)
+      .patch("/v1/users/me/settings")
+      .send({ notifications: { notifyLineMessages: false } })
+      .expect(200);
+  });
+
+  it("rejects non-boolean notification preferences", async () => {
+    const response = await request(app)
+      .patch("/v1/users/me/settings")
+      .send({ notifications: { notifyClassReminders: "false" } });
+    expect(response.status).toBe(400);
+    expect(response.body.error.code).toBe("OPENAPI_REQUEST_VALIDATION_FAILED");
   });
 });
 

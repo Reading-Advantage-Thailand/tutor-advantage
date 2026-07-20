@@ -104,6 +104,53 @@ paths:
           $ref: "#/components/responses/BadRequestError"
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+  /v1/users/me/settings:
+    get:
+      summary: Get current user settings
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current settings and linked LINE status
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [settings, lineConnected]
+                properties:
+                  settings:
+                    $ref: "#/components/schemas/UserSettings"
+                  lineConnected:
+                    type: boolean
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+    patch:
+      summary: Update current user settings
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserSettings"
+      responses:
+        "200":
+          description: Updated settings
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [settings]
+                properties:
+                  settings:
+                    $ref: "#/components/schemas/UserSettings"
+        "400":
+          $ref: "#/components/responses/BadRequestError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
   /v1/guardian/consent:
     post:
       summary: Submit Guardian Consent
@@ -137,6 +184,24 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    NotificationSettings:
+      type: object
+      additionalProperties: false
+      properties:
+        notifyClassReminders:
+          type: boolean
+        notifyScoreUpdates:
+          type: boolean
+        notifyLineMessages:
+          type: boolean
+        notifyMarketing:
+          type: boolean
+    UserSettings:
+      type: object
+      additionalProperties: true
+      properties:
+        notifications:
+          $ref: "#/components/schemas/NotificationSettings"
     User:
       type: object
       additionalProperties: false

@@ -12,10 +12,19 @@ export async function getSettings(req: AuthenticatedRequest, res: Response) {
       });
     }
 
-    const ObjectUser = await prisma.user.findUnique({
-      where: { userId },
-      select: { settings: true },
-    });
+    const [ObjectUser, lineIdentity] = await Promise.all([
+      prisma.user.findUnique({
+        where: { userId },
+        select: { settings: true },
+      }),
+      prisma.oAuthIdentity.findFirst({
+        where: {
+          userId,
+          provider: "line",
+        },
+        select: { identityId: true },
+      }),
+    ]);
 
     if (!ObjectUser) {
       return res.status(404).json({
@@ -26,7 +35,10 @@ export async function getSettings(req: AuthenticatedRequest, res: Response) {
     // Prisma returns JsonValue, we ensure it's an object or provide a default empty object
     const settings = ObjectUser.settings || {};
 
-    return res.status(200).json({ settings });
+    return res.status(200).json({
+      settings,
+      lineConnected: Boolean(lineIdentity),
+    });
   } catch (error) {
     const err = error as Error;
     logger.error("Get Settings Error:", err);
@@ -70,8 +82,27 @@ export async function updateSettings(req: AuthenticatedRequest, res: Response) {
 
     const currentSettings = (currentUser.settings as Record<string, any>) || {};
     
-    // Merge current settings with new settings
-    const mergedSettings = { ...currentSettings, ...newSettings };
+    // Merge notification preferences independently so a partial update does not
+    // erase preferences written by another screen or an older client.
+    const currentNotifications =
+      currentSettings.notifications &&
+      typeof currentSettings.notifications === "object" &&
+      !Array.isArray(currentSettings.notifications)
+        ? currentSettings.notifications as Record<string, unknown>
+        : {};
+    const newNotifications =
+      newSettings.notifications &&
+      typeof newSettings.notifications === "object" &&
+      !Array.isArray(newSettings.notifications)
+        ? newSettings.notifications as Record<string, unknown>
+        : null;
+    const mergedSettings = {
+      ...currentSettings,
+      ...newSettings,
+      ...(newNotifications
+        ? { notifications: { ...currentNotifications, ...newNotifications } }
+        : {}),
+    };
 
     const updatedUser = await prisma.user.update({
       where: { userId },

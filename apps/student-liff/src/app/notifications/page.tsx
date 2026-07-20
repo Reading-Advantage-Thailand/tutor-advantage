@@ -55,6 +55,8 @@ export default function NotificationsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'idle'|'success'|'error'>('idle');
+  const [loadError, setLoadError] = useState(false);
+  const [lineConnected, setLineConnected] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -78,9 +80,11 @@ export default function NotificationsPage() {
             ...prev,
             ...serverSettings
           }));
+          setLineConnected(response.lineConnected === true);
         }
       } catch (err) {
         console.error("Failed to load settings:", err);
+        setLoadError(true);
       } finally {
         setLoading(false);
       }
@@ -188,26 +192,36 @@ export default function NotificationsPage() {
           {/* Connected Status Info */}
           <div style={{ 
             padding: "16px", 
-            background: "rgba(6, 199, 85, 0.05)", 
+            background: lineConnected ? "rgba(6, 199, 85, 0.05)" : "rgba(245, 158, 11, 0.06)",
             borderRadius: "16px", 
-            border: "1px solid rgba(6, 199, 85, 0.15)", 
+            border: lineConnected ? "1px solid rgba(6, 199, 85, 0.15)" : "1px solid rgba(245, 158, 11, 0.25)",
             display: "flex", 
             gap: "14px", 
             alignItems: "center" 
           }}>
-            <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "#06C755", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: lineConnected ? "#06C755" : "#f59e0b", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <MessageSquare size={20} color="white" />
             </div>
             <div>
               <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "2px" }}>
-                {t("notifications.lineConnected")}
+                {lineConnected ? t("notifications.lineConnected") : t("notifications.lineNotConnected")}
               </p>
               <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
-                {t("notifications.linePush")}
+                {lineConnected ? t("notifications.linePush") : t("notifications.lineNotConnectedDescription")}
               </p>
             </div>
-            <CheckCircle2 size={20} style={{ marginLeft: "auto", color: "#06C755" }} />
+            {lineConnected ? (
+              <CheckCircle2 size={20} style={{ marginLeft: "auto", color: "#06C755" }} />
+            ) : (
+              <AlertCircle size={20} style={{ marginLeft: "auto", color: "#f59e0b" }} />
+            )}
           </div>
+
+          {loadError && (
+            <div role="alert" style={{ padding: "12px 14px", borderRadius: "12px", background: "#fef2f2", border: "1px solid #fecaca", color: "#b91c1c", fontSize: "0.8125rem", lineHeight: 1.5 }}>
+              {t("notifications.loadFailed")}
+            </div>
+          )}
 
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <h3 style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.05em", paddingLeft: "4px" }}>
@@ -261,6 +275,20 @@ export default function NotificationsPage() {
                     <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "2px" }}>{t("notifications.scoreSummaryDescription")}</p>
                   </div>
                   <Toggle checked={settings.notifyScoreUpdates} onChange={(v) => updateSetting('notifyScoreUpdates', v)} />
+                </div>
+
+                <Separator style={{ background: "var(--surface-border)" }} />
+
+                {/* LINE message toggle */}
+                <div style={{ display: "flex", alignItems: "center", gap: "14px", padding: "16px" }}>
+                  <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "var(--accent-blue-light)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: "var(--accent-blue)" }}>
+                    <MessageSquare size={18} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: "0.9375rem", fontWeight: 600, color: "var(--text-primary)" }}>{t("notifications.lineMessages")}</p>
+                    <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "2px" }}>{t("notifications.lineMessagesDescription")}</p>
+                  </div>
+                  <Toggle checked={settings.notifyLineMessages} onChange={(v) => updateSetting('notifyLineMessages', v)} />
                 </div>
 
               </div>
