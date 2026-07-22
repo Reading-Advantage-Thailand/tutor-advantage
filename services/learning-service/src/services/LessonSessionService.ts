@@ -14,7 +14,14 @@ export interface SessionParticipant {
 }
 
 export type GameCategory = "vocabulary" | "sentence";
-export type GamePhaseStatus = "voting" | "countdown" | "playing" | "results";
+export type GamePhaseStatus =
+  | "voting"
+  | "ready"
+  | "teacher_demo"
+  | "tutorial"
+  | "countdown"
+  | "playing"
+  | "results";
 
 export interface GamePhaseResult {
   studentId: string;
@@ -33,6 +40,8 @@ export interface GamePhaseState {
   status: GamePhaseStatus;
   votes: Record<string, string>;
   selectedGameId?: string;
+  tutorialEnabled?: boolean;
+  teacherDemoEnabled?: boolean;
   countdownEndsAt?: number;
   results: Record<string, GamePhaseResult>;
   voteFirstSeen: Record<string, number>;
@@ -444,10 +453,50 @@ class LessonSessionService {
     }
     if (selectedGameId) {
       session.gameState.selectedGameId = selectedGameId;
+      session.gameState.status = "ready";
+      session.gameState.tutorialEnabled = true;
+      session.gameState.teacherDemoEnabled = false;
     } else {
       delete session.gameState.selectedGameId;
     }
     return this.getGameStatePayload(session);
+  }
+
+  startGameIntro(
+    sessionId: string,
+    options: { tutorialEnabled?: boolean; teacherDemoEnabled?: boolean } = {},
+  ): GamePhaseState | null {
+    const session = this.sessions.get(sessionId);
+    if (!session?.gameState || session.gameState.status !== "ready") return null;
+
+    session.gameState.tutorialEnabled = options.tutorialEnabled !== false;
+    session.gameState.teacherDemoEnabled = options.teacherDemoEnabled === true;
+    if (session.gameState.teacherDemoEnabled) {
+      session.gameState.status = "teacher_demo";
+    } else if (session.gameState.tutorialEnabled) {
+      session.gameState.status = "tutorial";
+    } else {
+      return this.startGameCountdown(sessionId);
+    }
+
+    return this.getGameStatePayload(session);
+  }
+
+  advanceGameIntro(sessionId: string, durationMs = 5000): GamePhaseState | null {
+    const session = this.sessions.get(sessionId);
+    const gameState = session?.gameState;
+    if (!gameState) return null;
+
+    if (gameState.status === "teacher_demo" && gameState.tutorialEnabled) {
+      gameState.status = "tutorial";
+      return this.getGameStatePayload(session);
+    }
+
+    if (["ready", "teacher_demo", "tutorial"].includes(gameState.status)) {
+      return this.startGameCountdown(sessionId, durationMs);
+    }
+
+    return null;
   }
 
   startGameCountdown(sessionId: string, durationMs = 5000): GamePhaseState | null {
@@ -462,9 +511,16 @@ class LessonSessionService {
     return this.getGameStatePayload(session);
   }
 
-  markGamePlaying(sessionId: string): GamePhaseState | null {
+  markGamePlaying(sessionId: string, expectedCountdownEndsAt?: number): GamePhaseState | null {
     const session = this.sessions.get(sessionId);
     if (!session?.gameState) return null;
+    if (
+      expectedCountdownEndsAt !== undefined &&
+      (session.gameState.status !== "countdown" ||
+        session.gameState.countdownEndsAt !== expectedCountdownEndsAt)
+    ) {
+      return null;
+    }
     session.gameState.status = "playing";
     return this.getGameStatePayload(session);
   }

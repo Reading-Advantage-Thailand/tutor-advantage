@@ -26,7 +26,7 @@ export interface LessonPair {
 }
 
 export type GameCategory = "vocabulary" | "sentence";
-export type GamePhaseStatus = "voting" | "countdown" | "playing" | "results";
+export type GamePhaseStatus = "voting" | "ready" | "teacher_demo" | "tutorial" | "countdown" | "playing" | "results";
 
 export interface GamePhaseResult {
   studentId: string;
@@ -45,6 +45,8 @@ export interface GamePhaseState {
   status: GamePhaseStatus;
   votes: Record<string, string>;
   selectedGameId?: string;
+  tutorialEnabled?: boolean;
+  teacherDemoEnabled?: boolean;
   countdownEndsAt?: number;
   results: Record<string, GamePhaseResult>;
 }

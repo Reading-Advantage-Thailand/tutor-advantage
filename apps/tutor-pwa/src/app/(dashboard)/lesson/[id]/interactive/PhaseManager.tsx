@@ -8,7 +8,19 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { ArticleDisplay } from "./ArticleDisplay";
-import { ChevronRight, Check, Eye, EyeOff, Lock, Maximize2, Minimize2, Volume2, AlertTriangle } from "lucide-react";
+import {
+  ChevronRight,
+  Check,
+  Eye,
+  EyeOff,
+  Gamepad2,
+  GraduationCap,
+  Lock,
+  Maximize2,
+  Minimize2,
+  Volume2,
+  AlertTriangle,
+} from "lucide-react";
 import { playSound } from "@/lib/sounds";
 import { t } from "@/lib/i18n";
 import confetti from "canvas-confetti";
@@ -18,8 +30,9 @@ import {
   AnswerData,
   ArticleData,
 } from "@/lib/lesson-types";
-import { getGameById, getGamesByCategory } from "@/lib/liveLessonGames";
+import { getGameById, getGamesByCategory, getGameTutorial } from "@/lib/liveLessonGames";
 import { useThaiTranslations } from "@/hooks/useThaiTranslations";
+import { DragonFlightTeachingGame } from "@/components/lesson/DragonFlightTeachingGame";
 
 const TOTAL_PHASES = 18;
 const VOCAB_GAME_PHASE = 10;
@@ -92,7 +105,9 @@ interface PhaseManagerProps {
   syncActiveSentence: (index: number) => void;
   endQuestion?: () => void;
   startGameVote: (phase?: number) => void;
-  startGameCountdown: (durationMs?: number) => void;
+  lockGameVote: () => void;
+  startGameIntro: (options: { tutorialEnabled: boolean; teacherDemoEnabled: boolean }) => void;
+  advanceGameIntro: (durationMs?: number) => void;
   sessionData?: TutorSessionData;
   onFinishSession?: () => void;
   flagCounts?: Record<number, number>;
@@ -324,7 +339,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   syncActiveSentence,
   endQuestion,
   startGameVote,
-  startGameCountdown,
+  lockGameVote,
+  startGameIntro,
+  advanceGameIntro,
   sessionData,
   onFinishSession,
   flagCounts,
@@ -334,6 +351,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   const [canProceedDelayed, setCanProceedDelayed] = React.useState(false);
   const [isFullscreen, setIsFullscreen] = React.useState(false);
   const [isToolbarHidden, setIsToolbarHidden] = React.useState(false);
+  const [tutorialEnabled, setTutorialEnabled] = React.useState(true);
+  const [teacherDemoEnabled, setTeacherDemoEnabled] = React.useState(false);
+  const [teacherDemoAnswer, setTeacherDemoAnswer] = React.useState<string | null>(null);
   // Dev-only: mock participant list to preview the wrap-up leaderboard
   const [mockLeaderboard, setMockLeaderboard] = React.useState<any[] | null>(null);
   // Dev-only: mock pairs to preview the Step 14 pair-conversation layout
@@ -503,6 +523,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   // Reset loading state when phase actually changes
   React.useEffect(() => {
     setIsChangingPhase(false);
+    setTutorialEnabled(true);
+    setTeacherDemoEnabled(false);
+    setTeacherDemoAnswer(null);
   }, [currentPhase]);
 
   const isGamePhase = [VOCAB_GAME_PHASE, SENTENCE_GAME_PHASE].includes(currentPhase);
@@ -2196,6 +2219,26 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const votes = gameState?.votes || {};
     const results = Object.values(gameState?.results || {}).sort((a, b) => b.score - a.score);
     const selectedGame = getGameById(gameState?.selectedGameId);
+    const tutorialSteps = getGameTutorial(gameState?.selectedGameId, category);
+    const articleWords = ((articleData as any)?.words || (articleData as any)?.content?.words || []) as any[];
+    const articleSentences = ((articleData as any)?.sentences || (articleData as any)?.content?.sentences || []) as any[];
+    const demoWord = articleWords[0];
+    const dragonFlightVocabulary = articleWords.map((word, index) => ({
+      term: String(word?.vocabulary || word?.word || word?.text || `Word ${index + 1}`),
+      translation: String(word?.definition?.th || word?.translation || word?.meaning || word?.definition?.en || ""),
+    })).filter((word) => word.term && word.translation);
+    const demoPrompt = category === "vocabulary"
+      ? demoWord?.vocabulary || demoWord?.word || demoWord?.text || "example"
+      : "เรียงคำให้เป็นประโยคที่ถูกต้อง";
+    const demoCorrectAnswer = category === "vocabulary"
+      ? demoWord?.definition?.th || demoWord?.translation || demoWord?.meaning || demoPrompt
+      : String(articleSentences[0]?.sentences || articleSentences[0]?.text || articleSentences[0] || "Students read together");
+    const demoAnswers = Array.from(new Set([
+      demoCorrectAnswer,
+      ...(category === "vocabulary"
+        ? articleWords.slice(1, 3).map((word) => word?.definition?.th || word?.translation || word?.meaning || word?.vocabulary)
+        : [demoCorrectAnswer.split(" ").reverse().join(" "), "Teacher together read students"]),
+    ].filter(Boolean))).slice(0, 3);
     const voteCounts = games.map((game) => ({
       ...game,
       count: Object.values(votes).filter((gameId) => gameId === game.id).length,
@@ -2226,7 +2269,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
     return (
       <div className="flex-1 flex gap-5 overflow-hidden min-h-0">
-        <div className="flex-1 flex flex-col gap-5 min-w-0 overflow-y-auto pr-1">
+        <div className={`flex-1 flex min-w-0 flex-col ${isFullscreen ? "min-h-0 overflow-hidden" : "gap-5 overflow-y-auto pr-1"}`}>
           <div className={`rounded-3xl border border-border bg-card p-6 shadow-xl ${isFullscreen ? "hidden" : ""}`}>
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -2238,6 +2281,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 </h2>
                 <p className="mt-2 text-sm font-semibold text-muted-foreground">
                   {gameState?.status === "voting" && "กำลังเปิดโหวตบนมือถือนักเรียน"}
+                  {gameState?.status === "ready" && "ผลโหวตพร้อมแล้ว เลือกขั้นตอนก่อนเริ่มเกม"}
+                  {gameState?.status === "teacher_demo" && "กำลังสาธิตวิธีเล่นให้นักเรียนดู"}
+                  {gameState?.status === "tutorial" && "กำลังแสดง Tutorial บนหน้าจอนักเรียน"}
                   {gameState?.status === "countdown" && `เริ่มเกมใน ${countdownLeft} วินาที`}
                   {gameState?.status === "playing" && `กำลังเล่น ${selectedGame?.title || gameState?.selectedGameId}`}
                   {gameState?.status === "results" && "จบเกมแล้ว ดูคะแนนด้านล่าง"}
@@ -2253,6 +2299,79 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               </div>
             )}
           </div>
+
+          {!showScoreRanking && gameState?.status === "ready" && (
+            <div className={isFullscreen ? "flex flex-1 items-center justify-center px-6 pb-32" : ""}>
+              <div className={`overflow-hidden rounded-3xl border border-indigo-500/25 bg-card p-6 shadow-xl ${isFullscreen ? "w-full max-w-5xl" : ""}`}>
+                <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+                  <div className="max-w-xl">
+                    <p className="text-xs font-black uppercase tracking-widest text-indigo-500">ผลโหวตพร้อมแล้ว</p>
+                    <h3 className="mt-1 text-2xl font-black text-foreground">เตรียมเด็กก่อนเริ่ม {selectedGame?.title}</h3>
+                    <p className="mt-2 text-sm font-semibold leading-relaxed text-muted-foreground">เลือกได้ว่าจะสาธิตหนึ่งรอบและแสดง Tutorial หรือข้ามเพื่อเริ่มเกมทันที</p>
+                  </div>
+                  <div className="grid min-w-[340px] gap-3">
+                    <label className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-border bg-muted/40 p-4">
+                      <span className="flex items-center gap-3">
+                        <GraduationCap className="text-amber-500" size={22} />
+                        <span><span className="block text-sm font-black text-foreground">ครูเล่นให้เด็กดูก่อน</span><span className="block text-xs font-semibold text-muted-foreground">เปิดเกมจริงบนจอครูให้เด็กดูวิธีเล่น</span></span>
+                      </span>
+                      <input type="checkbox" checked={teacherDemoEnabled} onChange={(event) => setTeacherDemoEnabled(event.target.checked)} className="size-5 accent-indigo-600" />
+                    </label>
+                    <label className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-border bg-muted/40 p-4">
+                      <span className="flex items-center gap-3">
+                        <Gamepad2 className="text-indigo-500" size={22} />
+                        <span><span className="block text-sm font-black text-foreground">แสดง Tutorial</span><span className="block text-xs font-semibold text-muted-foreground">เปิดอยู่เป็นค่าเริ่มต้น และปิดได้</span></span>
+                      </span>
+                      <input type="checkbox" checked={tutorialEnabled} onChange={(event) => setTutorialEnabled(event.target.checked)} className="size-5 accent-indigo-600" />
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!showScoreRanking && gameState?.status === "teacher_demo" && selectedGame?.id === "dragon-flight" && (
+            <DragonFlightTeachingGame vocabulary={dragonFlightVocabulary} mode="teacher" fullscreen={isFullscreen} />
+          )}
+
+          {!showScoreRanking && gameState?.status === "teacher_demo" && selectedGame?.id !== "dragon-flight" && (
+            <div className="overflow-hidden rounded-[32px] border border-amber-400/30 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 p-7 text-white shadow-2xl">
+              <div className="grid gap-7 xl:grid-cols-[0.8fr_1.2fr] xl:items-center">
+                <div>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-amber-400 px-3 py-1 text-xs font-black text-slate-950"><GraduationCap size={14} /> TEACHER DEMO</div>
+                  <h3 className="mt-4 text-3xl font-black">ลองเล่นให้เด็กดู 1 ข้อ</h3>
+                  <p className="mt-2 text-sm font-semibold leading-relaxed text-white/60">หน้าจอเด็กกำลังแสดงโหมดดูครู เลือกคำตอบแล้วอธิบายวิธีคิดก่อนกดจบการสาธิต</p>
+                </div>
+                <div className="rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-white/50">ตัวอย่าง</p>
+                  <p className="mt-2 text-xl font-black">{demoPrompt}</p>
+                  <div className="mt-4 grid gap-2 sm:grid-cols-3">
+                    {demoAnswers.map((answer) => {
+                      const selected = teacherDemoAnswer === answer;
+                      const correct = answer === demoCorrectAnswer;
+                      return <button key={answer} type="button" onClick={() => setTeacherDemoAnswer(answer)} className={`rounded-2xl border px-4 py-3 text-left text-sm font-black transition-all ${selected ? (correct ? "border-emerald-300 bg-emerald-400 text-emerald-950" : "border-rose-300 bg-rose-500 text-white") : "border-white/15 bg-white/10 text-white hover:bg-white/20"}`}>{answer}</button>;
+                    })}
+                  </div>
+                  {teacherDemoAnswer && <p className={`mt-4 text-sm font-black ${teacherDemoAnswer === demoCorrectAnswer ? "text-emerald-300" : "text-rose-300"}`}>{teacherDemoAnswer === demoCorrectAnswer ? "✓ ถูกต้อง — อธิบายเหตุผลให้เด็กฟังได้เลย" : "ลองใหม่ แล้วชี้ให้เด็กเห็นว่าคำตอบนี้ยังไม่ตรงเป้าหมาย"}</p>}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!showScoreRanking && gameState?.status === "tutorial" && selectedGame?.id === "dragon-flight" && (
+            <DragonFlightTeachingGame vocabulary={dragonFlightVocabulary} mode="tutorial" fullscreen={isFullscreen} />
+          )}
+
+          {!showScoreRanking && gameState?.status === "tutorial" && selectedGame?.id !== "dragon-flight" && (
+            <div className="overflow-hidden rounded-[32px] border border-indigo-400/25 bg-gradient-to-br from-indigo-950 via-slate-950 to-violet-950 p-7 text-white shadow-2xl">
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-indigo-300">Tutorial</p>
+              <h3 className="mt-2 text-3xl font-black">วิธีเล่น {selectedGame?.title}</h3>
+              <div className="mt-6 grid gap-3 lg:grid-cols-3">
+                {tutorialSteps.map((step, index) => <div key={step} className="rounded-3xl border border-white/15 bg-white/10 p-5"><div className="flex size-10 items-center justify-center rounded-2xl bg-indigo-300 text-lg font-black text-indigo-950">{index + 1}</div><p className="mt-4 text-sm font-bold leading-relaxed text-white">{step}</p></div>)}
+              </div>
+              <p className="mt-5 text-sm font-semibold text-white/55">Tutorial นี้แสดงพร้อมกันบนมือถือของนักเรียนทุกคน</p>
+            </div>
+          )}
 
           {showScoreRanking ? (
             <div className="overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-xl">
@@ -2398,7 +2517,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 </div>
               </div>
             </div>
-          ) : (
+          ) : gameState?.status === "voting" ? (
+          <>
           <div className="overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-xl">
             <div className="mb-5 flex items-center justify-between gap-3">
               <div>
@@ -2582,7 +2702,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               )}
             </div>
           </div>
-          )}
+          </>
+          ) : null}
 
           <div className="hidden overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-xl">
             <div className="grid grid-cols-1 xl:grid-cols-[320px_1fr] gap-5 items-stretch">
@@ -2706,7 +2827,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             ))}
           </div>
 
-          <div className={`rounded-3xl border border-border bg-card p-5 shadow-sm ${isFullscreen || showScoreRanking ? "hidden" : ""}`}>
+          <div className={`rounded-3xl border border-border bg-card p-5 shadow-sm ${isFullscreen || showScoreRanking || gameState?.status !== "voting" ? "hidden" : ""}`}>
             <h3 className="text-lg font-black text-foreground">{t("lesson.interactive.gameScoreboard")}</h3>
             {results.length === 0 ? (
               <p className="mt-3 text-sm font-semibold text-muted-foreground">{t("lesson.interactive.waitingGameScores")}</p>
@@ -2884,11 +3005,20 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const gamePrimaryLabel =
       gameStatus === "voting" && !hasPlayableGameForPhase
         ? t("lesson.interactive.gamesComingSoon")
-        :
-      !gameStatus || gameStatus === "voting"
-        ? gameStatus === "voting"
-          ? t("lesson.interactive.startGameCountdown")
-          : t("lesson.interactive.openGameVote")
+        : !gameStatus
+          ? t("lesson.interactive.openGameVote")
+        : gameStatus === "voting"
+          ? "ปิดโหวตและดูผล"
+        : gameStatus === "ready"
+          ? teacherDemoEnabled
+            ? "เริ่มให้ครูสาธิต"
+            : tutorialEnabled
+              ? "แสดง Tutorial"
+              : "เริ่มเกมทันที"
+        : gameStatus === "teacher_demo"
+          ? gameState?.tutorialEnabled ? "จบการสาธิต ไป Tutorial" : "จบการสาธิตและเริ่มเกม"
+        : gameStatus === "tutorial"
+          ? "เริ่มเกม"
         : gameStatus === "countdown"
           ? t("lesson.interactive.countdownInProgress")
           : t("lesson.interactive.gamePlaying");
@@ -2902,7 +3032,15 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         return;
       }
       if (gameStatus === "voting") {
-        startGameCountdown(5000);
+        lockGameVote();
+        return;
+      }
+      if (gameStatus === "ready") {
+        startGameIntro({ tutorialEnabled, teacherDemoEnabled });
+        return;
+      }
+      if (gameStatus === "teacher_demo" || gameStatus === "tutorial") {
+        advanceGameIntro(5000);
       }
     };
     const toolbarShellClass = isFullscreen

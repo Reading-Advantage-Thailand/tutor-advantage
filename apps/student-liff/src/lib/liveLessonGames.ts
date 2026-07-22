@@ -64,3 +64,22 @@ export function getGameById(gameId?: string | null) {
   const game = LIVE_LESSON_GAMES.find((game) => game.id === gameId)
   return game ? withEnabledFlag(game) : undefined
 }
+
+export function getGameTutorial(gameId?: string | null, category?: LiveLessonGameCategory) {
+  const game = getGameById(gameId)
+  const isVocabulary = (game?.category || category) === "vocabulary"
+  const actionByGame: Record<string, string> = {
+    "dragon-flight": "เลือกความหมายที่ตรงกับคำศัพท์เพื่อเพิ่มพลังบิน",
+    "wizard-vs-zombie": "บังคับตัวละครไปเก็บคำตอบที่ถูกและหลบซอมบี้",
+    "enchanted-library": "เก็บหนังสือคำตอบที่ถูกต้องและหลบตัวเลือกที่ผิด",
+    "rune-match": "จับคู่รูนคำศัพท์กับความหมายให้ครบ",
+    "castle-defense": "เก็บคำตามลำดับเพื่อสร้างแนวป้องกันปราสาท",
+    "potion-rush": "เลือกคำตามลำดับให้เป็นประโยคก่อนหมดเวลา",
+  }
+
+  return [
+    isVocabulary ? "อ่านคำศัพท์และความหมายเป้าหมายให้ครบ" : "อ่านประโยคเป้าหมายและสังเกตลำดับคำ",
+    actionByGame[gameId || ""] || game?.description || "ทำภารกิจตามคำสั่งบนหน้าจอ",
+    "ตอบให้ถูกต่อเนื่องเพื่อทำคะแนน และเล่นจนจบก่อนส่งผล",
+  ]
+}

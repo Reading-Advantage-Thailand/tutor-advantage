@@ -14,7 +14,7 @@ import { LessonPairPhase } from '@/components/lesson/phases/LessonPairPhase';
 import { LessonWrapUpPhase } from '@/components/lesson/phases/LessonWrapUpPhase';
 import { AdvantageArcadeRuntime } from '@/components/lesson/AdvantageArcadeRuntime';
 import { toast } from 'sonner';
-import { getGameById, getGamesByCategory } from '@/lib/liveLessonGames';
+import { getGameById, getGamesByCategory, getGameTutorial } from '@/lib/liveLessonGames';
 import { preloadGameAssets } from '@/lib/games/gameAssetPreloader';
 import { Lock } from 'lucide-react';
 
@@ -137,7 +137,7 @@ function PlayLessonContent() {
 
   useEffect(() => {
     if (!gameIdForPreload) return;
-    if (!["voting", "countdown", "playing", "results"].includes(gameStatusForPreload)) return;
+    if (!["voting", "ready", "teacher_demo", "tutorial", "countdown", "playing", "results"].includes(gameStatusForPreload)) return;
     void preloadGameAssets(gameIdForPreload);
   }, [gameIdForPreload, gameStatusForPreload]);
 
@@ -794,6 +794,89 @@ function PlayLessonContent() {
             <p className="mt-1 text-sm font-black text-foreground">
               {myVote ? getGameById(myVote)?.title || myVote : t("interactivePlay.noGameSelected")}
             </p>
+          </div>
+        </div>
+      );
+    }
+
+    if (gameState.status === "ready") {
+      return (
+        <div className="phase-enter w-full max-w-sm overflow-hidden rounded-[32px] border border-border bg-card shadow-2xl">
+          {selected?.cover && (
+            <div className="relative h-56 w-full">
+              <Image src={selected.cover} alt={selected.title} fill sizes="384px" className="object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+              <div className="absolute inset-x-5 bottom-5 text-white">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70">ผลโหวต</p>
+                <h2 className="mt-1 text-3xl font-black">{selected.title}</h2>
+              </div>
+            </div>
+          )}
+          <div className="p-6 text-center">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-indigo-500/10 text-2xl">🎮</div>
+            <h3 className="mt-4 text-xl font-black text-foreground">รอคุณครูเตรียมเกม</h3>
+            <p className="mt-2 text-sm font-semibold text-muted-foreground">คุณครูกำลังเลือกว่าจะสาธิตและเปิด Tutorial ก่อนเล่นหรือไม่</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (gameState.status === "teacher_demo") {
+      return (
+        <div className="phase-enter fixed inset-0 z-50 flex h-dvh w-screen items-center justify-center overflow-hidden bg-slate-950 p-6 text-center text-white">
+          {selected?.cover && <Image src={selected.cover} alt={selected.title} fill sizes="100vw" className="absolute inset-0 size-full object-cover opacity-25" />}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-slate-950/80 to-indigo-950/70" />
+          <div className="relative z-10 w-full max-w-sm">
+            <div className="mx-auto flex size-20 items-center justify-center rounded-[28px] border border-white/20 bg-white/10 text-4xl backdrop-blur">👀</div>
+            <p className="mt-6 text-xs font-black uppercase tracking-[0.24em] text-amber-300">Teacher Demo</p>
+            <h2 className="mt-2 text-3xl font-black">ดูคุณครูเล่นก่อน</h2>
+            <p className="mt-3 text-base font-bold text-white/65">มองที่หน้าจอคุณครู แล้วสังเกตวิธีเล่น {selected?.title || "เกมนี้"}</p>
+            <div className="mt-8 rounded-3xl border border-white/15 bg-white/10 p-5 text-left backdrop-blur">
+              <p className="text-sm font-black text-white">ระหว่างดู ให้สังเกต</p>
+              <p className="mt-2 text-sm font-semibold leading-relaxed text-white/65">เป้าหมายของเกม · วิธีบังคับ · วิธีเลือกคำตอบที่ถูกต้อง</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (gameState.status === "tutorial") {
+      if (gameState.selectedGameId === "dragon-flight") {
+        return (
+          <div className="phase-enter fixed inset-0 z-50 h-dvh w-screen overflow-hidden bg-background">
+            <AdvantageArcadeRuntime
+              key={`tutorial-${gameState.phase}-${gameState.selectedGameId}`}
+              gameId={gameState.selectedGameId}
+              category={gameState.category}
+              articleData={articleData}
+              autoStart
+              tutorialMode
+              onComplete={() => undefined}
+            />
+          </div>
+        );
+      }
+      const tutorialSteps = getGameTutorial(gameState.selectedGameId, gameState.category);
+      return (
+        <div className="phase-enter fixed inset-0 z-50 h-dvh w-screen overflow-y-auto bg-slate-950 p-5 text-white">
+          {selected?.cover && <Image src={selected.cover} alt={selected.title} fill sizes="100vw" className="fixed inset-0 size-full object-cover opacity-20" />}
+          <div className="fixed inset-0 bg-gradient-to-b from-indigo-950/85 via-slate-950/95 to-black" />
+          <div className="relative z-10 mx-auto flex min-h-full w-full max-w-sm flex-col justify-center py-6">
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-indigo-300">Tutorial</p>
+            <h2 className="mt-2 text-3xl font-black">วิธีเล่น {selected?.title || "เกม"}</h2>
+            <p className="mt-2 text-sm font-semibold text-white/60">อ่านให้ครบก่อนเริ่มเกมจริง</p>
+            <div className="mt-7 grid gap-3">
+              {tutorialSteps.map((step, index) => (
+                <div key={step} className="flex gap-4 rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-400 text-lg font-black text-indigo-950">{index + 1}</div>
+                  <p className="self-center text-sm font-bold leading-relaxed text-white">{step}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-7 flex items-center justify-center gap-2 rounded-2xl bg-amber-400/10 px-4 py-3 text-sm font-black text-amber-200">
+              <span className="size-2 animate-pulse rounded-full bg-amber-300" />
+              รอคุณครูเริ่มเกม
+            </div>
           </div>
         </div>
       );

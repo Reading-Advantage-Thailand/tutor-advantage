@@ -56,6 +56,7 @@ type DragonFlightGameProps = {
   preloadedAssets?: DragonFlightAssets;
   adaptive?: boolean;
   autoStart?: boolean;
+  tutorialMode?: boolean;
 };
 
 type GateFeedback = {
@@ -451,6 +452,7 @@ export function DragonFlightGame({
   preloadedAssets,
   adaptive = false,
   autoStart = false,
+  tutorialMode = false,
 }: DragonFlightGameProps) {
   const t = useScopedI18n("pages.student.gamesPage");
   const [DIFFICULTY_SETTINGS] = useState(() => getDifficultySettings(t));
@@ -461,8 +463,9 @@ export function DragonFlightGame({
     () => shuffleVocabulary(vocabulary).slice(0, MAX_ROUND_WORDS),
     [vocabulary],
   );
-  const gameDurationMs =
-    durationMs ?? Math.max(MS_PER_WORD, gameVocabulary.length * MS_PER_WORD);
+  const gameDurationMs = tutorialMode
+    ? 60 * 60 * 1000
+    : durationMs ?? Math.max(MS_PER_WORD, gameVocabulary.length * MS_PER_WORD);
 
   const [stageSize, setStageSize] = useState<StageSize>(DEFAULT_STAGE);
   const [assets, setAssets] = useState<DragonFlightAssets | null>(
@@ -497,7 +500,9 @@ export function DragonFlightGame({
   const [playerFrame, setPlayerFrame] = useState(0);
   const [bossFrame, setBossFrame] = useState(0);
   const [playerX, setPlayerX] = useState(DEFAULT_STAGE.width / 2);
-  const [hasStarted, setHasStarted] = useState(autoStart);
+  const [hasStarted, setHasStarted] = useState(autoStart || tutorialMode);
+  const [tutorialStep, setTutorialStep] = useState(0);
+  const tutorialSelectionRef = useRef<(side: GateSide) => void>(() => undefined);
   const [lockedPairId, setLockedPairId] = useState<string | null>(null);
   const [displayDragonCount, setDisplayDragonCount] = useState(1);
   const [bossHealth, setBossHealth] = useState(0);
@@ -726,7 +731,9 @@ export function DragonFlightGame({
       lastFrameTime = frameTime;
       const deltaSeconds = deltaMs / 1000;
 
-      setState((prev) => advanceDragonFlightTime(prev, deltaMs));
+      if (!tutorialMode) {
+        setState((prev) => advanceDragonFlightTime(prev, deltaMs));
+      }
 
       if (!layout) return;
 
@@ -848,6 +855,7 @@ export function DragonFlightGame({
     recordAdaptiveResponse,
     stageSize.height,
     state.status,
+    tutorialMode,
   ]);
 
   useEffect(() => {
@@ -1036,6 +1044,10 @@ export function DragonFlightGame({
   );
 
   useEffect(() => {
+    tutorialSelectionRef.current = handleGateSelection;
+  }, [handleGateSelection]);
+
+  useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
       if (!hasStarted) return;
       if (state.status !== "running") return;
@@ -1060,6 +1072,20 @@ export function DragonFlightGame({
   const dragonCountDisplay =
     state.status === "boss" ? displayDragonCount : state.dragonCount;
   const activePairId = activePair?.id ?? null;
+  const activeCorrectSide = activePair?.round.correctSide;
+
+  useEffect(() => {
+    if (!tutorialMode || !activePairId || !activeCorrectSide) return;
+    const correctSide = activeCorrectSide;
+    setTutorialStep(0);
+    const timers = [
+      window.setTimeout(() => setTutorialStep(1), 1300),
+      window.setTimeout(() => setTutorialStep(2), 2600),
+      window.setTimeout(() => tutorialSelectionRef.current(correctSide), 3700),
+      window.setTimeout(() => setTutorialStep(3), 4100),
+    ];
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [activeCorrectSide, activePairId, tutorialMode]);
   const statusLabel = showResults
     ? "results"
     : hasStarted
@@ -1127,7 +1153,7 @@ export function DragonFlightGame({
           {/* Top HUD Bar */}
           <div className="grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 sm:gap-4">
             {/* Left: Prompt */}
-            <div className="min-w-[84px] rounded-2xl border border-white/10 bg-black/40 px-3 py-2 sm:px-5 sm:py-3 backdrop-blur-md shadow-lg">
+            <div className={`min-w-[84px] rounded-2xl border bg-black/40 px-3 py-2 sm:px-5 sm:py-3 backdrop-blur-md shadow-lg transition-all ${tutorialMode && tutorialStep === 0 ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/10"}`}>
               <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-white/60 mb-0.5">
                 {t("dragonFlight.prompt")}
               </div>
@@ -1164,7 +1190,7 @@ export function DragonFlightGame({
             </div>
 
             {/* Right: Dragon Count */}
-            <div className="min-w-[84px] rounded-2xl border border-white/10 bg-black/40 px-3 py-2 sm:px-5 sm:py-3 backdrop-blur-md shadow-lg text-right">
+            <div className={`min-w-[84px] rounded-2xl border bg-black/40 px-3 py-2 sm:px-5 sm:py-3 backdrop-blur-md shadow-lg text-right transition-all ${tutorialMode && tutorialStep === 3 ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/10"}`}>
               <div className="flex items-center justify-end gap-1 sm:gap-1.5 mb-0.5">
                 <Flame className="h-3 w-3 text-amber-400" />
                 <span className="text-[9px] sm:text-[10px] uppercase tracking-[0.2em] text-white/60">
@@ -1188,7 +1214,7 @@ export function DragonFlightGame({
             <div className="absolute bottom-14 sm:bottom-24 left-0 right-0 flex justify-center gap-16 sm:gap-32 pointer-events-auto">
               <button
                 type="button"
-                className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-white backdrop-blur-md transition-all hover:bg-white/20 active:scale-95 shadow-lg"
+                className={`flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-2xl border bg-white/10 text-white backdrop-blur-md transition-all hover:bg-white/20 active:scale-95 shadow-lg ${tutorialMode && tutorialStep === 2 && activePair?.round.correctSide === "left" ? "border-amber-300 ring-8 ring-amber-300/35 animate-pulse" : "border-white/20"}`}
                 onPointerDown={() => handleGateSelection("left")}
                 aria-label={appT("interactivePlay.chooseLeftGate")}
               >
@@ -1197,7 +1223,7 @@ export function DragonFlightGame({
               </button>
               <button
                 type="button"
-                className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-white backdrop-blur-md transition-all hover:bg-white/20 active:scale-95 shadow-lg"
+                className={`flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-2xl border bg-white/10 text-white backdrop-blur-md transition-all hover:bg-white/20 active:scale-95 shadow-lg ${tutorialMode && tutorialStep === 2 && activePair?.round.correctSide === "right" ? "border-amber-300 ring-8 ring-amber-300/35 animate-pulse" : "border-white/20"}`}
                 onPointerDown={() => handleGateSelection("right")}
                 aria-label={appT("interactivePlay.chooseRightGate")}
               >
@@ -1211,7 +1237,7 @@ export function DragonFlightGame({
           {gateLabels && layout && state.status !== "boss" && (
             <>
               <div
-                className="absolute -translate-x-1/2 rounded-xl border border-white/10 bg-black/80 px-3 py-2 sm:px-6 sm:py-3 text-sm sm:text-2xl font-bold text-white shadow-xl backdrop-blur-md"
+                className={`absolute -translate-x-1/2 rounded-xl border bg-black/80 px-3 py-2 sm:px-6 sm:py-3 text-sm sm:text-2xl font-bold text-white shadow-xl backdrop-blur-md transition-all ${tutorialMode && (tutorialStep === 1 || (tutorialStep === 2 && activePair?.round.correctSide === "left")) ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/10"}`}
                 style={{
                   left: layout.leftGate.left + layout.leftGate.width / 2,
                   top: gateLabelTop,
@@ -1220,7 +1246,7 @@ export function DragonFlightGame({
                 {gateLabels?.left}
               </div>
               <div
-                className="absolute -translate-x-1/2 rounded-xl border border-white/10 bg-black/80 px-3 py-2 sm:px-6 sm:py-3 text-sm sm:text-2xl font-bold text-white shadow-xl backdrop-blur-md"
+                className={`absolute -translate-x-1/2 rounded-xl border bg-black/80 px-3 py-2 sm:px-6 sm:py-3 text-sm sm:text-2xl font-bold text-white shadow-xl backdrop-blur-md transition-all ${tutorialMode && (tutorialStep === 1 || (tutorialStep === 2 && activePair?.round.correctSide === "right")) ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/10"}`}
                 style={{
                   left: layout.rightGate.left + layout.rightGate.width / 2,
                   top: gateLabelTop,
@@ -1250,6 +1276,22 @@ export function DragonFlightGame({
               </motion.div>
             )}
           </AnimatePresence>
+
+          {tutorialMode && (
+            <div className="pointer-events-none absolute inset-x-3 bottom-3 z-30 mx-auto flex max-w-xl items-center gap-3 rounded-3xl border border-amber-300/35 bg-slate-950/90 p-4 text-white shadow-2xl backdrop-blur sm:bottom-5">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-amber-300 text-lg font-black text-slate-950">{tutorialStep + 1}</div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-black uppercase tracking-widest text-amber-300">Dragon Flight Tutorial</p>
+                <p className="mt-0.5 text-sm font-black sm:text-base">{[
+                  "อ่านคำศัพท์เป้าหมายด้านบน",
+                  "เปรียบเทียบความหมายของประตูทั้งสองฝั่ง",
+                  "สคริปต์กำลังพามังกรบินเข้าประตูที่ถูก",
+                  "ตอบถูกแล้ว ฝูงมังกรเพิ่มขึ้น 1 ตัว",
+                ][tutorialStep]}</p>
+              </div>
+              <div className="flex gap-1">{[0, 1, 2, 3].map((step) => <span key={step} className={`h-2 rounded-full transition-all ${step === tutorialStep ? "w-7 bg-amber-300" : "w-2 bg-white/20"}`} />)}</div>
+            </div>
+          )}
         </div>
       )}
 

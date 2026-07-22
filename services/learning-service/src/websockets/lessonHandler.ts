@@ -483,6 +483,56 @@ export const setupLessonSocket = (io: Server) => {
       }
     });
 
+    const scheduleGameStart = (sessionId: string, countdownEndsAt?: number) => {
+      const expectedCountdownEndsAt = countdownEndsAt || Date.now();
+      const delay = Math.max(0, expectedCountdownEndsAt - Date.now());
+      setTimeout(() => {
+        const playingState = lessonSessionService.markGamePlaying(
+          sessionId,
+          expectedCountdownEndsAt,
+        );
+        if (playingState) {
+          io.to(sessionId).emit("game_state_changed", { gameState: playingState });
+        }
+      }, delay);
+    };
+
+    socket.on("start_game_intro", ({ sessionId, tutorialEnabled, teacherDemoEnabled }) => {
+      const activeSession = lessonSessionService.getSession(sessionId);
+      if (!isTutorSessionOwner(actor, socket.id, activeSession)) {
+        rejectForbidden("start_game_intro");
+        return;
+      }
+      const gameState = lessonSessionService.startGameIntro(sessionId, {
+        tutorialEnabled: tutorialEnabled !== false,
+        teacherDemoEnabled: teacherDemoEnabled === true,
+      });
+      if (gameState) {
+        io.to(sessionId).emit("game_state_changed", { gameState });
+        if (gameState.status === "countdown") {
+          scheduleGameStart(sessionId, gameState.countdownEndsAt);
+        }
+      }
+    });
+
+    socket.on("advance_game_intro", ({ sessionId, durationMs }) => {
+      const activeSession = lessonSessionService.getSession(sessionId);
+      if (!isTutorSessionOwner(actor, socket.id, activeSession)) {
+        rejectForbidden("advance_game_intro");
+        return;
+      }
+      const gameState = lessonSessionService.advanceGameIntro(
+        sessionId,
+        Number(durationMs || 5000),
+      );
+      if (gameState) {
+        io.to(sessionId).emit("game_state_changed", { gameState });
+        if (gameState.status === "countdown") {
+          scheduleGameStart(sessionId, gameState.countdownEndsAt);
+        }
+      }
+    });
+
     socket.on("start_game_countdown", ({ sessionId, durationMs }) => {
       const activeSession = lessonSessionService.getSession(sessionId);
       if (!isTutorSessionOwner(actor, socket.id, activeSession)) {
@@ -495,13 +545,7 @@ export const setupLessonSocket = (io: Server) => {
       );
       if (gameState) {
         io.to(sessionId).emit("game_state_changed", { gameState });
-        const delay = Math.max(0, (gameState.countdownEndsAt || Date.now()) - Date.now());
-        setTimeout(() => {
-          const playingState = lessonSessionService.markGamePlaying(sessionId);
-          if (playingState) {
-            io.to(sessionId).emit("game_state_changed", { gameState: playingState });
-          }
-        }, delay);
+        scheduleGameStart(sessionId, gameState.countdownEndsAt);
       }
     });
 

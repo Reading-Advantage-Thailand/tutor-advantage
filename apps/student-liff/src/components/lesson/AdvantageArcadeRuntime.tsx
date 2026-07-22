@@ -67,6 +67,7 @@ type AdvantageArcadeRuntimeProps = {
   category: LiveLessonGameCategory
   articleData?: ArticleData | null
   autoStart?: boolean
+  tutorialMode?: boolean
   onComplete: (result: {
     score: number
     correct: number
@@ -155,6 +156,7 @@ export function AdvantageArcadeRuntime({
   category,
   articleData,
   autoStart = true,
+  tutorialMode = false,
   onComplete,
 }: AdvantageArcadeRuntimeProps) {
   const startedAt = useRef(Date.now())
@@ -228,7 +230,7 @@ export function AdvantageArcadeRuntime({
   return (
     <div ref={rootRef} className={commonClass}>
       {resolvedGameId === "dragon-flight" && (
-        <DragonFlightGame vocabulary={vocabulary} autoStart={autoStart} onComplete={handleComplete} />
+        <DragonFlightGame vocabulary={vocabulary} autoStart={autoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
       )}
       {resolvedGameId === "wizard-vs-zombie" && (
         <WizardZombieGame vocabulary={vocabulary} autoStart={autoStart} onComplete={handleComplete} />

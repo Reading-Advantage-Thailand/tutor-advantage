@@ -123,4 +123,37 @@ describe("lessonSessionService", () => {
     expect(session.gameState?.votes).toEqual({});
     expect(service.lockGameVote(session.sessionId)?.selectedGameId).toBe("dragon-flight");
   });
+
+  it("supports an optional teacher demo and tutorial before the countdown", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+
+    service.setPhase(session.sessionId, 10);
+    expect(service.lockGameVote(session.sessionId)).toMatchObject({
+      status: "ready",
+      selectedGameId: "dragon-flight",
+      tutorialEnabled: true,
+      teacherDemoEnabled: false,
+    });
+
+    expect(service.startGameIntro(session.sessionId, {
+      teacherDemoEnabled: true,
+      tutorialEnabled: true,
+    })).toMatchObject({ status: "teacher_demo" });
+    expect(service.advanceGameIntro(session.sessionId)).toMatchObject({ status: "tutorial" });
+    expect(service.advanceGameIntro(session.sessionId, 3000)).toMatchObject({
+      status: "countdown",
+      selectedGameId: "dragon-flight",
+    });
+  });
+
+  it("lets the tutor disable tutorial and start the countdown directly", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+
+    service.setPhase(session.sessionId, 14);
+    service.lockGameVote(session.sessionId);
+    expect(service.startGameIntro(session.sessionId, {
+      teacherDemoEnabled: false,
+      tutorialEnabled: false,
+    })).toMatchObject({ status: "countdown", selectedGameId: "castle-defense" });
+  });
 });

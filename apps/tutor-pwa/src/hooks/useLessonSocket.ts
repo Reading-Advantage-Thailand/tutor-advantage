@@ -203,6 +203,24 @@ export const useLessonSocket = (
     }
   };
 
+  const startGameIntro = (options: { tutorialEnabled: boolean; teacherDemoEnabled: boolean }) => {
+    if (socketRef.current && sessionData) {
+      socketRef.current.emit('start_game_intro', {
+        sessionId: sessionData.sessionId,
+        ...options,
+      });
+    }
+  };
+
+  const advanceGameIntro = (durationMs = 5000) => {
+    if (socketRef.current && sessionData) {
+      socketRef.current.emit('advance_game_intro', {
+        sessionId: sessionData.sessionId,
+        durationMs,
+      });
+    }
+  };
+
   const startGameCountdown = (durationMs = 5000) => {
     if (socketRef.current && sessionData) {
       socketRef.current.emit('start_game_countdown', { sessionId: sessionData.sessionId, durationMs });
@@ -245,6 +263,8 @@ export const useLessonSocket = (
     endQuestion,
     startGameVote,
     lockGameVote,
+    startGameIntro,
+    advanceGameIntro,
     startGameCountdown,
     nudgeStudent,
     kickStudent,

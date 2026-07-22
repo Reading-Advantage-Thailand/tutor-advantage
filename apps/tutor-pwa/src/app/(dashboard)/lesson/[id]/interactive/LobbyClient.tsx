@@ -109,7 +109,9 @@ export default function TutorLobbyClient({
     syncActiveSentence,
     endQuestion,
     startGameVote,
-    startGameCountdown,
+    lockGameVote,
+    startGameIntro,
+    advanceGameIntro,
     nudgeStudent,
     kickStudent,
     deleteSession,
@@ -194,7 +196,9 @@ export default function TutorLobbyClient({
               syncActiveSentence={syncActiveSentence}
               endQuestion={endQuestion}
               startGameVote={startGameVote}
-              startGameCountdown={startGameCountdown}
+              lockGameVote={lockGameVote}
+              startGameIntro={startGameIntro}
+              advanceGameIntro={advanceGameIntro}
               bypassEmptyStudentGuard={bypassEmptyStudentGuard}
               onFinishSession={() => {
                 deleteSession();
@@ -413,7 +417,7 @@ export default function TutorLobbyClient({
             </div>
           </div>
 
-          <div className={`grid min-h-[28rem] flex-1 gap-4 ${participants.length === 0 ? 'grid-cols-1' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'}`}>
+          <div className={`grid min-h-[28rem] flex-1 content-start items-start auto-rows-max gap-4 ${participants.length === 0 ? 'grid-cols-1' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'}`}>
             {participants.length === 0 ? (
               <div className="h-full min-h-[28rem] bg-card rounded-3xl border-2 border-dashed border-border flex flex-col items-center justify-center text-center">
                 <div className="w-16 h-16 bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-4">
@@ -430,7 +434,7 @@ export default function TutorLobbyClient({
               participants.map((participant) => (
                 <div
                   key={participant.studentId}
-                  className={`group relative flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all duration-300 ${
+                  className={`group relative h-fit self-start flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all duration-300 ${
                     participant.isReady
                       ? "border-emerald-400/60 bg-emerald-500/5 shadow-md shadow-emerald-500/10"
                       : "border-dashed border-border bg-card"
