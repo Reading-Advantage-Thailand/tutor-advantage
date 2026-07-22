@@ -33,6 +33,7 @@ import {
 import { getGameById, getGamesByCategory, getGameTutorial } from "@/lib/liveLessonGames";
 import { useThaiTranslations } from "@/hooks/useThaiTranslations";
 import { DragonFlightTeachingGame } from "@/components/lesson/DragonFlightTeachingGame";
+import { WizardZombieTeachingGame } from "@/components/lesson/WizardZombieTeachingGame";
 
 const TOTAL_PHASES = 18;
 const VOCAB_GAME_PHASE = 10;
@@ -2334,7 +2335,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             <DragonFlightTeachingGame vocabulary={dragonFlightVocabulary} mode="teacher" fullscreen={isFullscreen} />
           )}
 
-          {!showScoreRanking && gameState?.status === "teacher_demo" && selectedGame?.id !== "dragon-flight" && (
+          {!showScoreRanking && gameState?.status === "teacher_demo" && selectedGame?.id === "wizard-vs-zombie" && (
+            <WizardZombieTeachingGame vocabulary={dragonFlightVocabulary} mode="teacher" fullscreen={isFullscreen} />
+          )}
+
+          {!showScoreRanking && gameState?.status === "teacher_demo" && selectedGame?.id !== "dragon-flight" && selectedGame?.id !== "wizard-vs-zombie" && (
             <div className="overflow-hidden rounded-[32px] border border-amber-400/30 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 p-7 text-white shadow-2xl">
               <div className="grid gap-7 xl:grid-cols-[0.8fr_1.2fr] xl:items-center">
                 <div>
@@ -2362,7 +2367,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             <DragonFlightTeachingGame vocabulary={dragonFlightVocabulary} mode="tutorial" fullscreen={isFullscreen} />
           )}
 
-          {!showScoreRanking && gameState?.status === "tutorial" && selectedGame?.id !== "dragon-flight" && (
+          {!showScoreRanking && gameState?.status === "tutorial" && selectedGame?.id === "wizard-vs-zombie" && (
+            <WizardZombieTeachingGame vocabulary={dragonFlightVocabulary} mode="tutorial" fullscreen={isFullscreen} />
+          )}
+
+          {!showScoreRanking && gameState?.status === "tutorial" && selectedGame?.id !== "dragon-flight" && selectedGame?.id !== "wizard-vs-zombie" && (
             <div className="overflow-hidden rounded-[32px] border border-indigo-400/25 bg-gradient-to-br from-indigo-950 via-slate-950 to-violet-950 p-7 text-white shadow-2xl">
               <p className="text-xs font-black uppercase tracking-[0.24em] text-indigo-300">Tutorial</p>
               <h3 className="mt-2 text-3xl font-black">วิธีเล่น {selectedGame?.title}</h3>

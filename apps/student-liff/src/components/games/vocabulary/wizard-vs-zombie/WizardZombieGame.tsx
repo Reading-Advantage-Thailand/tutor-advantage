@@ -13,6 +13,7 @@ import {
   Text,
   Group,
   Rect,
+  Circle,
   Image as KonvaImage,
 } from "react-konva";
 import {
@@ -68,6 +69,7 @@ interface WizardZombieGameProps {
   onComplete: (results: WizardZombieGameResult) => void;
   adaptive?: boolean;
   autoStart?: boolean;
+  tutorialMode?: boolean;
 }
 
 const GAME_DURATION_MS = 60_000;
@@ -109,11 +111,14 @@ export function WizardZombieGame({
   onComplete,
   adaptive = false,
   autoStart = false,
+  tutorialMode = false,
 }: WizardZombieGameProps) {
   const t = useScopedI18n("pages.student.gamesPage");
   const { playSound } = useSound();
   const { input, setVirtualInput, triggerCast, consumeCast } =
     useDirectionalInput();
+  const triggerCastRef = useRef(triggerCast);
+  triggerCastRef.current = triggerCast;
   const { getEffectiveTouchTarget, getEffectiveTextSize } =
     useAccessibilitySettings();
   const { containerRef, enterFullscreen, exitFullscreen } = useGameFullscreen();
@@ -132,6 +137,9 @@ export function WizardZombieGame({
   const gameStateRef = useRef(gameState);
   useEffect(() => { gameStateRef.current = gameState; }, [gameState]);
   const completedRef = useRef(false);
+  const [tutorialStep, setTutorialStep] = useState(0);
+  const tutorialPreparedRef = useRef(false);
+  const tutorialCastRef = useRef(false);
 
   // Register adaptive difficulty params for wizard-vs-zombie
   useMemo(() => {
@@ -250,6 +258,60 @@ export function WizardZombieGame({
         if (gameState || gameVocabulary.length === 0) return;
         startGame();
   }, [autoStart, gameState, gameVocabulary.length, startGame]);
+
+  useEffect(() => {
+    if (!tutorialMode || gamePhase !== "playing" || tutorialPreparedRef.current) return;
+    tutorialPreparedRef.current = true;
+    setTutorialStep(0);
+    setGameState((current) => {
+      if (!current) return current;
+      return {
+        ...current,
+        player: { ...current.player, x: 270, y: 300 },
+        orbs: current.orbs.map((orb) => orb.isCorrect ? { ...orb, x: 530, y: 300 } : orb),
+      };
+    });
+  }, [gamePhase, tutorialMode]);
+
+  useEffect(() => {
+    if (!tutorialMode || gamePhase !== "playing") return;
+    const startedAt = Date.now();
+    const interval = window.setInterval(() => {
+      const elapsed = Date.now() - startedAt;
+      const state = gameStateRef.current;
+      if (!state) return;
+      if (elapsed < 1400) {
+        setTutorialStep(0);
+        return;
+      }
+      if (elapsed < 2800) {
+        setTutorialStep(1);
+        return;
+      }
+      const correctOrb = state.orbs.find((orb) => orb.isCorrect);
+      if (!correctOrb || state.correctAnswers > 0) {
+        if (state.correctAnswers > 0 && !tutorialCastRef.current) {
+          tutorialCastRef.current = true;
+          triggerCastRef.current();
+          const clearedState = { ...state, zombies: [] };
+          gameStateRef.current = clearedState;
+          setGameState(clearedState);
+        }
+        setVirtualInput({ dx: 0, dy: 0 });
+        setTutorialStep(3);
+        return;
+      }
+      setTutorialStep(2);
+      setVirtualInput({
+        dx: Math.abs(correctOrb.x - state.player.x) < 12 ? 0 : correctOrb.x > state.player.x ? 1 : -1,
+        dy: Math.abs(correctOrb.y - state.player.y) < 12 ? 0 : correctOrb.y > state.player.y ? 1 : -1,
+      });
+    }, 80);
+    return () => {
+      window.clearInterval(interval);
+      setVirtualInput({ dx: 0, dy: 0 });
+    };
+  }, [gamePhase, setVirtualInput, tutorialMode]);
 
   useEffect(() => {
     if (gamePhase === "playing") {
@@ -485,7 +547,7 @@ export function WizardZombieGame({
       {gameState && grids && (
         <>
           {/* HUD Overlay */}
-          <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-10 flex flex-col gap-0.5 sm:gap-1 text-white font-bold text-sm sm:text-lg pointer-events-none drop-shadow-md">
+          <div className={`absolute top-2 sm:top-4 left-2 sm:left-4 z-10 flex flex-col gap-0.5 sm:gap-1 rounded-xl text-white font-bold text-sm sm:text-lg pointer-events-none drop-shadow-md ${tutorialMode && tutorialStep === 3 ? "ring-4 ring-cyan-300/80" : ""}`}>
             <div>HP: {Math.ceil(gameState.player.hp)}</div>
             <div className="text-blue-400 text-xs sm:text-sm flex items-center gap-0.5 sm:gap-1">
               SHOCKWAVE:{" "}
@@ -522,7 +584,7 @@ export function WizardZombieGame({
           </div>
 
           {/* Target Word - centered below HUD, above virtual controls */}
-          <div className="absolute right-3 top-20 z-10 max-w-[42vw] rounded-2xl border border-white/20 bg-black/65 px-3 py-2 text-right shadow-lg backdrop-blur-sm pointer-events-none sm:right-5 sm:top-24 sm:max-w-[320px] sm:px-4">
+          <div className={`absolute right-3 top-20 z-10 max-w-[42vw] rounded-2xl border border-white/20 bg-black/65 px-3 py-2 text-right shadow-lg backdrop-blur-sm pointer-events-none sm:right-5 sm:top-24 sm:max-w-[320px] sm:px-4 ${tutorialMode && tutorialStep === 0 ? "ring-4 ring-amber-300/80" : ""}`}>
             <span className="block text-[10px] uppercase tracking-[0.18em] text-white/60 sm:text-xs">
               Find:
             </span>
@@ -562,7 +624,7 @@ export function WizardZombieGame({
           ))}
 
           {/* Virtual Controls */}
-          <div className="absolute bottom-4 left-1/2 z-20 -translate-x-1/2 sm:bottom-5">
+          <div className={`absolute bottom-4 left-1/2 z-20 -translate-x-1/2 rounded-2xl sm:bottom-5 ${tutorialMode && tutorialStep === 1 ? "ring-4 ring-amber-300/80" : ""}`}>
             <div style={{ transform: `scale(${dpadSize / 128})`, transformOrigin: 'bottom center' }}>
               <VirtualDPad onInput={setVirtualInput} />
             </div>
@@ -676,6 +738,9 @@ export function WizardZombieGame({
                 {/* Orbs - Offset animation */}
                 {gameState.orbs.map((orb, i) => (
                   <Group key={orb.id} x={orb.x} y={orb.y}>
+                    {tutorialMode && tutorialStep === 2 && orb.isCorrect && (
+                      <Circle radius={40} stroke="#fcd34d" strokeWidth={6} shadowColor="#fcd34d" shadowBlur={20} />
+                    )}
                     <KonvaImage
                       image={assets.orb}
                       name="orb"
@@ -733,6 +798,13 @@ export function WizardZombieGame({
               {ft.text}
             </div>
           ))}
+          {tutorialMode && (
+            <div className="pointer-events-none absolute left-1/2 top-24 z-30 w-[min(520px,calc(100%-32px))] -translate-x-1/2 rounded-3xl border border-amber-300/35 bg-slate-950/90 p-4 text-white shadow-2xl backdrop-blur">
+              <p className="text-xs font-black uppercase tracking-widest text-amber-300">Tutorial · {tutorialStep + 1} / 4</p>
+              <p className="mt-1 text-lg font-black">{["ดูคำศัพท์เป้าหมาย", "ใช้ WASD หรือลูกศรเพื่อเดิน", "เดินเก็บลูกแก้วที่ตรงคำศัพท์", "ได้คะแนนและชาร์จ Shockwave แล้ว"][tutorialStep]}</p>
+              <p className="mt-1 text-sm font-semibold text-white/65">{["ดูคำในกล่อง Find ก่อนเลือก", "พาพ่อมดเดินไปหาลูกแก้ว", "เลือกความหมายที่ตรงกับคำศัพท์", "ใช้ Space หรือ Enter เมื่อถูกซอมบี้ล้อม"][tutorialStep]}</p>
+            </div>
+          )}
         </>
       )}
     </div>

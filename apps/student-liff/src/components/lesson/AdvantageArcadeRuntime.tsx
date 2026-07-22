@@ -233,7 +233,7 @@ export function AdvantageArcadeRuntime({
         <DragonFlightGame vocabulary={vocabulary} autoStart={autoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
       )}
       {resolvedGameId === "wizard-vs-zombie" && (
-        <WizardZombieGame vocabulary={vocabulary} autoStart={autoStart} onComplete={handleComplete} />
+        <WizardZombieGame vocabulary={vocabulary} autoStart={autoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
       )}
       {resolvedGameId === "enchanted-library" && (
         <EnchantedLibraryGame
