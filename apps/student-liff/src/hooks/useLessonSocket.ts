@@ -4,20 +4,24 @@ import { io, Socket } from 'socket.io-client';
 const getSocketUrl = () => {
   const configuredUrl = process.env.NEXT_PUBLIC_LEARNING_SERVICE_URL;
 
-  if (typeof window === 'undefined') {
-    return configuredUrl || 'http://localhost:3002';
+  if (configuredUrl) {
+    if (typeof window === 'undefined') return configuredUrl;
+    try {
+      const configuredHost = new URL(configuredUrl).hostname;
+      const pageHost = window.location.hostname;
+      const isPageOnLocalhost = pageHost === 'localhost' || pageHost === '127.0.0.1';
+      const isConfiguredLocalhost = configuredHost === 'localhost' || configuredHost === '127.0.0.1';
+      return isConfiguredLocalhost && !isPageOnLocalhost ? window.location.origin : configuredUrl;
+    } catch {
+      return configuredUrl;
+    }
   }
 
-  if (!configuredUrl) {
-    return window.location.origin;
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return 'http://localhost:3002';
   }
 
-  const configuredHost = new URL(configuredUrl).hostname;
-  const pageHost = window.location.hostname;
-  const isPageOnLocalhost = pageHost === 'localhost' || pageHost === '127.0.0.1';
-  const isConfiguredLocalhost = configuredHost === 'localhost' || configuredHost === '127.0.0.1';
-
-  return isConfiguredLocalhost && !isPageOnLocalhost ? window.location.origin : configuredUrl;
+  return typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3002';
 };
 
 export interface LessonPair {

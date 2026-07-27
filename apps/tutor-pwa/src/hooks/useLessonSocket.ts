@@ -19,9 +19,28 @@ export const useLessonSocket = (
   socketUrl?: string,
   classBookCycleId?: string,
   bookId?: string,
-  demo?: boolean,
+  demo?: boolean
 ) => {
-  const lessonSocketUrl = socketUrl || 'http://localhost:3002';
+  const getEffectiveSocketUrl = () => {
+    const candidate = socketUrl || process.env.NEXT_PUBLIC_LEARNING_SERVICE_URL || 'http://localhost:3002';
+    if (typeof window === 'undefined') return candidate;
+
+    if (!candidate || candidate === '/' || candidate === window.location.origin) {
+      return 'http://localhost:3002';
+    }
+
+    try {
+      const url = new URL(candidate, window.location.origin);
+      if (url.port === '3000' && window.location.port === '3000') {
+        return `${url.protocol}//${url.hostname}:3002`;
+      }
+      return candidate;
+    } catch {
+      return candidate;
+    }
+  };
+
+  const lessonSocketUrl = getEffectiveSocketUrl();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [sessionData, setSessionData] = useState<TutorSessionData | null>(null);
   const [participants, setParticipants] = useState<Participant[]>([]);

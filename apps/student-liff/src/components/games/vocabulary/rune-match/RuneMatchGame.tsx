@@ -52,6 +52,7 @@ export type RuneMatchGameResult = {
 };
 export type RuneMatchGameProps = {
   vocabulary: VocabularyItem[];
+  tutorialMode?: boolean;
   onComplete: (result: RuneMatchGameResult) => void;
 };
 
@@ -82,7 +83,7 @@ type RuneMatchAssets = {
   background: HTMLImageElement;
 };
 
-export function RuneMatchGame({ vocabulary, onComplete }: RuneMatchGameProps) {
+export function RuneMatchGame({ vocabulary, tutorialMode = false, onComplete }: RuneMatchGameProps) {
   const [gameState, setGameState] = useState<RuneMatchState | null>(null);
   const [assets, setAssets] = useState<RuneMatchAssets | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);

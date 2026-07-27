@@ -1,7 +1,4 @@
-type VocabularyItem = {
-  term: string;
-  translation: string;
-};
+import type { VocabularyItem } from "@/store/useGameStore";
 
 export type Point = {
   x: number;

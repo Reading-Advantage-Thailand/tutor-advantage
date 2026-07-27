@@ -242,11 +242,12 @@ export function AdvantageArcadeRuntime({
           onDifficultyChange={() => undefined}
           rankings={{ easy: [], normal: [], hard: [], extreme: [] }}
           autoStart={autoStart}
+          tutorialMode={tutorialMode}
           onComplete={handleComplete}
         />
       )}
       {resolvedGameId === "rune-match" && (
-        <RuneMatchGame vocabulary={vocabulary} onComplete={handleComplete} />
+        <RuneMatchGame vocabulary={vocabulary} tutorialMode={tutorialMode} onComplete={handleComplete} />
       )}
       {resolvedGameId === "alchemists-synthesis" && (
         <AlchemistsSynthesisGame vocabulary={vocabulary} onComplete={handleComplete} />
@@ -258,10 +259,10 @@ export function AdvantageArcadeRuntime({
         <PaladinsTwinSoulGame vocabulary={vocabulary} onComplete={handleComplete} />
       )}
       {resolvedGameId === "castle-defense" && (
-        <CastleDefenseGame vocabulary={sentences} autoStart={autoStart} onComplete={handleComplete} />
+        <CastleDefenseGame vocabulary={sentences} autoStart={autoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
       )}
       {resolvedGameId === "potion-rush" && (
-        <PotionRushGame vocabList={sentences} difficulty="normal" autoStart={autoStart} onComplete={handleComplete} />
+        <PotionRushGame vocabList={sentences} difficulty="normal" autoStart={autoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
       )}
       {resolvedGameId === "dungeon-liberator" && (
         <DungeonLiberatorGame vocabulary={sentences} onComplete={handleComplete} />

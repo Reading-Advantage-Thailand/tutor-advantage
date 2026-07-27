@@ -34,6 +34,10 @@ import { getGameById, getGamesByCategory, getGameTutorial } from "@/lib/liveLess
 import { useThaiTranslations } from "@/hooks/useThaiTranslations";
 import { DragonFlightTeachingGame } from "@/components/lesson/DragonFlightTeachingGame";
 import { WizardZombieTeachingGame } from "@/components/lesson/WizardZombieTeachingGame";
+import { EnchantedLibraryTeachingGame } from "@/components/lesson/EnchantedLibraryTeachingGame";
+import { RuneMatchTeachingGame } from "@/components/lesson/RuneMatchTeachingGame";
+import { CastleDefenseTeachingGame } from "@/components/lesson/CastleDefenseTeachingGame";
+import { PotionRushTeachingGame } from "@/components/lesson/PotionRushTeachingGame";
 
 const TOTAL_PHASES = 18;
 const VOCAB_GAME_PHASE = 10;
@@ -2228,6 +2232,10 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       term: String(word?.vocabulary || word?.word || word?.text || `Word ${index + 1}`),
       translation: String(word?.definition?.th || word?.translation || word?.meaning || word?.definition?.en || ""),
     })).filter((word) => word.term && word.translation);
+    const gameSentences = articleSentences.map((sentence, index) => ({
+      term: typeof sentence === "string" ? sentence : String(sentence?.sentences || sentence?.sentence || sentence?.text || `Sentence ${index + 1}`),
+      translation: typeof sentence === "string" ? sentence : String(sentence?.translation || sentence?.meaning || sentence?.sentences || sentence?.text || ""),
+    })).filter((s) => s.term);
     const demoPrompt = category === "vocabulary"
       ? demoWord?.vocabulary || demoWord?.word || demoWord?.text || "example"
       : "เรียงคำให้เป็นประโยคที่ถูกต้อง";
@@ -2339,7 +2347,23 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             <WizardZombieTeachingGame vocabulary={dragonFlightVocabulary} mode="teacher" fullscreen={isFullscreen} />
           )}
 
-          {!showScoreRanking && gameState?.status === "teacher_demo" && selectedGame?.id !== "dragon-flight" && selectedGame?.id !== "wizard-vs-zombie" && (
+          {!showScoreRanking && gameState?.status === "teacher_demo" && selectedGame?.id === "enchanted-library" && (
+            <EnchantedLibraryTeachingGame vocabulary={dragonFlightVocabulary} mode="teacher" fullscreen={isFullscreen} />
+          )}
+
+          {!showScoreRanking && gameState?.status === "teacher_demo" && selectedGame?.id === "rune-match" && (
+            <RuneMatchTeachingGame vocabulary={dragonFlightVocabulary} mode="teacher" fullscreen={isFullscreen} />
+          )}
+
+          {!showScoreRanking && gameState?.status === "teacher_demo" && selectedGame?.id === "castle-defense" && (
+            <CastleDefenseTeachingGame vocabulary={gameSentences} mode="teacher" fullscreen={isFullscreen} />
+          )}
+
+          {!showScoreRanking && gameState?.status === "teacher_demo" && selectedGame?.id === "potion-rush" && (
+            <PotionRushTeachingGame vocabulary={gameSentences} mode="teacher" fullscreen={isFullscreen} />
+          )}
+
+          {!showScoreRanking && gameState?.status === "teacher_demo" && !["dragon-flight", "wizard-vs-zombie", "enchanted-library", "rune-match", "castle-defense", "potion-rush"].includes(selectedGame?.id || "") && (
             <div className="overflow-hidden rounded-[32px] border border-amber-400/30 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 p-7 text-white shadow-2xl">
               <div className="grid gap-7 xl:grid-cols-[0.8fr_1.2fr] xl:items-center">
                 <div>
@@ -2371,7 +2395,23 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             <WizardZombieTeachingGame vocabulary={dragonFlightVocabulary} mode="tutorial" fullscreen={isFullscreen} />
           )}
 
-          {!showScoreRanking && gameState?.status === "tutorial" && selectedGame?.id !== "dragon-flight" && selectedGame?.id !== "wizard-vs-zombie" && (
+          {!showScoreRanking && gameState?.status === "tutorial" && selectedGame?.id === "enchanted-library" && (
+            <EnchantedLibraryTeachingGame vocabulary={dragonFlightVocabulary} mode="tutorial" fullscreen={isFullscreen} />
+          )}
+
+          {!showScoreRanking && gameState?.status === "tutorial" && selectedGame?.id === "rune-match" && (
+            <RuneMatchTeachingGame vocabulary={dragonFlightVocabulary} mode="tutorial" fullscreen={isFullscreen} />
+          )}
+
+          {!showScoreRanking && gameState?.status === "tutorial" && selectedGame?.id === "castle-defense" && (
+            <CastleDefenseTeachingGame vocabulary={gameSentences} mode="tutorial" fullscreen={isFullscreen} />
+          )}
+
+          {!showScoreRanking && gameState?.status === "tutorial" && selectedGame?.id === "potion-rush" && (
+            <PotionRushTeachingGame vocabulary={gameSentences} mode="tutorial" fullscreen={isFullscreen} />
+          )}
+
+          {!showScoreRanking && gameState?.status === "tutorial" && !["dragon-flight", "wizard-vs-zombie", "enchanted-library", "rune-match", "castle-defense", "potion-rush"].includes(selectedGame?.id || "") && (
             <div className="overflow-hidden rounded-[32px] border border-indigo-400/25 bg-gradient-to-br from-indigo-950 via-slate-950 to-violet-950 p-7 text-white shadow-2xl">
               <p className="text-xs font-black uppercase tracking-[0.24em] text-indigo-300">Tutorial</p>
               <h3 className="mt-2 text-3xl font-black">วิธีเล่น {selectedGame?.title}</h3>

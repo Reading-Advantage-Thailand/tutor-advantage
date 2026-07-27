@@ -841,21 +841,6 @@ function PlayLessonContent() {
     }
 
     if (gameState.status === "tutorial") {
-      if (["dragon-flight", "wizard-vs-zombie"].includes(gameState.selectedGameId || "")) {
-        return (
-          <div className="phase-enter fixed inset-0 z-50 h-dvh w-screen overflow-hidden bg-background">
-            <AdvantageArcadeRuntime
-              key={`tutorial-${gameState.phase}-${gameState.selectedGameId}`}
-              gameId={gameState.selectedGameId || ""}
-              category={gameState.category}
-              articleData={articleData}
-              autoStart
-              tutorialMode
-              onComplete={() => undefined}
-            />
-          </div>
-        );
-      }
       const tutorialSteps = getGameTutorial(gameState.selectedGameId, gameState.category);
       return (
         <div className="phase-enter fixed inset-0 z-50 h-dvh w-screen overflow-y-auto bg-slate-950 p-5 text-white">

@@ -33,6 +33,7 @@ interface PotionRushGameProps {
   difficulty: "easy" | "normal" | "hard" | "extreme";
   onComplete: (results: PotionRushGameResult) => void;
   autoStart?: boolean;
+  tutorialMode?: boolean;
 }
 
 export default function PotionRushGame({
@@ -40,6 +41,7 @@ export default function PotionRushGame({
   difficulty,
   onComplete,
   autoStart = false,
+  tutorialMode = false,
 }: PotionRushGameProps) {
   const t = useScopedI18n("pages.student.gamesPage.potionRush");
   const router = useRouter();

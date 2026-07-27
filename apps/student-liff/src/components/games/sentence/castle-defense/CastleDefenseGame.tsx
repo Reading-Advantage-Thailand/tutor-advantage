@@ -83,32 +83,23 @@ type Props = {
     durationMs?: number;
   }) => void;
   autoStart?: boolean;
+  tutorialMode?: boolean;
 };
 
 const GAME_DURATION_MS = 60_000;
 const MAX_ROUND_SENTENCES = 10;
 const CASTLE_ASSET_PATHS = {
-  player: "/games/sentence/castle-defense/player_3x3_pose_sheet.png",
-  soldier: "/games/sentence/castle-defense/goblin_3x3_pose_sheet.png",
-  tank: "/games/sentence/castle-defense/orc_3x3_pose_sheet.png",
-  boss: "/games/sentence/castle-defense/troll_3x3_pose_sheet.png",
-  towerBase: "/games/sentence/castle-defense/tower-base.png",
-  towerBuilt: "/games/sentence/castle-defense/tower-built.png",
-  base: "/games/sentence/castle-defense/player-castle.png",
+  player: "/games/sentence/castle-defense/soldier_3x3_pose_sheet.png",
+  soldier: "/games/sentence/castle-defense/soldier_3x3_pose_sheet.png",
+  tank: "/games/sentence/castle-defense/tank_3x3_pose_sheet.png",
+  boss: "/games/sentence/castle-defense/boss_3x3_pose_sheet.png",
+  towerBase: "/games/sentence/castle-defense/tower_base.png",
+  towerBuilt: "/games/sentence/castle-defense/tower_built.png",
+  base: "/games/sentence/castle-defense/castle_background.png",
 };
 
-const buildRoundSentences = (items: SentenceItem[]) => {
-  const seen = new Set<string>();
-  return [...items]
-    .sort(() => Math.random() - 0.5)
-    .filter((item) => {
-      const key = item.term.trim().toLowerCase();
-      if (!key || seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    })
-    .slice(0, MAX_ROUND_SENTENCES);
-};
+const buildRoundSentences = (items: SentenceItem[]) =>
+  [...items].sort(() => Math.random() - 0.5).slice(0, MAX_ROUND_SENTENCES);
 
 const getCachedCastleAssets = (): GameAssets | null => {
   const player = getCachedGameImage(CASTLE_ASSET_PATHS.player);
@@ -123,7 +114,7 @@ const getCachedCastleAssets = (): GameAssets | null => {
     : null;
 };
 
-export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false }: Props) {
+export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, tutorialMode = false }: Props) {
   const t = useScopedI18n("pages.student.gamesPage.castleDefense");
   const gameVocabulary = useMemo(() => buildRoundSentences(vocabulary), [vocabulary]);
 
