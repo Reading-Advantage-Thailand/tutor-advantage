@@ -69,8 +69,9 @@ export function RuneMatchTeachingGame({ vocabulary, mode, fullscreen = false }: 
   }, [mode]);
 
   const handleComplete = React.useCallback(() => {
+    if (mode === "teacher" || mode === "tutorial") return;
     setKey((prev) => prev + 1);
-  }, []);
+  }, [mode]);
 
   const currentStep = TUTORIAL_STEPS[tutorialStep];
   const StepIcon = currentStep.icon;
@@ -79,7 +80,7 @@ export function RuneMatchTeachingGame({ vocabulary, mode, fullscreen = false }: 
     <div
       key={key}
       className={`relative isolate w-full overflow-hidden bg-slate-950 text-white ${
-        fullscreen ? "h-full min-h-0 flex-1 rounded-none shadow-none" : "min-h-[520px] rounded-[32px] shadow-2xl"
+        fullscreen ? "h-full min-h-0 flex-1 rounded-none shadow-none pb-28 sm:pb-28" : "min-h-[520px] rounded-[32px] shadow-2xl"
       }`}
       data-testid={`rune-match-${mode}`}
     >
@@ -87,39 +88,19 @@ export function RuneMatchTeachingGame({ vocabulary, mode, fullscreen = false }: 
         vocabulary={words}
         tutorialMode={mode === "tutorial"}
         tutorialStep={tutorialStep}
+        disableAutoFullscreen={true}
         onComplete={handleComplete}
       />
 
-      {mode === "tutorial" && (
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-40 w-full max-w-xl px-4 pointer-events-none">
-          <div className="flex items-center gap-3.5 rounded-2xl border border-indigo-400/50 bg-slate-950/95 p-3.5 shadow-2xl backdrop-blur-md">
-            <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/25">
-              <StepIcon size={24} />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <span className="rounded-full bg-indigo-500/20 px-2.5 py-0.5 text-[11px] font-black uppercase tracking-widest text-indigo-300 border border-indigo-500/30">
-                  ขั้นตอนที่ {tutorialStep + 1} / {TUTORIAL_STEPS.length}
-                </span>
-              </div>
-              <p className="mt-1 text-lg font-black text-white leading-tight">{currentStep.title}</p>
-              <p className="text-xs font-semibold text-white/70 leading-snug mt-0.5">{currentStep.detail}</p>
-            </div>
-            <div className="flex items-center gap-1.5 shrink-0">
-              {TUTORIAL_STEPS.map((_, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setTutorialStep(idx)}
-                  className={`h-2.5 rounded-full transition-all pointer-events-auto ${
-                    idx === tutorialStep ? "w-7 bg-indigo-400 shadow-md shadow-indigo-400/50" : "w-2.5 bg-white/20 hover:bg-white/40"
-                  }`}
-                />
-              ))}
-            </div>
+      {mode === "teacher" && (
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-40 w-full max-w-lg px-4 pointer-events-none">
+          <div className="flex items-center gap-3 rounded-2xl border border-amber-300/40 bg-slate-950/90 p-3 shadow-2xl backdrop-blur-md text-amber-200 text-xs font-black">
+            <span className="flex size-7 items-center justify-center rounded-xl bg-amber-400 text-slate-950 font-black text-sm">👀</span>
+            <span>Teacher Demo Mode: คุณครูกำลังกดจับคู่เล่นสาธิตให้ดูสดบนหน้าจอ</span>
           </div>
         </div>
       )}
+
     </div>
   );
 }

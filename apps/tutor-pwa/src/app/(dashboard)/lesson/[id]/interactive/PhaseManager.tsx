@@ -2265,14 +2265,29 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const countdownLeft = gameState?.countdownEndsAt
       ? Math.max(0, Math.ceil((gameState.countdownEndsAt - Date.now()) / 1000))
       : 0;
-    const showScoreRanking = results.length > 0 && ["playing", "results"].includes(gameState?.status || "");
+    const showScoreRanking = ["playing", "countdown", "in_game", "active", "results"].includes(gameState?.status || "");
     const participantById = new Map(participants.map((participant) => [participant.studentId, participant]));
-    const rankedResults = results.map((result, index) => ({
-      ...result,
-      rank: index + 1,
-      pictureUrl: participantById.get(result.studentId)?.pictureUrl,
-      totalScore: participantById.get(result.studentId)?.score ?? result.score,
-    }));
+    const liveResults = results.length > 0
+      ? results.map((result, index) => ({
+          ...result,
+          rank: index + 1,
+          pictureUrl: participantById.get(result.studentId)?.pictureUrl,
+          totalScore: participantById.get(result.studentId)?.score ?? result.score,
+          isSubmitted: true,
+        }))
+      : participants.map((participant, index) => ({
+          studentId: participant.studentId,
+          name: participant.name,
+          score: participant.score || 0,
+          correct: 0,
+          total: 10,
+          rank: index + 1,
+          pictureUrl: participant.pictureUrl,
+          totalScore: participant.score || 0,
+          durationMs: undefined,
+          isSubmitted: false,
+        }));
+    const rankedResults = liveResults;
     const topScore = Math.max(...rankedResults.map((result) => result.score), 1);
     const podiumResults = [rankedResults[1], rankedResults[0], rankedResults[2]].filter(Boolean);
 
@@ -2427,10 +2442,12 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               <div className="mb-5 flex items-start justify-between gap-3">
                 <div>
                   <p className="text-xs font-black uppercase tracking-widest text-emerald-500">
-                    {t("lesson.interactive.gameRankingTitle")}
+                    {gameState?.status === "results" ? t("lesson.interactive.gameRankingTitle") : "🎮 LIVE MONITORING"}
                   </p>
                   <h3 className="mt-1 text-3xl font-black text-foreground">
-                    {t("lesson.interactive.gameRankingHeading")}
+                    {gameState?.status === "results"
+                      ? t("lesson.interactive.gameRankingHeading")
+                      : `นักเรียนกำลังเล่นเกม ${selectedGame?.title || ""}`}
                   </h3>
                   <p className="mt-1 text-sm font-semibold text-muted-foreground">
                     {selectedGame?.title || t("lesson.interactive.gameSelectedFallback")} · {results.length} / {totalParticipants} {t("lesson.interactive.studentsSubmittedSuffix")}
@@ -2438,7 +2455,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 </div>
                 <div className="rounded-2xl bg-emerald-500/10 px-4 py-3 text-center">
                   <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
-                    {topScore}
+                    {results.length > 0 ? topScore : "-"}
                   </p>
                   <p className="text-[10px] font-black uppercase text-muted-foreground">
                     {t("lesson.interactive.topScore")}
@@ -2495,7 +2512,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                               {result.name}
                             </p>
                             <p className={`mt-1 font-black tabular-nums ${isChampion ? "text-5xl text-amber-300" : "text-3xl text-emerald-200"}`}>
-                              {result.score}
+                              {(result as any).isSubmitted ? result.score : "-"}
                             </p>
                             <div className={`mt-3 flex w-full items-end justify-center rounded-t-3xl border border-white/15 bg-white/12 backdrop-blur ${heightClass}`}>
                               <p className="pb-4 text-3xl font-black text-white/30">#{result.rank}</p>
@@ -2544,7 +2561,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                                 {result.name}
                               </p>
                               <p className="text-2xl font-black tabular-nums text-emerald-600 dark:text-emerald-400">
-                                {result.score}
+                                {(result as any).isSubmitted ? result.score : "🎮"}
                               </p>
                             </div>
                             <div className="mt-2 h-2 overflow-hidden rounded-full bg-border">
@@ -2554,9 +2571,18 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                               />
                             </div>
                             <p className="mt-1 text-xs font-bold text-muted-foreground">
-                              {result.correct}/{result.total} {t("lesson.interactive.correctUnit")}
-                              {typeof result.durationMs === "number" && ` · ${(result.durationMs / 1000).toFixed(1)}s`}
-                              {typeof result.totalScore === "number" && ` · ${t("lesson.interactive.totalScoreShort")} ${result.totalScore}`}
+                              {(result as any).isSubmitted ? (
+                                <>
+                                  <span className="text-emerald-500 font-extrabold">ส่งคำตอบแล้ว ✓</span>
+                                  {` · ${result.correct}/${result.total} ${t("lesson.interactive.correctUnit")}`}
+                                  {typeof result.durationMs === "number" && ` · ${(result.durationMs / 1000).toFixed(1)}s`}
+                                </>
+                              ) : (
+                                <span className="inline-flex items-center gap-1.5 text-indigo-400 font-extrabold animate-pulse">
+                                  <span className="size-2 rounded-full bg-emerald-400 animate-ping" />
+                                  🎮 กำลังเล่นอยู่บนมือถือ...
+                                </span>
+                              )}
                             </p>
                           </div>
                         </div>
