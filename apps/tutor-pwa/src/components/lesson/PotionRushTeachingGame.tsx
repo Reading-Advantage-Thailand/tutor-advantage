@@ -69,8 +69,7 @@ export function PotionRushTeachingGame({ vocabulary, mode, fullscreen = false }:
   const formattedVocab = React.useMemo(() => {
     return sentences.map((s, idx) => ({
       id: `sent-${idx}`,
-      sentence: s.term,
-      sentences: s.term,
+      term: s.term,
       translation: s.translation || "",
     }));
   }, [sentences]);
@@ -95,7 +94,7 @@ export function PotionRushTeachingGame({ vocabulary, mode, fullscreen = false }:
       />
 
       {mode === "tutorial" && (
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-40 w-full max-w-xl px-4 pointer-events-none">
+        <div className="absolute top-14 sm:top-16 left-1/2 -translate-x-1/2 z-40 w-full max-w-[560px] px-4 pointer-events-none">
           <div className="flex items-center gap-3.5 rounded-2xl border border-violet-400/50 bg-slate-950/95 p-3.5 shadow-2xl backdrop-blur-md">
             <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-violet-500 text-white shadow-lg shadow-violet-500/25">
               <StepIcon size={24} />

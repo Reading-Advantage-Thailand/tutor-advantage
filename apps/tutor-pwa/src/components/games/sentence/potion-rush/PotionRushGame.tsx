@@ -200,12 +200,12 @@ export default function PotionRushGame({
   }, [reset]);
 
   useEffect(() => {
-    if (autoStart && assetsLoaded && !hasStarted && vocabList.length > 0) {
+    if ((autoStart || tutorialMode) && assetsLoaded && !hasStarted && vocabList.length > 0) {
       setHasStarted(true);
       enterFullscreen();
       startGame(vocabList, difficulty);
     }
-  }, [autoStart, assetsLoaded, hasStarted, vocabList, difficulty, enterFullscreen, startGame]);
+  }, [autoStart, tutorialMode, assetsLoaded, hasStarted, vocabList, difficulty, enterFullscreen, startGame]);
 
   if (dimensions.width === 0)
     return <div ref={containerRef} className="w-screen h-dvh bg-slate-950" />;
