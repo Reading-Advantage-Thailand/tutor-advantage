@@ -1,0 +1,1415 @@
+{
+  "version": 1,
+  "articleId": "cmmtse9p801a4s60en4k8d32q",
+  "source": "READING_ADVANTAGE",
+  "title": "The Shadow House",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-782ee2a9fc",
+      "order": 0,
+      "text": "My name is Elara.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-001-782ee2a9fc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-001-782ee2a9fc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-f847ff9c44",
+      "order": 1,
+      "text": "This is my house now.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-002-f847ff9c44.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-002-f847ff9c44.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-34319ac09c",
+      "order": 2,
+      "text": "It is my aunt's old house.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-003-34319ac09c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-003-34319ac09c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-a3645eae47",
+      "order": 3,
+      "text": "My aunt is not here.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-004-a3645eae47.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-004-a3645eae47.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-beee72d959",
+      "order": 4,
+      "text": "I am alone.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-005-beee72d959.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-005-beee72d959.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-0c049f39de",
+      "order": 5,
+      "text": "The house is very big.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-006-0c049f39de.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-006-0c049f39de.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-9c08fce6d8",
+      "order": 6,
+      "text": "The house is very old.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-007-9c08fce6d8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-007-9c08fce6d8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-c8c7ddca31",
+      "order": 7,
+      "text": "It is a dark house.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-008-c8c7ddca31.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-008-c8c7ddca31.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-cf918d73d8",
+      "order": 8,
+      "text": "The house is quiet.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-009-cf918d73d8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-009-cf918d73d8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-69fb995449",
+      "order": 9,
+      "text": "Very quiet.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-010-69fb995449.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-010-69fb995449.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-28579d9504",
+      "order": 10,
+      "text": "I am in a room.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-011-28579d9504.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-011-28579d9504.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-4c0ec416f3",
+      "order": 11,
+      "text": "This room is big.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-012-4c0ec416f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-012-4c0ec416f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-fcdee23d9e",
+      "order": 12,
+      "text": "The room is cold.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-013-fcdee23d9e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-013-fcdee23d9e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-da5ac9a9ae",
+      "order": 13,
+      "text": "The windows are tall.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-014-da5ac9a9ae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-014-da5ac9a9ae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-defbd239ce",
+      "order": 14,
+      "text": "The windows are dark.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-015-defbd239ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-015-defbd239ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-38cc814693",
+      "order": 15,
+      "text": "I am a little scared.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-016-38cc814693.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-016-38cc814693.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-680ec1f3be",
+      "order": 16,
+      "text": "My old home is not like this house.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-017-680ec1f3be.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-017-680ec1f3be.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-bd12ee1890",
+      "order": 17,
+      "text": "That is a picture on the wall.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-018-bd12ee1890.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-018-bd12ee1890.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-c9e3ca5fb1",
+      "order": 18,
+      "text": "It is a picture of my aunt.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-019-c9e3ca5fb1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-019-c9e3ca5fb1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-01fc595754",
+      "order": 19,
+      "text": "She is in the picture.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-020-01fc595754.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-020-01fc595754.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-e7cb61c5dc",
+      "order": 20,
+      "text": "She is not happy.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-021-e7cb61c5dc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-021-e7cb61c5dc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-61227ee523",
+      "order": 21,
+      "text": "Her face is white.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-022-61227ee523.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-022-61227ee523.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-f9b29722ba",
+      "order": 22,
+      "text": "Her eyes are dark and sad.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-023-f9b29722ba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-023-f9b29722ba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-436317b9ae",
+      "order": 23,
+      "text": "It is not a good picture.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-024-436317b9ae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-024-436317b9ae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-b05beeb1f3",
+      "order": 24,
+      "text": "I am not happy.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-025-b05beeb1f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-025-b05beeb1f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-1181db6953",
+      "order": 25,
+      "text": "What is that?",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-026-1181db6953.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-026-1181db6953.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-3b64a77824",
+      "order": 26,
+      "text": "I see a shadow.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-027-3b64a77824.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-027-3b64a77824.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-9bc40dcca8",
+      "order": 27,
+      "text": "The shadow is on the wall.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-028-9bc40dcca8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-028-9bc40dcca8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-5d7db35e72",
+      "order": 28,
+      "text": "It is a long shadow.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-029-5d7db35e72.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-029-5d7db35e72.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-a6be04d4cd",
+      "order": 29,
+      "text": "It is not my shadow.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-030-a6be04d4cd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-030-a6be04d4cd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-d735ff8f11",
+      "order": 30,
+      "text": "My shadow is small.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-031-d735ff8f11.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-031-d735ff8f11.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-6a52061482",
+      "order": 31,
+      "text": "That shadow is big.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-032-6a52061482.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-032-6a52061482.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-6acba245f2",
+      "order": 32,
+      "text": "A very big shadow.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-033-6acba245f2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-033-6acba245f2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-807b0b624f",
+      "order": 33,
+      "text": "I am very scared now.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-034-807b0b624f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-034-807b0b624f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-a61a1bd311",
+      "order": 34,
+      "text": "The shadow is in my room.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-035-a61a1bd311.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-035-a61a1bd311.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-cf5c8a99a2",
+      "order": 35,
+      "text": "My room is my bedroom.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-036-cf5c8a99a2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-036-cf5c8a99a2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-d533c36363",
+      "order": 36,
+      "text": "The shadow is on the wall near my bed.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-037-d533c36363.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-037-d533c36363.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-b214b36801",
+      "order": 37,
+      "text": "It is so big.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-038-b214b36801.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-038-b214b36801.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-e17a6e589b",
+      "order": 38,
+      "text": "It is not a person.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-039-e17a6e589b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-039-e17a6e589b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-aea173ff53",
+      "order": 39,
+      "text": "It is not an animal.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-040-aea173ff53.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-040-aea173ff53.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-fbfc20954a",
+      "order": 40,
+      "text": "I am very cold.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-041-fbfc20954a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-041-fbfc20954a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-21409896c4",
+      "order": 41,
+      "text": "'What are you?' I think.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-042-21409896c4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-042-21409896c4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-c18f609117",
+      "order": 42,
+      "text": "The door is closed.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-043-c18f609117.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-043-c18f609117.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-044-abe6dfcfe5",
+      "order": 43,
+      "text": "The window is black.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-044-abe6dfcfe5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-044-abe6dfcfe5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-045-6cf7a3700a",
+      "order": 44,
+      "text": "The light is not on.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-045-6cf7a3700a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-045-6cf7a3700a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-046-0526c464a4",
+      "order": 45,
+      "text": "I am in the dark room.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-046-0526c464a4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-046-0526c464a4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-047-a39a889930",
+      "order": 46,
+      "text": "I am on my bed.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-047-a39a889930.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-047-a39a889930.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-048-8c6ef0fd0d",
+      "order": 47,
+      "text": "The big shadow is here.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-048-8c6ef0fd0d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-048-8c6ef0fd0d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-049-21af94f4ae",
+      "order": 48,
+      "text": "It is with me.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-049-21af94f4ae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-049-21af94f4ae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-050-cfe0c78f7f",
+      "order": 49,
+      "text": "I am not alone in the dark house.",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-050-cfe0c78f7f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/sentences/sentence-050-cfe0c78f7f.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-0158b16a72",
+      "order": 0,
+      "text": "idiom: not like this house",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-001-0158b16a72.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-001-0158b16a72.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-df096f20a0",
+      "order": 1,
+      "text": "shadow",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-002-df096f20a0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-002-df096f20a0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-426c25f2ce",
+      "order": 2,
+      "text": "bedroom",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-003-426c25f2ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-003-426c25f2ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-fd0fd4c683",
+      "order": 3,
+      "text": "alone",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-004-fd0fd4c683.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-004-fd0fd4c683.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-436dad9257",
+      "order": 4,
+      "text": "scared",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-005-436dad9257.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-005-436dad9257.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-659c16a381",
+      "order": 5,
+      "text": "quiet",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-006-659c16a381.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-006-659c16a381.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-be69ea827c",
+      "order": 6,
+      "text": "picture",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-007-be69ea827c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-007-be69ea827c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-f0929af1a5",
+      "order": 7,
+      "text": "face",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-008-f0929af1a5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-008-f0929af1a5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-eb02d73ac2",
+      "order": 8,
+      "text": "window",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-009-eb02d73ac2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-009-eb02d73ac2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-bad5b36603",
+      "order": 9,
+      "text": "dark",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-010-bad5b36603.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-010-bad5b36603.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-2d6b771b9e",
+      "order": 10,
+      "text": "my",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-011-2d6b771b9e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-011-2d6b771b9e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-801579a736",
+      "order": 11,
+      "text": "name",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-012-801579a736.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-012-801579a736.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-870d283f76",
+      "order": 12,
+      "text": "is",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-013-870d283f76.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-013-870d283f76.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-0d65c8196d",
+      "order": 13,
+      "text": "elara",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-014-0d65c8196d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-014-0d65c8196d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-abc50025f0",
+      "order": 14,
+      "text": "this",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-015-abc50025f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-015-abc50025f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-257409c638",
+      "order": 15,
+      "text": "house",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-016-257409c638.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-016-257409c638.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-3f06e7f2a4",
+      "order": 16,
+      "text": "now",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-017-3f06e7f2a4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-017-3f06e7f2a4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-eb2e2f20b3",
+      "order": 17,
+      "text": "it",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-018-eb2e2f20b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-018-eb2e2f20b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-ca370d2a0b",
+      "order": 18,
+      "text": "aunt's",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-019-ca370d2a0b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-019-ca370d2a0b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-b6a885e08e",
+      "order": 19,
+      "text": "old",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-020-b6a885e08e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-020-b6a885e08e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-ebf51e6cbb",
+      "order": 20,
+      "text": "aunt",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-021-ebf51e6cbb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-021-ebf51e6cbb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-04462331a8",
+      "order": 21,
+      "text": "not",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-022-04462331a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-022-04462331a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-0c4d938db8",
+      "order": 22,
+      "text": "here",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-023-0c4d938db8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-023-0c4d938db8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-00a2c86d2f",
+      "order": 23,
+      "text": "i",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-024-00a2c86d2f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-024-00a2c86d2f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-62abc3a567",
+      "order": 24,
+      "text": "am",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-025-62abc3a567.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-025-62abc3a567.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-97de6f45c9",
+      "order": 25,
+      "text": "the",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-026-97de6f45c9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-026-97de6f45c9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-4a0d4aabda",
+      "order": 26,
+      "text": "very",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-027-4a0d4aabda.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-027-4a0d4aabda.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-1925393ac7",
+      "order": 27,
+      "text": "big",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-028-1925393ac7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-028-1925393ac7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-2ca6f70b46",
+      "order": 28,
+      "text": "a",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-029-2ca6f70b46.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-029-2ca6f70b46.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-dd28153ced",
+      "order": 29,
+      "text": "in",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-030-dd28153ced.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-030-dd28153ced.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-2de2860362",
+      "order": 30,
+      "text": "room",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-031-2de2860362.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-031-2de2860362.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-5947277897",
+      "order": 31,
+      "text": "cold",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-032-5947277897.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-032-5947277897.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-0277c0382e",
+      "order": 32,
+      "text": "windows",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-033-0277c0382e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-033-0277c0382e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-ba4a9f8e23",
+      "order": 33,
+      "text": "are",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-034-ba4a9f8e23.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-034-ba4a9f8e23.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-52fff1b0ad",
+      "order": 34,
+      "text": "tall",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-035-52fff1b0ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-035-52fff1b0ad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-161ab6252c",
+      "order": 35,
+      "text": "little",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-036-161ab6252c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-036-161ab6252c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-176e53d083",
+      "order": 36,
+      "text": "home",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-037-176e53d083.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-037-176e53d083.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-b6aa3c4b2f",
+      "order": 37,
+      "text": "like",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-038-b6aa3c4b2f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-038-b6aa3c4b2f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-eae4849043",
+      "order": 38,
+      "text": "that",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-039-eae4849043.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-039-eae4849043.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-9c7ac65247",
+      "order": 39,
+      "text": "on",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-040-9c7ac65247.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-040-9c7ac65247.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-054aed41d7",
+      "order": 40,
+      "text": "wall",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-041-054aed41d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-041-054aed41d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-73912b549c",
+      "order": 41,
+      "text": "of",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-042-73912b549c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-042-73912b549c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-aa9bcdb063",
+      "order": 42,
+      "text": "she",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-043-aa9bcdb063.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-043-aa9bcdb063.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-fbb0209bcd",
+      "order": 43,
+      "text": "happy",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-044-fbb0209bcd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-044-fbb0209bcd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-96bded2a6a",
+      "order": 44,
+      "text": "her",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-045-96bded2a6a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-045-96bded2a6a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-1a22c8aabe",
+      "order": 45,
+      "text": "white",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-046-1a22c8aabe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-046-1a22c8aabe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-2318c6d649",
+      "order": 46,
+      "text": "eyes",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-047-2318c6d649.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-047-2318c6d649.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-3694f9314d",
+      "order": 47,
+      "text": "and",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-048-3694f9314d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-048-3694f9314d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-74393b3a1d",
+      "order": 48,
+      "text": "sad",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-049-74393b3a1d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-049-74393b3a1d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-e93e40e930",
+      "order": 49,
+      "text": "good",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-050-e93e40e930.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-050-e93e40e930.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-1e8f988230",
+      "order": 50,
+      "text": "what",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-051-1e8f988230.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-051-1e8f988230.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-ad4628595a",
+      "order": 51,
+      "text": "see",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-052-ad4628595a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-052-ad4628595a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-f8059d4a99",
+      "order": 52,
+      "text": "long",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-053-f8059d4a99.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-053-f8059d4a99.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-bde9dc440e",
+      "order": 53,
+      "text": "small",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-054-bde9dc440e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-054-bde9dc440e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-14687f1c74",
+      "order": 54,
+      "text": "near",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-055-14687f1c74.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-055-14687f1c74.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-92a6018eeb",
+      "order": 55,
+      "text": "bed",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-056-92a6018eeb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-056-92a6018eeb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-4cd6faa15e",
+      "order": 56,
+      "text": "so",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-057-4cd6faa15e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-057-4cd6faa15e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-81174636ca",
+      "order": 57,
+      "text": "person",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-058-81174636ca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-058-81174636ca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-7c8a80b46a",
+      "order": 58,
+      "text": "an",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-059-7c8a80b46a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-059-7c8a80b46a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-650fa01664",
+      "order": 59,
+      "text": "animal",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-060-650fa01664.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-060-650fa01664.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-33043f444c",
+      "order": 60,
+      "text": "you",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-061-33043f444c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-061-33043f444c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-61edbb5876",
+      "order": 61,
+      "text": "think",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-062-61edbb5876.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-062-61edbb5876.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-1eb42bb622",
+      "order": 62,
+      "text": "door",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-063-1eb42bb622.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-063-1eb42bb622.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-22a4f0f08e",
+      "order": 63,
+      "text": "closed",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-064-22a4f0f08e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-064-22a4f0f08e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-6c062ded7e",
+      "order": 64,
+      "text": "black",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-065-6c062ded7e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-065-6c062ded7e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-cb98d3ed6a",
+      "order": 65,
+      "text": "light",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-066-cb98d3ed6a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-066-cb98d3ed6a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-8f38b0dce8",
+      "order": 66,
+      "text": "with",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-067-8f38b0dce8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-067-8f38b0dce8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-2a2a4155aa",
+      "order": 67,
+      "text": "me",
+      "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/words/word-068-2a2a4155aa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/words/word-068-2a2a4155aa.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-74a2f88948",
+      "type": "mcq",
+      "order": 0,
+      "text": "What is the girl's name?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-001-74a2f88948.mp3",
+      "questionObjectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-001-74a2f88948.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-001-74a2f88948-option1-4c02aa4f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-001-74a2f88948-option2-42617675.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-001-74a2f88948-option3-0fa4fed5.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-001-74a2f88948-option4-de8ecc78.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-74a2f88948-option1-4c02aa4f",
+          "text": "Sofia",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-001-74a2f88948-option1-4c02aa4f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-74a2f88948-option2-42617675",
+          "text": "Elara",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-001-74a2f88948-option2-42617675.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-74a2f88948-option3-0fa4fed5",
+          "text": "Anna",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-001-74a2f88948-option3-0fa4fed5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-74a2f88948-option4-de8ecc78",
+          "text": "Maria",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-001-74a2f88948-option4-de8ecc78.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-0c839f8f50",
+      "type": "mcq",
+      "order": 1,
+      "text": "Whose house is it?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-002-0c839f8f50.mp3",
+      "questionObjectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-002-0c839f8f50.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-002-0c839f8f50-option1-21d87fbd.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-002-0c839f8f50-option2-0f604a58.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-002-0c839f8f50-option3-dc3b7dd7.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-002-0c839f8f50-option4-af8725d8.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-0c839f8f50-option1-21d87fbd",
+          "text": "Her brother's",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-002-0c839f8f50-option1-21d87fbd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-0c839f8f50-option2-0f604a58",
+          "text": "Her father's",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-002-0c839f8f50-option2-0f604a58.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-0c839f8f50-option3-dc3b7dd7",
+          "text": "Her mother's",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-002-0c839f8f50-option3-dc3b7dd7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-0c839f8f50-option4-af8725d8",
+          "text": "Her aunt's",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-002-0c839f8f50-option4-af8725d8.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-6b888fbc7a",
+      "type": "mcq",
+      "order": 2,
+      "text": "Is the house big or small?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-003-6b888fbc7a.mp3",
+      "questionObjectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-003-6b888fbc7a.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-003-6b888fbc7a-option1-54b7d27f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-003-6b888fbc7a-option2-104a7b5e.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-003-6b888fbc7a-option3-3d4e5e17.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-003-6b888fbc7a-option4-4cc89624.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-6b888fbc7a-option1-54b7d27f",
+          "text": "Big",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-003-6b888fbc7a-option1-54b7d27f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-6b888fbc7a-option2-104a7b5e",
+          "text": "Medium",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-003-6b888fbc7a-option2-104a7b5e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-6b888fbc7a-option3-3d4e5e17",
+          "text": "Small",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-003-6b888fbc7a-option3-3d4e5e17.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-6b888fbc7a-option4-4cc89624",
+          "text": "Tiny",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-003-6b888fbc7a-option4-4cc89624.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-07d04b09d2",
+      "type": "mcq",
+      "order": 3,
+      "text": "Is the house new?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-004-07d04b09d2.mp3",
+      "questionObjectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-004-07d04b09d2.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-004-07d04b09d2-option1-81c4a561.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-004-07d04b09d2-option2-d1b60859.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-004-07d04b09d2-option3-cd584b9b.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-004-07d04b09d2-option4-3480e2be.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-07d04b09d2-option1-81c4a561",
+          "text": "Maybe",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-004-07d04b09d2-option1-81c4a561.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-07d04b09d2-option2-d1b60859",
+          "text": "A little",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-004-07d04b09d2-option2-d1b60859.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-07d04b09d2-option3-cd584b9b",
+          "text": "No",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-004-07d04b09d2-option3-cd584b9b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-07d04b09d2-option4-3480e2be",
+          "text": "Yes",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-004-07d04b09d2-option4-3480e2be.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-80021827b4",
+      "type": "mcq",
+      "order": 4,
+      "text": "Is Elara happy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-005-80021827b4.mp3",
+      "questionObjectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-005-80021827b4.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-005-80021827b4-option1-33059dc7.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-005-80021827b4-option2-f4e50ce6.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-005-80021827b4-option3-6c0963c6.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-005-80021827b4-option4-75043d69.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-80021827b4-option1-33059dc7",
+          "text": "Yes",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-005-80021827b4-option1-33059dc7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-80021827b4-option2-f4e50ce6",
+          "text": "So-so",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-005-80021827b4-option2-f4e50ce6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-80021827b4-option3-6c0963c6",
+          "text": "A little",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-005-80021827b4-option3-6c0963c6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-80021827b4-option4-75043d69",
+          "text": "No",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-005-80021827b4-option4-75043d69.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-cd26d6363b",
+      "type": "mcq",
+      "order": 5,
+      "text": "What is on the wall?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-006-cd26d6363b.mp3",
+      "questionObjectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-006-cd26d6363b.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-006-cd26d6363b-option1-c7522909.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-006-cd26d6363b-option2-ffa50b07.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-006-cd26d6363b-option3-59631479.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-006-cd26d6363b-option4-b3e164b0.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-cd26d6363b-option1-c7522909",
+          "text": "A picture",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-006-cd26d6363b-option1-c7522909.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-cd26d6363b-option2-ffa50b07",
+          "text": "A clock",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-006-cd26d6363b-option2-ffa50b07.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-cd26d6363b-option3-59631479",
+          "text": "A window",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-006-cd26d6363b-option3-59631479.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-cd26d6363b-option4-b3e164b0",
+          "text": "A door",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-006-cd26d6363b-option4-b3e164b0.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-4156b067c1",
+      "type": "mcq",
+      "order": 6,
+      "text": "Who is in the picture?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-007-4156b067c1.mp3",
+      "questionObjectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-007-4156b067c1.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-007-4156b067c1-option1-b2f1d60f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-007-4156b067c1-option2-6428d189.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-007-4156b067c1-option3-3905a7b1.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-007-4156b067c1-option4-0d0e084b.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-4156b067c1-option1-b2f1d60f",
+          "text": "Her mother",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-007-4156b067c1-option1-b2f1d60f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-4156b067c1-option2-6428d189",
+          "text": "Her aunt",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-007-4156b067c1-option2-6428d189.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-4156b067c1-option3-3905a7b1",
+          "text": "Her father",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-007-4156b067c1-option3-3905a7b1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-4156b067c1-option4-0d0e084b",
+          "text": "Her brother",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-007-4156b067c1-option4-0d0e084b.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-a60c001897",
+      "type": "mcq",
+      "order": 7,
+      "text": "What does Elara see?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-008-a60c001897.mp3",
+      "questionObjectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-008-a60c001897.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-008-a60c001897-option1-969a4268.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-008-a60c001897-option2-1dc63c0d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-008-a60c001897-option3-0a1c6d06.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-008-a60c001897-option4-e9023242.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-a60c001897-option1-969a4268",
+          "text": "A cat",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-008-a60c001897-option1-969a4268.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-a60c001897-option2-1dc63c0d",
+          "text": "A dog",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-008-a60c001897-option2-1dc63c0d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-a60c001897-option3-0a1c6d06",
+          "text": "A bird",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-008-a60c001897-option3-0a1c6d06.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-a60c001897-option4-e9023242",
+          "text": "A shadow",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-008-a60c001897-option4-e9023242.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-7a9df08592",
+      "type": "mcq",
+      "order": 8,
+      "text": "Is the shadow small?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-009-7a9df08592.mp3",
+      "questionObjectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-009-7a9df08592.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-009-7a9df08592-option1-094b7540.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-009-7a9df08592-option2-eb6091d3.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-009-7a9df08592-option3-7c5d27d3.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-009-7a9df08592-option4-8b679e87.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-7a9df08592-option1-094b7540",
+          "text": "Maybe",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-009-7a9df08592-option1-094b7540.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-7a9df08592-option2-eb6091d3",
+          "text": "Yes",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-009-7a9df08592-option2-eb6091d3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-7a9df08592-option3-7c5d27d3",
+          "text": "No",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-009-7a9df08592-option3-7c5d27d3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-7a9df08592-option4-8b679e87",
+          "text": "A little",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-009-7a9df08592-option4-8b679e87.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-1b30c4d3d9",
+      "type": "mcq",
+      "order": 9,
+      "text": "Is Elara alone?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-010-1b30c4d3d9.mp3",
+      "questionObjectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-010-1b30c4d3d9.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-010-1b30c4d3d9-option1-e20f8cca.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-010-1b30c4d3d9-option2-716078ce.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-010-1b30c4d3d9-option3-2bad1040.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-010-1b30c4d3d9-option4-95c524c9.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-1b30c4d3d9-option1-e20f8cca",
+          "text": "Yes",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-010-1b30c4d3d9-option1-e20f8cca.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-1b30c4d3d9-option2-716078ce",
+          "text": "Maybe",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-010-1b30c4d3d9-option2-716078ce.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-1b30c4d3d9-option3-2bad1040",
+          "text": "A little",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-010-1b30c4d3d9-option3-2bad1040.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-1b30c4d3d9-option4-95c524c9",
+          "text": "No",
+          "objectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/mcq-010-1b30c4d3d9-option4-95c524c9.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-12a3e9e223",
+      "type": "saq",
+      "order": 10,
+      "text": "What is the girl's name?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/saq-011-12a3e9e223.mp3",
+      "questionObjectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/saq-011-12a3e9e223.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-b6127a7e58",
+      "type": "saq",
+      "order": 11,
+      "text": "Is Elara alone?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/saq-012-b6127a7e58.mp3",
+      "questionObjectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/saq-012-b6127a7e58.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-9b1c577e85",
+      "type": "saq",
+      "order": 12,
+      "text": "What is on the wall?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/saq-013-9b1c577e85.mp3",
+      "questionObjectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/saq-013-9b1c577e85.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-adc5313504",
+      "type": "saq",
+      "order": 13,
+      "text": "What does Elara see?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/saq-014-adc5313504.mp3",
+      "questionObjectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/saq-014-adc5313504.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-133d90c452",
+      "type": "saq",
+      "order": 14,
+      "text": "Is Elara happy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmtse9p801a4s60en4k8d32q/questions/saq-015-133d90c452.mp3",
+      "questionObjectPath": "articles/cmmtse9p801a4s60en4k8d32q/questions/saq-015-133d90c452.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:09:40.128Z"
+}

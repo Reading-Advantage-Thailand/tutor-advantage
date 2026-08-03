@@ -1,0 +1,292 @@
+{
+  "version": 1,
+  "articleId": "7MrOtihsv9tsz3SaBfVC",
+  "source": "READING_ADVANTAGE",
+  "title": "The School Chronicles: A Tale of Friendship and Empowerment",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-34eb8d668d",
+      "order": 0,
+      "text": "The School Chronicles: A Tale of Friendship and Empowerment is an engaging article in Reading 4.",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/sentences/sentence-001-34eb8d668d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/sentences/sentence-001-34eb8d668d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-b06cfd7000",
+      "order": 1,
+      "text": "It explores fascinating themes related to Children's Fiction.",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/sentences/sentence-002-b06cfd7000.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/sentences/sentence-002-b06cfd7000.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-923f5b049d",
+      "order": 2,
+      "text": "Reading this story helps students improve vocabulary and comprehension skills.",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/sentences/sentence-003-923f5b049d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/sentences/sentence-003-923f5b049d.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-7a7ed62e66",
+      "order": 0,
+      "text": "The",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-001-7a7ed62e66.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-001-7a7ed62e66.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-002-5304cdbfa9",
+      "order": 1,
+      "text": "school",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-002-5304cdbfa9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-002-5304cdbfa9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-0f611efbe5",
+      "order": 2,
+      "text": "chronicles",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-003-0f611efbe5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-003-0f611efbe5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-752bfc0d65",
+      "order": 3,
+      "text": "a",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-004-752bfc0d65.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-004-752bfc0d65.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-e366e575e5",
+      "order": 4,
+      "text": "tale",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-005-e366e575e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-005-e366e575e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-8de9318100",
+      "order": 5,
+      "text": "of",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-006-8de9318100.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-006-8de9318100.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-f14ee893bc",
+      "order": 6,
+      "text": "friendship",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-007-f14ee893bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-007-f14ee893bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-5bed23f3ee",
+      "order": 7,
+      "text": "and",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-008-5bed23f3ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-008-5bed23f3ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-979b31f6a6",
+      "order": 8,
+      "text": "empowerment",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-009-979b31f6a6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-009-979b31f6a6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-54cd0b7e97",
+      "order": 9,
+      "text": "is",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-010-54cd0b7e97.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-010-54cd0b7e97.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-011-29a1100259",
+      "order": 10,
+      "text": "an",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-011-29a1100259.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-011-29a1100259.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-6171b312f3",
+      "order": 11,
+      "text": "engaging",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-012-6171b312f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-012-6171b312f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-8b03e94718",
+      "order": 12,
+      "text": "article",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-013-8b03e94718.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-013-8b03e94718.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-d3f7f8dc82",
+      "order": 13,
+      "text": "in",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-014-d3f7f8dc82.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-014-d3f7f8dc82.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-8965dcec66",
+      "order": 14,
+      "text": "reading",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-015-8965dcec66.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-015-8965dcec66.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-75835322d7",
+      "order": 15,
+      "text": "it",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-016-75835322d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-016-75835322d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-a8684f231f",
+      "order": 16,
+      "text": "explores",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-017-a8684f231f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-017-a8684f231f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-37ac9257c6",
+      "order": 17,
+      "text": "fascinating",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-018-37ac9257c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-018-37ac9257c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-6f7578ffc2",
+      "order": 18,
+      "text": "themes",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-019-6f7578ffc2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-019-6f7578ffc2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-49711435f0",
+      "order": 19,
+      "text": "related",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-020-49711435f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-020-49711435f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-23ac58ab90",
+      "order": 20,
+      "text": "to",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-021-23ac58ab90.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-021-23ac58ab90.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-71df2037cd",
+      "order": 21,
+      "text": "children's",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-022-71df2037cd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-022-71df2037cd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-06ac7ec318",
+      "order": 22,
+      "text": "fiction",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-023-06ac7ec318.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-023-06ac7ec318.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-7b3dae0f69",
+      "order": 23,
+      "text": "this",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-024-7b3dae0f69.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-024-7b3dae0f69.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-68c950c60c",
+      "order": 24,
+      "text": "story",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-025-68c950c60c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-025-68c950c60c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-aba9f39301",
+      "order": 25,
+      "text": "helps",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-026-aba9f39301.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-026-aba9f39301.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-b57a7e7c85",
+      "order": 26,
+      "text": "students",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-027-b57a7e7c85.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-027-b57a7e7c85.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-948dcb09ab",
+      "order": 27,
+      "text": "improve",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-028-948dcb09ab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-028-948dcb09ab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-2980d5494e",
+      "order": 28,
+      "text": "vocabulary",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-029-2980d5494e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-029-2980d5494e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-ddb0436f15",
+      "order": 29,
+      "text": "comprehension",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-030-ddb0436f15.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-030-ddb0436f15.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-bdb89753b9",
+      "order": 30,
+      "text": "skills",
+      "objectPath": "articles/7MrOtihsv9tsz3SaBfVC/words/word-031-bdb89753b9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/7MrOtihsv9tsz3SaBfVC/words/word-031-bdb89753b9.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [],
+  "generatedAt": "2026-08-02T16:51:44.857Z"
+}

@@ -1,0 +1,1991 @@
+{
+  "version": 1,
+  "articleId": "cml526drc00ges60emv019fn6",
+  "source": "READING_ADVANTAGE",
+  "title": "Costa Rica's Green Travel",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-0fe3574c69",
+      "order": 0,
+      "text": "Costa Rica is a small country in Central America.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-001-0fe3574c69.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-001-0fe3574c69.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-2bb298618e",
+      "order": 1,
+      "text": "It has many beautiful animals and big forests.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-002-2bb298618e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-002-2bb298618e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-7951d4d844",
+      "order": 2,
+      "text": "Many people travel to Costa Rica every year.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-003-7951d4d844.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-003-7951d4d844.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-24f64ed8e7",
+      "order": 3,
+      "text": "They want to see nature.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-004-24f64ed8e7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-004-24f64ed8e7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-e58886cbe9",
+      "order": 4,
+      "text": "This special kind of travel is called ecotourism.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-005-e58886cbe9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-005-e58886cbe9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-38163a466c",
+      "order": 5,
+      "text": "Ecotourism means you travel and you help the place you visit.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-006-38163a466c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-006-38163a466c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-492fcd66d9",
+      "order": 6,
+      "text": "It helps protect nature and all its animals.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-007-492fcd66d9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-007-492fcd66d9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-1443f8a19e",
+      "order": 7,
+      "text": "In the past, some people cut down many trees.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-008-1443f8a19e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-008-1443f8a19e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-843d1d1a70",
+      "order": 8,
+      "text": "This was a big problem for the animals.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-009-843d1d1a70.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-009-843d1d1a70.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-aba86615e6",
+      "order": 9,
+      "text": "Their homes were gone.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-010-aba86615e6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-010-aba86615e6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-d3bb962b1a",
+      "order": 10,
+      "text": "Now, ecotourism helps to change this.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-011-d3bb962b1a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-011-d3bb962b1a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-b459c38cfd",
+      "order": 11,
+      "text": "When tourists visit, they spend money in the country.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-012-b459c38cfd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-012-b459c38cfd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-3831114936",
+      "order": 12,
+      "text": "This money helps pay for national parks.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-013-3831114936.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-013-3831114936.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-feaa364503",
+      "order": 13,
+      "text": "National parks are very large, safe areas for wildlife.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-014-feaa364503.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-014-feaa364503.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-4bfffc18ac",
+      "order": 14,
+      "text": "Because of tourism, Costa Rica has more parks now.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-015-4bfffc18ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-015-4bfffc18ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-8b49781d9e",
+      "order": 15,
+      "text": "The parks are bigger than before, and they protect more land.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-016-8b49781d9e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-016-8b49781d9e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-68747d56b3",
+      "order": 16,
+      "text": "Ecotourism also creates jobs for local people.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-017-68747d56b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-017-68747d56b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-5b0a477fe5",
+      "order": 17,
+      "text": "People can work as tour guides.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-018-5b0a477fe5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-018-5b0a477fe5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-ddfafaba74",
+      "order": 18,
+      "text": "They show tourists the monkeys and the birds.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-019-ddfafaba74.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-019-ddfafaba74.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-350a0a9f36",
+      "order": 19,
+      "text": "Other people work in small hotels or restaurants.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-020-350a0a9f36.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-020-350a0a9f36.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-efb7aaf4e6",
+      "order": 20,
+      "text": "They do not need to cut trees for money anymore.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-021-efb7aaf4e6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-021-efb7aaf4e6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-adc551f231",
+      "order": 21,
+      "text": "Instead, they can protect the forest.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-022-adc551f231.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-022-adc551f231.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-8db6f386da",
+      "order": 22,
+      "text": "They know the forest is more important.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-023-8db6f386da.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-023-8db6f386da.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-bcd49d3521",
+      "order": 23,
+      "text": "It brings visitors and helps their families have a better life.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-024-bcd49d3521.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-024-bcd49d3521.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-896e3c502a",
+      "order": 24,
+      "text": "Tourists can see amazing animals in Costa Rica.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-025-896e3c502a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-025-896e3c502a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-f405925e0c",
+      "order": 25,
+      "text": "In the forest, you can see monkeys and sloths in the trees.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-026-f405925e0c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-026-f405925e0c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-74da5cce8b",
+      "order": 26,
+      "text": "You can see colorful birds like toucans.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-027-74da5cce8b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-027-74da5cce8b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-08736e981c",
+      "order": 27,
+      "text": "On the coast, you can watch sea turtles.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-028-08736e981c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-028-08736e981c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-8e64d95768",
+      "order": 28,
+      "text": "They come to the beaches to lay their eggs.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-029-8e64d95768.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-029-8e64d95768.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-f49910e484",
+      "order": 29,
+      "text": "But tourists must follow rules.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-030-f49910e484.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-030-f49910e484.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-5b90991c12",
+      "order": 30,
+      "text": "You should always stay on the paths.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-031-5b90991c12.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-031-5b90991c12.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-8216a9d13e",
+      "order": 31,
+      "text": "You must not touch the wild animals.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-032-8216a9d13e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-032-8216a9d13e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-19a4760556",
+      "order": 32,
+      "text": "You should not feed them, because it is bad for their health.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-033-19a4760556.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-033-19a4760556.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-407647b041",
+      "order": 33,
+      "text": "This is very important.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-034-407647b041.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-034-407647b041.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-211b1d77d9",
+      "order": 34,
+      "text": "It keeps the animals wild and safe.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-035-211b1d77d9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-035-211b1d77d9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-bf239aaced",
+      "order": 35,
+      "text": "Ecotourism is very good for Costa Rica.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-036-bf239aaced.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-036-bf239aaced.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-e4e2a89b66",
+      "order": 36,
+      "text": "It helps the animals, the forests, and the people.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-037-e4e2a89b66.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-037-e4e2a89b66.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-b4d9a323d6",
+      "order": 37,
+      "text": "When tourists choose ecotourism, they make a good choice.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-038-b4d9a323d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-038-b4d9a323d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-461b2fc1f1",
+      "order": 38,
+      "text": "They learn about nature and help protect it for the future.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-039-461b2fc1f1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-039-461b2fc1f1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-0d1d1e82b6",
+      "order": 39,
+      "text": "This good travel means everyone can enjoy Costa Rica’s beauty for a long, long time.",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/sentences/sentence-040-0d1d1e82b6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/sentences/sentence-040-0d1d1e82b6.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-668db52583",
+      "order": 0,
+      "text": "ecotourism",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-001-668db52583.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-001-668db52583.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-c7c74c9b96",
+      "order": 1,
+      "text": "protect",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-002-c7c74c9b96.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-002-c7c74c9b96.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-6f97070de6",
+      "order": 2,
+      "text": "national parks",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-003-6f97070de6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-003-6f97070de6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-5b8f37fca6",
+      "order": 3,
+      "text": "wildlife",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-004-5b8f37fca6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-004-5b8f37fca6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-635ca157b1",
+      "order": 4,
+      "text": "tourists",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-005-635ca157b1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-005-635ca157b1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-5127bec2e3",
+      "order": 5,
+      "text": "amazing",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-006-5127bec2e3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-006-5127bec2e3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-897404bc53",
+      "order": 6,
+      "text": "coast",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-007-897404bc53.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-007-897404bc53.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-59b52a9ec6",
+      "order": 7,
+      "text": "lay their eggs",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-008-59b52a9ec6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-008-59b52a9ec6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-77e5623747",
+      "order": 8,
+      "text": "paths",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-009-77e5623747.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-009-77e5623747.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-dbe49c2b36",
+      "order": 9,
+      "text": "future",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-010-dbe49c2b36.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-010-dbe49c2b36.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-cefe621d0f",
+      "order": 10,
+      "text": "costa",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-011-cefe621d0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-011-cefe621d0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-578bf4d6ed",
+      "order": 11,
+      "text": "rica",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-012-578bf4d6ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-012-578bf4d6ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-870d283f76",
+      "order": 12,
+      "text": "is",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-013-870d283f76.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-013-870d283f76.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-6f34be13fa",
+      "order": 13,
+      "text": "a",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-014-6f34be13fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-014-6f34be13fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-7167291a44",
+      "order": 14,
+      "text": "small",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-015-7167291a44.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-015-7167291a44.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-a7d416a811",
+      "order": 15,
+      "text": "country",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-016-a7d416a811.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-016-a7d416a811.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-f1ad06f9ad",
+      "order": 16,
+      "text": "in",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-017-f1ad06f9ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-017-f1ad06f9ad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-e250f6f72d",
+      "order": 17,
+      "text": "central",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-018-e250f6f72d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-018-e250f6f72d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-91d36ec157",
+      "order": 18,
+      "text": "america",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-019-91d36ec157.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-019-91d36ec157.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-c30b3fbca4",
+      "order": 19,
+      "text": "it",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-020-c30b3fbca4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-020-c30b3fbca4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-43ec7380a8",
+      "order": 20,
+      "text": "has",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-021-43ec7380a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-021-43ec7380a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-86f1e74f15",
+      "order": 21,
+      "text": "many",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-022-86f1e74f15.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-022-86f1e74f15.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-ed3b121606",
+      "order": 22,
+      "text": "beautiful",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-023-ed3b121606.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-023-ed3b121606.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-6c6541de55",
+      "order": 23,
+      "text": "animals",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-024-6c6541de55.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-024-6c6541de55.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-4eedf4ebd9",
+      "order": 24,
+      "text": "and",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-025-4eedf4ebd9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-025-4eedf4ebd9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-6f56dad597",
+      "order": 25,
+      "text": "big",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-026-6f56dad597.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-026-6f56dad597.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-b3f4f85d49",
+      "order": 26,
+      "text": "forests",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-027-b3f4f85d49.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-027-b3f4f85d49.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-7ab7169ad4",
+      "order": 27,
+      "text": "people",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-028-7ab7169ad4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-028-7ab7169ad4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-3f3aeb62d1",
+      "order": 28,
+      "text": "travel",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-029-3f3aeb62d1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-029-3f3aeb62d1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-c1abd03eda",
+      "order": 29,
+      "text": "to",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-030-c1abd03eda.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-030-c1abd03eda.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-aeea8221dd",
+      "order": 30,
+      "text": "every",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-031-aeea8221dd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-031-aeea8221dd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-19ad1508a9",
+      "order": 31,
+      "text": "year",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-032-19ad1508a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-032-19ad1508a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-5b8b956234",
+      "order": 32,
+      "text": "they",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-033-5b8b956234.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-033-5b8b956234.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-974fc9ebac",
+      "order": 33,
+      "text": "want",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-034-974fc9ebac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-034-974fc9ebac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-be510a692f",
+      "order": 34,
+      "text": "see",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-035-be510a692f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-035-be510a692f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-7b165a4542",
+      "order": 35,
+      "text": "nature",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-036-7b165a4542.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-036-7b165a4542.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-ca873216fa",
+      "order": 36,
+      "text": "this",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-037-ca873216fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-037-ca873216fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-5ed5da1b38",
+      "order": 37,
+      "text": "special",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-038-5ed5da1b38.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-038-5ed5da1b38.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-48c50e7078",
+      "order": 38,
+      "text": "kind",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-039-48c50e7078.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-039-48c50e7078.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-56063b038b",
+      "order": 39,
+      "text": "of",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-040-56063b038b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-040-56063b038b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-4b40767a32",
+      "order": 40,
+      "text": "called",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-041-4b40767a32.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-041-4b40767a32.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-1c1b68441f",
+      "order": 41,
+      "text": "means",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-042-1c1b68441f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-042-1c1b68441f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-3eb9a4046a",
+      "order": 42,
+      "text": "you",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-043-3eb9a4046a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-043-3eb9a4046a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-6f71992850",
+      "order": 43,
+      "text": "help",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-044-6f71992850.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-044-6f71992850.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-c17c57139e",
+      "order": 44,
+      "text": "the",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-045-c17c57139e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-045-c17c57139e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-eae00d2264",
+      "order": 45,
+      "text": "place",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-046-eae00d2264.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-046-eae00d2264.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-64a266b26e",
+      "order": 46,
+      "text": "visit",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-047-64a266b26e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-047-64a266b26e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-8b5f6e225a",
+      "order": 47,
+      "text": "helps",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-048-8b5f6e225a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-048-8b5f6e225a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-d84082deb5",
+      "order": 48,
+      "text": "all",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-049-d84082deb5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-049-d84082deb5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-f36088a9aa",
+      "order": 49,
+      "text": "its",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-050-f36088a9aa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-050-f36088a9aa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-af0733334c",
+      "order": 50,
+      "text": "past",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-051-af0733334c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-051-af0733334c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-f870f0ed06",
+      "order": 51,
+      "text": "some",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-052-f870f0ed06.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-052-f870f0ed06.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-a682209ebb",
+      "order": 52,
+      "text": "cut",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-053-a682209ebb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-053-a682209ebb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-0bce3491c0",
+      "order": 53,
+      "text": "down",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-054-0bce3491c0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-054-0bce3491c0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-f9f172f540",
+      "order": 54,
+      "text": "trees",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-055-f9f172f540.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-055-f9f172f540.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-962f6d3df7",
+      "order": 55,
+      "text": "was",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-056-962f6d3df7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-056-962f6d3df7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-89d1294ae3",
+      "order": 56,
+      "text": "problem",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-057-89d1294ae3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-057-89d1294ae3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-677d431340",
+      "order": 57,
+      "text": "for",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-058-677d431340.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-058-677d431340.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-be4ef2f5f9",
+      "order": 58,
+      "text": "their",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-059-be4ef2f5f9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-059-be4ef2f5f9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-7d9161d9c4",
+      "order": 59,
+      "text": "homes",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-060-7d9161d9c4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-060-7d9161d9c4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-7331d5d467",
+      "order": 60,
+      "text": "were",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-061-7331d5d467.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-061-7331d5d467.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-46cedef8fa",
+      "order": 61,
+      "text": "gone",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-062-46cedef8fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-062-46cedef8fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-eca4cc0556",
+      "order": 62,
+      "text": "now",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-063-eca4cc0556.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-063-eca4cc0556.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-a4e6ecb87d",
+      "order": 63,
+      "text": "change",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-064-a4e6ecb87d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-064-a4e6ecb87d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-8e5fc313d1",
+      "order": 64,
+      "text": "when",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-065-8e5fc313d1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-065-8e5fc313d1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-62df5be167",
+      "order": 65,
+      "text": "spend",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-066-62df5be167.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-066-62df5be167.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-07d175ec36",
+      "order": 66,
+      "text": "money",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-067-07d175ec36.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-067-07d175ec36.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-7f10f76bba",
+      "order": 67,
+      "text": "pay",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-068-7f10f76bba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-068-7f10f76bba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-855f889134",
+      "order": 68,
+      "text": "national",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-069-855f889134.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-069-855f889134.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-6877b0b455",
+      "order": 69,
+      "text": "parks",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-070-6877b0b455.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-070-6877b0b455.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-a65c4a0564",
+      "order": 70,
+      "text": "are",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-071-a65c4a0564.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-071-a65c4a0564.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-6c748b9505",
+      "order": 71,
+      "text": "very",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-072-6c748b9505.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-072-6c748b9505.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-eb82c348a4",
+      "order": 72,
+      "text": "large",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-073-eb82c348a4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-073-eb82c348a4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-b7c0589e5e",
+      "order": 73,
+      "text": "safe",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-074-b7c0589e5e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-074-b7c0589e5e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-47744579de",
+      "order": 74,
+      "text": "areas",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-075-47744579de.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-075-47744579de.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-5ba9ff7622",
+      "order": 75,
+      "text": "because",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-076-5ba9ff7622.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-076-5ba9ff7622.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-e3bbb73b3b",
+      "order": 76,
+      "text": "tourism",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-077-e3bbb73b3b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-077-e3bbb73b3b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-f2947e3ba9",
+      "order": 77,
+      "text": "more",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-078-f2947e3ba9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-078-f2947e3ba9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-a707e2c253",
+      "order": 78,
+      "text": "bigger",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-079-a707e2c253.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-079-a707e2c253.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-aee7832061",
+      "order": 79,
+      "text": "than",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-080-aee7832061.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-080-aee7832061.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-fcf84cef4e",
+      "order": 80,
+      "text": "before",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-081-fcf84cef4e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-081-fcf84cef4e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-1dc3ef2c14",
+      "order": 81,
+      "text": "land",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-082-1dc3ef2c14.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-082-1dc3ef2c14.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-e9a8ca546c",
+      "order": 82,
+      "text": "also",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-083-e9a8ca546c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-083-e9a8ca546c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-6e0e8f363f",
+      "order": 83,
+      "text": "creates",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-084-6e0e8f363f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-084-6e0e8f363f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-6af5209679",
+      "order": 84,
+      "text": "jobs",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-085-6af5209679.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-085-6af5209679.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-086-4b66afa0c8",
+      "order": 85,
+      "text": "local",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-086-4b66afa0c8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-086-4b66afa0c8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-087-e57680d208",
+      "order": 86,
+      "text": "can",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-087-e57680d208.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-087-e57680d208.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-088-0bc9c940dc",
+      "order": 87,
+      "text": "work",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-088-0bc9c940dc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-088-0bc9c940dc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-089-235e19f7cd",
+      "order": 88,
+      "text": "as",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-089-235e19f7cd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-089-235e19f7cd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-090-b5eba5fbea",
+      "order": 89,
+      "text": "tour",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-090-b5eba5fbea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-090-b5eba5fbea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-091-ecaf941bcd",
+      "order": 90,
+      "text": "guides",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-091-ecaf941bcd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-091-ecaf941bcd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-092-87e61b814b",
+      "order": 91,
+      "text": "show",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-092-87e61b814b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-092-87e61b814b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-093-71c5b93185",
+      "order": 92,
+      "text": "monkeys",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-093-71c5b93185.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-093-71c5b93185.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-094-4733432988",
+      "order": 93,
+      "text": "birds",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-094-4733432988.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-094-4733432988.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-095-707e1e744c",
+      "order": 94,
+      "text": "other",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-095-707e1e744c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-095-707e1e744c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-096-26ba824644",
+      "order": 95,
+      "text": "hotels",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-096-26ba824644.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-096-26ba824644.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-097-0d409bb753",
+      "order": 96,
+      "text": "or",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-097-0d409bb753.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-097-0d409bb753.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-098-3bef00bb87",
+      "order": 97,
+      "text": "restaurants",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-098-3bef00bb87.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-098-3bef00bb87.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-099-569ab77f61",
+      "order": 98,
+      "text": "do",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-099-569ab77f61.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-099-569ab77f61.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-100-5e80f4c7b4",
+      "order": 99,
+      "text": "not",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-100-5e80f4c7b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-100-5e80f4c7b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-101-f6f0e5820b",
+      "order": 100,
+      "text": "need",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-101-f6f0e5820b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-101-f6f0e5820b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-102-1941f106d6",
+      "order": 101,
+      "text": "anymore",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-102-1941f106d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-102-1941f106d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-103-2061275443",
+      "order": 102,
+      "text": "instead",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-103-2061275443.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-103-2061275443.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-104-aaed527441",
+      "order": 103,
+      "text": "forest",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-104-aaed527441.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-104-aaed527441.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-105-1cbfca1445",
+      "order": 104,
+      "text": "know",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-105-1cbfca1445.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-105-1cbfca1445.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-106-44ac9a6f76",
+      "order": 105,
+      "text": "important",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-106-44ac9a6f76.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-106-44ac9a6f76.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-107-11da16fcfa",
+      "order": 106,
+      "text": "brings",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-107-11da16fcfa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-107-11da16fcfa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-108-1611365fac",
+      "order": 107,
+      "text": "visitors",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-108-1611365fac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-108-1611365fac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-109-57335aa7c6",
+      "order": 108,
+      "text": "families",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-109-57335aa7c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-109-57335aa7c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-110-78cf49d98f",
+      "order": 109,
+      "text": "have",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-110-78cf49d98f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-110-78cf49d98f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-111-b76a4c5c73",
+      "order": 110,
+      "text": "better",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-111-b76a4c5c73.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-111-b76a4c5c73.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-112-b6f1984e99",
+      "order": 111,
+      "text": "life",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-112-b6f1984e99.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-112-b6f1984e99.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-113-d25a66c592",
+      "order": 112,
+      "text": "sloths",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-113-d25a66c592.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-113-d25a66c592.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-114-3e9789bcbb",
+      "order": 113,
+      "text": "colorful",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-114-3e9789bcbb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-114-3e9789bcbb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-115-eba92ab898",
+      "order": 114,
+      "text": "like",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-115-eba92ab898.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-115-eba92ab898.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-116-fe506315d5",
+      "order": 115,
+      "text": "toucans",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-116-fe506315d5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-116-fe506315d5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-117-a93c78b7f8",
+      "order": 116,
+      "text": "on",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-117-a93c78b7f8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-117-a93c78b7f8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-118-8d850c03f3",
+      "order": 117,
+      "text": "watch",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-118-8d850c03f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-118-8d850c03f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-119-ac7057b341",
+      "order": 118,
+      "text": "sea",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-119-ac7057b341.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-119-ac7057b341.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-120-1191af4358",
+      "order": 119,
+      "text": "turtles",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-120-1191af4358.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-120-1191af4358.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-121-32548f34ee",
+      "order": 120,
+      "text": "come",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-121-32548f34ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-121-32548f34ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-122-39dc23a986",
+      "order": 121,
+      "text": "beaches",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-122-39dc23a986.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-122-39dc23a986.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-123-399b1163ea",
+      "order": 122,
+      "text": "lay",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-123-399b1163ea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-123-399b1163ea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-124-d35bef9aa5",
+      "order": 123,
+      "text": "eggs",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-124-d35bef9aa5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-124-d35bef9aa5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-125-d38c3e40d7",
+      "order": 124,
+      "text": "but",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-125-d38c3e40d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-125-d38c3e40d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-126-dc43b8ee88",
+      "order": 125,
+      "text": "must",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-126-dc43b8ee88.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-126-dc43b8ee88.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-127-531ef19a5d",
+      "order": 126,
+      "text": "follow",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-127-531ef19a5d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-127-531ef19a5d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-128-550aaedd1e",
+      "order": 127,
+      "text": "rules",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-128-550aaedd1e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-128-550aaedd1e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-129-0ccf5302a9",
+      "order": 128,
+      "text": "should",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-129-0ccf5302a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-129-0ccf5302a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-130-62d28b8b9d",
+      "order": 129,
+      "text": "always",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-130-62d28b8b9d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-130-62d28b8b9d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-131-d067d78d11",
+      "order": 130,
+      "text": "stay",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-131-d067d78d11.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-131-d067d78d11.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-132-d5ebcafe20",
+      "order": 131,
+      "text": "touch",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-132-d5ebcafe20.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-132-d5ebcafe20.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-133-15027e3242",
+      "order": 132,
+      "text": "wild",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-133-15027e3242.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-133-15027e3242.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-134-3b8e21ada2",
+      "order": 133,
+      "text": "feed",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-134-3b8e21ada2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-134-3b8e21ada2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-135-64fe4b2469",
+      "order": 134,
+      "text": "them",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-135-64fe4b2469.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-135-64fe4b2469.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-136-d118370fa9",
+      "order": 135,
+      "text": "bad",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-136-d118370fa9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-136-d118370fa9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-137-e22e08d2e2",
+      "order": 136,
+      "text": "health",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-137-e22e08d2e2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-137-e22e08d2e2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-138-2ccb946675",
+      "order": 137,
+      "text": "keeps",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-138-2ccb946675.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-138-2ccb946675.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-139-25d733962b",
+      "order": 138,
+      "text": "good",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-139-25d733962b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-139-25d733962b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-140-293572e183",
+      "order": 139,
+      "text": "choose",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-140-293572e183.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-140-293572e183.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-141-aee639816c",
+      "order": 140,
+      "text": "make",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-141-aee639816c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-141-aee639816c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-142-f2e4895b3d",
+      "order": 141,
+      "text": "choice",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-142-f2e4895b3d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-142-f2e4895b3d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-143-734dd27b8b",
+      "order": 142,
+      "text": "learn",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-143-734dd27b8b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-143-734dd27b8b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-144-3bee71f66f",
+      "order": 143,
+      "text": "about",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-144-3bee71f66f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-144-3bee71f66f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-145-447a9ca314",
+      "order": 144,
+      "text": "everyone",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-145-447a9ca314.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-145-447a9ca314.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-146-de5c576299",
+      "order": 145,
+      "text": "enjoy",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-146-de5c576299.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-146-de5c576299.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-147-286a0e17bc",
+      "order": 146,
+      "text": "rica's",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-147-286a0e17bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-147-286a0e17bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-148-4e652b7ff6",
+      "order": 147,
+      "text": "beauty",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-148-4e652b7ff6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-148-4e652b7ff6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-149-34e46852e2",
+      "order": 148,
+      "text": "long",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-149-34e46852e2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-149-34e46852e2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-150-298e5f9797",
+      "order": 149,
+      "text": "time",
+      "objectPath": "articles/cml526drc00ges60emv019fn6/words/word-150-298e5f9797.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/words/word-150-298e5f9797.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-303b65cd53",
+      "type": "mcq",
+      "order": 0,
+      "text": "Where is Costa Rica?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-001-303b65cd53.mp3",
+      "questionObjectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-001-303b65cd53.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-001-303b65cd53-option1-7be8b916.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-001-303b65cd53-option2-9295e33d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-001-303b65cd53-option3-ecad9d55.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-001-303b65cd53-option4-2fccb8b7.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-303b65cd53-option1-7be8b916",
+          "text": "South America",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-001-303b65cd53-option1-7be8b916.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-303b65cd53-option2-9295e33d",
+          "text": "Central America",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-001-303b65cd53-option2-9295e33d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-303b65cd53-option3-ecad9d55",
+          "text": "North America",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-001-303b65cd53-option3-ecad9d55.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-303b65cd53-option4-2fccb8b7",
+          "text": "Europe",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-001-303b65cd53-option4-2fccb8b7.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-8ee9430166",
+      "type": "mcq",
+      "order": 1,
+      "text": "What do many people want to see in Costa Rica?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-002-8ee9430166.mp3",
+      "questionObjectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-002-8ee9430166.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-002-8ee9430166-option1-dfb81317.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-002-8ee9430166-option2-02b385a0.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-002-8ee9430166-option3-c6bf1324.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-002-8ee9430166-option4-8f3f99d4.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-8ee9430166-option1-dfb81317",
+          "text": "Deserts",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-002-8ee9430166-option1-dfb81317.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-8ee9430166-option2-02b385a0",
+          "text": "Old buildings",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-002-8ee9430166-option2-02b385a0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-8ee9430166-option3-c6bf1324",
+          "text": "Big cities",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-002-8ee9430166-option3-c6bf1324.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-8ee9430166-option4-8f3f99d4",
+          "text": "Nature",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-002-8ee9430166-option4-8f3f99d4.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-e3fbdc5465",
+      "type": "mcq",
+      "order": 2,
+      "text": "What is ecotourism?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-003-e3fbdc5465.mp3",
+      "questionObjectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-003-e3fbdc5465.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-003-e3fbdc5465-option1-d5c8e8bd.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-003-e3fbdc5465-option2-8a41353f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-003-e3fbdc5465-option3-306e0f6e.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-003-e3fbdc5465-option4-aa0a1c20.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-e3fbdc5465-option1-d5c8e8bd",
+          "text": "Travel that helps the place you visit",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-003-e3fbdc5465-option1-d5c8e8bd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-e3fbdc5465-option2-8a41353f",
+          "text": "Travel that costs a lot of money",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-003-e3fbdc5465-option2-8a41353f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-e3fbdc5465-option3-306e0f6e",
+          "text": "Travel to big cities",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-003-e3fbdc5465-option3-306e0f6e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-e3fbdc5465-option4-aa0a1c20",
+          "text": "Travel by plane only",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-003-e3fbdc5465-option4-aa0a1c20.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-c847a7c1c1",
+      "type": "mcq",
+      "order": 3,
+      "text": "What was a big problem in the past?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-004-c847a7c1c1.mp3",
+      "questionObjectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-004-c847a7c1c1.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-004-c847a7c1c1-option1-dc41f605.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-004-c847a7c1c1-option2-3f1214a8.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-004-c847a7c1c1-option3-a54f08d8.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-004-c847a7c1c1-option4-0675f6ae.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-c847a7c1c1-option1-dc41f605",
+          "text": "Cutting down trees",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-004-c847a7c1c1-option1-dc41f605.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-c847a7c1c1-option2-3f1214a8",
+          "text": "Building houses",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-004-c847a7c1c1-option2-3f1214a8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-c847a7c1c1-option3-a54f08d8",
+          "text": "Saving water",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-004-c847a7c1c1-option3-a54f08d8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-c847a7c1c1-option4-0675f6ae",
+          "text": "Planting trees",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-004-c847a7c1c1-option4-0675f6ae.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-89be3c0f1c",
+      "type": "mcq",
+      "order": 4,
+      "text": "What do tourists' money help pay for?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-005-89be3c0f1c.mp3",
+      "questionObjectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-005-89be3c0f1c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-005-89be3c0f1c-option1-905de708.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-005-89be3c0f1c-option2-b408698f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-005-89be3c0f1c-option3-28a6c777.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-005-89be3c0f1c-option4-755fffb7.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-89be3c0f1c-option1-905de708",
+          "text": "National parks",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-005-89be3c0f1c-option1-905de708.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-89be3c0f1c-option2-b408698f",
+          "text": "Small hotels",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-005-89be3c0f1c-option2-b408698f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-89be3c0f1c-option3-28a6c777",
+          "text": "Big cities",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-005-89be3c0f1c-option3-28a6c777.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-89be3c0f1c-option4-755fffb7",
+          "text": "Local schools",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-005-89be3c0f1c-option4-755fffb7.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-c74940bea2",
+      "type": "mcq",
+      "order": 5,
+      "text": "What can local people work as?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-006-c74940bea2.mp3",
+      "questionObjectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-006-c74940bea2.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-006-c74940bea2-option1-a2e67ad4.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-006-c74940bea2-option2-1165c46c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-006-c74940bea2-option3-32e4661d.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-006-c74940bea2-option4-09bd5a1e.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-c74940bea2-option1-a2e67ad4",
+          "text": "Tour guides",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-006-c74940bea2-option1-a2e67ad4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-c74940bea2-option2-1165c46c",
+          "text": "Pilots",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-006-c74940bea2-option2-1165c46c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-c74940bea2-option3-32e4661d",
+          "text": "Doctors",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-006-c74940bea2-option3-32e4661d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-c74940bea2-option4-09bd5a1e",
+          "text": "Engineers",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-006-c74940bea2-option4-09bd5a1e.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-3049b0ef26",
+      "type": "mcq",
+      "order": 6,
+      "text": "What animals can you see in the forest?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-007-3049b0ef26.mp3",
+      "questionObjectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-007-3049b0ef26.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-007-3049b0ef26-option1-4279141a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-007-3049b0ef26-option2-e3f74f70.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-007-3049b0ef26-option3-00a11f65.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-007-3049b0ef26-option4-cd323804.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-3049b0ef26-option1-4279141a",
+          "text": "Penguins and seals",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-007-3049b0ef26-option1-4279141a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-3049b0ef26-option2-e3f74f70",
+          "text": "Monkeys and sloths",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-007-3049b0ef26-option2-e3f74f70.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-3049b0ef26-option3-00a11f65",
+          "text": "Elephants and zebras",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-007-3049b0ef26-option3-00a11f65.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-3049b0ef26-option4-cd323804",
+          "text": "Lions and tigers",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-007-3049b0ef26-option4-cd323804.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-0a21b4da30",
+      "type": "mcq",
+      "order": 7,
+      "text": "Where do sea turtles lay their eggs?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-008-0a21b4da30.mp3",
+      "questionObjectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-008-0a21b4da30.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-008-0a21b4da30-option1-1ede2092.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-008-0a21b4da30-option2-abb9e4c8.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-008-0a21b4da30-option3-582a214b.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-008-0a21b4da30-option4-f445ffe0.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-0a21b4da30-option1-1ede2092",
+          "text": "On the beaches",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-008-0a21b4da30-option1-1ede2092.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-0a21b4da30-option2-abb9e4c8",
+          "text": "In the forest",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-008-0a21b4da30-option2-abb9e4c8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-0a21b4da30-option3-582a214b",
+          "text": "In the mountains",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-008-0a21b4da30-option3-582a214b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-0a21b4da30-option4-f445ffe0",
+          "text": "In the rivers",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-008-0a21b4da30-option4-f445ffe0.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-1e4663a082",
+      "type": "mcq",
+      "order": 8,
+      "text": "What should tourists NOT do?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-009-1e4663a082.mp3",
+      "questionObjectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-009-1e4663a082.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-009-1e4663a082-option1-a93fb8bf.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-009-1e4663a082-option2-f31b4b8d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-009-1e4663a082-option3-43ae9ea6.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-009-1e4663a082-option4-e1220408.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-1e4663a082-option1-a93fb8bf",
+          "text": "Look at the birds",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-009-1e4663a082-option1-a93fb8bf.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-1e4663a082-option2-f31b4b8d",
+          "text": "Take photos",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-009-1e4663a082-option2-f31b4b8d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-1e4663a082-option3-43ae9ea6",
+          "text": "Walk on the paths",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-009-1e4663a082-option3-43ae9ea6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-1e4663a082-option4-e1220408",
+          "text": "Touch the wild animals",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-009-1e4663a082-option4-e1220408.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-8a85c3dfe0",
+      "type": "mcq",
+      "order": 9,
+      "text": "What does ecotourism help protect?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-010-8a85c3dfe0.mp3",
+      "questionObjectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-010-8a85c3dfe0.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-010-8a85c3dfe0-option1-ed9bb09d.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-010-8a85c3dfe0-option2-7be85d82.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-010-8a85c3dfe0-option3-ef6f9437.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/mcq-010-8a85c3dfe0-option4-2b67f97f.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-8a85c3dfe0-option1-ed9bb09d",
+          "text": "Fast cars",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-010-8a85c3dfe0-option1-ed9bb09d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-8a85c3dfe0-option2-7be85d82",
+          "text": "Nature for the future",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-010-8a85c3dfe0-option2-7be85d82.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-8a85c3dfe0-option3-ef6f9437",
+          "text": "Big cities",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-010-8a85c3dfe0-option3-ef6f9437.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-8a85c3dfe0-option4-2b67f97f",
+          "text": "Old buildings",
+          "objectPath": "articles/cml526drc00ges60emv019fn6/questions/mcq-010-8a85c3dfe0-option4-2b67f97f.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-9c0f8c25ae",
+      "type": "saq",
+      "order": 10,
+      "text": "Where is Costa Rica?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/saq-011-9c0f8c25ae.mp3",
+      "questionObjectPath": "articles/cml526drc00ges60emv019fn6/questions/saq-011-9c0f8c25ae.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-a6b28589bd",
+      "type": "saq",
+      "order": 11,
+      "text": "What do many people want to see in Costa Rica?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/saq-012-a6b28589bd.mp3",
+      "questionObjectPath": "articles/cml526drc00ges60emv019fn6/questions/saq-012-a6b28589bd.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-caa2a335f1",
+      "type": "saq",
+      "order": 12,
+      "text": "What does ecotourism help to protect?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/saq-013-caa2a335f1.mp3",
+      "questionObjectPath": "articles/cml526drc00ges60emv019fn6/questions/saq-013-caa2a335f1.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-5a046805b6",
+      "type": "saq",
+      "order": 13,
+      "text": "What can tourists see in the forest?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/saq-014-5a046805b6.mp3",
+      "questionObjectPath": "articles/cml526drc00ges60emv019fn6/questions/saq-014-5a046805b6.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-308b9a7608",
+      "type": "saq",
+      "order": 14,
+      "text": "Why should tourists not feed the animals?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cml526drc00ges60emv019fn6/questions/saq-015-308b9a7608.mp3",
+      "questionObjectPath": "articles/cml526drc00ges60emv019fn6/questions/saq-015-308b9a7608.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T16:59:09.765Z"
+}

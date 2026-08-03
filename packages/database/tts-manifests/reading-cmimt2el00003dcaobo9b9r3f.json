@@ -1,0 +1,2303 @@
+{
+  "version": 1,
+  "articleId": "cmimt2el00003dcaobo9b9r3f",
+  "source": "READING_ADVANTAGE",
+  "title": "Leo and the Hero Cat",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-101dce2db2",
+      "order": 0,
+      "text": "Leo is a teenager.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-001-101dce2db2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-001-101dce2db2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-b9fdd6862c",
+      "order": 1,
+      "text": "He has a black cat named Shadow.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-002-b9fdd6862c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-002-b9fdd6862c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-07b6cbcc61",
+      "order": 2,
+      "text": "In Leo’s house, Shadow is a very simple cat.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-003-07b6cbcc61.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-003-07b6cbcc61.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-0c62539594",
+      "order": 3,
+      "text": "He is quiet and lazy.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-004-0c62539594.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-004-0c62539594.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-1322a0f90a",
+      "order": 4,
+      "text": "He eats his food and then he sleeps.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-005-1322a0f90a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-005-1322a0f90a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-897d7b6569",
+      "order": 5,
+      "text": "He can sleep for many hours on the sofa.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-006-897d7b6569.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-006-897d7b6569.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-3ff5e829d7",
+      "order": 6,
+      "text": "Shadow does not like to play very much.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-007-3ff5e829d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-007-3ff5e829d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-9676381b58",
+      "order": 7,
+      "text": "But Leo has a special account online.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-008-9676381b58.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-008-9676381b58.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-286d5adb49",
+      "order": 8,
+      "text": "It is for Shadow.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-009-286d5adb49.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-009-286d5adb49.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-9bd8a561a3",
+      "order": 9,
+      "text": "On this account, Shadow is not a simple cat.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-010-9bd8a561a3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-010-9bd8a561a3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-c85a1bb4db",
+      "order": 10,
+      "text": "He is an adventure cat!",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-011-c85a1bb4db.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-011-c85a1bb4db.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-ca14b8373f",
+      "order": 11,
+      "text": "Yesterday, Leo put a small hat on Shadow.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-012-ca14b8373f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-012-ca14b8373f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-f2e6325986",
+      "order": 12,
+      "text": "Shadow was sleeping.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-013-f2e6325986.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-013-f2e6325986.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-1c3c5a5010",
+      "order": 13,
+      "text": "Leo took a photo.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-014-1c3c5a5010.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-014-1c3c5a5010.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-3db72ceec1",
+      "order": 14,
+      "text": "Online, Leo wrote, “Shadow is looking for treasure!”",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-015-3db72ceec1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-015-3db72ceec1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-9f9298087e",
+      "order": 15,
+      "text": "The photo was very popular.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-016-9f9298087e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-016-9f9298087e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-1ebe49e2e3",
+      "order": 16,
+      "text": "Everyone thinks Shadow is brave and exciting.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-017-1ebe49e2e3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-017-1ebe49e2e3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-709cdd1216",
+      "order": 17,
+      "text": "Leo’s friend, Maria, saw the photos.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-018-709cdd1216.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-018-709cdd1216.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-63d2f83718",
+      "order": 18,
+      "text": "She called Leo.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-019-63d2f83718.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-019-63d2f83718.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-dbe8180597",
+      "order": 19,
+      "text": "“Your cat is amazing!” she said.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-020-dbe8180597.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-020-dbe8180597.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-89406defdd",
+      "order": 20,
+      "text": "“He is more exciting than my dog.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-021-89406defdd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-021-89406defdd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-3ac9d8e36b",
+      "order": 21,
+      "text": "Can I please meet him tomorrow?",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-022-3ac9d8e36b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-022-3ac9d8e36b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-bbcbd7943a",
+      "order": 22,
+      "text": "I want to see the famous adventure cat!”",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-023-bbcbd7943a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-023-bbcbd7943a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-67c0dd4059",
+      "order": 23,
+      "text": "Leo felt his face get hot.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-024-67c0dd4059.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-024-67c0dd4059.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-2e1ea30968",
+      "order": 24,
+      "text": "He was very worried.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-025-2e1ea30968.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-025-2e1ea30968.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-1fc00f6cd1",
+      "order": 25,
+      "text": "“Uh, yes.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-026-1fc00f6cd1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-026-1fc00f6cd1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-757164fd7e",
+      "order": 26,
+      "text": "You can come tomorrow,” he said slowly.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-027-757164fd7e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-027-757164fd7e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-9d6119183d",
+      "order": 27,
+      "text": "He was not happy.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-028-9d6119183d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-028-9d6119183d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-b946c34bca",
+      "order": 28,
+      "text": "He looked at Shadow.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-029-b946c34bca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-029-b946c34bca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-55057ca759",
+      "order": 29,
+      "text": "The cat was sleeping on a pile of clean clothes.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-030-55057ca759.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-030-55057ca759.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-769a5006e9",
+      "order": 30,
+      "text": "He was not looking for treasure.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-031-769a5006e9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-031-769a5006e9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-50951d3020",
+      "order": 31,
+      "text": "He was just a normal, sleepy cat.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-032-50951d3020.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-032-50951d3020.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-9bf0ebb55a",
+      "order": 32,
+      "text": "\"I must do something,\" Leo thought.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-033-9bf0ebb55a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-033-9bf0ebb55a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-af55bc84ad",
+      "order": 33,
+      "text": "Today, Leo tried to play with Shadow.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-034-af55bc84ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-034-af55bc84ad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-cb1d0508b0",
+      "order": 34,
+      "text": "He used a red toy mouse.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-035-cb1d0508b0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-035-cb1d0508b0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-aaa6f36cae",
+      "order": 35,
+      "text": "Shadow looked at the mouse for one second.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-036-aaa6f36cae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-036-aaa6f36cae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-cbe2aff5e0",
+      "order": 36,
+      "text": "Then he closed his eyes again.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-037-cbe2aff5e0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-037-cbe2aff5e0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-bec31d6640",
+      "order": 37,
+      "text": "Leo sighed.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-038-bec31d6640.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-038-bec31d6640.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-84838fa723",
+      "order": 38,
+      "text": "Soon, the doorbell rang.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-039-84838fa723.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-039-84838fa723.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-adfab4c0d6",
+      "order": 39,
+      "text": "It was Maria.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-040-adfab4c0d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-040-adfab4c0d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-0d519109aa",
+      "order": 40,
+      "text": "Leo opened the door.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-041-0d519109aa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-041-0d519109aa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-3e1e6ac241",
+      "order": 41,
+      "text": "He felt nervous.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-042-3e1e6ac241.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-042-3e1e6ac241.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-944e0fbad6",
+      "order": 42,
+      "text": "Maria walked in and looked around.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-043-944e0fbad6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-043-944e0fbad6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-044-d2d3349ad6",
+      "order": 43,
+      "text": "“Where is the hero?” she asked with a big smile.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-044-d2d3349ad6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-044-d2d3349ad6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-045-d6f2a6eca6",
+      "order": 44,
+      "text": "Leo pointed to the sofa.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-045-d6f2a6eca6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-045-d6f2a6eca6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-046-0e6342610d",
+      "order": 45,
+      "text": "Shadow was there, in a small, furry ball.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-046-0e6342610d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-046-0e6342610d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-047-0631948908",
+      "order": 46,
+      "text": "He was sleeping, of course.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-047-0631948908.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-047-0631948908.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-048-7651ddf5a3",
+      "order": 47,
+      "text": "Maria’s smile got bigger.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-048-7651ddf5a3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-048-7651ddf5a3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-049-4a7be28b4d",
+      "order": 48,
+      "text": "She went to the sofa quietly.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-049-4a7be28b4d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-049-4a7be28b4d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-050-cb34aa1385",
+      "order": 49,
+      "text": "“Oh, Leo!",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-050-cb34aa1385.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-050-cb34aa1385.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-051-54dbc787b3",
+      "order": 50,
+      "text": "He is so sweet,” she whispered.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-051-54dbc787b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-051-54dbc787b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-052-baab92201d",
+      "order": 51,
+      "text": "She did not look sad.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-052-baab92201d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-052-baab92201d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-053-22dd432657",
+      "order": 52,
+      "text": "She looked very happy.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-053-22dd432657.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-053-22dd432657.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-054-3490e84692",
+      "order": 53,
+      "text": "She gently petted Shadow’s back.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-054-3490e84692.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-054-3490e84692.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-055-75d9fefde2",
+      "order": 54,
+      "text": "Shadow made a small, happy noise in his sleep.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-055-75d9fefde2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-055-75d9fefde2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-056-46a888d6bb",
+      "order": 55,
+      "text": "“I thought you wanted an adventure cat,” Leo said.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-056-46a888d6bb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-056-46a888d6bb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-057-007a6ae722",
+      "order": 56,
+      "text": "“An adventure cat is fun online,” Maria said.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-057-007a6ae722.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-057-007a6ae722.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-058-06dfddbc26",
+      "order": 57,
+      "text": "“But a sleepy, happy cat is better in real life.”",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-058-06dfddbc26.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-058-06dfddbc26.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-059-63943eaf1a",
+      "order": 58,
+      "text": "Leo felt good.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-059-63943eaf1a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-059-63943eaf1a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-060-dff153e2d0",
+      "order": 59,
+      "text": "He sat down next to Maria.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-060-dff153e2d0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-060-dff153e2d0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-061-e1b08768ee",
+      "order": 60,
+      "text": "They watched the lazy cat sleep.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-061-e1b08768ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-061-e1b08768ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-062-bf697988fd",
+      "order": 61,
+      "text": "Leo was happy with his real cat.",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-062-bf697988fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/sentences/sentence-062-bf697988fd.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-e8a52af014",
+      "order": 0,
+      "text": "adventure cat",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-001-e8a52af014.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-001-e8a52af014.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-566008cbab",
+      "order": 1,
+      "text": "popular",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-002-566008cbab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-002-566008cbab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-77980e5c59",
+      "order": 2,
+      "text": "amazing",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-003-77980e5c59.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-003-77980e5c59.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-86a1f1cdfa",
+      "order": 3,
+      "text": "famous",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-004-86a1f1cdfa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-004-86a1f1cdfa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-92592fe5be",
+      "order": 4,
+      "text": "worried",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-005-92592fe5be.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-005-92592fe5be.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-a02f1b7e16",
+      "order": 5,
+      "text": "normal",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-006-a02f1b7e16.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-006-a02f1b7e16.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-af3a2c8226",
+      "order": 6,
+      "text": "doorbell",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-007-af3a2c8226.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-007-af3a2c8226.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-418eb9f3b0",
+      "order": 7,
+      "text": "nervous",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-008-418eb9f3b0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-008-418eb9f3b0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-2a5e4fae09",
+      "order": 8,
+      "text": "hero",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-009-2a5e4fae09.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-009-2a5e4fae09.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-b8da53145b",
+      "order": 9,
+      "text": "gently",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-010-b8da53145b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-010-b8da53145b.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-9be8cda511",
+      "order": 10,
+      "text": "leo",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-011-9be8cda511.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-011-9be8cda511.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-bc1f05f2e1",
+      "order": 11,
+      "text": "is",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-012-bc1f05f2e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-012-bc1f05f2e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-fe2767449c",
+      "order": 12,
+      "text": "a",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-013-fe2767449c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-013-fe2767449c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-102c8ba070",
+      "order": 13,
+      "text": "teenager",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-014-102c8ba070.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-014-102c8ba070.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-fd7b6adf0f",
+      "order": 14,
+      "text": "he",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-015-fd7b6adf0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-015-fd7b6adf0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-2a6a1b0612",
+      "order": 15,
+      "text": "has",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-016-2a6a1b0612.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-016-2a6a1b0612.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-d7e5c7ebfc",
+      "order": 16,
+      "text": "black",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-017-d7e5c7ebfc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-017-d7e5c7ebfc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-931d65777b",
+      "order": 17,
+      "text": "cat",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-018-931d65777b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-018-931d65777b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-fa995bbde8",
+      "order": 18,
+      "text": "named",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-019-fa995bbde8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-019-fa995bbde8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-c73a7a125b",
+      "order": 19,
+      "text": "shadow",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-020-c73a7a125b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-020-c73a7a125b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-1023754163",
+      "order": 20,
+      "text": "in",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-021-1023754163.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-021-1023754163.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-b7514033b1",
+      "order": 21,
+      "text": "leo's",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-022-b7514033b1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-022-b7514033b1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-a6bd79ab4a",
+      "order": 22,
+      "text": "house",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-023-a6bd79ab4a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-023-a6bd79ab4a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-50648eeff8",
+      "order": 23,
+      "text": "very",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-024-50648eeff8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-024-50648eeff8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-2cf2933e8e",
+      "order": 24,
+      "text": "simple",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-025-2cf2933e8e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-025-2cf2933e8e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-dc4405d9e7",
+      "order": 25,
+      "text": "quiet",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-026-dc4405d9e7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-026-dc4405d9e7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-d8e34cec9b",
+      "order": 26,
+      "text": "and",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-027-d8e34cec9b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-027-d8e34cec9b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-4b7806adaf",
+      "order": 27,
+      "text": "lazy",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-028-4b7806adaf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-028-4b7806adaf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-6515aca8c8",
+      "order": 28,
+      "text": "eats",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-029-6515aca8c8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-029-6515aca8c8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-092560b622",
+      "order": 29,
+      "text": "his",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-030-092560b622.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-030-092560b622.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-e9ea41f6e6",
+      "order": 30,
+      "text": "food",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-031-e9ea41f6e6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-031-e9ea41f6e6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-6e2669ae18",
+      "order": 31,
+      "text": "then",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-032-6e2669ae18.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-032-6e2669ae18.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-86f77cd572",
+      "order": 32,
+      "text": "sleeps",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-033-86f77cd572.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-033-86f77cd572.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-cfd506ad15",
+      "order": 33,
+      "text": "can",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-034-cfd506ad15.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-034-cfd506ad15.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-f3ee74eae4",
+      "order": 34,
+      "text": "sleep",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-035-f3ee74eae4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-035-f3ee74eae4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-063e433868",
+      "order": 35,
+      "text": "for",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-036-063e433868.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-036-063e433868.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-c17b0564fd",
+      "order": 36,
+      "text": "many",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-037-c17b0564fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-037-c17b0564fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-6d1f30ae0f",
+      "order": 37,
+      "text": "hours",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-038-6d1f30ae0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-038-6d1f30ae0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-76228e020d",
+      "order": 38,
+      "text": "on",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-039-76228e020d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-039-76228e020d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-b8a4236a7b",
+      "order": 39,
+      "text": "the",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-040-b8a4236a7b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-040-b8a4236a7b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-1b1ebde213",
+      "order": 40,
+      "text": "sofa",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-041-1b1ebde213.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-041-1b1ebde213.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-472945ee03",
+      "order": 41,
+      "text": "does",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-042-472945ee03.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-042-472945ee03.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-0c88495c4c",
+      "order": 42,
+      "text": "not",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-043-0c88495c4c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-043-0c88495c4c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-ef02b6253e",
+      "order": 43,
+      "text": "like",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-044-ef02b6253e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-044-ef02b6253e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-31eb08d330",
+      "order": 44,
+      "text": "to",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-045-31eb08d330.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-045-31eb08d330.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-a083d8ad8f",
+      "order": 45,
+      "text": "play",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-046-a083d8ad8f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-046-a083d8ad8f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-20b017af2c",
+      "order": 46,
+      "text": "much",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-047-20b017af2c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-047-20b017af2c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-869bfbe3cb",
+      "order": 47,
+      "text": "but",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-048-869bfbe3cb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-048-869bfbe3cb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-8077757235",
+      "order": 48,
+      "text": "special",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-049-8077757235.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-049-8077757235.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-8f1b2276ef",
+      "order": 49,
+      "text": "account",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-050-8f1b2276ef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-050-8f1b2276ef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-6294c74bec",
+      "order": 50,
+      "text": "online",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-051-6294c74bec.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-051-6294c74bec.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-c19834347e",
+      "order": 51,
+      "text": "it",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-052-c19834347e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-052-c19834347e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-baa0371b68",
+      "order": 52,
+      "text": "this",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-053-baa0371b68.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-053-baa0371b68.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-4fad249003",
+      "order": 53,
+      "text": "an",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-054-4fad249003.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-054-4fad249003.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-7ffd11ebfd",
+      "order": 54,
+      "text": "adventure",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-055-7ffd11ebfd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-055-7ffd11ebfd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-bf5ed36e03",
+      "order": 55,
+      "text": "yesterday",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-056-bf5ed36e03.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-056-bf5ed36e03.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-40e98834e0",
+      "order": 56,
+      "text": "put",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-057-40e98834e0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-057-40e98834e0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-a17d15cc4b",
+      "order": 57,
+      "text": "small",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-058-a17d15cc4b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-058-a17d15cc4b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-3a5ef1fd84",
+      "order": 58,
+      "text": "hat",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-059-3a5ef1fd84.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-059-3a5ef1fd84.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-dbf8b72630",
+      "order": 59,
+      "text": "was",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-060-dbf8b72630.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-060-dbf8b72630.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-7678a1d945",
+      "order": 60,
+      "text": "sleeping",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-061-7678a1d945.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-061-7678a1d945.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-f08490d6e1",
+      "order": 61,
+      "text": "took",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-062-f08490d6e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-062-f08490d6e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-51f184acdc",
+      "order": 62,
+      "text": "photo",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-063-51f184acdc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-063-51f184acdc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-1cc6bdc94a",
+      "order": 63,
+      "text": "wrote",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-064-1cc6bdc94a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-064-1cc6bdc94a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-a1ac27bfdf",
+      "order": 64,
+      "text": "looking",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-065-a1ac27bfdf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-065-a1ac27bfdf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-9877342d98",
+      "order": 65,
+      "text": "treasure",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-066-9877342d98.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-066-9877342d98.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-9c31406a82",
+      "order": 66,
+      "text": "everyone",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-067-9c31406a82.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-067-9c31406a82.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-41d16a5cb8",
+      "order": 67,
+      "text": "thinks",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-068-41d16a5cb8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-068-41d16a5cb8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-03ae10e1c9",
+      "order": 68,
+      "text": "brave",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-069-03ae10e1c9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-069-03ae10e1c9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-fd381e9078",
+      "order": 69,
+      "text": "exciting",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-070-fd381e9078.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-070-fd381e9078.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-0751cd2f51",
+      "order": 70,
+      "text": "friend",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-071-0751cd2f51.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-071-0751cd2f51.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-fb44a3eee6",
+      "order": 71,
+      "text": "maria",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-072-fb44a3eee6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-072-fb44a3eee6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-489ea3dfb3",
+      "order": 72,
+      "text": "saw",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-073-489ea3dfb3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-073-489ea3dfb3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-59b52c0e3f",
+      "order": 73,
+      "text": "photos",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-074-59b52c0e3f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-074-59b52c0e3f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-94b92f0e21",
+      "order": 74,
+      "text": "she",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-075-94b92f0e21.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-075-94b92f0e21.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-f1f7d35397",
+      "order": 75,
+      "text": "called",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-076-f1f7d35397.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-076-f1f7d35397.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-a2dbd98449",
+      "order": 76,
+      "text": "your",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-077-a2dbd98449.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-077-a2dbd98449.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-38773460a7",
+      "order": 77,
+      "text": "said",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-078-38773460a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-078-38773460a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-64aa207d5b",
+      "order": 78,
+      "text": "more",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-079-64aa207d5b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-079-64aa207d5b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-aee7832061",
+      "order": 79,
+      "text": "than",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-080-aee7832061.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-080-aee7832061.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-df2e7eaaf1",
+      "order": 80,
+      "text": "my",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-081-df2e7eaaf1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-081-df2e7eaaf1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-f14d5ec6c3",
+      "order": 81,
+      "text": "dog",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-082-f14d5ec6c3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-082-f14d5ec6c3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-a4558631c1",
+      "order": 82,
+      "text": "i",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-083-a4558631c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-083-a4558631c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-97fe23498b",
+      "order": 83,
+      "text": "please",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-084-97fe23498b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-084-97fe23498b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-afc86e9528",
+      "order": 84,
+      "text": "meet",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-085-afc86e9528.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-085-afc86e9528.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-086-545838ebd2",
+      "order": 85,
+      "text": "him",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-086-545838ebd2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-086-545838ebd2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-087-aa0c0845b0",
+      "order": 86,
+      "text": "tomorrow",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-087-aa0c0845b0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-087-aa0c0845b0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-088-53497c7c6c",
+      "order": 87,
+      "text": "want",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-088-53497c7c6c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-088-53497c7c6c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-089-aac65594af",
+      "order": 88,
+      "text": "see",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-089-aac65594af.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-089-aac65594af.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-090-6d711807b3",
+      "order": 89,
+      "text": "felt",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-090-6d711807b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-090-6d711807b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-091-666f6eaa34",
+      "order": 90,
+      "text": "face",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-091-666f6eaa34.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-091-666f6eaa34.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-092-3d6a74454b",
+      "order": 91,
+      "text": "get",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-092-3d6a74454b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-092-3d6a74454b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-093-0ad7305ca8",
+      "order": 92,
+      "text": "hot",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-093-0ad7305ca8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-093-0ad7305ca8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-094-973b5ceeb2",
+      "order": 93,
+      "text": "uh",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-094-973b5ceeb2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-094-973b5ceeb2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-095-142c66754d",
+      "order": 94,
+      "text": "yes",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-095-142c66754d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-095-142c66754d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-096-5ef333860e",
+      "order": 95,
+      "text": "you",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-096-5ef333860e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-096-5ef333860e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-097-37417eb35b",
+      "order": 96,
+      "text": "come",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-097-37417eb35b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-097-37417eb35b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-098-df1ed2668c",
+      "order": 97,
+      "text": "slowly",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-098-df1ed2668c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-098-df1ed2668c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-099-56e341bed5",
+      "order": 98,
+      "text": "happy",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-099-56e341bed5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-099-56e341bed5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-100-89a6dfe75e",
+      "order": 99,
+      "text": "looked",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-100-89a6dfe75e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-100-89a6dfe75e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-101-ddeb9fa43a",
+      "order": 100,
+      "text": "at",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-101-ddeb9fa43a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-101-ddeb9fa43a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-102-4907720e18",
+      "order": 101,
+      "text": "pile",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-102-4907720e18.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-102-4907720e18.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-103-fe36afbf39",
+      "order": 102,
+      "text": "of",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-103-fe36afbf39.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-103-fe36afbf39.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-104-6580274f96",
+      "order": 103,
+      "text": "clean",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-104-6580274f96.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-104-6580274f96.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-105-bd5942c319",
+      "order": 104,
+      "text": "clothes",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-105-bd5942c319.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-105-bd5942c319.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-106-90beb10fde",
+      "order": 105,
+      "text": "just",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-106-90beb10fde.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-106-90beb10fde.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-107-248edd089a",
+      "order": 106,
+      "text": "sleepy",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-107-248edd089a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-107-248edd089a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-108-7b421fcff6",
+      "order": 107,
+      "text": "must",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-108-7b421fcff6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-108-7b421fcff6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-109-eaebecf298",
+      "order": 108,
+      "text": "do",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-109-eaebecf298.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-109-eaebecf298.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-110-b8082bfd00",
+      "order": 109,
+      "text": "something",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-110-b8082bfd00.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-110-b8082bfd00.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-111-b210896e9c",
+      "order": 110,
+      "text": "thought",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-111-b210896e9c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-111-b210896e9c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-112-e0172f8c09",
+      "order": 111,
+      "text": "today",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-112-e0172f8c09.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-112-e0172f8c09.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-113-8a35098673",
+      "order": 112,
+      "text": "tried",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-113-8a35098673.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-113-8a35098673.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-114-9d19cc5111",
+      "order": 113,
+      "text": "with",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-114-9d19cc5111.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-114-9d19cc5111.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-115-6c84fb53d8",
+      "order": 114,
+      "text": "used",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-115-6c84fb53d8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-115-6c84fb53d8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-116-554e039749",
+      "order": 115,
+      "text": "red",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-116-554e039749.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-116-554e039749.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-117-fac1940dcf",
+      "order": 116,
+      "text": "toy",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-117-fac1940dcf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-117-fac1940dcf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-118-1203851b01",
+      "order": 117,
+      "text": "mouse",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-118-1203851b01.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-118-1203851b01.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-119-de5bcec32c",
+      "order": 118,
+      "text": "one",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-119-de5bcec32c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-119-de5bcec32c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-120-c771d04100",
+      "order": 119,
+      "text": "second",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-120-c771d04100.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-120-c771d04100.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-121-9c83442048",
+      "order": 120,
+      "text": "closed",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-121-9c83442048.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-121-9c83442048.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-122-aa53306b96",
+      "order": 121,
+      "text": "eyes",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-122-aa53306b96.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-122-aa53306b96.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-123-4662676e9b",
+      "order": 122,
+      "text": "again",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-123-4662676e9b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-123-4662676e9b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-124-9decbb198a",
+      "order": 123,
+      "text": "sighed",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-124-9decbb198a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-124-9decbb198a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-125-9340ce7e4a",
+      "order": 124,
+      "text": "soon",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-125-9340ce7e4a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-125-9340ce7e4a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-126-9dd6e9b12f",
+      "order": 125,
+      "text": "rang",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-126-9dd6e9b12f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-126-9dd6e9b12f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-127-868e6bc113",
+      "order": 126,
+      "text": "opened",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-127-868e6bc113.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-127-868e6bc113.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-128-921001f302",
+      "order": 127,
+      "text": "door",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-128-921001f302.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-128-921001f302.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-129-cfc034c77d",
+      "order": 128,
+      "text": "walked",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-129-cfc034c77d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-129-cfc034c77d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-130-6ef53d59d3",
+      "order": 129,
+      "text": "around",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-130-6ef53d59d3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-130-6ef53d59d3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-131-269e0029d3",
+      "order": 130,
+      "text": "where",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-131-269e0029d3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-131-269e0029d3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-132-a87b4cfa77",
+      "order": 131,
+      "text": "asked",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-132-a87b4cfa77.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-132-a87b4cfa77.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-133-0e8e6a261f",
+      "order": 132,
+      "text": "big",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-133-0e8e6a261f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-133-0e8e6a261f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-134-51bd0eca79",
+      "order": 133,
+      "text": "smile",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-134-51bd0eca79.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-134-51bd0eca79.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-135-ada746196a",
+      "order": 134,
+      "text": "pointed",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-135-ada746196a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-135-ada746196a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-136-fb4bfe9836",
+      "order": 135,
+      "text": "there",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-136-fb4bfe9836.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-136-fb4bfe9836.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-137-a77d16cddc",
+      "order": 136,
+      "text": "furry",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-137-a77d16cddc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-137-a77d16cddc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-138-3ee11f8fe5",
+      "order": 137,
+      "text": "ball",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-138-3ee11f8fe5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-138-3ee11f8fe5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-139-2977bd17f8",
+      "order": 138,
+      "text": "course",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-139-2977bd17f8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-139-2977bd17f8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-140-5d9f6bfd04",
+      "order": 139,
+      "text": "maria's",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-140-5d9f6bfd04.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-140-5d9f6bfd04.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-141-bce0719871",
+      "order": 140,
+      "text": "got",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-141-bce0719871.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-141-bce0719871.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-142-bfeaba2ab9",
+      "order": 141,
+      "text": "bigger",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-142-bfeaba2ab9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-142-bfeaba2ab9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-143-258480ca22",
+      "order": 142,
+      "text": "went",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-143-258480ca22.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-143-258480ca22.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-144-c69a0845a3",
+      "order": 143,
+      "text": "quietly",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-144-c69a0845a3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-144-c69a0845a3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-145-c9b283d0ce",
+      "order": 144,
+      "text": "oh",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-145-c9b283d0ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-145-c9b283d0ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-146-21d548eb40",
+      "order": 145,
+      "text": "so",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-146-21d548eb40.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-146-21d548eb40.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-147-93c1521bc7",
+      "order": 146,
+      "text": "sweet",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-147-93c1521bc7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-147-93c1521bc7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-148-d62c9ab176",
+      "order": 147,
+      "text": "whispered",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-148-d62c9ab176.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-148-d62c9ab176.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-149-5bb6bbdb8c",
+      "order": 148,
+      "text": "did",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-149-5bb6bbdb8c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-149-5bb6bbdb8c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-150-68f93413a0",
+      "order": 149,
+      "text": "look",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-150-68f93413a0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-150-68f93413a0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-151-9096e87fea",
+      "order": 150,
+      "text": "sad",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-151-9096e87fea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-151-9096e87fea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-152-1ae04c0d21",
+      "order": 151,
+      "text": "petted",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-152-1ae04c0d21.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-152-1ae04c0d21.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-153-abce8845bc",
+      "order": 152,
+      "text": "shadow's",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-153-abce8845bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-153-abce8845bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-154-c11426111e",
+      "order": 153,
+      "text": "back",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-154-c11426111e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-154-c11426111e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-155-5ced2d42f2",
+      "order": 154,
+      "text": "made",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-155-5ced2d42f2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-155-5ced2d42f2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-156-cdf436fbe6",
+      "order": 155,
+      "text": "noise",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-156-cdf436fbe6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-156-cdf436fbe6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-157-d4f73e3b60",
+      "order": 156,
+      "text": "wanted",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-157-d4f73e3b60.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-157-d4f73e3b60.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-158-3bb3f65345",
+      "order": 157,
+      "text": "fun",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-158-3bb3f65345.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-158-3bb3f65345.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-159-fe6416b42e",
+      "order": 158,
+      "text": "better",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-159-fe6416b42e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-159-fe6416b42e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-160-8fd0017be1",
+      "order": 159,
+      "text": "real",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-160-8fd0017be1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-160-8fd0017be1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-161-1512ee5978",
+      "order": 160,
+      "text": "life",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-161-1512ee5978.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-161-1512ee5978.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-162-6281692a0a",
+      "order": 161,
+      "text": "good",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-162-6281692a0a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-162-6281692a0a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-163-88a1e15c11",
+      "order": 162,
+      "text": "sat",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-163-88a1e15c11.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-163-88a1e15c11.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-164-bfa4f39ddb",
+      "order": 163,
+      "text": "down",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-164-bfa4f39ddb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-164-bfa4f39ddb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-165-318718b272",
+      "order": 164,
+      "text": "next",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-165-318718b272.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-165-318718b272.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-166-8daac5469f",
+      "order": 165,
+      "text": "they",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-166-8daac5469f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-166-8daac5469f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-167-2f7940ccd0",
+      "order": 166,
+      "text": "watched",
+      "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/words/word-167-2f7940ccd0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/words/word-167-2f7940ccd0.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-83ba149ab7",
+      "type": "mcq",
+      "order": 0,
+      "text": "What color is Leo's cat?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-001-83ba149ab7.mp3",
+      "questionObjectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-001-83ba149ab7.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-001-83ba149ab7-option1-bd07b406.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-001-83ba149ab7-option2-517d4519.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-001-83ba149ab7-option3-9983f553.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-001-83ba149ab7-option4-c41cbd9e.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-83ba149ab7-option1-bd07b406",
+          "text": "Black",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-001-83ba149ab7-option1-bd07b406.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-83ba149ab7-option2-517d4519",
+          "text": "White",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-001-83ba149ab7-option2-517d4519.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-83ba149ab7-option3-9983f553",
+          "text": "Gray",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-001-83ba149ab7-option3-9983f553.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-83ba149ab7-option4-c41cbd9e",
+          "text": "Orange",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-001-83ba149ab7-option4-c41cbd9e.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-817fbea77c",
+      "type": "mcq",
+      "order": 1,
+      "text": "What is the cat's name?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-002-817fbea77c.mp3",
+      "questionObjectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-002-817fbea77c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-002-817fbea77c-option1-cc2bd86b.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-002-817fbea77c-option2-bf0465af.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-002-817fbea77c-option3-e8a0fa87.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-002-817fbea77c-option4-6feb2c54.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-817fbea77c-option1-cc2bd86b",
+          "text": "Shadow",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-002-817fbea77c-option1-cc2bd86b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-817fbea77c-option2-bf0465af",
+          "text": "Mouse",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-002-817fbea77c-option2-bf0465af.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-817fbea77c-option3-e8a0fa87",
+          "text": "Leo",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-002-817fbea77c-option3-e8a0fa87.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-817fbea77c-option4-6feb2c54",
+          "text": "Maria",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-002-817fbea77c-option4-6feb2c54.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-f7608e006b",
+      "type": "mcq",
+      "order": 2,
+      "text": "What does Shadow like to do?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-003-f7608e006b.mp3",
+      "questionObjectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-003-f7608e006b.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-003-f7608e006b-option1-78fcfb21.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-003-f7608e006b-option2-100919ae.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-003-f7608e006b-option3-63f22bc7.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-003-f7608e006b-option4-f379a713.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-f7608e006b-option1-78fcfb21",
+          "text": "Jump",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-003-f7608e006b-option1-78fcfb21.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-f7608e006b-option2-100919ae",
+          "text": "Run",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-003-f7608e006b-option2-100919ae.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-f7608e006b-option3-63f22bc7",
+          "text": "Play",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-003-f7608e006b-option3-63f22bc7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-f7608e006b-option4-f379a713",
+          "text": "Sleep",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-003-f7608e006b-option4-f379a713.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-7accd47e48",
+      "type": "mcq",
+      "order": 3,
+      "text": "What does Leo put on Shadow's head?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-004-7accd47e48.mp3",
+      "questionObjectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-004-7accd47e48.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-004-7accd47e48-option1-2130c0ad.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-004-7accd47e48-option2-cb03d28f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-004-7accd47e48-option3-b2fa735f.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-004-7accd47e48-option4-1572705a.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-7accd47e48-option1-2130c0ad",
+          "text": "Water",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-004-7accd47e48-option1-2130c0ad.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-7accd47e48-option2-cb03d28f",
+          "text": "Food",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-004-7accd47e48-option2-cb03d28f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-7accd47e48-option3-b2fa735f",
+          "text": "A toy",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-004-7accd47e48-option3-b2fa735f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-7accd47e48-option4-1572705a",
+          "text": "A hat",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-004-7accd47e48-option4-1572705a.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-484e1dc349",
+      "type": "mcq",
+      "order": 4,
+      "text": "What does Leo say Shadow is looking for online?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-005-484e1dc349.mp3",
+      "questionObjectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-005-484e1dc349.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-005-484e1dc349-option1-ddf5fbe5.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-005-484e1dc349-option2-32f60897.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-005-484e1dc349-option3-8ba71925.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-005-484e1dc349-option4-b8c55ff2.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-484e1dc349-option1-ddf5fbe5",
+          "text": "Food",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-005-484e1dc349-option1-ddf5fbe5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-484e1dc349-option2-32f60897",
+          "text": "Treasure",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-005-484e1dc349-option2-32f60897.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-484e1dc349-option3-8ba71925",
+          "text": "A home",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-005-484e1dc349-option3-8ba71925.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-484e1dc349-option4-b8c55ff2",
+          "text": "Friends",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-005-484e1dc349-option4-b8c55ff2.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-bbedb65b63",
+      "type": "mcq",
+      "order": 5,
+      "text": "Who wants to meet Shadow?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-006-bbedb65b63.mp3",
+      "questionObjectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-006-bbedb65b63.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-006-bbedb65b63-option1-a121e35a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-006-bbedb65b63-option2-29c9a488.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-006-bbedb65b63-option3-df369be1.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-006-bbedb65b63-option4-419d1615.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-bbedb65b63-option1-a121e35a",
+          "text": "The reader",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-006-bbedb65b63-option1-a121e35a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-bbedb65b63-option2-29c9a488",
+          "text": "Leo",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-006-bbedb65b63-option2-29c9a488.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-bbedb65b63-option3-df369be1",
+          "text": "Nobody",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-006-bbedb65b63-option3-df369be1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-bbedb65b63-option4-419d1615",
+          "text": "Maria",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-006-bbedb65b63-option4-419d1615.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-048d461e8d",
+      "type": "mcq",
+      "order": 6,
+      "text": "How does Leo feel when Maria wants to meet Shadow?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-007-048d461e8d.mp3",
+      "questionObjectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-007-048d461e8d.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-007-048d461e8d-option1-c670000f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-007-048d461e8d-option2-d03cbe9b.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-007-048d461e8d-option3-c49abe01.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-007-048d461e8d-option4-774d07a0.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-048d461e8d-option1-c670000f",
+          "text": "Angry",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-007-048d461e8d-option1-c670000f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-048d461e8d-option2-d03cbe9b",
+          "text": "Happy",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-007-048d461e8d-option2-d03cbe9b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-048d461e8d-option3-c49abe01",
+          "text": "Excited",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-007-048d461e8d-option3-c49abe01.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-048d461e8d-option4-774d07a0",
+          "text": "Worried",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-007-048d461e8d-option4-774d07a0.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-0f8e9a3495",
+      "type": "mcq",
+      "order": 7,
+      "text": "What toy does Leo use to try to play with Shadow?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-008-0f8e9a3495.mp3",
+      "questionObjectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-008-0f8e9a3495.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-008-0f8e9a3495-option1-7976ef75.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-008-0f8e9a3495-option2-064f58b3.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-008-0f8e9a3495-option3-d5c56e89.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-008-0f8e9a3495-option4-17d54ace.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-0f8e9a3495-option1-7976ef75",
+          "text": "A blue ball",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-008-0f8e9a3495-option1-7976ef75.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-0f8e9a3495-option2-064f58b3",
+          "text": "A red mouse",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-008-0f8e9a3495-option2-064f58b3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-0f8e9a3495-option3-d5c56e89",
+          "text": "A yellow fish",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-008-0f8e9a3495-option3-d5c56e89.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-0f8e9a3495-option4-17d54ace",
+          "text": "A green bird",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-008-0f8e9a3495-option4-17d54ace.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-e2e4328919",
+      "type": "mcq",
+      "order": 8,
+      "text": "Where is Shadow when Maria arrives?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-009-e2e4328919.mp3",
+      "questionObjectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-009-e2e4328919.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-009-e2e4328919-option1-bb989acd.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-009-e2e4328919-option2-45e0ecc2.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-009-e2e4328919-option3-ed057a8b.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-009-e2e4328919-option4-af06d5ac.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-e2e4328919-option1-bb989acd",
+          "text": "In the kitchen",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-009-e2e4328919-option1-bb989acd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-e2e4328919-option2-45e0ecc2",
+          "text": "Under the bed",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-009-e2e4328919-option2-45e0ecc2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-e2e4328919-option3-ed057a8b",
+          "text": "At the door",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-009-e2e4328919-option3-ed057a8b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-e2e4328919-option4-af06d5ac",
+          "text": "On the sofa",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-009-e2e4328919-option4-af06d5ac.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-e7e6ad456b",
+      "type": "mcq",
+      "order": 9,
+      "text": "What does Maria think about Shadow in real life?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-010-e7e6ad456b.mp3",
+      "questionObjectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-010-e7e6ad456b.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-010-e7e6ad456b-option1-1f5bfa82.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-010-e7e6ad456b-option2-00c3be69.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-010-e7e6ad456b-option3-9c9e62af.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-010-e7e6ad456b-option4-0fb98ceb.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-e7e6ad456b-option1-1f5bfa82",
+          "text": "He is amazing",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-010-e7e6ad456b-option1-1f5bfa82.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-e7e6ad456b-option2-00c3be69",
+          "text": "He is scary",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-010-e7e6ad456b-option2-00c3be69.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-e7e6ad456b-option3-9c9e62af",
+          "text": "He is sweet",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-010-e7e6ad456b-option3-9c9e62af.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-e7e6ad456b-option4-0fb98ceb",
+          "text": "He is boring",
+          "objectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/mcq-010-e7e6ad456b-option4-0fb98ceb.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-7a9243779d",
+      "type": "saq",
+      "order": 10,
+      "text": "What kind of cat does Leo have?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/saq-011-7a9243779d.mp3",
+      "questionObjectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/saq-011-7a9243779d.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-db167849dc",
+      "type": "saq",
+      "order": 11,
+      "text": "Why does Leo put a hat on Shadow?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/saq-012-db167849dc.mp3",
+      "questionObjectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/saq-012-db167849dc.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-dee1d24760",
+      "type": "saq",
+      "order": 12,
+      "text": "How does Maria describe Leo's cat?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/saq-013-dee1d24760.mp3",
+      "questionObjectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/saq-013-dee1d24760.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-df2d8af79e",
+      "type": "saq",
+      "order": 13,
+      "text": "What does Leo try to do with a red toy mouse?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/saq-014-df2d8af79e.mp3",
+      "questionObjectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/saq-014-df2d8af79e.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-ccabcac6ed",
+      "type": "saq",
+      "order": 14,
+      "text": "Why does Maria like Shadow, even though he is sleeping?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmimt2el00003dcaobo9b9r3f/questions/saq-015-ccabcac6ed.mp3",
+      "questionObjectPath": "articles/cmimt2el00003dcaobo9b9r3f/questions/saq-015-ccabcac6ed.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T16:58:43.971Z"
+}

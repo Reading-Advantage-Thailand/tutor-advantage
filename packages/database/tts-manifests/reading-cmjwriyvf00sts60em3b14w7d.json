@@ -1,0 +1,1959 @@
+{
+  "version": 1,
+  "articleId": "cmjwriyvf00sts60em3b14w7d",
+  "source": "READING_ADVANTAGE",
+  "title": "You Can Learn and Grow",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-1a63e4b4bb",
+      "order": 0,
+      "text": "What is a mindset?",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-001-1a63e4b4bb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-001-1a63e4b4bb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-b0316bf434",
+      "order": 1,
+      "text": "A mindset is how you think about yourself and your skills.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-002-b0316bf434.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-002-b0316bf434.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-01931c4e21",
+      "order": 2,
+      "text": "There are two main types.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-003-01931c4e21.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-003-01931c4e21.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-64d8560ecb",
+      "order": 3,
+      "text": "One is a fixed mindset.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-004-64d8560ecb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-004-64d8560ecb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-c623dd1c2b",
+      "order": 4,
+      "text": "The other is a growth mindset.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-005-c623dd1c2b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-005-c623dd1c2b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-29aeeade04",
+      "order": 5,
+      "text": "It is very useful to understand them.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-006-29aeeade04.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-006-29aeeade04.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-e9a760b5f3",
+      "order": 6,
+      "text": "A person with a fixed mindset thinks their talents cannot change.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-007-e9a760b5f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-007-e9a760b5f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-68087400d0",
+      "order": 7,
+      "text": "They think, 'I am smart' or 'I am not smart.'",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-008-68087400d0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-008-68087400d0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-0f03ade404",
+      "order": 8,
+      "text": "They believe that you are born with your skills.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-009-0f03ade404.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-009-0f03ade404.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-5f5c272c1c",
+      "order": 9,
+      "text": "These people often do not like challenges.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-010-5f5c272c1c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-010-5f5c272c1c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-9e88a68387",
+      "order": 10,
+      "text": "They are afraid to make mistakes.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-011-9e88a68387.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-011-9e88a68387.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-4c1c43a22d",
+      "order": 11,
+      "text": "They think failure is very bad.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-012-4c1c43a22d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-012-4c1c43a22d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-207190971c",
+      "order": 12,
+      "text": "This way of thinking can stop a person from learning new things.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-013-207190971c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-013-207190971c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-4b3b1c74b4",
+      "order": 13,
+      "text": "Now, let's talk about a growth mindset.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-014-4b3b1c74b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-014-4b3b1c74b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-fdb9b9d047",
+      "order": 14,
+      "text": "A person with a growth mindset is different.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-015-fdb9b9d047.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-015-fdb9b9d047.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-637ecfda7e",
+      "order": 15,
+      "text": "They believe they can get smarter with effort.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-016-637ecfda7e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-016-637ecfda7e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-ccda095324",
+      "order": 16,
+      "text": "They think, 'I can learn this if I try hard.'",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-017-ccda095324.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-017-ccda095324.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-47134fc98f",
+      "order": 17,
+      "text": "They know that mistakes are okay.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-018-47134fc98f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-018-47134fc98f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-871a1f3513",
+      "order": 18,
+      "text": "Mistakes help us learn and get better.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-019-871a1f3513.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-019-871a1f3513.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-9551b0d17b",
+      "order": 19,
+      "text": "They like challenges because challenges make their brain stronger.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-020-9551b0d17b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-020-9551b0d17b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-52124b3d0b",
+      "order": 20,
+      "text": "Your brain is like a muscle.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-021-52124b3d0b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-021-52124b3d0b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-f49b3b781b",
+      "order": 21,
+      "text": "When you exercise your body, your muscles grow.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-022-f49b3b781b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-022-f49b3b781b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-c5d194d3eb",
+      "order": 22,
+      "text": "Your brain works in a similar way.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-023-c5d194d3eb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-023-c5d194d3eb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-8ff6f0a888",
+      "order": 23,
+      "text": "When you work on hard problems, your brain grows.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-024-8ff6f0a888.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-024-8ff6f0a888.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-69ae483e7a",
+      "order": 24,
+      "text": "It makes new connections.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-025-69ae483e7a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-025-69ae483e7a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-74d80d2357",
+      "order": 25,
+      "text": "So, you should not say, 'I can't do it.'",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-026-74d80d2357.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-026-74d80d2357.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-d567f8c193",
+      "order": 26,
+      "text": "You should say, 'I can't do it yet.'",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-027-d567f8c193.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-027-d567f8c193.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-5eef1b525d",
+      "order": 27,
+      "text": "The word 'yet' is very important.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-028-5eef1b525d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-028-5eef1b525d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-e0be12292b",
+      "order": 28,
+      "text": "It means you will learn it in the future.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-029-e0be12292b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-029-e0be12292b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-cbcc55780e",
+      "order": 29,
+      "text": "Think about learning a new language.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-030-cbcc55780e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-030-cbcc55780e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-42e4e2d724",
+      "order": 30,
+      "text": "At first, it is difficult.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-031-42e4e2d724.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-031-42e4e2d724.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-a3fb01a02e",
+      "order": 31,
+      "text": "You will make many mistakes.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-032-a3fb01a02e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-032-a3fb01a02e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-d2a5c0600e",
+      "order": 32,
+      "text": "But if you practice, you will improve.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-033-d2a5c0600e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-033-d2a5c0600e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-1dc22b82bc",
+      "order": 33,
+      "text": "You study every day.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-034-1dc22b82bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-034-1dc22b82bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-e3d68fe3a2",
+      "order": 34,
+      "text": "Soon, speaking is easier.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-035-e3d68fe3a2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-035-e3d68fe3a2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-f4d47c4889",
+      "order": 35,
+      "text": "This is a growth mindset at work.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-036-f4d47c4889.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-036-f4d47c4889.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-2690b50f84",
+      "order": 36,
+      "text": "You can use it for sports, school, or art.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-037-2690b50f84.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-037-2690b50f84.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-3cebc5c74d",
+      "order": 37,
+      "text": "You must try, and you must practice.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-038-3cebc5c74d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-038-3cebc5c74d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-d99f5a97b5",
+      "order": 38,
+      "text": "A growth mindset is a powerful tool for success.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-039-d99f5a97b5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-039-d99f5a97b5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-fb6e929375",
+      "order": 39,
+      "text": "It helps you work hard and be brave.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-040-fb6e929375.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-040-fb6e929375.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-e3a065bc9d",
+      "order": 40,
+      "text": "It helps you learn from your problems.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-041-e3a065bc9d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-041-e3a065bc9d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-21a10d4a96",
+      "order": 41,
+      "text": "When you believe you can grow, you can achieve your goals.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-042-21a10d4a96.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-042-21a10d4a96.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-08a9b8eb2f",
+      "order": 42,
+      "text": "Your potential is bigger than you think.",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-043-08a9b8eb2f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/sentences/sentence-043-08a9b8eb2f.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-6f3a2e1132",
+      "order": 0,
+      "text": "mindset",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-001-6f3a2e1132.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-001-6f3a2e1132.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-384d58487c",
+      "order": 1,
+      "text": "fixed mindset",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-002-384d58487c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-002-384d58487c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-f15e1877d5",
+      "order": 2,
+      "text": "growth mindset",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-003-f15e1877d5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-003-f15e1877d5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-248e1e4445",
+      "order": 3,
+      "text": "challenges",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-004-248e1e4445.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-004-248e1e4445.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-430013a9fb",
+      "order": 4,
+      "text": "mistakes",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-005-430013a9fb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-005-430013a9fb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-09f50f5b03",
+      "order": 5,
+      "text": "connections",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-006-09f50f5b03.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-006-09f50f5b03.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-d783ddf0d5",
+      "order": 6,
+      "text": "potential",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-007-d783ddf0d5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-007-d783ddf0d5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-4e6392547a",
+      "order": 7,
+      "text": "cultivate",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-008-4e6392547a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-008-4e6392547a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-878b7dc1ab",
+      "order": 8,
+      "text": "achieve",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-009-878b7dc1ab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-009-878b7dc1ab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-2de2d0d81f",
+      "order": 9,
+      "text": "brave",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-010-2de2d0d81f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-010-2de2d0d81f.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-52bdf38a64",
+      "order": 10,
+      "text": "what",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-011-52bdf38a64.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-011-52bdf38a64.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-bc1f05f2e1",
+      "order": 11,
+      "text": "is",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-012-bc1f05f2e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-012-bc1f05f2e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-fe2767449c",
+      "order": 12,
+      "text": "a",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-013-fe2767449c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-013-fe2767449c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-34c1b2e9ef",
+      "order": 13,
+      "text": "how",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-014-34c1b2e9ef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-014-34c1b2e9ef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-e2965d8714",
+      "order": 14,
+      "text": "you",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-015-e2965d8714.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-015-e2965d8714.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-ec4f19830a",
+      "order": 15,
+      "text": "think",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-016-ec4f19830a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-016-ec4f19830a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-41efa48b0d",
+      "order": 16,
+      "text": "about",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-017-41efa48b0d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-017-41efa48b0d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-b01cc618b3",
+      "order": 17,
+      "text": "yourself",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-018-b01cc618b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-018-b01cc618b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-f89d67463e",
+      "order": 18,
+      "text": "and",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-019-f89d67463e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-019-f89d67463e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-adbe0a554a",
+      "order": 19,
+      "text": "your",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-020-adbe0a554a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-020-adbe0a554a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-cd53bcbde4",
+      "order": 20,
+      "text": "skills",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-021-cd53bcbde4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-021-cd53bcbde4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-949410f204",
+      "order": 21,
+      "text": "there",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-022-949410f204.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-022-949410f204.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-b2c98746d6",
+      "order": 22,
+      "text": "are",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-023-b2c98746d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-023-b2c98746d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-293096a147",
+      "order": 23,
+      "text": "two",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-024-293096a147.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-024-293096a147.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-0649cacc91",
+      "order": 24,
+      "text": "main",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-025-0649cacc91.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-025-0649cacc91.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-3cc350d971",
+      "order": 25,
+      "text": "types",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-026-3cc350d971.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-026-3cc350d971.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-67eb5a44ec",
+      "order": 26,
+      "text": "one",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-027-67eb5a44ec.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-027-67eb5a44ec.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-51067c0789",
+      "order": 27,
+      "text": "fixed",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-028-51067c0789.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-028-51067c0789.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-fec4cfc2bb",
+      "order": 28,
+      "text": "the",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-029-fec4cfc2bb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-029-fec4cfc2bb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-170857735b",
+      "order": 29,
+      "text": "other",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-030-170857735b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-030-170857735b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-51335f5859",
+      "order": 30,
+      "text": "growth",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-031-51335f5859.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-031-51335f5859.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-9da689e753",
+      "order": 31,
+      "text": "it",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-032-9da689e753.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-032-9da689e753.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-25181d7c81",
+      "order": 32,
+      "text": "very",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-033-25181d7c81.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-033-25181d7c81.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-560b0c2861",
+      "order": 33,
+      "text": "useful",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-034-560b0c2861.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-034-560b0c2861.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-ea9c63e348",
+      "order": 34,
+      "text": "to",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-035-ea9c63e348.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-035-ea9c63e348.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-19f8e985c7",
+      "order": 35,
+      "text": "understand",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-036-19f8e985c7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-036-19f8e985c7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-b38ab900e0",
+      "order": 36,
+      "text": "them",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-037-b38ab900e0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-037-b38ab900e0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-20a3a66e80",
+      "order": 37,
+      "text": "person",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-038-20a3a66e80.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-038-20a3a66e80.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-36a8913fe1",
+      "order": 38,
+      "text": "with",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-039-36a8913fe1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-039-36a8913fe1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-f5f8a00732",
+      "order": 39,
+      "text": "thinks",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-040-f5f8a00732.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-040-f5f8a00732.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-7b491cb67f",
+      "order": 40,
+      "text": "their",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-041-7b491cb67f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-041-7b491cb67f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-62d275ae2f",
+      "order": 41,
+      "text": "talents",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-042-62d275ae2f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-042-62d275ae2f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-b950c1ff0b",
+      "order": 42,
+      "text": "cannot",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-043-b950c1ff0b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-043-b950c1ff0b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-faceec58fa",
+      "order": 43,
+      "text": "change",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-044-faceec58fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-044-faceec58fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-965ea3ac17",
+      "order": 44,
+      "text": "they",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-045-965ea3ac17.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-045-965ea3ac17.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-521b648558",
+      "order": 45,
+      "text": "i",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-046-521b648558.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-046-521b648558.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-a0ffbc9fb3",
+      "order": 46,
+      "text": "am",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-047-a0ffbc9fb3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-047-a0ffbc9fb3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-cdc81dd4b9",
+      "order": 47,
+      "text": "smart",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-048-cdc81dd4b9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-048-cdc81dd4b9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-4f035b97c1",
+      "order": 48,
+      "text": "or",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-049-4f035b97c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-049-4f035b97c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-ecae98cd0a",
+      "order": 49,
+      "text": "not",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-050-ecae98cd0a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-050-ecae98cd0a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-b346275e98",
+      "order": 50,
+      "text": "believe",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-051-b346275e98.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-051-b346275e98.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-aa95f5c66c",
+      "order": 51,
+      "text": "that",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-052-aa95f5c66c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-052-aa95f5c66c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-877605a990",
+      "order": 52,
+      "text": "born",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-053-877605a990.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-053-877605a990.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-b984c5f2a2",
+      "order": 53,
+      "text": "these",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-054-b984c5f2a2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-054-b984c5f2a2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-ccbba64754",
+      "order": 54,
+      "text": "people",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-055-ccbba64754.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-055-ccbba64754.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-0ebc44655a",
+      "order": 55,
+      "text": "often",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-056-0ebc44655a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-056-0ebc44655a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-922d5b8145",
+      "order": 56,
+      "text": "do",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-057-922d5b8145.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-057-922d5b8145.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-28e4cbecdc",
+      "order": 57,
+      "text": "like",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-058-28e4cbecdc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-058-28e4cbecdc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-946d6dc210",
+      "order": 58,
+      "text": "afraid",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-059-946d6dc210.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-059-946d6dc210.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-85d1a22eda",
+      "order": 59,
+      "text": "make",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-060-85d1a22eda.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-060-85d1a22eda.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-51be5f3f63",
+      "order": 60,
+      "text": "failure",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-061-51be5f3f63.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-061-51be5f3f63.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-9770b3eda5",
+      "order": 61,
+      "text": "bad",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-062-9770b3eda5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-062-9770b3eda5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-51cc53649d",
+      "order": 62,
+      "text": "this",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-063-51cc53649d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-063-51cc53649d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-e0f048f717",
+      "order": 63,
+      "text": "way",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-064-e0f048f717.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-064-e0f048f717.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-bf4e09d217",
+      "order": 64,
+      "text": "of",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-065-bf4e09d217.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-065-bf4e09d217.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-2a846ffea9",
+      "order": 65,
+      "text": "thinking",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-066-2a846ffea9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-066-2a846ffea9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-b009d458ad",
+      "order": 66,
+      "text": "can",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-067-b009d458ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-067-b009d458ad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-8e300038db",
+      "order": 67,
+      "text": "stop",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-068-8e300038db.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-068-8e300038db.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-7e3a634bd7",
+      "order": 68,
+      "text": "from",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-069-7e3a634bd7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-069-7e3a634bd7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-777e555022",
+      "order": 69,
+      "text": "learning",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-070-777e555022.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-070-777e555022.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-11b7fcd7d3",
+      "order": 70,
+      "text": "new",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-071-11b7fcd7d3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-071-11b7fcd7d3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-344cae0374",
+      "order": 71,
+      "text": "things",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-072-344cae0374.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-072-344cae0374.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-d5f39a4c30",
+      "order": 72,
+      "text": "now",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-073-d5f39a4c30.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-073-d5f39a4c30.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-81c0bacbdd",
+      "order": 73,
+      "text": "let's",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-074-81c0bacbdd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-074-81c0bacbdd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-90bd8fe9d1",
+      "order": 74,
+      "text": "talk",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-075-90bd8fe9d1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-075-90bd8fe9d1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-d100b0e9b8",
+      "order": 75,
+      "text": "different",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-076-d100b0e9b8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-076-d100b0e9b8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-1232bcd7c9",
+      "order": 76,
+      "text": "get",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-077-1232bcd7c9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-077-1232bcd7c9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-163f9fbd26",
+      "order": 77,
+      "text": "smarter",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-078-163f9fbd26.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-078-163f9fbd26.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-fca3de6b1e",
+      "order": 78,
+      "text": "effort",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-079-fca3de6b1e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-079-fca3de6b1e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-7de41e4a56",
+      "order": 79,
+      "text": "learn",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-080-7de41e4a56.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-080-7de41e4a56.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-76fefca659",
+      "order": 80,
+      "text": "if",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-081-76fefca659.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-081-76fefca659.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-3aee449c1c",
+      "order": 81,
+      "text": "try",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-082-3aee449c1c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-082-3aee449c1c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-a417092d49",
+      "order": 82,
+      "text": "hard",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-083-a417092d49.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-083-a417092d49.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-e220fa1c31",
+      "order": 83,
+      "text": "know",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-084-e220fa1c31.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-084-e220fa1c31.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-b96533b891",
+      "order": 84,
+      "text": "okay",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-085-b96533b891.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-085-b96533b891.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-086-ba2107af1a",
+      "order": 85,
+      "text": "help",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-086-ba2107af1a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-086-ba2107af1a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-087-34e375582a",
+      "order": 86,
+      "text": "us",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-087-34e375582a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-087-34e375582a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-088-dc3b7d5886",
+      "order": 87,
+      "text": "better",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-088-dc3b7d5886.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-088-dc3b7d5886.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-089-e60c0b9c7b",
+      "order": 88,
+      "text": "because",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-089-e60c0b9c7b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-089-e60c0b9c7b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-090-50239efd57",
+      "order": 89,
+      "text": "brain",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-090-50239efd57.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-090-50239efd57.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-091-a264e5ad8c",
+      "order": 90,
+      "text": "stronger",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-091-a264e5ad8c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-091-a264e5ad8c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-092-a0d84d9307",
+      "order": 91,
+      "text": "muscle",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-092-a0d84d9307.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-092-a0d84d9307.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-093-62240b99de",
+      "order": 92,
+      "text": "when",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-093-62240b99de.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-093-62240b99de.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-094-ef4d321780",
+      "order": 93,
+      "text": "exercise",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-094-ef4d321780.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-094-ef4d321780.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-095-baee66c14c",
+      "order": 94,
+      "text": "body",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-095-baee66c14c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-095-baee66c14c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-096-7204351619",
+      "order": 95,
+      "text": "muscles",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-096-7204351619.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-096-7204351619.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-097-e86839b1d4",
+      "order": 96,
+      "text": "grow",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-097-e86839b1d4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-097-e86839b1d4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-098-182b57daa1",
+      "order": 97,
+      "text": "works",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-098-182b57daa1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-098-182b57daa1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-099-388afdb4b8",
+      "order": 98,
+      "text": "in",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-099-388afdb4b8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-099-388afdb4b8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-100-2db219eac0",
+      "order": 99,
+      "text": "similar",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-100-2db219eac0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-100-2db219eac0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-101-3b1d61ef76",
+      "order": 100,
+      "text": "work",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-101-3b1d61ef76.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-101-3b1d61ef76.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-102-c5768cd74a",
+      "order": 101,
+      "text": "on",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-102-c5768cd74a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-102-c5768cd74a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-103-0bdd4772f0",
+      "order": 102,
+      "text": "problems",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-103-0bdd4772f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-103-0bdd4772f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-104-6f4d81b781",
+      "order": 103,
+      "text": "grows",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-104-6f4d81b781.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-104-6f4d81b781.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-105-e600356804",
+      "order": 104,
+      "text": "makes",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-105-e600356804.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-105-e600356804.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-106-988ee225c6",
+      "order": 105,
+      "text": "so",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-106-988ee225c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-106-988ee225c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-107-aa27ddf64d",
+      "order": 106,
+      "text": "should",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-107-aa27ddf64d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-107-aa27ddf64d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-108-ac30b94df7",
+      "order": 107,
+      "text": "say",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-108-ac30b94df7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-108-ac30b94df7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-109-0081be6b06",
+      "order": 108,
+      "text": "can't",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-109-0081be6b06.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-109-0081be6b06.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-110-38c4de56f1",
+      "order": 109,
+      "text": "yet",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-110-38c4de56f1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-110-38c4de56f1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-111-97dc2027ae",
+      "order": 110,
+      "text": "word",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-111-97dc2027ae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-111-97dc2027ae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-112-49d0201f3d",
+      "order": 111,
+      "text": "important",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-112-49d0201f3d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-112-49d0201f3d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-113-98a9dd8c2e",
+      "order": 112,
+      "text": "means",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-113-98a9dd8c2e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-113-98a9dd8c2e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-114-d655259b31",
+      "order": 113,
+      "text": "will",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-114-d655259b31.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-114-d655259b31.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-115-ddc7a36444",
+      "order": 114,
+      "text": "future",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-115-ddc7a36444.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-115-ddc7a36444.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-116-044e94c0d1",
+      "order": 115,
+      "text": "language",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-116-044e94c0d1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-116-044e94c0d1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-117-fa48fda716",
+      "order": 116,
+      "text": "at",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-117-fa48fda716.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-117-fa48fda716.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-118-d8ba92284c",
+      "order": 117,
+      "text": "first",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-118-d8ba92284c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-118-d8ba92284c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-119-9abad30e81",
+      "order": 118,
+      "text": "difficult",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-119-9abad30e81.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-119-9abad30e81.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-120-0be1fa5dfc",
+      "order": 119,
+      "text": "many",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-120-0be1fa5dfc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-120-0be1fa5dfc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-121-d1ba47b210",
+      "order": 120,
+      "text": "but",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-121-d1ba47b210.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-121-d1ba47b210.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-122-3c9bbb60de",
+      "order": 121,
+      "text": "practice",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-122-3c9bbb60de.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-122-3c9bbb60de.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-123-1473301bfe",
+      "order": 122,
+      "text": "improve",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-123-1473301bfe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-123-1473301bfe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-124-0d43b57bb2",
+      "order": 123,
+      "text": "study",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-124-0d43b57bb2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-124-0d43b57bb2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-125-2c1ed86020",
+      "order": 124,
+      "text": "every",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-125-2c1ed86020.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-125-2c1ed86020.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-126-c537cccecc",
+      "order": 125,
+      "text": "day",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-126-c537cccecc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-126-c537cccecc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-127-ff5f0a8854",
+      "order": 126,
+      "text": "soon",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-127-ff5f0a8854.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-127-ff5f0a8854.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-128-cca4fcc503",
+      "order": 127,
+      "text": "speaking",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-128-cca4fcc503.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-128-cca4fcc503.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-129-84751d976c",
+      "order": 128,
+      "text": "easier",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-129-84751d976c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-129-84751d976c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-130-e02c33c29f",
+      "order": 129,
+      "text": "use",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-130-e02c33c29f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-130-e02c33c29f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-131-2656264303",
+      "order": 130,
+      "text": "for",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-131-2656264303.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-131-2656264303.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-132-f5a58b9410",
+      "order": 131,
+      "text": "sports",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-132-f5a58b9410.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-132-f5a58b9410.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-133-84f69e4837",
+      "order": 132,
+      "text": "school",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-133-84f69e4837.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-133-84f69e4837.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-134-48ca975297",
+      "order": 133,
+      "text": "art",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-134-48ca975297.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-134-48ca975297.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-135-c86b2de010",
+      "order": 134,
+      "text": "must",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-135-c86b2de010.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-135-c86b2de010.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-136-99191650c5",
+      "order": 135,
+      "text": "powerful",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-136-99191650c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-136-99191650c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-137-7151dc8ac7",
+      "order": 136,
+      "text": "tool",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-137-7151dc8ac7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-137-7151dc8ac7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-138-7e6996d11d",
+      "order": 137,
+      "text": "success",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-138-7e6996d11d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-138-7e6996d11d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-139-9bd9d6d454",
+      "order": 138,
+      "text": "helps",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-139-9bd9d6d454.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-139-9bd9d6d454.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-140-4486630979",
+      "order": 139,
+      "text": "be",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-140-4486630979.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-140-4486630979.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-141-83c90051ee",
+      "order": 140,
+      "text": "goals",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-141-83c90051ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-141-83c90051ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-142-bfeaba2ab9",
+      "order": 141,
+      "text": "bigger",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-142-bfeaba2ab9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-142-bfeaba2ab9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-143-f5f6abd331",
+      "order": 142,
+      "text": "than",
+      "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/words/word-143-f5f6abd331.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/words/word-143-f5f6abd331.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-530c4518f6",
+      "type": "mcq",
+      "order": 0,
+      "text": "What are the two main types of mindsets?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-001-530c4518f6.mp3",
+      "questionObjectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-001-530c4518f6.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-001-530c4518f6-option1-1a26cef2.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-001-530c4518f6-option2-6ddca481.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-001-530c4518f6-option3-b65161ac.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-001-530c4518f6-option4-b43d3085.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-530c4518f6-option1-1a26cef2",
+          "text": "Good and bad",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-001-530c4518f6-option1-1a26cef2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-530c4518f6-option2-6ddca481",
+          "text": "Fast and slow",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-001-530c4518f6-option2-6ddca481.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-530c4518f6-option3-b65161ac",
+          "text": "Happy and sad",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-001-530c4518f6-option3-b65161ac.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-530c4518f6-option4-b43d3085",
+          "text": "Fixed and growth",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-001-530c4518f6-option4-b43d3085.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-a49e831665",
+      "type": "mcq",
+      "order": 1,
+      "text": "What do people with a fixed mindset think about their talents?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-002-a49e831665.mp3",
+      "questionObjectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-002-a49e831665.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-002-a49e831665-option1-8efb9823.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-002-a49e831665-option2-8534737b.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-002-a49e831665-option3-d5c7346c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-002-a49e831665-option4-c54832a3.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-a49e831665-option1-8efb9823",
+          "text": "They disappear quickly",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-002-a49e831665-option1-8efb9823.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-a49e831665-option2-8534737b",
+          "text": "They are not important",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-002-a49e831665-option2-8534737b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-a49e831665-option3-d5c7346c",
+          "text": "They can grow easily",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-002-a49e831665-option3-d5c7346c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-a49e831665-option4-c54832a3",
+          "text": "They cannot change",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-002-a49e831665-option4-c54832a3.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-6d96a47fb5",
+      "type": "mcq",
+      "order": 2,
+      "text": "What do people with a growth mindset believe?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-003-6d96a47fb5.mp3",
+      "questionObjectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-003-6d96a47fb5.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-003-6d96a47fb5-option1-b6c96b52.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-003-6d96a47fb5-option2-0f0494b0.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-003-6d96a47fb5-option3-d7158725.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-003-6d96a47fb5-option4-f6e3531b.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-6d96a47fb5-option1-b6c96b52",
+          "text": "They can get smarter with effort",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-003-6d96a47fb5-option1-b6c96b52.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-6d96a47fb5-option2-0f0494b0",
+          "text": "They are already perfect",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-003-6d96a47fb5-option2-0f0494b0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-6d96a47fb5-option3-d7158725",
+          "text": "Effort is not important",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-003-6d96a47fb5-option3-d7158725.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-6d96a47fb5-option4-f6e3531b",
+          "text": "Luck is the only thing that matters",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-003-6d96a47fb5-option4-f6e3531b.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-bddb848331",
+      "type": "mcq",
+      "order": 3,
+      "text": "Why do people with a growth mindset like challenges?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-004-bddb848331.mp3",
+      "questionObjectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-004-bddb848331.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-004-bddb848331-option1-0d43f77d.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-004-bddb848331-option2-7480b4b0.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-004-bddb848331-option3-e50988a5.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-004-bddb848331-option4-1d0944dd.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-bddb848331-option1-0d43f77d",
+          "text": "Challenges make them famous",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-004-bddb848331-option1-0d43f77d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-bddb848331-option2-7480b4b0",
+          "text": "Challenges are easy",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-004-bddb848331-option2-7480b4b0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-bddb848331-option3-e50988a5",
+          "text": "Challenges give them money",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-004-bddb848331-option3-e50988a5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-bddb848331-option4-1d0944dd",
+          "text": "Challenges make their brain stronger",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-004-bddb848331-option4-1d0944dd.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-7b8832e42c",
+      "type": "mcq",
+      "order": 4,
+      "text": "What is your brain like, according to the text?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-005-7b8832e42c.mp3",
+      "questionObjectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-005-7b8832e42c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-005-7b8832e42c-option1-db221992.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-005-7b8832e42c-option2-389f05b1.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-005-7b8832e42c-option3-520a0b38.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-005-7b8832e42c-option4-f79b37fb.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-7b8832e42c-option1-db221992",
+          "text": "A car",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-005-7b8832e42c-option1-db221992.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-7b8832e42c-option2-389f05b1",
+          "text": "A computer",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-005-7b8832e42c-option2-389f05b1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-7b8832e42c-option3-520a0b38",
+          "text": "A rock",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-005-7b8832e42c-option3-520a0b38.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-7b8832e42c-option4-f79b37fb",
+          "text": "A muscle",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-005-7b8832e42c-option4-f79b37fb.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-66248c355e",
+      "type": "mcq",
+      "order": 5,
+      "text": "What should you say instead of 'I can't do it'?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-006-66248c355e.mp3",
+      "questionObjectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-006-66248c355e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-006-66248c355e-option1-25811296.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-006-66248c355e-option2-02285841.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-006-66248c355e-option3-efcca409.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-006-66248c355e-option4-01b9e2c9.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-66248c355e-option1-25811296",
+          "text": "It is too easy",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-006-66248c355e-option1-25811296.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-66248c355e-option2-02285841",
+          "text": "I will never do it",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-006-66248c355e-option2-02285841.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-66248c355e-option3-efcca409",
+          "text": "I don't want to do it",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-006-66248c355e-option3-efcca409.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-66248c355e-option4-01b9e2c9",
+          "text": "I can't do it yet",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-006-66248c355e-option4-01b9e2c9.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-f3cec317d4",
+      "type": "mcq",
+      "order": 6,
+      "text": "What happens when you practice a new language?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-007-f3cec317d4.mp3",
+      "questionObjectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-007-f3cec317d4.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-007-f3cec317d4-option1-c2483b58.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-007-f3cec317d4-option2-88b2a066.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-007-f3cec317d4-option3-1b2e8484.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-007-f3cec317d4-option4-f2ae8d9c.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-f3cec317d4-option1-c2483b58",
+          "text": "You get bored",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-007-f3cec317d4-option1-c2483b58.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-f3cec317d4-option2-88b2a066",
+          "text": "Speaking is easier",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-007-f3cec317d4-option2-88b2a066.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-f3cec317d4-option3-1b2e8484",
+          "text": "You forget everything",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-007-f3cec317d4-option3-1b2e8484.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-f3cec317d4-option4-f2ae8d9c",
+          "text": "Speaking is harder",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-007-f3cec317d4-option4-f2ae8d9c.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-c5e73d64f0",
+      "type": "mcq",
+      "order": 7,
+      "text": "What is a growth mindset a powerful tool for?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-008-c5e73d64f0.mp3",
+      "questionObjectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-008-c5e73d64f0.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-008-c5e73d64f0-option1-b2e08fd3.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-008-c5e73d64f0-option2-5930181d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-008-c5e73d64f0-option3-81c24d58.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-008-c5e73d64f0-option4-ed2ac217.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-c5e73d64f0-option1-b2e08fd3",
+          "text": "Boredom",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-008-c5e73d64f0-option1-b2e08fd3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-c5e73d64f0-option2-5930181d",
+          "text": "Laziness",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-008-c5e73d64f0-option2-5930181d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-c5e73d64f0-option3-81c24d58",
+          "text": "Failure",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-008-c5e73d64f0-option3-81c24d58.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-c5e73d64f0-option4-ed2ac217",
+          "text": "Success",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-008-c5e73d64f0-option4-ed2ac217.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-adbf84a543",
+      "type": "mcq",
+      "order": 8,
+      "text": "What does a growth mindset help you do with problems?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-009-adbf84a543.mp3",
+      "questionObjectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-009-adbf84a543.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-009-adbf84a543-option1-3a9990f5.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-009-adbf84a543-option2-806e34b9.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-009-adbf84a543-option3-9ede325d.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-009-adbf84a543-option4-2e16cceb.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-adbf84a543-option1-3a9990f5",
+          "text": "Create more",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-009-adbf84a543-option1-3a9990f5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-adbf84a543-option2-806e34b9",
+          "text": "Hide them",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-009-adbf84a543-option2-806e34b9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-adbf84a543-option3-9ede325d",
+          "text": "Ignore them",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-009-adbf84a543-option3-9ede325d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-adbf84a543-option4-2e16cceb",
+          "text": "Learn from them",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-009-adbf84a543-option4-2e16cceb.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-2bccedd91a",
+      "type": "mcq",
+      "order": 9,
+      "text": "What happens when you believe you can grow?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-010-2bccedd91a.mp3",
+      "questionObjectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-010-2bccedd91a.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-010-2bccedd91a-option1-05b222f9.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-010-2bccedd91a-option2-249cc4cd.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-010-2bccedd91a-option3-c8491252.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-010-2bccedd91a-option4-34d6a216.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-2bccedd91a-option1-05b222f9",
+          "text": "You can achieve your goals",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-010-2bccedd91a-option1-05b222f9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-2bccedd91a-option2-249cc4cd",
+          "text": "You stay the same",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-010-2bccedd91a-option2-249cc4cd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-2bccedd91a-option3-c8491252",
+          "text": "You give up easily",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-010-2bccedd91a-option3-c8491252.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-2bccedd91a-option4-34d6a216",
+          "text": "You become unhappy",
+          "objectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/mcq-010-2bccedd91a-option4-34d6a216.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-b881be6db4",
+      "type": "saq",
+      "order": 10,
+      "text": "What are the two main types of mindsets?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/saq-011-b881be6db4.mp3",
+      "questionObjectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/saq-011-b881be6db4.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-610376edef",
+      "type": "saq",
+      "order": 11,
+      "text": "What does a person with a fixed mindset think about their talents?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/saq-012-610376edef.mp3",
+      "questionObjectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/saq-012-610376edef.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-e2f1ac9c4b",
+      "type": "saq",
+      "order": 12,
+      "text": "Why do people with a growth mindset like challenges?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/saq-013-e2f1ac9c4b.mp3",
+      "questionObjectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/saq-013-e2f1ac9c4b.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-43aa54b117",
+      "type": "saq",
+      "order": 13,
+      "text": "What should you say instead of 'I can't do it'?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/saq-014-43aa54b117.mp3",
+      "questionObjectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/saq-014-43aa54b117.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-59041b3e06",
+      "type": "saq",
+      "order": 14,
+      "text": "What helps you improve when learning something new?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjwriyvf00sts60em3b14w7d/questions/saq-015-59041b3e06.mp3",
+      "questionObjectPath": "articles/cmjwriyvf00sts60em3b14w7d/questions/saq-015-59041b3e06.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T16:59:55.656Z"
+}

@@ -1,0 +1,2231 @@
+{
+  "version": 1,
+  "articleId": "ok5b5Be1QOBPzX2as2S4",
+  "source": "READING_ADVANTAGE",
+  "title": "The Quest for the Lost Gem",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-e75385de42",
+      "order": 0,
+      "text": "In a small village, there lived a brave girl named Elara.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-001-e75385de42.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-001-e75385de42.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-af394fccec",
+      "order": 1,
+      "text": "She had long, dark hair and bright green eyes.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-002-af394fccec.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-002-af394fccec.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-cf2250edd8",
+      "order": 2,
+      "text": "Elara loved adventures.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-003-cf2250edd8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-003-cf2250edd8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-0f7a78ca64",
+      "order": 3,
+      "text": "One day, she heard a story about a lost gem.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-004-0f7a78ca64.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-004-0f7a78ca64.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-8459ec3a84",
+      "order": 4,
+      "text": "This gem was very powerful.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-005-8459ec3a84.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-005-8459ec3a84.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-ca3b4a0f60",
+      "order": 5,
+      "text": "It could give great strength to anyone who found it.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-006-ca3b4a0f60.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-006-ca3b4a0f60.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-63efe36ed7",
+      "order": 6,
+      "text": "Elara wanted to find the gem.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-007-63efe36ed7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-007-63efe36ed7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-786106a4c1",
+      "order": 7,
+      "text": "She wanted to help her village.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-008-786106a4c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-008-786106a4c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-10eeb252f4",
+      "order": 8,
+      "text": "Elara packed her bag.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-009-10eeb252f4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-009-10eeb252f4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-ecd6e10d64",
+      "order": 9,
+      "text": "She took food, water, and a small sword.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-010-ecd6e10d64.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-010-ecd6e10d64.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-7fb8753f0b",
+      "order": 10,
+      "text": "She said goodbye to her family and friends.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-011-7fb8753f0b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-011-7fb8753f0b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-c48879b46f",
+      "order": 11,
+      "text": "\"I will return with the gem!\" she promised.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-012-c48879b46f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-012-c48879b46f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-4c0ddbf3da",
+      "order": 12,
+      "text": "The villagers cheered for her.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-013-4c0ddbf3da.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-013-4c0ddbf3da.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-b17e73311d",
+      "order": 13,
+      "text": "They believed in her.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-014-b17e73311d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-014-b17e73311d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-d1aca34a86",
+      "order": 14,
+      "text": "Elara started her journey in the dark forest.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-015-d1aca34a86.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-015-d1aca34a86.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-cafa1b1c39",
+      "order": 15,
+      "text": "The trees were tall and thick.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-016-cafa1b1c39.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-016-cafa1b1c39.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-dec4eb96ed",
+      "order": 16,
+      "text": "She walked carefully.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-017-dec4eb96ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-017-dec4eb96ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-e5431a8c5a",
+      "order": 17,
+      "text": "Suddenly, she heard a noise.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-018-e5431a8c5a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-018-e5431a8c5a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-9ae1525a4c",
+      "order": 18,
+      "text": "It was a giant wolf!",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-019-9ae1525a4c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-019-9ae1525a4c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-5b972f0eb3",
+      "order": 19,
+      "text": "The wolf growled and showed its sharp teeth.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-020-5b972f0eb3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-020-5b972f0eb3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-d2a74b489a",
+      "order": 20,
+      "text": "Elara was scared, but she stood tall.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-021-d2a74b489a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-021-d2a74b489a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-e8115ff671",
+      "order": 21,
+      "text": "\"I am not afraid of you!\" she shouted.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-022-e8115ff671.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-022-e8115ff671.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-3bae9e8639",
+      "order": 22,
+      "text": "The wolf was surprised.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-023-3bae9e8639.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-023-3bae9e8639.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-bae4c263c5",
+      "order": 23,
+      "text": "It stopped growling and looked at her.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-024-bae4c263c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-024-bae4c263c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-7acd2e4dcd",
+      "order": 24,
+      "text": "\"You are brave, little girl,\" said the wolf.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-025-7acd2e4dcd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-025-7acd2e4dcd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-ef98b670c6",
+      "order": 25,
+      "text": "\"I will not hurt you.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-026-ef98b670c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-026-ef98b670c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-c4c403b3f2",
+      "order": 26,
+      "text": "I can help you find the gem.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-027-c4c403b3f2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-027-c4c403b3f2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-339667ff72",
+      "order": 27,
+      "text": "But first, you must help me.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-028-339667ff72.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-028-339667ff72.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-3de5ac33b6",
+      "order": 28,
+      "text": "I lost my home in the forest.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-029-3de5ac33b6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-029-3de5ac33b6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-c9c3b17540",
+      "order": 29,
+      "text": "Can you help me find it?\"",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-030-c9c3b17540.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-030-c9c3b17540.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-b4e1fc85f0",
+      "order": 30,
+      "text": "Elara thought for a moment.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-031-b4e1fc85f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-031-b4e1fc85f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-2e8f4efbe5",
+      "order": 31,
+      "text": "She wanted to help the wolf.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-032-2e8f4efbe5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-032-2e8f4efbe5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-f902976ce2",
+      "order": 32,
+      "text": "\"Yes, I will help you!\" she said.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-033-f902976ce2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-033-f902976ce2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-7ceeefc294",
+      "order": 33,
+      "text": "The wolf led Elara deeper into the forest.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-034-7ceeefc294.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-034-7ceeefc294.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-89975cd3a1",
+      "order": 34,
+      "text": "They searched for a long time.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-035-89975cd3a1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-035-89975cd3a1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-a1f36988e4",
+      "order": 35,
+      "text": "Finally, they found a cave.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-036-a1f36988e4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-036-a1f36988e4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-b3e6aa9b2e",
+      "order": 36,
+      "text": "The wolf's home was inside.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-037-b3e6aa9b2e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-037-b3e6aa9b2e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-f6c1b8185e",
+      "order": 37,
+      "text": "The wolf was very happy.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-038-f6c1b8185e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-038-f6c1b8185e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-45d60ce638",
+      "order": 38,
+      "text": "\"Thank you, Elara!",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-039-45d60ce638.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-039-45d60ce638.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-5c30ef3fa5",
+      "order": 39,
+      "text": "Now I will help you find the gem!\"",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-040-5c30ef3fa5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-040-5c30ef3fa5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-39b59c7ec6",
+      "order": 40,
+      "text": "The wolf joined Elara on her quest.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-041-39b59c7ec6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-041-39b59c7ec6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-9dac1967c2",
+      "order": 41,
+      "text": "Together, they traveled to the mountains.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-042-9dac1967c2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-042-9dac1967c2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-28c13a35fc",
+      "order": 42,
+      "text": "The mountains were high and cold.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-043-28c13a35fc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-043-28c13a35fc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-044-a977baef39",
+      "order": 43,
+      "text": "They met a wise old man there.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-044-a977baef39.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-044-a977baef39.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-045-9bb319ecad",
+      "order": 44,
+      "text": "He had a long beard and kind eyes.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-045-9bb319ecad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-045-9bb319ecad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-046-7e7d2f9f4b",
+      "order": 45,
+      "text": "\"To find the gem, you must solve a riddle,\" he said.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-046-7e7d2f9f4b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-046-7e7d2f9f4b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-047-349e27b6a9",
+      "order": 46,
+      "text": "The riddle was difficult, but Elara thought hard.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-047-349e27b6a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-047-349e27b6a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-048-16a98430bc",
+      "order": 47,
+      "text": "Finally, she answered correctly.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-048-16a98430bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-048-16a98430bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-049-8435090daf",
+      "order": 48,
+      "text": "The old man smiled and pointed to a hidden path.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-049-8435090daf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-049-8435090daf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-050-489ed0f1e5",
+      "order": 49,
+      "text": "Elara and the wolf followed the path.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-050-489ed0f1e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-050-489ed0f1e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-051-9f554ece90",
+      "order": 50,
+      "text": "They climbed and climbed until they reached a shining cave.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-051-9f554ece90.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-051-9f554ece90.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-052-0fc0ba7b0c",
+      "order": 51,
+      "text": "Inside, they saw the lost gem!",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-052-0fc0ba7b0c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-052-0fc0ba7b0c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-053-deeb8e9895",
+      "order": 52,
+      "text": "It sparkled like the stars.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-053-deeb8e9895.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-053-deeb8e9895.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-054-05c771220d",
+      "order": 53,
+      "text": "Elara took the gem and felt its power.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-054-05c771220d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-054-05c771220d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-055-fb8ea7db4a",
+      "order": 54,
+      "text": "She thanked the wolf and returned to her village.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-055-fb8ea7db4a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-055-fb8ea7db4a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-056-739cce01ee",
+      "order": 55,
+      "text": "The villagers celebrated her bravery.",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-056-739cce01ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-056-739cce01ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-057-daeb0d232c",
+      "order": 56,
+      "text": "Elara was a hero!",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-057-daeb0d232c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/sentences/sentence-057-daeb0d232c.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-136ae127b3",
+      "order": 0,
+      "text": "adventures",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-001-136ae127b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-001-136ae127b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-7c9d252d56",
+      "order": 1,
+      "text": "powerful",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-002-7c9d252d56.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-002-7c9d252d56.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-ef295cd759",
+      "order": 2,
+      "text": "strength",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-003-ef295cd759.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-003-ef295cd759.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-0e3d7369ab",
+      "order": 3,
+      "text": "brave",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-004-0e3d7369ab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-004-0e3d7369ab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-364ace3a27",
+      "order": 4,
+      "text": "growled",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-005-364ace3a27.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-005-364ace3a27.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-09c9e4d20c",
+      "order": 5,
+      "text": "riddle",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-006-09c9e4d20c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-006-09c9e4d20c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-2891150511",
+      "order": 6,
+      "text": "quest",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-007-2891150511.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-007-2891150511.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-e745ab774a",
+      "order": 7,
+      "text": "celebrated",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-008-e745ab774a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-008-e745ab774a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-dc87ae2eed",
+      "order": 8,
+      "text": "sparkled",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-009-dc87ae2eed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-009-dc87ae2eed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-ef6464a2d3",
+      "order": 9,
+      "text": "hidden",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-010-ef6464a2d3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-010-ef6464a2d3.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-16207836a7",
+      "order": 10,
+      "text": "in",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-011-16207836a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-011-16207836a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-b154fd7284",
+      "order": 11,
+      "text": "a",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-012-b154fd7284.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-012-b154fd7284.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-3f825b118f",
+      "order": 12,
+      "text": "small",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-013-3f825b118f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-013-3f825b118f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-39fab4c743",
+      "order": 13,
+      "text": "village",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-014-39fab4c743.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-014-39fab4c743.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-8a029288b1",
+      "order": 14,
+      "text": "there",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-015-8a029288b1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-015-8a029288b1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-2441ffe228",
+      "order": 15,
+      "text": "lived",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-016-2441ffe228.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-016-2441ffe228.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-d616b46aff",
+      "order": 16,
+      "text": "girl",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-017-d616b46aff.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-017-d616b46aff.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-2b06a104c7",
+      "order": 17,
+      "text": "named",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-018-2b06a104c7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-018-2b06a104c7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-26763bcc8a",
+      "order": 18,
+      "text": "elara",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-019-26763bcc8a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-019-26763bcc8a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-342bf2d52a",
+      "order": 19,
+      "text": "she",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-020-342bf2d52a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-020-342bf2d52a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-53321287e6",
+      "order": 20,
+      "text": "had",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-021-53321287e6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-021-53321287e6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-3f97a04ac6",
+      "order": 21,
+      "text": "long",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-022-3f97a04ac6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-022-3f97a04ac6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-9050e6b380",
+      "order": 22,
+      "text": "dark",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-023-9050e6b380.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-023-9050e6b380.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-fd7179179e",
+      "order": 23,
+      "text": "hair",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-024-fd7179179e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-024-fd7179179e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-4eedf4ebd9",
+      "order": 24,
+      "text": "and",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-025-4eedf4ebd9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-025-4eedf4ebd9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-d64e0858dd",
+      "order": 25,
+      "text": "bright",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-026-d64e0858dd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-026-d64e0858dd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-741b0dfe38",
+      "order": 26,
+      "text": "green",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-027-741b0dfe38.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-027-741b0dfe38.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-be82a40523",
+      "order": 27,
+      "text": "eyes",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-028-be82a40523.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-028-be82a40523.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-df3353152a",
+      "order": 28,
+      "text": "loved",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-029-df3353152a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-029-df3353152a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-249ec4ba43",
+      "order": 29,
+      "text": "one",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-030-249ec4ba43.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-030-249ec4ba43.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-756556a416",
+      "order": 30,
+      "text": "day",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-031-756556a416.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-031-756556a416.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-b046be9f72",
+      "order": 31,
+      "text": "heard",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-032-b046be9f72.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-032-b046be9f72.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-c40c6fb9b7",
+      "order": 32,
+      "text": "story",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-033-c40c6fb9b7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-033-c40c6fb9b7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-d8f86159b8",
+      "order": 33,
+      "text": "about",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-034-d8f86159b8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-034-d8f86159b8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-1337929cf9",
+      "order": 34,
+      "text": "lost",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-035-1337929cf9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-035-1337929cf9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-781364775a",
+      "order": 35,
+      "text": "gem",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-036-781364775a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-036-781364775a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-ca873216fa",
+      "order": 36,
+      "text": "this",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-037-ca873216fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-037-ca873216fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-4f0e899fc1",
+      "order": 37,
+      "text": "was",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-038-4f0e899fc1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-038-4f0e899fc1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-53d2ebd847",
+      "order": 38,
+      "text": "very",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-039-53d2ebd847.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-039-53d2ebd847.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-478dd9030b",
+      "order": 39,
+      "text": "it",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-040-478dd9030b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-040-478dd9030b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-7c601dec7b",
+      "order": 40,
+      "text": "could",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-041-7c601dec7b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-041-7c601dec7b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-6b7afee83d",
+      "order": 41,
+      "text": "give",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-042-6b7afee83d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-042-6b7afee83d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-0e5b98041e",
+      "order": 42,
+      "text": "great",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-043-0e5b98041e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-043-0e5b98041e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-e8ebcc29f0",
+      "order": 43,
+      "text": "to",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-044-e8ebcc29f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-044-e8ebcc29f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-07e1f34cac",
+      "order": 44,
+      "text": "anyone",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-045-07e1f34cac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-045-07e1f34cac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-0e36443ec8",
+      "order": 45,
+      "text": "who",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-046-0e36443ec8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-046-0e36443ec8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-37167c66f1",
+      "order": 46,
+      "text": "found",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-047-37167c66f1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-047-37167c66f1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-f43bca68c4",
+      "order": 47,
+      "text": "wanted",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-048-f43bca68c4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-048-f43bca68c4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-dfd5eccf0b",
+      "order": 48,
+      "text": "find",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-049-dfd5eccf0b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-049-dfd5eccf0b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-22344ee803",
+      "order": 49,
+      "text": "the",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-050-22344ee803.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-050-22344ee803.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-7f32dc4b7b",
+      "order": 50,
+      "text": "help",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-051-7f32dc4b7b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-051-7f32dc4b7b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-6eac29dc51",
+      "order": 51,
+      "text": "her",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-052-6eac29dc51.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-052-6eac29dc51.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-888189ead4",
+      "order": 52,
+      "text": "packed",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-053-888189ead4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-053-888189ead4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-e8a5405aa1",
+      "order": 53,
+      "text": "bag",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-054-e8a5405aa1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-054-e8a5405aa1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-96cac00aa4",
+      "order": 54,
+      "text": "took",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-055-96cac00aa4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-055-96cac00aa4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-cba02b8c38",
+      "order": 55,
+      "text": "food",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-056-cba02b8c38.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-056-cba02b8c38.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-bda4e78c94",
+      "order": 56,
+      "text": "water",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-057-bda4e78c94.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-057-bda4e78c94.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-6a20712665",
+      "order": 57,
+      "text": "sword",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-058-6a20712665.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-058-6a20712665.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-211d2edf2b",
+      "order": 58,
+      "text": "said",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-059-211d2edf2b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-059-211d2edf2b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-72d8bc1cc0",
+      "order": 59,
+      "text": "goodbye",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-060-72d8bc1cc0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-060-72d8bc1cc0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-5d58bbc039",
+      "order": 60,
+      "text": "family",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-061-5d58bbc039.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-061-5d58bbc039.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-aad3d24e27",
+      "order": 61,
+      "text": "friends",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-062-aad3d24e27.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-062-aad3d24e27.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-cbfdf95ea6",
+      "order": 62,
+      "text": "i",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-063-cbfdf95ea6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-063-cbfdf95ea6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-3b3d752156",
+      "order": 63,
+      "text": "will",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-064-3b3d752156.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-064-3b3d752156.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-d3d626a483",
+      "order": 64,
+      "text": "return",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-065-d3d626a483.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-065-d3d626a483.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-f4c3f07c5d",
+      "order": 65,
+      "text": "with",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-066-f4c3f07c5d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-066-f4c3f07c5d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-4f67ea4eb1",
+      "order": 66,
+      "text": "promised",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-067-4f67ea4eb1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-067-4f67ea4eb1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-ece3a0add1",
+      "order": 67,
+      "text": "villagers",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-068-ece3a0add1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-068-ece3a0add1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-4df9ff1f41",
+      "order": 68,
+      "text": "cheered",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-069-4df9ff1f41.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-069-4df9ff1f41.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-ebe0d367da",
+      "order": 69,
+      "text": "for",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-070-ebe0d367da.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-070-ebe0d367da.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-35bb267026",
+      "order": 70,
+      "text": "they",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-071-35bb267026.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-071-35bb267026.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-0bf246da39",
+      "order": 71,
+      "text": "believed",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-072-0bf246da39.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-072-0bf246da39.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-f00d8c5705",
+      "order": 72,
+      "text": "started",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-073-f00d8c5705.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-073-f00d8c5705.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-e3fb1c4946",
+      "order": 73,
+      "text": "journey",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-074-e3fb1c4946.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-074-e3fb1c4946.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-e77e81fd12",
+      "order": 74,
+      "text": "forest",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-075-e77e81fd12.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-075-e77e81fd12.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-616ec75047",
+      "order": 75,
+      "text": "trees",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-076-616ec75047.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-076-616ec75047.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-234036a5b4",
+      "order": 76,
+      "text": "were",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-077-234036a5b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-077-234036a5b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-56bdd5858f",
+      "order": 77,
+      "text": "tall",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-078-56bdd5858f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-078-56bdd5858f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-b9504361fa",
+      "order": 78,
+      "text": "thick",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-079-b9504361fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-079-b9504361fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-032458886d",
+      "order": 79,
+      "text": "walked",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-080-032458886d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-080-032458886d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-1a3a962a94",
+      "order": 80,
+      "text": "carefully",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-081-1a3a962a94.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-081-1a3a962a94.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-fc2c1679d3",
+      "order": 81,
+      "text": "suddenly",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-082-fc2c1679d3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-082-fc2c1679d3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-54a6e77cfd",
+      "order": 82,
+      "text": "noise",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-083-54a6e77cfd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-083-54a6e77cfd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-549954e2f9",
+      "order": 83,
+      "text": "giant",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-084-549954e2f9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-084-549954e2f9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-3ec8fb73da",
+      "order": 84,
+      "text": "wolf",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-085-3ec8fb73da.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-085-3ec8fb73da.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-086-f0c29672b4",
+      "order": 85,
+      "text": "showed",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-086-f0c29672b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-086-f0c29672b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-087-e12431b635",
+      "order": 86,
+      "text": "its",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-087-e12431b635.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-087-e12431b635.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-088-719468583b",
+      "order": 87,
+      "text": "sharp",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-088-719468583b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-088-719468583b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-089-11584e4a67",
+      "order": 88,
+      "text": "teeth",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-089-11584e4a67.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-089-11584e4a67.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-090-bfdffd9c10",
+      "order": 89,
+      "text": "scared",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-090-bfdffd9c10.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-090-bfdffd9c10.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-091-e7d1442175",
+      "order": 90,
+      "text": "but",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-091-e7d1442175.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-091-e7d1442175.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-092-e490abbec6",
+      "order": 91,
+      "text": "stood",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-092-e490abbec6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-092-e490abbec6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-093-0556671e96",
+      "order": 92,
+      "text": "am",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-093-0556671e96.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-093-0556671e96.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-094-70c25e6c39",
+      "order": 93,
+      "text": "not",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-094-70c25e6c39.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-094-70c25e6c39.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-095-44fc9b4539",
+      "order": 94,
+      "text": "afraid",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-095-44fc9b4539.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-095-44fc9b4539.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-096-f7a486bb89",
+      "order": 95,
+      "text": "of",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-096-f7a486bb89.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-096-f7a486bb89.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-097-9f6a0a8c79",
+      "order": 96,
+      "text": "you",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-097-9f6a0a8c79.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-097-9f6a0a8c79.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-098-411aaffc92",
+      "order": 97,
+      "text": "shouted",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-098-411aaffc92.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-098-411aaffc92.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-099-76fbcbf122",
+      "order": 98,
+      "text": "surprised",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-099-76fbcbf122.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-099-76fbcbf122.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-100-31f5740574",
+      "order": 99,
+      "text": "stopped",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-100-31f5740574.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-100-31f5740574.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-101-8b85b30aac",
+      "order": 100,
+      "text": "growling",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-101-8b85b30aac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-101-8b85b30aac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-102-f8c60c3f6c",
+      "order": 101,
+      "text": "looked",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-102-f8c60c3f6c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-102-f8c60c3f6c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-103-74aaa1f847",
+      "order": 102,
+      "text": "at",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-103-74aaa1f847.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-103-74aaa1f847.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-104-6ad1e96760",
+      "order": 103,
+      "text": "are",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-104-6ad1e96760.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-104-6ad1e96760.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-105-d285ee99e4",
+      "order": 104,
+      "text": "little",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-105-d285ee99e4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-105-d285ee99e4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-106-60dfcd4247",
+      "order": 105,
+      "text": "hurt",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-106-60dfcd4247.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-106-60dfcd4247.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-107-6d72f494e5",
+      "order": 106,
+      "text": "can",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-107-6d72f494e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-107-6d72f494e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-108-7b5a642b82",
+      "order": 107,
+      "text": "first",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-108-7b5a642b82.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-108-7b5a642b82.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-109-758be44ee3",
+      "order": 108,
+      "text": "must",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-109-758be44ee3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-109-758be44ee3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-110-9c9f105397",
+      "order": 109,
+      "text": "me",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-110-9c9f105397.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-110-9c9f105397.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-111-1270365d02",
+      "order": 110,
+      "text": "my",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-111-1270365d02.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-111-1270365d02.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-112-32c101b041",
+      "order": 111,
+      "text": "home",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-112-32c101b041.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-112-32c101b041.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-113-5143a2ea49",
+      "order": 112,
+      "text": "thought",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-113-5143a2ea49.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-113-5143a2ea49.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-114-e50dd03102",
+      "order": 113,
+      "text": "moment",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-114-e50dd03102.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-114-e50dd03102.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-115-9ff337bd8d",
+      "order": 114,
+      "text": "yes",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-115-9ff337bd8d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-115-9ff337bd8d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-116-4d1720a99f",
+      "order": 115,
+      "text": "led",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-116-4d1720a99f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-116-4d1720a99f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-117-32f4e0bdbf",
+      "order": 116,
+      "text": "deeper",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-117-32f4e0bdbf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-117-32f4e0bdbf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-118-5885d558e4",
+      "order": 117,
+      "text": "into",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-118-5885d558e4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-118-5885d558e4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-119-ace0698340",
+      "order": 118,
+      "text": "searched",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-119-ace0698340.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-119-ace0698340.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-120-79e687e2ed",
+      "order": 119,
+      "text": "time",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-120-79e687e2ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-120-79e687e2ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-121-5b12e8c8fd",
+      "order": 120,
+      "text": "finally",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-121-5b12e8c8fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-121-5b12e8c8fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-122-342f0425d9",
+      "order": 121,
+      "text": "cave",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-122-342f0425d9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-122-342f0425d9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-123-ed35e202c2",
+      "order": 122,
+      "text": "wolf's",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-123-ed35e202c2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-123-ed35e202c2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-124-eb45e1013b",
+      "order": 123,
+      "text": "inside",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-124-eb45e1013b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-124-eb45e1013b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-125-3a9fb69de8",
+      "order": 124,
+      "text": "happy",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-125-3a9fb69de8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-125-3a9fb69de8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-126-f1f7425cba",
+      "order": 125,
+      "text": "thank",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-126-f1f7425cba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-126-f1f7425cba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-127-5b37053c53",
+      "order": 126,
+      "text": "now",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-127-5b37053c53.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-127-5b37053c53.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-128-32a0a18f79",
+      "order": 127,
+      "text": "joined",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-128-32a0a18f79.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-128-32a0a18f79.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-129-eddf6b79b1",
+      "order": 128,
+      "text": "on",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-129-eddf6b79b1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-129-eddf6b79b1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-130-2920dba5a6",
+      "order": 129,
+      "text": "together",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-130-2920dba5a6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-130-2920dba5a6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-131-e60366b407",
+      "order": 130,
+      "text": "traveled",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-131-e60366b407.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-131-e60366b407.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-132-199eb8e537",
+      "order": 131,
+      "text": "mountains",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-132-199eb8e537.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-132-199eb8e537.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-133-d7e5a98ccd",
+      "order": 132,
+      "text": "high",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-133-d7e5a98ccd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-133-d7e5a98ccd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-134-197afb624e",
+      "order": 133,
+      "text": "cold",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-134-197afb624e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-134-197afb624e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-135-a27bdf23cf",
+      "order": 134,
+      "text": "met",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-135-a27bdf23cf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-135-a27bdf23cf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-136-8104bfe06e",
+      "order": 135,
+      "text": "wise",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-136-8104bfe06e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-136-8104bfe06e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-137-f313a547b3",
+      "order": 136,
+      "text": "old",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-137-f313a547b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-137-f313a547b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-138-d96b130727",
+      "order": 137,
+      "text": "man",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-138-d96b130727.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-138-d96b130727.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-139-46d6ccc322",
+      "order": 138,
+      "text": "he",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-139-46d6ccc322.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-139-46d6ccc322.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-140-34098d5203",
+      "order": 139,
+      "text": "beard",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-140-34098d5203.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-140-34098d5203.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-141-9dcb08951c",
+      "order": 140,
+      "text": "kind",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-141-9dcb08951c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-141-9dcb08951c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-142-141098b36b",
+      "order": 141,
+      "text": "solve",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-142-141098b36b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-142-141098b36b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-143-ae6943caed",
+      "order": 142,
+      "text": "difficult",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-143-ae6943caed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-143-ae6943caed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-144-161672774d",
+      "order": 143,
+      "text": "hard",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-144-161672774d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-144-161672774d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-145-d2e5cc0049",
+      "order": 144,
+      "text": "answered",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-145-d2e5cc0049.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-145-d2e5cc0049.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-146-b909ef57f7",
+      "order": 145,
+      "text": "correctly",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-146-b909ef57f7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-146-b909ef57f7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-147-d3851379ed",
+      "order": 146,
+      "text": "smiled",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-147-d3851379ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-147-d3851379ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-148-6684961288",
+      "order": 147,
+      "text": "pointed",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-148-6684961288.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-148-6684961288.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-149-eb86a2d873",
+      "order": 148,
+      "text": "path",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-149-eb86a2d873.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-149-eb86a2d873.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-150-2b8cd81a77",
+      "order": 149,
+      "text": "followed",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-150-2b8cd81a77.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-150-2b8cd81a77.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-151-787bd58886",
+      "order": 150,
+      "text": "climbed",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-151-787bd58886.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-151-787bd58886.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-152-38255fab1b",
+      "order": 151,
+      "text": "until",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-152-38255fab1b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-152-38255fab1b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-153-963fb2675d",
+      "order": 152,
+      "text": "reached",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-153-963fb2675d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-153-963fb2675d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-154-89276bb4ec",
+      "order": 153,
+      "text": "shining",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-154-89276bb4ec.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-154-89276bb4ec.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-155-12c761bfea",
+      "order": 154,
+      "text": "saw",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-155-12c761bfea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-155-12c761bfea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-156-1480e48062",
+      "order": 155,
+      "text": "like",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-156-1480e48062.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-156-1480e48062.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-157-aeba44eaf8",
+      "order": 156,
+      "text": "stars",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-157-aeba44eaf8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-157-aeba44eaf8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-158-d9bbeb08de",
+      "order": 157,
+      "text": "felt",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-158-d9bbeb08de.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-158-d9bbeb08de.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-159-61ef7a6e26",
+      "order": 158,
+      "text": "power",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-159-61ef7a6e26.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-159-61ef7a6e26.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-160-6f5239d266",
+      "order": 159,
+      "text": "thanked",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-160-6f5239d266.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-160-6f5239d266.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-161-f1991e0a3e",
+      "order": 160,
+      "text": "returned",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-161-f1991e0a3e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-161-f1991e0a3e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-162-eb6732fe0b",
+      "order": 161,
+      "text": "bravery",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-162-eb6732fe0b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-162-eb6732fe0b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-163-3183c85325",
+      "order": 162,
+      "text": "hero",
+      "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/words/word-163-3183c85325.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/words/word-163-3183c85325.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-ec4e74bac7",
+      "type": "mcq",
+      "order": 0,
+      "text": "What animal did Elara meet in the forest?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-001-ec4e74bac7.mp3",
+      "questionObjectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-001-ec4e74bac7.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-001-ec4e74bac7-option1-8ac6a1a7.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-001-ec4e74bac7-option2-a5be3913.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-001-ec4e74bac7-option3-e8af91d3.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-001-ec4e74bac7-option4-7a6c1b77.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-ec4e74bac7-option1-8ac6a1a7",
+          "text": "A giant wolf",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-001-ec4e74bac7-option1-8ac6a1a7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-ec4e74bac7-option2-a5be3913",
+          "text": "A small fox",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-001-ec4e74bac7-option2-a5be3913.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-ec4e74bac7-option3-e8af91d3",
+          "text": "A big bear",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-001-ec4e74bac7-option3-e8af91d3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-ec4e74bac7-option4-7a6c1b77",
+          "text": "A friendly deer",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-001-ec4e74bac7-option4-7a6c1b77.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-0506be4f2d",
+      "type": "mcq",
+      "order": 1,
+      "text": "What did Elara find in the shining cave?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-002-0506be4f2d.mp3",
+      "questionObjectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-002-0506be4f2d.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-002-0506be4f2d-option1-49ade7f8.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-002-0506be4f2d-option2-b7ead319.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-002-0506be4f2d-option3-1739b3a5.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-002-0506be4f2d-option4-9a8fa634.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-0506be4f2d-option1-49ade7f8",
+          "text": "The lost gem",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-002-0506be4f2d-option1-49ade7f8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-0506be4f2d-option2-b7ead319",
+          "text": "A golden crown",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-002-0506be4f2d-option2-b7ead319.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-0506be4f2d-option3-1739b3a5",
+          "text": "A magic book",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-002-0506be4f2d-option3-1739b3a5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-0506be4f2d-option4-9a8fa634",
+          "text": "A silver coin",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-002-0506be4f2d-option4-9a8fa634.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-d21f0eb11a",
+      "type": "mcq",
+      "order": 2,
+      "text": "What did the villagers do when Elara left?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-003-d21f0eb11a.mp3",
+      "questionObjectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-003-d21f0eb11a.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-003-d21f0eb11a-option1-ef109d9e.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-003-d21f0eb11a-option2-0b297001.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-003-d21f0eb11a-option3-1d7e3921.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-003-d21f0eb11a-option4-9921df70.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-d21f0eb11a-option1-ef109d9e",
+          "text": "They cheered for her",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-003-d21f0eb11a-option1-ef109d9e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-d21f0eb11a-option2-0b297001",
+          "text": "They cried for her",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-003-d21f0eb11a-option2-0b297001.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-d21f0eb11a-option3-1d7e3921",
+          "text": "They ignored her",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-003-d21f0eb11a-option3-1d7e3921.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-d21f0eb11a-option4-9921df70",
+          "text": "They followed her",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-003-d21f0eb11a-option4-9921df70.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-2ac07dc7f1",
+      "type": "mcq",
+      "order": 3,
+      "text": "What did the wolf ask Elara for help with?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-004-2ac07dc7f1.mp3",
+      "questionObjectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-004-2ac07dc7f1.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-004-2ac07dc7f1-option1-3a1c291b.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-004-2ac07dc7f1-option2-c17fd6cd.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-004-2ac07dc7f1-option3-69b915b5.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-004-2ac07dc7f1-option4-06a05357.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-2ac07dc7f1-option1-3a1c291b",
+          "text": "Finding his home",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-004-2ac07dc7f1-option1-3a1c291b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-2ac07dc7f1-option2-c17fd6cd",
+          "text": "Finding food",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-004-2ac07dc7f1-option2-c17fd6cd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-2ac07dc7f1-option3-69b915b5",
+          "text": "Finding a friend",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-004-2ac07dc7f1-option3-69b915b5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-2ac07dc7f1-option4-06a05357",
+          "text": "Finding a treasure",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-004-2ac07dc7f1-option4-06a05357.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-95e38705f3",
+      "type": "mcq",
+      "order": 4,
+      "text": "What did the wise old man give Elara?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-005-95e38705f3.mp3",
+      "questionObjectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-005-95e38705f3.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-005-95e38705f3-option1-e02dbaf4.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-005-95e38705f3-option2-1c7b96e1.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-005-95e38705f3-option3-f7eb38aa.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-005-95e38705f3-option4-66953a4c.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-95e38705f3-option1-e02dbaf4",
+          "text": "A riddle to solve",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-005-95e38705f3-option1-e02dbaf4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-95e38705f3-option2-1c7b96e1",
+          "text": "A map to follow",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-005-95e38705f3-option2-1c7b96e1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-95e38705f3-option3-f7eb38aa",
+          "text": "A sword to use",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-005-95e38705f3-option3-f7eb38aa.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-95e38705f3-option4-66953a4c",
+          "text": "A gem to keep",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-005-95e38705f3-option4-66953a4c.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-5e965f65de",
+      "type": "mcq",
+      "order": 5,
+      "text": "Who did Elara and the wolf meet in the mountains?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-006-5e965f65de.mp3",
+      "questionObjectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-006-5e965f65de.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-006-5e965f65de-option1-234fdc0f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-006-5e965f65de-option2-5a314b74.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-006-5e965f65de-option3-aa2b13fc.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-006-5e965f65de-option4-031040dd.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-5e965f65de-option1-234fdc0f",
+          "text": "A wise old man",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-006-5e965f65de-option1-234fdc0f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-5e965f65de-option2-5a314b74",
+          "text": "A young girl",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-006-5e965f65de-option2-5a314b74.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-5e965f65de-option3-aa2b13fc",
+          "text": "A strong knight",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-006-5e965f65de-option3-aa2b13fc.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-5e965f65de-option4-031040dd",
+          "text": "A kind woman",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-006-5e965f65de-option4-031040dd.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-14ca9d0b06",
+      "type": "mcq",
+      "order": 6,
+      "text": "What is the name of the brave girl?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-007-14ca9d0b06.mp3",
+      "questionObjectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-007-14ca9d0b06.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-007-14ca9d0b06-option1-0972f389.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-007-14ca9d0b06-option2-0174f069.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-007-14ca9d0b06-option3-ff6c4a0c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-007-14ca9d0b06-option4-aa604f7d.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-14ca9d0b06-option1-0972f389",
+          "text": "Elara",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-007-14ca9d0b06-option1-0972f389.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-14ca9d0b06-option2-0174f069",
+          "text": "Lara",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-007-14ca9d0b06-option2-0174f069.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-14ca9d0b06-option3-ff6c4a0c",
+          "text": "Sara",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-007-14ca9d0b06-option3-ff6c4a0c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-14ca9d0b06-option4-aa604f7d",
+          "text": "Mara",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-007-14ca9d0b06-option4-aa604f7d.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-e57507397d",
+      "type": "mcq",
+      "order": 7,
+      "text": "How did the villagers feel when Elara returned?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-008-e57507397d.mp3",
+      "questionObjectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-008-e57507397d.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-008-e57507397d-option1-10341eae.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-008-e57507397d-option2-329295a6.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-008-e57507397d-option3-8ad09cf5.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-008-e57507397d-option4-05a509eb.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-e57507397d-option1-10341eae",
+          "text": "They celebrated her bravery",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-008-e57507397d-option1-10341eae.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-e57507397d-option2-329295a6",
+          "text": "They were angry with her",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-008-e57507397d-option2-329295a6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-e57507397d-option3-8ad09cf5",
+          "text": "They were sad for her",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-008-e57507397d-option3-8ad09cf5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-e57507397d-option4-05a509eb",
+          "text": "They were confused by her",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-008-e57507397d-option4-05a509eb.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-efe3b02ab0",
+      "type": "mcq",
+      "order": 8,
+      "text": "What color are Elara's eyes?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-009-efe3b02ab0.mp3",
+      "questionObjectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-009-efe3b02ab0.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-009-efe3b02ab0-option1-88f56976.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-009-efe3b02ab0-option2-d25ae847.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-009-efe3b02ab0-option3-0bfa03b4.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-009-efe3b02ab0-option4-d8ebc160.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-efe3b02ab0-option1-88f56976",
+          "text": "Green",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-009-efe3b02ab0-option1-88f56976.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-efe3b02ab0-option2-d25ae847",
+          "text": "Blue",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-009-efe3b02ab0-option2-d25ae847.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-efe3b02ab0-option3-0bfa03b4",
+          "text": "Brown",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-009-efe3b02ab0-option3-0bfa03b4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-efe3b02ab0-option4-d8ebc160",
+          "text": "Black",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-009-efe3b02ab0-option4-d8ebc160.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-7aeeed1599",
+      "type": "mcq",
+      "order": 9,
+      "text": "What did Elara take with her on her journey?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-010-7aeeed1599.mp3",
+      "questionObjectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-010-7aeeed1599.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-010-7aeeed1599-option1-17042967.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-010-7aeeed1599-option2-43c2bb13.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-010-7aeeed1599-option3-3afa2dd1.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-010-7aeeed1599-option4-5edf1077.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-7aeeed1599-option1-17042967",
+          "text": "A small sword",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-010-7aeeed1599-option1-17042967.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-7aeeed1599-option2-43c2bb13",
+          "text": "A big sword",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-010-7aeeed1599-option2-43c2bb13.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-7aeeed1599-option3-3afa2dd1",
+          "text": "A bow and arrow",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-010-7aeeed1599-option3-3afa2dd1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-7aeeed1599-option4-5edf1077",
+          "text": "A magic wand",
+          "objectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/mcq-010-7aeeed1599-option4-5edf1077.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-ba057f24db",
+      "type": "saq",
+      "order": 10,
+      "text": "Who does Elara meet in the forest?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/saq-011-ba057f24db.mp3",
+      "questionObjectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/saq-011-ba057f24db.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-3223f0ff94",
+      "type": "saq",
+      "order": 11,
+      "text": "What does Elara take with her on her journey?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/saq-012-3223f0ff94.mp3",
+      "questionObjectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/saq-012-3223f0ff94.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-c4c8442683",
+      "type": "saq",
+      "order": 12,
+      "text": "Who is the main character of the story?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/saq-013-c4c8442683.mp3",
+      "questionObjectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/saq-013-c4c8442683.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-ed933e55c3",
+      "type": "saq",
+      "order": 13,
+      "text": "What must Elara do to find the gem?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/saq-014-ed933e55c3.mp3",
+      "questionObjectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/saq-014-ed933e55c3.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-077c3825e1",
+      "type": "saq",
+      "order": 14,
+      "text": "What does Elara want to find?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ok5b5Be1QOBPzX2as2S4/questions/saq-015-077c3825e1.mp3",
+      "questionObjectPath": "articles/ok5b5Be1QOBPzX2as2S4/questions/saq-015-077c3825e1.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T16:48:44.593Z"
+}

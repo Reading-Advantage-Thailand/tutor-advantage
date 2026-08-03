@@ -1,0 +1,1135 @@
+{
+  "version": 1,
+  "articleId": "hFxfpuViJkutoIqbcUwP",
+  "source": "READING_ADVANTAGE",
+  "title": "The Journey of a Young Cowboy",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-0b5db9a6f9",
+      "order": 0,
+      "text": "Tom is a boy.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-001-0b5db9a6f9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-001-0b5db9a6f9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-e53aaa12ef",
+      "order": 1,
+      "text": "He is a cowboy.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-002-e53aaa12ef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-002-e53aaa12ef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-0650df58df",
+      "order": 2,
+      "text": "He has a horse.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-003-0650df58df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-003-0650df58df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-8cdc29599f",
+      "order": 3,
+      "text": "The horse is brown.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-004-8cdc29599f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-004-8cdc29599f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-432d3c1054",
+      "order": 4,
+      "text": "Tom is on the horse.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-005-432d3c1054.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-005-432d3c1054.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-4baa93f753",
+      "order": 5,
+      "text": "They are on the plains.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-006-4baa93f753.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-006-4baa93f753.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-34332a6896",
+      "order": 6,
+      "text": "The plains are big.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-007-34332a6896.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-007-34332a6896.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-7a53c502ba",
+      "order": 7,
+      "text": "Tom sees a bird.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-008-7a53c502ba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-008-7a53c502ba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-20cf8f33a9",
+      "order": 8,
+      "text": "The bird is blue.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-009-20cf8f33a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-009-20cf8f33a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-1781475c6a",
+      "order": 9,
+      "text": "Tom likes the bird.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-010-1781475c6a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-010-1781475c6a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-32e396ac8c",
+      "order": 10,
+      "text": "He is not alone.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-011-32e396ac8c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-011-32e396ac8c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-21d2d94903",
+      "order": 11,
+      "text": "He has a friend.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-012-21d2d94903.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-012-21d2d94903.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-235784f16a",
+      "order": 12,
+      "text": "His friend is Sam.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-013-235784f16a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-013-235784f16a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-d2889a1971",
+      "order": 13,
+      "text": "Sam is a cowboy too.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-014-d2889a1971.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-014-d2889a1971.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-356988bc4a",
+      "order": 14,
+      "text": "Sam has a horse.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-015-356988bc4a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-015-356988bc4a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-757251f201",
+      "order": 15,
+      "text": "His horse is black.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-016-757251f201.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-016-757251f201.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-d5e07fdb11",
+      "order": 16,
+      "text": "Tom and Sam are friends.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-017-d5e07fdb11.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-017-d5e07fdb11.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-b76ed8c7c7",
+      "order": 17,
+      "text": "They ride their horses.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-018-b76ed8c7c7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-018-b76ed8c7c7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-95fd56843a",
+      "order": 18,
+      "text": "They see a river.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-019-95fd56843a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-019-95fd56843a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-345842077a",
+      "order": 19,
+      "text": "The river is long.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-020-345842077a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-020-345842077a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-bd7258ba17",
+      "order": 20,
+      "text": "They want to cross.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-021-bd7258ba17.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-021-bd7258ba17.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-0b67cd59bf",
+      "order": 21,
+      "text": "The river is deep.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-022-0b67cd59bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-022-0b67cd59bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-e2435550f3",
+      "order": 22,
+      "text": "Tom is brave.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-023-e2435550f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-023-e2435550f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-881c8b8d37",
+      "order": 23,
+      "text": "Sam is brave too.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-024-881c8b8d37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-024-881c8b8d37.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-ac91c30937",
+      "order": 24,
+      "text": "They cross the river.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-025-ac91c30937.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-025-ac91c30937.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-211a6183bf",
+      "order": 25,
+      "text": "They are wet.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-026-211a6183bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-026-211a6183bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-eac2d9dacf",
+      "order": 26,
+      "text": "They see a town.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-027-eac2d9dacf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-027-eac2d9dacf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-e5075f6426",
+      "order": 27,
+      "text": "The town is small.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-028-e5075f6426.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-028-e5075f6426.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-b30be1b587",
+      "order": 28,
+      "text": "They are happy.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-029-b30be1b587.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-029-b30be1b587.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-d7d41a6de1",
+      "order": 29,
+      "text": "They are at the town.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-030-d7d41a6de1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-030-d7d41a6de1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-4a36f3710d",
+      "order": 30,
+      "text": "They are good cowboys.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-031-4a36f3710d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-031-4a36f3710d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-a6f2809a2f",
+      "order": 31,
+      "text": "They are good friends.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-032-a6f2809a2f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-032-a6f2809a2f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-e68b4daa01",
+      "order": 32,
+      "text": "They help people.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-033-e68b4daa01.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-033-e68b4daa01.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-325c669994",
+      "order": 33,
+      "text": "They are heroes.",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-034-325c669994.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/sentences/sentence-034-325c669994.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-c11e259259",
+      "order": 0,
+      "text": "cowboy",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-001-c11e259259.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-001-c11e259259.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-1bdc9a073c",
+      "order": 1,
+      "text": "plains",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-002-1bdc9a073c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-002-1bdc9a073c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-b8895faf16",
+      "order": 2,
+      "text": "cross",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-003-b8895faf16.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-003-b8895faf16.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-0e3d7369ab",
+      "order": 3,
+      "text": "brave",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-004-0e3d7369ab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-004-0e3d7369ab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-2178d96252",
+      "order": 4,
+      "text": "heroes",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-005-2178d96252.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-005-2178d96252.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-da2b22a4f6",
+      "order": 5,
+      "text": "long",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-006-da2b22a4f6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-006-da2b22a4f6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-74043ede1a",
+      "order": 6,
+      "text": "deep",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-007-74043ede1a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-007-74043ede1a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-45164b8b9b",
+      "order": 7,
+      "text": "wet",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-008-45164b8b9b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-008-45164b8b9b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-7700a3fbc5",
+      "order": 8,
+      "text": "happy",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-009-7700a3fbc5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-009-7700a3fbc5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-84eaeb02ad",
+      "order": 9,
+      "text": "friends",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-010-84eaeb02ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-010-84eaeb02ad.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-6b20409cee",
+      "order": 10,
+      "text": "tom",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-011-6b20409cee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-011-6b20409cee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-bc1f05f2e1",
+      "order": 11,
+      "text": "is",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-012-bc1f05f2e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-012-bc1f05f2e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-fe2767449c",
+      "order": 12,
+      "text": "a",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-013-fe2767449c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-013-fe2767449c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-75d14a2716",
+      "order": 13,
+      "text": "boy",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-014-75d14a2716.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-014-75d14a2716.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-fd7b6adf0f",
+      "order": 14,
+      "text": "he",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-015-fd7b6adf0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-015-fd7b6adf0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-2a6a1b0612",
+      "order": 15,
+      "text": "has",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-016-2a6a1b0612.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-016-2a6a1b0612.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-c3b631920f",
+      "order": 16,
+      "text": "horse",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-017-c3b631920f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-017-c3b631920f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-fe9a531c4e",
+      "order": 17,
+      "text": "the",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-018-fe9a531c4e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-018-fe9a531c4e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-a55663eba7",
+      "order": 18,
+      "text": "brown",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-019-a55663eba7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-019-a55663eba7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-45cbccb2af",
+      "order": 19,
+      "text": "on",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-020-45cbccb2af.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-020-45cbccb2af.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-7ab3caa57f",
+      "order": 20,
+      "text": "they",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-021-7ab3caa57f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-021-7ab3caa57f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-37875d29ed",
+      "order": 21,
+      "text": "are",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-022-37875d29ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-022-37875d29ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-db857c04e8",
+      "order": 22,
+      "text": "big",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-023-db857c04e8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-023-db857c04e8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-f3bd61e7f6",
+      "order": 23,
+      "text": "sees",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-024-f3bd61e7f6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-024-f3bd61e7f6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-58aebb1130",
+      "order": 24,
+      "text": "bird",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-025-58aebb1130.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-025-58aebb1130.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-f6ae92aa56",
+      "order": 25,
+      "text": "blue",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-026-f6ae92aa56.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-026-f6ae92aa56.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-66b5fc5f0d",
+      "order": 26,
+      "text": "likes",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-027-66b5fc5f0d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-027-66b5fc5f0d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-2d00a46a67",
+      "order": 27,
+      "text": "not",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-028-2d00a46a67.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-028-2d00a46a67.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-b8fade8797",
+      "order": 28,
+      "text": "alone",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-029-b8fade8797.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-029-b8fade8797.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-40921c9991",
+      "order": 29,
+      "text": "friend",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-030-40921c9991.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-030-40921c9991.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-87e28323d6",
+      "order": 30,
+      "text": "his",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-031-87e28323d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-031-87e28323d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-56f0b68e62",
+      "order": 31,
+      "text": "sam",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-032-56f0b68e62.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-032-56f0b68e62.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-6927ff12d9",
+      "order": 32,
+      "text": "too",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-033-6927ff12d9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-033-6927ff12d9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-a83fdfceb9",
+      "order": 33,
+      "text": "black",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-034-a83fdfceb9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-034-a83fdfceb9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-a4bd4a3578",
+      "order": 34,
+      "text": "and",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-035-a4bd4a3578.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-035-a4bd4a3578.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-4fcb826da6",
+      "order": 35,
+      "text": "ride",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-036-4fcb826da6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-036-4fcb826da6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-b69c53060e",
+      "order": 36,
+      "text": "their",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-037-b69c53060e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-037-b69c53060e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-b61a89f92e",
+      "order": 37,
+      "text": "horses",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-038-b61a89f92e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-038-b61a89f92e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-833ab80b6a",
+      "order": 38,
+      "text": "see",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-039-833ab80b6a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-039-833ab80b6a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-d22c2e2a0d",
+      "order": 39,
+      "text": "river",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-040-d22c2e2a0d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-040-d22c2e2a0d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-d193a8bdd4",
+      "order": 40,
+      "text": "want",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-041-d193a8bdd4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-041-d193a8bdd4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-4ff34c466f",
+      "order": 41,
+      "text": "to",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-042-4ff34c466f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-042-4ff34c466f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-43e615d3db",
+      "order": 42,
+      "text": "town",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-043-43e615d3db.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-043-43e615d3db.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-887b321b8f",
+      "order": 43,
+      "text": "small",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-044-887b321b8f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-044-887b321b8f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-c4e36549bd",
+      "order": 44,
+      "text": "at",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-045-c4e36549bd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-045-c4e36549bd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-9bc87ff1cb",
+      "order": 45,
+      "text": "good",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-046-9bc87ff1cb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-046-9bc87ff1cb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-94164aad42",
+      "order": 46,
+      "text": "cowboys",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-047-94164aad42.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-047-94164aad42.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-5e7945110a",
+      "order": 47,
+      "text": "help",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-048-5e7945110a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-048-5e7945110a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-72c5e19154",
+      "order": 48,
+      "text": "people",
+      "objectPath": "articles/hFxfpuViJkutoIqbcUwP/words/word-049-72c5e19154.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/words/word-049-72c5e19154.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-c05eabe85a",
+      "type": "mcq",
+      "order": 0,
+      "text": "What color is Tom's horse?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-001-c05eabe85a.mp3",
+      "questionObjectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-001-c05eabe85a.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-001-c05eabe85a-option1-55df698e.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-001-c05eabe85a-option2-289d346e.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-001-c05eabe85a-option3-8282460f.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-001-c05eabe85a-option4-121c3063.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-c05eabe85a-option1-55df698e",
+          "text": "Brown",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-001-c05eabe85a-option1-55df698e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-c05eabe85a-option2-289d346e",
+          "text": "Black",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-001-c05eabe85a-option2-289d346e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-c05eabe85a-option3-8282460f",
+          "text": "Blue",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-001-c05eabe85a-option3-8282460f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-c05eabe85a-option4-121c3063",
+          "text": "White",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-001-c05eabe85a-option4-121c3063.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-ba00aca715",
+      "type": "mcq",
+      "order": 1,
+      "text": "What does Tom see?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-002-ba00aca715.mp3",
+      "questionObjectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-002-ba00aca715.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-002-ba00aca715-option1-d6e1d8e2.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-002-ba00aca715-option2-9b3d1eb9.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-002-ba00aca715-option3-45905780.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-002-ba00aca715-option4-3da98b6a.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-ba00aca715-option1-d6e1d8e2",
+          "text": "A bird",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-002-ba00aca715-option1-d6e1d8e2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-ba00aca715-option2-9b3d1eb9",
+          "text": "A river",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-002-ba00aca715-option2-9b3d1eb9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-ba00aca715-option3-45905780",
+          "text": "A town",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-002-ba00aca715-option3-45905780.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-ba00aca715-option4-3da98b6a",
+          "text": "A mountain",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-002-ba00aca715-option4-3da98b6a.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-d47902765d",
+      "type": "mcq",
+      "order": 2,
+      "text": "How do Tom and Sam feel in the town?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-003-d47902765d.mp3",
+      "questionObjectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-003-d47902765d.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-003-d47902765d-option1-fbfd52f8.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-003-d47902765d-option2-f52d7afe.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-003-d47902765d-option3-b0a637e8.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-003-d47902765d-option4-911de213.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-d47902765d-option1-fbfd52f8",
+          "text": "Happy",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-003-d47902765d-option1-fbfd52f8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-d47902765d-option2-f52d7afe",
+          "text": "Sad",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-003-d47902765d-option2-f52d7afe.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-d47902765d-option3-b0a637e8",
+          "text": "Angry",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-003-d47902765d-option3-b0a637e8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-d47902765d-option4-911de213",
+          "text": "Tired",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-003-d47902765d-option4-911de213.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-106b4a092d",
+      "type": "mcq",
+      "order": 3,
+      "text": "What are Tom and Sam?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-004-106b4a092d.mp3",
+      "questionObjectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-004-106b4a092d.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-004-106b4a092d-option1-f4666d1e.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-004-106b4a092d-option2-cf75e4ae.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-004-106b4a092d-option3-bbfaa433.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-004-106b4a092d-option4-0a3443e5.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-106b4a092d-option1-f4666d1e",
+          "text": "Good cowboys",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-004-106b4a092d-option1-f4666d1e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-106b4a092d-option2-cf75e4ae",
+          "text": "Good friends",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-004-106b4a092d-option2-cf75e4ae.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-106b4a092d-option3-bbfaa433",
+          "text": "Good birds",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-004-106b4a092d-option3-bbfaa433.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-106b4a092d-option4-0a3443e5",
+          "text": "Good horses",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-004-106b4a092d-option4-0a3443e5.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-bdcac87ae1",
+      "type": "mcq",
+      "order": 4,
+      "text": "Who is the boy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-005-bdcac87ae1.mp3",
+      "questionObjectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-005-bdcac87ae1.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-005-bdcac87ae1-option1-09c3b65b.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-005-bdcac87ae1-option2-6a64c9de.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-005-bdcac87ae1-option3-2a309690.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-005-bdcac87ae1-option4-28efb607.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-bdcac87ae1-option1-09c3b65b",
+          "text": "Tom",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-005-bdcac87ae1-option1-09c3b65b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-bdcac87ae1-option2-6a64c9de",
+          "text": "Sam",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-005-bdcac87ae1-option2-6a64c9de.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-bdcac87ae1-option3-2a309690",
+          "text": "A bird",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-005-bdcac87ae1-option3-2a309690.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-bdcac87ae1-option4-28efb607",
+          "text": "A horse",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-005-bdcac87ae1-option4-28efb607.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-0d8512f1cd",
+      "type": "mcq",
+      "order": 5,
+      "text": "What color is the bird?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-006-0d8512f1cd.mp3",
+      "questionObjectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-006-0d8512f1cd.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-006-0d8512f1cd-option1-3a97a71f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-006-0d8512f1cd-option2-57b83f56.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-006-0d8512f1cd-option3-a4509a5a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-006-0d8512f1cd-option4-027144d8.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-0d8512f1cd-option1-3a97a71f",
+          "text": "Blue",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-006-0d8512f1cd-option1-3a97a71f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-0d8512f1cd-option2-57b83f56",
+          "text": "Brown",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-006-0d8512f1cd-option2-57b83f56.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-0d8512f1cd-option3-a4509a5a",
+          "text": "Black",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-006-0d8512f1cd-option3-a4509a5a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-0d8512f1cd-option4-027144d8",
+          "text": "Green",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-006-0d8512f1cd-option4-027144d8.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-7fe4bb9808",
+      "type": "mcq",
+      "order": 6,
+      "text": "What color is Sam's horse?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-007-7fe4bb9808.mp3",
+      "questionObjectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-007-7fe4bb9808.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-007-7fe4bb9808-option1-7f0ba649.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-007-7fe4bb9808-option2-7eb313a8.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-007-7fe4bb9808-option3-1207fa63.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-007-7fe4bb9808-option4-cc92efac.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-7fe4bb9808-option1-7f0ba649",
+          "text": "Black",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-007-7fe4bb9808-option1-7f0ba649.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-7fe4bb9808-option2-7eb313a8",
+          "text": "Brown",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-007-7fe4bb9808-option2-7eb313a8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-7fe4bb9808-option3-1207fa63",
+          "text": "Blue",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-007-7fe4bb9808-option3-1207fa63.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-7fe4bb9808-option4-cc92efac",
+          "text": "Red",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-007-7fe4bb9808-option4-cc92efac.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-b2480040a8",
+      "type": "mcq",
+      "order": 7,
+      "text": "What do Tom and Sam want to cross?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-008-b2480040a8.mp3",
+      "questionObjectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-008-b2480040a8.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-008-b2480040a8-option1-5a3eff3c.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-008-b2480040a8-option2-5d1c63d3.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-008-b2480040a8-option3-084cb895.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-008-b2480040a8-option4-5838ed1c.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-b2480040a8-option1-5a3eff3c",
+          "text": "The river",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-008-b2480040a8-option1-5a3eff3c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-b2480040a8-option2-5d1c63d3",
+          "text": "The plains",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-008-b2480040a8-option2-5d1c63d3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-b2480040a8-option3-084cb895",
+          "text": "The town",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-008-b2480040a8-option3-084cb895.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-b2480040a8-option4-5838ed1c",
+          "text": "The mountains",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-008-b2480040a8-option4-5838ed1c.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-73c8f92460",
+      "type": "mcq",
+      "order": 8,
+      "text": "Where are Tom and Sam?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-009-73c8f92460.mp3",
+      "questionObjectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-009-73c8f92460.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-009-73c8f92460-option1-4fb3edb5.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-009-73c8f92460-option2-53d5a979.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-009-73c8f92460-option3-29f1d634.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-009-73c8f92460-option4-32985c2d.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-73c8f92460-option1-4fb3edb5",
+          "text": "On the plains",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-009-73c8f92460-option1-4fb3edb5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-73c8f92460-option2-53d5a979",
+          "text": "In the town",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-009-73c8f92460-option2-53d5a979.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-73c8f92460-option3-29f1d634",
+          "text": "In the river",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-009-73c8f92460-option3-29f1d634.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-73c8f92460-option4-32985c2d",
+          "text": "In the mountains",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-009-73c8f92460-option4-32985c2d.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-6aecfc8efa",
+      "type": "mcq",
+      "order": 9,
+      "text": "Who is Tom's friend?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-010-6aecfc8efa.mp3",
+      "questionObjectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-010-6aecfc8efa.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-010-6aecfc8efa-option1-70991a31.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-010-6aecfc8efa-option2-2579cd61.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-010-6aecfc8efa-option3-4907d415.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/mcq-010-6aecfc8efa-option4-463b3471.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-6aecfc8efa-option1-70991a31",
+          "text": "Sam",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-010-6aecfc8efa-option1-70991a31.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-6aecfc8efa-option2-2579cd61",
+          "text": "A bird",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-010-6aecfc8efa-option2-2579cd61.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-6aecfc8efa-option3-4907d415",
+          "text": "A horse",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-010-6aecfc8efa-option3-4907d415.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-6aecfc8efa-option4-463b3471",
+          "text": "A river",
+          "objectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/mcq-010-6aecfc8efa-option4-463b3471.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-bfcd0d5d38",
+      "type": "saq",
+      "order": 10,
+      "text": "What is the town like?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/saq-011-bfcd0d5d38.mp3",
+      "questionObjectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/saq-011-bfcd0d5d38.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-7b305461d8",
+      "type": "saq",
+      "order": 11,
+      "text": "Who is Tom's friend?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/saq-012-7b305461d8.mp3",
+      "questionObjectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/saq-012-7b305461d8.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-ce889752a7",
+      "type": "saq",
+      "order": 12,
+      "text": "What color is Tom's horse?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/saq-013-ce889752a7.mp3",
+      "questionObjectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/saq-013-ce889752a7.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-557c120341",
+      "type": "saq",
+      "order": 13,
+      "text": "Who is the boy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/saq-014-557c120341.mp3",
+      "questionObjectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/saq-014-557c120341.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-baab58c74d",
+      "type": "saq",
+      "order": 14,
+      "text": "What do Tom and Sam see?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/hFxfpuViJkutoIqbcUwP/questions/saq-015-baab58c74d.mp3",
+      "questionObjectPath": "articles/hFxfpuViJkutoIqbcUwP/questions/saq-015-baab58c74d.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T16:49:07.564Z"
+}

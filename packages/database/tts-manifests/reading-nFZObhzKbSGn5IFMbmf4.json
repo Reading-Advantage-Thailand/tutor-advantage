@@ -1,0 +1,1375 @@
+{
+  "version": 1,
+  "articleId": "nFZObhzKbSGn5IFMbmf4",
+  "source": "READING_ADVANTAGE",
+  "title": "The Sheriff of Deadwood",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-2d796111fd",
+      "order": 0,
+      "text": "Tom is the sheriff.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-001-2d796111fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-001-2d796111fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-073c41d197",
+      "order": 1,
+      "text": "He is young.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-002-073c41d197.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-002-073c41d197.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-a6a65217ca",
+      "order": 2,
+      "text": "He is brave.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-003-a6a65217ca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-003-a6a65217ca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-35b844a5ce",
+      "order": 3,
+      "text": "He lives in Deadwood.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-004-35b844a5ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-004-35b844a5ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-8e6f545acb",
+      "order": 4,
+      "text": "Deadwood is a small town.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-005-8e6f545acb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-005-8e6f545acb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-8f2e58ec31",
+      "order": 5,
+      "text": "It is a mining town.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-006-8f2e58ec31.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-006-8f2e58ec31.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-1e8cd2e62a",
+      "order": 6,
+      "text": "Many people come to find gold.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-007-1e8cd2e62a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-007-1e8cd2e62a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-b4df5f683c",
+      "order": 7,
+      "text": "One day, a gang comes.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-008-b4df5f683c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-008-b4df5f683c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-233ec52873",
+      "order": 8,
+      "text": "The gang is bad.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-009-233ec52873.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-009-233ec52873.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-5184993275",
+      "order": 9,
+      "text": "They steal gold.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-010-5184993275.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-010-5184993275.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-b3f08edd98",
+      "order": 10,
+      "text": "They hurt people.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-011-b3f08edd98.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-011-b3f08edd98.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-06f9bd1bd6",
+      "order": 11,
+      "text": "Tom wants to stop them.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-012-06f9bd1bd6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-012-06f9bd1bd6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-092fb0a454",
+      "order": 12,
+      "text": "He has a plan.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-013-092fb0a454.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-013-092fb0a454.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-c05f368fe4",
+      "order": 13,
+      "text": "He tells the people, \"Stay inside.\"",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-014-c05f368fe4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-014-c05f368fe4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-da3dc06548",
+      "order": 14,
+      "text": "Tom waits for the gang.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-015-da3dc06548.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-015-da3dc06548.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-bb53129c4f",
+      "order": 15,
+      "text": "The gang comes to the bank.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-016-bb53129c4f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-016-bb53129c4f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-389ee1ad6f",
+      "order": 16,
+      "text": "Tom is ready.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-017-389ee1ad6f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-017-389ee1ad6f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-3a3dbe4638",
+      "order": 17,
+      "text": "He hides behind a barrel.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-018-3a3dbe4638.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-018-3a3dbe4638.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-5d86cbf3ef",
+      "order": 18,
+      "text": "The gang goes inside.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-019-5d86cbf3ef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-019-5d86cbf3ef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-58b0afeabc",
+      "order": 19,
+      "text": "Tom jumps out.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-020-58b0afeabc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-020-58b0afeabc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-7e28ef6df7",
+      "order": 20,
+      "text": "He says, \"Stop!\"",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-021-7e28ef6df7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-021-7e28ef6df7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-45a27ca004",
+      "order": 21,
+      "text": "The gang laughs.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-022-45a27ca004.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-022-45a27ca004.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-48d0bc7502",
+      "order": 22,
+      "text": "They do not stop.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-023-48d0bc7502.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-023-48d0bc7502.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-0c34bdd236",
+      "order": 23,
+      "text": "Tom shoots his gun.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-024-0c34bdd236.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-024-0c34bdd236.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-761236bec9",
+      "order": 24,
+      "text": "Bang!",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-025-761236bec9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-025-761236bec9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-94114565be",
+      "order": 25,
+      "text": "Bang!",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-026-94114565be.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-026-94114565be.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-4665e88347",
+      "order": 26,
+      "text": "The gang is scared.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-027-4665e88347.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-027-4665e88347.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-66fc1eece4",
+      "order": 27,
+      "text": "They run away.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-028-66fc1eece4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-028-66fc1eece4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-f0254a6ca3",
+      "order": 28,
+      "text": "Tom chases them.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-029-f0254a6ca3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-029-f0254a6ca3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-e07f1b5249",
+      "order": 29,
+      "text": "He catches the leader.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-030-e07f1b5249.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-030-e07f1b5249.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-64e73489d7",
+      "order": 30,
+      "text": "The leader is big.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-031-64e73489d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-031-64e73489d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-d73d44b7d6",
+      "order": 31,
+      "text": "He is strong.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-032-d73d44b7d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-032-d73d44b7d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-3681fdd7e7",
+      "order": 32,
+      "text": "Tom is smart.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-033-3681fdd7e7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-033-3681fdd7e7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-eda4ca6d52",
+      "order": 33,
+      "text": "He ties the leader up.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-034-eda4ca6d52.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-034-eda4ca6d52.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-e074770cc5",
+      "order": 34,
+      "text": "The people cheer.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-035-e074770cc5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-035-e074770cc5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-59ff07f59e",
+      "order": 35,
+      "text": "They say, \"Thank you, Tom!\"",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-036-59ff07f59e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-036-59ff07f59e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-25014219db",
+      "order": 36,
+      "text": "Tom smiles.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-037-25014219db.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-037-25014219db.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-3adcdf00ac",
+      "order": 37,
+      "text": "He is happy.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-038-3adcdf00ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-038-3adcdf00ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-2398732eed",
+      "order": 38,
+      "text": "Deadwood is safe again.",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-039-2398732eed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/sentences/sentence-039-2398732eed.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-58bb92695c",
+      "order": 0,
+      "text": "sheriff",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-001-58bb92695c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-001-58bb92695c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-2a5e98bb82",
+      "order": 1,
+      "text": "mining",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-002-2a5e98bb82.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-002-2a5e98bb82.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-432f6793a1",
+      "order": 2,
+      "text": "gang",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-003-432f6793a1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-003-432f6793a1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-912466d344",
+      "order": 3,
+      "text": "steal",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-004-912466d344.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-004-912466d344.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-6494c62dee",
+      "order": 4,
+      "text": "plan",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-005-6494c62dee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-005-6494c62dee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-fb2d00819c",
+      "order": 5,
+      "text": "bank",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-006-fb2d00819c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-006-fb2d00819c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-0db0458ae8",
+      "order": 6,
+      "text": "hides",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-007-0db0458ae8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-007-0db0458ae8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-3bbef9a9bd",
+      "order": 7,
+      "text": "jumps",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-008-3bbef9a9bd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-008-3bbef9a9bd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-9831566a85",
+      "order": 8,
+      "text": "leader",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-009-9831566a85.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-009-9831566a85.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-15decfb6e5",
+      "order": 9,
+      "text": "cheer",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-010-15decfb6e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-010-15decfb6e5.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-6b20409cee",
+      "order": 10,
+      "text": "tom",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-011-6b20409cee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-011-6b20409cee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-bc1f05f2e1",
+      "order": 11,
+      "text": "is",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-012-bc1f05f2e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-012-bc1f05f2e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-5903d835ea",
+      "order": 12,
+      "text": "the",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-013-5903d835ea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-013-5903d835ea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-e4d7214bc8",
+      "order": 13,
+      "text": "he",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-014-e4d7214bc8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-014-e4d7214bc8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-e68463c6dc",
+      "order": 14,
+      "text": "young",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-015-e68463c6dc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-015-e68463c6dc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-283e7733e9",
+      "order": 15,
+      "text": "brave",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-016-283e7733e9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-016-283e7733e9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-3847aa8e61",
+      "order": 16,
+      "text": "lives",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-017-3847aa8e61.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-017-3847aa8e61.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-caa1acde72",
+      "order": 17,
+      "text": "in",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-018-caa1acde72.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-018-caa1acde72.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-d5cf75372f",
+      "order": 18,
+      "text": "deadwood",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-019-d5cf75372f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-019-d5cf75372f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-728b0dd7ce",
+      "order": 19,
+      "text": "a",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-020-728b0dd7ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-020-728b0dd7ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-0fe3983020",
+      "order": 20,
+      "text": "small",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-021-0fe3983020.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-021-0fe3983020.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-f15f04ca1b",
+      "order": 21,
+      "text": "town",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-022-f15f04ca1b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-022-f15f04ca1b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-906d30c28b",
+      "order": 22,
+      "text": "it",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-023-906d30c28b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-023-906d30c28b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-df58afe785",
+      "order": 23,
+      "text": "many",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-024-df58afe785.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-024-df58afe785.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-56ef97352d",
+      "order": 24,
+      "text": "people",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-025-56ef97352d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-025-56ef97352d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-1a008eb560",
+      "order": 25,
+      "text": "come",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-026-1a008eb560.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-026-1a008eb560.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-b5e4e4ac1c",
+      "order": 26,
+      "text": "to",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-027-b5e4e4ac1c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-027-b5e4e4ac1c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-62918ebaee",
+      "order": 27,
+      "text": "find",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-028-62918ebaee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-028-62918ebaee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-ebab7e98ff",
+      "order": 28,
+      "text": "gold",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-029-ebab7e98ff.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-029-ebab7e98ff.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-249ec4ba43",
+      "order": 29,
+      "text": "one",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-030-249ec4ba43.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-030-249ec4ba43.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-756556a416",
+      "order": 30,
+      "text": "day",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-031-756556a416.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-031-756556a416.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-0ecd41802c",
+      "order": 31,
+      "text": "comes",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-032-0ecd41802c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-032-0ecd41802c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-8f9e6d6bd1",
+      "order": 32,
+      "text": "bad",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-033-8f9e6d6bd1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-033-8f9e6d6bd1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-3d1d234648",
+      "order": 33,
+      "text": "they",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-034-3d1d234648.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-034-3d1d234648.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-97e3b2dbe3",
+      "order": 34,
+      "text": "hurt",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-035-97e3b2dbe3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-035-97e3b2dbe3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-d1cba957b3",
+      "order": 35,
+      "text": "wants",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-036-d1cba957b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-036-d1cba957b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-6b8a872863",
+      "order": 36,
+      "text": "stop",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-037-6b8a872863.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-037-6b8a872863.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-97d023a743",
+      "order": 37,
+      "text": "them",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-038-97d023a743.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-038-97d023a743.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-95bc4511fd",
+      "order": 38,
+      "text": "has",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-039-95bc4511fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-039-95bc4511fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-d1bb341d72",
+      "order": 39,
+      "text": "tells",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-040-d1bb341d72.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-040-d1bb341d72.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-98c2805db2",
+      "order": 40,
+      "text": "stay",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-041-98c2805db2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-041-98c2805db2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-fc2a10a1f8",
+      "order": 41,
+      "text": "inside",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-042-fc2a10a1f8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-042-fc2a10a1f8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-43eb5573cd",
+      "order": 42,
+      "text": "waits",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-043-43eb5573cd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-043-43eb5573cd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-c325602033",
+      "order": 43,
+      "text": "for",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-044-c325602033.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-044-c325602033.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-b5b2d1c17c",
+      "order": 44,
+      "text": "ready",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-045-b5b2d1c17c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-045-b5b2d1c17c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-9ce7790075",
+      "order": 45,
+      "text": "behind",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-046-9ce7790075.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-046-9ce7790075.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-4855177f33",
+      "order": 46,
+      "text": "barrel",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-047-4855177f33.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-047-4855177f33.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-36edcaa60c",
+      "order": 47,
+      "text": "goes",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-048-36edcaa60c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-048-36edcaa60c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-67bcc9fde0",
+      "order": 48,
+      "text": "out",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-049-67bcc9fde0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-049-67bcc9fde0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-b910001821",
+      "order": 49,
+      "text": "says",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-050-b910001821.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-050-b910001821.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-fcdd2e4273",
+      "order": 50,
+      "text": "laughs",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-051-fcdd2e4273.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-051-fcdd2e4273.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-d90b198413",
+      "order": 51,
+      "text": "do",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-052-d90b198413.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-052-d90b198413.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-7bb5c69f24",
+      "order": 52,
+      "text": "not",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-053-7bb5c69f24.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-053-7bb5c69f24.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-3186d851c6",
+      "order": 53,
+      "text": "shoots",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-054-3186d851c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-054-3186d851c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-19cc98448e",
+      "order": 54,
+      "text": "his",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-055-19cc98448e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-055-19cc98448e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-1e29b98c22",
+      "order": 55,
+      "text": "gun",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-056-1e29b98c22.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-056-1e29b98c22.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-97920ab0bf",
+      "order": 56,
+      "text": "bang",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-057-97920ab0bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-057-97920ab0bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-d741819bf6",
+      "order": 57,
+      "text": "scared",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-058-d741819bf6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-058-d741819bf6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-068bd176b3",
+      "order": 58,
+      "text": "run",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-059-068bd176b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-059-068bd176b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-98bb830363",
+      "order": 59,
+      "text": "away",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-060-98bb830363.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-060-98bb830363.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-73a7c754b6",
+      "order": 60,
+      "text": "chases",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-061-73a7c754b6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-061-73a7c754b6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-de76322c97",
+      "order": 61,
+      "text": "catches",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-062-de76322c97.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-062-de76322c97.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-ebe02124c6",
+      "order": 62,
+      "text": "big",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-063-ebe02124c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-063-ebe02124c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-3fb5a51cc0",
+      "order": 63,
+      "text": "strong",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-064-3fb5a51cc0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-064-3fb5a51cc0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-5230484b43",
+      "order": 64,
+      "text": "smart",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-065-5230484b43.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-065-5230484b43.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-eca455083b",
+      "order": 65,
+      "text": "ties",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-066-eca455083b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-066-eca455083b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-e97b0fd301",
+      "order": 66,
+      "text": "up",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-067-e97b0fd301.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-067-e97b0fd301.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-3b009f6c5d",
+      "order": 67,
+      "text": "say",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-068-3b009f6c5d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-068-3b009f6c5d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-5a8b00d1ce",
+      "order": 68,
+      "text": "thank",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-069-5a8b00d1ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-069-5a8b00d1ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-1d4faa820e",
+      "order": 69,
+      "text": "you",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-070-1d4faa820e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-070-1d4faa820e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-4632b199ca",
+      "order": 70,
+      "text": "smiles",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-071-4632b199ca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-071-4632b199ca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-839a11bc7f",
+      "order": 71,
+      "text": "happy",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-072-839a11bc7f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-072-839a11bc7f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-e967454d37",
+      "order": 72,
+      "text": "safe",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-073-e967454d37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-073-e967454d37.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-55d8816b9a",
+      "order": 73,
+      "text": "again",
+      "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/words/word-074-55d8816b9a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/words/word-074-55d8816b9a.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-7f93250df4",
+      "type": "mcq",
+      "order": 0,
+      "text": "What kind of town is Deadwood?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-001-7f93250df4.mp3",
+      "questionObjectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-001-7f93250df4.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-001-7f93250df4-option1-7927a8fc.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-001-7f93250df4-option2-f55617ae.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-001-7f93250df4-option3-8ca173c8.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-001-7f93250df4-option4-01720ae7.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-7f93250df4-option1-7927a8fc",
+          "text": "A mining town",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-001-7f93250df4-option1-7927a8fc.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-7f93250df4-option2-f55617ae",
+          "text": "A fishing town",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-001-7f93250df4-option2-f55617ae.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-7f93250df4-option3-8ca173c8",
+          "text": "A farming town",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-001-7f93250df4-option3-8ca173c8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-7f93250df4-option4-01720ae7",
+          "text": "A big city",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-001-7f93250df4-option4-01720ae7.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-9b7f09db96",
+      "type": "mcq",
+      "order": 1,
+      "text": "What does Tom do when the gang goes inside the bank?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-002-9b7f09db96.mp3",
+      "questionObjectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-002-9b7f09db96.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-002-9b7f09db96-option1-e959f06a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-002-9b7f09db96-option2-feda30f3.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-002-9b7f09db96-option3-bf04cffa.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-002-9b7f09db96-option4-1efab476.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-9b7f09db96-option1-e959f06a",
+          "text": "He jumps out and says, 'Stop!'",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-002-9b7f09db96-option1-e959f06a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-9b7f09db96-option2-feda30f3",
+          "text": "He runs away",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-002-9b7f09db96-option2-feda30f3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-9b7f09db96-option3-bf04cffa",
+          "text": "He hides more",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-002-9b7f09db96-option3-bf04cffa.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-9b7f09db96-option4-1efab476",
+          "text": "He calls for help",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-002-9b7f09db96-option4-1efab476.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-f7a4666f49",
+      "type": "mcq",
+      "order": 2,
+      "text": "Where does Tom live?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-003-f7a4666f49.mp3",
+      "questionObjectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-003-f7a4666f49.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-003-f7a4666f49-option1-e34710a6.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-003-f7a4666f49-option2-c1e3a7d3.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-003-f7a4666f49-option3-1b3076c3.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-003-f7a4666f49-option4-f815c440.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-f7a4666f49-option1-e34710a6",
+          "text": "Deadwood",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-003-f7a4666f49-option1-e34710a6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-f7a4666f49-option2-c1e3a7d3",
+          "text": "Goldtown",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-003-f7a4666f49-option2-c1e3a7d3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-f7a4666f49-option3-1b3076c3",
+          "text": "Silver City",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-003-f7a4666f49-option3-1b3076c3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-f7a4666f49-option4-f815c440",
+          "text": "Copperville",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-003-f7a4666f49-option4-f815c440.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-8a1ddc2012",
+      "type": "mcq",
+      "order": 3,
+      "text": "What does the gang do?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-004-8a1ddc2012.mp3",
+      "questionObjectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-004-8a1ddc2012.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-004-8a1ddc2012-option1-e3b626d7.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-004-8a1ddc2012-option2-6c58f738.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-004-8a1ddc2012-option3-8798b91e.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-004-8a1ddc2012-option4-423fd936.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-8a1ddc2012-option1-e3b626d7",
+          "text": "They steal gold and hurt people",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-004-8a1ddc2012-option1-e3b626d7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-8a1ddc2012-option2-6c58f738",
+          "text": "They help people",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-004-8a1ddc2012-option2-6c58f738.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-8a1ddc2012-option3-8798b91e",
+          "text": "They find gold",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-004-8a1ddc2012-option3-8798b91e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-8a1ddc2012-option4-423fd936",
+          "text": "They build houses",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-004-8a1ddc2012-option4-423fd936.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-933b5b374e",
+      "type": "mcq",
+      "order": 4,
+      "text": "Where does Tom hide?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-005-933b5b374e.mp3",
+      "questionObjectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-005-933b5b374e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-005-933b5b374e-option1-9ba966ce.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-005-933b5b374e-option2-fa536e13.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-005-933b5b374e-option3-c1764299.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-005-933b5b374e-option4-b624861f.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-933b5b374e-option1-9ba966ce",
+          "text": "Behind a barrel",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-005-933b5b374e-option1-9ba966ce.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-933b5b374e-option2-fa536e13",
+          "text": "In a house",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-005-933b5b374e-option2-fa536e13.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-933b5b374e-option3-c1764299",
+          "text": "In a tree",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-005-933b5b374e-option3-c1764299.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-933b5b374e-option4-b624861f",
+          "text": "Under a table",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-005-933b5b374e-option4-b624861f.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-40c09f2941",
+      "type": "mcq",
+      "order": 5,
+      "text": "What does Tom tell the people to do?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-006-40c09f2941.mp3",
+      "questionObjectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-006-40c09f2941.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-006-40c09f2941-option1-9d47dcbe.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-006-40c09f2941-option2-de07c498.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-006-40c09f2941-option3-17df755d.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-006-40c09f2941-option4-9ae15571.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-40c09f2941-option1-9d47dcbe",
+          "text": "Stay inside",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-006-40c09f2941-option1-9d47dcbe.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-40c09f2941-option2-de07c498",
+          "text": "Run away",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-006-40c09f2941-option2-de07c498.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-40c09f2941-option3-17df755d",
+          "text": "Fight the gang",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-006-40c09f2941-option3-17df755d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-40c09f2941-option4-9ae15571",
+          "text": "Hide in the bank",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-006-40c09f2941-option4-9ae15571.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-52e03d627f",
+      "type": "mcq",
+      "order": 6,
+      "text": "What do many people come to find in Deadwood?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-007-52e03d627f.mp3",
+      "questionObjectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-007-52e03d627f.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-007-52e03d627f-option1-9bba5531.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-007-52e03d627f-option2-d0db5725.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-007-52e03d627f-option3-758d50ae.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-007-52e03d627f-option4-df0731e1.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-52e03d627f-option1-9bba5531",
+          "text": "Gold",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-007-52e03d627f-option1-9bba5531.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-52e03d627f-option2-d0db5725",
+          "text": "Silver",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-007-52e03d627f-option2-d0db5725.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-52e03d627f-option3-758d50ae",
+          "text": "Copper",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-007-52e03d627f-option3-758d50ae.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-52e03d627f-option4-df0731e1",
+          "text": "Diamonds",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-007-52e03d627f-option4-df0731e1.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-8439f2ef5c",
+      "type": "mcq",
+      "order": 7,
+      "text": "What happens when Tom shoots his gun?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-008-8439f2ef5c.mp3",
+      "questionObjectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-008-8439f2ef5c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-008-8439f2ef5c-option1-c3c8e8c8.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-008-8439f2ef5c-option2-64f025f7.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-008-8439f2ef5c-option3-b8627e16.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-008-8439f2ef5c-option4-c3b16cdb.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-8439f2ef5c-option1-c3c8e8c8",
+          "text": "The gang is scared and runs away",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-008-8439f2ef5c-option1-c3c8e8c8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-8439f2ef5c-option2-64f025f7",
+          "text": "The gang laughs",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-008-8439f2ef5c-option2-64f025f7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-8439f2ef5c-option3-b8627e16",
+          "text": "The gang fights back",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-008-8439f2ef5c-option3-b8627e16.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-8439f2ef5c-option4-c3b16cdb",
+          "text": "The gang hides",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-008-8439f2ef5c-option4-c3b16cdb.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-ce95ad5289",
+      "type": "mcq",
+      "order": 8,
+      "text": "Who is the sheriff?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-009-ce95ad5289.mp3",
+      "questionObjectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-009-ce95ad5289.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-009-ce95ad5289-option1-8639a676.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-009-ce95ad5289-option2-c247896d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-009-ce95ad5289-option3-98f4e50c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-009-ce95ad5289-option4-1af0d42e.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-ce95ad5289-option1-8639a676",
+          "text": "Tom",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-009-ce95ad5289-option1-8639a676.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-ce95ad5289-option2-c247896d",
+          "text": "John",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-009-ce95ad5289-option2-c247896d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-ce95ad5289-option3-98f4e50c",
+          "text": "Mike",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-009-ce95ad5289-option3-98f4e50c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-ce95ad5289-option4-1af0d42e",
+          "text": "Sam",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-009-ce95ad5289-option4-1af0d42e.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-ec82182aef",
+      "type": "mcq",
+      "order": 9,
+      "text": "How do the people feel after Tom catches the leader?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-010-ec82182aef.mp3",
+      "questionObjectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-010-ec82182aef.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-010-ec82182aef-option1-3797c888.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-010-ec82182aef-option2-9f00f7c9.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-010-ec82182aef-option3-4f4d4dde.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-010-ec82182aef-option4-afe08211.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-ec82182aef-option1-3797c888",
+          "text": "Happy",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-010-ec82182aef-option1-3797c888.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ec82182aef-option2-9f00f7c9",
+          "text": "Sad",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-010-ec82182aef-option2-9f00f7c9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ec82182aef-option3-4f4d4dde",
+          "text": "Angry",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-010-ec82182aef-option3-4f4d4dde.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ec82182aef-option4-afe08211",
+          "text": "Scared",
+          "objectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/mcq-010-ec82182aef-option4-afe08211.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-e304c68bd7",
+      "type": "saq",
+      "order": 10,
+      "text": "Who is the sheriff?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/saq-011-e304c68bd7.mp3",
+      "questionObjectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/saq-011-e304c68bd7.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-d37c1ddf80",
+      "type": "saq",
+      "order": 11,
+      "text": "What does Tom tell the people to do?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/saq-012-d37c1ddf80.mp3",
+      "questionObjectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/saq-012-d37c1ddf80.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-31da3ef0bf",
+      "type": "saq",
+      "order": 12,
+      "text": "What do many people come to find in Deadwood?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/saq-013-31da3ef0bf.mp3",
+      "questionObjectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/saq-013-31da3ef0bf.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-2bf35f4960",
+      "type": "saq",
+      "order": 13,
+      "text": "What does Tom do when the gang comes to the bank?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/saq-014-2bf35f4960.mp3",
+      "questionObjectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/saq-014-2bf35f4960.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-0bae416309",
+      "type": "saq",
+      "order": 14,
+      "text": "Where does Tom live?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/nFZObhzKbSGn5IFMbmf4/questions/saq-015-0bae416309.mp3",
+      "questionObjectPath": "articles/nFZObhzKbSGn5IFMbmf4/questions/saq-015-0bae416309.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:08:45.281Z"
+}

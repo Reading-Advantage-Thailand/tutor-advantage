@@ -1,0 +1,1615 @@
+{
+  "version": 1,
+  "articleId": "mQBtacaks53c7Djci9n6",
+  "source": "READING_ADVANTAGE",
+  "title": "English: Our World Language",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-3114b85e17",
+      "order": 0,
+      "text": "English is a language.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-001-3114b85e17.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-001-3114b85e17.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-170cfd8354",
+      "order": 1,
+      "text": "Many people speak English.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-002-170cfd8354.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-002-170cfd8354.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-5a19ceb4fe",
+      "order": 2,
+      "text": "It is a good language.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-003-5a19ceb4fe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-003-5a19ceb4fe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-93121e4c90",
+      "order": 3,
+      "text": "English is old.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-004-93121e4c90.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-004-93121e4c90.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-9bb97d9eeb",
+      "order": 4,
+      "text": "It has a very long story.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-005-9bb97d9eeb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-005-9bb97d9eeb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-5bf8703319",
+      "order": 5,
+      "text": "The story starts long ago.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-006-5bf8703319.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-006-5bf8703319.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-ac35706c78",
+      "order": 6,
+      "text": "An old language is the start.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-007-ac35706c78.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-007-ac35706c78.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-003a3e76d7",
+      "order": 7,
+      "text": "This language was in North Europe.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-008-003a3e76d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-008-003a3e76d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-8456e2fa0a",
+      "order": 8,
+      "text": "Near Germany.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-009-8456e2fa0a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-009-8456e2fa0a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-a0a4703d14",
+      "order": 9,
+      "text": "This old language is a root.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-010-a0a4703d14.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-010-a0a4703d14.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-08b6efd00a",
+      "order": 10,
+      "text": "It is a root for English.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-011-08b6efd00a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-011-08b6efd00a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-e59e934ad4",
+      "order": 11,
+      "text": "English comes from this root.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-012-e59e934ad4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-012-e59e934ad4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-f43903c8d7",
+      "order": 12,
+      "text": "Some people moved.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-013-f43903c8d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-013-f43903c8d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-adccecb035",
+      "order": 13,
+      "text": "They went to a big island.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-014-adccecb035.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-014-adccecb035.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-0cd44d96e5",
+      "order": 14,
+      "text": "This island is Britain.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-015-0cd44d96e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-015-0cd44d96e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-74914e0f13",
+      "order": 15,
+      "text": "In Britain, their language changed.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-016-74914e0f13.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-016-74914e0f13.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-b9b8d976d4",
+      "order": 16,
+      "text": "It became Old English.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-017-b9b8d976d4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-017-b9b8d976d4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-a8802a804b",
+      "order": 17,
+      "text": "Old English is very different.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-018-a8802a804b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-018-a8802a804b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-587969f869",
+      "order": 18,
+      "text": "It is not like English today.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-019-587969f869.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-019-587969f869.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-05c08ebed0",
+      "order": 19,
+      "text": "More changes came to English.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-020-05c08ebed0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-020-05c08ebed0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-117163d703",
+      "order": 20,
+      "text": "Many new words came.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-021-117163d703.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-021-117163d703.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-a5309b9ac5",
+      "order": 21,
+      "text": "Words from the French language are in English.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-022-a5309b9ac5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-022-a5309b9ac5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-4e5ab23165",
+      "order": 22,
+      "text": "Words from the Latin language are in English too.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-023-4e5ab23165.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-023-4e5ab23165.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-7d10d630f9",
+      "order": 23,
+      "text": "These new words made English grow.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-024-7d10d630f9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-024-7d10d630f9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-aed0bc9625",
+      "order": 24,
+      "text": "English became bigger.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-025-aed0bc9625.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-025-aed0bc9625.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-99d89d5a06",
+      "order": 25,
+      "text": "Now, we speak Modern English.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-026-99d89d5a06.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-026-99d89d5a06.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-9f5848d030",
+      "order": 26,
+      "text": "This English is all around.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-027-9f5848d030.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-027-9f5848d030.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-8d97372997",
+      "order": 27,
+      "text": "Many people speak Modern English.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-028-8d97372997.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-028-8d97372997.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-d5236af123",
+      "order": 28,
+      "text": "They are in many countries.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-029-d5236af123.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-029-d5236af123.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-4ab4d54565",
+      "order": 29,
+      "text": "People in America speak English.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-030-4ab4d54565.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-030-4ab4d54565.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-1f14fc1946",
+      "order": 30,
+      "text": "People in Australia speak English.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-031-1f14fc1946.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-031-1f14fc1946.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-aec23a1897",
+      "order": 31,
+      "text": "Many schools teach English.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-032-aec23a1897.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-032-aec23a1897.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-88d4ede991",
+      "order": 32,
+      "text": "Why is English important?",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-033-88d4ede991.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-033-88d4ede991.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-3ade535f75",
+      "order": 33,
+      "text": "It helps people.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-034-3ade535f75.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-034-3ade535f75.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-327d9229a5",
+      "order": 34,
+      "text": "People from different countries talk.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-035-327d9229a5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-035-327d9229a5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-b8f8dae969",
+      "order": 35,
+      "text": "They use English.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-036-b8f8dae969.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-036-b8f8dae969.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-6cae7c6385",
+      "order": 36,
+      "text": "This is good.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-037-6cae7c6385.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-037-6cae7c6385.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-9a5e782a7e",
+      "order": 37,
+      "text": "You learn English.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-038-9a5e782a7e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-038-9a5e782a7e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-0e12f87412",
+      "order": 38,
+      "text": "We learn English.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-039-0e12f87412.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-039-0e12f87412.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-e3353d299e",
+      "order": 39,
+      "text": "This helps us.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-040-e3353d299e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-040-e3353d299e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-7d2b083f24",
+      "order": 40,
+      "text": "English words are everywhere.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-041-7d2b083f24.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-041-7d2b083f24.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-a6e3c9b9f1",
+      "order": 41,
+      "text": "'Hello' is an English word.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-042-a6e3c9b9f1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-042-a6e3c9b9f1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-917c3180f1",
+      "order": 42,
+      "text": "'Friend' is an English word.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-043-917c3180f1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-043-917c3180f1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-044-4f2c648f87",
+      "order": 43,
+      "text": "'Water' is an English word.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-044-4f2c648f87.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-044-4f2c648f87.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-045-35a72b7a6f",
+      "order": 44,
+      "text": "English is in books.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-045-35a72b7a6f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-045-35a72b7a6f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-046-59eb457c03",
+      "order": 45,
+      "text": "English is in songs.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-046-59eb457c03.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-046-59eb457c03.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-047-c6bff9e855",
+      "order": 46,
+      "text": "English is on computers.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-047-c6bff9e855.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-047-c6bff9e855.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-048-d0075e2d98",
+      "order": 47,
+      "text": "English connects the world.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-048-d0075e2d98.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-048-d0075e2d98.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-049-b3d0c6b1ce",
+      "order": 48,
+      "text": "It is a big, helpful language.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-049-b3d0c6b1ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-049-b3d0c6b1ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-050-4a4fd451fc",
+      "order": 49,
+      "text": "It is a world language.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-050-4a4fd451fc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-050-4a4fd451fc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-051-33c506394a",
+      "order": 50,
+      "text": "Many people understand English.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-051-33c506394a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-051-33c506394a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-052-2ba773ad05",
+      "order": 51,
+      "text": "It helps us communicate.",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/sentences/sentence-052-2ba773ad05.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/sentences/sentence-052-2ba773ad05.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-37e757fc5b",
+      "order": 0,
+      "text": "root",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-001-37e757fc5b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-001-37e757fc5b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-a4220dee16",
+      "order": 1,
+      "text": "changed",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-002-a4220dee16.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-002-a4220dee16.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-84cd4ba103",
+      "order": 2,
+      "text": "comes from",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-003-84cd4ba103.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-003-84cd4ba103.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-6ec78516a7",
+      "order": 3,
+      "text": "countries",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-004-6ec78516a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-004-6ec78516a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-6b6f523a81",
+      "order": 4,
+      "text": "communicate",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-005-6b6f523a81.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-005-6b6f523a81.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-afcabdf5e3",
+      "order": 5,
+      "text": "connects",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-006-afcabdf5e3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-006-afcabdf5e3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-8941f6b256",
+      "order": 6,
+      "text": "different",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-007-8941f6b256.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-007-8941f6b256.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-2902aa3eb1",
+      "order": 7,
+      "text": "helpful",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-008-2902aa3eb1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-008-2902aa3eb1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-c81a2b7945",
+      "order": 8,
+      "text": "important",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-009-c81a2b7945.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-009-c81a2b7945.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-ddfe810ef0",
+      "order": 9,
+      "text": "understand",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-010-ddfe810ef0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-010-ddfe810ef0.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-5e76bedf18",
+      "order": 10,
+      "text": "english",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-011-5e76bedf18.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-011-5e76bedf18.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-bc1f05f2e1",
+      "order": 11,
+      "text": "is",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-012-bc1f05f2e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-012-bc1f05f2e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-fe2767449c",
+      "order": 12,
+      "text": "a",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-013-fe2767449c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-013-fe2767449c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-f63c732019",
+      "order": 13,
+      "text": "language",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-014-f63c732019.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-014-f63c732019.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-72e45ba806",
+      "order": 14,
+      "text": "many",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-015-72e45ba806.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-015-72e45ba806.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-599e342fac",
+      "order": 15,
+      "text": "people",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-016-599e342fac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-016-599e342fac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-371c0643c5",
+      "order": 16,
+      "text": "speak",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-017-371c0643c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-017-371c0643c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-eb2e2f20b3",
+      "order": 17,
+      "text": "it",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-018-eb2e2f20b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-018-eb2e2f20b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-e1f7b80988",
+      "order": 18,
+      "text": "good",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-019-e1f7b80988.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-019-e1f7b80988.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-b6a885e08e",
+      "order": 19,
+      "text": "old",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-020-b6a885e08e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-020-b6a885e08e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-43ec7380a8",
+      "order": 20,
+      "text": "has",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-021-43ec7380a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-021-43ec7380a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-930f129abf",
+      "order": 21,
+      "text": "very",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-022-930f129abf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-022-930f129abf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-90e3dce9b7",
+      "order": 22,
+      "text": "long",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-023-90e3dce9b7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-023-90e3dce9b7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-283fc2e6fb",
+      "order": 23,
+      "text": "story",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-024-283fc2e6fb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-024-283fc2e6fb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-f79e128478",
+      "order": 24,
+      "text": "the",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-025-f79e128478.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-025-f79e128478.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-fb530709d2",
+      "order": 25,
+      "text": "starts",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-026-fb530709d2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-026-fb530709d2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-e604e3f516",
+      "order": 26,
+      "text": "ago",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-027-e604e3f516.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-027-e604e3f516.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-529fa6d375",
+      "order": 27,
+      "text": "an",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-028-529fa6d375.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-028-529fa6d375.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-e45bf6f200",
+      "order": 28,
+      "text": "start",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-029-e45bf6f200.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-029-e45bf6f200.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-628ae20cbb",
+      "order": 29,
+      "text": "this",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-030-628ae20cbb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-030-628ae20cbb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-9ed3b35a72",
+      "order": 30,
+      "text": "was",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-031-9ed3b35a72.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-031-9ed3b35a72.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-47bfd32438",
+      "order": 31,
+      "text": "in",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-032-47bfd32438.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-032-47bfd32438.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-54349f9f82",
+      "order": 32,
+      "text": "north",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-033-54349f9f82.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-033-54349f9f82.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-03089c45d8",
+      "order": 33,
+      "text": "europe",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-034-03089c45d8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-034-03089c45d8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-5c020de561",
+      "order": 34,
+      "text": "near",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-035-5c020de561.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-035-5c020de561.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-26e824331c",
+      "order": 35,
+      "text": "germany",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-036-26e824331c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-036-26e824331c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-f90a85f5f7",
+      "order": 36,
+      "text": "for",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-037-f90a85f5f7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-037-f90a85f5f7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-806661893e",
+      "order": 37,
+      "text": "comes",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-038-806661893e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-038-806661893e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-499642d041",
+      "order": 38,
+      "text": "from",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-039-499642d041.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-039-499642d041.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-8dd973ed3c",
+      "order": 39,
+      "text": "some",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-040-8dd973ed3c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-040-8dd973ed3c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-9c41002b88",
+      "order": 40,
+      "text": "moved",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-041-9c41002b88.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-041-9c41002b88.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-82c981a8af",
+      "order": 41,
+      "text": "they",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-042-82c981a8af.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-042-82c981a8af.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-a20da80d24",
+      "order": 42,
+      "text": "went",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-043-a20da80d24.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-043-a20da80d24.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-e8ebcc29f0",
+      "order": 43,
+      "text": "to",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-044-e8ebcc29f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-044-e8ebcc29f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-d44346af6d",
+      "order": 44,
+      "text": "big",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-045-d44346af6d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-045-d44346af6d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-41a8c0c986",
+      "order": 45,
+      "text": "island",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-046-41a8c0c986.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-046-41a8c0c986.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-27227c705a",
+      "order": 46,
+      "text": "britain",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-047-27227c705a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-047-27227c705a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-1eef2548f8",
+      "order": 47,
+      "text": "their",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-048-1eef2548f8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-048-1eef2548f8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-d4b16a8653",
+      "order": 48,
+      "text": "became",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-049-d4b16a8653.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-049-d4b16a8653.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-ecae98cd0a",
+      "order": 49,
+      "text": "not",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-050-ecae98cd0a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-050-ecae98cd0a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-e3ee214828",
+      "order": 50,
+      "text": "like",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-051-e3ee214828.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-051-e3ee214828.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-923bedfd80",
+      "order": 51,
+      "text": "today",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-052-923bedfd80.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-052-923bedfd80.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-fd4f0195f2",
+      "order": 52,
+      "text": "more",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-053-fd4f0195f2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-053-fd4f0195f2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-02429453d8",
+      "order": 53,
+      "text": "changes",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-054-02429453d8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-054-02429453d8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-5df1a91c2e",
+      "order": 54,
+      "text": "came",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-055-5df1a91c2e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-055-5df1a91c2e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-8999af4af1",
+      "order": 55,
+      "text": "new",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-056-8999af4af1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-056-8999af4af1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-54f1088aeb",
+      "order": 56,
+      "text": "words",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-057-54f1088aeb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-057-54f1088aeb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-e55d4aeb7f",
+      "order": 57,
+      "text": "french",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-058-e55d4aeb7f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-058-e55d4aeb7f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-5d7e962d55",
+      "order": 58,
+      "text": "are",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-059-5d7e962d55.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-059-5d7e962d55.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-b806ad28c2",
+      "order": 59,
+      "text": "latin",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-060-b806ad28c2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-060-b806ad28c2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-a47d194a5a",
+      "order": 60,
+      "text": "too",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-061-a47d194a5a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-061-a47d194a5a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-c83e1c6a92",
+      "order": 61,
+      "text": "these",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-062-c83e1c6a92.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-062-c83e1c6a92.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-8d2356e882",
+      "order": 62,
+      "text": "made",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-063-8d2356e882.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-063-8d2356e882.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-1d991895c1",
+      "order": 63,
+      "text": "grow",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-064-1d991895c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-064-1d991895c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-a6aec5e59b",
+      "order": 64,
+      "text": "bigger",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-065-a6aec5e59b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-065-a6aec5e59b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-1ff48c3e04",
+      "order": 65,
+      "text": "now",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-066-1ff48c3e04.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-066-1ff48c3e04.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-31bbcfe7bc",
+      "order": 66,
+      "text": "we",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-067-31bbcfe7bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-067-31bbcfe7bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-01a36fd883",
+      "order": 67,
+      "text": "modern",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-068-01a36fd883.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-068-01a36fd883.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-68f0104806",
+      "order": 68,
+      "text": "all",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-069-68f0104806.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-069-68f0104806.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-1df5b17256",
+      "order": 69,
+      "text": "around",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-070-1df5b17256.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-070-1df5b17256.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-2dfacc8867",
+      "order": 70,
+      "text": "america",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-071-2dfacc8867.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-071-2dfacc8867.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-11fc707fef",
+      "order": 71,
+      "text": "australia",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-072-11fc707fef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-072-11fc707fef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-f5e0255d47",
+      "order": 72,
+      "text": "schools",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-073-f5e0255d47.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-073-f5e0255d47.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-8c7042e2bf",
+      "order": 73,
+      "text": "teach",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-074-8c7042e2bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-074-8c7042e2bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-a776915a4e",
+      "order": 74,
+      "text": "why",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-075-a776915a4e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-075-a776915a4e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-4ae81505af",
+      "order": 75,
+      "text": "helps",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-076-4ae81505af.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-076-4ae81505af.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-862ce1ce39",
+      "order": 76,
+      "text": "talk",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-077-862ce1ce39.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-077-862ce1ce39.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-ff0ba7b83a",
+      "order": 77,
+      "text": "use",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-078-ff0ba7b83a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-078-ff0ba7b83a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-6b24ee42f9",
+      "order": 78,
+      "text": "you",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-079-6b24ee42f9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-079-6b24ee42f9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-7de41e4a56",
+      "order": 79,
+      "text": "learn",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-080-7de41e4a56.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-080-7de41e4a56.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-3e492df5d7",
+      "order": 80,
+      "text": "us",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-081-3e492df5d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-081-3e492df5d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-a6c304fb43",
+      "order": 81,
+      "text": "everywhere",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-082-a6c304fb43.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-082-a6c304fb43.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-b69de0eb70",
+      "order": 82,
+      "text": "hello",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-083-b69de0eb70.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-083-b69de0eb70.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-f1e9957b65",
+      "order": 83,
+      "text": "word",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-084-f1e9957b65.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-084-f1e9957b65.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-ed6e0783fd",
+      "order": 84,
+      "text": "friend",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-085-ed6e0783fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-085-ed6e0783fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-086-e87495a2d3",
+      "order": 85,
+      "text": "water",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-086-e87495a2d3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-086-e87495a2d3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-087-941917fdac",
+      "order": 86,
+      "text": "books",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-087-941917fdac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-087-941917fdac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-088-2dcc0cc820",
+      "order": 87,
+      "text": "songs",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-088-2dcc0cc820.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-088-2dcc0cc820.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-089-656b2e85d0",
+      "order": 88,
+      "text": "on",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-089-656b2e85d0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-089-656b2e85d0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-090-dfa6dbc172",
+      "order": 89,
+      "text": "computers",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-090-dfa6dbc172.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-090-dfa6dbc172.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-091-37771d055c",
+      "order": 90,
+      "text": "world",
+      "objectPath": "articles/mQBtacaks53c7Djci9n6/words/word-091-37771d055c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/words/word-091-37771d055c.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-242ebcb7d2",
+      "type": "mcq",
+      "order": 0,
+      "text": "Which word is an English word?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-001-242ebcb7d2.mp3",
+      "questionObjectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-001-242ebcb7d2.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-001-242ebcb7d2-option1-ff9fc5b2.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-001-242ebcb7d2-option2-94847fbf.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-001-242ebcb7d2-option3-747d01aa.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-001-242ebcb7d2-option4-72cba814.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-242ebcb7d2-option1-ff9fc5b2",
+          "text": "Hello",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-001-242ebcb7d2-option1-ff9fc5b2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-242ebcb7d2-option2-94847fbf",
+          "text": "Goodbye",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-001-242ebcb7d2-option2-94847fbf.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-242ebcb7d2-option3-747d01aa",
+          "text": "Thank you",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-001-242ebcb7d2-option3-747d01aa.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-242ebcb7d2-option4-72cba814",
+          "text": "Excuse me",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-001-242ebcb7d2-option4-72cba814.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-208007be44",
+      "type": "mcq",
+      "order": 1,
+      "text": "What is the name of the big island?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-002-208007be44.mp3",
+      "questionObjectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-002-208007be44.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-002-208007be44-option1-8afa3460.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-002-208007be44-option2-70a8417a.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-002-208007be44-option3-eb71e7ad.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-002-208007be44-option4-4a99b5d2.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-208007be44-option1-8afa3460",
+          "text": "Britain",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-002-208007be44-option1-8afa3460.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-208007be44-option2-70a8417a",
+          "text": "Germany",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-002-208007be44-option2-70a8417a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-208007be44-option3-eb71e7ad",
+          "text": "France",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-002-208007be44-option3-eb71e7ad.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-208007be44-option4-4a99b5d2",
+          "text": "Spain",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-002-208007be44-option4-4a99b5d2.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-e779fac224",
+      "type": "mcq",
+      "order": 2,
+      "text": "Do people in America speak English?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-003-e779fac224.mp3",
+      "questionObjectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-003-e779fac224.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-003-e779fac224-option1-a07ddecd.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-003-e779fac224-option2-ebb262f4.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-003-e779fac224-option3-a5bc7942.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-003-e779fac224-option4-8f92ef88.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-e779fac224-option1-a07ddecd",
+          "text": "America",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-003-e779fac224-option1-a07ddecd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-e779fac224-option2-ebb262f4",
+          "text": "China",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-003-e779fac224-option2-ebb262f4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-e779fac224-option3-a5bc7942",
+          "text": "Egypt",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-003-e779fac224-option3-a5bc7942.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-e779fac224-option4-8f92ef88",
+          "text": "Mexico",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-003-e779fac224-option4-8f92ef88.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-b43dbbf322",
+      "type": "mcq",
+      "order": 3,
+      "text": "Where was the old language?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-004-b43dbbf322.mp3",
+      "questionObjectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-004-b43dbbf322.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-004-b43dbbf322-option1-79b3c839.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-004-b43dbbf322-option2-c7364f39.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-004-b43dbbf322-option3-64ba9920.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-004-b43dbbf322-option4-1e4322f8.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-b43dbbf322-option1-79b3c839",
+          "text": "North Europe",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-004-b43dbbf322-option1-79b3c839.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-b43dbbf322-option2-c7364f39",
+          "text": "South America",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-004-b43dbbf322-option2-c7364f39.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-b43dbbf322-option3-64ba9920",
+          "text": "East Asia",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-004-b43dbbf322-option3-64ba9920.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-b43dbbf322-option4-1e4322f8",
+          "text": "West Africa",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-004-b43dbbf322-option4-1e4322f8.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-4480f3783a",
+      "type": "mcq",
+      "order": 4,
+      "text": "Who speaks English?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-005-4480f3783a.mp3",
+      "questionObjectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-005-4480f3783a.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-005-4480f3783a-option1-45d9c7c6.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-005-4480f3783a-option2-7eee8b3a.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-005-4480f3783a-option3-448f488a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-005-4480f3783a-option4-a5881013.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-4480f3783a-option1-45d9c7c6",
+          "text": "Many people",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-005-4480f3783a-option1-45d9c7c6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-4480f3783a-option2-7eee8b3a",
+          "text": "Few people",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-005-4480f3783a-option2-7eee8b3a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-4480f3783a-option3-448f488a",
+          "text": "No people",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-005-4480f3783a-option3-448f488a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-4480f3783a-option4-a5881013",
+          "text": "One person",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-005-4480f3783a-option4-a5881013.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-f907275a63",
+      "type": "mcq",
+      "order": 5,
+      "text": "What did their language become in Britain?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-006-f907275a63.mp3",
+      "questionObjectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-006-f907275a63.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-006-f907275a63-option1-04e561e8.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-006-f907275a63-option2-e773d795.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-006-f907275a63-option3-0ebf4559.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-006-f907275a63-option4-3d9e5f82.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-f907275a63-option1-04e561e8",
+          "text": "Old English",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-006-f907275a63-option1-04e561e8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-f907275a63-option2-e773d795",
+          "text": "New English",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-006-f907275a63-option2-e773d795.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-f907275a63-option3-0ebf4559",
+          "text": "Modern English",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-006-f907275a63-option3-0ebf4559.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-f907275a63-option4-3d9e5f82",
+          "text": "Simple English",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-006-f907275a63-option4-3d9e5f82.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-d1868a5bbd",
+      "type": "mcq",
+      "order": 6,
+      "text": "What is English?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-007-d1868a5bbd.mp3",
+      "questionObjectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-007-d1868a5bbd.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-007-d1868a5bbd-option1-1454c171.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-007-d1868a5bbd-option2-46180448.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-007-d1868a5bbd-option3-e03f24b0.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-007-d1868a5bbd-option4-695c1624.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-d1868a5bbd-option1-1454c171",
+          "text": "A language",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-007-d1868a5bbd-option1-1454c171.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-d1868a5bbd-option2-46180448",
+          "text": "A country",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-007-d1868a5bbd-option2-46180448.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-d1868a5bbd-option3-e03f24b0",
+          "text": "A city",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-007-d1868a5bbd-option3-e03f24b0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-d1868a5bbd-option4-695c1624",
+          "text": "A person",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-007-d1868a5bbd-option4-695c1624.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-8ffb733143",
+      "type": "mcq",
+      "order": 7,
+      "text": "What does English do?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-008-8ffb733143.mp3",
+      "questionObjectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-008-8ffb733143.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-008-8ffb733143-option1-d0c6a7ab.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-008-8ffb733143-option2-dd9fa7b3.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-008-8ffb733143-option3-fe5dfe08.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-008-8ffb733143-option4-f4e0f8fc.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-8ffb733143-option1-d0c6a7ab",
+          "text": "Connects the world",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-008-8ffb733143-option1-d0c6a7ab.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-8ffb733143-option2-dd9fa7b3",
+          "text": "Breaks the world",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-008-8ffb733143-option2-dd9fa7b3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-8ffb733143-option3-fe5dfe08",
+          "text": "Hides the world",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-008-8ffb733143-option3-fe5dfe08.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-8ffb733143-option4-f4e0f8fc",
+          "text": "Forgets the world",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-008-8ffb733143-option4-f4e0f8fc.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-ab395a5173",
+      "type": "mcq",
+      "order": 8,
+      "text": "What does English help people do?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-009-ab395a5173.mp3",
+      "questionObjectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-009-ab395a5173.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-009-ab395a5173-option1-4710da44.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-009-ab395a5173-option2-5f754177.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-009-ab395a5173-option3-d3810b99.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-009-ab395a5173-option4-bc147c84.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-ab395a5173-option1-4710da44",
+          "text": "Talk to people",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-009-ab395a5173-option1-4710da44.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-ab395a5173-option2-5f754177",
+          "text": "Eat food",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-009-ab395a5173-option2-5f754177.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-ab395a5173-option3-d3810b99",
+          "text": "Drive cars",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-009-ab395a5173-option3-d3810b99.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-ab395a5173-option4-bc147c84",
+          "text": "Play games",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-009-ab395a5173-option4-bc147c84.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-e04e521337",
+      "type": "mcq",
+      "order": 9,
+      "text": "Words from which language are in English?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-010-e04e521337.mp3",
+      "questionObjectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-010-e04e521337.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-010-e04e521337-option1-582df8b5.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-010-e04e521337-option2-c5fc0427.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-010-e04e521337-option3-0968993c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/mcq-010-e04e521337-option4-40f35339.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-e04e521337-option1-582df8b5",
+          "text": "French",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-010-e04e521337-option1-582df8b5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-e04e521337-option2-c5fc0427",
+          "text": "German",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-010-e04e521337-option2-c5fc0427.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-e04e521337-option3-0968993c",
+          "text": "Spanish",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-010-e04e521337-option3-0968993c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-e04e521337-option4-40f35339",
+          "text": "Italian",
+          "objectPath": "articles/mQBtacaks53c7Djci9n6/questions/mcq-010-e04e521337-option4-40f35339.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-f7ba970bf9",
+      "type": "saq",
+      "order": 10,
+      "text": "Do people in America speak English?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/saq-011-f7ba970bf9.mp3",
+      "questionObjectPath": "articles/mQBtacaks53c7Djci9n6/questions/saq-011-f7ba970bf9.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-8b5b095e61",
+      "type": "saq",
+      "order": 11,
+      "text": "Is English in books?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/saq-012-8b5b095e61.mp3",
+      "questionObjectPath": "articles/mQBtacaks53c7Djci9n6/questions/saq-012-8b5b095e61.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-356377aa71",
+      "type": "saq",
+      "order": 12,
+      "text": "Is English a good language?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/saq-013-356377aa71.mp3",
+      "questionObjectPath": "articles/mQBtacaks53c7Djci9n6/questions/saq-013-356377aa71.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-757cc02a2e",
+      "type": "saq",
+      "order": 13,
+      "text": "Is English old or new?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/saq-014-757cc02a2e.mp3",
+      "questionObjectPath": "articles/mQBtacaks53c7Djci9n6/questions/saq-014-757cc02a2e.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-ef83f0e877",
+      "type": "saq",
+      "order": 14,
+      "text": "Is 'Hello' an English word?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mQBtacaks53c7Djci9n6/questions/saq-015-ef83f0e877.mp3",
+      "questionObjectPath": "articles/mQBtacaks53c7Djci9n6/questions/saq-015-ef83f0e877.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:10:37.329Z"
+}

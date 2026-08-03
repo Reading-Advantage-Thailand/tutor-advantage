@@ -1,0 +1,1295 @@
+{
+  "version": 1,
+  "articleId": "cmjhremv1000ds60ew177qfxg",
+  "source": "READING_ADVANTAGE",
+  "title": "The Doll Factory",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-23f1ce8d27",
+      "order": 0,
+      "text": "This is a big factory.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-001-23f1ce8d27.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-001-23f1ce8d27.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-47bc8c846b",
+      "order": 1,
+      "text": "It is old.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-002-47bc8c846b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-002-47bc8c846b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-55eb26969f",
+      "order": 2,
+      "text": "Tom is here.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-003-55eb26969f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-003-55eb26969f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-7bd1d742b7",
+      "order": 3,
+      "text": "His friends are here.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-004-7bd1d742b7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-004-7bd1d742b7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-deed3be3d0",
+      "order": 4,
+      "text": "Sara, Ben, and Kim are his friends.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-005-deed3be3d0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-005-deed3be3d0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-2fa195aedd",
+      "order": 5,
+      "text": "They are in the factory.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-006-2fa195aedd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-006-2fa195aedd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-7513b53ac5",
+      "order": 6,
+      "text": "It is dark.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-007-7513b53ac5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-007-7513b53ac5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-4875fb0b0f",
+      "order": 7,
+      "text": "A man is here.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-008-4875fb0b0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-008-4875fb0b0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-015db5ab58",
+      "order": 8,
+      "text": "He is the Inventor.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-009-015db5ab58.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-009-015db5ab58.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-77566e8afc",
+      "order": 9,
+      "text": "His arm is metal.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-010-77566e8afc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-010-77566e8afc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-be7a89e751",
+      "order": 10,
+      "text": "His eye is glass.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-011-be7a89e751.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-011-be7a89e751.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-f9c76c4db1",
+      "order": 11,
+      "text": "He is strange.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-012-f9c76c4db1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-012-f9c76c4db1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-4997399605",
+      "order": 12,
+      "text": "Tom and his friends are quiet.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-013-4997399605.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-013-4997399605.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-a82b71955b",
+      "order": 13,
+      "text": "They look.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-014-a82b71955b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-014-a82b71955b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-527f4b24a5",
+      "order": 14,
+      "text": "These are dolls.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-015-527f4b24a5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-015-527f4b24a5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-d9475bb810",
+      "order": 15,
+      "text": "The dolls are strange.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-016-d9475bb810.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-016-d9475bb810.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-956e724f3d",
+      "order": 16,
+      "text": "This doll's hand is a real hand.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-017-956e724f3d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-017-956e724f3d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-b8b6069458",
+      "order": 17,
+      "text": "That doll's hair is real hair.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-018-b8b6069458.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-018-b8b6069458.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-bea1ade10e",
+      "order": 18,
+      "text": "Those dolls are not toys.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-019-bea1ade10e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-019-bea1ade10e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-ce88e2a865",
+      "order": 19,
+      "text": "A question for the Inventor: 'What are these?'",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-020-ce88e2a865.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-020-ce88e2a865.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-85a7c1afaf",
+      "order": 20,
+      "text": "He is happy.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-021-85a7c1afaf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-021-85a7c1afaf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-3f664c0930",
+      "order": 21,
+      "text": "'My dolls,' he says.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-022-3f664c0930.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-022-3f664c0930.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-a85577e1c9",
+      "order": 22,
+      "text": "'You are new parts.'",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-023-a85577e1c9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-023-a85577e1c9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-3f193ac62c",
+      "order": 23,
+      "text": "Ben is gone.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-024-3f193ac62c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-024-3f193ac62c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-c71fbb9aeb",
+      "order": 24,
+      "text": "Sara is gone.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-025-c71fbb9aeb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-025-c71fbb9aeb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-8223898066",
+      "order": 25,
+      "text": "Tom and Kim are alone.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-026-8223898066.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-026-8223898066.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-4e554e0471",
+      "order": 26,
+      "text": "They are scared.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-027-4e554e0471.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-027-4e554e0471.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-67e1904935",
+      "order": 27,
+      "text": "They see a new doll.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-028-67e1904935.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-028-67e1904935.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-fbcbbd9e1d",
+      "order": 28,
+      "text": "Its face is Ben's face.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-029-fbcbbd9e1d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-029-fbcbbd9e1d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-59134e4a7c",
+      "order": 29,
+      "text": "They see another doll.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-030-59134e4a7c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-030-59134e4a7c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-bf8c15738a",
+      "order": 30,
+      "text": "Its hair is Sara's hair.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-031-bf8c15738a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-031-bf8c15738a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-7cab872aae",
+      "order": 31,
+      "text": "'Your parts are good,' the Inventor says.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-032-7cab872aae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-032-7cab872aae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-e634ef128a",
+      "order": 32,
+      "text": "Now, Tom and Kim are dolls.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-033-e634ef128a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-033-e634ef128a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-24a2c533a9",
+      "order": 33,
+      "text": "They are on a shelf.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-034-24a2c533a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-034-24a2c533a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-57afacf073",
+      "order": 34,
+      "text": "Their eyes are open.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-035-57afacf073.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-035-57afacf073.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-31781fbf24",
+      "order": 35,
+      "text": "They are quiet.",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-036-31781fbf24.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/sentences/sentence-036-31781fbf24.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-efa56d106b",
+      "order": 0,
+      "text": "Inventor",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-001-efa56d106b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-001-efa56d106b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-c583768b60",
+      "order": 1,
+      "text": "metal",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-002-c583768b60.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-002-c583768b60.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-2e3143b056",
+      "order": 2,
+      "text": "strange",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-003-2e3143b056.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-003-2e3143b056.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-8ed9ba3d69",
+      "order": 3,
+      "text": "dolls",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-004-8ed9ba3d69.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-004-8ed9ba3d69.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-94ea0c1a2a",
+      "order": 4,
+      "text": "real",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-005-94ea0c1a2a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-005-94ea0c1a2a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-c5a5f7903c",
+      "order": 5,
+      "text": "toys",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-006-c5a5f7903c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-006-c5a5f7903c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-8fea4d33c1",
+      "order": 6,
+      "text": "parts",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-007-8fea4d33c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-007-8fea4d33c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-8792123c57",
+      "order": 7,
+      "text": "shelf",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-008-8792123c57.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-008-8792123c57.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-6ab2a73112",
+      "order": 8,
+      "text": "scared",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-009-6ab2a73112.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-009-6ab2a73112.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-a69799e94a",
+      "order": 9,
+      "text": "alone",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-010-a69799e94a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-010-a69799e94a.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-438b09494a",
+      "order": 10,
+      "text": "this",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-011-438b09494a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-011-438b09494a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-bc1f05f2e1",
+      "order": 11,
+      "text": "is",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-012-bc1f05f2e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-012-bc1f05f2e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-fe2767449c",
+      "order": 12,
+      "text": "a",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-013-fe2767449c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-013-fe2767449c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-206ec7933a",
+      "order": 13,
+      "text": "big",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-014-206ec7933a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-014-206ec7933a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-bc368754b9",
+      "order": 14,
+      "text": "factory",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-015-bc368754b9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-015-bc368754b9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-75835322d7",
+      "order": 15,
+      "text": "it",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-016-75835322d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-016-75835322d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-5c81eeb519",
+      "order": 16,
+      "text": "old",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-017-5c81eeb519.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-017-5c81eeb519.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-f2af3ac56f",
+      "order": 17,
+      "text": "tom",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-018-f2af3ac56f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-018-f2af3ac56f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-85704c0429",
+      "order": 18,
+      "text": "here",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-019-85704c0429.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-019-85704c0429.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-97cf30df12",
+      "order": 19,
+      "text": "his",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-020-97cf30df12.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-020-97cf30df12.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-61f05e0d93",
+      "order": 20,
+      "text": "friends",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-021-61f05e0d93.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-021-61f05e0d93.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-37875d29ed",
+      "order": 21,
+      "text": "are",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-022-37875d29ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-022-37875d29ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-8eecdc2b40",
+      "order": 22,
+      "text": "sara",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-023-8eecdc2b40.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-023-8eecdc2b40.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-3c00736043",
+      "order": 23,
+      "text": "ben",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-024-3c00736043.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-024-3c00736043.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-4eedf4ebd9",
+      "order": 24,
+      "text": "and",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-025-4eedf4ebd9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-025-4eedf4ebd9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-5e63c5b859",
+      "order": 25,
+      "text": "kim",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-026-5e63c5b859.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-026-5e63c5b859.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-5ac8aa26c1",
+      "order": 26,
+      "text": "they",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-027-5ac8aa26c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-027-5ac8aa26c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-b917b9eeea",
+      "order": 27,
+      "text": "in",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-028-b917b9eeea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-028-b917b9eeea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-fec4cfc2bb",
+      "order": 28,
+      "text": "the",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-029-fec4cfc2bb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-029-fec4cfc2bb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-1adc2fd155",
+      "order": 29,
+      "text": "dark",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-030-1adc2fd155.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-030-1adc2fd155.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-354f8fb91b",
+      "order": 30,
+      "text": "man",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-031-354f8fb91b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-031-354f8fb91b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-61d81ba1a0",
+      "order": 31,
+      "text": "he",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-032-61d81ba1a0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-032-61d81ba1a0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-a423c4d0eb",
+      "order": 32,
+      "text": "arm",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-033-a423c4d0eb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-033-a423c4d0eb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-934b1d2bda",
+      "order": 33,
+      "text": "eye",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-034-934b1d2bda.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-034-934b1d2bda.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-a4a60333db",
+      "order": 34,
+      "text": "glass",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-035-a4a60333db.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-035-a4a60333db.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-6dcfd0daac",
+      "order": 35,
+      "text": "quiet",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-036-6dcfd0daac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-036-6dcfd0daac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-349c1f2fc4",
+      "order": 36,
+      "text": "look",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-037-349c1f2fc4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-037-349c1f2fc4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-78482602f2",
+      "order": 37,
+      "text": "these",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-038-78482602f2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-038-78482602f2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-fd1767923e",
+      "order": 38,
+      "text": "doll's",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-039-fd1767923e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-039-fd1767923e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-4ce687507e",
+      "order": 39,
+      "text": "hand",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-040-4ce687507e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-040-4ce687507e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-d5717f2d25",
+      "order": 40,
+      "text": "that",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-041-d5717f2d25.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-041-d5717f2d25.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-8e34d24772",
+      "order": 41,
+      "text": "hair",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-042-8e34d24772.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-042-8e34d24772.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-444d8ba7de",
+      "order": 42,
+      "text": "those",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-043-444d8ba7de.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-043-444d8ba7de.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-55a6527cbc",
+      "order": 43,
+      "text": "not",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-044-55a6527cbc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-044-55a6527cbc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-ea025e0cb2",
+      "order": 44,
+      "text": "question",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-045-ea025e0cb2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-045-ea025e0cb2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-1b13ec31bd",
+      "order": 45,
+      "text": "for",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-046-1b13ec31bd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-046-1b13ec31bd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-e68e329b55",
+      "order": 46,
+      "text": "what",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-047-e68e329b55.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-047-e68e329b55.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-c429e3f69a",
+      "order": 47,
+      "text": "happy",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-048-c429e3f69a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-048-c429e3f69a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-5b6fb9c6d1",
+      "order": 48,
+      "text": "my",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-049-5b6fb9c6d1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-049-5b6fb9c6d1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-b910001821",
+      "order": 49,
+      "text": "says",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-050-b910001821.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-050-b910001821.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-4f9944d113",
+      "order": 50,
+      "text": "you",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-051-4f9944d113.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-051-4f9944d113.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-bff08c2f61",
+      "order": 51,
+      "text": "new",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-052-bff08c2f61.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-052-bff08c2f61.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-af35060360",
+      "order": 52,
+      "text": "gone",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-053-af35060360.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-053-af35060360.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-9610370d2f",
+      "order": 53,
+      "text": "see",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-054-9610370d2f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-054-9610370d2f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-ffbdfd7895",
+      "order": 54,
+      "text": "doll",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-055-ffbdfd7895.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-055-ffbdfd7895.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-f74f505480",
+      "order": 55,
+      "text": "its",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-056-f74f505480.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-056-f74f505480.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-bae581d521",
+      "order": 56,
+      "text": "face",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-057-bae581d521.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-057-bae581d521.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-aad07f7857",
+      "order": 57,
+      "text": "ben's",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-058-aad07f7857.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-058-aad07f7857.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-f91d48f5e4",
+      "order": 58,
+      "text": "another",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-059-f91d48f5e4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-059-f91d48f5e4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-f9476030ad",
+      "order": 59,
+      "text": "sara's",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-060-f9476030ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-060-f9476030ad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-a6c63b9c03",
+      "order": 60,
+      "text": "your",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-061-a6c63b9c03.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-061-a6c63b9c03.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-8b823e9b65",
+      "order": 61,
+      "text": "good",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-062-8b823e9b65.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-062-8b823e9b65.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-eca4cc0556",
+      "order": 62,
+      "text": "now",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-063-eca4cc0556.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-063-eca4cc0556.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-f65619d097",
+      "order": 63,
+      "text": "on",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-064-f65619d097.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-064-f65619d097.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-7ae2d5a2a2",
+      "order": 64,
+      "text": "their",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-065-7ae2d5a2a2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-065-7ae2d5a2a2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-beddc8a495",
+      "order": 65,
+      "text": "eyes",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-066-beddc8a495.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-066-beddc8a495.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-28c08d6c2d",
+      "order": 66,
+      "text": "open",
+      "objectPath": "articles/cmjhremv1000ds60ew177qfxg/words/word-067-28c08d6c2d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/words/word-067-28c08d6c2d.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-bb2847f3e9",
+      "type": "mcq",
+      "order": 0,
+      "text": "What is the place?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-001-bb2847f3e9.mp3",
+      "questionObjectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-001-bb2847f3e9.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-001-bb2847f3e9-option1-42becf65.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-001-bb2847f3e9-option2-60ee0d91.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-001-bb2847f3e9-option3-142af8ad.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-001-bb2847f3e9-option4-7d03ac26.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-bb2847f3e9-option1-42becf65",
+          "text": "A house",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-001-bb2847f3e9-option1-42becf65.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-bb2847f3e9-option2-60ee0d91",
+          "text": "A park",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-001-bb2847f3e9-option2-60ee0d91.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-bb2847f3e9-option3-142af8ad",
+          "text": "A school",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-001-bb2847f3e9-option3-142af8ad.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-bb2847f3e9-option4-7d03ac26",
+          "text": "A factory",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-001-bb2847f3e9-option4-7d03ac26.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-9ad3772707",
+      "type": "mcq",
+      "order": 1,
+      "text": "Is the factory new?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-002-9ad3772707.mp3",
+      "questionObjectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-002-9ad3772707.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-002-9ad3772707-option1-e6413ddd.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-002-9ad3772707-option2-3ef95188.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-002-9ad3772707-option3-5f519d56.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-002-9ad3772707-option4-e0cb6bc7.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-9ad3772707-option1-e6413ddd",
+          "text": "It is not a factory",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-002-9ad3772707-option1-e6413ddd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-9ad3772707-option2-3ef95188",
+          "text": "No, it is old",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-002-9ad3772707-option2-3ef95188.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-9ad3772707-option3-5f519d56",
+          "text": "Yes, it is new",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-002-9ad3772707-option3-5f519d56.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-9ad3772707-option4-e0cb6bc7",
+          "text": "Maybe it is new",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-002-9ad3772707-option4-e0cb6bc7.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-7317e781b9",
+      "type": "mcq",
+      "order": 2,
+      "text": "Who is Tom's friend?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-003-7317e781b9.mp3",
+      "questionObjectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-003-7317e781b9.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-003-7317e781b9-option1-670cabb0.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-003-7317e781b9-option2-bd0fd2b8.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-003-7317e781b9-option3-554ff42b.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-003-7317e781b9-option4-ffbd9bfa.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-7317e781b9-option1-670cabb0",
+          "text": "The factory",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-003-7317e781b9-option1-670cabb0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-7317e781b9-option2-bd0fd2b8",
+          "text": "A doll",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-003-7317e781b9-option2-bd0fd2b8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-7317e781b9-option3-554ff42b",
+          "text": "The Inventor",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-003-7317e781b9-option3-554ff42b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-7317e781b9-option4-ffbd9bfa",
+          "text": "Sara",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-003-7317e781b9-option4-ffbd9bfa.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-7774f4d080",
+      "type": "mcq",
+      "order": 3,
+      "text": "Is the factory light?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-004-7774f4d080.mp3",
+      "questionObjectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-004-7774f4d080.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-004-7774f4d080-option1-96f78b80.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-004-7774f4d080-option2-19bcb990.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-004-7774f4d080-option3-f3e8e249.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-004-7774f4d080-option4-b616ae9b.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-7774f4d080-option1-96f78b80",
+          "text": "No, it is dark",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-004-7774f4d080-option1-96f78b80.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-7774f4d080-option2-19bcb990",
+          "text": "It is not a factory",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-004-7774f4d080-option2-19bcb990.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-7774f4d080-option3-f3e8e249",
+          "text": "Yes, it is light",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-004-7774f4d080-option3-f3e8e249.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-7774f4d080-option4-b616ae9b",
+          "text": "Maybe it is light",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-004-7774f4d080-option4-b616ae9b.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-5786063596",
+      "type": "mcq",
+      "order": 4,
+      "text": "What is the man?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-005-5786063596.mp3",
+      "questionObjectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-005-5786063596.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-005-5786063596-option1-9a243abd.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-005-5786063596-option2-f95e735e.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-005-5786063596-option3-4f613230.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-005-5786063596-option4-a5282770.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-5786063596-option1-9a243abd",
+          "text": "Ben",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-005-5786063596-option1-9a243abd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-5786063596-option2-f95e735e",
+          "text": "Tom",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-005-5786063596-option2-f95e735e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-5786063596-option3-4f613230",
+          "text": "Kim",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-005-5786063596-option3-4f613230.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-5786063596-option4-a5282770",
+          "text": "The Inventor",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-005-5786063596-option4-a5282770.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-4e2fd8ee90",
+      "type": "mcq",
+      "order": 5,
+      "text": "Is the Inventor normal?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-006-4e2fd8ee90.mp3",
+      "questionObjectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-006-4e2fd8ee90.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-006-4e2fd8ee90-option1-81084f98.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-006-4e2fd8ee90-option2-68548fa2.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-006-4e2fd8ee90-option3-a29f779d.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-006-4e2fd8ee90-option4-b0d16a8f.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-4e2fd8ee90-option1-81084f98",
+          "text": "No, he is strange",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-006-4e2fd8ee90-option1-81084f98.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-4e2fd8ee90-option2-68548fa2",
+          "text": "Yes, he is normal",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-006-4e2fd8ee90-option2-68548fa2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-4e2fd8ee90-option3-a29f779d",
+          "text": "Maybe he is normal",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-006-4e2fd8ee90-option3-a29f779d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-4e2fd8ee90-option4-b0d16a8f",
+          "text": "He is not a man",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-006-4e2fd8ee90-option4-b0d16a8f.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-3dd92481a9",
+      "type": "mcq",
+      "order": 6,
+      "text": "What are these?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-007-3dd92481a9.mp3",
+      "questionObjectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-007-3dd92481a9.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-007-3dd92481a9-option1-8d92c116.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-007-3dd92481a9-option2-3d7f350b.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-007-3dd92481a9-option3-f3c1fb3a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-007-3dd92481a9-option4-4eb233ec.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-3dd92481a9-option1-8d92c116",
+          "text": "Parts",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-007-3dd92481a9-option1-8d92c116.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-3dd92481a9-option2-3d7f350b",
+          "text": "Friends",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-007-3dd92481a9-option2-3d7f350b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-3dd92481a9-option3-f3c1fb3a",
+          "text": "Toys",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-007-3dd92481a9-option3-f3c1fb3a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-3dd92481a9-option4-4eb233ec",
+          "text": "Dolls",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-007-3dd92481a9-option4-4eb233ec.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-b766cb3538",
+      "type": "mcq",
+      "order": 7,
+      "text": "Are the dolls toys?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-008-b766cb3538.mp3",
+      "questionObjectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-008-b766cb3538.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-008-b766cb3538-option1-fce0c4cf.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-008-b766cb3538-option2-11548231.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-008-b766cb3538-option3-336accfd.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-008-b766cb3538-option4-dd498b64.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-b766cb3538-option1-fce0c4cf",
+          "text": "They are not dolls",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-008-b766cb3538-option1-fce0c4cf.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-b766cb3538-option2-11548231",
+          "text": "Maybe they are toys",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-008-b766cb3538-option2-11548231.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-b766cb3538-option3-336accfd",
+          "text": "Yes, they are toys",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-008-b766cb3538-option3-336accfd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-b766cb3538-option4-dd498b64",
+          "text": "No, they are not",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-008-b766cb3538-option4-dd498b64.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-e67808536c",
+      "type": "mcq",
+      "order": 8,
+      "text": "Who is gone?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-009-e67808536c.mp3",
+      "questionObjectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-009-e67808536c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-009-e67808536c-option1-f0b422d1.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-009-e67808536c-option2-2cc3677c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-009-e67808536c-option3-ca7c7eed.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-009-e67808536c-option4-81bc22ef.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-e67808536c-option1-f0b422d1",
+          "text": "Ben",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-009-e67808536c-option1-f0b422d1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-e67808536c-option2-2cc3677c",
+          "text": "The factory",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-009-e67808536c-option2-2cc3677c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-e67808536c-option3-ca7c7eed",
+          "text": "Kim",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-009-e67808536c-option3-ca7c7eed.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-e67808536c-option4-81bc22ef",
+          "text": "Tom",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-009-e67808536c-option4-81bc22ef.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-3432bddd8e",
+      "type": "mcq",
+      "order": 9,
+      "text": "Where are Tom and Kim?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-010-3432bddd8e.mp3",
+      "questionObjectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-010-3432bddd8e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-010-3432bddd8e-option1-015a9e89.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-010-3432bddd8e-option2-fc26da50.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-010-3432bddd8e-option3-fa29001c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/mcq-010-3432bddd8e-option4-e5529411.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-3432bddd8e-option1-015a9e89",
+          "text": "In the factory",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-010-3432bddd8e-option1-015a9e89.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-3432bddd8e-option2-fc26da50",
+          "text": "On a shelf",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-010-3432bddd8e-option2-fc26da50.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-3432bddd8e-option3-fa29001c",
+          "text": "At home",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-010-3432bddd8e-option3-fa29001c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-3432bddd8e-option4-e5529411",
+          "text": "At school",
+          "objectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/mcq-010-3432bddd8e-option4-e5529411.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-2f3ef502cd",
+      "type": "saq",
+      "order": 10,
+      "text": "Who is in the factory?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/saq-011-2f3ef502cd.mp3",
+      "questionObjectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/saq-011-2f3ef502cd.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-42152d29cb",
+      "type": "saq",
+      "order": 11,
+      "text": "Is the factory new or old?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/saq-012-42152d29cb.mp3",
+      "questionObjectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/saq-012-42152d29cb.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-c45909c41c",
+      "type": "saq",
+      "order": 12,
+      "text": "What is strange?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/saq-013-c45909c41c.mp3",
+      "questionObjectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/saq-013-c45909c41c.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-16eadd4d85",
+      "type": "saq",
+      "order": 13,
+      "text": "What does the Inventor say?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/saq-014-16eadd4d85.mp3",
+      "questionObjectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/saq-014-16eadd4d85.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-34230db9d9",
+      "type": "saq",
+      "order": 14,
+      "text": "Are Tom and Kim happy or scared?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjhremv1000ds60ew177qfxg/questions/saq-015-34230db9d9.mp3",
+      "questionObjectPath": "articles/cmjhremv1000ds60ew177qfxg/questions/saq-015-34230db9d9.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:07:51.313Z"
+}

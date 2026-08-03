@@ -1,0 +1,2127 @@
+{
+  "version": 1,
+  "articleId": "WBTAniq6iDywaXQLBZYF",
+  "source": "READING_ADVANTAGE",
+  "title": "Your First Business: A Teen Guide",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-6696e30df3",
+      "order": 0,
+      "text": "Do you want to make your own money?",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-001-6696e30df3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-001-6696e30df3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-a0d8fcbc51",
+      "order": 1,
+      "text": "Maybe you have a great idea.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-002-a0d8fcbc51.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-002-a0d8fcbc51.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-a455476364",
+      "order": 2,
+      "text": "You can start your own small business.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-003-a455476364.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-003-a455476364.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-255d9f372d",
+      "order": 3,
+      "text": "A business sells products or offers services to people.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-004-255d9f372d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-004-255d9f372d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-1a977c9543",
+      "order": 4,
+      "text": "Many teens become entrepreneurs.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-005-1a977c9543.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-005-1a977c9543.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-8781459705",
+      "order": 5,
+      "text": "An entrepreneur is a person.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-006-8781459705.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-006-8781459705.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-e1e20e8ca4",
+      "order": 6,
+      "text": "This person starts a new business.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-007-e1e20e8ca4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-007-e1e20e8ca4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-120a878d9d",
+      "order": 7,
+      "text": "It can be very exciting and you will learn a lot.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-008-120a878d9d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-008-120a878d9d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-1febb8b2fc",
+      "order": 8,
+      "text": "This guide can help you begin.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-009-1febb8b2fc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-009-1febb8b2fc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-8553809649",
+      "order": 9,
+      "text": "First, you need a good idea.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-010-8553809649.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-010-8553809649.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-bbbf6d50df",
+      "order": 10,
+      "text": "Think about what people want or need.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-011-bbbf6d50df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-011-bbbf6d50df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-b400cdc967",
+      "order": 11,
+      "text": "What do you enjoy doing?",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-012-b400cdc967.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-012-b400cdc967.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-debd2cde02",
+      "order": 12,
+      "text": "What skills do you have?",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-013-debd2cde02.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-013-debd2cde02.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-33c8739be3",
+      "order": 13,
+      "text": "Maybe you are good at making things or helping others.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-014-33c8739be3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-014-33c8739be3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-52ddecd5db",
+      "order": 14,
+      "text": "Your idea should be something you like.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-015-52ddecd5db.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-015-52ddecd5db.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-9970db995e",
+      "order": 15,
+      "text": "Next, you must make a simple plan.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-016-9970db995e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-016-9970db995e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-ac45f57355",
+      "order": 16,
+      "text": "What product will you sell?",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-017-ac45f57355.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-017-ac45f57355.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-0bbbcf408e",
+      "order": 17,
+      "text": "Or what service will you offer?",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-018-0bbbcf408e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-018-0bbbcf408e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-93b1627721",
+      "order": 18,
+      "text": "Who are your customers?",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-019-93b1627721.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-019-93b1627721.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-45bb06cec1",
+      "order": 19,
+      "text": "Your customers are the people who will pay for your product or service.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-020-45bb06cec1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-020-45bb06cec1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-62bb8a4ed7",
+      "order": 20,
+      "text": "How will you tell people about your business?",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-021-62bb8a4ed7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-021-62bb8a4ed7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-0a07bbb9f2",
+      "order": 21,
+      "text": "This is called marketing.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-022-0a07bbb9f2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-022-0a07bbb9f2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-daae276959",
+      "order": 22,
+      "text": "Then, think about money.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-023-daae276959.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-023-daae276959.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-3a2f05ec94",
+      "order": 23,
+      "text": "How much money do you need to start?",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-024-3a2f05ec94.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-024-3a2f05ec94.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-3ae4b4b826",
+      "order": 24,
+      "text": "Some businesses need very little money.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-025-3ae4b4b826.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-025-3ae4b4b826.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-1d1c282ca5",
+      "order": 25,
+      "text": "Other businesses need more.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-026-1d1c282ca5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-026-1d1c282ca5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-9c52ebfe9a",
+      "order": 26,
+      "text": "You can start small.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-027-9c52ebfe9a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-027-9c52ebfe9a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-b4f08f11b3",
+      "order": 27,
+      "text": "You should always talk to your parents or an adult.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-028-b4f08f11b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-028-b4f08f11b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-6d8f469d06",
+      "order": 28,
+      "text": "They can give you good advice.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-029-6d8f469d06.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-029-6d8f469d06.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-2f2dd607db",
+      "order": 29,
+      "text": "They can also help you stay safe.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-030-2f2dd607db.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-030-2f2dd607db.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-03c766fcf6",
+      "order": 30,
+      "text": "There are many good ideas for teen businesses.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-031-03c766fcf6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-031-03c766fcf6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-f99997e3f6",
+      "order": 31,
+      "text": "You can offer a dog walking service for your neighbors.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-032-f99997e3f6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-032-f99997e3f6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-1d8a68a631",
+      "order": 32,
+      "text": "You can wash cars in your street.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-033-1d8a68a631.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-033-1d8a68a631.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-ea1e5c453d",
+      "order": 33,
+      "text": "Some teens are creative.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-034-ea1e5c453d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-034-ea1e5c453d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-b38848252f",
+      "order": 34,
+      "text": "They make and sell jewelry, art, or baked goods.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-035-b38848252f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-035-b38848252f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-ed524a0f46",
+      "order": 35,
+      "text": "Other teens can help younger students with their homework.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-036-ed524a0f46.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-036-ed524a0f46.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-15ab0a5029",
+      "order": 36,
+      "text": "This is called tutoring, and it is a helpful service.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-037-15ab0a5029.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-037-15ab0a5029.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-345ff0a9e7",
+      "order": 37,
+      "text": "For example, Mark loved computers.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-038-345ff0a9e7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-038-345ff0a9e7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-847a9ac542",
+      "order": 38,
+      "text": "He started a small business last year.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-039-847a9ac542.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-039-847a9ac542.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-bd4650cdb4",
+      "order": 39,
+      "text": "He helps older people learn how to use their computers and phones.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-040-bd4650cdb4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-040-bd4650cdb4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-f23d56d194",
+      "order": 40,
+      "text": "First, he made simple flyers.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-041-f23d56d194.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-041-f23d56d194.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-40b620675e",
+      "order": 41,
+      "text": "He gave them to people in his community.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-042-40b620675e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-042-40b620675e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-41b31093af",
+      "order": 42,
+      "text": "Now, many people call Mark for help.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-043-41b31093af.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-043-41b31093af.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-044-885fdf6340",
+      "order": 43,
+      "text": "He earns his own money.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-044-885fdf6340.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-044-885fdf6340.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-045-09fce42702",
+      "order": 44,
+      "text": "He is very happy.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-045-09fce42702.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-045-09fce42702.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-046-d7eda82d40",
+      "order": 45,
+      "text": "He must be patient with his customers.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-046-d7eda82d40.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-046-d7eda82d40.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-047-fb7e54161a",
+      "order": 46,
+      "text": "Starting your own business is interesting.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-047-fb7e54161a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-047-fb7e54161a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-048-609b9d391a",
+      "order": 47,
+      "text": "It can be hard work, but it is also very rewarding.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-048-609b9d391a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-048-609b9d391a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-049-5dccca4f4f",
+      "order": 48,
+      "text": "You will learn many new skills.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-049-5dccca4f4f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-049-5dccca4f4f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-050-ef30f5812d",
+      "order": 49,
+      "text": "You will learn about money, responsibility, and talking to people.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-050-ef30f5812d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-050-ef30f5812d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-051-e9088fef37",
+      "order": 50,
+      "text": "You can make your own money for things you want.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-051-e9088fef37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-051-e9088fef37.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-052-f31ec7d237",
+      "order": 51,
+      "text": "If you have a good idea, you should try.",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-052-f31ec7d237.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-052-f31ec7d237.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-053-5e6da223f9",
+      "order": 52,
+      "text": "Maybe you will be a successful teen entrepreneur too!",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-053-5e6da223f9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/sentences/sentence-053-5e6da223f9.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-2e05055f7d",
+      "order": 0,
+      "text": "entrepreneur",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-001-2e05055f7d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-001-2e05055f7d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-9c317efbb6",
+      "order": 1,
+      "text": "marketing",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-002-9c317efbb6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-002-9c317efbb6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-20a27bc904",
+      "order": 2,
+      "text": "tutoring",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-003-20a27bc904.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-003-20a27bc904.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-784b0b7874",
+      "order": 3,
+      "text": "neighbors",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-004-784b0b7874.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-004-784b0b7874.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-c6596a93c6",
+      "order": 4,
+      "text": "creative",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-005-c6596a93c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-005-c6596a93c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-69d97a11a4",
+      "order": 5,
+      "text": "rewarding",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-006-69d97a11a4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-006-69d97a11a4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-856f188fd2",
+      "order": 6,
+      "text": "responsibility",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-007-856f188fd2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-007-856f188fd2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-97c26eb422",
+      "order": 7,
+      "text": "product",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-008-97c26eb422.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-008-97c26eb422.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-6549f0666c",
+      "order": 8,
+      "text": "service",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-009-6549f0666c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-009-6549f0666c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-053ec1fa50",
+      "order": 9,
+      "text": "patient",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-010-053ec1fa50.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-010-053ec1fa50.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-21accaf860",
+      "order": 10,
+      "text": "do",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-011-21accaf860.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-011-21accaf860.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-3c160baa3d",
+      "order": 11,
+      "text": "you",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-012-3c160baa3d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-012-3c160baa3d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-ab6af8721b",
+      "order": 12,
+      "text": "want",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-013-ab6af8721b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-013-ab6af8721b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-e2e808b59a",
+      "order": 13,
+      "text": "to",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-014-e2e808b59a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-014-e2e808b59a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-7f7980923c",
+      "order": 14,
+      "text": "make",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-015-7f7980923c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-015-7f7980923c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-6bfc4bb858",
+      "order": 15,
+      "text": "your",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-016-6bfc4bb858.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-016-6bfc4bb858.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-ad59ba9fbb",
+      "order": 16,
+      "text": "own",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-017-ad59ba9fbb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-017-ad59ba9fbb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-1b18a4373a",
+      "order": 17,
+      "text": "money",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-018-1b18a4373a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-018-1b18a4373a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-baab9fc218",
+      "order": 18,
+      "text": "maybe",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-019-baab9fc218.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-019-baab9fc218.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-f723e66f61",
+      "order": 19,
+      "text": "have",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-020-f723e66f61.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-020-f723e66f61.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-373ee848c9",
+      "order": 20,
+      "text": "a",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-021-373ee848c9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-021-373ee848c9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-15f6c58408",
+      "order": 21,
+      "text": "great",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-022-15f6c58408.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-022-15f6c58408.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-bd46cd66f0",
+      "order": 22,
+      "text": "idea",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-023-bd46cd66f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-023-bd46cd66f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-b041bb39b5",
+      "order": 23,
+      "text": "can",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-024-b041bb39b5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-024-b041bb39b5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-077db0d7bf",
+      "order": 24,
+      "text": "start",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-025-077db0d7bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-025-077db0d7bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-82d512d8c5",
+      "order": 25,
+      "text": "small",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-026-82d512d8c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-026-82d512d8c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-3170b58d25",
+      "order": 26,
+      "text": "business",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-027-3170b58d25.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-027-3170b58d25.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-aaa4f2eac1",
+      "order": 27,
+      "text": "sells",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-028-aaa4f2eac1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-028-aaa4f2eac1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-f70b2abca8",
+      "order": 28,
+      "text": "products",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-029-f70b2abca8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-029-f70b2abca8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-2cc1aed42e",
+      "order": 29,
+      "text": "or",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-030-2cc1aed42e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-030-2cc1aed42e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-3e008b4ecf",
+      "order": 30,
+      "text": "offers",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-031-3e008b4ecf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-031-3e008b4ecf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-b6a51b073c",
+      "order": 31,
+      "text": "services",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-032-b6a51b073c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-032-b6a51b073c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-37ff26e928",
+      "order": 32,
+      "text": "people",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-033-37ff26e928.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-033-37ff26e928.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-3f02a663f1",
+      "order": 33,
+      "text": "many",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-034-3f02a663f1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-034-3f02a663f1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-c219f38622",
+      "order": 34,
+      "text": "teens",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-035-c219f38622.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-035-c219f38622.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-6180f5d4a6",
+      "order": 35,
+      "text": "become",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-036-6180f5d4a6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-036-6180f5d4a6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-a0e2c01890",
+      "order": 36,
+      "text": "entrepreneurs",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-037-a0e2c01890.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-037-a0e2c01890.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-7663aff506",
+      "order": 37,
+      "text": "an",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-038-7663aff506.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-038-7663aff506.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-2eaa101870",
+      "order": 38,
+      "text": "is",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-039-2eaa101870.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-039-2eaa101870.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-050b2c3723",
+      "order": 39,
+      "text": "person",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-040-050b2c3723.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-040-050b2c3723.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-9216c93eef",
+      "order": 40,
+      "text": "this",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-041-9216c93eef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-041-9216c93eef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-abc8aabce1",
+      "order": 41,
+      "text": "starts",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-042-abc8aabce1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-042-abc8aabce1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-619889deb6",
+      "order": 42,
+      "text": "new",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-043-619889deb6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-043-619889deb6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-41e56a649a",
+      "order": 43,
+      "text": "it",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-044-41e56a649a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-044-41e56a649a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-3191e68ff7",
+      "order": 44,
+      "text": "be",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-045-3191e68ff7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-045-3191e68ff7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-702a898b80",
+      "order": 45,
+      "text": "very",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-046-702a898b80.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-046-702a898b80.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-b2ed3d4848",
+      "order": 46,
+      "text": "exciting",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-047-b2ed3d4848.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-047-b2ed3d4848.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-3694f9314d",
+      "order": 47,
+      "text": "and",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-048-3694f9314d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-048-3694f9314d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-ea998fa9d8",
+      "order": 48,
+      "text": "will",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-049-ea998fa9d8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-049-ea998fa9d8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-79567c8018",
+      "order": 49,
+      "text": "learn",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-050-79567c8018.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-050-79567c8018.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-648702172c",
+      "order": 50,
+      "text": "lot",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-051-648702172c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-051-648702172c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-e511a851a5",
+      "order": 51,
+      "text": "guide",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-052-e511a851a5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-052-e511a851a5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-6f34f8df89",
+      "order": 52,
+      "text": "help",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-053-6f34f8df89.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-053-6f34f8df89.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-7e3d986920",
+      "order": 53,
+      "text": "begin",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-054-7e3d986920.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-054-7e3d986920.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-8a873252b5",
+      "order": 54,
+      "text": "first",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-055-8a873252b5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-055-8a873252b5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-22d0ac8808",
+      "order": 55,
+      "text": "need",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-056-22d0ac8808.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-056-22d0ac8808.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-ede4ec21b2",
+      "order": 56,
+      "text": "good",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-057-ede4ec21b2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-057-ede4ec21b2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-15a2c17e6c",
+      "order": 57,
+      "text": "think",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-058-15a2c17e6c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-058-15a2c17e6c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-976cff66c1",
+      "order": 58,
+      "text": "about",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-059-976cff66c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-059-976cff66c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-0af8c80601",
+      "order": 59,
+      "text": "what",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-060-0af8c80601.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-060-0af8c80601.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-b3182b6aef",
+      "order": 60,
+      "text": "enjoy",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-061-b3182b6aef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-061-b3182b6aef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-5274800809",
+      "order": 61,
+      "text": "doing",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-062-5274800809.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-062-5274800809.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-c09fc5b0bf",
+      "order": 62,
+      "text": "skills",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-063-c09fc5b0bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-063-c09fc5b0bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-ddc5a8406b",
+      "order": 63,
+      "text": "are",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-064-ddc5a8406b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-064-ddc5a8406b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-4a886cc36a",
+      "order": 64,
+      "text": "at",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-065-4a886cc36a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-065-4a886cc36a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-a219af5e2e",
+      "order": 65,
+      "text": "making",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-066-a219af5e2e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-066-a219af5e2e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-db73b0ea9a",
+      "order": 66,
+      "text": "things",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-067-db73b0ea9a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-067-db73b0ea9a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-89a21deec0",
+      "order": 67,
+      "text": "helping",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-068-89a21deec0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-068-89a21deec0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-06cb6767ce",
+      "order": 68,
+      "text": "others",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-069-06cb6767ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-069-06cb6767ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-10e2c31b95",
+      "order": 69,
+      "text": "should",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-070-10e2c31b95.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-070-10e2c31b95.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-ede0d1be08",
+      "order": 70,
+      "text": "something",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-071-ede0d1be08.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-071-ede0d1be08.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-5b36133172",
+      "order": 71,
+      "text": "like",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-072-5b36133172.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-072-5b36133172.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-da9d1524d1",
+      "order": 72,
+      "text": "next",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-073-da9d1524d1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-073-da9d1524d1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-8e8ff57842",
+      "order": 73,
+      "text": "must",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-074-8e8ff57842.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-074-8e8ff57842.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-ff2047fba6",
+      "order": 74,
+      "text": "simple",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-075-ff2047fba6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-075-ff2047fba6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-a173665a69",
+      "order": 75,
+      "text": "plan",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-076-a173665a69.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-076-a173665a69.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-ad2a89b0e6",
+      "order": 76,
+      "text": "sell",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-077-ad2a89b0e6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-077-ad2a89b0e6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-b5975fd1c5",
+      "order": 77,
+      "text": "offer",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-078-b5975fd1c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-078-b5975fd1c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-072078e6a3",
+      "order": 78,
+      "text": "who",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-079-072078e6a3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-079-072078e6a3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-ac7ee26b5e",
+      "order": 79,
+      "text": "customers",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-080-ac7ee26b5e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-080-ac7ee26b5e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-256d659b3e",
+      "order": 80,
+      "text": "the",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-081-256d659b3e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-081-256d659b3e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-52ba405c7d",
+      "order": 81,
+      "text": "pay",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-082-52ba405c7d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-082-52ba405c7d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-970a8b3f89",
+      "order": 82,
+      "text": "for",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-083-970a8b3f89.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-083-970a8b3f89.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-ca653ae163",
+      "order": 83,
+      "text": "how",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-084-ca653ae163.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-084-ca653ae163.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-9183abf297",
+      "order": 84,
+      "text": "tell",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-085-9183abf297.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-085-9183abf297.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-086-ec2d134fa9",
+      "order": 85,
+      "text": "called",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-086-ec2d134fa9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-086-ec2d134fa9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-087-0affa8c24e",
+      "order": 86,
+      "text": "then",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-087-0affa8c24e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-087-0affa8c24e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-088-f78cd41135",
+      "order": 87,
+      "text": "much",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-088-f78cd41135.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-088-f78cd41135.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-089-e4fb4e6ebb",
+      "order": 88,
+      "text": "some",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-089-e4fb4e6ebb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-089-e4fb4e6ebb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-090-5e600a250e",
+      "order": 89,
+      "text": "businesses",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-090-5e600a250e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-090-5e600a250e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-091-cc078ce937",
+      "order": 90,
+      "text": "little",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-091-cc078ce937.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-091-cc078ce937.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-092-51fde2f4c9",
+      "order": 91,
+      "text": "other",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-092-51fde2f4c9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-092-51fde2f4c9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-093-6516f16503",
+      "order": 92,
+      "text": "more",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-093-6516f16503.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-093-6516f16503.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-094-70f5f64edf",
+      "order": 93,
+      "text": "always",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-094-70f5f64edf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-094-70f5f64edf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-095-b61469dfd6",
+      "order": 94,
+      "text": "talk",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-095-b61469dfd6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-095-b61469dfd6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-096-25c41366d6",
+      "order": 95,
+      "text": "parents",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-096-25c41366d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-096-25c41366d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-097-bf96dfc0e7",
+      "order": 96,
+      "text": "adult",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-097-bf96dfc0e7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-097-bf96dfc0e7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-098-b4945cf06e",
+      "order": 97,
+      "text": "they",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-098-b4945cf06e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-098-b4945cf06e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-099-82cd7ef039",
+      "order": 98,
+      "text": "give",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-099-82cd7ef039.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-099-82cd7ef039.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-100-ebcd9330c0",
+      "order": 99,
+      "text": "advice",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-100-ebcd9330c0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-100-ebcd9330c0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-101-87f527fa84",
+      "order": 100,
+      "text": "also",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-101-87f527fa84.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-101-87f527fa84.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-102-27b2bc75fb",
+      "order": 101,
+      "text": "stay",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-102-27b2bc75fb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-102-27b2bc75fb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-103-a2503d1d90",
+      "order": 102,
+      "text": "safe",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-103-a2503d1d90.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-103-a2503d1d90.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-104-9f95947458",
+      "order": 103,
+      "text": "there",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-104-9f95947458.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-104-9f95947458.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-105-8cd3baeaca",
+      "order": 104,
+      "text": "ideas",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-105-8cd3baeaca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-105-8cd3baeaca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-106-572b2be8fd",
+      "order": 105,
+      "text": "teen",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-106-572b2be8fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-106-572b2be8fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-107-325922d83b",
+      "order": 106,
+      "text": "dog",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-107-325922d83b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-107-325922d83b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-108-6018c10984",
+      "order": 107,
+      "text": "walking",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-108-6018c10984.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-108-6018c10984.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-109-a2b375a644",
+      "order": 108,
+      "text": "wash",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-109-a2b375a644.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-109-a2b375a644.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-110-5f7e8e658d",
+      "order": 109,
+      "text": "cars",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-110-5f7e8e658d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-110-5f7e8e658d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-111-a9c8f6421a",
+      "order": 110,
+      "text": "in",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-111-a9c8f6421a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-111-a9c8f6421a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-112-6502751ded",
+      "order": 111,
+      "text": "street",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-112-6502751ded.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-112-6502751ded.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-113-e2bd61a9af",
+      "order": 112,
+      "text": "jewelry",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-113-e2bd61a9af.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-113-e2bd61a9af.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-114-b2e3876be1",
+      "order": 113,
+      "text": "art",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-114-b2e3876be1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-114-b2e3876be1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-115-fd1a56c58e",
+      "order": 114,
+      "text": "baked",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-115-fd1a56c58e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-115-fd1a56c58e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-116-dae0d3bd8c",
+      "order": 115,
+      "text": "goods",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-116-dae0d3bd8c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-116-dae0d3bd8c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-117-aafb6d41c4",
+      "order": 116,
+      "text": "younger",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-117-aafb6d41c4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-117-aafb6d41c4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-118-732f80673b",
+      "order": 117,
+      "text": "students",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-118-732f80673b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-118-732f80673b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-119-afd1f20634",
+      "order": 118,
+      "text": "with",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-119-afd1f20634.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-119-afd1f20634.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-120-ca3de00510",
+      "order": 119,
+      "text": "their",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-120-ca3de00510.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-120-ca3de00510.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-121-c9ba02daba",
+      "order": 120,
+      "text": "homework",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-121-c9ba02daba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-121-c9ba02daba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-122-5b9069114a",
+      "order": 121,
+      "text": "helpful",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-122-5b9069114a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-122-5b9069114a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-123-af43b50271",
+      "order": 122,
+      "text": "example",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-123-af43b50271.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-123-af43b50271.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-124-56bcb36849",
+      "order": 123,
+      "text": "mark",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-124-56bcb36849.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-124-56bcb36849.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-125-bb39455905",
+      "order": 124,
+      "text": "loved",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-125-bb39455905.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-125-bb39455905.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-126-f3d7475afd",
+      "order": 125,
+      "text": "computers",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-126-f3d7475afd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-126-f3d7475afd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-127-4be3ec33e9",
+      "order": 126,
+      "text": "he",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-127-4be3ec33e9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-127-4be3ec33e9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-128-6ebef8b97b",
+      "order": 127,
+      "text": "started",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-128-6ebef8b97b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-128-6ebef8b97b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-129-a541198a1a",
+      "order": 128,
+      "text": "last",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-129-a541198a1a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-129-a541198a1a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-130-e84fcc15f0",
+      "order": 129,
+      "text": "year",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-130-e84fcc15f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-130-e84fcc15f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-131-88b37ac352",
+      "order": 130,
+      "text": "helps",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-131-88b37ac352.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-131-88b37ac352.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-132-ec90a7c683",
+      "order": 131,
+      "text": "older",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-132-ec90a7c683.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-132-ec90a7c683.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-133-223cb99f89",
+      "order": 132,
+      "text": "use",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-133-223cb99f89.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-133-223cb99f89.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-134-b3b992dcaf",
+      "order": 133,
+      "text": "phones",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-134-b3b992dcaf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-134-b3b992dcaf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-135-24ffb794a9",
+      "order": 134,
+      "text": "made",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-135-24ffb794a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-135-24ffb794a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-136-6997035d50",
+      "order": 135,
+      "text": "flyers",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-136-6997035d50.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-136-6997035d50.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-137-feec0fd5a5",
+      "order": 136,
+      "text": "gave",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-137-feec0fd5a5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-137-feec0fd5a5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-138-693cadb1f8",
+      "order": 137,
+      "text": "them",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-138-693cadb1f8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-138-693cadb1f8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-139-fccc4d6795",
+      "order": 138,
+      "text": "his",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-139-fccc4d6795.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-139-fccc4d6795.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-140-86b06fd251",
+      "order": 139,
+      "text": "community",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-140-86b06fd251.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-140-86b06fd251.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-141-3cba7f9737",
+      "order": 140,
+      "text": "now",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-141-3cba7f9737.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-141-3cba7f9737.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-142-e21acd014c",
+      "order": 141,
+      "text": "call",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-142-e21acd014c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-142-e21acd014c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-143-bc34962c76",
+      "order": 142,
+      "text": "earns",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-143-bc34962c76.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-143-bc34962c76.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-144-03fd8c6334",
+      "order": 143,
+      "text": "happy",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-144-03fd8c6334.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-144-03fd8c6334.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-145-73390ed1d9",
+      "order": 144,
+      "text": "starting",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-145-73390ed1d9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-145-73390ed1d9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-146-9c886ef38a",
+      "order": 145,
+      "text": "interesting",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-146-9c886ef38a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-146-9c886ef38a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-147-078da351c1",
+      "order": 146,
+      "text": "hard",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-147-078da351c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-147-078da351c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-148-ee03684c6e",
+      "order": 147,
+      "text": "work",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-148-ee03684c6e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-148-ee03684c6e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-149-b62e56f820",
+      "order": 148,
+      "text": "but",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-149-b62e56f820.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-149-b62e56f820.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-150-fcdc53235b",
+      "order": 149,
+      "text": "talking",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-150-fcdc53235b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-150-fcdc53235b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-151-ed9f037218",
+      "order": 150,
+      "text": "if",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-151-ed9f037218.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-151-ed9f037218.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-152-38edfbda11",
+      "order": 151,
+      "text": "try",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-152-38edfbda11.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-152-38edfbda11.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-153-06b3f876f9",
+      "order": 152,
+      "text": "successful",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-153-06b3f876f9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-153-06b3f876f9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-154-04d1bc9465",
+      "order": 153,
+      "text": "too",
+      "objectPath": "articles/WBTAniq6iDywaXQLBZYF/words/word-154-04d1bc9465.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/words/word-154-04d1bc9465.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-7c0e9d2232",
+      "type": "mcq",
+      "order": 0,
+      "text": "What should you do when starting a business?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-001-7c0e9d2232.mp3",
+      "questionObjectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-001-7c0e9d2232.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-001-7c0e9d2232-option1-e027aaea.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-001-7c0e9d2232-option2-dc42aef9.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-001-7c0e9d2232-option3-0befa348.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-001-7c0e9d2232-option4-3e69a695.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-7c0e9d2232-option1-e027aaea",
+          "text": "Talk to your parents",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-001-7c0e9d2232-option1-e027aaea.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-7c0e9d2232-option2-dc42aef9",
+          "text": "Ignore your parents",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-001-7c0e9d2232-option2-dc42aef9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-7c0e9d2232-option3-0befa348",
+          "text": "Hide your money",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-001-7c0e9d2232-option3-0befa348.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-7c0e9d2232-option4-3e69a695",
+          "text": "Quit school",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-001-7c0e9d2232-option4-3e69a695.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-34c3b45c8d",
+      "type": "mcq",
+      "order": 1,
+      "text": "Who are your customers?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-002-34c3b45c8d.mp3",
+      "questionObjectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-002-34c3b45c8d.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-002-34c3b45c8d-option1-3104ab85.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-002-34c3b45c8d-option2-0fbc14b0.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-002-34c3b45c8d-option3-7ee7de42.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-002-34c3b45c8d-option4-008305fd.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-34c3b45c8d-option1-3104ab85",
+          "text": "People who buy your product",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-002-34c3b45c8d-option1-3104ab85.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-34c3b45c8d-option2-0fbc14b0",
+          "text": "People who sell products",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-002-34c3b45c8d-option2-0fbc14b0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-34c3b45c8d-option3-7ee7de42",
+          "text": "People who make products",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-002-34c3b45c8d-option3-7ee7de42.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-34c3b45c8d-option4-008305fd",
+          "text": "People who walk dogs",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-002-34c3b45c8d-option4-008305fd.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-d873e2d58e",
+      "type": "mcq",
+      "order": 2,
+      "text": "What did Mark make to tell people about his business?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-003-d873e2d58e.mp3",
+      "questionObjectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-003-d873e2d58e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-003-d873e2d58e-option1-80353993.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-003-d873e2d58e-option2-6be2bb38.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-003-d873e2d58e-option3-31ca792b.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-003-d873e2d58e-option4-e2a75b94.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-d873e2d58e-option1-80353993",
+          "text": "Flyers",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-003-d873e2d58e-option1-80353993.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-d873e2d58e-option2-6be2bb38",
+          "text": "Newspapers",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-003-d873e2d58e-option2-6be2bb38.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-d873e2d58e-option3-31ca792b",
+          "text": "Books",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-003-d873e2d58e-option3-31ca792b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-d873e2d58e-option4-e2a75b94",
+          "text": "Cars",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-003-d873e2d58e-option4-e2a75b94.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-c80abd673c",
+      "type": "mcq",
+      "order": 3,
+      "text": "What is starting a business like?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-004-c80abd673c.mp3",
+      "questionObjectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-004-c80abd673c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-004-c80abd673c-option1-29b58d3c.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-004-c80abd673c-option2-c23fff08.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-004-c80abd673c-option3-abc0595b.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-004-c80abd673c-option4-48e9b816.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-c80abd673c-option1-29b58d3c",
+          "text": "It can be hard but rewarding",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-004-c80abd673c-option1-29b58d3c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-c80abd673c-option2-c23fff08",
+          "text": "It is always easy",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-004-c80abd673c-option2-c23fff08.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-c80abd673c-option3-abc0595b",
+          "text": "It is never fun",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-004-c80abd673c-option3-abc0595b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-c80abd673c-option4-48e9b816",
+          "text": "It is only for adults",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-004-c80abd673c-option4-48e9b816.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-c00afc6efb",
+      "type": "mcq",
+      "order": 4,
+      "text": "What is marketing?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-005-c00afc6efb.mp3",
+      "questionObjectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-005-c00afc6efb.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-005-c00afc6efb-option1-5e664fcb.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-005-c00afc6efb-option2-4c82a309.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-005-c00afc6efb-option3-13fb8b94.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-005-c00afc6efb-option4-96e898a4.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-c00afc6efb-option1-5e664fcb",
+          "text": "How to tell people about your business",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-005-c00afc6efb-option1-5e664fcb.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-c00afc6efb-option2-4c82a309",
+          "text": "How to make a product",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-005-c00afc6efb-option2-4c82a309.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-c00afc6efb-option3-13fb8b94",
+          "text": "How to save money",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-005-c00afc6efb-option3-13fb8b94.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-c00afc6efb-option4-96e898a4",
+          "text": "How to walk dogs",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-005-c00afc6efb-option4-96e898a4.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-6dbc4f7b08",
+      "type": "mcq",
+      "order": 5,
+      "text": "What is a good business idea for teens?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-006-6dbc4f7b08.mp3",
+      "questionObjectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-006-6dbc4f7b08.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-006-6dbc4f7b08-option1-f321a4a8.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-006-6dbc4f7b08-option2-3fd6fca8.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-006-6dbc4f7b08-option3-b1e5fc1e.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-006-6dbc4f7b08-option4-5a3f08c6.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-6dbc4f7b08-option1-f321a4a8",
+          "text": "Dog walking",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-006-6dbc4f7b08-option1-f321a4a8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-6dbc4f7b08-option2-3fd6fca8",
+          "text": "Building houses",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-006-6dbc4f7b08-option2-3fd6fca8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-6dbc4f7b08-option3-b1e5fc1e",
+          "text": "Flying planes",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-006-6dbc4f7b08-option3-b1e5fc1e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-6dbc4f7b08-option4-5a3f08c6",
+          "text": "Teaching college",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-006-6dbc4f7b08-option4-5a3f08c6.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-f284ac4349",
+      "type": "mcq",
+      "order": 6,
+      "text": "What does Mark do in his business?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-007-f284ac4349.mp3",
+      "questionObjectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-007-f284ac4349.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-007-f284ac4349-option1-2aa951b9.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-007-f284ac4349-option2-096fe96a.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-007-f284ac4349-option3-435c1091.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-007-f284ac4349-option4-bf6a5656.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-f284ac4349-option1-2aa951b9",
+          "text": "He helps people with computers",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-007-f284ac4349-option1-2aa951b9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-f284ac4349-option2-096fe96a",
+          "text": "He sells cars",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-007-f284ac4349-option2-096fe96a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-f284ac4349-option3-435c1091",
+          "text": "He teaches English",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-007-f284ac4349-option3-435c1091.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-f284ac4349-option4-bf6a5656",
+          "text": "He builds houses",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-007-f284ac4349-option4-bf6a5656.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-ff63868ff3",
+      "type": "mcq",
+      "order": 7,
+      "text": "What is tutoring?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-008-ff63868ff3.mp3",
+      "questionObjectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-008-ff63868ff3.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-008-ff63868ff3-option1-4f6ee911.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-008-ff63868ff3-option2-e8e28c3f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-008-ff63868ff3-option3-2a03c9e9.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-008-ff63868ff3-option4-f9c5a9ad.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-ff63868ff3-option1-4f6ee911",
+          "text": "Helping with homework",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-008-ff63868ff3-option1-4f6ee911.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-ff63868ff3-option2-e8e28c3f",
+          "text": "Building houses",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-008-ff63868ff3-option2-e8e28c3f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-ff63868ff3-option3-2a03c9e9",
+          "text": "Flying planes",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-008-ff63868ff3-option3-2a03c9e9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-ff63868ff3-option4-f9c5a9ad",
+          "text": "Driving buses",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-008-ff63868ff3-option4-f9c5a9ad.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-bf4d87b3ce",
+      "type": "mcq",
+      "order": 8,
+      "text": "What is an entrepreneur?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-009-bf4d87b3ce.mp3",
+      "questionObjectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-009-bf4d87b3ce.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-009-bf4d87b3ce-option1-2bfda244.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-009-bf4d87b3ce-option2-4e47cce2.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-009-bf4d87b3ce-option3-4b936196.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-009-bf4d87b3ce-option4-ce553cdb.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-bf4d87b3ce-option1-2bfda244",
+          "text": "Someone who starts a business",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-009-bf4d87b3ce-option1-2bfda244.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-bf4d87b3ce-option2-4e47cce2",
+          "text": "Someone who buys things",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-009-bf4d87b3ce-option2-4e47cce2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-bf4d87b3ce-option3-4b936196",
+          "text": "Someone who sells things",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-009-bf4d87b3ce-option3-4b936196.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-bf4d87b3ce-option4-ce553cdb",
+          "text": "Someone who walks dogs",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-009-bf4d87b3ce-option4-ce553cdb.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-789b4086c7",
+      "type": "mcq",
+      "order": 9,
+      "text": "What is a creative business idea?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-010-789b4086c7.mp3",
+      "questionObjectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-010-789b4086c7.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-010-789b4086c7-option1-3286888e.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-010-789b4086c7-option2-ea340cb3.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-010-789b4086c7-option3-8cb8239a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/mcq-010-789b4086c7-option4-b9bb1dea.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-789b4086c7-option1-3286888e",
+          "text": "Making jewelry",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-010-789b4086c7-option1-3286888e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-789b4086c7-option2-ea340cb3",
+          "text": "Building houses",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-010-789b4086c7-option2-ea340cb3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-789b4086c7-option3-8cb8239a",
+          "text": "Flying planes",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-010-789b4086c7-option3-8cb8239a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-789b4086c7-option4-b9bb1dea",
+          "text": "Driving buses",
+          "objectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/mcq-010-789b4086c7-option4-b9bb1dea.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-67bf143c66",
+      "type": "saq",
+      "order": 10,
+      "text": "What does a business sell or offer?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/saq-011-67bf143c66.mp3",
+      "questionObjectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/saq-011-67bf143c66.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-81e2bc840d",
+      "type": "saq",
+      "order": 11,
+      "text": "Who are your customers?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/saq-012-81e2bc840d.mp3",
+      "questionObjectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/saq-012-81e2bc840d.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-eebe2cf5bf",
+      "type": "saq",
+      "order": 12,
+      "text": "What did Mark do to tell people about his business?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/saq-013-eebe2cf5bf.mp3",
+      "questionObjectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/saq-013-eebe2cf5bf.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-19f78b9c13",
+      "type": "saq",
+      "order": 13,
+      "text": "What is one thing you will learn when starting a business?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/saq-014-19f78b9c13.mp3",
+      "questionObjectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/saq-014-19f78b9c13.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-995a7f3f74",
+      "type": "saq",
+      "order": 14,
+      "text": "What is a person called who starts a new business?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/WBTAniq6iDywaXQLBZYF/questions/saq-015-995a7f3f74.mp3",
+      "questionObjectPath": "articles/WBTAniq6iDywaXQLBZYF/questions/saq-015-995a7f3f74.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:01:47.542Z"
+}

@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useMemo, useCallback } from "react";
 import { t } from "@/lib/i18n";
-import { BookOpen, Volume2 } from "lucide-react";
+import { BookOpen, Volume2, AlertTriangle } from "lucide-react";
 import { useThaiTranslations } from "@/hooks/useThaiTranslations";
 
 import { ArticleData } from "@/lib/lesson-types";
@@ -14,20 +14,7 @@ interface ArticleDisplayProps {
 }
 
 const AUDIO_RATES = [0.75, 0.85, 1, 1.15] as const;
-const READING_ADVANTAGE_BUCKET = "artifacts.reading-advantage.appspot.com";
 const SENTENCE_STOP_MARGIN_SECONDS = 0.06;
-
-const readingAdvantageTtsUrl = (fileName: string, cacheKey: string) => {
-  const objectPath = fileName.startsWith("tts/") ? fileName : `tts/${fileName}`;
-  return `https://storage.googleapis.com/${READING_ADVANTAGE_BUCKET}/${objectPath}?v=${cacheKey}`;
-};
-
-const readingAdvantageWordAudioUrl = (fileName: string) => {
-  const objectPath = fileName.startsWith("audios-words/")
-    ? fileName
-    : `audios-words/${fileName}`;
-  return `https://storage.googleapis.com/${READING_ADVANTAGE_BUCKET}/${objectPath}`;
-};
 
 const getSentenceText = (sentence: any) =>
   String(
@@ -113,11 +100,13 @@ function buildPrimaryWordMap(sentence: any) {
 function GuideQuestionCard({
   label,
   question,
+  onSpeak,
   className = "",
   large = false,
 }: {
   label: string;
   question: string;
+  onSpeak?: () => void;
   className?: string;
   large?: boolean;
 }) {
@@ -132,6 +121,16 @@ function GuideQuestionCard({
         <p className={`flex-1 font-semibold text-foreground ${large ? "text-[clamp(16px,1.12vw,21px)] leading-snug" : "text-xs leading-relaxed"}`}>
           {label}. {question}
         </p>
+        {onSpeak && (
+          <button
+            type="button"
+            onClick={onSpeak}
+            title={t("lesson.interactive.speakTitle")}
+            className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-teal-500/10 text-teal-700 transition-colors hover:bg-teal-500/20 dark:text-teal-300"
+          >
+            <Volume2 size={16} />
+          </button>
+        )}
       </div>
       {(thaiQuestion || loading) && (
         <p className={`mt-2 font-medium text-teal-700 dark:text-teal-300 ${large ? "text-[clamp(14px,0.92vw,18px)] leading-snug" : "text-[11px] leading-relaxed"}`}>
@@ -189,6 +188,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   const sentenceStopRafRef = useRef<number | null>(null);
   const isSeekingRef = useRef(false); // prevent highlight flickering during seek
   const audioRequestRef = useRef(0);
+  const granularAutoAdvanceRef = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
   const [activeWordIdx, setActiveWordIdx] = useState(-1);
@@ -285,46 +285,96 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   const articleId = String(articleData?.id || articleData?.articleId || "");
   const sentenceStopMarginSeconds = SENTENCE_STOP_MARGIN_SECONDS;
+  const hasPublishedGranularManifest = Boolean(
+    Array.isArray((articleData as any)?.audio_manifest?.sentences) &&
+      (articleData as any).audio_manifest.sentences.length > 0,
+  );
   const readingAdvantageAudioUrl = (() => {
-    if (!articleId) return null;
-    const primarySentenceAudioUrl = String(
-      (articleData as any)?.primary_audio?.sentencesUrl || "",
-    );
-    if (isPrimaryContent && primarySentenceAudioUrl) return primarySentenceAudioUrl;
+    if (!articleId || hasPublishedGranularManifest) return null;
     const rawAudioUrl = String(
       articleData?.audio_url ||
         articleData?.raAudioUrl ||
         articleData?.readingAdvantageAudioUrl ||
         "",
     );
-    if (rawAudioUrl.startsWith("http")) return rawAudioUrl;
-    return readingAdvantageTtsUrl(rawAudioUrl || `${articleId}.mp3`, articleId);
-  })();
-  const readingAdvantageWordsAudioUrl = (() => {
-    if (!articleId) return "";
-    const rawAudioUrl = String(
-      articleData?.audio_word_url ||
-        articleData?.audioWordUrl ||
-        articleData?.readingAdvantageWordsAudioUrl ||
-        "",
-    );
-    if (rawAudioUrl.startsWith("http")) return rawAudioUrl;
-    return readingAdvantageWordAudioUrl(rawAudioUrl || `${articleId}.mp3`);
+    return rawAudioUrl.startsWith("http") ? rawAudioUrl : null;
   })();
 
-  const playClipUrl = (url?: string | null) => {
-    if (!url) return;
+  const [audioToastText, setAudioToastText] = useState<string | null>(null);
+
+  const stopSpeechFallback = () => {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+  };
+
+  const showAudioFallbackToast = (text: string) => {
+    setAudioToastText(text);
+    setTimeout(() => setAudioToastText(null), 4500);
+  };
+
+  const playClipUrl = (url?: string | null, fallbackText?: string) => {
+    stopSpeechFallback();
+    clipAudioRef.current?.pause();
+    clipAudioRef.current = null;
+
+    const playFallback = () => {
+      if (fallbackText) {
+        showAudioFallbackToast(fallbackText);
+      }
+      if (fallbackText && typeof window !== "undefined" && "speechSynthesis" in window) {
+        try {
+          window.speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(fallbackText);
+          u.lang = "en-US";
+          window.speechSynthesis.speak(u);
+        } catch {
+          // ignore
+        }
+      }
+    };
+
+    if (!url) {
+      playFallback();
+      return;
+    }
+
     audioRequestRef.current++;
     clearClipStopMonitor();
-    audioRef.current?.pause();
-    clipAudioRef.current?.pause();
-    const clip = new Audio(url);
+    if (audioRef.current) audioRef.current.pause();
+    const clip = new Audio();
     clipAudioRef.current = clip;
-    clip.playbackRate = speechRate;
     setIsPlaying(true);
-    clip.onended = () => setIsPlaying(false);
-    clip.onerror = () => setIsPlaying(false);
-    clip.play().catch(() => setIsPlaying(false));
+
+    clip.onended = () => {
+      if (clipAudioRef.current === clip) {
+        clipAudioRef.current = null;
+        setIsPlaying(false);
+      }
+    };
+    clip.onerror = () => {
+      if (clipAudioRef.current === clip) {
+        clipAudioRef.current = null;
+        setIsPlaying(false);
+        playFallback();
+      }
+    };
+
+    clip.oncanplay = () => {
+      try {
+        clip.playbackRate = speechRate;
+      } catch {
+        // ignore
+      }
+    };
+
+    clip.src = url;
+    clip.play().catch((err) => {
+      setIsPlaying(false);
+      if (err?.name !== "AbortError") {
+        playFallback();
+      }
+    });
   };
 
   useEffect(() => {
@@ -377,151 +427,88 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       : Infinity;
   };
 
-  // Mirrors Primary's student/read/[articleId] useAudioPlayer flow exactly:
-  // seek the single, preloaded full-article MP3 to the sentence start, then
-  // continue normal article playback. Primary does not create a clip or apply
-  // artificial start/end offsets to its article narration.
-  const playPrimaryArticleSentence = (sentenceIndex: number) => {
-    const audio = primaryArticleAudioRef.current;
-    const sentence = sentences[sentenceIndex];
-    if (!audio || !sentence) return;
-
-    const seekAndPlay = () => {
-      audio.pause();
-      audio.currentTime = Math.max(0, getSentenceTime(sentence));
-      audio.playbackRate = speechRate;
-      audio.play()
-        .then(() => setIsPlaying(true))
-        .catch(() => setIsPlaying(false));
-    };
-
-    if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) {
-      seekAndPlay();
-    } else {
-      audio.addEventListener("loadedmetadata", seekAndPlay, { once: true });
-      audio.load();
+  const getManifestAudioUrl = (rawUrl: any) => {
+    // The backend manifest is the source of truth. Do not reconstruct an URL
+    // from an array index: reordering content must never play another item.
+    if (typeof rawUrl === "string" && /^https?:\/\//i.test(rawUrl)) {
+      return rawUrl;
     }
+    return null;
   };
 
-  // Phase 6 uses the article MP3 plus sentence timestamps, not browser TTS.
-  const playSentenceFromReadingAdvantage = (sentenceIndex: number) => {
-    if (!readingAdvantageAudioUrl || !sentences[sentenceIndex]) return;
+  const granularSentenceUrls = useMemo(
+    () => sentences.map((sentence: any) => getManifestAudioUrl(sentence?.audioUrl || sentence?.audio_url)),
+    [sentences],
+  );
+  const hasGranularSentenceAudio = granularSentenceUrls.some(Boolean);
 
-    const start = Math.max(0, getSentenceTime(sentences[sentenceIndex]));
-    const nextSentence = sentences[sentenceIndex + 1];
-
-    audioRequestRef.current++;
-    audioRef.current?.pause();
-    clearClipStopMonitor();
-    clipAudioRef.current?.pause();
-
-    const clip = isPrimaryContent && primaryArticleAudioRef.current
-      ? primaryArticleAudioRef.current
-      : new Audio(readingAdvantageAudioUrl);
-    clipAudioRef.current = clip;
-    clip.playbackRate = speechRate;
-
-    let end = getSentenceEndTime(sentences[sentenceIndex], start, nextSentence);
-
-    const beginPlayback = () => {
-      // Primary's full-reading MP3 has its own precise start/end timeline.
-      // Seeking before playback avoids an audible burst from 0:00 while the
-      // browser is still loading metadata from GCS.
-      clip.currentTime = start;
-      if (!Number.isFinite(end) && Number.isFinite(clip.duration)) {
-        end = Math.max(start + 0.1, clip.duration - sentenceStopMarginSeconds);
-      }
-      clip
-        .play()
-        .then(() => {
-          setIsPlaying(true);
-          clipStopRafRef.current = requestAnimationFrame(tick);
-        })
-        .catch(() => setIsPlaying(false));
-    };
-    clip.onloadedmetadata = beginPlayback;
-    clip.onended = () => {
-      clearClipStopMonitor();
-      setIsPlaying(false);
-    };
-    clip.onerror = () => {
-      clearClipStopMonitor();
-      setIsPlaying(false);
-    };
-
-    const tick = () => {
-      if (clip.paused) {
-        clipStopRafRef.current = null;
-        return;
-      }
-      if (clip.currentTime >= end) {
-        clip.pause();
-        clearClipStopMonitor();
-        setIsPlaying(false);
-        return;
-      }
-      clipStopRafRef.current = requestAnimationFrame(tick);
-    };
-
-    if (clip.readyState >= HTMLMediaElement.HAVE_METADATA) {
-      beginPlayback();
-    } else {
-      clip.load();
+  const findNextPlayableSentence = (fromIndex: number) => {
+    for (let index = Math.max(0, fromIndex); index < granularSentenceUrls.length; index++) {
+      if (granularSentenceUrls[index]) return index;
     }
+    return -1;
   };
 
-  const playWordFromReadingAdvantage = (index: number) => {
-    if (!readingAdvantageWordsAudioUrl) return;
-    const start = getWordTime(words[index], index);
-    const end = getWordEndTime(index, start);
+  // Unified sentence TTS player for ALL articles (Primary Advantage + Reading Advantage)
+  const playSentence = (sentenceIndex: number) => {
+    const targetSentence = sentences[sentenceIndex] as any;
+    if (!targetSentence && targetSentence !== "") return;
+
+    const sentenceText = typeof targetSentence === "object" ? (targetSentence.sentences || targetSentence.text || targetSentence.sentence || "") : String(targetSentence);
+    const articleId = articleData?.id;
+    const rawUrl = typeof targetSentence === "object" ? (targetSentence.audioUrl || targetSentence.audio_url) : null;
+    const granularUrl = getManifestAudioUrl(rawUrl);
+
+    setActiveIdx(sentenceIndex);
+    if (phase === 3 && granularUrl && audioRef.current) {
+      playGranularArticleSentence(sentenceIndex, false);
+      return;
+    }
+    playClipUrl(granularUrl, sentenceText);
+  };
+
+  // Unified word TTS player for ALL articles (Primary Advantage + Reading Advantage)
+  const playWord = (index: number) => {
+    const targetWord = words[index] as any;
+    if (!targetWord && targetWord !== "") return;
+
+    const wordText = typeof targetWord === "object" ? (targetWord.vocabulary || targetWord.word || targetWord.text || "") : String(targetWord);
+    const articleId = articleData?.id;
+    const rawUrl = typeof targetWord === "object" ? (targetWord.audioUrl || targetWord.audio_url) : null;
+    const granularUrl = getManifestAudioUrl(rawUrl);
+
+    setActiveWordIdx(index);
+    playClipUrl(granularUrl, wordText);
+  };
+
+  const playGranularArticleSentence = (sentenceIndex: number, autoAdvance = false) => {
+    const audio = audioRef.current;
+    const playableIndex = findNextPlayableSentence(sentenceIndex);
+    const url = granularSentenceUrls[playableIndex];
+    if (!audio || !url) return false;
 
     audioRequestRef.current++;
-    audioRef.current?.pause();
-    clearClipStopMonitor();
+    primarySentencePlaybackTokenRef.current++;
+    clearSentenceStopMonitor();
     clipAudioRef.current?.pause();
-
-    const clip = new Audio(readingAdvantageWordsAudioUrl);
-    clipAudioRef.current = clip;
-    clip.playbackRate = speechRate;
-    try {
-      clip.currentTime = start;
-    } catch {
-      // Some browsers only allow seeking after metadata is available.
-    }
-    clip.onloadedmetadata = () => {
-      clip.currentTime = start;
+    audio.pause();
+    audio.src = url;
+    audio.load();
+    audio.playbackRate = speechRate;
+    stopAtRef.current = Infinity;
+    granularAutoAdvanceRef.current = autoAdvance;
+    setActiveIdx(playableIndex);
+    setActiveWordIdx(-1);
+    activeSentenceRef.current = playableIndex;
+    activeWordRef.current = -1;
+    setCurrentTime(0);
+    setDuration(0);
+    const start = () => {
+      audio.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
     };
-    clip.onended = () => {
-      clearClipStopMonitor();
-      setIsPlaying(false);
-    };
-    clip.onerror = () => {
-      clearClipStopMonitor();
-      setIsPlaying(false);
-    };
-
-    const tick = () => {
-      if (clip.paused) {
-        clipStopRafRef.current = null;
-        return;
-      }
-      if (clip.currentTime >= end) {
-        clip.pause();
-        clearClipStopMonitor();
-        setIsPlaying(false);
-        return;
-      }
-      clipStopRafRef.current = requestAnimationFrame(tick);
-    };
-
-    setIsPlaying(true);
-    clip
-      .play()
-      .then(() => {
-        if (clip.readyState >= 1) clip.currentTime = start;
-        clipStopRafRef.current = requestAnimationFrame(tick);
-      })
-      .catch(() => setIsPlaying(false));
+    if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) start();
+    else audio.addEventListener("loadedmetadata", start, { once: true });
+    return true;
   };
 
   const clearSentenceStopMonitor = () => {
@@ -588,6 +575,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     if (!audioRef.current) return;
     const t = audioRef.current.currentTime;
     setCurrentTime(t);
+
+      if (hasGranularSentenceAudio) return;
 
     if (t >= stopAtRef.current) {
       stopSingleSentencePlayback();
@@ -656,7 +645,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   // Exact Primary article-reader tracking model: requestAnimationFrame reads
   // the full-article MP3 timeline and drives sentence and word highlights.
   useEffect(() => {
-    if (!isPrimaryContent || phase !== 3 || !isPlaying) return;
+    if (!isPrimaryContent || hasGranularSentenceAudio || phase !== 3 || !isPlaying) return;
 
     const track = () => {
       const audio = audioRef.current;
@@ -698,7 +687,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         primaryTrackingRafRef.current = null;
       }
     };
-  }, [isPrimaryContent, phase, isPlaying, findPrimaryAudioPosition]);
+  }, [isPrimaryContent, hasGranularSentenceAudio, phase, isPlaying, findPrimaryAudioPosition]);
 
   const playAudioSentenceFallback = (sentenceIdx: number) => {
     const audio = audioRef.current;
@@ -768,9 +757,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   };
 
   const seekToSentence = (sentenceIdx: number) => {
-    // Temporarily allow sentence selection only for the first Primary sentence.
-    // Full-article playback remains available through the audio controls.
-    if (isPrimaryContent && sentenceIdx !== 0) return;
+    if (hasGranularSentenceAudio && granularSentenceUrls[sentenceIdx]) {
+      playGranularArticleSentence(sentenceIdx, false);
+      return;
+    }
 
     const requestId = ++audioRequestRef.current;
     const item = sentences[sentenceIdx];
@@ -802,6 +792,14 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       clipAudioRef.current?.pause();
       setIsPlaying(false);
     } else {
+      if (hasGranularSentenceAudio) {
+        const currentIndex = activeIdx >= 0 ? activeIdx : 0;
+        const firstPlayableIndex = findNextPlayableSentence(currentIndex);
+        if (firstPlayableIndex >= 0) {
+          playGranularArticleSentence(firstPlayableIndex, true);
+        }
+        return;
+      }
       audioRequestRef.current++;
       primarySentencePlaybackTokenRef.current++;
       clipAudioRef.current?.pause();
@@ -1152,13 +1150,14 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             const c = cardColors[index % cardColors.length];
 
             const speak = () => {
-              playWordFromReadingAdvantage(index);
+              playWord(index);
             };
 
             return (
               <div
                 key={index}
-                className={`group relative rounded-2xl border-2 ${c.border} ${c.light} overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1`}
+                onClick={speak}
+                className={`group relative cursor-pointer rounded-2xl border-2 ${c.border} ${c.light} overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1`}
                 style={{ minHeight: "160px" }}
               >
                 <div className="p-5 flex flex-col h-full gap-2">
@@ -1171,7 +1170,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     </div>
                     <button
                       type="button"
-                      onClick={speak}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        speak();
+                      }}
                       title={t("lesson.interactive.speakTitle")}
                       className={`w-8 h-8 rounded-full ${c.bg} text-white flex items-center justify-center shadow hover:opacity-80 active:scale-90 transition-all`}
                     >
@@ -1394,7 +1396,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     </div>
                     <button
                       type="button"
-                      onClick={() => playWordFromReadingAdvantage(i)}
+                      onClick={() => playWord(i)}
                       title={t("lesson.interactive.speakTitle")}
                       className={isFullscreen
                         ? "absolute right-3 top-3 inline-flex size-8 items-center justify-center rounded-full bg-purple-500/10 text-purple-600 transition-all hover:bg-purple-500/20 active:scale-95"
@@ -1416,6 +1418,15 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   if (phase === 5) {
     const comprehensionQuestions =
       articleData.shortAnswerQuestions?.slice(0, 3) || [];
+    const getQuestionAudioUrl = (question: string, questionData: any) => {
+      const questionKey = String(question || "").trim().toLowerCase();
+      const manifestQuestion = Array.isArray((articleData as any)?.audio_manifest?.questions)
+        ? (articleData as any).audio_manifest.questions.find(
+          (item: any) => String(item?.text || "").trim().toLowerCase() === questionKey,
+        )
+        : undefined;
+      return manifestQuestion?.questionAudioUrl || questionData?.questionAudioUrl || questionData?.audioUrl;
+    };
 
     return (
       <div
@@ -1478,6 +1489,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                       key={i}
                       label={`Q${i + 1}`}
                       question={q.question}
+                      onSpeak={() => playClipUrl(getQuestionAudioUrl(q.question, q), q.question)}
                       className={isFullscreen ? "h-full" : ""}
                       large={isFullscreen}
                     />
@@ -1676,11 +1688,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                             </p>
                             <button
                               type="button"
-                              onClick={() =>
-                                isPrimaryContent
-                                  ? playPrimaryArticleSentence(sentenceIndex)
-                                  : playSentenceFromReadingAdvantage(sentenceIndex)
-                              }
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                playSentence(sentenceIndex);
+                              }}
                               title={t("lesson.interactive.speakTitle")}
                               className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-green-500/15 text-green-700 transition-colors hover:bg-green-500/25 dark:text-green-300"
                             >
@@ -1739,7 +1750,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   /* ─── Step 3: Read the Article + Audio Player + Sentence Flag ───────────────── */
   if (phase === 3) {
     const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
-    const phase3AudioUrl = readingAdvantageAudioUrl;
+    const phase3AudioUrl = hasGranularSentenceAudio
+      ? granularSentenceUrls.find(Boolean) || null
+      : readingAdvantageAudioUrl;
     const fmtTime = (s: number) =>
       `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
     const cycleSpeechRate = () => {
@@ -1829,7 +1842,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       });
     };
     const renderSentence = (idx: number, text: string) => {
-      const canSelectSentence = !isPrimaryContent || idx === 0;
+      const canSelectSentence = hasGranularSentenceAudio || !isPrimaryContent || idx === 0;
       const isActive = idx === activeIdx;
       const flagCount = flagCounts?.[idx] || 0;
       const isFlagged = flagCount > 0;
@@ -1887,6 +1900,22 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       primaryReadingGroups[primaryReadingPageIndex] ?? primaryReadingGroups[0] ?? [];
     const primaryReadingImageUrl =
       primaryImageUrls[primaryReadingPageIndex] ?? articleImageUrl;
+    const goToPrimaryPart = (direction: -1 | 1) => {
+      const nextPart = Math.max(
+        0,
+        Math.min(primaryReadingGroups.length - 1, primaryReadingPageIndex + direction),
+      );
+      const firstSentence = primaryReadingGroups[nextPart]?.[0]?.idx;
+      audioRef.current?.pause();
+      granularAutoAdvanceRef.current = false;
+      setIsPlaying(false);
+      setActiveWordIdx(-1);
+      if (typeof firstSentence === "number") {
+        setActiveIdx(firstSentence);
+        activeSentenceRef.current = firstSentence;
+        activeWordRef.current = -1;
+      }
+    };
 
     return (
       <div className="flex-1 flex flex-col w-full bg-muted relative">
@@ -1904,8 +1933,29 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               setDuration(audioRef.current?.duration || 0)
             }
             onEnded={() => {
-              setIsPlaying(false);
-              if (isPrimaryContent) {
+              const completedSentenceIndex = activeSentenceRef.current;
+              const nextPlayableSentenceIndex = findNextPlayableSentence(
+                completedSentenceIndex + 1,
+              );
+              if (
+                hasGranularSentenceAudio &&
+                granularAutoAdvanceRef.current &&
+                nextPlayableSentenceIndex >= 0
+              ) {
+                // Keep Play-all running across sentence and Part boundaries.
+                // The visible Part is derived from activeIdx, so selecting the
+                // next sentence also advances the Primary illustration/page.
+                playGranularArticleSentence(nextPlayableSentenceIndex, true);
+              } else if (hasGranularSentenceAudio) {
+                // Keep the completed sentence selected so its highlight and
+                // translation remain visible after single-sentence playback.
+                granularAutoAdvanceRef.current = false;
+                setIsPlaying(false);
+                setActiveWordIdx(-1);
+                activeWordRef.current = -1;
+              } else {
+                granularAutoAdvanceRef.current = false;
+                setIsPlaying(false);
                 activeSentenceRef.current = -1;
                 activeWordRef.current = -1;
                 setActiveIdx(-1);
@@ -1952,9 +2002,25 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               )}
               <div className="mt-5 w-full rounded-3xl border border-border bg-card p-6 shadow-xl sm:p-8">
                 <div className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-orange-600 dark:text-orange-400">
-                  <span>Part {primaryReadingPageIndex + 1}</span>
+                  <button
+                    type="button"
+                    onClick={() => goToPrimaryPart(-1)}
+                    disabled={primaryReadingPageIndex <= 0}
+                    className="rounded-full border border-orange-500/30 px-3 py-1.5 transition-colors hover:bg-orange-500/10 disabled:cursor-not-allowed disabled:opacity-30"
+                  >
+                    ← Previous Part
+                  </button>
                   <span className="h-px flex-1 bg-orange-500/20" />
-                  <span>{primaryReadingGroups.length} Parts</span>
+                  <span className="whitespace-nowrap">Part {primaryReadingPageIndex + 1} / {primaryReadingGroups.length}</span>
+                  <span className="h-px flex-1 bg-orange-500/20" />
+                  <button
+                    type="button"
+                    onClick={() => goToPrimaryPart(1)}
+                    disabled={primaryReadingPageIndex >= primaryReadingGroups.length - 1}
+                    className="rounded-full border border-orange-500/30 px-3 py-1.5 transition-colors hover:bg-orange-500/10 disabled:cursor-not-allowed disabled:opacity-30"
+                  >
+                    Next Part →
+                  </button>
                 </div>
                 <p className="text-base leading-[2] sm:text-lg sm:leading-[2.05]">
                   {primaryReadingGroup.length > 0
@@ -1975,7 +2041,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               >
                 {group.length > 0 ? (
                   group.map(({ idx, text, ts }) => {
-                    const canSelectSentence = !isPrimaryContent || idx === 0;
+                    const canSelectSentence = hasGranularSentenceAudio || !isPrimaryContent || idx === 0;
                     const isActive = idx === activeIdx;
                     const flagCount = flagCounts?.[idx] || 0;
                     const isFlagged = flagCount > 0;
@@ -2134,6 +2200,15 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             {articleData.passage}
           </p>
           {renderThaiPassageCard("mt-6")}
+        </div>
+      )}
+      {audioToastText && (
+        <div className="fixed bottom-6 right-6 z-[200] flex items-center gap-3 bg-amber-500 text-amber-950 font-bold px-4 py-3 rounded-2xl shadow-2xl border border-amber-300 animate-in fade-in slide-in-from-bottom-5 duration-300">
+          <AlertTriangle className="size-5 shrink-0 text-amber-950" />
+          <div className="text-xs">
+            <p className="font-bold uppercase tracking-wider">⚠️ Web Speech Fallback Active</p>
+            <p className="opacity-90 font-normal mt-0.5">Playing via browser TTS: &quot;{audioToastText}&quot;</p>
+          </div>
         </div>
       )}
     </div>

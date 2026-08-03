@@ -1,0 +1,1479 @@
+{
+  "version": 1,
+  "articleId": "cmn57x04l00f2s60et9r9k1c6",
+  "source": "READING_ADVANTAGE",
+  "title": "Lucius's Choice",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-c18fd1b084",
+      "order": 0,
+      "text": "My name is Lucius.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-001-c18fd1b084.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-001-c18fd1b084.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-973f676f46",
+      "order": 1,
+      "text": "I am a boy.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-002-973f676f46.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-002-973f676f46.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-3c6637a412",
+      "order": 2,
+      "text": "This is my city.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-003-3c6637a412.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-003-3c6637a412.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-42a1488d31",
+      "order": 3,
+      "text": "My city is Rome.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-004-42a1488d31.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-004-42a1488d31.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-049f5b6096",
+      "order": 4,
+      "text": "I have a family.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-005-049f5b6096.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-005-049f5b6096.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-d34d7a5fd5",
+      "order": 5,
+      "text": "My father is a good man.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-006-d34d7a5fd5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-006-d34d7a5fd5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-5a5ba9ecee",
+      "order": 6,
+      "text": "My mother is a good woman.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-007-5a5ba9ecee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-007-5a5ba9ecee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-85725c8547",
+      "order": 7,
+      "text": "Our home is small.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-008-85725c8547.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-008-85725c8547.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-adfdde8389",
+      "order": 8,
+      "text": "Our life is simple.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-009-adfdde8389.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-009-adfdde8389.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-67426c7354",
+      "order": 9,
+      "text": "My family is my world.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-010-67426c7354.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-010-67426c7354.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-089f23d75b",
+      "order": 10,
+      "text": "A man is here.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-011-089f23d75b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-011-089f23d75b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-005060eeaa",
+      "order": 11,
+      "text": "He is a general.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-012-005060eeaa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-012-005060eeaa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-3069c4e329",
+      "order": 12,
+      "text": "His name is famous.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-013-3069c4e329.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-013-3069c4e329.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-cb1656e3d2",
+      "order": 13,
+      "text": "He is very big.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-014-cb1656e3d2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-014-cb1656e3d2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-bd19f9ad78",
+      "order": 14,
+      "text": "His soldiers are big.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-015-bd19f9ad78.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-015-bd19f9ad78.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-f536a6cc49",
+      "order": 15,
+      "text": "They are very strong.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-016-f536a6cc49.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-016-f536a6cc49.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-a34d53da71",
+      "order": 16,
+      "text": "My father is not happy.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-017-a34d53da71.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-017-a34d53da71.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-23045b3ab2",
+      "order": 17,
+      "text": "He is quiet.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-018-23045b3ab2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-018-23045b3ab2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-107900049a",
+      "order": 18,
+      "text": "My mother is sad.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-019-107900049a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-019-107900049a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-d221879ada",
+      "order": 19,
+      "text": "Her eyes are sad.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-020-d221879ada.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-020-d221879ada.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-bfc04aaaef",
+      "order": 20,
+      "text": "The general is loud.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-021-bfc04aaaef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-021-bfc04aaaef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-9889b355bc",
+      "order": 21,
+      "text": "His voice is strong.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-022-9889b355bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-022-9889b355bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-57930c4949",
+      "order": 22,
+      "text": "He looks at me.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-023-57930c4949.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-023-57930c4949.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-24e7b68816",
+      "order": 23,
+      "text": "He says, 'You are a strong boy.'",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-024-24e7b68816.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-024-24e7b68816.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-7bf7cbf185",
+      "order": 24,
+      "text": "He has gold.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-025-7bf7cbf185.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-025-7bf7cbf185.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-b9976ba4be",
+      "order": 25,
+      "text": "The gold is yellow.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-026-b9976ba4be.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-026-b9976ba4be.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-bc3435b4e7",
+      "order": 26,
+      "text": "He has food.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-027-bc3435b4e7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-027-bc3435b4e7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-028cb0e097",
+      "order": 27,
+      "text": "The food is good.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-028-028cb0e097.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-028-028cb0e097.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-78e8885e83",
+      "order": 28,
+      "text": "'This is for you.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-029-78e8885e83.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-029-78e8885e83.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-fadcdbb158",
+      "order": 29,
+      "text": "Be my soldier.'",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-030-fadcdbb158.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-030-fadcdbb158.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-6c6df28f98",
+      "order": 30,
+      "text": "I look at my father.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-031-6c6df28f98.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-031-6c6df28f98.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-835fb8db73",
+      "order": 31,
+      "text": "I look at my mother.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-032-835fb8db73.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-032-835fb8db73.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-e722ec3cd3",
+      "order": 32,
+      "text": "They are very sad.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-033-e722ec3cd3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-033-e722ec3cd3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-f94d2188ab",
+      "order": 33,
+      "text": "I look at the gold.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-034-f94d2188ab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-034-f94d2188ab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-dabc2f72f9",
+      "order": 34,
+      "text": "My old tunic is small.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-035-dabc2f72f9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-035-dabc2f72f9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-8dc5a2fe9e",
+      "order": 35,
+      "text": "My old life is small.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-036-8dc5a2fe9e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-036-8dc5a2fe9e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-1300703966",
+      "order": 36,
+      "text": "My choice is big.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-037-1300703966.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-037-1300703966.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-50e3551bbf",
+      "order": 37,
+      "text": "I say, 'Yes.'",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-038-50e3551bbf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-038-50e3551bbf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-bc52618ddf",
+      "order": 38,
+      "text": "I am a soldier now.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-039-bc52618ddf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-039-bc52618ddf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-2daaa806c3",
+      "order": 39,
+      "text": "My new tunic is red.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-040-2daaa806c3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-040-2daaa806c3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-60bdb36b1b",
+      "order": 40,
+      "text": "My sword is big.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-041-60bdb36b1b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-041-60bdb36b1b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-5de28ae3e7",
+      "order": 41,
+      "text": "The general is happy.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-042-5de28ae3e7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-042-5de28ae3e7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-f6dd8be9bd",
+      "order": 42,
+      "text": "He is my leader.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-043-f6dd8be9bd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-043-f6dd8be9bd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-044-6be2635b04",
+      "order": 43,
+      "text": "My father is not my leader now.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-044-6be2635b04.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-044-6be2635b04.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-045-46e6e1a4b1",
+      "order": 44,
+      "text": "He is very sad.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-045-46e6e1a4b1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-045-46e6e1a4b1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-046-01b63e178b",
+      "order": 45,
+      "text": "My mother is very sad.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-046-01b63e178b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-046-01b63e178b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-047-330f74a0bb",
+      "order": 46,
+      "text": "That is my old home.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-047-330f74a0bb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-047-330f74a0bb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-048-11d89e3975",
+      "order": 47,
+      "text": "It is small.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-048-11d89e3975.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-048-11d89e3975.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-049-f1f81347f3",
+      "order": 48,
+      "text": "These are my new brothers.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-049-f1f81347f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-049-f1f81347f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-050-640de3e41f",
+      "order": 49,
+      "text": "They are soldiers.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-050-640de3e41f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-050-640de3e41f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-051-b8f421bd48",
+      "order": 50,
+      "text": "This is my new life.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-051-b8f421bd48.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-051-b8f421bd48.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-052-d634ef0e0c",
+      "order": 51,
+      "text": "It is big.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-052-d634ef0e0c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-052-d634ef0e0c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-053-698d8d4759",
+      "order": 52,
+      "text": "I am not a boy.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-053-698d8d4759.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-053-698d8d4759.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-054-214b5e3c18",
+      "order": 53,
+      "text": "I am a soldier of Rome.",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-054-214b5e3c18.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/sentences/sentence-054-214b5e3c18.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-a4d79d20c8",
+      "order": 0,
+      "text": "general",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-001-a4d79d20c8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-001-a4d79d20c8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-a73c13cd68",
+      "order": 1,
+      "text": "soldiers",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-002-a73c13cd68.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-002-a73c13cd68.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-38faaf57f4",
+      "order": 2,
+      "text": "tunic",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-003-38faaf57f4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-003-38faaf57f4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-3fe7d6c1ca",
+      "order": 3,
+      "text": "sword",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-004-3fe7d6c1ca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-004-3fe7d6c1ca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-7c2d736377",
+      "order": 4,
+      "text": "leader",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-005-7c2d736377.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-005-7c2d736377.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-8e602075c5",
+      "order": 5,
+      "text": "Rome",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-006-8e602075c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-006-8e602075c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-b1b39fb479",
+      "order": 6,
+      "text": "choice",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-007-b1b39fb479.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-007-b1b39fb479.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-c1b77c074b",
+      "order": 7,
+      "text": "famous",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-008-c1b77c074b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-008-c1b77c074b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-58c37bb46b",
+      "order": 8,
+      "text": "brothers",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-009-58c37bb46b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-009-58c37bb46b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-a89bfa9f26",
+      "order": 9,
+      "text": "now",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-010-a89bfa9f26.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-010-a89bfa9f26.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-2d6b771b9e",
+      "order": 10,
+      "text": "my",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-011-2d6b771b9e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-011-2d6b771b9e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-801579a736",
+      "order": 11,
+      "text": "name",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-012-801579a736.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-012-801579a736.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-870d283f76",
+      "order": 12,
+      "text": "is",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-013-870d283f76.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-013-870d283f76.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-5118466288",
+      "order": 13,
+      "text": "lucius",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-014-5118466288.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-014-5118466288.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-df2d3854ff",
+      "order": 14,
+      "text": "i",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-015-df2d3854ff.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-015-df2d3854ff.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-c5171f8865",
+      "order": 15,
+      "text": "am",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-016-c5171f8865.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-016-c5171f8865.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-2d32b79049",
+      "order": 16,
+      "text": "a",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-017-2d32b79049.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-017-2d32b79049.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-155ad5ed84",
+      "order": 17,
+      "text": "boy",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-018-155ad5ed84.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-018-155ad5ed84.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-4387984b1d",
+      "order": 18,
+      "text": "this",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-019-4387984b1d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-019-4387984b1d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-aef5f0d4d0",
+      "order": 19,
+      "text": "city",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-020-aef5f0d4d0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-020-aef5f0d4d0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-1220e7a5df",
+      "order": 20,
+      "text": "have",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-021-1220e7a5df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-021-1220e7a5df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-0c29ca6f02",
+      "order": 21,
+      "text": "family",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-022-0c29ca6f02.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-022-0c29ca6f02.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-bda01a036c",
+      "order": 22,
+      "text": "father",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-023-bda01a036c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-023-bda01a036c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-7caea8aee4",
+      "order": 23,
+      "text": "good",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-024-7caea8aee4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-024-7caea8aee4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-fe560dfe7b",
+      "order": 24,
+      "text": "man",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-025-fe560dfe7b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-025-fe560dfe7b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-24c9e737fd",
+      "order": 25,
+      "text": "mother",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-026-24c9e737fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-026-24c9e737fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-014db065c5",
+      "order": 26,
+      "text": "woman",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-027-014db065c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-027-014db065c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-cb76fc051d",
+      "order": 27,
+      "text": "our",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-028-cb76fc051d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-028-cb76fc051d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-f0b2288dd7",
+      "order": 28,
+      "text": "home",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-029-f0b2288dd7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-029-f0b2288dd7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-e37552910a",
+      "order": 29,
+      "text": "small",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-030-e37552910a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-030-e37552910a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-8da7b655fd",
+      "order": 30,
+      "text": "life",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-031-8da7b655fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-031-8da7b655fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-73293fc00f",
+      "order": 31,
+      "text": "simple",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-032-73293fc00f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-032-73293fc00f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-c9c692ed1c",
+      "order": 32,
+      "text": "world",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-033-c9c692ed1c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-033-c9c692ed1c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-b33ecf8897",
+      "order": 33,
+      "text": "here",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-034-b33ecf8897.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-034-b33ecf8897.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-787290cbc0",
+      "order": 34,
+      "text": "he",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-035-787290cbc0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-035-787290cbc0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-d29b066e94",
+      "order": 35,
+      "text": "his",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-036-d29b066e94.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-036-d29b066e94.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-8ee7632dbc",
+      "order": 36,
+      "text": "very",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-037-8ee7632dbc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-037-8ee7632dbc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-2f5cf234b1",
+      "order": 37,
+      "text": "big",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-038-2f5cf234b1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-038-2f5cf234b1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-61212fb43d",
+      "order": 38,
+      "text": "are",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-039-61212fb43d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-039-61212fb43d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-a97b839cc7",
+      "order": 39,
+      "text": "they",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-040-a97b839cc7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-040-a97b839cc7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-f2cbbabf1f",
+      "order": 40,
+      "text": "strong",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-041-f2cbbabf1f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-041-f2cbbabf1f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-4ea1f50288",
+      "order": 41,
+      "text": "not",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-042-4ea1f50288.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-042-4ea1f50288.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-0f302b79e2",
+      "order": 42,
+      "text": "happy",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-043-0f302b79e2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-043-0f302b79e2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-8188c9b816",
+      "order": 43,
+      "text": "quiet",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-044-8188c9b816.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-044-8188c9b816.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-495d4df000",
+      "order": 44,
+      "text": "sad",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-045-495d4df000.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-045-495d4df000.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-8cd38fa7f3",
+      "order": 45,
+      "text": "her",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-046-8cd38fa7f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-046-8cd38fa7f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-2318c6d649",
+      "order": 46,
+      "text": "eyes",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-047-2318c6d649.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-047-2318c6d649.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-4caf0b8c8d",
+      "order": 47,
+      "text": "the",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-048-4caf0b8c8d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-048-4caf0b8c8d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-4299930c21",
+      "order": 48,
+      "text": "loud",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-049-4299930c21.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-049-4299930c21.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-c5aad72d54",
+      "order": 49,
+      "text": "voice",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-050-c5aad72d54.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-050-c5aad72d54.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-370afce7e1",
+      "order": 50,
+      "text": "looks",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-051-370afce7e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-051-370afce7e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-ef2c83d8d0",
+      "order": 51,
+      "text": "at",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-052-ef2c83d8d0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-052-ef2c83d8d0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-436ef5fb73",
+      "order": 52,
+      "text": "me",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-053-436ef5fb73.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-053-436ef5fb73.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-47677425c2",
+      "order": 53,
+      "text": "says",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-054-47677425c2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-054-47677425c2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-ac21ba5f81",
+      "order": 54,
+      "text": "you",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-055-ac21ba5f81.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-055-ac21ba5f81.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-5eb682c199",
+      "order": 55,
+      "text": "has",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-056-5eb682c199.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-056-5eb682c199.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-969e2a2e76",
+      "order": 56,
+      "text": "gold",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-057-969e2a2e76.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-057-969e2a2e76.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-24c6df864d",
+      "order": 57,
+      "text": "yellow",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-058-24c6df864d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-058-24c6df864d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-b50296f4ed",
+      "order": 58,
+      "text": "food",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-059-b50296f4ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-059-b50296f4ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-70230f8d53",
+      "order": 59,
+      "text": "for",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-060-70230f8d53.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-060-70230f8d53.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-3cbc5f1ff2",
+      "order": 60,
+      "text": "be",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-061-3cbc5f1ff2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-061-3cbc5f1ff2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-a37bdcdcae",
+      "order": 61,
+      "text": "soldier",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-062-a37bdcdcae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-062-a37bdcdcae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-0cda9e02a3",
+      "order": 62,
+      "text": "look",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-063-0cda9e02a3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-063-0cda9e02a3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-b285a544a4",
+      "order": 63,
+      "text": "old",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-064-b285a544a4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-064-b285a544a4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-35c5d37584",
+      "order": 64,
+      "text": "say",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-065-35c5d37584.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-065-35c5d37584.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-d498da54e3",
+      "order": 65,
+      "text": "yes",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-066-d498da54e3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-066-d498da54e3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-c29f872cb8",
+      "order": 66,
+      "text": "new",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-067-c29f872cb8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-067-c29f872cb8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-87e0718b00",
+      "order": 67,
+      "text": "red",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-068-87e0718b00.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-068-87e0718b00.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-b36f775a24",
+      "order": 68,
+      "text": "that",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-069-b36f775a24.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-069-b36f775a24.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-66b4836975",
+      "order": 69,
+      "text": "it",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-070-66b4836975.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-070-66b4836975.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-aa7c98ca9a",
+      "order": 70,
+      "text": "these",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-071-aa7c98ca9a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-071-aa7c98ca9a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-1e16e9356d",
+      "order": 71,
+      "text": "of",
+      "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/words/word-072-1e16e9356d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/words/word-072-1e16e9356d.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-e4da3548d2",
+      "type": "mcq",
+      "order": 0,
+      "text": "What is the boy's name?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-001-e4da3548d2.mp3",
+      "questionObjectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-001-e4da3548d2.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-001-e4da3548d2-option1-827184e9.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-001-e4da3548d2-option2-f442182b.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-001-e4da3548d2-option3-dc449536.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-001-e4da3548d2-option4-fc20793a.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-e4da3548d2-option1-827184e9",
+          "text": "Marcus",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-001-e4da3548d2-option1-827184e9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-e4da3548d2-option2-f442182b",
+          "text": "Julius",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-001-e4da3548d2-option2-f442182b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-e4da3548d2-option3-dc449536",
+          "text": "Lucius",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-001-e4da3548d2-option3-dc449536.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-e4da3548d2-option4-fc20793a",
+          "text": "Antonius",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-001-e4da3548d2-option4-fc20793a.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-15d56c549b",
+      "type": "mcq",
+      "order": 1,
+      "text": "Where is Lucius's city?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-002-15d56c549b.mp3",
+      "questionObjectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-002-15d56c549b.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-002-15d56c549b-option1-6892e2c2.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-002-15d56c549b-option2-c7aedd45.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-002-15d56c549b-option3-7a2e4ef7.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-002-15d56c549b-option4-2cfd8f5b.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-15d56c549b-option1-6892e2c2",
+          "text": "Rome",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-002-15d56c549b-option1-6892e2c2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-15d56c549b-option2-c7aedd45",
+          "text": "Athens",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-002-15d56c549b-option2-c7aedd45.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-15d56c549b-option3-7a2e4ef7",
+          "text": "Sparta",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-002-15d56c549b-option3-7a2e4ef7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-15d56c549b-option4-2cfd8f5b",
+          "text": "Egypt",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-002-15d56c549b-option4-2cfd8f5b.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-2c51ff8f37",
+      "type": "mcq",
+      "order": 2,
+      "text": "Is Lucius's home big or small?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-003-2c51ff8f37.mp3",
+      "questionObjectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-003-2c51ff8f37.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-003-2c51ff8f37-option1-966522ea.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-003-2c51ff8f37-option2-c6d7a0cd.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-003-2c51ff8f37-option3-3ee8305f.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-003-2c51ff8f37-option4-b9a7bc5c.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-2c51ff8f37-option1-966522ea",
+          "text": "Small",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-003-2c51ff8f37-option1-966522ea.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-2c51ff8f37-option2-c6d7a0cd",
+          "text": "Red",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-003-2c51ff8f37-option2-c6d7a0cd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-2c51ff8f37-option3-3ee8305f",
+          "text": "Blue",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-003-2c51ff8f37-option3-3ee8305f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-2c51ff8f37-option4-b9a7bc5c",
+          "text": "Big",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-003-2c51ff8f37-option4-b9a7bc5c.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-90dc8f6a42",
+      "type": "mcq",
+      "order": 3,
+      "text": "Who is the new man?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-004-90dc8f6a42.mp3",
+      "questionObjectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-004-90dc8f6a42.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-004-90dc8f6a42-option1-8294e4d4.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-004-90dc8f6a42-option2-b6c179ad.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-004-90dc8f6a42-option3-324e5f1c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-004-90dc8f6a42-option4-b7c7ceff.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-90dc8f6a42-option1-8294e4d4",
+          "text": "A teacher",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-004-90dc8f6a42-option1-8294e4d4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-90dc8f6a42-option2-b6c179ad",
+          "text": "A baker",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-004-90dc8f6a42-option2-b6c179ad.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-90dc8f6a42-option3-324e5f1c",
+          "text": "A farmer",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-004-90dc8f6a42-option3-324e5f1c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-90dc8f6a42-option4-b7c7ceff",
+          "text": "A general",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-004-90dc8f6a42-option4-b7c7ceff.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-ba2b042978",
+      "type": "mcq",
+      "order": 4,
+      "text": "What color is the gold?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-005-ba2b042978.mp3",
+      "questionObjectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-005-ba2b042978.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-005-ba2b042978-option1-0f452b48.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-005-ba2b042978-option2-94b36871.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-005-ba2b042978-option3-f8197e97.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-005-ba2b042978-option4-7a282344.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-ba2b042978-option1-0f452b48",
+          "text": "Yellow",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-005-ba2b042978-option1-0f452b48.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-ba2b042978-option2-94b36871",
+          "text": "Red",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-005-ba2b042978-option2-94b36871.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-ba2b042978-option3-f8197e97",
+          "text": "Blue",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-005-ba2b042978-option3-f8197e97.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-ba2b042978-option4-7a282344",
+          "text": "Green",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-005-ba2b042978-option4-7a282344.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-43a2fde31b",
+      "type": "mcq",
+      "order": 5,
+      "text": "What does the general give Lucius?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-006-43a2fde31b.mp3",
+      "questionObjectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-006-43a2fde31b.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-006-43a2fde31b-option1-71cb6608.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-006-43a2fde31b-option2-63463f33.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-006-43a2fde31b-option3-7d8c5c91.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-006-43a2fde31b-option4-fbc6f542.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-43a2fde31b-option1-71cb6608",
+          "text": "Gold and food",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-006-43a2fde31b-option1-71cb6608.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-43a2fde31b-option2-63463f33",
+          "text": "A book",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-006-43a2fde31b-option2-63463f33.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-43a2fde31b-option3-7d8c5c91",
+          "text": "A house",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-006-43a2fde31b-option3-7d8c5c91.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-43a2fde31b-option4-fbc6f542",
+          "text": "A toy",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-006-43a2fde31b-option4-fbc6f542.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-647fc3ba87",
+      "type": "mcq",
+      "order": 6,
+      "text": "What is Lucius's new tunic color?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-007-647fc3ba87.mp3",
+      "questionObjectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-007-647fc3ba87.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-007-647fc3ba87-option1-9d9d97b6.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-007-647fc3ba87-option2-9d415f91.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-007-647fc3ba87-option3-1207fa63.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-007-647fc3ba87-option4-cc92efac.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-647fc3ba87-option1-9d9d97b6",
+          "text": "Yellow",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-007-647fc3ba87-option1-9d9d97b6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-647fc3ba87-option2-9d415f91",
+          "text": "Green",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-007-647fc3ba87-option2-9d415f91.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-647fc3ba87-option3-1207fa63",
+          "text": "Blue",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-007-647fc3ba87-option3-1207fa63.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-647fc3ba87-option4-cc92efac",
+          "text": "Red",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-007-647fc3ba87-option4-cc92efac.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-e4197a0896",
+      "type": "mcq",
+      "order": 7,
+      "text": "Who is Lucius's new leader?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-008-e4197a0896.mp3",
+      "questionObjectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-008-e4197a0896.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-008-e4197a0896-option1-cfa0c188.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-008-e4197a0896-option2-846489e7.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-008-e4197a0896-option3-62263d52.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-008-e4197a0896-option4-0180e9e6.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-e4197a0896-option1-cfa0c188",
+          "text": "His mother",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-008-e4197a0896-option1-cfa0c188.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-e4197a0896-option2-846489e7",
+          "text": "His brother",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-008-e4197a0896-option2-846489e7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-e4197a0896-option3-62263d52",
+          "text": "His father",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-008-e4197a0896-option3-62263d52.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-e4197a0896-option4-0180e9e6",
+          "text": "The general",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-008-e4197a0896-option4-0180e9e6.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-564d57966d",
+      "type": "mcq",
+      "order": 8,
+      "text": "What is Lucius now?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-009-564d57966d.mp3",
+      "questionObjectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-009-564d57966d.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-009-564d57966d-option1-4cb91328.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-009-564d57966d-option2-5fb0aad0.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-009-564d57966d-option3-a01838f4.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-009-564d57966d-option4-9a6fec62.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-564d57966d-option1-4cb91328",
+          "text": "A farmer",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-009-564d57966d-option1-4cb91328.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-564d57966d-option2-5fb0aad0",
+          "text": "A soldier",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-009-564d57966d-option2-5fb0aad0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-564d57966d-option3-a01838f4",
+          "text": "A baker",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-009-564d57966d-option3-a01838f4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-564d57966d-option4-9a6fec62",
+          "text": "A student",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-009-564d57966d-option4-9a6fec62.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-4d315bac29",
+      "type": "mcq",
+      "order": 9,
+      "text": "Is Lucius happy or sad at the end?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-010-4d315bac29.mp3",
+      "questionObjectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-010-4d315bac29.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-010-4d315bac29-option1-6b8a1aab.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-010-4d315bac29-option2-2f612ce2.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-010-4d315bac29-option3-1387b361.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-010-4d315bac29-option4-4a01477e.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-4d315bac29-option1-6b8a1aab",
+          "text": "Angry",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-010-4d315bac29-option1-6b8a1aab.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-4d315bac29-option2-2f612ce2",
+          "text": "Happy",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-010-4d315bac29-option2-2f612ce2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-4d315bac29-option3-1387b361",
+          "text": "Sad",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-010-4d315bac29-option3-1387b361.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-4d315bac29-option4-4a01477e",
+          "text": "The text doesn't say",
+          "objectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/mcq-010-4d315bac29-option4-4a01477e.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-13ac7bfea6",
+      "type": "saq",
+      "order": 10,
+      "text": "What is the boy's name?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/saq-011-13ac7bfea6.mp3",
+      "questionObjectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/saq-011-13ac7bfea6.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-aece4956b6",
+      "type": "saq",
+      "order": 11,
+      "text": "What is Lucius now?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/saq-012-aece4956b6.mp3",
+      "questionObjectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/saq-012-aece4956b6.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-5f8dcfe8f9",
+      "type": "saq",
+      "order": 12,
+      "text": "What color is the new tunic?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/saq-013-5f8dcfe8f9.mp3",
+      "questionObjectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/saq-013-5f8dcfe8f9.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-5bdd911360",
+      "type": "saq",
+      "order": 13,
+      "text": "Who is the leader now?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/saq-014-5bdd911360.mp3",
+      "questionObjectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/saq-014-5bdd911360.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-a7a5234ab3",
+      "type": "saq",
+      "order": 14,
+      "text": "Is the home big or small?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmn57x04l00f2s60et9r9k1c6/questions/saq-015-a7a5234ab3.mp3",
+      "questionObjectPath": "articles/cmn57x04l00f2s60et9r9k1c6/questions/saq-015-a7a5234ab3.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:07:50.595Z"
+}

@@ -1,0 +1,1431 @@
+{
+  "version": 1,
+  "articleId": "cmjw1t3ky00mps60etppweqpu",
+  "source": "READING_ADVANTAGE",
+  "title": "My Backpack in Asia",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-5733b4f785",
+      "order": 0,
+      "text": "This is Southeast Asia.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-001-5733b4f785.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-001-5733b4f785.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-dc5252cd17",
+      "order": 1,
+      "text": "It is a place in the world.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-002-dc5252cd17.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-002-dc5252cd17.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-d8498267fb",
+      "order": 2,
+      "text": "It is far away for many people.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-003-d8498267fb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-003-d8498267fb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-f24820ba5d",
+      "order": 3,
+      "text": "Southeast Asia is very big.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-004-f24820ba5d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-004-f24820ba5d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-43439f6a22",
+      "order": 4,
+      "text": "Many countries are here.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-005-43439f6a22.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-005-43439f6a22.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-d9f920689b",
+      "order": 5,
+      "text": "Thailand is a country in Southeast Asia.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-006-d9f920689b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-006-d9f920689b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-be6c94de58",
+      "order": 6,
+      "text": "Vietnam is a country in Southeast Asia.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-007-be6c94de58.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-007-be6c94de58.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-48cd925c84",
+      "order": 7,
+      "text": "The countries are beautiful.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-008-48cd925c84.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-008-48cd925c84.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-4f1e1b5d2f",
+      "order": 8,
+      "text": "This is a backpack.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-009-4f1e1b5d2f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-009-4f1e1b5d2f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-27583aa09f",
+      "order": 9,
+      "text": "It is a big bag for your back.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-010-27583aa09f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-010-27583aa09f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-99dc11f391",
+      "order": 10,
+      "text": "You are a traveler.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-011-99dc11f391.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-011-99dc11f391.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-5963d67a5e",
+      "order": 11,
+      "text": "You are a backpacker.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-012-5963d67a5e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-012-5963d67a5e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-2f07be5387",
+      "order": 12,
+      "text": "Your trip is called backpacking.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-013-2f07be5387.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-013-2f07be5387.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-b18a37e92a",
+      "order": 13,
+      "text": "Your things are in the backpack.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-014-b18a37e92a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-014-b18a37e92a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-4d571a27c5",
+      "order": 14,
+      "text": "Your home is your backpack.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-015-4d571a27c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-015-4d571a27c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-b130802fa2",
+      "order": 15,
+      "text": "Your trip is slow.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-016-b130802fa2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-016-b130802fa2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-4741ba91d6",
+      "order": 16,
+      "text": "It is not fast.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-017-4741ba91d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-017-4741ba91d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-e5904240ef",
+      "order": 17,
+      "text": "This trip is not expensive.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-018-e5904240ef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-018-e5904240ef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-493990bb9e",
+      "order": 18,
+      "text": "It is cheap.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-019-493990bb9e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-019-493990bb9e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-adc16723b5",
+      "order": 19,
+      "text": "A little money is okay here.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-020-adc16723b5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-020-adc16723b5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-142f993b2d",
+      "order": 20,
+      "text": "The food is cheap.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-021-142f993b2d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-021-142f993b2d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-ef640af1c8",
+      "order": 21,
+      "text": "A bed is cheap.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-022-ef640af1c8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-022-ef640af1c8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-5bf57eea2f",
+      "order": 22,
+      "text": "The sights are beautiful.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-023-5bf57eea2f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-023-5bf57eea2f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-a2e725275f",
+      "order": 23,
+      "text": "The beaches are big and long.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-024-a2e725275f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-024-a2e725275f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-139d04b390",
+      "order": 24,
+      "text": "The sand is white.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-025-139d04b390.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-025-139d04b390.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-a7768d026e",
+      "order": 25,
+      "text": "The water is blue.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-026-a7768d026e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-026-a7768d026e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-368cf488f9",
+      "order": 26,
+      "text": "Temples are here.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-027-368cf488f9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-027-368cf488f9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-c6f62b13fb",
+      "order": 27,
+      "text": "The temples are old and big.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-028-c6f62b13fb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-028-c6f62b13fb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-070570dbf5",
+      "order": 28,
+      "text": "They are very beautiful.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-029-070570dbf5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-029-070570dbf5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-0038323b2c",
+      "order": 29,
+      "text": "The food is very good.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-030-0038323b2c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-030-0038323b2c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-e565c9d9ad",
+      "order": 30,
+      "text": "Rice is a food here.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-031-e565c9d9ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-031-e565c9d9ad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-e048a9d619",
+      "order": 31,
+      "text": "Noodles are a food here.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-032-e048a9d619.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-032-e048a9d619.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-1fe0bdffd5",
+      "order": 32,
+      "text": "The food is fresh and yummy.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-033-1fe0bdffd5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-033-1fe0bdffd5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-7831ccf7ca",
+      "order": 33,
+      "text": "The people are nice.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-034-7831ccf7ca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-034-7831ccf7ca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-301359cef2",
+      "order": 34,
+      "text": "They are very friendly.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-035-301359cef2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-035-301359cef2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-19be84ce90",
+      "order": 35,
+      "text": "A smile is a hello.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-036-19be84ce90.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-036-19be84ce90.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-7e96e81322",
+      "order": 36,
+      "text": "Your bed is in a hostel.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-037-7e96e81322.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-037-7e96e81322.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-420892a78a",
+      "order": 37,
+      "text": "A hostel is a small hotel for backpackers.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-038-420892a78a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-038-420892a78a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-d1323d90d7",
+      "order": 38,
+      "text": "The rooms are for many people.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-039-d1323d90d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-039-d1323d90d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-792a4aceee",
+      "order": 39,
+      "text": "Hostels are fun.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-040-792a4aceee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-040-792a4aceee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-fb2452b4e5",
+      "order": 40,
+      "text": "Backpacking in Southeast Asia is a great adventure.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-041-fb2452b4e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-041-fb2452b4e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-f7c603c15b",
+      "order": 41,
+      "text": "It is very fun.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-042-f7c603c15b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-042-f7c603c15b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-06e54a2f1d",
+      "order": 42,
+      "text": "You are happy here.",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-043-06e54a2f1d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/sentences/sentence-043-06e54a2f1d.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-e5948582d5",
+      "order": 0,
+      "text": "Southeast Asia",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-001-e5948582d5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-001-e5948582d5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-f66ff09e62",
+      "order": 1,
+      "text": "backpacker",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-002-f66ff09e62.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-002-f66ff09e62.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-fbebee5d58",
+      "order": 2,
+      "text": "backpacking",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-003-fbebee5d58.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-003-fbebee5d58.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-fb184ea19b",
+      "order": 3,
+      "text": "expensive",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-004-fb184ea19b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-004-fb184ea19b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-9ca8f041ca",
+      "order": 4,
+      "text": "cheap",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-005-9ca8f041ca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-005-9ca8f041ca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-3f0bbe6f24",
+      "order": 5,
+      "text": "beaches",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-006-3f0bbe6f24.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-006-3f0bbe6f24.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-1db61c9b93",
+      "order": 6,
+      "text": "temples",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-007-1db61c9b93.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-007-1db61c9b93.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-fa991de3e7",
+      "order": 7,
+      "text": "hostel",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-008-fa991de3e7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-008-fa991de3e7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-8fee499d8b",
+      "order": 8,
+      "text": "adventure",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-009-8fee499d8b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-009-8fee499d8b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-7b76139573",
+      "order": 9,
+      "text": "yummy",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-010-7b76139573.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-010-7b76139573.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-438b09494a",
+      "order": 10,
+      "text": "this",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-011-438b09494a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-011-438b09494a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-bc1f05f2e1",
+      "order": 11,
+      "text": "is",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-012-bc1f05f2e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-012-bc1f05f2e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-f3f88e793a",
+      "order": 12,
+      "text": "southeast",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-013-f3f88e793a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-013-f3f88e793a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-9d3aa4a6f5",
+      "order": 13,
+      "text": "asia",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-014-9d3aa4a6f5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-014-9d3aa4a6f5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-08a72593bf",
+      "order": 14,
+      "text": "it",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-015-08a72593bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-015-08a72593bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-67507d7509",
+      "order": 15,
+      "text": "a",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-016-67507d7509.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-016-67507d7509.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-662beccfe1",
+      "order": 16,
+      "text": "place",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-017-662beccfe1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-017-662beccfe1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-caa1acde72",
+      "order": 17,
+      "text": "in",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-018-caa1acde72.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-018-caa1acde72.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-72fc7da4b7",
+      "order": 18,
+      "text": "the",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-019-72fc7da4b7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-019-72fc7da4b7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-5f2dc09aed",
+      "order": 19,
+      "text": "world",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-020-5f2dc09aed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-020-5f2dc09aed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-0cb704915c",
+      "order": 20,
+      "text": "far",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-021-0cb704915c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-021-0cb704915c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-5ab80bffd5",
+      "order": 21,
+      "text": "away",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-022-5ab80bffd5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-022-5ab80bffd5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-393b425e78",
+      "order": 22,
+      "text": "for",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-023-393b425e78.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-023-393b425e78.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-df58afe785",
+      "order": 23,
+      "text": "many",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-024-df58afe785.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-024-df58afe785.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-56ef97352d",
+      "order": 24,
+      "text": "people",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-025-56ef97352d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-025-56ef97352d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-cc79a2067e",
+      "order": 25,
+      "text": "very",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-026-cc79a2067e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-026-cc79a2067e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-b4f7fd471c",
+      "order": 26,
+      "text": "big",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-027-b4f7fd471c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-027-b4f7fd471c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-9df4901277",
+      "order": 27,
+      "text": "countries",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-028-9df4901277.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-028-9df4901277.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-5d97f94524",
+      "order": 28,
+      "text": "are",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-029-5d97f94524.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-029-5d97f94524.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-6450ecaed0",
+      "order": 29,
+      "text": "here",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-030-6450ecaed0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-030-6450ecaed0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-007d92837b",
+      "order": 30,
+      "text": "thailand",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-031-007d92837b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-031-007d92837b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-ca2e34cf80",
+      "order": 31,
+      "text": "country",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-032-ca2e34cf80.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-032-ca2e34cf80.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-dddc9516bf",
+      "order": 32,
+      "text": "vietnam",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-033-dddc9516bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-033-dddc9516bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-e3e9fd03e0",
+      "order": 33,
+      "text": "beautiful",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-034-e3e9fd03e0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-034-e3e9fd03e0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-16f5c1720c",
+      "order": 34,
+      "text": "backpack",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-035-16f5c1720c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-035-16f5c1720c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-79e7fc3c46",
+      "order": 35,
+      "text": "bag",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-036-79e7fc3c46.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-036-79e7fc3c46.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-d791c53e32",
+      "order": 36,
+      "text": "your",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-037-d791c53e32.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-037-d791c53e32.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-7f90421563",
+      "order": 37,
+      "text": "back",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-038-7f90421563.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-038-7f90421563.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-10fcab0a51",
+      "order": 38,
+      "text": "you",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-039-10fcab0a51.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-039-10fcab0a51.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-3104d2598b",
+      "order": 39,
+      "text": "traveler",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-040-3104d2598b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-040-3104d2598b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-f3c5db8d9d",
+      "order": 40,
+      "text": "trip",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-041-f3c5db8d9d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-041-f3c5db8d9d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-116206fa67",
+      "order": 41,
+      "text": "called",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-042-116206fa67.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-042-116206fa67.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-4c15171102",
+      "order": 42,
+      "text": "things",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-043-4c15171102.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-043-4c15171102.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-235d23c5b0",
+      "order": 43,
+      "text": "home",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-044-235d23c5b0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-044-235d23c5b0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-c13d1c2400",
+      "order": 44,
+      "text": "slow",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-045-c13d1c2400.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-045-c13d1c2400.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-c968013037",
+      "order": 45,
+      "text": "not",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-046-c968013037.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-046-c968013037.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-1547348e38",
+      "order": 46,
+      "text": "fast",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-047-1547348e38.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-047-1547348e38.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-c6314f1339",
+      "order": 47,
+      "text": "little",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-048-c6314f1339.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-048-c6314f1339.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-92050367ab",
+      "order": 48,
+      "text": "money",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-049-92050367ab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-049-92050367ab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-15a984d556",
+      "order": 49,
+      "text": "okay",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-050-15a984d556.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-050-15a984d556.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-f55366ba32",
+      "order": 50,
+      "text": "food",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-051-f55366ba32.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-051-f55366ba32.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-dae5562434",
+      "order": 51,
+      "text": "bed",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-052-dae5562434.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-052-dae5562434.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-2a8428fe29",
+      "order": 52,
+      "text": "sights",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-053-2a8428fe29.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-053-2a8428fe29.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-29c5765170",
+      "order": 53,
+      "text": "and",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-054-29c5765170.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-054-29c5765170.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-a7d531bb32",
+      "order": 54,
+      "text": "long",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-055-a7d531bb32.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-055-a7d531bb32.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-9ee13cb4fc",
+      "order": 55,
+      "text": "sand",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-056-9ee13cb4fc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-056-9ee13cb4fc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-bb38bdc1ee",
+      "order": 56,
+      "text": "white",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-057-bb38bdc1ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-057-bb38bdc1ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-8a35d31d4c",
+      "order": 57,
+      "text": "water",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-058-8a35d31d4c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-058-8a35d31d4c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-a1d8b87301",
+      "order": 58,
+      "text": "blue",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-059-a1d8b87301.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-059-a1d8b87301.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-f4a892c589",
+      "order": 59,
+      "text": "old",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-060-f4a892c589.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-060-f4a892c589.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-ec1d45dce7",
+      "order": 60,
+      "text": "they",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-061-ec1d45dce7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-061-ec1d45dce7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-8b823e9b65",
+      "order": 61,
+      "text": "good",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-062-8b823e9b65.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-062-8b823e9b65.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-e233cff421",
+      "order": 62,
+      "text": "rice",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-063-e233cff421.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-063-e233cff421.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-ffa5381632",
+      "order": 63,
+      "text": "noodles",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-064-ffa5381632.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-064-ffa5381632.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-482013f8a3",
+      "order": 64,
+      "text": "fresh",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-065-482013f8a3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-065-482013f8a3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-cd5fde1c87",
+      "order": 65,
+      "text": "nice",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-066-cd5fde1c87.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-066-cd5fde1c87.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-442e5c8adc",
+      "order": 66,
+      "text": "friendly",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-067-442e5c8adc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-067-442e5c8adc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-72771ab5f6",
+      "order": 67,
+      "text": "smile",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-068-72771ab5f6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-068-72771ab5f6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-485f046b04",
+      "order": 68,
+      "text": "hello",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-069-485f046b04.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-069-485f046b04.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-0cdf2d9aab",
+      "order": 69,
+      "text": "small",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-070-0cdf2d9aab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-070-0cdf2d9aab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-c9df52b19d",
+      "order": 70,
+      "text": "hotel",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-071-c9df52b19d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-071-c9df52b19d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-0aa8144611",
+      "order": 71,
+      "text": "backpackers",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-072-0aa8144611.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-072-0aa8144611.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-b584671325",
+      "order": 72,
+      "text": "rooms",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-073-b584671325.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-073-b584671325.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-5f510978ac",
+      "order": 73,
+      "text": "hostels",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-074-5f510978ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-074-5f510978ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-e835b705e9",
+      "order": 74,
+      "text": "fun",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-075-e835b705e9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-075-e835b705e9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-7604ab677f",
+      "order": 75,
+      "text": "great",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-076-7604ab677f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-076-7604ab677f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-70aa16c0c6",
+      "order": 76,
+      "text": "happy",
+      "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/words/word-077-70aa16c0c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/words/word-077-70aa16c0c6.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-324f826f61",
+      "type": "mcq",
+      "order": 0,
+      "text": "Where is Thailand?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-001-324f826f61.mp3",
+      "questionObjectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-001-324f826f61.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-001-324f826f61-option1-e0079917.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-001-324f826f61-option2-e37c33a7.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-001-324f826f61-option3-2c8fc830.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-001-324f826f61-option4-2fccb8b7.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-324f826f61-option1-e0079917",
+          "text": "North America",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-001-324f826f61-option1-e0079917.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-324f826f61-option2-e37c33a7",
+          "text": "South Africa",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-001-324f826f61-option2-e37c33a7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-324f826f61-option3-2c8fc830",
+          "text": "Southeast Asia",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-001-324f826f61-option3-2c8fc830.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-324f826f61-option4-2fccb8b7",
+          "text": "Europe",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-001-324f826f61-option4-2fccb8b7.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-a36b0262e0",
+      "type": "mcq",
+      "order": 1,
+      "text": "What is a backpack?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-002-a36b0262e0.mp3",
+      "questionObjectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-002-a36b0262e0.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-002-a36b0262e0-option1-f1b25f47.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-002-a36b0262e0-option2-f6850ce8.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-002-a36b0262e0-option3-55588d81.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-002-a36b0262e0-option4-d3650f8a.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-a36b0262e0-option1-f1b25f47",
+          "text": "A small car",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-002-a36b0262e0-option1-f1b25f47.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-a36b0262e0-option2-f6850ce8",
+          "text": "A fast train",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-002-a36b0262e0-option2-f6850ce8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-a36b0262e0-option3-55588d81",
+          "text": "A big bag",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-002-a36b0262e0-option3-55588d81.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-a36b0262e0-option4-d3650f8a",
+          "text": "A tall building",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-002-a36b0262e0-option4-d3650f8a.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-89f553c643",
+      "type": "mcq",
+      "order": 2,
+      "text": "Is the trip fast?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-003-89f553c643.mp3",
+      "questionObjectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-003-89f553c643.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-003-89f553c643-option1-a1c311d5.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-003-89f553c643-option2-ca0c00d9.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-003-89f553c643-option3-eb244b0c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-003-89f553c643-option4-93ac5ef9.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-89f553c643-option1-a1c311d5",
+          "text": "Yes, very fast",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-003-89f553c643-option1-a1c311d5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-89f553c643-option2-ca0c00d9",
+          "text": "Yes, always fast",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-003-89f553c643-option2-ca0c00d9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-89f553c643-option3-eb244b0c",
+          "text": "No, it is slow",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-003-89f553c643-option3-eb244b0c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-89f553c643-option4-93ac5ef9",
+          "text": "Maybe, sometimes",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-003-89f553c643-option4-93ac5ef9.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-fb15685b39",
+      "type": "mcq",
+      "order": 3,
+      "text": "Is the trip expensive?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-004-fb15685b39.mp3",
+      "questionObjectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-004-fb15685b39.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-004-fb15685b39-option1-200caf95.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-004-fb15685b39-option2-d743b782.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-004-fb15685b39-option3-afe20baf.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-004-fb15685b39-option4-1a8f585d.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-fb15685b39-option1-200caf95",
+          "text": "No, it is cheap",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-004-fb15685b39-option1-200caf95.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-fb15685b39-option2-d743b782",
+          "text": "Yes, always expensive",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-004-fb15685b39-option2-d743b782.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-fb15685b39-option3-afe20baf",
+          "text": "Yes, very expensive",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-004-fb15685b39-option3-afe20baf.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-fb15685b39-option4-1a8f585d",
+          "text": "Maybe, sometimes",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-004-fb15685b39-option4-1a8f585d.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-cca237a750",
+      "type": "mcq",
+      "order": 4,
+      "text": "What color is the sand?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-005-cca237a750.mp3",
+      "questionObjectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-005-cca237a750.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-005-cca237a750-option1-0a3b46b6.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-005-cca237a750-option2-173a5602.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-005-cca237a750-option3-c787b16e.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-005-cca237a750-option4-730e8a53.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-cca237a750-option1-0a3b46b6",
+          "text": "White",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-005-cca237a750-option1-0a3b46b6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-cca237a750-option2-173a5602",
+          "text": "Black",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-005-cca237a750-option2-173a5602.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-cca237a750-option3-c787b16e",
+          "text": "Green",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-005-cca237a750-option3-c787b16e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-cca237a750-option4-730e8a53",
+          "text": "Red",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-005-cca237a750-option4-730e8a53.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-182650e4f2",
+      "type": "mcq",
+      "order": 5,
+      "text": "What is in Southeast Asia?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-006-182650e4f2.mp3",
+      "questionObjectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-006-182650e4f2.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-006-182650e4f2-option1-0724aa93.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-006-182650e4f2-option2-4d73c067.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-006-182650e4f2-option3-68481ae7.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-006-182650e4f2-option4-65ece4d2.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-182650e4f2-option1-0724aa93",
+          "text": "Deserts",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-006-182650e4f2-option1-0724aa93.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-182650e4f2-option2-4d73c067",
+          "text": "Temples",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-006-182650e4f2-option2-4d73c067.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-182650e4f2-option3-68481ae7",
+          "text": "Mountains",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-006-182650e4f2-option3-68481ae7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-182650e4f2-option4-65ece4d2",
+          "text": "Ice",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-006-182650e4f2-option4-65ece4d2.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-ba7aacea6c",
+      "type": "mcq",
+      "order": 6,
+      "text": "Is the food good?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-007-ba7aacea6c.mp3",
+      "questionObjectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-007-ba7aacea6c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-007-ba7aacea6c-option1-04a60e95.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-007-ba7aacea6c-option2-7aeb9f54.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-007-ba7aacea6c-option3-d49a3985.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-007-ba7aacea6c-option4-c03024f2.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-ba7aacea6c-option1-04a60e95",
+          "text": "Yes, very good",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-007-ba7aacea6c-option1-04a60e95.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-ba7aacea6c-option2-7aeb9f54",
+          "text": "No, very bad",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-007-ba7aacea6c-option2-7aeb9f54.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-ba7aacea6c-option3-d49a3985",
+          "text": "Maybe, so-so",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-007-ba7aacea6c-option3-d49a3985.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-ba7aacea6c-option4-c03024f2",
+          "text": "No, not good",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-007-ba7aacea6c-option4-c03024f2.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-7f28de495b",
+      "type": "mcq",
+      "order": 7,
+      "text": "What is a food here?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-008-7f28de495b.mp3",
+      "questionObjectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-008-7f28de495b.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-008-7f28de495b-option1-461ecc25.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-008-7f28de495b-option2-5bdcd682.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-008-7f28de495b-option3-9cde46a2.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-008-7f28de495b-option4-cfcb4226.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-7f28de495b-option1-461ecc25",
+          "text": "Burgers",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-008-7f28de495b-option1-461ecc25.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-7f28de495b-option2-5bdcd682",
+          "text": "Rice",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-008-7f28de495b-option2-5bdcd682.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-7f28de495b-option3-9cde46a2",
+          "text": "Pizza",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-008-7f28de495b-option3-9cde46a2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-7f28de495b-option4-cfcb4226",
+          "text": "Tacos",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-008-7f28de495b-option4-cfcb4226.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-976489475e",
+      "type": "mcq",
+      "order": 8,
+      "text": "Are the people friendly?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-009-976489475e.mp3",
+      "questionObjectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-009-976489475e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-009-976489475e-option1-a976c30e.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-009-976489475e-option2-6fbe9cdd.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-009-976489475e-option3-b551ce3c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-009-976489475e-option4-192fbe15.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-976489475e-option1-a976c30e",
+          "text": "Yes, very friendly",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-009-976489475e-option1-a976c30e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-976489475e-option2-6fbe9cdd",
+          "text": "No, not friendly",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-009-976489475e-option2-6fbe9cdd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-976489475e-option3-b551ce3c",
+          "text": "Maybe, sometimes",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-009-976489475e-option3-b551ce3c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-976489475e-option4-192fbe15",
+          "text": "No, very mean",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-009-976489475e-option4-192fbe15.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-ba82497158",
+      "type": "mcq",
+      "order": 9,
+      "text": "What is a hostel?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-010-ba82497158.mp3",
+      "questionObjectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-010-ba82497158.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-010-ba82497158-option1-761c53bd.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-010-ba82497158-option2-ee4a45bb.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-010-ba82497158-option3-875f3973.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-010-ba82497158-option4-27902618.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-ba82497158-option1-761c53bd",
+          "text": "A big house",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-010-ba82497158-option1-761c53bd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ba82497158-option2-ee4a45bb",
+          "text": "A tall tree",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-010-ba82497158-option2-ee4a45bb.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ba82497158-option3-875f3973",
+          "text": "A small hotel",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-010-ba82497158-option3-875f3973.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ba82497158-option4-27902618",
+          "text": "A fast car",
+          "objectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/mcq-010-ba82497158-option4-27902618.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-17ea388d06",
+      "type": "saq",
+      "order": 10,
+      "text": "Is Thailand a country in Southeast Asia?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/saq-011-17ea388d06.mp3",
+      "questionObjectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/saq-011-17ea388d06.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-8b175a73ee",
+      "type": "saq",
+      "order": 11,
+      "text": "Is the backpack big or small?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/saq-012-8b175a73ee.mp3",
+      "questionObjectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/saq-012-8b175a73ee.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-766ef36209",
+      "type": "saq",
+      "order": 12,
+      "text": "Is the trip expensive?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/saq-013-766ef36209.mp3",
+      "questionObjectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/saq-013-766ef36209.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-e66a9b5c52",
+      "type": "saq",
+      "order": 13,
+      "text": "Is the sand white or black?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/saq-014-e66a9b5c52.mp3",
+      "questionObjectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/saq-014-e66a9b5c52.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-89f1d1e3f9",
+      "type": "saq",
+      "order": 14,
+      "text": "Are the people friendly?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmjw1t3ky00mps60etppweqpu/questions/saq-015-89f1d1e3f9.mp3",
+      "questionObjectPath": "articles/cmjw1t3ky00mps60etppweqpu/questions/saq-015-89f1d1e3f9.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:08:57.510Z"
+}

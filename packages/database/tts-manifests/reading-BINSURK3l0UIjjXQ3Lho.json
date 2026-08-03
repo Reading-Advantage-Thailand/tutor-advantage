@@ -1,0 +1,1855 @@
+{
+  "version": 1,
+  "articleId": "BINSURK3l0UIjjXQ3Lho",
+  "source": "READING_ADVANTAGE",
+  "title": "Steve Jobs: The Innovator Behind Apple",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-05617064d2",
+      "order": 0,
+      "text": "Steve Jobs was born on February 24, 1955.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-001-05617064d2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-001-05617064d2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-ab7c5457da",
+      "order": 1,
+      "text": "He grew up in California.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-002-ab7c5457da.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-002-ab7c5457da.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-2aaeb93ae3",
+      "order": 2,
+      "text": "As a child, he was very curious.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-003-2aaeb93ae3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-003-2aaeb93ae3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-56884f2570",
+      "order": 3,
+      "text": "He loved to learn about electronics.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-004-56884f2570.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-004-56884f2570.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-a5aefee535",
+      "order": 4,
+      "text": "In high school, he met Steve Wozniak.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-005-a5aefee535.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-005-a5aefee535.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-7a5be1cb79",
+      "order": 5,
+      "text": "They became good friends.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-006-7a5be1cb79.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-006-7a5be1cb79.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-02b248f6d7",
+      "order": 6,
+      "text": "They both loved computers.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-007-02b248f6d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-007-02b248f6d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-2c496f3e1a",
+      "order": 7,
+      "text": "In 1976, Jobs and Wozniak started Apple.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-008-2c496f3e1a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-008-2c496f3e1a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-30b73d89dc",
+      "order": 8,
+      "text": "They worked in Jobs' garage.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-009-30b73d89dc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-009-30b73d89dc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-917c3fefef",
+      "order": 9,
+      "text": "They built the first Apple computer there.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-010-917c3fefef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-010-917c3fefef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-041471bf4b",
+      "order": 10,
+      "text": "It was called the Apple I.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-011-041471bf4b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-011-041471bf4b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-e30d4c4f6d",
+      "order": 11,
+      "text": "It was a big success.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-012-e30d4c4f6d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-012-e30d4c4f6d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-f77df61915",
+      "order": 12,
+      "text": "People loved it.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-013-f77df61915.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-013-f77df61915.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-6e5ed5f02e",
+      "order": 13,
+      "text": "In 1984, Apple released the Macintosh.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-014-6e5ed5f02e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-014-6e5ed5f02e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-fb62aa283c",
+      "order": 14,
+      "text": "It was the first computer with a mouse and a graphical user interface.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-015-fb62aa283c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-015-fb62aa283c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-a62179bf57",
+      "order": 15,
+      "text": "This was a big change.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-016-a62179bf57.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-016-a62179bf57.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-71c2ad41ef",
+      "order": 16,
+      "text": "It made computers easier to use.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-017-71c2ad41ef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-017-71c2ad41ef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-b9764234cc",
+      "order": 17,
+      "text": "Many people bought the Macintosh.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-018-b9764234cc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-018-b9764234cc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-a0c5f0617d",
+      "order": 18,
+      "text": "But in 1985, Jobs left Apple.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-019-a0c5f0617d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-019-a0c5f0617d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-5f121f05a9",
+      "order": 19,
+      "text": "He had a disagreement with the board.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-020-5f121f05a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-020-5f121f05a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-dcdaaebd5c",
+      "order": 20,
+      "text": "He started a new company called NeXT.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-021-dcdaaebd5c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-021-dcdaaebd5c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-9fca960b5a",
+      "order": 21,
+      "text": "NeXT made powerful computers.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-022-9fca960b5a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-022-9fca960b5a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-a83e552783",
+      "order": 22,
+      "text": "They were used in universities and businesses.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-023-a83e552783.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-023-a83e552783.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-2cfd7fac7a",
+      "order": 23,
+      "text": "In 1996, Apple bought NeXT.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-024-2cfd7fac7a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-024-2cfd7fac7a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-f3fc0996d4",
+      "order": 24,
+      "text": "Jobs returned to Apple.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-025-f3fc0996d4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-025-f3fc0996d4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-34f1c45c24",
+      "order": 25,
+      "text": "He became the CEO.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-026-34f1c45c24.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-026-34f1c45c24.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-9fff1a901b",
+      "order": 26,
+      "text": "Under his leadership, Apple created many new products.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-027-9fff1a901b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-027-9fff1a901b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-54df211dde",
+      "order": 27,
+      "text": "In 2001, Apple released the iPod.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-028-54df211dde.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-028-54df211dde.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-d025c8bc59",
+      "order": 28,
+      "text": "It changed the way people listened to music.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-029-d025c8bc59.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-029-d025c8bc59.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-08baa1e4ca",
+      "order": 29,
+      "text": "In 2007, Apple released the iPhone.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-030-08baa1e4ca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-030-08baa1e4ca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-77c090f85f",
+      "order": 30,
+      "text": "It changed the way people used phones.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-031-77c090f85f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-031-77c090f85f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-3283d28e8c",
+      "order": 31,
+      "text": "In 2010, Apple released the iPad.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-032-3283d28e8c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-032-3283d28e8c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-d4728c4f5d",
+      "order": 32,
+      "text": "It was a new kind of computer.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-033-d4728c4f5d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-033-d4728c4f5d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-b05f75844a",
+      "order": 33,
+      "text": "Jobs was known for his vision.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-034-b05f75844a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-034-b05f75844a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-1bffb5f6dd",
+      "order": 34,
+      "text": "He wanted to make products that were easy to use.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-035-1bffb5f6dd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-035-1bffb5f6dd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-2473bb4e19",
+      "order": 35,
+      "text": "He also wanted them to look good.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-036-2473bb4e19.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-036-2473bb4e19.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-938f0dbdba",
+      "order": 36,
+      "text": "He paid attention to every detail.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-037-938f0dbdba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-037-938f0dbdba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-de366b56f2",
+      "order": 37,
+      "text": "This made Apple products very popular.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-038-de366b56f2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-038-de366b56f2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-06c4784a12",
+      "order": 38,
+      "text": "Steve Jobs passed away on October 5, 2011.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-039-06c4784a12.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-039-06c4784a12.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-bdb4080b3e",
+      "order": 39,
+      "text": "He left a big mark on the world.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-040-bdb4080b3e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-040-bdb4080b3e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-9491c1756a",
+      "order": 40,
+      "text": "His ideas and products changed technology forever.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-041-9491c1756a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-041-9491c1756a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-54fda474ad",
+      "order": 41,
+      "text": "People still use and love Apple products today.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-042-54fda474ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-042-54fda474ad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-5a9d28e2c0",
+      "order": 42,
+      "text": "Jobs' story is one of creativity and innovation.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-043-5a9d28e2c0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-043-5a9d28e2c0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-044-d4b9cf16b5",
+      "order": 43,
+      "text": "He showed that with hard work and vision, you can change the world.",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-044-d4b9cf16b5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/sentences/sentence-044-d4b9cf16b5.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-8f212bf4f9",
+      "order": 0,
+      "text": "disagreement",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-001-8f212bf4f9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-001-8f212bf4f9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-697d719ece",
+      "order": 1,
+      "text": "leadership",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-002-697d719ece.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-002-697d719ece.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-54957b19c4",
+      "order": 2,
+      "text": "innovation",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-003-54957b19c4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-003-54957b19c4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-379c090163",
+      "order": 3,
+      "text": "graphical user interface",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-004-379c090163.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-004-379c090163.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-8e5ed5faac",
+      "order": 4,
+      "text": "creativity",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-005-8e5ed5faac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-005-8e5ed5faac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-c57ceac854",
+      "order": 5,
+      "text": "powerful",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-006-c57ceac854.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-006-c57ceac854.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-bfffc8a270",
+      "order": 6,
+      "text": "success",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-007-bfffc8a270.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-007-bfffc8a270.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-92130c5fe3",
+      "order": 7,
+      "text": "attention to detail",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-008-92130c5fe3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-008-92130c5fe3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-d8ab363425",
+      "order": 8,
+      "text": "vision",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-009-d8ab363425.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-009-d8ab363425.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-2e608ef087",
+      "order": 9,
+      "text": "technology",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-010-2e608ef087.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-010-2e608ef087.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-9f5853f3a9",
+      "order": 10,
+      "text": "steve",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-011-9f5853f3a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-011-9f5853f3a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-d9f666ea7c",
+      "order": 11,
+      "text": "jobs",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-012-d9f666ea7c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-012-d9f666ea7c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-0a3ef678b4",
+      "order": 12,
+      "text": "was",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-013-0a3ef678b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-013-0a3ef678b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-bc8a5f25a9",
+      "order": 13,
+      "text": "born",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-014-bc8a5f25a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-014-bc8a5f25a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-0a86fd43d8",
+      "order": 14,
+      "text": "on",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-015-0a86fd43d8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-015-0a86fd43d8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-2c109538cf",
+      "order": 15,
+      "text": "february",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-016-2c109538cf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-016-2c109538cf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-506b5dee5a",
+      "order": 16,
+      "text": "he",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-017-506b5dee5a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-017-506b5dee5a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-94ec2d4a89",
+      "order": 17,
+      "text": "grew",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-018-94ec2d4a89.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-018-94ec2d4a89.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-3dbc27ffa7",
+      "order": 18,
+      "text": "up",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-019-3dbc27ffa7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-019-3dbc27ffa7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-a411546eee",
+      "order": 19,
+      "text": "in",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-020-a411546eee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-020-a411546eee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-d4edb92f30",
+      "order": 20,
+      "text": "california",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-021-d4edb92f30.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-021-d4edb92f30.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-968d878ce7",
+      "order": 21,
+      "text": "as",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-022-968d878ce7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-022-968d878ce7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-4b20732b50",
+      "order": 22,
+      "text": "a",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-023-4b20732b50.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-023-4b20732b50.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-6ad6a06a9c",
+      "order": 23,
+      "text": "child",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-024-6ad6a06a9c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-024-6ad6a06a9c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-d7aafdeed4",
+      "order": 24,
+      "text": "very",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-025-d7aafdeed4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-025-d7aafdeed4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-415955762d",
+      "order": 25,
+      "text": "curious",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-026-415955762d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-026-415955762d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-ab1fba6a12",
+      "order": 26,
+      "text": "loved",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-027-ab1fba6a12.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-027-ab1fba6a12.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-cf74b9f370",
+      "order": 27,
+      "text": "to",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-028-cf74b9f370.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-028-cf74b9f370.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-7f753e61f1",
+      "order": 28,
+      "text": "learn",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-029-7f753e61f1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-029-7f753e61f1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-4cef9fb1d6",
+      "order": 29,
+      "text": "about",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-030-4cef9fb1d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-030-4cef9fb1d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-59f01832f8",
+      "order": 30,
+      "text": "electronics",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-031-59f01832f8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-031-59f01832f8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-508d3e2f20",
+      "order": 31,
+      "text": "high",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-032-508d3e2f20.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-032-508d3e2f20.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-872c073f5c",
+      "order": 32,
+      "text": "school",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-033-872c073f5c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-033-872c073f5c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-0dd0ba81cf",
+      "order": 33,
+      "text": "met",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-034-0dd0ba81cf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-034-0dd0ba81cf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-0b50b53489",
+      "order": 34,
+      "text": "wozniak",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-035-0b50b53489.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-035-0b50b53489.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-f2245dc8a1",
+      "order": 35,
+      "text": "they",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-036-f2245dc8a1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-036-f2245dc8a1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-2f07d38ccf",
+      "order": 36,
+      "text": "became",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-037-2f07d38ccf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-037-2f07d38ccf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-c1bd6be83e",
+      "order": 37,
+      "text": "good",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-038-c1bd6be83e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-038-c1bd6be83e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-3bb78683f1",
+      "order": 38,
+      "text": "friends",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-039-3bb78683f1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-039-3bb78683f1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-322e5450fa",
+      "order": 39,
+      "text": "both",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-040-322e5450fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-040-322e5450fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-3404b47148",
+      "order": 40,
+      "text": "computers",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-041-3404b47148.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-041-3404b47148.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-f99a336f9f",
+      "order": 41,
+      "text": "and",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-042-f99a336f9f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-042-f99a336f9f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-3b739ed0c9",
+      "order": 42,
+      "text": "started",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-043-3b739ed0c9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-043-3b739ed0c9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-1c99588c20",
+      "order": 43,
+      "text": "apple",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-044-1c99588c20.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-044-1c99588c20.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-4d334e6d91",
+      "order": 44,
+      "text": "worked",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-045-4d334e6d91.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-045-4d334e6d91.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-71bf9e5f7e",
+      "order": 45,
+      "text": "garage",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-046-71bf9e5f7e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-046-71bf9e5f7e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-2340d75e31",
+      "order": 46,
+      "text": "built",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-047-2340d75e31.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-047-2340d75e31.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-4caf0b8c8d",
+      "order": 47,
+      "text": "the",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-048-4caf0b8c8d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-048-4caf0b8c8d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-7759df7b52",
+      "order": 48,
+      "text": "first",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-049-7759df7b52.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-049-7759df7b52.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-1a4beeba21",
+      "order": 49,
+      "text": "computer",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-050-1a4beeba21.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-050-1a4beeba21.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-f0c011e1ae",
+      "order": 50,
+      "text": "there",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-051-f0c011e1ae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-051-f0c011e1ae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-c19834347e",
+      "order": 51,
+      "text": "it",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-052-c19834347e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-052-c19834347e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-cdbc2d945d",
+      "order": 52,
+      "text": "called",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-053-cdbc2d945d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-053-cdbc2d945d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-1006a89209",
+      "order": 53,
+      "text": "i",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-054-1006a89209.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-054-1006a89209.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-4c93409912",
+      "order": 54,
+      "text": "big",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-055-4c93409912.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-055-4c93409912.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-20a27c5909",
+      "order": 55,
+      "text": "people",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-056-20a27c5909.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-056-20a27c5909.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-f02d856183",
+      "order": 56,
+      "text": "released",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-057-f02d856183.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-057-f02d856183.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-63ebd1436e",
+      "order": 57,
+      "text": "macintosh",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-058-63ebd1436e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-058-63ebd1436e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-56e3dfa7fd",
+      "order": 58,
+      "text": "with",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-059-56e3dfa7fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-059-56e3dfa7fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-111c2bdc81",
+      "order": 59,
+      "text": "mouse",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-060-111c2bdc81.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-060-111c2bdc81.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-85d15b4caf",
+      "order": 60,
+      "text": "graphical",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-061-85d15b4caf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-061-85d15b4caf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-841adc389d",
+      "order": 61,
+      "text": "user",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-062-841adc389d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-062-841adc389d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-ab86239f11",
+      "order": 62,
+      "text": "interface",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-063-ab86239f11.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-063-ab86239f11.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-c891dd8794",
+      "order": 63,
+      "text": "this",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-064-c891dd8794.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-064-c891dd8794.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-d6cbbe547b",
+      "order": 64,
+      "text": "change",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-065-d6cbbe547b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-065-d6cbbe547b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-b75eed9b88",
+      "order": 65,
+      "text": "made",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-066-b75eed9b88.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-066-b75eed9b88.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-ea2bf94e39",
+      "order": 66,
+      "text": "easier",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-067-ea2bf94e39.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-067-ea2bf94e39.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-90aefd3086",
+      "order": 67,
+      "text": "use",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-068-90aefd3086.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-068-90aefd3086.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-2e97e3e793",
+      "order": 68,
+      "text": "many",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-069-2e97e3e793.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-069-2e97e3e793.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-d371f50566",
+      "order": 69,
+      "text": "bought",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-070-d371f50566.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-070-d371f50566.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-c50c8d48c6",
+      "order": 70,
+      "text": "but",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-071-c50c8d48c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-071-c50c8d48c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-a93c3c9ea1",
+      "order": 71,
+      "text": "left",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-072-a93c3c9ea1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-072-a93c3c9ea1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-4e19a57c96",
+      "order": 72,
+      "text": "had",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-073-4e19a57c96.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-073-4e19a57c96.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-3129e1276d",
+      "order": 73,
+      "text": "board",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-074-3129e1276d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-074-3129e1276d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-fd046c2046",
+      "order": 74,
+      "text": "new",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-075-fd046c2046.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-075-fd046c2046.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-494d7b8b60",
+      "order": 75,
+      "text": "company",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-076-494d7b8b60.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-076-494d7b8b60.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-623ae1b209",
+      "order": 76,
+      "text": "next",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-077-623ae1b209.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-077-623ae1b209.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-38af4c95a4",
+      "order": 77,
+      "text": "were",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-078-38af4c95a4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-078-38af4c95a4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-b5c49536c1",
+      "order": 78,
+      "text": "used",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-079-b5c49536c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-079-b5c49536c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-bd57699f98",
+      "order": 79,
+      "text": "universities",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-080-bd57699f98.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-080-bd57699f98.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-2c608ff6dd",
+      "order": 80,
+      "text": "businesses",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-081-2c608ff6dd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-081-2c608ff6dd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-76beb7b5e5",
+      "order": 81,
+      "text": "returned",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-082-76beb7b5e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-082-76beb7b5e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-63f25d0f6c",
+      "order": 82,
+      "text": "ceo",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-083-63f25d0f6c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-083-63f25d0f6c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-00dbf65944",
+      "order": 83,
+      "text": "under",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-084-00dbf65944.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-084-00dbf65944.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-e41f0e8769",
+      "order": 84,
+      "text": "his",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-085-e41f0e8769.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-085-e41f0e8769.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-086-19d233935a",
+      "order": 85,
+      "text": "created",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-086-19d233935a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-086-19d233935a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-087-4e063c4a52",
+      "order": 86,
+      "text": "products",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-087-4e063c4a52.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-087-4e063c4a52.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-088-83ec05a98e",
+      "order": 87,
+      "text": "ipod",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-088-83ec05a98e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-088-83ec05a98e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-089-a36cfa082c",
+      "order": 88,
+      "text": "changed",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-089-a36cfa082c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-089-a36cfa082c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-090-1364e79417",
+      "order": 89,
+      "text": "way",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-090-1364e79417.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-090-1364e79417.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-091-9b62293b99",
+      "order": 90,
+      "text": "listened",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-091-9b62293b99.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-091-9b62293b99.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-092-b9143c7e2b",
+      "order": 91,
+      "text": "music",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-092-b9143c7e2b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-092-b9143c7e2b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-093-4602548126",
+      "order": 92,
+      "text": "iphone",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-093-4602548126.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-093-4602548126.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-094-5349fc6dc9",
+      "order": 93,
+      "text": "phones",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-094-5349fc6dc9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-094-5349fc6dc9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-095-186ed047cf",
+      "order": 94,
+      "text": "ipad",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-095-186ed047cf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-095-186ed047cf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-096-c8488a03fe",
+      "order": 95,
+      "text": "kind",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-096-c8488a03fe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-096-c8488a03fe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-097-c58da0c552",
+      "order": 96,
+      "text": "of",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-097-c58da0c552.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-097-c58da0c552.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-098-69c5727ef2",
+      "order": 97,
+      "text": "known",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-098-69c5727ef2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-098-69c5727ef2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-099-580077ca4e",
+      "order": 98,
+      "text": "for",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-099-580077ca4e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-099-580077ca4e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-100-9b5030e540",
+      "order": 99,
+      "text": "wanted",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-100-9b5030e540.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-100-9b5030e540.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-101-9d32f0a74c",
+      "order": 100,
+      "text": "make",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-101-9d32f0a74c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-101-9d32f0a74c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-102-26de93eab1",
+      "order": 101,
+      "text": "that",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-102-26de93eab1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-102-26de93eab1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-103-b9b2f86569",
+      "order": 102,
+      "text": "easy",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-103-b9b2f86569.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-103-b9b2f86569.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-104-518f852176",
+      "order": 103,
+      "text": "also",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-104-518f852176.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-104-518f852176.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-105-ea2f53b6ee",
+      "order": 104,
+      "text": "them",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-105-ea2f53b6ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-105-ea2f53b6ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-106-89882fb8aa",
+      "order": 105,
+      "text": "look",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-106-89882fb8aa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-106-89882fb8aa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-107-755ee34e98",
+      "order": 106,
+      "text": "paid",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-107-755ee34e98.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-107-755ee34e98.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-108-9084dabaae",
+      "order": 107,
+      "text": "attention",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-108-9084dabaae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-108-9084dabaae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-109-ebc124c197",
+      "order": 108,
+      "text": "every",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-109-ebc124c197.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-109-ebc124c197.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-110-27e1557086",
+      "order": 109,
+      "text": "detail",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-110-27e1557086.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-110-27e1557086.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-111-303eaefde9",
+      "order": 110,
+      "text": "popular",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-111-303eaefde9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-111-303eaefde9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-112-b18631724d",
+      "order": 111,
+      "text": "passed",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-112-b18631724d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-112-b18631724d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-113-8e19d09599",
+      "order": 112,
+      "text": "away",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-113-8e19d09599.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-113-8e19d09599.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-114-a45068cd02",
+      "order": 113,
+      "text": "october",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-114-a45068cd02.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-114-a45068cd02.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-115-4100f83c12",
+      "order": 114,
+      "text": "mark",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-115-4100f83c12.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-115-4100f83c12.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-116-0dde4e4ad5",
+      "order": 115,
+      "text": "world",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-116-0dde4e4ad5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-116-0dde4e4ad5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-117-11926f0e23",
+      "order": 116,
+      "text": "ideas",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-117-11926f0e23.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-117-11926f0e23.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-118-6541e3f9a3",
+      "order": 117,
+      "text": "forever",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-118-6541e3f9a3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-118-6541e3f9a3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-119-7c284b4284",
+      "order": 118,
+      "text": "still",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-119-7c284b4284.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-119-7c284b4284.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-120-b26cc3c367",
+      "order": 119,
+      "text": "love",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-120-b26cc3c367.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-120-b26cc3c367.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-121-d295c71031",
+      "order": 120,
+      "text": "today",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-121-d295c71031.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-121-d295c71031.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-122-ee892d12ed",
+      "order": 121,
+      "text": "story",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-122-ee892d12ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-122-ee892d12ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-123-4e539411a8",
+      "order": 122,
+      "text": "is",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-123-4e539411a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-123-4e539411a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-124-d7a3cc105b",
+      "order": 123,
+      "text": "one",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-124-d7a3cc105b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-124-d7a3cc105b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-125-9d71eb873a",
+      "order": 124,
+      "text": "showed",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-125-9d71eb873a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-125-9d71eb873a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-126-4489914f99",
+      "order": 125,
+      "text": "hard",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-126-4489914f99.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-126-4489914f99.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-127-2eb4017f4a",
+      "order": 126,
+      "text": "work",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-127-2eb4017f4a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-127-2eb4017f4a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-128-be59cb1839",
+      "order": 127,
+      "text": "you",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-128-be59cb1839.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-128-be59cb1839.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-129-f05688117f",
+      "order": 128,
+      "text": "can",
+      "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/words/word-129-f05688117f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/words/word-129-f05688117f.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-7b98c88b34",
+      "type": "mcq",
+      "order": 0,
+      "text": "When did Apple release the iPod?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-001-7b98c88b34.mp3",
+      "questionObjectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-001-7b98c88b34.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-001-7b98c88b34-option1-bc092b11.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-001-7b98c88b34-option2-cacd2f9d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-001-7b98c88b34-option3-77bbab26.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-001-7b98c88b34-option4-1f686915.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-7b98c88b34-option1-bc092b11",
+          "text": "2001",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-001-7b98c88b34-option1-bc092b11.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-7b98c88b34-option2-cacd2f9d",
+          "text": "2000",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-001-7b98c88b34-option2-cacd2f9d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-7b98c88b34-option3-77bbab26",
+          "text": "2005",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-001-7b98c88b34-option3-77bbab26.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-7b98c88b34-option4-1f686915",
+          "text": "2010",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-001-7b98c88b34-option4-1f686915.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-0c078f20cc",
+      "type": "mcq",
+      "order": 1,
+      "text": "Who did Steve Jobs meet in high school?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-002-0c078f20cc.mp3",
+      "questionObjectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-002-0c078f20cc.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-002-0c078f20cc-option1-085e95fe.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-002-0c078f20cc-option2-f0bcfb62.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-002-0c078f20cc-option3-d86a3333.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-002-0c078f20cc-option4-5e2b701c.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-0c078f20cc-option1-085e95fe",
+          "text": "Steve Wozniak",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-002-0c078f20cc-option1-085e95fe.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-0c078f20cc-option2-f0bcfb62",
+          "text": "Bill Gates",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-002-0c078f20cc-option2-f0bcfb62.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-0c078f20cc-option3-d86a3333",
+          "text": "Mark Zuckerberg",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-002-0c078f20cc-option3-d86a3333.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-0c078f20cc-option4-5e2b701c",
+          "text": "Elon Musk",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-002-0c078f20cc-option4-5e2b701c.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-1931215012",
+      "type": "mcq",
+      "order": 2,
+      "text": "What was the first Apple computer called?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-003-1931215012.mp3",
+      "questionObjectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-003-1931215012.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-003-1931215012-option1-3592deb1.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-003-1931215012-option2-5b3e584d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-003-1931215012-option3-fa0940fc.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-003-1931215012-option4-72797a3c.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-1931215012-option1-3592deb1",
+          "text": "Apple I",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-003-1931215012-option1-3592deb1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-1931215012-option2-5b3e584d",
+          "text": "Apple II",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-003-1931215012-option2-5b3e584d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-1931215012-option3-fa0940fc",
+          "text": "Macintosh",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-003-1931215012-option3-fa0940fc.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-1931215012-option4-72797a3c",
+          "text": "iMac",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-003-1931215012-option4-72797a3c.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-b4d885f36c",
+      "type": "mcq",
+      "order": 3,
+      "text": "What was the name of the company Jobs started after leaving Apple?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-004-b4d885f36c.mp3",
+      "questionObjectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-004-b4d885f36c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-004-b4d885f36c-option1-4efd0359.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-004-b4d885f36c-option2-884cae58.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-004-b4d885f36c-option3-fc646ea9.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-004-b4d885f36c-option4-8d6422f9.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-b4d885f36c-option1-4efd0359",
+          "text": "NeXT",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-004-b4d885f36c-option1-4efd0359.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-b4d885f36c-option2-884cae58",
+          "text": "Pixar",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-004-b4d885f36c-option2-884cae58.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-b4d885f36c-option3-fc646ea9",
+          "text": "Microsoft",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-004-b4d885f36c-option3-fc646ea9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-b4d885f36c-option4-8d6422f9",
+          "text": "Google",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-004-b4d885f36c-option4-8d6422f9.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-c41c026336",
+      "type": "mcq",
+      "order": 4,
+      "text": "Why did Steve Jobs leave Apple in 1985?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-005-c41c026336.mp3",
+      "questionObjectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-005-c41c026336.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-005-c41c026336-option1-637a2daf.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-005-c41c026336-option2-b6458e92.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-005-c41c026336-option3-011c3fd2.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-005-c41c026336-option4-ecb30d67.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-c41c026336-option1-637a2daf",
+          "text": "He had a disagreement with the board",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-005-c41c026336-option1-637a2daf.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-c41c026336-option2-b6458e92",
+          "text": "He wanted to start a new company",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-005-c41c026336-option2-b6458e92.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-c41c026336-option3-011c3fd2",
+          "text": "He was tired of working",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-005-c41c026336-option3-011c3fd2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-c41c026336-option4-ecb30d67",
+          "text": "He moved to another country",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-005-c41c026336-option4-ecb30d67.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-efe5c94fd9",
+      "type": "mcq",
+      "order": 5,
+      "text": "When did Steve Jobs pass away?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-006-efe5c94fd9.mp3",
+      "questionObjectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-006-efe5c94fd9.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-006-efe5c94fd9-option1-57ee58f9.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-006-efe5c94fd9-option2-9a74bbd2.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-006-efe5c94fd9-option3-da20e662.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-006-efe5c94fd9-option4-738669fd.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-efe5c94fd9-option1-57ee58f9",
+          "text": "October 5, 2011",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-006-efe5c94fd9-option1-57ee58f9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-efe5c94fd9-option2-9a74bbd2",
+          "text": "October 5, 2010",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-006-efe5c94fd9-option2-9a74bbd2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-efe5c94fd9-option3-da20e662",
+          "text": "October 5, 2012",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-006-efe5c94fd9-option3-da20e662.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-efe5c94fd9-option4-738669fd",
+          "text": "October 5, 2009",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-006-efe5c94fd9-option4-738669fd.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-b6c5f5aad7",
+      "type": "mcq",
+      "order": 6,
+      "text": "Where did Steve Jobs grow up?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-007-b6c5f5aad7.mp3",
+      "questionObjectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-007-b6c5f5aad7.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-007-b6c5f5aad7-option1-d6aad97d.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-007-b6c5f5aad7-option2-c34d38f4.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-007-b6c5f5aad7-option3-49e680f7.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-007-b6c5f5aad7-option4-23fb8afc.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-b6c5f5aad7-option1-d6aad97d",
+          "text": "California",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-007-b6c5f5aad7-option1-d6aad97d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-b6c5f5aad7-option2-c34d38f4",
+          "text": "New York",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-007-b6c5f5aad7-option2-c34d38f4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-b6c5f5aad7-option3-49e680f7",
+          "text": "Texas",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-007-b6c5f5aad7-option3-49e680f7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-b6c5f5aad7-option4-23fb8afc",
+          "text": "Florida",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-007-b6c5f5aad7-option4-23fb8afc.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-239f7d7313",
+      "type": "mcq",
+      "order": 7,
+      "text": "When was Steve Jobs born?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-008-239f7d7313.mp3",
+      "questionObjectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-008-239f7d7313.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-008-239f7d7313-option1-1bd2a2e2.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-008-239f7d7313-option2-29b7162d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-008-239f7d7313-option3-72400f15.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-008-239f7d7313-option4-ab034a24.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-239f7d7313-option1-1bd2a2e2",
+          "text": "February 24, 1955",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-008-239f7d7313-option1-1bd2a2e2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-239f7d7313-option2-29b7162d",
+          "text": "March 15, 1955",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-008-239f7d7313-option2-29b7162d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-239f7d7313-option3-72400f15",
+          "text": "January 24, 1955",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-008-239f7d7313-option3-72400f15.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-239f7d7313-option4-ab034a24",
+          "text": "April 24, 1955",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-008-239f7d7313-option4-ab034a24.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-c88b7168af",
+      "type": "mcq",
+      "order": 8,
+      "text": "What product did Apple release in 2007?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-009-c88b7168af.mp3",
+      "questionObjectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-009-c88b7168af.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-009-c88b7168af-option1-bb0b9316.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-009-c88b7168af-option2-c7130ed4.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-009-c88b7168af-option3-74841367.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-009-c88b7168af-option4-4fcdf380.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-c88b7168af-option1-bb0b9316",
+          "text": "iPhone",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-009-c88b7168af-option1-bb0b9316.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-c88b7168af-option2-c7130ed4",
+          "text": "iPad",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-009-c88b7168af-option2-c7130ed4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-c88b7168af-option3-74841367",
+          "text": "iPod",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-009-c88b7168af-option3-74841367.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-c88b7168af-option4-4fcdf380",
+          "text": "MacBook",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-009-c88b7168af-option4-4fcdf380.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-e8d856684a",
+      "type": "mcq",
+      "order": 9,
+      "text": "When did Apple release the Macintosh?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-010-e8d856684a.mp3",
+      "questionObjectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-010-e8d856684a.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-010-e8d856684a-option1-8f319df0.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-010-e8d856684a-option2-b4fb953c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-010-e8d856684a-option3-b459bfa6.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-010-e8d856684a-option4-89e57ccf.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-e8d856684a-option1-8f319df0",
+          "text": "1984",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-010-e8d856684a-option1-8f319df0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-e8d856684a-option2-b4fb953c",
+          "text": "1980",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-010-e8d856684a-option2-b4fb953c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-e8d856684a-option3-b459bfa6",
+          "text": "1985",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-010-e8d856684a-option3-b459bfa6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-e8d856684a-option4-89e57ccf",
+          "text": "1990",
+          "objectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/mcq-010-e8d856684a-option4-89e57ccf.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-e9b46cf253",
+      "type": "saq",
+      "order": 10,
+      "text": "Why did Steve Jobs leave Apple in 1985?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/saq-011-e9b46cf253.mp3",
+      "questionObjectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/saq-011-e9b46cf253.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-3f56b3f211",
+      "type": "saq",
+      "order": 11,
+      "text": "Where did Steve Jobs grow up?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/saq-012-3f56b3f211.mp3",
+      "questionObjectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/saq-012-3f56b3f211.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-ee5e9683e6",
+      "type": "saq",
+      "order": 12,
+      "text": "What was the name of the first Apple computer?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/saq-013-ee5e9683e6.mp3",
+      "questionObjectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/saq-013-ee5e9683e6.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-0cac8bfac8",
+      "type": "saq",
+      "order": 13,
+      "text": "When was Steve Jobs born?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/saq-014-0cac8bfac8.mp3",
+      "questionObjectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/saq-014-0cac8bfac8.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-24b78ac310",
+      "type": "saq",
+      "order": 14,
+      "text": "What product did Apple release in 2007?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/BINSURK3l0UIjjXQ3Lho/questions/saq-015-24b78ac310.mp3",
+      "questionObjectPath": "articles/BINSURK3l0UIjjXQ3Lho/questions/saq-015-24b78ac310.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:04:21.832Z"
+}

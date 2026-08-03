@@ -1,0 +1,1263 @@
+{
+  "version": 1,
+  "articleId": "1lnzzXylJmtQWd39qmkQ",
+  "source": "READING_ADVANTAGE",
+  "title": "The Life and Legacy of Nelson Mandela",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-b1931a2cdd",
+      "order": 0,
+      "text": "Nelson Mandela is a famous man.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-001-b1931a2cdd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-001-b1931a2cdd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-5bbae7360f",
+      "order": 1,
+      "text": "He was born in South Africa.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-002-5bbae7360f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-002-5bbae7360f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-9e2da52320",
+      "order": 2,
+      "text": "He was born in 1918.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-003-9e2da52320.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-003-9e2da52320.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-7ffabb75b8",
+      "order": 3,
+      "text": "He grew up in a small village.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-004-7ffabb75b8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-004-7ffabb75b8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-e397a383f4",
+      "order": 4,
+      "text": "He went to school.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-005-e397a383f4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-005-e397a383f4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-35d1f23c35",
+      "order": 5,
+      "text": "He liked to learn.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-006-35d1f23c35.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-006-35d1f23c35.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-585d2d863c",
+      "order": 6,
+      "text": "He became a lawyer.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-007-585d2d863c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-007-585d2d863c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-a6c87260f6",
+      "order": 7,
+      "text": "He wanted to help people.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-008-a6c87260f6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-008-a6c87260f6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-3102aa205a",
+      "order": 8,
+      "text": "South Africa had many problems.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-009-3102aa205a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-009-3102aa205a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-c7d2ed6131",
+      "order": 9,
+      "text": "There was a system called apartheid.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-010-c7d2ed6131.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-010-c7d2ed6131.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-cbdcb46e73",
+      "order": 10,
+      "text": "It was not fair.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-011-cbdcb46e73.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-011-cbdcb46e73.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-f42977862d",
+      "order": 11,
+      "text": "Mandela fought against it.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-012-f42977862d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-012-f42977862d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-35a6ef9a0b",
+      "order": 12,
+      "text": "He went to jail.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-013-35a6ef9a0b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-013-35a6ef9a0b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-e5c61ee913",
+      "order": 13,
+      "text": "He was in jail for 27 years.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-014-e5c61ee913.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-014-e5c61ee913.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-0c10c38084",
+      "order": 14,
+      "text": "People all over the world knew about him.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-015-0c10c38084.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-015-0c10c38084.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-1c4b5dcd5b",
+      "order": 15,
+      "text": "They wanted him to be free.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-016-1c4b5dcd5b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-016-1c4b5dcd5b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-407deac4ac",
+      "order": 16,
+      "text": "In 1990, he was free.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-017-407deac4ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-017-407deac4ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-3442a77eef",
+      "order": 17,
+      "text": "He became a leader.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-018-3442a77eef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-018-3442a77eef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-64e5d510cf",
+      "order": 18,
+      "text": "In 1994, he became the president.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-019-64e5d510cf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-019-64e5d510cf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-785625c711",
+      "order": 19,
+      "text": "He was the first black president of South Africa.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-020-785625c711.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-020-785625c711.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-6c012d700b",
+      "order": 20,
+      "text": "He worked for peace.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-021-6c012d700b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-021-6c012d700b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-68a7f34dc2",
+      "order": 21,
+      "text": "He worked for equality.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-022-68a7f34dc2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-022-68a7f34dc2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-4053281dce",
+      "order": 22,
+      "text": "People loved him.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-023-4053281dce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-023-4053281dce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-0261daa703",
+      "order": 23,
+      "text": "He won many awards.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-024-0261daa703.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-024-0261daa703.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-2ca1c03311",
+      "order": 24,
+      "text": "He died in 2013.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-025-2ca1c03311.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-025-2ca1c03311.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-75353c904f",
+      "order": 25,
+      "text": "He is still famous.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-026-75353c904f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-026-75353c904f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-aff995b787",
+      "order": 26,
+      "text": "People remember him.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-027-aff995b787.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-027-aff995b787.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-f126374803",
+      "order": 27,
+      "text": "They remember his work.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-028-f126374803.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-028-f126374803.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-aa3100f017",
+      "order": 28,
+      "text": "They remember his smile.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-029-aa3100f017.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-029-aa3100f017.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-0eab1f5c58",
+      "order": 29,
+      "text": "Nelson Mandela is a hero.",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-030-0eab1f5c58.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/sentences/sentence-030-0eab1f5c58.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-dd56bb041b",
+      "order": 0,
+      "text": "apartheid",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-001-dd56bb041b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-001-dd56bb041b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-789b1e7320",
+      "order": 1,
+      "text": "fought",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-002-789b1e7320.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-002-789b1e7320.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-79bca0b312",
+      "order": 2,
+      "text": "equality",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-003-79bca0b312.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-003-79bca0b312.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-bcbb9e31ae",
+      "order": 3,
+      "text": "president",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-004-bcbb9e31ae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-004-bcbb9e31ae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-5bc320b1fa",
+      "order": 4,
+      "text": "hero",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-005-5bc320b1fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-005-5bc320b1fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-5b04473e62",
+      "order": 5,
+      "text": "awards",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-006-5b04473e62.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-006-5b04473e62.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-6ed1f226c9",
+      "order": 6,
+      "text": "jail",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-007-6ed1f226c9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-007-6ed1f226c9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-c1b77c074b",
+      "order": 7,
+      "text": "famous",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-008-c1b77c074b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-008-c1b77c074b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-9831566a85",
+      "order": 8,
+      "text": "leader",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-009-9831566a85.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-009-9831566a85.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-4fc3541f78",
+      "order": 9,
+      "text": "work",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-010-4fc3541f78.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-010-4fc3541f78.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-3055b71871",
+      "order": 10,
+      "text": "nelson",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-011-3055b71871.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-011-3055b71871.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-34601a3e00",
+      "order": 11,
+      "text": "mandela",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-012-34601a3e00.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-012-34601a3e00.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-870d283f76",
+      "order": 12,
+      "text": "is",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-013-870d283f76.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-013-870d283f76.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-6f34be13fa",
+      "order": 13,
+      "text": "a",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-014-6f34be13fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-014-6f34be13fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-6a34592c6c",
+      "order": 14,
+      "text": "man",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-015-6a34592c6c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-015-6a34592c6c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-a85b8cecfc",
+      "order": 15,
+      "text": "he",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-016-a85b8cecfc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-016-a85b8cecfc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-1afc7e0ce7",
+      "order": 16,
+      "text": "was",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-017-1afc7e0ce7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-017-1afc7e0ce7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-426e7017ce",
+      "order": 17,
+      "text": "born",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-018-426e7017ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-018-426e7017ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-1da67892ac",
+      "order": 18,
+      "text": "in",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-019-1da67892ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-019-1da67892ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-ec41aa8cb1",
+      "order": 19,
+      "text": "south",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-020-ec41aa8cb1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-020-ec41aa8cb1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-c0027d9faa",
+      "order": 20,
+      "text": "africa",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-021-c0027d9faa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-021-c0027d9faa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-24613c0281",
+      "order": 21,
+      "text": "grew",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-022-24613c0281.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-022-24613c0281.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-403b9fc69a",
+      "order": 22,
+      "text": "up",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-023-403b9fc69a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-023-403b9fc69a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-2b83a2af0c",
+      "order": 23,
+      "text": "small",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-024-2b83a2af0c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-024-2b83a2af0c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-cbc4b34670",
+      "order": 24,
+      "text": "village",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-025-cbc4b34670.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-025-cbc4b34670.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-cddf5df051",
+      "order": 25,
+      "text": "went",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-026-cddf5df051.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-026-cddf5df051.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-b5e4e4ac1c",
+      "order": 26,
+      "text": "to",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-027-b5e4e4ac1c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-027-b5e4e4ac1c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-0998900cc1",
+      "order": 27,
+      "text": "school",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-028-0998900cc1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-028-0998900cc1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-13d8c38d84",
+      "order": 28,
+      "text": "liked",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-029-13d8c38d84.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-029-13d8c38d84.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-3d05d6992e",
+      "order": 29,
+      "text": "learn",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-030-3d05d6992e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-030-3d05d6992e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-03d34d0115",
+      "order": 30,
+      "text": "became",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-031-03d34d0115.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-031-03d34d0115.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-4f8da08d90",
+      "order": 31,
+      "text": "lawyer",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-032-4f8da08d90.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-032-4f8da08d90.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-73fa477fdc",
+      "order": 32,
+      "text": "wanted",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-033-73fa477fdc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-033-73fa477fdc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-44fa67f56c",
+      "order": 33,
+      "text": "help",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-034-44fa67f56c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-034-44fa67f56c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-6ae495a3ab",
+      "order": 34,
+      "text": "people",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-035-6ae495a3ab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-035-6ae495a3ab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-1130d5d5a3",
+      "order": 35,
+      "text": "had",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-036-1130d5d5a3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-036-1130d5d5a3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-c17b0564fd",
+      "order": 36,
+      "text": "many",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-037-c17b0564fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-037-c17b0564fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-66ae112cb4",
+      "order": 37,
+      "text": "problems",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-038-66ae112cb4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-038-66ae112cb4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-562b684f4e",
+      "order": 38,
+      "text": "there",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-039-562b684f4e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-039-562b684f4e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-73283c478d",
+      "order": 39,
+      "text": "system",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-040-73283c478d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-040-73283c478d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-4b40767a32",
+      "order": 40,
+      "text": "called",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-041-4b40767a32.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-041-4b40767a32.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-6df878829b",
+      "order": 41,
+      "text": "it",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-042-6df878829b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-042-6df878829b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-0c88495c4c",
+      "order": 42,
+      "text": "not",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-043-0c88495c4c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-043-0c88495c4c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-f593eac96b",
+      "order": 43,
+      "text": "fair",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-044-f593eac96b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-044-f593eac96b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-c7a0ff90d8",
+      "order": 44,
+      "text": "against",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-045-c7a0ff90d8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-045-c7a0ff90d8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-1b13ec31bd",
+      "order": 45,
+      "text": "for",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-046-1b13ec31bd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-046-1b13ec31bd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-0cb188e19d",
+      "order": 46,
+      "text": "years",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-047-0cb188e19d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-047-0cb188e19d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-51ccb9d592",
+      "order": 47,
+      "text": "all",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-048-51ccb9d592.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-048-51ccb9d592.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-8b53873a2e",
+      "order": 48,
+      "text": "over",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-049-8b53873a2e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-049-8b53873a2e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-22344ee803",
+      "order": 49,
+      "text": "the",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-050-22344ee803.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-050-22344ee803.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-e6b3b3eec7",
+      "order": 50,
+      "text": "world",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-051-e6b3b3eec7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-051-e6b3b3eec7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-6ae7c8fb47",
+      "order": 51,
+      "text": "knew",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-052-6ae7c8fb47.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-052-6ae7c8fb47.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-983deb117d",
+      "order": 52,
+      "text": "about",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-053-983deb117d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-053-983deb117d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-197cbc4e49",
+      "order": 53,
+      "text": "him",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-054-197cbc4e49.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-054-197cbc4e49.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-de86b9ed0f",
+      "order": 54,
+      "text": "they",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-055-de86b9ed0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-055-de86b9ed0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-e089242181",
+      "order": 55,
+      "text": "be",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-056-e089242181.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-056-e089242181.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-c9b12dc727",
+      "order": 56,
+      "text": "free",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-057-c9b12dc727.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-057-c9b12dc727.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-e447818fa7",
+      "order": 57,
+      "text": "first",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-058-e447818fa7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-058-e447818fa7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-89573cb858",
+      "order": 58,
+      "text": "black",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-059-89573cb858.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-059-89573cb858.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-e10d84f26e",
+      "order": 59,
+      "text": "of",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-060-e10d84f26e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-060-e10d84f26e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-1600d4da0b",
+      "order": 60,
+      "text": "worked",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-061-1600d4da0b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-061-1600d4da0b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-6d1de1729d",
+      "order": 61,
+      "text": "peace",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-062-6d1de1729d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-062-6d1de1729d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-d87e6163ef",
+      "order": 62,
+      "text": "loved",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-063-d87e6163ef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-063-d87e6163ef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-b34fcd5eeb",
+      "order": 63,
+      "text": "won",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-064-b34fcd5eeb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-064-b34fcd5eeb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-be80ff28b4",
+      "order": 64,
+      "text": "died",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-065-be80ff28b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-065-be80ff28b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-a95fae5cea",
+      "order": 65,
+      "text": "still",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-066-a95fae5cea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-066-a95fae5cea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-e1b27419e7",
+      "order": 66,
+      "text": "remember",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-067-e1b27419e7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-067-e1b27419e7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-b4704bdb54",
+      "order": 67,
+      "text": "his",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-068-b4704bdb54.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-068-b4704bdb54.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-a7c00f2478",
+      "order": 68,
+      "text": "smile",
+      "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/words/word-069-a7c00f2478.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/words/word-069-a7c00f2478.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-a4266dbe31",
+      "type": "mcq",
+      "order": 0,
+      "text": "When did Nelson Mandela die?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-001-a4266dbe31.mp3",
+      "questionObjectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-001-a4266dbe31.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-001-a4266dbe31-option1-a5b86954.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-001-a4266dbe31-option2-fc3eb5bc.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-001-a4266dbe31-option3-be69bf44.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-001-a4266dbe31-option4-100f25f3.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-a4266dbe31-option1-a5b86954",
+          "text": "2013",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-001-a4266dbe31-option1-a5b86954.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-a4266dbe31-option2-fc3eb5bc",
+          "text": "2010",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-001-a4266dbe31-option2-fc3eb5bc.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-a4266dbe31-option3-be69bf44",
+          "text": "2000",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-001-a4266dbe31-option3-be69bf44.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-a4266dbe31-option4-100f25f3",
+          "text": "1990",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-001-a4266dbe31-option4-100f25f3.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-88e9f7b5d5",
+      "type": "mcq",
+      "order": 1,
+      "text": "What do people remember about Nelson Mandela?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-002-88e9f7b5d5.mp3",
+      "questionObjectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-002-88e9f7b5d5.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-002-88e9f7b5d5-option1-835dbc4f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-002-88e9f7b5d5-option2-c08aa57a.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-002-88e9f7b5d5-option3-65ea7662.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-002-88e9f7b5d5-option4-b14ca637.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-88e9f7b5d5-option1-835dbc4f",
+          "text": "his work and smile",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-002-88e9f7b5d5-option1-835dbc4f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-88e9f7b5d5-option2-c08aa57a",
+          "text": "his house",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-002-88e9f7b5d5-option2-c08aa57a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-88e9f7b5d5-option3-65ea7662",
+          "text": "his car",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-002-88e9f7b5d5-option3-65ea7662.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-88e9f7b5d5-option4-b14ca637",
+          "text": "his clothes",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-002-88e9f7b5d5-option4-b14ca637.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-cc55091739",
+      "type": "mcq",
+      "order": 2,
+      "text": "Where was Nelson Mandela born?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-003-cc55091739.mp3",
+      "questionObjectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-003-cc55091739.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-003-cc55091739-option1-83bf7b0c.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-003-cc55091739-option2-41051191.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-003-cc55091739-option3-2cfdbfea.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-003-cc55091739-option4-b649943d.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-cc55091739-option1-83bf7b0c",
+          "text": "South Africa",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-003-cc55091739-option1-83bf7b0c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-cc55091739-option2-41051191",
+          "text": "America",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-003-cc55091739-option2-41051191.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-cc55091739-option3-2cfdbfea",
+          "text": "Europe",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-003-cc55091739-option3-2cfdbfea.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-cc55091739-option4-b649943d",
+          "text": "Asia",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-003-cc55091739-option4-b649943d.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-57e1f2f93a",
+      "type": "mcq",
+      "order": 3,
+      "text": "When was Nelson Mandela free from jail?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-004-57e1f2f93a.mp3",
+      "questionObjectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-004-57e1f2f93a.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-004-57e1f2f93a-option1-c0f45fec.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-004-57e1f2f93a-option2-090d9c24.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-004-57e1f2f93a-option3-03919a8a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-004-57e1f2f93a-option4-e34a5dcd.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-57e1f2f93a-option1-c0f45fec",
+          "text": "1990",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-004-57e1f2f93a-option1-c0f45fec.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-57e1f2f93a-option2-090d9c24",
+          "text": "1980",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-004-57e1f2f93a-option2-090d9c24.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-57e1f2f93a-option3-03919a8a",
+          "text": "2000",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-004-57e1f2f93a-option3-03919a8a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-57e1f2f93a-option4-e34a5dcd",
+          "text": "2010",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-004-57e1f2f93a-option4-e34a5dcd.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-cd395a59d4",
+      "type": "mcq",
+      "order": 4,
+      "text": "What was the system called in South Africa that was not fair?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-005-cd395a59d4.mp3",
+      "questionObjectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-005-cd395a59d4.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-005-cd395a59d4-option1-16ab1b32.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-005-cd395a59d4-option2-8351e711.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-005-cd395a59d4-option3-b716fab2.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-005-cd395a59d4-option4-56c85b16.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-cd395a59d4-option1-16ab1b32",
+          "text": "apartheid",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-005-cd395a59d4-option1-16ab1b32.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-cd395a59d4-option2-8351e711",
+          "text": "democracy",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-005-cd395a59d4-option2-8351e711.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-cd395a59d4-option3-b716fab2",
+          "text": "monarchy",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-005-cd395a59d4-option3-b716fab2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-cd395a59d4-option4-56c85b16",
+          "text": "republic",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-005-cd395a59d4-option4-56c85b16.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-cb4d9d4d1e",
+      "type": "mcq",
+      "order": 5,
+      "text": "What did Nelson Mandela become?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-006-cb4d9d4d1e.mp3",
+      "questionObjectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-006-cb4d9d4d1e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-006-cb4d9d4d1e-option1-9e8b04f1.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-006-cb4d9d4d1e-option2-6dc84f91.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-006-cb4d9d4d1e-option3-a76128e1.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-006-cb4d9d4d1e-option4-7ad9c9ef.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-cb4d9d4d1e-option1-9e8b04f1",
+          "text": "a lawyer",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-006-cb4d9d4d1e-option1-9e8b04f1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-cb4d9d4d1e-option2-6dc84f91",
+          "text": "a doctor",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-006-cb4d9d4d1e-option2-6dc84f91.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-cb4d9d4d1e-option3-a76128e1",
+          "text": "a teacher",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-006-cb4d9d4d1e-option3-a76128e1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-cb4d9d4d1e-option4-7ad9c9ef",
+          "text": "a farmer",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-006-cb4d9d4d1e-option4-7ad9c9ef.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-5316c215bd",
+      "type": "mcq",
+      "order": 6,
+      "text": "How many years was Nelson Mandela in jail?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-007-5316c215bd.mp3",
+      "questionObjectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-007-5316c215bd.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-007-5316c215bd-option1-694b3934.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-007-5316c215bd-option2-66e73bd0.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-007-5316c215bd-option3-b97f9aea.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-007-5316c215bd-option4-7d50c959.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-5316c215bd-option1-694b3934",
+          "text": "27 years",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-007-5316c215bd-option1-694b3934.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-5316c215bd-option2-66e73bd0",
+          "text": "20 years",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-007-5316c215bd-option2-66e73bd0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-5316c215bd-option3-b97f9aea",
+          "text": "15 years",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-007-5316c215bd-option3-b97f9aea.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-5316c215bd-option4-7d50c959",
+          "text": "10 years",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-007-5316c215bd-option4-7d50c959.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-1183b61a8e",
+      "type": "mcq",
+      "order": 7,
+      "text": "When did Nelson Mandela become the president?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-008-1183b61a8e.mp3",
+      "questionObjectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-008-1183b61a8e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-008-1183b61a8e-option1-7dd81a06.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-008-1183b61a8e-option2-246ece4e.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-008-1183b61a8e-option3-13df65ff.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-008-1183b61a8e-option4-4d0b1543.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-1183b61a8e-option1-7dd81a06",
+          "text": "1994",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-008-1183b61a8e-option1-7dd81a06.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-1183b61a8e-option2-246ece4e",
+          "text": "1990",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-008-1183b61a8e-option2-246ece4e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-1183b61a8e-option3-13df65ff",
+          "text": "2000",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-008-1183b61a8e-option3-13df65ff.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-1183b61a8e-option4-4d0b1543",
+          "text": "2010",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-008-1183b61a8e-option4-4d0b1543.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-98a3b4fe7e",
+      "type": "mcq",
+      "order": 8,
+      "text": "Where did Nelson Mandela grow up?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-009-98a3b4fe7e.mp3",
+      "questionObjectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-009-98a3b4fe7e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-009-98a3b4fe7e-option1-a6ec0563.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-009-98a3b4fe7e-option2-97237f75.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-009-98a3b4fe7e-option3-426aa083.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-009-98a3b4fe7e-option4-f0f0ead2.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-98a3b4fe7e-option1-a6ec0563",
+          "text": "a small village",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-009-98a3b4fe7e-option1-a6ec0563.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-98a3b4fe7e-option2-97237f75",
+          "text": "a big city",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-009-98a3b4fe7e-option2-97237f75.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-98a3b4fe7e-option3-426aa083",
+          "text": "a farm",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-009-98a3b4fe7e-option3-426aa083.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-98a3b4fe7e-option4-f0f0ead2",
+          "text": "a town",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-009-98a3b4fe7e-option4-f0f0ead2.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-b3f5445bab",
+      "type": "mcq",
+      "order": 9,
+      "text": "When was Nelson Mandela born?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-010-b3f5445bab.mp3",
+      "questionObjectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-010-b3f5445bab.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-010-b3f5445bab-option1-0f6237c1.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-010-b3f5445bab-option2-fea3b05e.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-010-b3f5445bab-option3-8034394a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-010-b3f5445bab-option4-a17409e3.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-b3f5445bab-option1-0f6237c1",
+          "text": "1918",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-010-b3f5445bab-option1-0f6237c1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-b3f5445bab-option2-fea3b05e",
+          "text": "1920",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-010-b3f5445bab-option2-fea3b05e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-b3f5445bab-option3-8034394a",
+          "text": "1930",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-010-b3f5445bab-option3-8034394a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-b3f5445bab-option4-a17409e3",
+          "text": "1940",
+          "objectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/mcq-010-b3f5445bab-option4-a17409e3.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-9ec0ab1243",
+      "type": "saq",
+      "order": 10,
+      "text": "When was Nelson Mandela born?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/saq-011-9ec0ab1243.mp3",
+      "questionObjectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/saq-011-9ec0ab1243.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-1da87f204a",
+      "type": "saq",
+      "order": 11,
+      "text": "When did Nelson Mandela die?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/saq-012-1da87f204a.mp3",
+      "questionObjectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/saq-012-1da87f204a.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-790c5edacd",
+      "type": "saq",
+      "order": 12,
+      "text": "How many years was Nelson Mandela in jail?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/saq-013-790c5edacd.mp3",
+      "questionObjectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/saq-013-790c5edacd.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-a7a62a3c37",
+      "type": "saq",
+      "order": 13,
+      "text": "Where was Nelson Mandela born?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/saq-014-a7a62a3c37.mp3",
+      "questionObjectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/saq-014-a7a62a3c37.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-3ab1842cb2",
+      "type": "saq",
+      "order": 14,
+      "text": "What did Nelson Mandela become?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/1lnzzXylJmtQWd39qmkQ/questions/saq-015-3ab1842cb2.mp3",
+      "questionObjectPath": "articles/1lnzzXylJmtQWd39qmkQ/questions/saq-015-3ab1842cb2.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:08:56.488Z"
+}

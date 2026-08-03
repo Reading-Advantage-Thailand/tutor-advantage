@@ -1,0 +1,2359 @@
+{
+  "version": 1,
+  "articleId": "vhQPapCRtJ8zdXOODg7n",
+  "source": "READING_ADVANTAGE",
+  "title": "The Resistance Fighters of Occupied France in World War II",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-9f0b662c5c",
+      "order": 0,
+      "text": "In 1942, France was under German occupation.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-001-9f0b662c5c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-001-9f0b662c5c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-3fbe2faf7d",
+      "order": 1,
+      "text": "The streets of Paris were filled with soldiers.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-002-3fbe2faf7d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-002-3fbe2faf7d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-332ccaad68",
+      "order": 2,
+      "text": "People lived in fear.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-003-332ccaad68.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-003-332ccaad68.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-6feb561511",
+      "order": 3,
+      "text": "But not everyone was afraid.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-004-6feb561511.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-004-6feb561511.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-ef905dd0f2",
+      "order": 4,
+      "text": "Some were brave.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-005-ef905dd0f2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-005-ef905dd0f2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-f497cc9b97",
+      "order": 5,
+      "text": "They were the resistance fighters.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-006-f497cc9b97.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-006-f497cc9b97.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-6bac8ed757",
+      "order": 6,
+      "text": "Marie was one of them.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-007-6bac8ed757.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-007-6bac8ed757.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-bfa7ca6f69",
+      "order": 7,
+      "text": "She was a young woman, only 22 years old.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-008-bfa7ca6f69.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-008-bfa7ca6f69.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-df6aa1d532",
+      "order": 8,
+      "text": "She worked as a nurse by day.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-009-df6aa1d532.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-009-df6aa1d532.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-d387a5050b",
+      "order": 9,
+      "text": "By night, she was a spy.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-010-d387a5050b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-010-d387a5050b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-5edc1950a2",
+      "order": 10,
+      "text": "She passed messages and helped hide people.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-011-5edc1950a2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-011-5edc1950a2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-52576ce016",
+      "order": 11,
+      "text": "Her brother, Pierre, was also in the resistance.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-012-52576ce016.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-012-52576ce016.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-89fca0562c",
+      "order": 12,
+      "text": "He was a mechanic.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-013-89fca0562c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-013-89fca0562c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-c2d1bd9d8f",
+      "order": 13,
+      "text": "He fixed cars and made weapons for the fighters.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-014-c2d1bd9d8f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-014-c2d1bd9d8f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-22fdcd9bf9",
+      "order": 14,
+      "text": "One night, Marie received a message.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-015-22fdcd9bf9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-015-22fdcd9bf9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-82a5f9c26f",
+      "order": 15,
+      "text": "It was from Jacques, the leader of their group.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-016-82a5f9c26f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-016-82a5f9c26f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-e3114a8cae",
+      "order": 16,
+      "text": "He needed to meet her.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-017-e3114a8cae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-017-e3114a8cae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-e056e83547",
+      "order": 17,
+      "text": "They met in a small café.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-018-e056e83547.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-018-e056e83547.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-696cad79c5",
+      "order": 18,
+      "text": "Jacques told her about a new mission.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-019-696cad79c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-019-696cad79c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-7136d984aa",
+      "order": 19,
+      "text": "They had to blow up a train.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-020-7136d984aa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-020-7136d984aa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-9ba0bf1952",
+      "order": 20,
+      "text": "The train carried supplies for the German army.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-021-9ba0bf1952.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-021-9ba0bf1952.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-244d774029",
+      "order": 21,
+      "text": "It was a dangerous mission, but it was important.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-022-244d774029.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-022-244d774029.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-9787e7c09b",
+      "order": 22,
+      "text": "Marie and Pierre prepared for the mission.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-023-9787e7c09b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-023-9787e7c09b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-83b8a53387",
+      "order": 23,
+      "text": "They gathered explosives and made a plan.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-024-83b8a53387.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-024-83b8a53387.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-0bb67cece0",
+      "order": 24,
+      "text": "The night of the mission, they dressed in dark clothes.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-025-0bb67cece0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-025-0bb67cece0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-8e6d379139",
+      "order": 25,
+      "text": "They moved quietly through the streets.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-026-8e6d379139.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-026-8e6d379139.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-58682e3008",
+      "order": 26,
+      "text": "They reached the train tracks and placed the explosives.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-027-58682e3008.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-027-58682e3008.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-7ca7d53696",
+      "order": 27,
+      "text": "They set the timer and ran away.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-028-7ca7d53696.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-028-7ca7d53696.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-e6b8bd3328",
+      "order": 28,
+      "text": "The explosion was loud.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-029-e6b8bd3328.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-029-e6b8bd3328.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-0f46caf1b5",
+      "order": 29,
+      "text": "It shook the ground.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-030-0f46caf1b5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-030-0f46caf1b5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-9109a3d6ab",
+      "order": 30,
+      "text": "The train was destroyed.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-031-9109a3d6ab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-031-9109a3d6ab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-83ad77bc8c",
+      "order": 31,
+      "text": "The German soldiers were angry.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-032-83ad77bc8c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-032-83ad77bc8c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-c622c6c37c",
+      "order": 32,
+      "text": "They searched for the resistance fighters.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-033-c622c6c37c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-033-c622c6c37c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-1b19c618bc",
+      "order": 33,
+      "text": "Marie and Pierre hid in a safe house.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-034-1b19c618bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-034-1b19c618bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-ecd8144e61",
+      "order": 34,
+      "text": "They stayed there for days.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-035-ecd8144e61.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-035-ecd8144e61.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-7b4a3b38a6",
+      "order": 35,
+      "text": "They knew they had to be careful.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-036-7b4a3b38a6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-036-7b4a3b38a6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-43e27fc6cf",
+      "order": 36,
+      "text": "After the mission, Marie continued her work.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-037-43e27fc6cf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-037-43e27fc6cf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-1946fb2ea6",
+      "order": 37,
+      "text": "She helped many people escape.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-038-1946fb2ea6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-038-1946fb2ea6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-8f7d7c6a01",
+      "order": 38,
+      "text": "She passed messages and gathered information.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-039-8f7d7c6a01.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-039-8f7d7c6a01.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-1c91709eb4",
+      "order": 39,
+      "text": "She was always careful.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-040-1c91709eb4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-040-1c91709eb4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-f042d097bd",
+      "order": 40,
+      "text": "But one day, she was caught.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-041-f042d097bd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-041-f042d097bd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-dda4bf4e27",
+      "order": 41,
+      "text": "A German soldier saw her passing a message.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-042-dda4bf4e27.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-042-dda4bf4e27.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-0724d93dcd",
+      "order": 42,
+      "text": "She was arrested and taken to a prison.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-043-0724d93dcd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-043-0724d93dcd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-044-f07bea662e",
+      "order": 43,
+      "text": "In prison, Marie was scared.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-044-f07bea662e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-044-f07bea662e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-045-65d8000ca6",
+      "order": 44,
+      "text": "But she did not give up.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-045-65d8000ca6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-045-65d8000ca6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-046-95c9dcad67",
+      "order": 45,
+      "text": "She knew she had to stay strong.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-046-95c9dcad67.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-046-95c9dcad67.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-047-fc596f3562",
+      "order": 46,
+      "text": "She thought of her brother and her friends.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-047-fc596f3562.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-047-fc596f3562.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-048-bdecd5c051",
+      "order": 47,
+      "text": "She knew they were still fighting.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-048-bdecd5c051.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-048-bdecd5c051.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-049-11429cf132",
+      "order": 48,
+      "text": "She hoped they would rescue her.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-049-11429cf132.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-049-11429cf132.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-050-de79b3e04d",
+      "order": 49,
+      "text": "One night, there was a noise outside her cell.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-050-de79b3e04d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-050-de79b3e04d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-051-ded32a007c",
+      "order": 50,
+      "text": "It was Pierre and Jacques.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-051-ded32a007c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-051-ded32a007c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-052-990d9153bf",
+      "order": 51,
+      "text": "They had come to save her.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-052-990d9153bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-052-990d9153bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-053-6eb4d74f3b",
+      "order": 52,
+      "text": "They fought the guards and opened her cell.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-053-6eb4d74f3b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-053-6eb4d74f3b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-054-929683fc91",
+      "order": 53,
+      "text": "Marie was free.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-054-929683fc91.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-054-929683fc91.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-055-73ac7387f4",
+      "order": 54,
+      "text": "They ran through the prison and escaped into the night.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-055-73ac7387f4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-055-73ac7387f4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-056-5f3530e8be",
+      "order": 55,
+      "text": "Marie and Pierre continued to fight in the resistance.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-056-5f3530e8be.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-056-5f3530e8be.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-057-9a793b4ca2",
+      "order": 56,
+      "text": "They never gave up.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-057-9a793b4ca2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-057-9a793b4ca2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-058-9a819e1c96",
+      "order": 57,
+      "text": "They knew their work was important.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-058-9a819e1c96.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-058-9a819e1c96.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-059-fc4f3e33b0",
+      "order": 58,
+      "text": "They wanted to see France free again.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-059-fc4f3e33b0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-059-fc4f3e33b0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-060-bc8274d5fc",
+      "order": 59,
+      "text": "And in 1944, their dream came true.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-060-bc8274d5fc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-060-bc8274d5fc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-061-16a3e85969",
+      "order": 60,
+      "text": "The Allies liberated France.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-061-16a3e85969.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-061-16a3e85969.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-062-72dba35877",
+      "order": 61,
+      "text": "The resistance fighters were heroes.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-062-72dba35877.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-062-72dba35877.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-063-2d2b75eaf3",
+      "order": 62,
+      "text": "Marie and Pierre were proud of their work.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-063-2d2b75eaf3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-063-2d2b75eaf3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-064-808da4f45e",
+      "order": 63,
+      "text": "They had fought for their country and won.",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-064-808da4f45e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/sentences/sentence-064-808da4f45e.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-1a26887cc7",
+      "order": 0,
+      "text": "occupation",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-001-1a26887cc7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-001-1a26887cc7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-c94754b99e",
+      "order": 1,
+      "text": "resistance fighters",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-002-c94754b99e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-002-c94754b99e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-d136e01ab1",
+      "order": 2,
+      "text": "mission",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-003-d136e01ab1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-003-d136e01ab1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-a24218ab06",
+      "order": 3,
+      "text": "explosives",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-004-a24218ab06.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-004-a24218ab06.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-773e82c7d5",
+      "order": 4,
+      "text": "timer",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-005-773e82c7d5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-005-773e82c7d5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-eec7dee425",
+      "order": 5,
+      "text": "explosion",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-006-eec7dee425.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-006-eec7dee425.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-d34d2c68fd",
+      "order": 6,
+      "text": "arrested",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-007-d34d2c68fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-007-d34d2c68fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-ff8e156e0a",
+      "order": 7,
+      "text": "rescue",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-008-ff8e156e0a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-008-ff8e156e0a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-aabdc8f639",
+      "order": 8,
+      "text": "liberated",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-009-aabdc8f639.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-009-aabdc8f639.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-4c3752a89c",
+      "order": 9,
+      "text": "heroes",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-010-4c3752a89c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-010-4c3752a89c.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-16207836a7",
+      "order": 10,
+      "text": "in",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-011-16207836a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-011-16207836a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-47b8171ac2",
+      "order": 11,
+      "text": "france",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-012-47b8171ac2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-012-47b8171ac2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-0a3ef678b4",
+      "order": 12,
+      "text": "was",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-013-0a3ef678b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-013-0a3ef678b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-1ba0bb6dec",
+      "order": 13,
+      "text": "under",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-014-1ba0bb6dec.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-014-1ba0bb6dec.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-f266ad6aa6",
+      "order": 14,
+      "text": "german",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-015-f266ad6aa6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-015-f266ad6aa6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-111cea6c66",
+      "order": 15,
+      "text": "the",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-016-111cea6c66.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-016-111cea6c66.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-b25f414f59",
+      "order": 16,
+      "text": "streets",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-017-b25f414f59.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-017-b25f414f59.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-a20ee7bc6a",
+      "order": 17,
+      "text": "of",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-018-a20ee7bc6a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-018-a20ee7bc6a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-35cd3d49a6",
+      "order": 18,
+      "text": "paris",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-019-35cd3d49a6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-019-35cd3d49a6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-0fa33d6e43",
+      "order": 19,
+      "text": "were",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-020-0fa33d6e43.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-020-0fa33d6e43.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-1269ecacb2",
+      "order": 20,
+      "text": "filled",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-021-1269ecacb2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-021-1269ecacb2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-22346cad6d",
+      "order": 21,
+      "text": "with",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-022-22346cad6d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-022-22346cad6d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-d6d6467eec",
+      "order": 22,
+      "text": "soldiers",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-023-d6d6467eec.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-023-d6d6467eec.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-ad0d43f95b",
+      "order": 23,
+      "text": "people",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-024-ad0d43f95b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-024-ad0d43f95b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-00ad33f002",
+      "order": 24,
+      "text": "lived",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-025-00ad33f002.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-025-00ad33f002.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-28f09f7874",
+      "order": 25,
+      "text": "fear",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-026-28f09f7874.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-026-28f09f7874.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-723d308335",
+      "order": 26,
+      "text": "but",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-027-723d308335.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-027-723d308335.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-2d00a46a67",
+      "order": 27,
+      "text": "not",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-028-2d00a46a67.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-028-2d00a46a67.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-1e168868c8",
+      "order": 28,
+      "text": "everyone",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-029-1e168868c8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-029-1e168868c8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-55266ff6d2",
+      "order": 29,
+      "text": "afraid",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-030-55266ff6d2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-030-55266ff6d2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-f27c56e50e",
+      "order": 30,
+      "text": "some",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-031-f27c56e50e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-031-f27c56e50e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-ba215e9dc3",
+      "order": 31,
+      "text": "brave",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-032-ba215e9dc3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-032-ba215e9dc3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-5b8b956234",
+      "order": 32,
+      "text": "they",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-033-5b8b956234.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-033-5b8b956234.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-3ab23965ec",
+      "order": 33,
+      "text": "resistance",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-034-3ab23965ec.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-034-3ab23965ec.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-5ce3d03811",
+      "order": 34,
+      "text": "fighters",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-035-5ce3d03811.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-035-5ce3d03811.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-dba6a9a735",
+      "order": 35,
+      "text": "marie",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-036-dba6a9a735.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-036-dba6a9a735.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-02f2e5770d",
+      "order": 36,
+      "text": "one",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-037-02f2e5770d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-037-02f2e5770d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-97d023a743",
+      "order": 37,
+      "text": "them",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-038-97d023a743.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-038-97d023a743.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-abc802bf97",
+      "order": 38,
+      "text": "she",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-039-abc802bf97.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-039-abc802bf97.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-6e87fe0968",
+      "order": 39,
+      "text": "a",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-040-6e87fe0968.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-040-6e87fe0968.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-1b358def89",
+      "order": 40,
+      "text": "young",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-041-1b358def89.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-041-1b358def89.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-ccdd300e8f",
+      "order": 41,
+      "text": "woman",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-042-ccdd300e8f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-042-ccdd300e8f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-ac988c797f",
+      "order": 42,
+      "text": "only",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-043-ac988c797f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-043-ac988c797f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-03c270dc71",
+      "order": 43,
+      "text": "years",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-044-03c270dc71.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-044-03c270dc71.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-0f80ed7535",
+      "order": 44,
+      "text": "old",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-045-0f80ed7535.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-045-0f80ed7535.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-65fba223ce",
+      "order": 45,
+      "text": "worked",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-046-65fba223ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-046-65fba223ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-06d1275895",
+      "order": 46,
+      "text": "as",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-047-06d1275895.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-047-06d1275895.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-37780b43c5",
+      "order": 47,
+      "text": "nurse",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-048-37780b43c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-048-37780b43c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-68fb2d3145",
+      "order": 48,
+      "text": "by",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-049-68fb2d3145.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-049-68fb2d3145.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-4399a12837",
+      "order": 49,
+      "text": "day",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-050-4399a12837.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-050-4399a12837.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-141767b01b",
+      "order": 50,
+      "text": "night",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-051-141767b01b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-051-141767b01b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-7cf5a787b5",
+      "order": 51,
+      "text": "spy",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-052-7cf5a787b5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-052-7cf5a787b5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-0321dde217",
+      "order": 52,
+      "text": "passed",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-053-0321dde217.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-053-0321dde217.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-439e344c0a",
+      "order": 53,
+      "text": "messages",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-054-439e344c0a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-054-439e344c0a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-8c8869e0ce",
+      "order": 54,
+      "text": "and",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-055-8c8869e0ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-055-8c8869e0ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-46a7ce5512",
+      "order": 55,
+      "text": "helped",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-056-46a7ce5512.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-056-46a7ce5512.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-b173b869e8",
+      "order": 56,
+      "text": "hide",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-057-b173b869e8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-057-b173b869e8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-b9491cc33b",
+      "order": 57,
+      "text": "her",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-058-b9491cc33b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-058-b9491cc33b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-c5dbcf9249",
+      "order": 58,
+      "text": "brother",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-059-c5dbcf9249.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-059-c5dbcf9249.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-b7e1b325dd",
+      "order": 59,
+      "text": "pierre",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-060-b7e1b325dd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-060-b7e1b325dd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-07ed3ece07",
+      "order": 60,
+      "text": "also",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-061-07ed3ece07.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-061-07ed3ece07.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-531360fd38",
+      "order": 61,
+      "text": "he",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-062-531360fd38.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-062-531360fd38.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-721aed9ea7",
+      "order": 62,
+      "text": "mechanic",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-063-721aed9ea7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-063-721aed9ea7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-203d69312c",
+      "order": 63,
+      "text": "fixed",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-064-203d69312c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-064-203d69312c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-f76339db5e",
+      "order": 64,
+      "text": "cars",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-065-f76339db5e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-065-f76339db5e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-b75eed9b88",
+      "order": 65,
+      "text": "made",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-066-b75eed9b88.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-066-b75eed9b88.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-70ee073205",
+      "order": 66,
+      "text": "weapons",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-067-70ee073205.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-067-70ee073205.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-7190ae200a",
+      "order": 67,
+      "text": "for",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-068-7190ae200a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-068-7190ae200a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-d2b9485896",
+      "order": 68,
+      "text": "received",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-069-d2b9485896.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-069-d2b9485896.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-ff7d0c0161",
+      "order": 69,
+      "text": "message",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-070-ff7d0c0161.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-070-ff7d0c0161.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-0f0bd532a2",
+      "order": 70,
+      "text": "it",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-071-0f0bd532a2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-071-0f0bd532a2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-10fb7ab9a7",
+      "order": 71,
+      "text": "from",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-072-10fb7ab9a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-072-10fb7ab9a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-d68dd52696",
+      "order": 72,
+      "text": "jacques",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-073-d68dd52696.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-073-d68dd52696.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-84d20301f0",
+      "order": 73,
+      "text": "leader",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-074-84d20301f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-074-84d20301f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-f1cded3745",
+      "order": 74,
+      "text": "their",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-075-f1cded3745.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-075-f1cded3745.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-8d4277a1ab",
+      "order": 75,
+      "text": "group",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-076-8d4277a1ab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-076-8d4277a1ab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-393b1811fd",
+      "order": 76,
+      "text": "needed",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-077-393b1811fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-077-393b1811fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-7895d6f808",
+      "order": 77,
+      "text": "to",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-078-7895d6f808.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-078-7895d6f808.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-20f2c6c674",
+      "order": 78,
+      "text": "meet",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-079-20f2c6c674.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-079-20f2c6c674.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-73750bb1b0",
+      "order": 79,
+      "text": "met",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-080-73750bb1b0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-080-73750bb1b0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-ceb46cb195",
+      "order": 80,
+      "text": "small",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-081-ceb46cb195.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-081-ceb46cb195.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-6c6a506b15",
+      "order": 81,
+      "text": "caf",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-082-6c6a506b15.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-082-6c6a506b15.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-f9f1879099",
+      "order": 82,
+      "text": "told",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-083-f9f1879099.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-083-f9f1879099.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-9304cfe4c4",
+      "order": 83,
+      "text": "about",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-084-9304cfe4c4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-084-9304cfe4c4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-a55706bf0b",
+      "order": 84,
+      "text": "new",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-085-a55706bf0b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-085-a55706bf0b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-086-a580c1fcdc",
+      "order": 85,
+      "text": "had",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-086-a580c1fcdc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-086-a580c1fcdc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-087-51c39021ae",
+      "order": 86,
+      "text": "blow",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-087-51c39021ae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-087-51c39021ae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-088-98caf02ff0",
+      "order": 87,
+      "text": "up",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-088-98caf02ff0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-088-98caf02ff0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-089-e487b61197",
+      "order": 88,
+      "text": "train",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-089-e487b61197.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-089-e487b61197.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-090-1ceb351b81",
+      "order": 89,
+      "text": "carried",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-090-1ceb351b81.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-090-1ceb351b81.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-091-277518426e",
+      "order": 90,
+      "text": "supplies",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-091-277518426e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-091-277518426e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-092-89080916ef",
+      "order": 91,
+      "text": "army",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-092-89080916ef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-092-89080916ef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-093-004a72e18c",
+      "order": 92,
+      "text": "dangerous",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-093-004a72e18c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-093-004a72e18c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-094-c76d4f907f",
+      "order": 93,
+      "text": "important",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-094-c76d4f907f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-094-c76d4f907f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-095-1c6d6c2742",
+      "order": 94,
+      "text": "prepared",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-095-1c6d6c2742.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-095-1c6d6c2742.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-096-f6ba04ebbc",
+      "order": 95,
+      "text": "gathered",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-096-f6ba04ebbc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-096-f6ba04ebbc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-097-6cf5ebe3f7",
+      "order": 96,
+      "text": "plan",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-097-6cf5ebe3f7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-097-6cf5ebe3f7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-098-4cb1069a2d",
+      "order": 97,
+      "text": "dressed",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-098-4cb1069a2d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-098-4cb1069a2d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-099-4b2bb59292",
+      "order": 98,
+      "text": "dark",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-099-4b2bb59292.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-099-4b2bb59292.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-100-c072eb0670",
+      "order": 99,
+      "text": "clothes",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-100-c072eb0670.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-100-c072eb0670.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-101-f44f8d078c",
+      "order": 100,
+      "text": "moved",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-101-f44f8d078c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-101-f44f8d078c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-102-93dd69eece",
+      "order": 101,
+      "text": "quietly",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-102-93dd69eece.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-102-93dd69eece.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-103-ea386a8561",
+      "order": 102,
+      "text": "through",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-103-ea386a8561.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-103-ea386a8561.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-104-622d2a9974",
+      "order": 103,
+      "text": "reached",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-104-622d2a9974.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-104-622d2a9974.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-105-209428b4fb",
+      "order": 104,
+      "text": "tracks",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-105-209428b4fb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-105-209428b4fb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-106-2c055a9fad",
+      "order": 105,
+      "text": "placed",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-106-2c055a9fad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-106-2c055a9fad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-107-a16e494f3b",
+      "order": 106,
+      "text": "set",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-107-a16e494f3b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-107-a16e494f3b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-108-be5af36a87",
+      "order": 107,
+      "text": "ran",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-108-be5af36a87.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-108-be5af36a87.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-109-441364f749",
+      "order": 108,
+      "text": "away",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-109-441364f749.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-109-441364f749.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-110-3fd1b9bfcc",
+      "order": 109,
+      "text": "loud",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-110-3fd1b9bfcc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-110-3fd1b9bfcc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-111-1c18d633b5",
+      "order": 110,
+      "text": "shook",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-111-1c18d633b5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-111-1c18d633b5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-112-c0e93acf48",
+      "order": 111,
+      "text": "ground",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-112-c0e93acf48.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-112-c0e93acf48.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-113-a79a7055fc",
+      "order": 112,
+      "text": "destroyed",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-113-a79a7055fc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-113-a79a7055fc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-114-5aaf817f62",
+      "order": 113,
+      "text": "angry",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-114-5aaf817f62.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-114-5aaf817f62.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-115-8541af48af",
+      "order": 114,
+      "text": "searched",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-115-8541af48af.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-115-8541af48af.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-116-6d7f84ac17",
+      "order": 115,
+      "text": "hid",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-116-6d7f84ac17.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-116-6d7f84ac17.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-117-3651b31f2c",
+      "order": 116,
+      "text": "safe",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-117-3651b31f2c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-117-3651b31f2c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-118-1fe0b0eecc",
+      "order": 117,
+      "text": "house",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-118-1fe0b0eecc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-118-1fe0b0eecc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-119-276cbb3a5e",
+      "order": 118,
+      "text": "stayed",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-119-276cbb3a5e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-119-276cbb3a5e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-120-e1296174b6",
+      "order": 119,
+      "text": "there",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-120-e1296174b6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-120-e1296174b6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-121-c6e81b8123",
+      "order": 120,
+      "text": "days",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-121-c6e81b8123.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-121-c6e81b8123.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-122-801cea4824",
+      "order": 121,
+      "text": "knew",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-122-801cea4824.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-122-801cea4824.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-123-bdc1caca77",
+      "order": 122,
+      "text": "be",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-123-bdc1caca77.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-123-bdc1caca77.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-124-0bf9826c78",
+      "order": 123,
+      "text": "careful",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-124-0bf9826c78.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-124-0bf9826c78.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-125-64f581abea",
+      "order": 124,
+      "text": "after",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-125-64f581abea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-125-64f581abea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-126-fcd8dbb0cd",
+      "order": 125,
+      "text": "continued",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-126-fcd8dbb0cd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-126-fcd8dbb0cd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-127-2eb4017f4a",
+      "order": 126,
+      "text": "work",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-127-2eb4017f4a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-127-2eb4017f4a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-128-058e3032e0",
+      "order": 127,
+      "text": "many",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-128-058e3032e0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-128-058e3032e0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-129-387ec57bf0",
+      "order": 128,
+      "text": "escape",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-129-387ec57bf0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-129-387ec57bf0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-130-794d659856",
+      "order": 129,
+      "text": "information",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-130-794d659856.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-130-794d659856.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-131-1b7ae1506e",
+      "order": 130,
+      "text": "always",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-131-1b7ae1506e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-131-1b7ae1506e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-132-78871a36d5",
+      "order": 131,
+      "text": "caught",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-132-78871a36d5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-132-78871a36d5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-133-cf763ee968",
+      "order": 132,
+      "text": "soldier",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-133-cf763ee968.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-133-cf763ee968.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-134-3a22a55310",
+      "order": 133,
+      "text": "saw",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-134-3a22a55310.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-134-3a22a55310.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-135-80d38dd25b",
+      "order": 134,
+      "text": "passing",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-135-80d38dd25b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-135-80d38dd25b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-136-d5f1ef12ee",
+      "order": 135,
+      "text": "taken",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-136-d5f1ef12ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-136-d5f1ef12ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-137-8c482613ce",
+      "order": 136,
+      "text": "prison",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-137-8c482613ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-137-8c482613ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-138-1f452d7a6c",
+      "order": 137,
+      "text": "scared",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-138-1f452d7a6c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-138-1f452d7a6c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-139-23870dcd3a",
+      "order": 138,
+      "text": "did",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-139-23870dcd3a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-139-23870dcd3a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-140-efb773315c",
+      "order": 139,
+      "text": "give",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-140-efb773315c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-140-efb773315c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-141-cc27a46013",
+      "order": 140,
+      "text": "stay",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-141-cc27a46013.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-141-cc27a46013.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-142-d2deefbedd",
+      "order": 141,
+      "text": "strong",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-142-d2deefbedd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-142-d2deefbedd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-143-053b0d5b5b",
+      "order": 142,
+      "text": "thought",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-143-053b0d5b5b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-143-053b0d5b5b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-144-cb19b1c4a5",
+      "order": 143,
+      "text": "friends",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-144-cb19b1c4a5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-144-cb19b1c4a5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-145-4b26fa5d47",
+      "order": 144,
+      "text": "still",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-145-4b26fa5d47.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-145-4b26fa5d47.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-146-72f14e5a79",
+      "order": 145,
+      "text": "fighting",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-146-72f14e5a79.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-146-72f14e5a79.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-147-7401393b71",
+      "order": 146,
+      "text": "hoped",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-147-7401393b71.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-147-7401393b71.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-148-5f54c9aeb6",
+      "order": 147,
+      "text": "would",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-148-5f54c9aeb6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-148-5f54c9aeb6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-149-35caba60e4",
+      "order": 148,
+      "text": "noise",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-149-35caba60e4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-149-35caba60e4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-150-8eea3ef642",
+      "order": 149,
+      "text": "outside",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-150-8eea3ef642.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-150-8eea3ef642.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-151-b752fb0646",
+      "order": 150,
+      "text": "cell",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-151-b752fb0646.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-151-b752fb0646.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-152-cd72f81e07",
+      "order": 151,
+      "text": "come",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-152-cd72f81e07.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-152-cd72f81e07.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-153-15e8bd14f5",
+      "order": 152,
+      "text": "save",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-153-15e8bd14f5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-153-15e8bd14f5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-154-1723768f2f",
+      "order": 153,
+      "text": "fought",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-154-1723768f2f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-154-1723768f2f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-155-1007ab7f64",
+      "order": 154,
+      "text": "guards",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-155-1007ab7f64.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-155-1007ab7f64.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-156-854272d6e6",
+      "order": 155,
+      "text": "opened",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-156-854272d6e6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-156-854272d6e6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-157-f7483131ee",
+      "order": 156,
+      "text": "free",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-157-f7483131ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-157-f7483131ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-158-94809f4cff",
+      "order": 157,
+      "text": "escaped",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-158-94809f4cff.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-158-94809f4cff.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-159-6e64774dfd",
+      "order": 158,
+      "text": "into",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-159-6e64774dfd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-159-6e64774dfd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-160-f99b31b95a",
+      "order": 159,
+      "text": "fight",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-160-f99b31b95a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-160-f99b31b95a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-161-30d732ebf3",
+      "order": 160,
+      "text": "never",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-161-30d732ebf3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-161-30d732ebf3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-162-efd82bfcad",
+      "order": 161,
+      "text": "gave",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-162-efd82bfcad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-162-efd82bfcad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-163-4c619d9630",
+      "order": 162,
+      "text": "wanted",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-163-4c619d9630.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-163-4c619d9630.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-164-dcb3e08965",
+      "order": 163,
+      "text": "see",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-164-dcb3e08965.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-164-dcb3e08965.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-165-0bcefee5f5",
+      "order": 164,
+      "text": "again",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-165-0bcefee5f5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-165-0bcefee5f5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-166-eb89790243",
+      "order": 165,
+      "text": "dream",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-166-eb89790243.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-166-eb89790243.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-167-6b8b6f4f07",
+      "order": 166,
+      "text": "came",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-167-6b8b6f4f07.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-167-6b8b6f4f07.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-168-4ac71ea770",
+      "order": 167,
+      "text": "true",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-168-4ac71ea770.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-168-4ac71ea770.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-169-4089b44400",
+      "order": 168,
+      "text": "allies",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-169-4089b44400.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-169-4089b44400.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-170-b782fee0bc",
+      "order": 169,
+      "text": "proud",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-170-b782fee0bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-170-b782fee0bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-171-d6d66e578a",
+      "order": 170,
+      "text": "country",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-171-d6d66e578a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-171-d6d66e578a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-172-57908a8c27",
+      "order": 171,
+      "text": "won",
+      "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/words/word-172-57908a8c27.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/words/word-172-57908a8c27.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-eddb01a76f",
+      "type": "mcq",
+      "order": 0,
+      "text": "What did Marie and Pierre do after Marie's escape from prison?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-001-eddb01a76f.mp3",
+      "questionObjectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-001-eddb01a76f.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-001-eddb01a76f-option1-659cf501.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-001-eddb01a76f-option2-1e2c03a6.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-001-eddb01a76f-option3-f0007433.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-001-eddb01a76f-option4-61e37ae6.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-eddb01a76f-option1-659cf501",
+          "text": "They continued to fight in the resistance until France was liberated.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-001-eddb01a76f-option1-659cf501.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-eddb01a76f-option2-1e2c03a6",
+          "text": "They left the resistance and moved to another country.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-001-eddb01a76f-option2-1e2c03a6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-eddb01a76f-option3-f0007433",
+          "text": "They were captured again by the German soldiers.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-001-eddb01a76f-option3-f0007433.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-eddb01a76f-option4-61e37ae6",
+          "text": "They stopped fighting and waited for the Allies.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-001-eddb01a76f-option4-61e37ae6.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-27a7fc533d",
+      "type": "mcq",
+      "order": 1,
+      "text": "How did Marie and Pierre feel after France was liberated?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-002-27a7fc533d.mp3",
+      "questionObjectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-002-27a7fc533d.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-002-27a7fc533d-option1-ee6b6fc9.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-002-27a7fc533d-option2-343b7d87.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-002-27a7fc533d-option3-ae87f76e.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-002-27a7fc533d-option4-ae25e17c.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-27a7fc533d-option1-ee6b6fc9",
+          "text": "They were proud of their work and knew they had fought for their country.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-002-27a7fc533d-option1-ee6b6fc9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-27a7fc533d-option2-343b7d87",
+          "text": "They regretted their actions and wished they had done more.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-002-27a7fc533d-option2-343b7d87.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-27a7fc533d-option3-ae87f76e",
+          "text": "They felt their efforts were not recognized.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-002-27a7fc533d-option3-ae87f76e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-27a7fc533d-option4-ae25e17c",
+          "text": "They were disappointed with the outcome of the war.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-002-27a7fc533d-option4-ae25e17c.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-85e8dc2555",
+      "type": "mcq",
+      "order": 2,
+      "text": "How did Marie escape from prison?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-003-85e8dc2555.mp3",
+      "questionObjectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-003-85e8dc2555.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-003-85e8dc2555-option1-54d12054.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-003-85e8dc2555-option2-72ab283b.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-003-85e8dc2555-option3-792cdc35.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-003-85e8dc2555-option4-2933c9b0.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-85e8dc2555-option1-54d12054",
+          "text": "Pierre and Jacques fought the guards and opened her cell.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-003-85e8dc2555-option1-54d12054.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-85e8dc2555-option2-72ab283b",
+          "text": "Marie managed to escape on her own.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-003-85e8dc2555-option2-72ab283b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-85e8dc2555-option3-792cdc35",
+          "text": "The guards decided to release her.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-003-85e8dc2555-option3-792cdc35.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-85e8dc2555-option4-2933c9b0",
+          "text": "A fellow prisoner helped her escape.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-003-85e8dc2555-option4-2933c9b0.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-1088890e83",
+      "type": "mcq",
+      "order": 3,
+      "text": "What did Marie and Pierre do after the train explosion?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-004-1088890e83.mp3",
+      "questionObjectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-004-1088890e83.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-004-1088890e83-option1-943e30ee.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-004-1088890e83-option2-28b15c5d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-004-1088890e83-option3-1c2d12ca.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-004-1088890e83-option4-cc556e4d.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-1088890e83-option1-943e30ee",
+          "text": "They hid in a safe house for days.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-004-1088890e83-option1-943e30ee.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-1088890e83-option2-28b15c5d",
+          "text": "They escaped to another city.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-004-1088890e83-option2-28b15c5d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-1088890e83-option3-1c2d12ca",
+          "text": "They disguised themselves as civilians.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-004-1088890e83-option3-1c2d12ca.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-1088890e83-option4-cc556e4d",
+          "text": "They surrendered to the German soldiers.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-004-1088890e83-option4-cc556e4d.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-4a1d78378a",
+      "type": "mcq",
+      "order": 4,
+      "text": "What were Marie's roles during the day and night?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-005-4a1d78378a.mp3",
+      "questionObjectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-005-4a1d78378a.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-005-4a1d78378a-option1-46daabbe.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-005-4a1d78378a-option2-f4eef7e0.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-005-4a1d78378a-option3-b9aa1216.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-005-4a1d78378a-option4-8cf76462.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-4a1d78378a-option1-46daabbe",
+          "text": "Marie was a nurse by day and a spy by night.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-005-4a1d78378a-option1-46daabbe.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-4a1d78378a-option2-f4eef7e0",
+          "text": "Marie was a nurse and a teacher.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-005-4a1d78378a-option2-f4eef7e0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-4a1d78378a-option3-b9aa1216",
+          "text": "Marie was a spy and a mechanic.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-005-4a1d78378a-option3-b9aa1216.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-4a1d78378a-option4-8cf76462",
+          "text": "Marie was a nurse and a soldier.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-005-4a1d78378a-option4-8cf76462.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-68a2e3d70f",
+      "type": "mcq",
+      "order": 5,
+      "text": "What kept Marie strong while she was in prison?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-006-68a2e3d70f.mp3",
+      "questionObjectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-006-68a2e3d70f.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-006-68a2e3d70f-option1-42ca36af.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-006-68a2e3d70f-option2-dc71cb40.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-006-68a2e3d70f-option3-536e2d22.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-006-68a2e3d70f-option4-8a250e02.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-68a2e3d70f-option1-42ca36af",
+          "text": "She thought of her brother and friends who were still fighting.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-006-68a2e3d70f-option1-42ca36af.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-68a2e3d70f-option2-dc71cb40",
+          "text": "She planned an escape on her own.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-006-68a2e3d70f-option2-dc71cb40.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-68a2e3d70f-option3-536e2d22",
+          "text": "She decided to give up and wait for the war to end.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-006-68a2e3d70f-option3-536e2d22.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-68a2e3d70f-option4-8a250e02",
+          "text": "She tried to negotiate with the guards.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-006-68a2e3d70f-option4-8a250e02.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-503e537d24",
+      "type": "mcq",
+      "order": 6,
+      "text": "What was the mission that Jacques told Marie about in the café?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-007-503e537d24.mp3",
+      "questionObjectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-007-503e537d24.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-007-503e537d24-option1-417d7da1.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-007-503e537d24-option2-e9c57264.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-007-503e537d24-option3-5605bee9.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-007-503e537d24-option4-d06d1eb7.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-503e537d24-option1-417d7da1",
+          "text": "They had to blow up a train carrying supplies for the German army.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-007-503e537d24-option1-417d7da1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-503e537d24-option2-e9c57264",
+          "text": "They had to rescue a captured resistance fighter.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-007-503e537d24-option2-e9c57264.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-503e537d24-option3-5605bee9",
+          "text": "They had to steal documents from the German headquarters.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-007-503e537d24-option3-5605bee9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-503e537d24-option4-d06d1eb7",
+          "text": "They had to sabotage a German communication tower.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-007-503e537d24-option4-d06d1eb7.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-ad5c979d85",
+      "type": "mcq",
+      "order": 7,
+      "text": "What did Pierre do as part of the resistance?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-008-ad5c979d85.mp3",
+      "questionObjectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-008-ad5c979d85.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-008-ad5c979d85-option1-5f455874.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-008-ad5c979d85-option2-5c11ebdd.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-008-ad5c979d85-option3-55f65d4f.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-008-ad5c979d85-option4-684a63d2.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-ad5c979d85-option1-5f455874",
+          "text": "He fixed cars and made weapons.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-008-ad5c979d85-option1-5f455874.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-ad5c979d85-option2-5c11ebdd",
+          "text": "He passed messages and hid people.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-008-ad5c979d85-option2-5c11ebdd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-ad5c979d85-option3-55f65d4f",
+          "text": "He was a nurse and a spy.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-008-ad5c979d85-option3-55f65d4f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-ad5c979d85-option4-684a63d2",
+          "text": "He was a leader of the resistance group.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-008-ad5c979d85-option4-684a63d2.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-b8d6191f14",
+      "type": "mcq",
+      "order": 8,
+      "text": "How did Marie and Pierre prepare for the mission on the night of the explosion?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-009-b8d6191f14.mp3",
+      "questionObjectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-009-b8d6191f14.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-009-b8d6191f14-option1-eb1bdb70.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-009-b8d6191f14-option2-ef720332.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-009-b8d6191f14-option3-d103c9a3.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-009-b8d6191f14-option4-d341c756.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-b8d6191f14-option1-eb1bdb70",
+          "text": "They dressed in dark clothes and moved quietly through the streets.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-009-b8d6191f14-option1-eb1bdb70.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-b8d6191f14-option2-ef720332",
+          "text": "They disguised themselves as German soldiers.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-009-b8d6191f14-option2-ef720332.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-b8d6191f14-option3-d103c9a3",
+          "text": "They used a car to reach the train tracks.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-009-b8d6191f14-option3-d103c9a3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-b8d6191f14-option4-d341c756",
+          "text": "They waited until morning to place the explosives.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-009-b8d6191f14-option4-d341c756.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-c6fc272b57",
+      "type": "mcq",
+      "order": 9,
+      "text": "How was Marie caught by the German soldiers?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-010-c6fc272b57.mp3",
+      "questionObjectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-010-c6fc272b57.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-010-c6fc272b57-option1-64ece5ff.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-010-c6fc272b57-option2-dfe17562.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-010-c6fc272b57-option3-a539e1d8.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-010-c6fc272b57-option4-7537b9f0.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-c6fc272b57-option1-64ece5ff",
+          "text": "A German soldier saw her passing a message.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-010-c6fc272b57-option1-64ece5ff.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-c6fc272b57-option2-dfe17562",
+          "text": "She was caught while hiding people.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-010-c6fc272b57-option2-dfe17562.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-c6fc272b57-option3-a539e1d8",
+          "text": "She was betrayed by a fellow resistance fighter.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-010-c6fc272b57-option3-a539e1d8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-c6fc272b57-option4-7537b9f0",
+          "text": "She was found with explosives.",
+          "objectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/mcq-010-c6fc272b57-option4-7537b9f0.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-7e66595fce",
+      "type": "saq",
+      "order": 10,
+      "text": "What was the significance of the year 1944 for Marie, Pierre, and the resistance fighters?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/saq-011-7e66595fce.mp3",
+      "questionObjectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/saq-011-7e66595fce.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-e5102b6b27",
+      "type": "saq",
+      "order": 11,
+      "text": "How did the resistance fighters react after the train explosion?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/saq-012-e5102b6b27.mp3",
+      "questionObjectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/saq-012-e5102b6b27.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-7a8a7a4a28",
+      "type": "saq",
+      "order": 12,
+      "text": "Why did Marie and Pierre decide to blow up the train?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/saq-013-7a8a7a4a28.mp3",
+      "questionObjectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/saq-013-7a8a7a4a28.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-41eeb8bff1",
+      "type": "saq",
+      "order": 13,
+      "text": "How did Marie balance her roles as a nurse and a resistance fighter?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/saq-014-41eeb8bff1.mp3",
+      "questionObjectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/saq-014-41eeb8bff1.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-0fab1e0573",
+      "type": "saq",
+      "order": 14,
+      "text": "What emotions did Marie experience when she was caught and taken to prison?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vhQPapCRtJ8zdXOODg7n/questions/saq-015-0fab1e0573.mp3",
+      "questionObjectPath": "articles/vhQPapCRtJ8zdXOODg7n/questions/saq-015-0fab1e0573.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:29:30.775Z"
+}

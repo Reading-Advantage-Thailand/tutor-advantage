@@ -1,0 +1,1935 @@
+{
+  "version": 1,
+  "articleId": "Usdm93Q1U6dhVEGsg54x",
+  "source": "READING_ADVANTAGE",
+  "title": "A Day at the Market",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-d78fd915fd",
+      "order": 0,
+      "text": "Maria loved Saturdays.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-001-d78fd915fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-001-d78fd915fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-db6e4c3af8",
+      "order": 1,
+      "text": "Every Saturday, she went to the market.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-002-db6e4c3af8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-002-db6e4c3af8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-7ae2aef301",
+      "order": 2,
+      "text": "The market was full of colors and sounds.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-003-7ae2aef301.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-003-7ae2aef301.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-bd6a8a5fb3",
+      "order": 3,
+      "text": "Maria liked to buy fresh fruits and vegetables.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-004-bd6a8a5fb3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-004-bd6a8a5fb3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-0a4e34b73a",
+      "order": 4,
+      "text": "She also liked to talk to the sellers.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-005-0a4e34b73a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-005-0a4e34b73a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-6a28a5762f",
+      "order": 5,
+      "text": "They were always friendly and happy to see her.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-006-6a28a5762f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-006-6a28a5762f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-11771e9f4e",
+      "order": 6,
+      "text": "One Saturday, Maria saw a new seller.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-007-11771e9f4e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-007-11771e9f4e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-53366b4fa5",
+      "order": 7,
+      "text": "He had a small stand with beautiful flowers.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-008-53366b4fa5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-008-53366b4fa5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-f1d859df5d",
+      "order": 8,
+      "text": "Maria loved flowers.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-009-f1d859df5d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-009-f1d859df5d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-13e6d4d0e8",
+      "order": 9,
+      "text": "She walked to the stand and smiled at the seller.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-010-13e6d4d0e8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-010-13e6d4d0e8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-8f8318a407",
+      "order": 10,
+      "text": "\"Hello,\" she said.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-011-8f8318a407.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-011-8f8318a407.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-6f8593dea3",
+      "order": 11,
+      "text": "\"Your flowers are very pretty.\"",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-012-6f8593dea3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-012-6f8593dea3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-ce6433f5ca",
+      "order": 12,
+      "text": "The seller smiled back.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-013-ce6433f5ca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-013-ce6433f5ca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-b23e85c8dd",
+      "order": 13,
+      "text": "\"Thank you,\" he said.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-014-b23e85c8dd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-014-b23e85c8dd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-614f5036d7",
+      "order": 14,
+      "text": "\"I grow them myself.\"",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-015-614f5036d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-015-614f5036d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-00590805a1",
+      "order": 15,
+      "text": "Maria looked at the flowers.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-016-00590805a1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-016-00590805a1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-e8c38761ba",
+      "order": 16,
+      "text": "There were roses, tulips, and daisies.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-017-e8c38761ba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-017-e8c38761ba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-388897d983",
+      "order": 17,
+      "text": "She picked a bunch of daisies.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-018-388897d983.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-018-388897d983.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-43f52f4e8b",
+      "order": 18,
+      "text": "\"I will take these,\" she said.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-019-43f52f4e8b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-019-43f52f4e8b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-6241927b1b",
+      "order": 19,
+      "text": "The seller wrapped the flowers in paper.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-020-6241927b1b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-020-6241927b1b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-8c522af3ed",
+      "order": 20,
+      "text": "\"Here you go,\" he said.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-021-8c522af3ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-021-8c522af3ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-aaf9ab2482",
+      "order": 21,
+      "text": "\"Have a nice day.\"",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-022-aaf9ab2482.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-022-aaf9ab2482.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-cb7657d0bb",
+      "order": 22,
+      "text": "Maria paid for the flowers and walked away.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-023-cb7657d0bb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-023-cb7657d0bb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-1ad7c1615b",
+      "order": 23,
+      "text": "She felt happy.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-024-1ad7c1615b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-024-1ad7c1615b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-8d13ff024c",
+      "order": 24,
+      "text": "The flowers were bright and cheerful.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-025-8d13ff024c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-025-8d13ff024c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-0cbecf8a97",
+      "order": 25,
+      "text": "She thought about where to put them in her home.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-026-0cbecf8a97.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-026-0cbecf8a97.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-b196de3d7e",
+      "order": 26,
+      "text": "As she walked, Maria saw her friend, Ana.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-027-b196de3d7e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-027-b196de3d7e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-8acca1d35f",
+      "order": 27,
+      "text": "Ana was buying apples.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-028-8acca1d35f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-028-8acca1d35f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-10679a22d0",
+      "order": 28,
+      "text": "\"Hi, Ana!\" Maria called.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-029-10679a22d0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-029-10679a22d0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-7c5c317a16",
+      "order": 29,
+      "text": "Ana turned and smiled.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-030-7c5c317a16.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-030-7c5c317a16.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-4275e0478b",
+      "order": 30,
+      "text": "\"Hi, Maria!\" she said.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-031-4275e0478b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-031-4275e0478b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-ca6cc6362a",
+      "order": 31,
+      "text": "\"Those flowers are beautiful.\"",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-032-ca6cc6362a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-032-ca6cc6362a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-727fafff66",
+      "order": 32,
+      "text": "\"Thank you,\" Maria said.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-033-727fafff66.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-033-727fafff66.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-f600c8f592",
+      "order": 33,
+      "text": "\"I just bought them from a new seller.\"",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-034-f600c8f592.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-034-f600c8f592.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-60a9566cc7",
+      "order": 34,
+      "text": "Ana looked at the flowers.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-035-60a9566cc7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-035-60a9566cc7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-c18441151d",
+      "order": 35,
+      "text": "\"They are very nice,\" she said.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-036-c18441151d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-036-c18441151d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-1e1a9e84df",
+      "order": 36,
+      "text": "\"I think I will buy some too.\"",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-037-1e1a9e84df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-037-1e1a9e84df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-89b1915556",
+      "order": 37,
+      "text": "Maria and Ana walked to the flower stand together.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-038-89b1915556.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-038-89b1915556.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-6b45c8027c",
+      "order": 38,
+      "text": "The seller smiled when he saw them.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-039-6b45c8027c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-039-6b45c8027c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-29d5b809bd",
+      "order": 39,
+      "text": "\"Hello again,\" he said to Maria.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-040-29d5b809bd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-040-29d5b809bd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-78f2eefa90",
+      "order": 40,
+      "text": "\"And hello to your friend.\"",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-041-78f2eefa90.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-041-78f2eefa90.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-79c467c22f",
+      "order": 41,
+      "text": "\"Hi,\" Ana said.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-042-79c467c22f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-042-79c467c22f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-5f4c1c708d",
+      "order": 42,
+      "text": "\"I would like some flowers too.\"",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-043-5f4c1c708d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-043-5f4c1c708d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-044-5361acc880",
+      "order": 43,
+      "text": "The seller helped Ana pick some flowers.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-044-5361acc880.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-044-5361acc880.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-045-4a67d49006",
+      "order": 44,
+      "text": "She chose a bunch of tulips.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-045-4a67d49006.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-045-4a67d49006.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-046-e892f4aa33",
+      "order": 45,
+      "text": "\"These are perfect,\" she said.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-046-e892f4aa33.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-046-e892f4aa33.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-047-f6f403f8ac",
+      "order": 46,
+      "text": "Maria and Ana left the market together.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-047-f6f403f8ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-047-f6f403f8ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-048-f5360e3803",
+      "order": 47,
+      "text": "They talked and laughed.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-048-f5360e3803.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-048-f5360e3803.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-049-14d63f8fa3",
+      "order": 48,
+      "text": "They both felt happy with their flowers.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-049-14d63f8fa3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-049-14d63f8fa3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-050-c210aa051c",
+      "order": 49,
+      "text": "It was a good day at the market.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-050-c210aa051c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-050-c210aa051c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-051-4d9b5ac5ac",
+      "order": 50,
+      "text": "When Maria got home, she put the daisies in a vase.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-051-4d9b5ac5ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-051-4d9b5ac5ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-052-1352679142",
+      "order": 51,
+      "text": "They looked beautiful on her table.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-052-1352679142.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-052-1352679142.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-053-d6a6a4ac60",
+      "order": 52,
+      "text": "She smiled and thought about the nice day she had.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-053-d6a6a4ac60.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-053-d6a6a4ac60.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-054-ad365bfb6d",
+      "order": 53,
+      "text": "She was glad she went to the market and met the new seller.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-054-ad365bfb6d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-054-ad365bfb6d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-055-db20d15bd7",
+      "order": 54,
+      "text": "She looked forward to next Saturday.",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-055-db20d15bd7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/sentences/sentence-055-db20d15bd7.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-80cc786f89",
+      "order": 0,
+      "text": "vase",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-001-80cc786f89.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-001-80cc786f89.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-d4bc7da53c",
+      "order": 1,
+      "text": "daisies",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-002-d4bc7da53c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-002-d4bc7da53c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-558dfb9d20",
+      "order": 2,
+      "text": "tulips",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-003-558dfb9d20.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-003-558dfb9d20.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-55fe1d6f5e",
+      "order": 3,
+      "text": "bunch",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-004-55fe1d6f5e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-004-55fe1d6f5e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-cf717a111a",
+      "order": 4,
+      "text": "seller",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-005-cf717a111a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-005-cf717a111a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-e1f2127d88",
+      "order": 5,
+      "text": "market",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-006-e1f2127d88.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-006-e1f2127d88.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-4ac128e272",
+      "order": 6,
+      "text": "colors",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-007-4ac128e272.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-007-4ac128e272.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-62cd392d22",
+      "order": 7,
+      "text": "fresh",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-008-62cd392d22.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-008-62cd392d22.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-b5c823d070",
+      "order": 8,
+      "text": "cheerful",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-009-b5c823d070.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-009-b5c823d070.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-9ba4c2c7bb",
+      "order": 9,
+      "text": "beautiful",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-010-9ba4c2c7bb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-010-9ba4c2c7bb.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-8401137461",
+      "order": 10,
+      "text": "maria",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-011-8401137461.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-011-8401137461.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-452a38ba48",
+      "order": 11,
+      "text": "loved",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-012-452a38ba48.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-012-452a38ba48.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-3f795b584d",
+      "order": 12,
+      "text": "saturdays",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-013-3f795b584d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-013-3f795b584d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-746eeb8330",
+      "order": 13,
+      "text": "every",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-014-746eeb8330.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-014-746eeb8330.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-1c42fe1d5b",
+      "order": 14,
+      "text": "saturday",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-015-1c42fe1d5b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-015-1c42fe1d5b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-217e02d7a6",
+      "order": 15,
+      "text": "she",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-016-217e02d7a6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-016-217e02d7a6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-e06fc98f08",
+      "order": 16,
+      "text": "went",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-017-e06fc98f08.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-017-e06fc98f08.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-605e30f77f",
+      "order": 17,
+      "text": "to",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-018-605e30f77f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-018-605e30f77f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-72fc7da4b7",
+      "order": 18,
+      "text": "the",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-019-72fc7da4b7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-019-72fc7da4b7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-57c2cd5260",
+      "order": 19,
+      "text": "was",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-020-57c2cd5260.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-020-57c2cd5260.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-39d9c0ccae",
+      "order": 20,
+      "text": "full",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-021-39d9c0ccae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-021-39d9c0ccae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-2287796116",
+      "order": 21,
+      "text": "of",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-022-2287796116.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-022-2287796116.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-b1e9a61b2c",
+      "order": 22,
+      "text": "and",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-023-b1e9a61b2c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-023-b1e9a61b2c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-3071151065",
+      "order": 23,
+      "text": "sounds",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-024-3071151065.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-024-3071151065.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-8d3cbef3e6",
+      "order": 24,
+      "text": "liked",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-025-8d3cbef3e6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-025-8d3cbef3e6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-deb6c1d0c7",
+      "order": 25,
+      "text": "buy",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-026-deb6c1d0c7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-026-deb6c1d0c7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-5db0bd566c",
+      "order": 26,
+      "text": "fruits",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-027-5db0bd566c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-027-5db0bd566c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-62d8b6fc1b",
+      "order": 27,
+      "text": "vegetables",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-028-62d8b6fc1b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-028-62d8b6fc1b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-e07e2b089d",
+      "order": 28,
+      "text": "also",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-029-e07e2b089d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-029-e07e2b089d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-0964d11699",
+      "order": 29,
+      "text": "talk",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-030-0964d11699.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-030-0964d11699.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-a66266fee9",
+      "order": 30,
+      "text": "sellers",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-031-a66266fee9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-031-a66266fee9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-113b483753",
+      "order": 31,
+      "text": "they",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-032-113b483753.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-032-113b483753.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-d06a326025",
+      "order": 32,
+      "text": "were",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-033-d06a326025.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-033-d06a326025.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-2e73318561",
+      "order": 33,
+      "text": "always",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-034-2e73318561.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-034-2e73318561.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-c6cbc1ddf0",
+      "order": 34,
+      "text": "friendly",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-035-c6cbc1ddf0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-035-c6cbc1ddf0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-47e3d2cda1",
+      "order": 35,
+      "text": "happy",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-036-47e3d2cda1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-036-47e3d2cda1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-98a33b87a9",
+      "order": 36,
+      "text": "see",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-037-98a33b87a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-037-98a33b87a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-7969943b6f",
+      "order": 37,
+      "text": "her",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-038-7969943b6f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-038-7969943b6f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-e5fcccc7fd",
+      "order": 38,
+      "text": "one",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-039-e5fcccc7fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-039-e5fcccc7fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-912792299b",
+      "order": 39,
+      "text": "saw",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-040-912792299b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-040-912792299b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-b8b3d7e424",
+      "order": 40,
+      "text": "a",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-041-b8b3d7e424.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-041-b8b3d7e424.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-011c23c857",
+      "order": 41,
+      "text": "new",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-042-011c23c857.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-042-011c23c857.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-96b4b8d099",
+      "order": 42,
+      "text": "he",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-043-96b4b8d099.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-043-96b4b8d099.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-9fce38e42c",
+      "order": 43,
+      "text": "had",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-044-9fce38e42c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-044-9fce38e42c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-e5ac210332",
+      "order": 44,
+      "text": "small",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-045-e5ac210332.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-045-e5ac210332.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-8e928748c6",
+      "order": 45,
+      "text": "stand",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-046-8e928748c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-046-8e928748c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-98cbbd20d5",
+      "order": 46,
+      "text": "with",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-047-98cbbd20d5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-047-98cbbd20d5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-9e8d8f3b8e",
+      "order": 47,
+      "text": "flowers",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-048-9e8d8f3b8e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-048-9e8d8f3b8e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-c03d004420",
+      "order": 48,
+      "text": "walked",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-049-c03d004420.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-049-c03d004420.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-0c8da5d40a",
+      "order": 49,
+      "text": "smiled",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-050-0c8da5d40a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-050-0c8da5d40a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-dfa6b85362",
+      "order": 50,
+      "text": "at",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-051-dfa6b85362.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-051-dfa6b85362.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-f3ec0387d0",
+      "order": 51,
+      "text": "hello",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-052-f3ec0387d0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-052-f3ec0387d0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-bcdd8e6486",
+      "order": 52,
+      "text": "said",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-053-bcdd8e6486.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-053-bcdd8e6486.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-ee4905b85e",
+      "order": 53,
+      "text": "your",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-054-ee4905b85e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-054-ee4905b85e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-1f72c84f54",
+      "order": 54,
+      "text": "are",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-055-1f72c84f54.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-055-1f72c84f54.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-01f4a3e4fb",
+      "order": 55,
+      "text": "very",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-056-01f4a3e4fb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-056-01f4a3e4fb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-80d861e64e",
+      "order": 56,
+      "text": "pretty",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-057-80d861e64e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-057-80d861e64e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-5e1fd4f03c",
+      "order": 57,
+      "text": "back",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-058-5e1fd4f03c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-058-5e1fd4f03c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-fb3262d67a",
+      "order": 58,
+      "text": "thank",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-059-fb3262d67a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-059-fb3262d67a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-804fcbdb9e",
+      "order": 59,
+      "text": "you",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-060-804fcbdb9e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-060-804fcbdb9e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-113f25e667",
+      "order": 60,
+      "text": "i",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-061-113f25e667.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-061-113f25e667.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-f7411a3bf2",
+      "order": 61,
+      "text": "grow",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-062-f7411a3bf2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-062-f7411a3bf2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-333720662f",
+      "order": 62,
+      "text": "them",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-063-333720662f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-063-333720662f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-3d4639a32a",
+      "order": 63,
+      "text": "myself",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-064-3d4639a32a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-064-3d4639a32a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-b812e8eaca",
+      "order": 64,
+      "text": "looked",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-065-b812e8eaca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-065-b812e8eaca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-26de97c29c",
+      "order": 65,
+      "text": "there",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-066-26de97c29c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-066-26de97c29c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-3fcea55f79",
+      "order": 66,
+      "text": "roses",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-067-3fcea55f79.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-067-3fcea55f79.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-36dddcfab9",
+      "order": 67,
+      "text": "picked",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-068-36dddcfab9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-068-36dddcfab9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-1a4c725c51",
+      "order": 68,
+      "text": "will",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-069-1a4c725c51.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-069-1a4c725c51.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-a6bbae6532",
+      "order": 69,
+      "text": "take",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-070-a6bbae6532.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-070-a6bbae6532.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-aa7c98ca9a",
+      "order": 70,
+      "text": "these",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-071-aa7c98ca9a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-071-aa7c98ca9a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-edacfab2a7",
+      "order": 71,
+      "text": "wrapped",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-072-edacfab2a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-072-edacfab2a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-6835ec3c7c",
+      "order": 72,
+      "text": "in",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-073-6835ec3c7c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-073-6835ec3c7c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-cf75087896",
+      "order": 73,
+      "text": "paper",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-074-cf75087896.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-074-cf75087896.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-02362678a8",
+      "order": 74,
+      "text": "here",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-075-02362678a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-075-02362678a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-699aeb58db",
+      "order": 75,
+      "text": "go",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-076-699aeb58db.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-076-699aeb58db.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-6543b3a40b",
+      "order": 76,
+      "text": "have",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-077-6543b3a40b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-077-6543b3a40b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-7cad2b03a7",
+      "order": 77,
+      "text": "nice",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-078-7cad2b03a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-078-7cad2b03a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-3cdc59913f",
+      "order": 78,
+      "text": "day",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-079-3cdc59913f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-079-3cdc59913f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-e644c9551c",
+      "order": 79,
+      "text": "paid",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-080-e644c9551c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-080-e644c9551c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-75efa21934",
+      "order": 80,
+      "text": "for",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-081-75efa21934.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-081-75efa21934.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-f264df4c23",
+      "order": 81,
+      "text": "away",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-082-f264df4c23.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-082-f264df4c23.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-859f633852",
+      "order": 82,
+      "text": "felt",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-083-859f633852.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-083-859f633852.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-ab9db0ad63",
+      "order": 83,
+      "text": "bright",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-084-ab9db0ad63.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-084-ab9db0ad63.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-476482a05f",
+      "order": 84,
+      "text": "thought",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-085-476482a05f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-085-476482a05f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-086-d5bbfc87a9",
+      "order": 85,
+      "text": "about",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-086-d5bbfc87a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-086-d5bbfc87a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-087-7c3d0ca8dc",
+      "order": 86,
+      "text": "where",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-087-7c3d0ca8dc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-087-7c3d0ca8dc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-088-3666c98d4b",
+      "order": 87,
+      "text": "put",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-088-3666c98d4b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-088-3666c98d4b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-089-dd0ef23614",
+      "order": 88,
+      "text": "home",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-089-dd0ef23614.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-089-dd0ef23614.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-090-7e2aa65208",
+      "order": 89,
+      "text": "as",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-090-7e2aa65208.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-090-7e2aa65208.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-091-035646fb0f",
+      "order": 90,
+      "text": "friend",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-091-035646fb0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-091-035646fb0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-092-fdaf41af7d",
+      "order": 91,
+      "text": "ana",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-092-fdaf41af7d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-092-fdaf41af7d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-093-18dc82ae2b",
+      "order": 92,
+      "text": "buying",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-093-18dc82ae2b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-093-18dc82ae2b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-094-46a5696e15",
+      "order": 93,
+      "text": "apples",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-094-46a5696e15.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-094-46a5696e15.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-095-ed50216fe7",
+      "order": 94,
+      "text": "hi",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-095-ed50216fe7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-095-ed50216fe7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-096-584f8b794e",
+      "order": 95,
+      "text": "called",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-096-584f8b794e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-096-584f8b794e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-097-8e7498763d",
+      "order": 96,
+      "text": "turned",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-097-8e7498763d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-097-8e7498763d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-098-5dfde677d0",
+      "order": 97,
+      "text": "those",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-098-5dfde677d0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-098-5dfde677d0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-099-a05dd99379",
+      "order": 98,
+      "text": "just",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-099-a05dd99379.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-099-a05dd99379.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-100-d3f50fe25a",
+      "order": 99,
+      "text": "bought",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-100-d3f50fe25a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-100-d3f50fe25a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-101-533b462565",
+      "order": 100,
+      "text": "from",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-101-533b462565.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-101-533b462565.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-102-5aa833de99",
+      "order": 101,
+      "text": "think",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-102-5aa833de99.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-102-5aa833de99.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-103-15fdb59592",
+      "order": 102,
+      "text": "some",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-103-15fdb59592.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-103-15fdb59592.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-104-aa8486bead",
+      "order": 103,
+      "text": "too",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-104-aa8486bead.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-104-aa8486bead.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-105-842e48a9da",
+      "order": 104,
+      "text": "flower",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-105-842e48a9da.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-105-842e48a9da.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-106-0fff5863c4",
+      "order": 105,
+      "text": "together",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-106-0fff5863c4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-106-0fff5863c4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-107-f85c23794d",
+      "order": 106,
+      "text": "when",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-107-f85c23794d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-107-f85c23794d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-108-c4d808f7aa",
+      "order": 107,
+      "text": "again",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-108-c4d808f7aa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-108-c4d808f7aa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-109-5aadf0f29e",
+      "order": 108,
+      "text": "would",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-109-5aadf0f29e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-109-5aadf0f29e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-110-fd7be25673",
+      "order": 109,
+      "text": "like",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-110-fd7be25673.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-110-fd7be25673.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-111-966465625a",
+      "order": 110,
+      "text": "helped",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-111-966465625a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-111-966465625a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-112-363f812d55",
+      "order": 111,
+      "text": "pick",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-112-363f812d55.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-112-363f812d55.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-113-613c3bc46b",
+      "order": 112,
+      "text": "chose",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-113-613c3bc46b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-113-613c3bc46b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-114-c18dc13d7f",
+      "order": 113,
+      "text": "perfect",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-114-c18dc13d7f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-114-c18dc13d7f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-115-ee400260b6",
+      "order": 114,
+      "text": "left",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-115-ee400260b6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-115-ee400260b6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-116-21720d7c7a",
+      "order": 115,
+      "text": "talked",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-116-21720d7c7a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-116-21720d7c7a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-117-ddfe90bb3e",
+      "order": 116,
+      "text": "laughed",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-117-ddfe90bb3e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-117-ddfe90bb3e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-118-f2bd394c5b",
+      "order": 117,
+      "text": "both",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-118-f2bd394c5b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-118-f2bd394c5b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-119-3f2f62051b",
+      "order": 118,
+      "text": "their",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-119-3f2f62051b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-119-3f2f62051b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-120-78d9f4d076",
+      "order": 119,
+      "text": "it",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-120-78d9f4d076.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-120-78d9f4d076.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-121-cae97d1405",
+      "order": 120,
+      "text": "good",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-121-cae97d1405.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-121-cae97d1405.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-122-328c079dd1",
+      "order": 121,
+      "text": "got",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-122-328c079dd1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-122-328c079dd1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-123-a71e9770dd",
+      "order": 122,
+      "text": "on",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-123-a71e9770dd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-123-a71e9770dd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-124-320f3302bf",
+      "order": 123,
+      "text": "table",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-124-320f3302bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-124-320f3302bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-125-33cc31966f",
+      "order": 124,
+      "text": "glad",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-125-33cc31966f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-125-33cc31966f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-126-a1a955e90d",
+      "order": 125,
+      "text": "met",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-126-a1a955e90d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-126-a1a955e90d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-127-11dd18fc2d",
+      "order": 126,
+      "text": "forward",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-127-11dd18fc2d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-127-11dd18fc2d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-128-6888f2885f",
+      "order": 127,
+      "text": "next",
+      "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/words/word-128-6888f2885f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/words/word-128-6888f2885f.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-11ab080034",
+      "type": "mcq",
+      "order": 0,
+      "text": "What was Ana buying when Maria saw her?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-001-11ab080034.mp3",
+      "questionObjectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-001-11ab080034.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-001-11ab080034-option1-306db17a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-001-11ab080034-option2-fbc85e9c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-001-11ab080034-option3-a63c2edd.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-001-11ab080034-option4-2f0c8e01.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-11ab080034-option1-306db17a",
+          "text": "Apples",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-001-11ab080034-option1-306db17a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-11ab080034-option2-fbc85e9c",
+          "text": "Oranges",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-001-11ab080034-option2-fbc85e9c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-11ab080034-option3-a63c2edd",
+          "text": "Bananas",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-001-11ab080034-option3-a63c2edd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-11ab080034-option4-2f0c8e01",
+          "text": "Grapes",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-001-11ab080034-option4-2f0c8e01.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-964ce87002",
+      "type": "mcq",
+      "order": 1,
+      "text": "Where did Maria put the daisies when she got home?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-002-964ce87002.mp3",
+      "questionObjectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-002-964ce87002.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-002-964ce87002-option1-2481d4cb.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-002-964ce87002-option2-747c4059.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-002-964ce87002-option3-87645ff4.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-002-964ce87002-option4-6ab9ecfd.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-964ce87002-option1-2481d4cb",
+          "text": "In a vase",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-002-964ce87002-option1-2481d4cb.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-964ce87002-option2-747c4059",
+          "text": "In a bowl",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-002-964ce87002-option2-747c4059.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-964ce87002-option3-87645ff4",
+          "text": "In a basket",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-002-964ce87002-option3-87645ff4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-964ce87002-option4-6ab9ecfd",
+          "text": "In a jar",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-002-964ce87002-option4-6ab9ecfd.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-7e486a9dff",
+      "type": "mcq",
+      "order": 2,
+      "text": "What does Maria like to buy at the market?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-003-7e486a9dff.mp3",
+      "questionObjectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-003-7e486a9dff.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-003-7e486a9dff-option1-bd47c2b5.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-003-7e486a9dff-option2-c8777f91.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-003-7e486a9dff-option3-92c3123c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-003-7e486a9dff-option4-71170bad.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-7e486a9dff-option1-bd47c2b5",
+          "text": "Fresh fruits and vegetables",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-003-7e486a9dff-option1-bd47c2b5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-7e486a9dff-option2-c8777f91",
+          "text": "Clothes and shoes",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-003-7e486a9dff-option2-c8777f91.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-7e486a9dff-option3-92c3123c",
+          "text": "Books and magazines",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-003-7e486a9dff-option3-92c3123c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-7e486a9dff-option4-71170bad",
+          "text": "Toys and games",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-003-7e486a9dff-option4-71170bad.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-7aab88ed4d",
+      "type": "mcq",
+      "order": 3,
+      "text": "What did the new seller have at his stand?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-004-7aab88ed4d.mp3",
+      "questionObjectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-004-7aab88ed4d.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-004-7aab88ed4d-option1-345f1f90.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-004-7aab88ed4d-option2-cb10ac9b.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-004-7aab88ed4d-option3-e6783772.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-004-7aab88ed4d-option4-ba9c84e8.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-7aab88ed4d-option1-345f1f90",
+          "text": "Beautiful flowers",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-004-7aab88ed4d-option1-345f1f90.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-7aab88ed4d-option2-cb10ac9b",
+          "text": "Fresh fruits",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-004-7aab88ed4d-option2-cb10ac9b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-7aab88ed4d-option3-e6783772",
+          "text": "Handmade jewelry",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-004-7aab88ed4d-option3-e6783772.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-7aab88ed4d-option4-ba9c84e8",
+          "text": "Baked goods",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-004-7aab88ed4d-option4-ba9c84e8.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-9a4862586f",
+      "type": "mcq",
+      "order": 4,
+      "text": "What did Maria see one Saturday?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-005-9a4862586f.mp3",
+      "questionObjectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-005-9a4862586f.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-005-9a4862586f-option1-628fcb13.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-005-9a4862586f-option2-af967b86.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-005-9a4862586f-option3-cbaff667.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-005-9a4862586f-option4-009c0d1d.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-9a4862586f-option1-628fcb13",
+          "text": "A new seller",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-005-9a4862586f-option1-628fcb13.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-9a4862586f-option2-af967b86",
+          "text": "A new fruit stand",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-005-9a4862586f-option2-af967b86.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-9a4862586f-option3-cbaff667",
+          "text": "A new bakery",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-005-9a4862586f-option3-cbaff667.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-9a4862586f-option4-009c0d1d",
+          "text": "A new coffee shop",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-005-9a4862586f-option4-009c0d1d.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-484a668357",
+      "type": "mcq",
+      "order": 5,
+      "text": "What flowers did Maria buy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-006-484a668357.mp3",
+      "questionObjectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-006-484a668357.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-006-484a668357-option1-47999128.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-006-484a668357-option2-ecb582f8.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-006-484a668357-option3-108ef140.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-006-484a668357-option4-9dcdce78.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-484a668357-option1-47999128",
+          "text": "Daisies",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-006-484a668357-option1-47999128.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-484a668357-option2-ecb582f8",
+          "text": "Roses",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-006-484a668357-option2-ecb582f8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-484a668357-option3-108ef140",
+          "text": "Tulips",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-006-484a668357-option3-108ef140.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-484a668357-option4-9dcdce78",
+          "text": "Lilies",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-006-484a668357-option4-9dcdce78.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-0541f1a04a",
+      "type": "mcq",
+      "order": 6,
+      "text": "How did Maria feel after her day at the market?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-007-0541f1a04a.mp3",
+      "questionObjectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-007-0541f1a04a.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-007-0541f1a04a-option1-a5d4bc78.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-007-0541f1a04a-option2-f5059029.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-007-0541f1a04a-option3-a5c02b88.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-007-0541f1a04a-option4-064ad233.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-0541f1a04a-option1-a5d4bc78",
+          "text": "Happy",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-007-0541f1a04a-option1-a5d4bc78.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-0541f1a04a-option2-f5059029",
+          "text": "Sad",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-007-0541f1a04a-option2-f5059029.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-0541f1a04a-option3-a5c02b88",
+          "text": "Angry",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-007-0541f1a04a-option3-a5c02b88.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-0541f1a04a-option4-064ad233",
+          "text": "Tired",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-007-0541f1a04a-option4-064ad233.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-21ee8d1437",
+      "type": "mcq",
+      "order": 7,
+      "text": "What does Maria do every Saturday?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-008-21ee8d1437.mp3",
+      "questionObjectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-008-21ee8d1437.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-008-21ee8d1437-option1-144b1cf9.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-008-21ee8d1437-option2-9f4d11bf.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-008-21ee8d1437-option3-8f55ed6a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-008-21ee8d1437-option4-81c8fb0d.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-21ee8d1437-option1-144b1cf9",
+          "text": "She goes to the market.",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-008-21ee8d1437-option1-144b1cf9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-21ee8d1437-option2-9f4d11bf",
+          "text": "She goes to the park.",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-008-21ee8d1437-option2-9f4d11bf.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-21ee8d1437-option3-8f55ed6a",
+          "text": "She visits her friend Ana.",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-008-21ee8d1437-option3-8f55ed6a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-21ee8d1437-option4-81c8fb0d",
+          "text": "She works at the market.",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-008-21ee8d1437-option4-81c8fb0d.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-0c579f5fe9",
+      "type": "mcq",
+      "order": 8,
+      "text": "What flowers did Ana buy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-009-0c579f5fe9.mp3",
+      "questionObjectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-009-0c579f5fe9.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-009-0c579f5fe9-option1-b6659020.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-009-0c579f5fe9-option2-619e3c60.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-009-0c579f5fe9-option3-224f727c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-009-0c579f5fe9-option4-9fdfdeaf.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-0c579f5fe9-option1-b6659020",
+          "text": "Tulips",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-009-0c579f5fe9-option1-b6659020.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-0c579f5fe9-option2-619e3c60",
+          "text": "Roses",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-009-0c579f5fe9-option2-619e3c60.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-0c579f5fe9-option3-224f727c",
+          "text": "Daisies",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-009-0c579f5fe9-option3-224f727c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-0c579f5fe9-option4-9fdfdeaf",
+          "text": "Sunflowers",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-009-0c579f5fe9-option4-9fdfdeaf.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-3895b0981e",
+      "type": "mcq",
+      "order": 9,
+      "text": "Who did Maria see while walking with the flowers?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-010-3895b0981e.mp3",
+      "questionObjectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-010-3895b0981e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-010-3895b0981e-option1-d326866d.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-010-3895b0981e-option2-b7545ba2.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-010-3895b0981e-option3-c56235ee.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-010-3895b0981e-option4-82f2c357.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-3895b0981e-option1-d326866d",
+          "text": "Her friend Ana",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-010-3895b0981e-option1-d326866d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-3895b0981e-option2-b7545ba2",
+          "text": "Her mother",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-010-3895b0981e-option2-b7545ba2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-3895b0981e-option3-c56235ee",
+          "text": "Her sister",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-010-3895b0981e-option3-c56235ee.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-3895b0981e-option4-82f2c357",
+          "text": "Her neighbor",
+          "objectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/mcq-010-3895b0981e-option4-82f2c357.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-7b939b8d81",
+      "type": "saq",
+      "order": 10,
+      "text": "Who did Maria meet at the market?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/saq-011-7b939b8d81.mp3",
+      "questionObjectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/saq-011-7b939b8d81.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-f002003cd8",
+      "type": "saq",
+      "order": 11,
+      "text": "Where did Maria put the daisies when she got home?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/saq-012-f002003cd8.mp3",
+      "questionObjectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/saq-012-f002003cd8.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-24f22c63aa",
+      "type": "saq",
+      "order": 12,
+      "text": "What does Maria do every Saturday?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/saq-013-24f22c63aa.mp3",
+      "questionObjectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/saq-013-24f22c63aa.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-5294553c46",
+      "type": "saq",
+      "order": 13,
+      "text": "What did Maria see one Saturday at the market?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/saq-014-5294553c46.mp3",
+      "questionObjectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/saq-014-5294553c46.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-5e3a590707",
+      "type": "saq",
+      "order": 14,
+      "text": "What flowers did Maria buy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Usdm93Q1U6dhVEGsg54x/questions/saq-015-5e3a590707.mp3",
+      "questionObjectPath": "articles/Usdm93Q1U6dhVEGsg54x/questions/saq-015-5e3a590707.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:17:54.332Z"
+}

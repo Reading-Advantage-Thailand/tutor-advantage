@@ -1,0 +1,1735 @@
+{
+  "version": 1,
+  "articleId": "RoT9WUo5frmxyfjN2U9J",
+  "source": "READING_ADVANTAGE",
+  "title": "The Adaptations of Arctic Animals",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-8235474a62",
+      "order": 0,
+      "text": "In the cold Arctic, many animals live.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-001-8235474a62.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-001-8235474a62.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-413c77cdf4",
+      "order": 1,
+      "text": "They have special ways to survive.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-002-413c77cdf4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-002-413c77cdf4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-941132e4fa",
+      "order": 2,
+      "text": "Let's learn about some of them.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-003-941132e4fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-003-941132e4fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-43fd735828",
+      "order": 3,
+      "text": "First, there is the polar bear.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-004-43fd735828.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-004-43fd735828.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-868c4bb40d",
+      "order": 4,
+      "text": "Polar bears have thick fur.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-005-868c4bb40d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-005-868c4bb40d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-19ce3fd986",
+      "order": 5,
+      "text": "This fur keeps them warm.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-006-19ce3fd986.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-006-19ce3fd986.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-e3bb7e1438",
+      "order": 6,
+      "text": "They also have a layer of fat.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-007-e3bb7e1438.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-007-e3bb7e1438.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-b4379e8575",
+      "order": 7,
+      "text": "This fat is called blubber.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-008-b4379e8575.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-008-b4379e8575.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-e8bbccf36e",
+      "order": 8,
+      "text": "Blubber helps them stay warm in icy water.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-009-e8bbccf36e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-009-e8bbccf36e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-1ea6eb2e37",
+      "order": 9,
+      "text": "Polar bears are great swimmers.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-010-1ea6eb2e37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-010-1ea6eb2e37.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-0e838a794b",
+      "order": 10,
+      "text": "They can swim for many miles.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-011-0e838a794b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-011-0e838a794b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-d84e16a594",
+      "order": 11,
+      "text": "They hunt seals for food.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-012-d84e16a594.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-012-d84e16a594.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-ca8c5e2f19",
+      "order": 12,
+      "text": "Next, we have the Arctic fox.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-013-ca8c5e2f19.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-013-ca8c5e2f19.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-8ccd4e0f91",
+      "order": 13,
+      "text": "The Arctic fox has white fur in winter.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-014-8ccd4e0f91.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-014-8ccd4e0f91.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-99c0d0148f",
+      "order": 14,
+      "text": "This fur helps it hide in the snow.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-015-99c0d0148f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-015-99c0d0148f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-4fbafcc3da",
+      "order": 15,
+      "text": "In summer, its fur turns brown.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-016-4fbafcc3da.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-016-4fbafcc3da.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-6499da7a91",
+      "order": 16,
+      "text": "This helps it hide on the rocks and plants.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-017-6499da7a91.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-017-6499da7a91.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-ac875fb545",
+      "order": 17,
+      "text": "The Arctic fox has small ears.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-018-ac875fb545.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-018-ac875fb545.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-d1f33ef6d7",
+      "order": 18,
+      "text": "Small ears help keep it warm.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-019-d1f33ef6d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-019-d1f33ef6d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-1663d5a6ee",
+      "order": 19,
+      "text": "It eats small animals and birds.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-020-1663d5a6ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-020-1663d5a6ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-6fa9f774cb",
+      "order": 20,
+      "text": "Another animal is the caribou.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-021-6fa9f774cb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-021-6fa9f774cb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-a5be1815b6",
+      "order": 21,
+      "text": "Caribou are also called reindeer.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-022-a5be1815b6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-022-a5be1815b6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-b94685b321",
+      "order": 22,
+      "text": "They have thick fur, too.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-023-b94685b321.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-023-b94685b321.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-d289c23fd0",
+      "order": 23,
+      "text": "Their fur traps air.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-024-d289c23fd0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-024-d289c23fd0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-cfaa533764",
+      "order": 24,
+      "text": "This air keeps them warm.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-025-cfaa533764.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-025-cfaa533764.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-5d1436c4f2",
+      "order": 25,
+      "text": "Caribou have big hooves.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-026-5d1436c4f2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-026-5d1436c4f2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-9e7d857582",
+      "order": 26,
+      "text": "These hooves help them walk on snow.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-027-9e7d857582.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-027-9e7d857582.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-773165b2e7",
+      "order": 27,
+      "text": "They eat plants and moss.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-028-773165b2e7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-028-773165b2e7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-a64c6ddc56",
+      "order": 28,
+      "text": "The snowy owl is another Arctic animal.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-029-a64c6ddc56.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-029-a64c6ddc56.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-00a8a3e608",
+      "order": 29,
+      "text": "It has white feathers.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-030-00a8a3e608.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-030-00a8a3e608.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-ec9241ed10",
+      "order": 30,
+      "text": "These feathers help it hide in the snow.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-031-ec9241ed10.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-031-ec9241ed10.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-e7c42abfab",
+      "order": 31,
+      "text": "The snowy owl has sharp claws.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-032-e7c42abfab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-032-e7c42abfab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-d3353a9940",
+      "order": 32,
+      "text": "It uses these claws to catch food.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-033-d3353a9940.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-033-d3353a9940.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-9a808820e2",
+      "order": 33,
+      "text": "It eats small animals like mice.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-034-9a808820e2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-034-9a808820e2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-4fb903deba",
+      "order": 34,
+      "text": "Lastly, we have the walrus.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-035-4fb903deba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-035-4fb903deba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-a6bbb2133f",
+      "order": 35,
+      "text": "Walruses have thick skin.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-036-a6bbb2133f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-036-a6bbb2133f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-4a2970d342",
+      "order": 36,
+      "text": "They also have blubber.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-037-4a2970d342.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-037-4a2970d342.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-3fe35ffdff",
+      "order": 37,
+      "text": "Blubber keeps them warm.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-038-3fe35ffdff.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-038-3fe35ffdff.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-3cbe792482",
+      "order": 38,
+      "text": "Walruses have long tusks.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-039-3cbe792482.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-039-3cbe792482.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-dd9106e813",
+      "order": 39,
+      "text": "They use these tusks to break ice.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-040-dd9106e813.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-040-dd9106e813.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-d32173d916",
+      "order": 40,
+      "text": "They also use them to climb out of the water.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-041-d32173d916.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-041-d32173d916.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-14d6289f7c",
+      "order": 41,
+      "text": "Walruses eat clams and other sea animals.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-042-14d6289f7c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-042-14d6289f7c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-cefff5d202",
+      "order": 42,
+      "text": "These animals are amazing.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-043-cefff5d202.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-043-cefff5d202.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-044-ea69e81825",
+      "order": 43,
+      "text": "They have special ways to live in the Arctic.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-044-ea69e81825.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-044-ea69e81825.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-045-ae795c4b6b",
+      "order": 44,
+      "text": "Their adaptations help them survive the cold.",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-045-ae795c4b6b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/sentences/sentence-045-ae795c4b6b.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-4a79893182",
+      "order": 0,
+      "text": "Arctic",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-001-4a79893182.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-001-4a79893182.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-042fde3afd",
+      "order": 1,
+      "text": "blubber",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-002-042fde3afd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-002-042fde3afd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-2ac6f7fb66",
+      "order": 2,
+      "text": "camouflage",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-003-2ac6f7fb66.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-003-2ac6f7fb66.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-adad84cd6a",
+      "order": 3,
+      "text": "adaptations",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-004-adad84cd6a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-004-adad84cd6a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-caa9db2a1b",
+      "order": 4,
+      "text": "tusks",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-005-caa9db2a1b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-005-caa9db2a1b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-504dc0d27e",
+      "order": 5,
+      "text": "feathers",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-006-504dc0d27e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-006-504dc0d27e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-947c8541db",
+      "order": 6,
+      "text": "hooves",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-007-947c8541db.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-007-947c8541db.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-6c7ef7c580",
+      "order": 7,
+      "text": "claws",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-008-6c7ef7c580.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-008-6c7ef7c580.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-c22ab28bbc",
+      "order": 8,
+      "text": "swimmers",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-009-c22ab28bbc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-009-c22ab28bbc.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-010-7a586e5227",
+      "order": 9,
+      "text": "in",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-010-7a586e5227.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-010-7a586e5227.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-011-9ec763d8a5",
+      "order": 10,
+      "text": "the",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-011-9ec763d8a5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-011-9ec763d8a5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-0e733bf714",
+      "order": 11,
+      "text": "cold",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-012-0e733bf714.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-012-0e733bf714.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-d7c3e187f4",
+      "order": 12,
+      "text": "many",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-013-d7c3e187f4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-013-d7c3e187f4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-46c8381623",
+      "order": 13,
+      "text": "animals",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-014-46c8381623.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-014-46c8381623.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-7f404a8bc0",
+      "order": 14,
+      "text": "live",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-015-7f404a8bc0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-015-7f404a8bc0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-823b02abfa",
+      "order": 15,
+      "text": "they",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-016-823b02abfa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-016-823b02abfa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-3ae9a64824",
+      "order": 16,
+      "text": "have",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-017-3ae9a64824.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-017-3ae9a64824.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-f34723c960",
+      "order": 17,
+      "text": "special",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-018-f34723c960.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-018-f34723c960.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-c71c635c57",
+      "order": 18,
+      "text": "ways",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-019-c71c635c57.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-019-c71c635c57.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-7f877659e0",
+      "order": 19,
+      "text": "to",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-020-7f877659e0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-020-7f877659e0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-8c0977d678",
+      "order": 20,
+      "text": "survive",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-021-8c0977d678.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-021-8c0977d678.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-b13e250e87",
+      "order": 21,
+      "text": "let's",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-022-b13e250e87.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-022-b13e250e87.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-890f502756",
+      "order": 22,
+      "text": "learn",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-023-890f502756.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-023-890f502756.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-197f1c3213",
+      "order": 23,
+      "text": "about",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-024-197f1c3213.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-024-197f1c3213.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-0ac0a24fd3",
+      "order": 24,
+      "text": "some",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-025-0ac0a24fd3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-025-0ac0a24fd3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-e27f73d88c",
+      "order": 25,
+      "text": "of",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-026-e27f73d88c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-026-e27f73d88c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-ec73aee89a",
+      "order": 26,
+      "text": "them",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-027-ec73aee89a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-027-ec73aee89a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-914eaa4ec3",
+      "order": 27,
+      "text": "first",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-028-914eaa4ec3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-028-914eaa4ec3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-0b0252d5fc",
+      "order": 28,
+      "text": "there",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-029-0b0252d5fc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-029-0b0252d5fc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-5a5fad594b",
+      "order": 29,
+      "text": "is",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-030-5a5fad594b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-030-5a5fad594b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-c10243be57",
+      "order": 30,
+      "text": "polar",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-031-c10243be57.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-031-c10243be57.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-b936d725c5",
+      "order": 31,
+      "text": "bear",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-032-b936d725c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-032-b936d725c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-6edf7e71e4",
+      "order": 32,
+      "text": "bears",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-033-6edf7e71e4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-033-6edf7e71e4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-ca2511f367",
+      "order": 33,
+      "text": "thick",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-034-ca2511f367.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-034-ca2511f367.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-94dad3613d",
+      "order": 34,
+      "text": "fur",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-035-94dad3613d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-035-94dad3613d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-da237028f3",
+      "order": 35,
+      "text": "this",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-036-da237028f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-036-da237028f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-698f52bfd0",
+      "order": 36,
+      "text": "keeps",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-037-698f52bfd0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-037-698f52bfd0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-47195091f1",
+      "order": 37,
+      "text": "warm",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-038-47195091f1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-038-47195091f1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-b19263e5b8",
+      "order": 38,
+      "text": "also",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-039-b19263e5b8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-039-b19263e5b8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-6e87fe0968",
+      "order": 39,
+      "text": "a",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-040-6e87fe0968.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-040-6e87fe0968.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-14c964f057",
+      "order": 40,
+      "text": "layer",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-041-14c964f057.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-041-14c964f057.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-5fda0ee860",
+      "order": 41,
+      "text": "fat",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-042-5fda0ee860.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-042-5fda0ee860.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-252b2fa286",
+      "order": 42,
+      "text": "called",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-043-252b2fa286.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-043-252b2fa286.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-c5df36f5e7",
+      "order": 43,
+      "text": "helps",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-044-c5df36f5e7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-044-c5df36f5e7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-4f063d4f1e",
+      "order": 44,
+      "text": "stay",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-045-4f063d4f1e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-045-4f063d4f1e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-77a4e11f3f",
+      "order": 45,
+      "text": "icy",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-046-77a4e11f3f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-046-77a4e11f3f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-8a7f4cc126",
+      "order": 46,
+      "text": "water",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-047-8a7f4cc126.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-047-8a7f4cc126.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-951048b55b",
+      "order": 47,
+      "text": "are",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-048-951048b55b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-048-951048b55b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-387f80cdc4",
+      "order": 48,
+      "text": "great",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-049-387f80cdc4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-049-387f80cdc4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-23ca944f81",
+      "order": 49,
+      "text": "can",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-050-23ca944f81.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-050-23ca944f81.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-70400df8df",
+      "order": 50,
+      "text": "swim",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-051-70400df8df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-051-70400df8df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-78e4fae76a",
+      "order": 51,
+      "text": "for",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-052-78e4fae76a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-052-78e4fae76a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-605e489842",
+      "order": 52,
+      "text": "miles",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-053-605e489842.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-053-605e489842.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-9883ef845a",
+      "order": 53,
+      "text": "hunt",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-054-9883ef845a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-054-9883ef845a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-5bd2224607",
+      "order": 54,
+      "text": "seals",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-055-5bd2224607.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-055-5bd2224607.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-cba02b8c38",
+      "order": 55,
+      "text": "food",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-056-cba02b8c38.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-056-cba02b8c38.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-63ecf9cab7",
+      "order": 56,
+      "text": "next",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-057-63ecf9cab7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-057-63ecf9cab7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-e0c2dfb767",
+      "order": 57,
+      "text": "we",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-058-e0c2dfb767.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-058-e0c2dfb767.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-55d14f6464",
+      "order": 58,
+      "text": "fox",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-059-55d14f6464.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-059-55d14f6464.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-dd680ba68a",
+      "order": 59,
+      "text": "has",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-060-dd680ba68a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-060-dd680ba68a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-caa1da5034",
+      "order": 60,
+      "text": "white",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-061-caa1da5034.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-061-caa1da5034.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-c3ee344e28",
+      "order": 61,
+      "text": "winter",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-062-c3ee344e28.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-062-c3ee344e28.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-63e749c9f1",
+      "order": 62,
+      "text": "it",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-063-63e749c9f1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-063-63e749c9f1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-731d523905",
+      "order": 63,
+      "text": "hide",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-064-731d523905.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-064-731d523905.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-f7d08990ed",
+      "order": 64,
+      "text": "snow",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-065-f7d08990ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-065-f7d08990ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-b0e29a53a7",
+      "order": 65,
+      "text": "summer",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-066-b0e29a53a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-066-b0e29a53a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-b693e9ef23",
+      "order": 66,
+      "text": "its",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-067-b693e9ef23.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-067-b693e9ef23.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-8730d6679d",
+      "order": 67,
+      "text": "turns",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-068-8730d6679d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-068-8730d6679d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-3dae114726",
+      "order": 68,
+      "text": "brown",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-069-3dae114726.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-069-3dae114726.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-148f7b8113",
+      "order": 69,
+      "text": "on",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-070-148f7b8113.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-070-148f7b8113.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-c6e05ef70e",
+      "order": 70,
+      "text": "rocks",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-071-c6e05ef70e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-071-c6e05ef70e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-be69e06a5f",
+      "order": 71,
+      "text": "and",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-072-be69e06a5f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-072-be69e06a5f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-a5460a7acf",
+      "order": 72,
+      "text": "plants",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-073-a5460a7acf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-073-a5460a7acf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-5d996ab351",
+      "order": 73,
+      "text": "small",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-074-5d996ab351.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-074-5d996ab351.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-12669d0edc",
+      "order": 74,
+      "text": "ears",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-075-12669d0edc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-075-12669d0edc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-3405b0e852",
+      "order": 75,
+      "text": "help",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-076-3405b0e852.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-076-3405b0e852.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-e049f44bd6",
+      "order": 76,
+      "text": "keep",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-077-e049f44bd6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-077-e049f44bd6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-cc8922e0f0",
+      "order": 77,
+      "text": "eats",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-078-cc8922e0f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-078-cc8922e0f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-810247b6ac",
+      "order": 78,
+      "text": "birds",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-079-810247b6ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-079-810247b6ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-142d57863b",
+      "order": 79,
+      "text": "another",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-080-142d57863b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-080-142d57863b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-ced33fff8b",
+      "order": 80,
+      "text": "animal",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-081-ced33fff8b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-081-ced33fff8b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-e24933377f",
+      "order": 81,
+      "text": "caribou",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-082-e24933377f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-082-e24933377f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-897618311d",
+      "order": 82,
+      "text": "reindeer",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-083-897618311d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-083-897618311d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-13ae0445bb",
+      "order": 83,
+      "text": "too",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-084-13ae0445bb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-084-13ae0445bb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-3a78a7b0f5",
+      "order": 84,
+      "text": "their",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-085-3a78a7b0f5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-085-3a78a7b0f5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-086-f5c713a06d",
+      "order": 85,
+      "text": "traps",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-086-f5c713a06d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-086-f5c713a06d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-087-a472ad2cec",
+      "order": 86,
+      "text": "air",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-087-a472ad2cec.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-087-a472ad2cec.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-088-62f675f79a",
+      "order": 87,
+      "text": "big",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-088-62f675f79a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-088-62f675f79a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-089-49f593b5e4",
+      "order": 88,
+      "text": "these",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-089-49f593b5e4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-089-49f593b5e4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-090-ffbfc1fa09",
+      "order": 89,
+      "text": "walk",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-090-ffbfc1fa09.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-090-ffbfc1fa09.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-091-2215d3d045",
+      "order": 90,
+      "text": "eat",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-091-2215d3d045.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-091-2215d3d045.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-092-bce68b5cb8",
+      "order": 91,
+      "text": "moss",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-092-bce68b5cb8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-092-bce68b5cb8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-093-619303178e",
+      "order": 92,
+      "text": "snowy",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-093-619303178e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-093-619303178e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-094-6759817623",
+      "order": 93,
+      "text": "owl",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-094-6759817623.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-094-6759817623.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-095-2e390d946f",
+      "order": 94,
+      "text": "sharp",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-095-2e390d946f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-095-2e390d946f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-096-a02557a9cf",
+      "order": 95,
+      "text": "uses",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-096-a02557a9cf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-096-a02557a9cf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-097-c642159087",
+      "order": 96,
+      "text": "catch",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-097-c642159087.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-097-c642159087.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-098-19972cd595",
+      "order": 97,
+      "text": "like",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-098-19972cd595.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-098-19972cd595.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-099-e2067c6617",
+      "order": 98,
+      "text": "mice",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-099-e2067c6617.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-099-e2067c6617.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-100-9f091af89f",
+      "order": 99,
+      "text": "lastly",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-100-9f091af89f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-100-9f091af89f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-101-9e583f07ef",
+      "order": 100,
+      "text": "walrus",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-101-9e583f07ef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-101-9e583f07ef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-102-17e01a3148",
+      "order": 101,
+      "text": "walruses",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-102-17e01a3148.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-102-17e01a3148.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-103-c1241d2b44",
+      "order": 102,
+      "text": "skin",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-103-c1241d2b44.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-103-c1241d2b44.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-104-584632eed2",
+      "order": 103,
+      "text": "long",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-104-584632eed2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-104-584632eed2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-105-17c90a2610",
+      "order": 104,
+      "text": "use",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-105-17c90a2610.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-105-17c90a2610.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-106-a8c00f3cc3",
+      "order": 105,
+      "text": "break",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-106-a8c00f3cc3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-106-a8c00f3cc3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-107-d84fa10547",
+      "order": 106,
+      "text": "ice",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-107-d84fa10547.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-107-d84fa10547.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-108-39e0a4dccd",
+      "order": 107,
+      "text": "climb",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-108-39e0a4dccd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-108-39e0a4dccd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-109-fe23a44b15",
+      "order": 108,
+      "text": "out",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-109-fe23a44b15.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-109-fe23a44b15.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-110-ddeebb2a34",
+      "order": 109,
+      "text": "clams",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-110-ddeebb2a34.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-110-ddeebb2a34.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-111-8fcc30932c",
+      "order": 110,
+      "text": "other",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-111-8fcc30932c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-111-8fcc30932c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-112-56fef92508",
+      "order": 111,
+      "text": "sea",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-112-56fef92508.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-112-56fef92508.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-113-c8b8f2df52",
+      "order": 112,
+      "text": "amazing",
+      "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/words/word-113-c8b8f2df52.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/words/word-113-c8b8f2df52.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-74722523d7",
+      "type": "mcq",
+      "order": 0,
+      "text": "What does the snowy owl eat?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-001-74722523d7.mp3",
+      "questionObjectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-001-74722523d7.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-001-74722523d7-option1-6598a113.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-001-74722523d7-option2-78f6cb08.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-001-74722523d7-option3-033561e5.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-001-74722523d7-option4-27fb9527.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-74722523d7-option1-6598a113",
+          "text": "Mice",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-001-74722523d7-option1-6598a113.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-74722523d7-option2-78f6cb08",
+          "text": "Seals",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-001-74722523d7-option2-78f6cb08.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-74722523d7-option3-033561e5",
+          "text": "Clams",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-001-74722523d7-option3-033561e5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-74722523d7-option4-27fb9527",
+          "text": "Plants and moss",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-001-74722523d7-option4-27fb9527.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-a6723850b2",
+      "type": "mcq",
+      "order": 1,
+      "text": "Which animal has thick fur and blubber to stay warm?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-002-a6723850b2.mp3",
+      "questionObjectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-002-a6723850b2.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-002-a6723850b2-option1-b5fd87d8.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-002-a6723850b2-option2-bfe3f56c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-002-a6723850b2-option3-a1ee2fdc.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-002-a6723850b2-option4-639a2a57.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-a6723850b2-option1-b5fd87d8",
+          "text": "Polar bear",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-002-a6723850b2-option1-b5fd87d8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-a6723850b2-option2-bfe3f56c",
+          "text": "Arctic fox",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-002-a6723850b2-option2-bfe3f56c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-a6723850b2-option3-a1ee2fdc",
+          "text": "Caribou",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-002-a6723850b2-option3-a1ee2fdc.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-a6723850b2-option4-639a2a57",
+          "text": "Snowy owl",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-002-a6723850b2-option4-639a2a57.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-9a2f9bcf82",
+      "type": "mcq",
+      "order": 2,
+      "text": "What do polar bears hunt for food?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-003-9a2f9bcf82.mp3",
+      "questionObjectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-003-9a2f9bcf82.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-003-9a2f9bcf82-option1-b4845458.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-003-9a2f9bcf82-option2-6b5e2030.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-003-9a2f9bcf82-option3-14729fda.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-003-9a2f9bcf82-option4-3f7d7ecd.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-9a2f9bcf82-option1-b4845458",
+          "text": "Seals",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-003-9a2f9bcf82-option1-b4845458.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-9a2f9bcf82-option2-6b5e2030",
+          "text": "Clams",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-003-9a2f9bcf82-option2-6b5e2030.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-9a2f9bcf82-option3-14729fda",
+          "text": "Mice",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-003-9a2f9bcf82-option3-14729fda.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-9a2f9bcf82-option4-3f7d7ecd",
+          "text": "Plants",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-003-9a2f9bcf82-option4-3f7d7ecd.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-7fe449c720",
+      "type": "mcq",
+      "order": 3,
+      "text": "Which animal uses its tusks to break ice?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-004-7fe449c720.mp3",
+      "questionObjectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-004-7fe449c720.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-004-7fe449c720-option1-a4ec6846.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-004-7fe449c720-option2-39a45d2e.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-004-7fe449c720-option3-4597d8ae.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-004-7fe449c720-option4-63972b8a.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-7fe449c720-option1-a4ec6846",
+          "text": "Walrus",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-004-7fe449c720-option1-a4ec6846.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-7fe449c720-option2-39a45d2e",
+          "text": "Polar bear",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-004-7fe449c720-option2-39a45d2e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-7fe449c720-option3-4597d8ae",
+          "text": "Caribou",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-004-7fe449c720-option3-4597d8ae.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-7fe449c720-option4-63972b8a",
+          "text": "Snowy owl",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-004-7fe449c720-option4-63972b8a.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-20e899d7f3",
+      "type": "mcq",
+      "order": 4,
+      "text": "What do walruses eat?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-005-20e899d7f3.mp3",
+      "questionObjectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-005-20e899d7f3.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-005-20e899d7f3-option1-51ee5daa.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-005-20e899d7f3-option2-d081849b.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-005-20e899d7f3-option3-40f43cef.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-005-20e899d7f3-option4-142cf0f4.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-20e899d7f3-option1-51ee5daa",
+          "text": "Clams and other sea animals",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-005-20e899d7f3-option1-51ee5daa.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-20e899d7f3-option2-d081849b",
+          "text": "Seals",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-005-20e899d7f3-option2-d081849b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-20e899d7f3-option3-40f43cef",
+          "text": "Mice",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-005-20e899d7f3-option3-40f43cef.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-20e899d7f3-option4-142cf0f4",
+          "text": "Plants and moss",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-005-20e899d7f3-option4-142cf0f4.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-50c4f8db6a",
+      "type": "mcq",
+      "order": 5,
+      "text": "Which animal has sharp claws to catch food?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-006-50c4f8db6a.mp3",
+      "questionObjectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-006-50c4f8db6a.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-006-50c4f8db6a-option1-5b5c45f9.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-006-50c4f8db6a-option2-45bb8954.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-006-50c4f8db6a-option3-8d5dff82.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-006-50c4f8db6a-option4-232c13af.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-50c4f8db6a-option1-5b5c45f9",
+          "text": "Snowy owl",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-006-50c4f8db6a-option1-5b5c45f9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-50c4f8db6a-option2-45bb8954",
+          "text": "Arctic fox",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-006-50c4f8db6a-option2-45bb8954.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-50c4f8db6a-option3-8d5dff82",
+          "text": "Caribou",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-006-50c4f8db6a-option3-8d5dff82.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-50c4f8db6a-option4-232c13af",
+          "text": "Walrus",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-006-50c4f8db6a-option4-232c13af.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-0a92c4340c",
+      "type": "mcq",
+      "order": 6,
+      "text": "What do caribou eat?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-007-0a92c4340c.mp3",
+      "questionObjectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-007-0a92c4340c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-007-0a92c4340c-option1-078f4cd8.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-007-0a92c4340c-option2-f70e0fe3.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-007-0a92c4340c-option3-7834e443.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-007-0a92c4340c-option4-dd6efe1d.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-0a92c4340c-option1-078f4cd8",
+          "text": "Plants and moss",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-007-0a92c4340c-option1-078f4cd8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-0a92c4340c-option2-f70e0fe3",
+          "text": "Seals",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-007-0a92c4340c-option2-f70e0fe3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-0a92c4340c-option3-7834e443",
+          "text": "Clams",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-007-0a92c4340c-option3-7834e443.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-0a92c4340c-option4-dd6efe1d",
+          "text": "Small animals and birds",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-007-0a92c4340c-option4-dd6efe1d.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-74066534ae",
+      "type": "mcq",
+      "order": 7,
+      "text": "What does the Arctic fox eat?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-008-74066534ae.mp3",
+      "questionObjectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-008-74066534ae.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-008-74066534ae-option1-d28ae815.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-008-74066534ae-option2-54361a30.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-008-74066534ae-option3-76352e8c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-008-74066534ae-option4-0bada603.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-74066534ae-option1-d28ae815",
+          "text": "Small animals and birds",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-008-74066534ae-option1-d28ae815.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-74066534ae-option2-54361a30",
+          "text": "Seals",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-008-74066534ae-option2-54361a30.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-74066534ae-option3-76352e8c",
+          "text": "Clams",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-008-74066534ae-option3-76352e8c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-74066534ae-option4-0bada603",
+          "text": "Plants and moss",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-008-74066534ae-option4-0bada603.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-378aa7f80c",
+      "type": "mcq",
+      "order": 8,
+      "text": "Which animal is also called a reindeer?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-009-378aa7f80c.mp3",
+      "questionObjectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-009-378aa7f80c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-009-378aa7f80c-option1-43d313bd.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-009-378aa7f80c-option2-4c265140.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-009-378aa7f80c-option3-1aae831d.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-009-378aa7f80c-option4-95ef65b2.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-378aa7f80c-option1-43d313bd",
+          "text": "Caribou",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-009-378aa7f80c-option1-43d313bd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-378aa7f80c-option2-4c265140",
+          "text": "Polar bear",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-009-378aa7f80c-option2-4c265140.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-378aa7f80c-option3-1aae831d",
+          "text": "Walrus",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-009-378aa7f80c-option3-1aae831d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-378aa7f80c-option4-95ef65b2",
+          "text": "Snowy owl",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-009-378aa7f80c-option4-95ef65b2.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-bf1fb942d1",
+      "type": "mcq",
+      "order": 9,
+      "text": "Which animal's fur changes color with the seasons?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-010-bf1fb942d1.mp3",
+      "questionObjectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-010-bf1fb942d1.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-010-bf1fb942d1-option1-bf134ee1.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-010-bf1fb942d1-option2-0b3be864.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-010-bf1fb942d1-option3-c87cb6cf.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-010-bf1fb942d1-option4-25963cdd.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-bf1fb942d1-option1-bf134ee1",
+          "text": "Arctic fox",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-010-bf1fb942d1-option1-bf134ee1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-bf1fb942d1-option2-0b3be864",
+          "text": "Polar bear",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-010-bf1fb942d1-option2-0b3be864.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-bf1fb942d1-option3-c87cb6cf",
+          "text": "Walrus",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-010-bf1fb942d1-option3-c87cb6cf.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-bf1fb942d1-option4-25963cdd",
+          "text": "Snowy owl",
+          "objectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/mcq-010-bf1fb942d1-option4-25963cdd.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-f4be1bd7c5",
+      "type": "saq",
+      "order": 10,
+      "text": "What do walruses use their tusks for?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/saq-011-f4be1bd7c5.mp3",
+      "questionObjectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/saq-011-f4be1bd7c5.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-fe7447bca7",
+      "type": "saq",
+      "order": 11,
+      "text": "What helps caribou walk on snow?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/saq-012-fe7447bca7.mp3",
+      "questionObjectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/saq-012-fe7447bca7.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-b8dfeef8ae",
+      "type": "saq",
+      "order": 12,
+      "text": "What do polar bears hunt for food?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/saq-013-b8dfeef8ae.mp3",
+      "questionObjectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/saq-013-b8dfeef8ae.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-ac9a830807",
+      "type": "saq",
+      "order": 13,
+      "text": "What do snowy owls use their sharp claws for?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/saq-014-ac9a830807.mp3",
+      "questionObjectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/saq-014-ac9a830807.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-e0df265426",
+      "type": "saq",
+      "order": 14,
+      "text": "How does the Arctic fox's fur change in summer?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/RoT9WUo5frmxyfjN2U9J/questions/saq-015-e0df265426.mp3",
+      "questionObjectPath": "articles/RoT9WUo5frmxyfjN2U9J/questions/saq-015-e0df265426.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T16:57:16.115Z"
+}

@@ -1,0 +1,1463 @@
+{
+  "version": 1,
+  "articleId": "mIGa1v9cgtJgkXAnmVGy",
+  "source": "READING_ADVANTAGE",
+  "title": "Two Sisters, Two Paths",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-883babb7ce",
+      "order": 0,
+      "text": "Ama and Esi are sisters.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-001-883babb7ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-001-883babb7ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-f85a7b4f89",
+      "order": 1,
+      "text": "They live in Ghana.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-002-f85a7b4f89.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-002-f85a7b4f89.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-95825b9cd0",
+      "order": 2,
+      "text": "Ama is older.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-003-95825b9cd0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-003-95825b9cd0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-8670c28ccb",
+      "order": 3,
+      "text": "Esi is younger.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-004-8670c28ccb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-004-8670c28ccb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-8220b2c405",
+      "order": 4,
+      "text": "They have different mothers.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-005-8220b2c405.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-005-8220b2c405.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-88c9282f1e",
+      "order": 5,
+      "text": "Ama's mother is a slave.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-006-88c9282f1e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-006-88c9282f1e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-d3776c2344",
+      "order": 6,
+      "text": "Esi's mother is free.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-007-d3776c2344.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-007-d3776c2344.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-aaf185ae2b",
+      "order": 7,
+      "text": "One day, men come.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-008-aaf185ae2b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-008-aaf185ae2b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-7f04f4f0c6",
+      "order": 8,
+      "text": "They take Ama.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-009-7f04f4f0c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-009-7f04f4f0c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-434540bab4",
+      "order": 9,
+      "text": "They sell her.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-010-434540bab4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-010-434540bab4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-5d04fb1d39",
+      "order": 10,
+      "text": "Ama is now a slave.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-011-5d04fb1d39.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-011-5d04fb1d39.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-51e12f028c",
+      "order": 11,
+      "text": "Esi is sad.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-012-51e12f028c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-012-51e12f028c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-28acf40756",
+      "order": 12,
+      "text": "She misses Ama.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-013-28acf40756.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-013-28acf40756.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-91a4b05cca",
+      "order": 13,
+      "text": "Esi's mother marries a British man.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-014-91a4b05cca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-014-91a4b05cca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-67b258e052",
+      "order": 14,
+      "text": "They move to a big house.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-015-67b258e052.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-015-67b258e052.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-7fb7408bd6",
+      "order": 15,
+      "text": "Esi has new clothes.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-016-7fb7408bd6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-016-7fb7408bd6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-e8c9889796",
+      "order": 16,
+      "text": "She has new toys.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-017-e8c9889796.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-017-e8c9889796.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-850a928cfa",
+      "order": 17,
+      "text": "But Esi is not happy.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-018-850a928cfa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-018-850a928cfa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-a71787a931",
+      "order": 18,
+      "text": "She thinks of Ama.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-019-a71787a931.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-019-a71787a931.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-e306cdf1a4",
+      "order": 19,
+      "text": "Ama works hard.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-020-e306cdf1a4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-020-e306cdf1a4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-d24e1acd1f",
+      "order": 20,
+      "text": "She is tired.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-021-d24e1acd1f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-021-d24e1acd1f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-ac3c1e81c1",
+      "order": 21,
+      "text": "She is hungry.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-022-ac3c1e81c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-022-ac3c1e81c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-92e7f991a9",
+      "order": 22,
+      "text": "She dreams of home.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-023-92e7f991a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-023-92e7f991a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-5f969d4ea4",
+      "order": 23,
+      "text": "She dreams of Esi.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-024-5f969d4ea4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-024-5f969d4ea4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-c0f9eb398d",
+      "order": 24,
+      "text": "Years pass.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-025-c0f9eb398d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-025-c0f9eb398d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-d39db3a0f1",
+      "order": 25,
+      "text": "Esi grows up.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-026-d39db3a0f1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-026-d39db3a0f1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-acf6b85fe0",
+      "order": 26,
+      "text": "She marries a British man.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-027-acf6b85fe0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-027-acf6b85fe0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-d75c06a802",
+      "order": 27,
+      "text": "She has children.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-028-d75c06a802.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-028-d75c06a802.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-75cc4ea2a8",
+      "order": 28,
+      "text": "Ama is still a slave.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-029-75cc4ea2a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-029-75cc4ea2a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-b63d78d387",
+      "order": 29,
+      "text": "She has no children.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-030-b63d78d387.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-030-b63d78d387.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-7536dd62aa",
+      "order": 30,
+      "text": "One day, Esi finds a letter.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-031-7536dd62aa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-031-7536dd62aa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-f5fa2102a4",
+      "order": 31,
+      "text": "It is from Ama.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-032-f5fa2102a4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-032-f5fa2102a4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-c116dd0c0d",
+      "order": 32,
+      "text": "Ama is free now.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-033-c116dd0c0d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-033-c116dd0c0d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-825eda7976",
+      "order": 33,
+      "text": "She wants to see Esi.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-034-825eda7976.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-034-825eda7976.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-3eb3eee335",
+      "order": 34,
+      "text": "Esi is happy.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-035-3eb3eee335.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-035-3eb3eee335.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-c0663a0111",
+      "order": 35,
+      "text": "She writes back.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-036-c0663a0111.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-036-c0663a0111.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-47b78ab089",
+      "order": 36,
+      "text": "They meet.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-037-47b78ab089.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-037-47b78ab089.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-a4082c925e",
+      "order": 37,
+      "text": "They hug.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-038-a4082c925e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-038-a4082c925e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-026b89d1fa",
+      "order": 38,
+      "text": "They cry.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-039-026b89d1fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-039-026b89d1fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-0aaadedf51",
+      "order": 39,
+      "text": "They talk.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-040-0aaadedf51.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-040-0aaadedf51.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-762362db70",
+      "order": 40,
+      "text": "Ama tells her story.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-041-762362db70.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-041-762362db70.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-74e412611f",
+      "order": 41,
+      "text": "Esi listens.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-042-74e412611f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-042-74e412611f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-2a7ff4ef15",
+      "order": 42,
+      "text": "Esi tells her story.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-043-2a7ff4ef15.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-043-2a7ff4ef15.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-044-b6abd5b0f2",
+      "order": 43,
+      "text": "Ama listens.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-044-b6abd5b0f2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-044-b6abd5b0f2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-045-db4655433c",
+      "order": 44,
+      "text": "They are sisters.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-045-db4655433c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-045-db4655433c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-046-705262510f",
+      "order": 45,
+      "text": "They are together again.",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-046-705262510f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/sentences/sentence-046-705262510f.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-2aff4e6f18",
+      "order": 0,
+      "text": "slave",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-001-2aff4e6f18.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-001-2aff4e6f18.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-0d6a20ad63",
+      "order": 1,
+      "text": "marries",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-002-0d6a20ad63.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-002-0d6a20ad63.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-d6741b7ee2",
+      "order": 2,
+      "text": "hungry",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-003-d6741b7ee2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-003-d6741b7ee2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-5c143965ef",
+      "order": 3,
+      "text": "dreams",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-004-5c143965ef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-004-5c143965ef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-3332c55a12",
+      "order": 4,
+      "text": "children",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-005-3332c55a12.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-005-3332c55a12.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-02b3275a37",
+      "order": 5,
+      "text": "letter",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-006-02b3275a37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-006-02b3275a37.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-f0e6901df2",
+      "order": 6,
+      "text": "together",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-007-f0e6901df2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-007-f0e6901df2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-5d55df5017",
+      "order": 7,
+      "text": "hard",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-008-5d55df5017.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-008-5d55df5017.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-d4adcfebb5",
+      "order": 8,
+      "text": "sad",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-009-d4adcfebb5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-009-d4adcfebb5.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-010-d0878baf0d",
+      "order": 9,
+      "text": "ama",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-010-d0878baf0d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-010-d0878baf0d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-011-585b2c216e",
+      "order": 10,
+      "text": "and",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-011-585b2c216e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-011-585b2c216e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-7d624ba11f",
+      "order": 11,
+      "text": "esi",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-012-7d624ba11f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-012-7d624ba11f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-3e6c0cfc87",
+      "order": 12,
+      "text": "are",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-013-3e6c0cfc87.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-013-3e6c0cfc87.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-2ca9660d02",
+      "order": 13,
+      "text": "sisters",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-014-2ca9660d02.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-014-2ca9660d02.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-8adeecef93",
+      "order": 14,
+      "text": "they",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-015-8adeecef93.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-015-8adeecef93.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-22cc65cf22",
+      "order": 15,
+      "text": "live",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-016-22cc65cf22.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-016-22cc65cf22.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-f1ad06f9ad",
+      "order": 16,
+      "text": "in",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-017-f1ad06f9ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-017-f1ad06f9ad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-bd826a775c",
+      "order": 17,
+      "text": "ghana",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-018-bd826a775c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-018-bd826a775c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-fc7d3e53a8",
+      "order": 18,
+      "text": "is",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-019-fc7d3e53a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-019-fc7d3e53a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-7a6dfa0978",
+      "order": 19,
+      "text": "older",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-020-7a6dfa0978.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-020-7a6dfa0978.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-ada1b9951d",
+      "order": 20,
+      "text": "younger",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-021-ada1b9951d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-021-ada1b9951d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-dc1acef6ba",
+      "order": 21,
+      "text": "have",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-022-dc1acef6ba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-022-dc1acef6ba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-a9317528f3",
+      "order": 22,
+      "text": "different",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-023-a9317528f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-023-a9317528f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-352b60c809",
+      "order": 23,
+      "text": "mothers",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-024-352b60c809.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-024-352b60c809.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-1b1c81edf9",
+      "order": 24,
+      "text": "ama's",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-025-1b1c81edf9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-025-1b1c81edf9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-24c9e737fd",
+      "order": 25,
+      "text": "mother",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-026-24c9e737fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-026-24c9e737fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-4cd912929a",
+      "order": 26,
+      "text": "a",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-027-4cd912929a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-027-4cd912929a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-44b0f14eda",
+      "order": 27,
+      "text": "esi's",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-028-44b0f14eda.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-028-44b0f14eda.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-ff5d7b6e1d",
+      "order": 28,
+      "text": "free",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-029-ff5d7b6e1d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-029-ff5d7b6e1d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-249ec4ba43",
+      "order": 29,
+      "text": "one",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-030-249ec4ba43.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-030-249ec4ba43.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-756556a416",
+      "order": 30,
+      "text": "day",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-031-756556a416.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-031-756556a416.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-65bdb219cc",
+      "order": 31,
+      "text": "men",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-032-65bdb219cc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-032-65bdb219cc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-b0cf2bafac",
+      "order": 32,
+      "text": "come",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-033-b0cf2bafac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-033-b0cf2bafac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-ba410cd299",
+      "order": 33,
+      "text": "take",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-034-ba410cd299.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-034-ba410cd299.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-5e4e16e163",
+      "order": 34,
+      "text": "sell",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-035-5e4e16e163.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-035-5e4e16e163.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-10f19a1a42",
+      "order": 35,
+      "text": "her",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-036-10f19a1a42.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-036-10f19a1a42.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-fe74c28772",
+      "order": 36,
+      "text": "now",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-037-fe74c28772.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-037-fe74c28772.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-5c0acabfdd",
+      "order": 37,
+      "text": "she",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-038-5c0acabfdd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-038-5c0acabfdd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-1f6e6f5ab7",
+      "order": 38,
+      "text": "misses",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-039-1f6e6f5ab7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-039-1f6e6f5ab7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-d2e072c226",
+      "order": 39,
+      "text": "british",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-040-d2e072c226.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-040-d2e072c226.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-71263bd062",
+      "order": 40,
+      "text": "man",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-041-71263bd062.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-041-71263bd062.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-64ff7bb1b7",
+      "order": 41,
+      "text": "move",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-042-64ff7bb1b7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-042-64ff7bb1b7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-262abdaf87",
+      "order": 42,
+      "text": "to",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-043-262abdaf87.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-043-262abdaf87.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-ec1537345f",
+      "order": 43,
+      "text": "big",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-044-ec1537345f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-044-ec1537345f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-13d648b1de",
+      "order": 44,
+      "text": "house",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-045-13d648b1de.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-045-13d648b1de.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-42e7f0e1fa",
+      "order": 45,
+      "text": "has",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-046-42e7f0e1fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-046-42e7f0e1fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-de6e1b1b37",
+      "order": 46,
+      "text": "new",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-047-de6e1b1b37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-047-de6e1b1b37.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-8efe2309fb",
+      "order": 47,
+      "text": "clothes",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-048-8efe2309fb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-048-8efe2309fb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-8c0a279217",
+      "order": 48,
+      "text": "toys",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-049-8c0a279217.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-049-8c0a279217.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-810dfb77e8",
+      "order": 49,
+      "text": "but",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-050-810dfb77e8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-050-810dfb77e8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-72f6cffd69",
+      "order": 50,
+      "text": "not",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-051-72f6cffd69.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-051-72f6cffd69.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-37370c73ee",
+      "order": 51,
+      "text": "happy",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-052-37370c73ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-052-37370c73ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-38067efa84",
+      "order": 52,
+      "text": "thinks",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-053-38067efa84.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-053-38067efa84.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-c2a5e31cda",
+      "order": 53,
+      "text": "of",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-054-c2a5e31cda.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-054-c2a5e31cda.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-c5c3a500c6",
+      "order": 54,
+      "text": "works",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-055-c5c3a500c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-055-c5c3a500c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-8b3d594674",
+      "order": 55,
+      "text": "tired",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-056-8b3d594674.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-056-8b3d594674.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-30f77fc7cd",
+      "order": 56,
+      "text": "home",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-057-30f77fc7cd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-057-30f77fc7cd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-77625e08cb",
+      "order": 57,
+      "text": "years",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-058-77625e08cb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-058-77625e08cb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-b3fd31fbb7",
+      "order": 58,
+      "text": "pass",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-059-b3fd31fbb7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-059-b3fd31fbb7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-fd5ebde6ab",
+      "order": 59,
+      "text": "grows",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-060-fd5ebde6ab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-060-fd5ebde6ab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-585eb26f43",
+      "order": 60,
+      "text": "up",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-061-585eb26f43.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-061-585eb26f43.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-51b9efeddd",
+      "order": 61,
+      "text": "still",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-062-51b9efeddd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-062-51b9efeddd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-25cc197829",
+      "order": 62,
+      "text": "no",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-063-25cc197829.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-063-25cc197829.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-314ff36f77",
+      "order": 63,
+      "text": "finds",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-064-314ff36f77.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-064-314ff36f77.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-9fc30f5f3a",
+      "order": 64,
+      "text": "it",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-065-9fc30f5f3a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-065-9fc30f5f3a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-fe923b8d0d",
+      "order": 65,
+      "text": "from",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-066-fe923b8d0d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-066-fe923b8d0d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-dc02236d6e",
+      "order": 66,
+      "text": "wants",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-067-dc02236d6e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-067-dc02236d6e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-8037c8661f",
+      "order": 67,
+      "text": "see",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-068-8037c8661f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-068-8037c8661f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-a1bd0f1a79",
+      "order": 68,
+      "text": "writes",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-069-a1bd0f1a79.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-069-a1bd0f1a79.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-de0927122f",
+      "order": 69,
+      "text": "back",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-070-de0927122f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-070-de0927122f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-77731e21ad",
+      "order": 70,
+      "text": "meet",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-071-77731e21ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-071-77731e21ad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-087e5772d9",
+      "order": 71,
+      "text": "hug",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-072-087e5772d9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-072-087e5772d9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-5031d361b5",
+      "order": 72,
+      "text": "cry",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-073-5031d361b5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-073-5031d361b5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-8ad6d42f11",
+      "order": 73,
+      "text": "talk",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-074-8ad6d42f11.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-074-8ad6d42f11.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-9ff3802a5b",
+      "order": 74,
+      "text": "tells",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-075-9ff3802a5b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-075-9ff3802a5b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-65096ac4db",
+      "order": 75,
+      "text": "story",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-076-65096ac4db.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-076-65096ac4db.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-66fcb7d44e",
+      "order": 76,
+      "text": "listens",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-077-66fcb7d44e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-077-66fcb7d44e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-3efc004150",
+      "order": 77,
+      "text": "again",
+      "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/words/word-078-3efc004150.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/words/word-078-3efc004150.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-7a0f2420be",
+      "type": "mcq",
+      "order": 0,
+      "text": "Who marries a British man?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-001-7a0f2420be.mp3",
+      "questionObjectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-001-7a0f2420be.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-001-7a0f2420be-option1-704f3eb9.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-001-7a0f2420be-option2-407bf15f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-001-7a0f2420be-option3-7de1ce12.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-001-7a0f2420be-option4-bc32deaf.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-7a0f2420be-option1-704f3eb9",
+          "text": "Esi's mother",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-001-7a0f2420be-option1-704f3eb9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-7a0f2420be-option2-407bf15f",
+          "text": "Ama's mother",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-001-7a0f2420be-option2-407bf15f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-7a0f2420be-option3-7de1ce12",
+          "text": "Ama",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-001-7a0f2420be-option3-7de1ce12.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-7a0f2420be-option4-bc32deaf",
+          "text": "Esi",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-001-7a0f2420be-option4-bc32deaf.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-9388e75b91",
+      "type": "mcq",
+      "order": 1,
+      "text": "Where do Ama and Esi live?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-002-9388e75b91.mp3",
+      "questionObjectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-002-9388e75b91.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-002-9388e75b91-option1-a4b23edc.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-002-9388e75b91-option2-3f325f6a.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-002-9388e75b91-option3-6c36294b.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-002-9388e75b91-option4-e6e77f8f.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-9388e75b91-option1-a4b23edc",
+          "text": "Ghana",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-002-9388e75b91-option1-a4b23edc.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-9388e75b91-option2-3f325f6a",
+          "text": "Nigeria",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-002-9388e75b91-option2-3f325f6a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-9388e75b91-option3-6c36294b",
+          "text": "Kenya",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-002-9388e75b91-option3-6c36294b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-9388e75b91-option4-e6e77f8f",
+          "text": "South Africa",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-002-9388e75b91-option4-e6e77f8f.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-e6ead79c5f",
+      "type": "mcq",
+      "order": 2,
+      "text": "What does Ama dream of?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-003-e6ead79c5f.mp3",
+      "questionObjectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-003-e6ead79c5f.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-003-e6ead79c5f-option1-5227c316.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-003-e6ead79c5f-option2-267aba17.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-003-e6ead79c5f-option3-772104ec.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-003-e6ead79c5f-option4-92620d3b.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-e6ead79c5f-option1-5227c316",
+          "text": "Home and Esi",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-003-e6ead79c5f-option1-5227c316.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-e6ead79c5f-option2-267aba17",
+          "text": "Money",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-003-e6ead79c5f-option2-267aba17.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-e6ead79c5f-option3-772104ec",
+          "text": "Travel",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-003-e6ead79c5f-option3-772104ec.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-e6ead79c5f-option4-92620d3b",
+          "text": "Food",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-003-e6ead79c5f-option4-92620d3b.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-26256236f8",
+      "type": "mcq",
+      "order": 3,
+      "text": "How does Esi feel after Ama is taken?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-004-26256236f8.mp3",
+      "questionObjectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-004-26256236f8.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-004-26256236f8-option1-d6726134.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-004-26256236f8-option2-d3d86274.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-004-26256236f8-option3-fbfd3857.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-004-26256236f8-option4-447a10af.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-26256236f8-option1-d6726134",
+          "text": "Sad",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-004-26256236f8-option1-d6726134.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-26256236f8-option2-d3d86274",
+          "text": "Happy",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-004-26256236f8-option2-d3d86274.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-26256236f8-option3-fbfd3857",
+          "text": "Angry",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-004-26256236f8-option3-fbfd3857.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-26256236f8-option4-447a10af",
+          "text": "Excited",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-004-26256236f8-option4-447a10af.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-8b85e92900",
+      "type": "mcq",
+      "order": 4,
+      "text": "What does Esi get after moving to a big house?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-005-8b85e92900.mp3",
+      "questionObjectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-005-8b85e92900.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-005-8b85e92900-option1-2389dc06.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-005-8b85e92900-option2-1947790e.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-005-8b85e92900-option3-90063d7a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-005-8b85e92900-option4-d36754c9.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-8b85e92900-option1-2389dc06",
+          "text": "New clothes and toys",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-005-8b85e92900-option1-2389dc06.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-8b85e92900-option2-1947790e",
+          "text": "A new job",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-005-8b85e92900-option2-1947790e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-8b85e92900-option3-90063d7a",
+          "text": "A new school",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-005-8b85e92900-option3-90063d7a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-8b85e92900-option4-d36754c9",
+          "text": "A new friend",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-005-8b85e92900-option4-d36754c9.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-11b8112dbc",
+      "type": "mcq",
+      "order": 5,
+      "text": "How do Ama and Esi feel when they meet again?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-006-11b8112dbc.mp3",
+      "questionObjectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-006-11b8112dbc.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-006-11b8112dbc-option1-cb4c6c4f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-006-11b8112dbc-option2-362def7a.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-006-11b8112dbc-option3-ef9ce012.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-006-11b8112dbc-option4-89e2c843.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-11b8112dbc-option1-cb4c6c4f",
+          "text": "Happy",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-006-11b8112dbc-option1-cb4c6c4f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-11b8112dbc-option2-362def7a",
+          "text": "Angry",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-006-11b8112dbc-option2-362def7a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-11b8112dbc-option3-ef9ce012",
+          "text": "Scared",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-006-11b8112dbc-option3-ef9ce012.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-11b8112dbc-option4-89e2c843",
+          "text": "Bored",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-006-11b8112dbc-option4-89e2c843.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-c59c50941e",
+      "type": "mcq",
+      "order": 6,
+      "text": "What does Esi find one day?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-007-c59c50941e.mp3",
+      "questionObjectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-007-c59c50941e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-007-c59c50941e-option1-e7af043a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-007-c59c50941e-option2-4f240aca.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-007-c59c50941e-option3-042da11e.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-007-c59c50941e-option4-0c207843.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-c59c50941e-option1-e7af043a",
+          "text": "A letter from Ama",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-007-c59c50941e-option1-e7af043a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-c59c50941e-option2-4f240aca",
+          "text": "A new toy",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-007-c59c50941e-option2-4f240aca.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-c59c50941e-option3-042da11e",
+          "text": "A new dress",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-007-c59c50941e-option3-042da11e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-c59c50941e-option4-0c207843",
+          "text": "A photo of Ama",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-007-c59c50941e-option4-0c207843.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-2e71536207",
+      "type": "mcq",
+      "order": 7,
+      "text": "What happens to Ama?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-008-2e71536207.mp3",
+      "questionObjectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-008-2e71536207.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-008-2e71536207-option1-07e4175f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-008-2e71536207-option2-83af24be.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-008-2e71536207-option3-bb699f38.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-008-2e71536207-option4-98863c05.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-2e71536207-option1-07e4175f",
+          "text": "She is sold as a slave",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-008-2e71536207-option1-07e4175f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-2e71536207-option2-83af24be",
+          "text": "She goes to school",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-008-2e71536207-option2-83af24be.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-2e71536207-option3-bb699f38",
+          "text": "She gets married",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-008-2e71536207-option3-bb699f38.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-2e71536207-option4-98863c05",
+          "text": "She moves to a big house",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-008-2e71536207-option4-98863c05.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-8c065d3df1",
+      "type": "mcq",
+      "order": 8,
+      "text": "Who are Ama and Esi?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-009-8c065d3df1.mp3",
+      "questionObjectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-009-8c065d3df1.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-009-8c065d3df1-option1-93c74d48.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-009-8c065d3df1-option2-f1edd1cc.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-009-8c065d3df1-option3-e8de95a8.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-009-8c065d3df1-option4-956bc31f.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-8c065d3df1-option1-93c74d48",
+          "text": "Sisters",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-009-8c065d3df1-option1-93c74d48.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-8c065d3df1-option2-f1edd1cc",
+          "text": "Friends",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-009-8c065d3df1-option2-f1edd1cc.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-8c065d3df1-option3-e8de95a8",
+          "text": "Cousins",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-009-8c065d3df1-option3-e8de95a8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-8c065d3df1-option4-956bc31f",
+          "text": "Neighbors",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-009-8c065d3df1-option4-956bc31f.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-30917c005a",
+      "type": "mcq",
+      "order": 9,
+      "text": "Who is older?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-010-30917c005a.mp3",
+      "questionObjectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-010-30917c005a.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-010-30917c005a-option1-f8d404c7.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-010-30917c005a-option2-3e45248e.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-010-30917c005a-option3-d60113ba.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-010-30917c005a-option4-6f157456.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-30917c005a-option1-f8d404c7",
+          "text": "Ama",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-010-30917c005a-option1-f8d404c7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-30917c005a-option2-3e45248e",
+          "text": "Esi",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-010-30917c005a-option2-3e45248e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-30917c005a-option3-d60113ba",
+          "text": "Both are the same age",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-010-30917c005a-option3-d60113ba.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-30917c005a-option4-6f157456",
+          "text": "Not mentioned",
+          "objectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/mcq-010-30917c005a-option4-6f157456.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-6c6390cbc6",
+      "type": "saq",
+      "order": 10,
+      "text": "Where do Ama and Esi live?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/saq-011-6c6390cbc6.mp3",
+      "questionObjectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/saq-011-6c6390cbc6.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-9fba53abe5",
+      "type": "saq",
+      "order": 11,
+      "text": "Who is older, Ama or Esi?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/saq-012-9fba53abe5.mp3",
+      "questionObjectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/saq-012-9fba53abe5.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-a7ce802d6a",
+      "type": "saq",
+      "order": 12,
+      "text": "How does Esi feel when Ama is taken?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/saq-013-a7ce802d6a.mp3",
+      "questionObjectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/saq-013-a7ce802d6a.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-d14a2f0426",
+      "type": "saq",
+      "order": 13,
+      "text": "What happens to Ama?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/saq-014-d14a2f0426.mp3",
+      "questionObjectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/saq-014-d14a2f0426.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-36a3192fee",
+      "type": "saq",
+      "order": 14,
+      "text": "Who are the sisters?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/mIGa1v9cgtJgkXAnmVGy/questions/saq-015-36a3192fee.mp3",
+      "questionObjectPath": "articles/mIGa1v9cgtJgkXAnmVGy/questions/saq-015-36a3192fee.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T16:57:36.143Z"
+}

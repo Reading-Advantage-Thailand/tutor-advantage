@@ -1,0 +1,2055 @@
+{
+  "version": 1,
+  "articleId": "vBZRHhd6lNwTye5af2we",
+  "source": "READING_ADVANTAGE",
+  "title": "The Evolution of Mockumentaries",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-7fd3e8ed46",
+      "order": 0,
+      "text": "Once upon a time, in a small town, there was a filmmaker named Bob.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-001-7fd3e8ed46.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-001-7fd3e8ed46.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-d7ac484c49",
+      "order": 1,
+      "text": "Bob loved making movies.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-002-d7ac484c49.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-002-d7ac484c49.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-81d469b67d",
+      "order": 2,
+      "text": "One day, he had a funny idea.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-003-81d469b67d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-003-81d469b67d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-a0a34a9321",
+      "order": 3,
+      "text": "He wanted to make a movie that looked real but was not.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-004-a0a34a9321.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-004-a0a34a9321.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-4d655c6cfb",
+      "order": 4,
+      "text": "He called it a mockumentary.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-005-4d655c6cfb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-005-4d655c6cfb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-e6b3ef92e2",
+      "order": 5,
+      "text": "Bob's first mockumentary was about a man who thought he was a superhero.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-006-e6b3ef92e2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-006-e6b3ef92e2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-bf12f465eb",
+      "order": 6,
+      "text": "The man wore a cape and tried to fly.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-007-bf12f465eb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-007-bf12f465eb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-58fcbc47b0",
+      "order": 7,
+      "text": "He jumped off a chair and fell.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-008-58fcbc47b0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-008-58fcbc47b0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-194d60d4d0",
+      "order": 8,
+      "text": "People laughed.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-009-194d60d4d0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-009-194d60d4d0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-480bcfbca8",
+      "order": 9,
+      "text": "They knew it was fake, but it was funny.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-010-480bcfbca8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-010-480bcfbca8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-206a8fea74",
+      "order": 10,
+      "text": "Bob's movie became popular.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-011-206a8fea74.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-011-206a8fea74.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-0bb3da4734",
+      "order": 11,
+      "text": "Everyone in the town watched it.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-012-0bb3da4734.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-012-0bb3da4734.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-6c579e23f9",
+      "order": 12,
+      "text": "They loved the silly superhero.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-013-6c579e23f9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-013-6c579e23f9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-e93f89694b",
+      "order": 13,
+      "text": "Bob was happy.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-014-e93f89694b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-014-e93f89694b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-6dff456931",
+      "order": 14,
+      "text": "He decided to make more mockumentaries.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-015-6dff456931.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-015-6dff456931.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-861f5b0a87",
+      "order": 15,
+      "text": "Next, Bob made a movie about a talking dog.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-016-861f5b0a87.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-016-861f5b0a87.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-868beff232",
+      "order": 16,
+      "text": "The dog gave advice to people.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-017-868beff232.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-017-868beff232.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-466c256641",
+      "order": 17,
+      "text": "It told them to eat more vegetables and exercise.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-018-466c256641.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-018-466c256641.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-bcc8397df1",
+      "order": 18,
+      "text": "The dog was very wise.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-019-bcc8397df1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-019-bcc8397df1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-e1a777f557",
+      "order": 19,
+      "text": "People laughed even more.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-020-e1a777f557.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-020-e1a777f557.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-406ab8bfe0",
+      "order": 20,
+      "text": "They knew dogs could not talk, but they enjoyed the joke.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-021-406ab8bfe0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-021-406ab8bfe0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-0cba28a3de",
+      "order": 21,
+      "text": "Bob's movies started to change.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-022-0cba28a3de.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-022-0cba28a3de.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-513a857336",
+      "order": 22,
+      "text": "He made a mockumentary about a family of aliens.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-023-513a857336.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-023-513a857336.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-9ff228e92d",
+      "order": 23,
+      "text": "The aliens tried to live like humans.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-024-9ff228e92d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-024-9ff228e92d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-64faa0aaa6",
+      "order": 24,
+      "text": "They went to school and work.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-025-64faa0aaa6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-025-64faa0aaa6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-00182d189f",
+      "order": 25,
+      "text": "They did not understand human customs.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-026-00182d189f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-026-00182d189f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-bf2861384d",
+      "order": 26,
+      "text": "They made many mistakes.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-027-bf2861384d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-027-bf2861384d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-40591313af",
+      "order": 27,
+      "text": "People laughed at their funny actions.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-028-40591313af.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-028-40591313af.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-23460be2ff",
+      "order": 28,
+      "text": "Bob's mockumentaries became famous.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-029-23460be2ff.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-029-23460be2ff.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-5a2c957a11",
+      "order": 29,
+      "text": "People from other towns came to watch.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-030-5a2c957a11.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-030-5a2c957a11.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-82a6883584",
+      "order": 30,
+      "text": "Bob was now a well-known filmmaker.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-031-82a6883584.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-031-82a6883584.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-70f0102ec1",
+      "order": 31,
+      "text": "He was proud of his work.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-032-70f0102ec1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-032-70f0102ec1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-e630d46313",
+      "order": 32,
+      "text": "One day, Bob had a new idea.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-033-e630d46313.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-033-e630d46313.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-dda58509fe",
+      "order": 33,
+      "text": "He wanted to make a mockumentary about making mockumentaries.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-034-dda58509fe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-034-dda58509fe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-ba71762b68",
+      "order": 34,
+      "text": "He called it \"The Evolution of Mockumentaries.\"",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-035-ba71762b68.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-035-ba71762b68.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-aa8f5ec2e9",
+      "order": 35,
+      "text": "It was a movie about how he made his movies.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-036-aa8f5ec2e9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-036-aa8f5ec2e9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-ce498ead7d",
+      "order": 36,
+      "text": "It showed all the funny moments and mistakes.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-037-ce498ead7d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-037-ce498ead7d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-f770fdcc12",
+      "order": 37,
+      "text": "People laughed the most at this one.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-038-f770fdcc12.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-038-f770fdcc12.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-6b86a4bd5a",
+      "order": 38,
+      "text": "Bob's new movie was a big hit.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-039-6b86a4bd5a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-039-6b86a4bd5a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-dabbe70748",
+      "order": 39,
+      "text": "It was the funniest of all.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-040-dabbe70748.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-040-dabbe70748.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-b16b478ad2",
+      "order": 40,
+      "text": "People loved seeing how the movies were made.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-041-b16b478ad2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-041-b16b478ad2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-1e1308d742",
+      "order": 41,
+      "text": "They laughed at the behind-the-scenes jokes.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-042-1e1308d742.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-042-1e1308d742.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-d850b14ec3",
+      "order": 42,
+      "text": "Bob was very happy.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-043-d850b14ec3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-043-d850b14ec3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-044-816c9b7ff4",
+      "order": 43,
+      "text": "He knew he had created something special.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-044-816c9b7ff4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-044-816c9b7ff4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-045-a33b0ab7b9",
+      "order": 44,
+      "text": "Bob's town became famous for mockumentaries.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-045-a33b0ab7b9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-045-a33b0ab7b9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-046-bb3f4b87de",
+      "order": 45,
+      "text": "Other filmmakers came to learn from Bob.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-046-bb3f4b87de.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-046-bb3f4b87de.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-047-a811fc0116",
+      "order": 46,
+      "text": "They wanted to make funny movies too.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-047-a811fc0116.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-047-a811fc0116.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-048-0eaeb26446",
+      "order": 47,
+      "text": "Bob taught them all he knew.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-048-0eaeb26446.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-048-0eaeb26446.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-049-633401f00b",
+      "order": 48,
+      "text": "He showed them how to make people laugh.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-049-633401f00b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-049-633401f00b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-050-7936968f9b",
+      "order": 49,
+      "text": "In the end, Bob's mockumentaries changed the world of movies.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-050-7936968f9b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-050-7936968f9b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-051-582b9fb89b",
+      "order": 50,
+      "text": "People everywhere enjoyed his funny films.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-051-582b9fb89b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-051-582b9fb89b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-052-2d7a046905",
+      "order": 51,
+      "text": "They laughed and felt happy.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-052-2d7a046905.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-052-2d7a046905.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-053-a7576993fc",
+      "order": 52,
+      "text": "Bob's work was loved by all.",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/sentences/sentence-053-a7576993fc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/sentences/sentence-053-a7576993fc.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-c376e2e320",
+      "order": 0,
+      "text": "mockumentary",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-001-c376e2e320.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-001-c376e2e320.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-bb842cda69",
+      "order": 1,
+      "text": "superhero",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-002-bb842cda69.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-002-bb842cda69.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-89bc0936f7",
+      "order": 2,
+      "text": "cape",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-003-89bc0936f7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-003-89bc0936f7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-2c9a0d3952",
+      "order": 3,
+      "text": "mockumentaries",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-004-2c9a0d3952.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-004-2c9a0d3952.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-687252d565",
+      "order": 4,
+      "text": "customs",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-005-687252d565.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-005-687252d565.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-ec2ca69e34",
+      "order": 5,
+      "text": "behind-the-scenes",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-006-ec2ca69e34.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-006-ec2ca69e34.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-90dba03a7b",
+      "order": 6,
+      "text": "evolution",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-007-90dba03a7b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-007-90dba03a7b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-07398de70d",
+      "order": 7,
+      "text": "filmmaker",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-008-07398de70d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-008-07398de70d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-f4fd2a60dc",
+      "order": 8,
+      "text": "parodies",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-009-f4fd2a60dc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-009-f4fd2a60dc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-248f34f960",
+      "order": 9,
+      "text": "hit",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-010-248f34f960.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-010-248f34f960.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-72867a8980",
+      "order": 10,
+      "text": "once",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-011-72867a8980.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-011-72867a8980.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-8a4a255b01",
+      "order": 11,
+      "text": "upon",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-012-8a4a255b01.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-012-8a4a255b01.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-fe2767449c",
+      "order": 12,
+      "text": "a",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-013-fe2767449c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-013-fe2767449c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-cf228deeb0",
+      "order": 13,
+      "text": "time",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-014-cf228deeb0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-014-cf228deeb0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-02b2807ea1",
+      "order": 14,
+      "text": "in",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-015-02b2807ea1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-015-02b2807ea1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-a53e4153fb",
+      "order": 15,
+      "text": "small",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-016-a53e4153fb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-016-a53e4153fb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-aa07d014e5",
+      "order": 16,
+      "text": "town",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-017-aa07d014e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-017-aa07d014e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-080572ce3d",
+      "order": 17,
+      "text": "there",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-018-080572ce3d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-018-080572ce3d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-ea7127b5cd",
+      "order": 18,
+      "text": "was",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-019-ea7127b5cd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-019-ea7127b5cd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-2cdb476bc3",
+      "order": 19,
+      "text": "named",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-020-2cdb476bc3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-020-2cdb476bc3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-f00cd8a0ac",
+      "order": 20,
+      "text": "bob",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-021-f00cd8a0ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-021-f00cd8a0ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-8bd0b38d9a",
+      "order": 21,
+      "text": "loved",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-022-8bd0b38d9a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-022-8bd0b38d9a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-ea32cdaacd",
+      "order": 22,
+      "text": "making",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-023-ea32cdaacd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-023-ea32cdaacd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-035e7f873f",
+      "order": 23,
+      "text": "movies",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-024-035e7f873f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-024-035e7f873f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-5f42669121",
+      "order": 24,
+      "text": "one",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-025-5f42669121.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-025-5f42669121.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-1ed1fc38ac",
+      "order": 25,
+      "text": "day",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-026-1ed1fc38ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-026-1ed1fc38ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-9f9ad19888",
+      "order": 26,
+      "text": "he",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-027-9f9ad19888.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-027-9f9ad19888.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-8019e68ab5",
+      "order": 27,
+      "text": "had",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-028-8019e68ab5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-028-8019e68ab5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-379c307926",
+      "order": 28,
+      "text": "funny",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-029-379c307926.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-029-379c307926.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-2349f0be00",
+      "order": 29,
+      "text": "idea",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-030-2349f0be00.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-030-2349f0be00.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-6e3aa59ce7",
+      "order": 30,
+      "text": "wanted",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-031-6e3aa59ce7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-031-6e3aa59ce7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-ff7664915b",
+      "order": 31,
+      "text": "to",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-032-ff7664915b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-032-ff7664915b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-52fbb2b407",
+      "order": 32,
+      "text": "make",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-033-52fbb2b407.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-033-52fbb2b407.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-f14c5c2963",
+      "order": 33,
+      "text": "movie",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-034-f14c5c2963.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-034-f14c5c2963.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-c5db322d0d",
+      "order": 34,
+      "text": "that",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-035-c5db322d0d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-035-c5db322d0d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-33bf737f86",
+      "order": 35,
+      "text": "looked",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-036-33bf737f86.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-036-33bf737f86.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-5ee990245e",
+      "order": 36,
+      "text": "real",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-037-5ee990245e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-037-5ee990245e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-8a32639512",
+      "order": 37,
+      "text": "but",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-038-8a32639512.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-038-8a32639512.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-b26b25d250",
+      "order": 38,
+      "text": "not",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-039-b26b25d250.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-039-b26b25d250.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-2395313b44",
+      "order": 39,
+      "text": "called",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-040-2395313b44.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-040-2395313b44.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-d1f17e724c",
+      "order": 40,
+      "text": "it",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-041-d1f17e724c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-041-d1f17e724c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-e8604d98fa",
+      "order": 41,
+      "text": "bob's",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-042-e8604d98fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-042-e8604d98fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-d8b30c6fb3",
+      "order": 42,
+      "text": "first",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-043-d8b30c6fb3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-043-d8b30c6fb3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-b56de57fb0",
+      "order": 43,
+      "text": "about",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-044-b56de57fb0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-044-b56de57fb0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-eea7231a7e",
+      "order": 44,
+      "text": "man",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-045-eea7231a7e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-045-eea7231a7e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-0e36443ec8",
+      "order": 45,
+      "text": "who",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-046-0e36443ec8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-046-0e36443ec8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-abadbc16e1",
+      "order": 46,
+      "text": "thought",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-047-abadbc16e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-047-abadbc16e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-4caf0b8c8d",
+      "order": 47,
+      "text": "the",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-048-4caf0b8c8d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-048-4caf0b8c8d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-d7558be8c8",
+      "order": 48,
+      "text": "wore",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-049-d7558be8c8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-049-d7558be8c8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-afa836d090",
+      "order": 49,
+      "text": "and",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-050-afa836d090.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-050-afa836d090.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-ecbfa4ea94",
+      "order": 50,
+      "text": "tried",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-051-ecbfa4ea94.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-051-ecbfa4ea94.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-d756533950",
+      "order": 51,
+      "text": "fly",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-052-d756533950.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-052-d756533950.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-e6bf081ef3",
+      "order": 52,
+      "text": "jumped",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-053-e6bf081ef3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-053-e6bf081ef3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-bbf1332715",
+      "order": 53,
+      "text": "off",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-054-bbf1332715.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-054-bbf1332715.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-56534a33ec",
+      "order": 54,
+      "text": "chair",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-055-56534a33ec.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-055-56534a33ec.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-73517062fa",
+      "order": 55,
+      "text": "fell",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-056-73517062fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-056-73517062fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-d7123bd4ce",
+      "order": 56,
+      "text": "people",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-057-d7123bd4ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-057-d7123bd4ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-e8371f32c3",
+      "order": 57,
+      "text": "laughed",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-058-e8371f32c3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-058-e8371f32c3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-e399a30837",
+      "order": 58,
+      "text": "they",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-059-e399a30837.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-059-e399a30837.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-e1813be55d",
+      "order": 59,
+      "text": "knew",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-060-e1813be55d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-060-e1813be55d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-e690d18645",
+      "order": 60,
+      "text": "fake",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-061-e690d18645.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-061-e690d18645.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-36d4d74a98",
+      "order": 61,
+      "text": "became",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-062-36d4d74a98.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-062-36d4d74a98.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-d17ce83203",
+      "order": 62,
+      "text": "popular",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-063-d17ce83203.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-063-d17ce83203.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-33fe10bd0b",
+      "order": 63,
+      "text": "everyone",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-064-33fe10bd0b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-064-33fe10bd0b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-f4673d4cb6",
+      "order": 64,
+      "text": "watched",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-065-f4673d4cb6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-065-f4673d4cb6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-ed64b5fd5c",
+      "order": 65,
+      "text": "silly",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-066-ed64b5fd5c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-066-ed64b5fd5c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-4d6744243c",
+      "order": 66,
+      "text": "happy",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-067-4d6744243c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-067-4d6744243c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-931ac3755b",
+      "order": 67,
+      "text": "decided",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-068-931ac3755b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-068-931ac3755b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-d87aa83a09",
+      "order": 68,
+      "text": "more",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-069-d87aa83a09.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-069-d87aa83a09.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-6ef2a6de79",
+      "order": 69,
+      "text": "next",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-070-6ef2a6de79.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-070-6ef2a6de79.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-c6e227c8f5",
+      "order": 70,
+      "text": "made",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-071-c6e227c8f5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-071-c6e227c8f5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-a9ab37a633",
+      "order": 71,
+      "text": "talking",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-072-a9ab37a633.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-072-a9ab37a633.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-350364bb25",
+      "order": 72,
+      "text": "dog",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-073-350364bb25.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-073-350364bb25.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-f942b5dd34",
+      "order": 73,
+      "text": "gave",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-074-f942b5dd34.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-074-f942b5dd34.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-4a560b91e9",
+      "order": 74,
+      "text": "advice",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-075-4a560b91e9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-075-4a560b91e9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-9ce05e4cae",
+      "order": 75,
+      "text": "told",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-076-9ce05e4cae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-076-9ce05e4cae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-f2dca6cd30",
+      "order": 76,
+      "text": "them",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-077-f2dca6cd30.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-077-f2dca6cd30.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-6d6cf2cd82",
+      "order": 77,
+      "text": "eat",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-078-6d6cf2cd82.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-078-6d6cf2cd82.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-4b09f1d2e6",
+      "order": 78,
+      "text": "vegetables",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-079-4b09f1d2e6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-079-4b09f1d2e6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-e1179010d0",
+      "order": 79,
+      "text": "exercise",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-080-e1179010d0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-080-e1179010d0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-c58023ad7f",
+      "order": 80,
+      "text": "very",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-081-c58023ad7f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-081-c58023ad7f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-083192a538",
+      "order": 81,
+      "text": "wise",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-082-083192a538.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-082-083192a538.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-d5d57b488b",
+      "order": 82,
+      "text": "even",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-083-d5d57b488b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-083-d5d57b488b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-60672909d7",
+      "order": 83,
+      "text": "dogs",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-084-60672909d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-084-60672909d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-b6100c75c7",
+      "order": 84,
+      "text": "could",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-085-b6100c75c7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-085-b6100c75c7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-086-59ff757c11",
+      "order": 85,
+      "text": "talk",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-086-59ff757c11.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-086-59ff757c11.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-087-861d25a7df",
+      "order": 86,
+      "text": "enjoyed",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-087-861d25a7df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-087-861d25a7df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-088-e08e063c66",
+      "order": 87,
+      "text": "joke",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-088-e08e063c66.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-088-e08e063c66.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-089-1555826fe7",
+      "order": 88,
+      "text": "started",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-089-1555826fe7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-089-1555826fe7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-090-84c5047507",
+      "order": 89,
+      "text": "change",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-090-84c5047507.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-090-84c5047507.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-091-7beea54da0",
+      "order": 90,
+      "text": "family",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-091-7beea54da0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-091-7beea54da0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-092-280c816426",
+      "order": 91,
+      "text": "of",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-092-280c816426.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-092-280c816426.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-093-070cd45c18",
+      "order": 92,
+      "text": "aliens",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-093-070cd45c18.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-093-070cd45c18.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-094-a5408d6d3c",
+      "order": 93,
+      "text": "live",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-094-a5408d6d3c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-094-a5408d6d3c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-095-ef1b0f8645",
+      "order": 94,
+      "text": "like",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-095-ef1b0f8645.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-095-ef1b0f8645.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-096-12e1322fbf",
+      "order": 95,
+      "text": "humans",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-096-12e1322fbf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-096-12e1322fbf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-097-b947eac642",
+      "order": 96,
+      "text": "went",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-097-b947eac642.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-097-b947eac642.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-098-1701533508",
+      "order": 97,
+      "text": "school",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-098-1701533508.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-098-1701533508.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-099-b95fc37280",
+      "order": 98,
+      "text": "work",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-099-b95fc37280.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-099-b95fc37280.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-100-7f0cbe623a",
+      "order": 99,
+      "text": "did",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-100-7f0cbe623a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-100-7f0cbe623a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-101-0ee9938d0a",
+      "order": 100,
+      "text": "understand",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-101-0ee9938d0a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-101-0ee9938d0a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-102-54f56ad9e7",
+      "order": 101,
+      "text": "human",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-102-54f56ad9e7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-102-54f56ad9e7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-103-78091743fa",
+      "order": 102,
+      "text": "many",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-103-78091743fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-103-78091743fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-104-c8fdf87ef9",
+      "order": 103,
+      "text": "mistakes",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-104-c8fdf87ef9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-104-c8fdf87ef9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-105-2f6b2ce0b4",
+      "order": 104,
+      "text": "at",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-105-2f6b2ce0b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-105-2f6b2ce0b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-106-299195881a",
+      "order": 105,
+      "text": "their",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-106-299195881a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-106-299195881a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-107-1bc68fb637",
+      "order": 106,
+      "text": "actions",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-107-1bc68fb637.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-107-1bc68fb637.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-108-84d20c3b65",
+      "order": 107,
+      "text": "famous",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-108-84d20c3b65.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-108-84d20c3b65.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-109-94251ed18c",
+      "order": 108,
+      "text": "from",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-109-94251ed18c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-109-94251ed18c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-110-9de3559afa",
+      "order": 109,
+      "text": "other",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-110-9de3559afa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-110-9de3559afa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-111-b8d5517c04",
+      "order": 110,
+      "text": "towns",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-111-b8d5517c04.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-111-b8d5517c04.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-112-44086568d9",
+      "order": 111,
+      "text": "came",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-112-44086568d9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-112-44086568d9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-113-e65a95726f",
+      "order": 112,
+      "text": "watch",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-113-e65a95726f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-113-e65a95726f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-114-3bfbc3f3da",
+      "order": 113,
+      "text": "now",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-114-3bfbc3f3da.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-114-3bfbc3f3da.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-115-fd17b7b504",
+      "order": 114,
+      "text": "well-known",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-115-fd17b7b504.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-115-fd17b7b504.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-116-97c84d0908",
+      "order": 115,
+      "text": "proud",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-116-97c84d0908.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-116-97c84d0908.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-117-05220a12e5",
+      "order": 116,
+      "text": "his",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-117-05220a12e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-117-05220a12e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-118-c60f53705f",
+      "order": 117,
+      "text": "new",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-118-c60f53705f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-118-c60f53705f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-119-4ab106d1c6",
+      "order": 118,
+      "text": "how",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-119-4ab106d1c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-119-4ab106d1c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-120-03ab130974",
+      "order": 119,
+      "text": "showed",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-120-03ab130974.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-120-03ab130974.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-121-e64e628fba",
+      "order": 120,
+      "text": "all",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-121-e64e628fba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-121-e64e628fba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-122-b474b43f46",
+      "order": 121,
+      "text": "moments",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-122-b474b43f46.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-122-b474b43f46.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-123-5481eadec7",
+      "order": 122,
+      "text": "most",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-123-5481eadec7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-123-5481eadec7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-124-87da51e67b",
+      "order": 123,
+      "text": "this",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-124-87da51e67b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-124-87da51e67b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-125-ebe2d22d3b",
+      "order": 124,
+      "text": "big",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-125-ebe2d22d3b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-125-ebe2d22d3b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-126-1ed644dfbc",
+      "order": 125,
+      "text": "funniest",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-126-1ed644dfbc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-126-1ed644dfbc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-127-13bfbe266e",
+      "order": 126,
+      "text": "seeing",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-127-13bfbe266e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-127-13bfbe266e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-128-1600dcbb70",
+      "order": 127,
+      "text": "were",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-128-1600dcbb70.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-128-1600dcbb70.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-129-5efc0546ee",
+      "order": 128,
+      "text": "jokes",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-129-5efc0546ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-129-5efc0546ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-130-34118a940f",
+      "order": 129,
+      "text": "created",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-130-34118a940f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-130-34118a940f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-131-fbb3ba7df7",
+      "order": 130,
+      "text": "something",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-131-fbb3ba7df7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-131-fbb3ba7df7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-132-b23c6908b8",
+      "order": 131,
+      "text": "special",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-132-b23c6908b8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-132-b23c6908b8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-133-43609e75cd",
+      "order": 132,
+      "text": "for",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-133-43609e75cd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-133-43609e75cd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-134-0a04de8088",
+      "order": 133,
+      "text": "filmmakers",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-134-0a04de8088.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-134-0a04de8088.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-135-5be9b6a286",
+      "order": 134,
+      "text": "learn",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-135-5be9b6a286.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-135-5be9b6a286.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-136-6d4288b6e1",
+      "order": 135,
+      "text": "too",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-136-6d4288b6e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-136-6d4288b6e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-137-cd35b8b9e2",
+      "order": 136,
+      "text": "taught",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-137-cd35b8b9e2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-137-cd35b8b9e2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-138-07659691df",
+      "order": 137,
+      "text": "laugh",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-138-07659691df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-138-07659691df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-139-edd2cb9f67",
+      "order": 138,
+      "text": "end",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-139-edd2cb9f67.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-139-edd2cb9f67.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-140-101a9441c5",
+      "order": 139,
+      "text": "changed",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-140-101a9441c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-140-101a9441c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-141-9e5dc8356c",
+      "order": 140,
+      "text": "world",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-141-9e5dc8356c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-141-9e5dc8356c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-142-b8e0f88636",
+      "order": 141,
+      "text": "everywhere",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-142-b8e0f88636.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-142-b8e0f88636.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-143-ba9f133089",
+      "order": 142,
+      "text": "films",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-143-ba9f133089.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-143-ba9f133089.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-144-9da6e5d6ce",
+      "order": 143,
+      "text": "felt",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-144-9da6e5d6ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-144-9da6e5d6ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-145-d9c23ccfed",
+      "order": 144,
+      "text": "by",
+      "objectPath": "articles/vBZRHhd6lNwTye5af2we/words/word-145-d9c23ccfed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/words/word-145-d9c23ccfed.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-c3f638f827",
+      "type": "mcq",
+      "order": 0,
+      "text": "What did Bob teach other filmmakers?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-001-c3f638f827.mp3",
+      "questionObjectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-001-c3f638f827.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-001-c3f638f827-option1-b3595803.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-001-c3f638f827-option2-66f38f40.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-001-c3f638f827-option3-93cb4a07.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-001-c3f638f827-option4-450fee15.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-c3f638f827-option1-b3595803",
+          "text": "How to make people laugh",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-001-c3f638f827-option1-b3595803.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-c3f638f827-option2-66f38f40",
+          "text": "How to cook",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-001-c3f638f827-option2-66f38f40.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-c3f638f827-option3-93cb4a07",
+          "text": "How to paint",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-001-c3f638f827-option3-93cb4a07.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-c3f638f827-option4-450fee15",
+          "text": "How to dance",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-001-c3f638f827-option4-450fee15.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-66f2fb1ccd",
+      "type": "mcq",
+      "order": 1,
+      "text": "What was Bob's first mockumentary about?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-002-66f2fb1ccd.mp3",
+      "questionObjectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-002-66f2fb1ccd.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-002-66f2fb1ccd-option1-15c18c71.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-002-66f2fb1ccd-option2-855ca468.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-002-66f2fb1ccd-option3-32d5603a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-002-66f2fb1ccd-option4-155514e4.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-66f2fb1ccd-option1-15c18c71",
+          "text": "A man who thought he was a superhero",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-002-66f2fb1ccd-option1-15c18c71.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-66f2fb1ccd-option2-855ca468",
+          "text": "A talking dog",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-002-66f2fb1ccd-option2-855ca468.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-66f2fb1ccd-option3-32d5603a",
+          "text": "A family of aliens",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-002-66f2fb1ccd-option3-32d5603a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-66f2fb1ccd-option4-155514e4",
+          "text": "A funny teacher",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-002-66f2fb1ccd-option4-155514e4.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-3a2b1f8c3f",
+      "type": "mcq",
+      "order": 2,
+      "text": "What is a mockumentary?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-003-3a2b1f8c3f.mp3",
+      "questionObjectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-003-3a2b1f8c3f.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-003-3a2b1f8c3f-option1-04134895.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-003-3a2b1f8c3f-option2-8e268e29.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-003-3a2b1f8c3f-option3-d56c9c2b.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-003-3a2b1f8c3f-option4-38ce5b6c.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-3a2b1f8c3f-option1-04134895",
+          "text": "A movie that looks real but is not",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-003-3a2b1f8c3f-option1-04134895.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-3a2b1f8c3f-option2-8e268e29",
+          "text": "A movie about animals",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-003-3a2b1f8c3f-option2-8e268e29.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-3a2b1f8c3f-option3-d56c9c2b",
+          "text": "A movie about history",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-003-3a2b1f8c3f-option3-d56c9c2b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-3a2b1f8c3f-option4-38ce5b6c",
+          "text": "A movie about space",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-003-3a2b1f8c3f-option4-38ce5b6c.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-3ac3a10f88",
+      "type": "mcq",
+      "order": 3,
+      "text": "What is Bob's job?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-004-3ac3a10f88.mp3",
+      "questionObjectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-004-3ac3a10f88.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-004-3ac3a10f88-option1-438fddc7.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-004-3ac3a10f88-option2-b948a6d5.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-004-3ac3a10f88-option3-31ff51f2.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-004-3ac3a10f88-option4-c3aa7019.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-3ac3a10f88-option1-438fddc7",
+          "text": "Filmmaker",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-004-3ac3a10f88-option1-438fddc7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-3ac3a10f88-option2-b948a6d5",
+          "text": "Teacher",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-004-3ac3a10f88-option2-b948a6d5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-3ac3a10f88-option3-31ff51f2",
+          "text": "Doctor",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-004-3ac3a10f88-option3-31ff51f2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-3ac3a10f88-option4-c3aa7019",
+          "text": "Chef",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-004-3ac3a10f88-option4-c3aa7019.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-53a7f6f199",
+      "type": "mcq",
+      "order": 4,
+      "text": "What did the aliens in Bob's movie try to do?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-005-53a7f6f199.mp3",
+      "questionObjectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-005-53a7f6f199.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-005-53a7f6f199-option1-7a026e23.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-005-53a7f6f199-option2-b5fda93a.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-005-53a7f6f199-option3-17dd3290.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-005-53a7f6f199-option4-c3f982db.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-53a7f6f199-option1-7a026e23",
+          "text": "Live like humans",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-005-53a7f6f199-option1-7a026e23.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-53a7f6f199-option2-b5fda93a",
+          "text": "Build a spaceship",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-005-53a7f6f199-option2-b5fda93a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-53a7f6f199-option3-17dd3290",
+          "text": "Find treasure",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-005-53a7f6f199-option3-17dd3290.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-53a7f6f199-option4-c3f982db",
+          "text": "Talk to animals",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-005-53a7f6f199-option4-c3f982db.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-7504f03f7f",
+      "type": "mcq",
+      "order": 5,
+      "text": "Why did people laugh at Bob's new movie?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-006-7504f03f7f.mp3",
+      "questionObjectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-006-7504f03f7f.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-006-7504f03f7f-option1-e96e149d.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-006-7504f03f7f-option2-60af78fa.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-006-7504f03f7f-option3-2583fa73.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-006-7504f03f7f-option4-911e1ecd.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-7504f03f7f-option1-e96e149d",
+          "text": "It showed funny moments and mistakes",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-006-7504f03f7f-option1-e96e149d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-7504f03f7f-option2-60af78fa",
+          "text": "It was about a serious topic",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-006-7504f03f7f-option2-60af78fa.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-7504f03f7f-option3-2583fa73",
+          "text": "It was very sad",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-006-7504f03f7f-option3-2583fa73.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-7504f03f7f-option4-911e1ecd",
+          "text": "It was a musical",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-006-7504f03f7f-option4-911e1ecd.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-92f4a1e973",
+      "type": "mcq",
+      "order": 6,
+      "text": "What advice did the talking dog give?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-007-92f4a1e973.mp3",
+      "questionObjectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-007-92f4a1e973.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-007-92f4a1e973-option1-9e76547f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-007-92f4a1e973-option2-a0aaf787.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-007-92f4a1e973-option3-6735dacb.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-007-92f4a1e973-option4-a0b017ad.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-92f4a1e973-option1-9e76547f",
+          "text": "Eat more vegetables and exercise",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-007-92f4a1e973-option1-9e76547f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-92f4a1e973-option2-a0aaf787",
+          "text": "Read more books",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-007-92f4a1e973-option2-a0aaf787.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-92f4a1e973-option3-6735dacb",
+          "text": "Travel the world",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-007-92f4a1e973-option3-6735dacb.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-92f4a1e973-option4-a0b017ad",
+          "text": "Sleep early",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-007-92f4a1e973-option4-a0b017ad.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-d8488229c2",
+      "type": "mcq",
+      "order": 7,
+      "text": "What did the man in Bob's first mockumentary try to do?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-008-d8488229c2.mp3",
+      "questionObjectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-008-d8488229c2.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-008-d8488229c2-option1-694a7a34.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-008-d8488229c2-option2-cbde70f7.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-008-d8488229c2-option3-f73e1dfd.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-008-d8488229c2-option4-f345b280.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-d8488229c2-option1-694a7a34",
+          "text": "Fly",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-008-d8488229c2-option1-694a7a34.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-d8488229c2-option2-cbde70f7",
+          "text": "Swim",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-008-d8488229c2-option2-cbde70f7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-d8488229c2-option3-f73e1dfd",
+          "text": "Run fast",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-008-d8488229c2-option3-f73e1dfd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-d8488229c2-option4-f345b280",
+          "text": "Sing",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-008-d8488229c2-option4-f345b280.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-d2d989c877",
+      "type": "mcq",
+      "order": 8,
+      "text": "What was the title of Bob's new mockumentary?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-009-d2d989c877.mp3",
+      "questionObjectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-009-d2d989c877.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-009-d2d989c877-option1-564bb358.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-009-d2d989c877-option2-43bf201d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-009-d2d989c877-option3-ed286632.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-009-d2d989c877-option4-938c0590.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-d2d989c877-option1-564bb358",
+          "text": "The Evolution of Mockumentaries",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-009-d2d989c877-option1-564bb358.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-d2d989c877-option2-43bf201d",
+          "text": "The Life of a Superhero",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-009-d2d989c877-option2-43bf201d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-d2d989c877-option3-ed286632",
+          "text": "The Talking Dog",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-009-d2d989c877-option3-ed286632.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-d2d989c877-option4-938c0590",
+          "text": "The Alien Family",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-009-d2d989c877-option4-938c0590.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-dc95c7b3ee",
+      "type": "mcq",
+      "order": 9,
+      "text": "What was Bob's new idea for a mockumentary?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-010-dc95c7b3ee.mp3",
+      "questionObjectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-010-dc95c7b3ee.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-010-dc95c7b3ee-option1-8314361c.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-010-dc95c7b3ee-option2-5bb7a656.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-010-dc95c7b3ee-option3-6455b22a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/mcq-010-dc95c7b3ee-option4-d3528cc6.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-dc95c7b3ee-option1-8314361c",
+          "text": "A movie about making mockumentaries",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-010-dc95c7b3ee-option1-8314361c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-dc95c7b3ee-option2-5bb7a656",
+          "text": "A movie about a superhero",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-010-dc95c7b3ee-option2-5bb7a656.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-dc95c7b3ee-option3-6455b22a",
+          "text": "A movie about a talking dog",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-010-dc95c7b3ee-option3-6455b22a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-dc95c7b3ee-option4-d3528cc6",
+          "text": "A movie about aliens",
+          "objectPath": "articles/vBZRHhd6lNwTye5af2we/questions/mcq-010-dc95c7b3ee-option4-d3528cc6.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-7c74823d8b",
+      "type": "saq",
+      "order": 10,
+      "text": "What advice did the talking dog give to people?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/saq-011-7c74823d8b.mp3",
+      "questionObjectPath": "articles/vBZRHhd6lNwTye5af2we/questions/saq-011-7c74823d8b.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-05f12caab8",
+      "type": "saq",
+      "order": 11,
+      "text": "What was Bob's new idea for a mockumentary?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/saq-012-05f12caab8.mp3",
+      "questionObjectPath": "articles/vBZRHhd6lNwTye5af2we/questions/saq-012-05f12caab8.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-3602efec53",
+      "type": "saq",
+      "order": 12,
+      "text": "What was Bob's first mockumentary about?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/saq-013-3602efec53.mp3",
+      "questionObjectPath": "articles/vBZRHhd6lNwTye5af2we/questions/saq-013-3602efec53.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-5933ee663d",
+      "type": "saq",
+      "order": 13,
+      "text": "Why did people laugh at Bob's movies?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/saq-014-5933ee663d.mp3",
+      "questionObjectPath": "articles/vBZRHhd6lNwTye5af2we/questions/saq-014-5933ee663d.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-7ea896fbea",
+      "type": "saq",
+      "order": 14,
+      "text": "What is Bob's job?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vBZRHhd6lNwTye5af2we/questions/saq-015-7ea896fbea.mp3",
+      "questionObjectPath": "articles/vBZRHhd6lNwTye5af2we/questions/saq-015-7ea896fbea.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:15:20.671Z"
+}

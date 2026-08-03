@@ -1,0 +1,1399 @@
+{
+  "version": 1,
+  "articleId": "cmitgx6xd000ts60ew7qdd5a4",
+  "source": "READING_ADVANTAGE",
+  "title": "People and Jobs",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-b1192ea4c0",
+      "order": 0,
+      "text": "Networking is a big word.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-001-b1192ea4c0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-001-b1192ea4c0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-f871d7b132",
+      "order": 1,
+      "text": "The idea is simple.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-002-f871d7b132.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-002-f871d7b132.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-20876ee7ff",
+      "order": 2,
+      "text": "Networking is meeting new people.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-003-20876ee7ff.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-003-20876ee7ff.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-5f1e8fb171",
+      "order": 3,
+      "text": "You meet people for your job.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-004-5f1e8fb171.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-004-5f1e8fb171.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-f81ab91b9e",
+      "order": 4,
+      "text": "These people are connections.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-005-f81ab91b9e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-005-f81ab91b9e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-46dd435c29",
+      "order": 5,
+      "text": "Your connections are a network.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-006-46dd435c29.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-006-46dd435c29.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-f0c439da49",
+      "order": 6,
+      "text": "A network is a group of people.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-007-f0c439da49.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-007-f0c439da49.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-7f49d0609d",
+      "order": 7,
+      "text": "This network is important for your work.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-008-7f49d0609d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-008-7f49d0609d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-8fa6b9c0d2",
+      "order": 8,
+      "text": "Your connections help you.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-009-8fa6b9c0d2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-009-8fa6b9c0d2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-92c755eb61",
+      "order": 9,
+      "text": "They help you find a job.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-010-92c755eb61.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-010-92c755eb61.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-c05ce4c83e",
+      "order": 10,
+      "text": "They help you learn new things.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-011-c05ce4c83e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-011-c05ce4c83e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-50c78284e6",
+      "order": 11,
+      "text": "Today, networking is online.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-012-50c78284e6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-012-50c78284e6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-1b9d002b37",
+      "order": 12,
+      "text": "This is digital networking.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-013-1b9d002b37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-013-1b9d002b37.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-a0c2592c54",
+      "order": 13,
+      "text": "You use a computer or a phone.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-014-a0c2592c54.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-014-a0c2592c54.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-18e444edea",
+      "order": 14,
+      "text": "You use a website.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-015-18e444edea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-015-18e444edea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-ab87923b87",
+      "order": 15,
+      "text": "LinkedIn is a website for jobs.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-016-ab87923b87.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-016-ab87923b87.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-0f1bd930aa",
+      "order": 16,
+      "text": "On the website, you have a profile.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-017-0f1bd930aa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-017-0f1bd930aa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-62e576909e",
+      "order": 17,
+      "text": "A profile is a page about you.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-018-62e576909e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-018-62e576909e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-0cb4b36cfa",
+      "order": 18,
+      "text": "It has your name.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-019-0cb4b36cfa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-019-0cb4b36cfa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-04ccb8dfc0",
+      "order": 19,
+      "text": "It has your picture.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-020-04ccb8dfc0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-020-04ccb8dfc0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-9978c50bac",
+      "order": 20,
+      "text": "It has your job.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-021-9978c50bac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-021-9978c50bac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-faeb778fc1",
+      "order": 21,
+      "text": "Your profile is for other people.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-022-faeb778fc1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-022-faeb778fc1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-b1c78512bc",
+      "order": 22,
+      "text": "They see your profile.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-023-b1c78512bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-023-b1c78512bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-a427cc5062",
+      "order": 23,
+      "text": "You see their profiles.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-024-a427cc5062.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-024-a427cc5062.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-603f4846f8",
+      "order": 24,
+      "text": "You find new people.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-025-603f4846f8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-025-603f4846f8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-6fa37e1e0a",
+      "order": 25,
+      "text": "You connect with them.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-026-6fa37e1e0a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-026-6fa37e1e0a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-82990f6cb3",
+      "order": 26,
+      "text": "You say, 'Hello'.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-027-82990f6cb3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-027-82990f6cb3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-d568612adb",
+      "order": 27,
+      "text": "You ask a question.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-028-d568612adb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-028-d568612adb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-4e863491cf",
+      "order": 28,
+      "text": "'What is your job?'",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-029-4e863491cf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-029-4e863491cf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-78259ab8d7",
+      "order": 29,
+      "text": "'I am a doctor.'",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-030-78259ab8d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-030-78259ab8d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-a51e11f5c1",
+      "order": 30,
+      "text": "'I am a student.'",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-031-a51e11f5c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-031-a51e11f5c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-06891db693",
+      "order": 31,
+      "text": "They ask you questions.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-032-06891db693.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-032-06891db693.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-e33140bef7",
+      "order": 32,
+      "text": "You are now in a network.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-033-e33140bef7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-033-e33140bef7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-c34632a806",
+      "order": 33,
+      "text": "Networking is good.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-034-c34632a806.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-034-c34632a806.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-e581523432",
+      "order": 34,
+      "text": "Your network helps your career.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-035-e581523432.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-035-e581523432.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-1c95f8c7b6",
+      "order": 35,
+      "text": "It is good to have many connections.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-036-1c95f8c7b6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-036-1c95f8c7b6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-760d03a640",
+      "order": 36,
+      "text": "Many connections are many new friends for work.",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-037-760d03a640.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/sentences/sentence-037-760d03a640.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-44067cf0f7",
+      "order": 0,
+      "text": "Networking",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-001-44067cf0f7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-001-44067cf0f7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-e18296bfe1",
+      "order": 1,
+      "text": "Connections",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-002-e18296bfe1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-002-e18296bfe1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-d5d906fe60",
+      "order": 2,
+      "text": "Digital networking",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-003-d5d906fe60.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-003-d5d906fe60.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-cc3e277483",
+      "order": 3,
+      "text": "Profile",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-004-cc3e277483.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-004-cc3e277483.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-5fa68dbedc",
+      "order": 4,
+      "text": "Career",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-005-5fa68dbedc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-005-5fa68dbedc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-952d9536e4",
+      "order": 5,
+      "text": "LinkedIn",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-006-952d9536e4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-006-952d9536e4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-b130480816",
+      "order": 6,
+      "text": "Interact",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-007-b130480816.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-007-b130480816.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-153d40b843",
+      "order": 7,
+      "text": "Platform",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-008-153d40b843.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-008-153d40b843.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-781524e504",
+      "order": 8,
+      "text": "Professional",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-009-781524e504.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-009-781524e504.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-9259c57781",
+      "order": 9,
+      "text": "Context",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-010-9259c57781.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-010-9259c57781.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-580a6f357f",
+      "order": 10,
+      "text": "is",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-011-580a6f357f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-011-580a6f357f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-b154fd7284",
+      "order": 11,
+      "text": "a",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-012-b154fd7284.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-012-b154fd7284.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-a7aa300bf9",
+      "order": 12,
+      "text": "big",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-013-a7aa300bf9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-013-a7aa300bf9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-69146aef6f",
+      "order": 13,
+      "text": "word",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-014-69146aef6f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-014-69146aef6f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-0cb2c21c68",
+      "order": 14,
+      "text": "the",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-015-0cb2c21c68.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-015-0cb2c21c68.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-33d4f8005b",
+      "order": 15,
+      "text": "idea",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-016-33d4f8005b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-016-33d4f8005b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-c9a7af375a",
+      "order": 16,
+      "text": "simple",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-017-c9a7af375a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-017-c9a7af375a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-6ade90db75",
+      "order": 17,
+      "text": "meeting",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-018-6ade90db75.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-018-6ade90db75.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-5bd0c48348",
+      "order": 18,
+      "text": "new",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-019-5bd0c48348.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-019-5bd0c48348.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-08066994a7",
+      "order": 19,
+      "text": "people",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-020-08066994a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-020-08066994a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-d43600e14c",
+      "order": 20,
+      "text": "you",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-021-d43600e14c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-021-d43600e14c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-4ea4a317ca",
+      "order": 21,
+      "text": "meet",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-022-4ea4a317ca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-022-4ea4a317ca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-393b425e78",
+      "order": 22,
+      "text": "for",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-023-393b425e78.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-023-393b425e78.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-cb43e18916",
+      "order": 23,
+      "text": "your",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-024-cb43e18916.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-024-cb43e18916.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-39a01740f3",
+      "order": 24,
+      "text": "job",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-025-39a01740f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-025-39a01740f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-f359e5aa61",
+      "order": 25,
+      "text": "these",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-026-f359e5aa61.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-026-f359e5aa61.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-8af1560a96",
+      "order": 26,
+      "text": "are",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-027-8af1560a96.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-027-8af1560a96.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-ec12a5dc57",
+      "order": 27,
+      "text": "network",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-028-ec12a5dc57.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-028-ec12a5dc57.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-f85cede4da",
+      "order": 28,
+      "text": "group",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-029-f85cede4da.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-029-f85cede4da.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-61822c22a8",
+      "order": 29,
+      "text": "of",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-030-61822c22a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-030-61822c22a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-bac7b7d809",
+      "order": 30,
+      "text": "this",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-031-bac7b7d809.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-031-bac7b7d809.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-5a3843bebb",
+      "order": 31,
+      "text": "important",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-032-5a3843bebb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-032-5a3843bebb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-9a742b1c4d",
+      "order": 32,
+      "text": "work",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-033-9a742b1c4d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-033-9a742b1c4d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-44fa67f56c",
+      "order": 33,
+      "text": "help",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-034-44fa67f56c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-034-44fa67f56c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-72adff12d5",
+      "order": 34,
+      "text": "they",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-035-72adff12d5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-035-72adff12d5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-73ac6db1d2",
+      "order": 35,
+      "text": "find",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-036-73ac6db1d2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-036-73ac6db1d2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-b3cd740b30",
+      "order": 36,
+      "text": "learn",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-037-b3cd740b30.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-037-b3cd740b30.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-25b640a4fa",
+      "order": 37,
+      "text": "things",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-038-25b640a4fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-038-25b640a4fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-953400298f",
+      "order": 38,
+      "text": "today",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-039-953400298f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-039-953400298f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-37bf8e9d1c",
+      "order": 39,
+      "text": "online",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-040-37bf8e9d1c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-040-37bf8e9d1c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-8b1ccaac84",
+      "order": 40,
+      "text": "digital",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-041-8b1ccaac84.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-041-8b1ccaac84.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-cb293f11bb",
+      "order": 41,
+      "text": "use",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-042-cb293f11bb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-042-cb293f11bb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-b349fde14f",
+      "order": 42,
+      "text": "computer",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-043-b349fde14f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-043-b349fde14f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-e56c3c7251",
+      "order": 43,
+      "text": "or",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-044-e56c3c7251.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-044-e56c3c7251.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-10786d9b0e",
+      "order": 44,
+      "text": "phone",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-045-10786d9b0e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-045-10786d9b0e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-357ddbc6e9",
+      "order": 45,
+      "text": "website",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-046-357ddbc6e9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-046-357ddbc6e9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-ef948dcaf9",
+      "order": 46,
+      "text": "jobs",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-047-ef948dcaf9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-047-ef948dcaf9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-e2bdc10be8",
+      "order": 47,
+      "text": "on",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-048-e2bdc10be8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-048-e2bdc10be8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-c34e1fa876",
+      "order": 48,
+      "text": "have",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-049-c34e1fa876.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-049-c34e1fa876.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-014b147037",
+      "order": 49,
+      "text": "page",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-050-014b147037.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-050-014b147037.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-5fd53ccc87",
+      "order": 50,
+      "text": "about",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-051-5fd53ccc87.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-051-5fd53ccc87.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-c19834347e",
+      "order": 51,
+      "text": "it",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-052-c19834347e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-052-c19834347e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-6fafee2ddc",
+      "order": 52,
+      "text": "has",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-053-6fafee2ddc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-053-6fafee2ddc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-1a4173e35e",
+      "order": 53,
+      "text": "name",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-054-1a4173e35e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-054-1a4173e35e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-a1de9f4615",
+      "order": 54,
+      "text": "picture",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-055-a1de9f4615.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-055-a1de9f4615.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-f5782c18b5",
+      "order": 55,
+      "text": "other",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-056-f5782c18b5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-056-f5782c18b5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-3f557dd7df",
+      "order": 56,
+      "text": "see",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-057-3f557dd7df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-057-3f557dd7df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-1ad79c5c36",
+      "order": 57,
+      "text": "their",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-058-1ad79c5c36.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-058-1ad79c5c36.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-2674f457d5",
+      "order": 58,
+      "text": "profiles",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-059-2674f457d5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-059-2674f457d5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-2222cec363",
+      "order": 59,
+      "text": "connect",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-060-2222cec363.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-060-2222cec363.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-57ed73161e",
+      "order": 60,
+      "text": "with",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-061-57ed73161e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-061-57ed73161e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-86b405326d",
+      "order": 61,
+      "text": "them",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-062-86b405326d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-062-86b405326d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-5f44251a59",
+      "order": 62,
+      "text": "say",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-063-5f44251a59.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-063-5f44251a59.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-6bcd15f33e",
+      "order": 63,
+      "text": "hello",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-064-6bcd15f33e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-064-6bcd15f33e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-297a90f003",
+      "order": 64,
+      "text": "ask",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-065-297a90f003.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-065-297a90f003.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-931f0aa1f6",
+      "order": 65,
+      "text": "question",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-066-931f0aa1f6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-066-931f0aa1f6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-9f7734e6b8",
+      "order": 66,
+      "text": "what",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-067-9f7734e6b8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-067-9f7734e6b8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-257ac7780f",
+      "order": 67,
+      "text": "i",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-068-257ac7780f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-068-257ac7780f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-911e3045af",
+      "order": 68,
+      "text": "am",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-069-911e3045af.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-069-911e3045af.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-a14a3aa789",
+      "order": 69,
+      "text": "doctor",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-070-a14a3aa789.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-070-a14a3aa789.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-f551b54399",
+      "order": 70,
+      "text": "student",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-071-f551b54399.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-071-f551b54399.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-4753f8877f",
+      "order": 71,
+      "text": "questions",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-072-4753f8877f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-072-4753f8877f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-d5f39a4c30",
+      "order": 72,
+      "text": "now",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-073-d5f39a4c30.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-073-d5f39a4c30.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-ce78359ce4",
+      "order": 73,
+      "text": "in",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-074-ce78359ce4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-074-ce78359ce4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-186c7d1e8d",
+      "order": 74,
+      "text": "good",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-075-186c7d1e8d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-075-186c7d1e8d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-4ae81505af",
+      "order": 75,
+      "text": "helps",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-076-4ae81505af.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-076-4ae81505af.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-c3a316e6aa",
+      "order": 76,
+      "text": "to",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-077-c3a316e6aa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-077-c3a316e6aa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-c8ef203d10",
+      "order": 77,
+      "text": "many",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-078-c8ef203d10.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-078-c8ef203d10.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-ee5b376e00",
+      "order": 78,
+      "text": "friends",
+      "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/words/word-079-ee5b376e00.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/words/word-079-ee5b376e00.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-43c5e1877e",
+      "type": "mcq",
+      "order": 0,
+      "text": "What is networking?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-001-43c5e1877e.mp3",
+      "questionObjectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-001-43c5e1877e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-001-43c5e1877e-option1-b4c6e0ad.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-001-43c5e1877e-option2-8342afdc.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-001-43c5e1877e-option3-06397f2a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-001-43c5e1877e-option4-764a0a11.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-43c5e1877e-option1-b4c6e0ad",
+          "text": "Reading new books",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-001-43c5e1877e-option1-b4c6e0ad.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-43c5e1877e-option2-8342afdc",
+          "text": "Selling old things",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-001-43c5e1877e-option2-8342afdc.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-43c5e1877e-option3-06397f2a",
+          "text": "Buying new things",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-001-43c5e1877e-option3-06397f2a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-43c5e1877e-option4-764a0a11",
+          "text": "Meeting new people",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-001-43c5e1877e-option4-764a0a11.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-ffc61a6d3e",
+      "type": "mcq",
+      "order": 1,
+      "text": "Why do you meet people?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-002-ffc61a6d3e.mp3",
+      "questionObjectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-002-ffc61a6d3e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-002-ffc61a6d3e-option1-53375465.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-002-ffc61a6d3e-option2-6501b936.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-002-ffc61a6d3e-option3-80f622e0.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-002-ffc61a6d3e-option4-5669b59c.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-ffc61a6d3e-option1-53375465",
+          "text": "For your school",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-002-ffc61a6d3e-option1-53375465.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-ffc61a6d3e-option2-6501b936",
+          "text": "For your hobby",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-002-ffc61a6d3e-option2-6501b936.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-ffc61a6d3e-option3-80f622e0",
+          "text": "For your family",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-002-ffc61a6d3e-option3-80f622e0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-ffc61a6d3e-option4-5669b59c",
+          "text": "For your job",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-002-ffc61a6d3e-option4-5669b59c.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-83e540e147",
+      "type": "mcq",
+      "order": 2,
+      "text": "What are connections?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-003-83e540e147.mp3",
+      "questionObjectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-003-83e540e147.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-003-83e540e147-option1-6511d20f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-003-83e540e147-option2-4ca9b4d7.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-003-83e540e147-option3-d37d41f6.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-003-83e540e147-option4-4ec605b8.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-83e540e147-option1-6511d20f",
+          "text": "People you meet",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-003-83e540e147-option1-6511d20f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-83e540e147-option2-4ca9b4d7",
+          "text": "Things you buy",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-003-83e540e147-option2-4ca9b4d7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-83e540e147-option3-d37d41f6",
+          "text": "Places you visit",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-003-83e540e147-option3-d37d41f6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-83e540e147-option4-4ec605b8",
+          "text": "Games you play",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-003-83e540e147-option4-4ec605b8.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-1d32dc6de4",
+      "type": "mcq",
+      "order": 3,
+      "text": "Where is networking today?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-004-1d32dc6de4.mp3",
+      "questionObjectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-004-1d32dc6de4.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-004-1d32dc6de4-option1-2387a5d0.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-004-1d32dc6de4-option2-9f870299.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-004-1d32dc6de4-option3-c4b823fd.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-004-1d32dc6de4-option4-f526fbad.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-1d32dc6de4-option1-2387a5d0",
+          "text": "At the library",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-004-1d32dc6de4-option1-2387a5d0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-1d32dc6de4-option2-9f870299",
+          "text": "Online",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-004-1d32dc6de4-option2-9f870299.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-1d32dc6de4-option3-c4b823fd",
+          "text": "At the store",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-004-1d32dc6de4-option3-c4b823fd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-1d32dc6de4-option4-f526fbad",
+          "text": "At the park",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-004-1d32dc6de4-option4-f526fbad.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-1c8525cf60",
+      "type": "mcq",
+      "order": 4,
+      "text": "What is LinkedIn?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-005-1c8525cf60.mp3",
+      "questionObjectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-005-1c8525cf60.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-005-1c8525cf60-option1-195c9e42.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-005-1c8525cf60-option2-98dc4627.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-005-1c8525cf60-option3-2a4c475d.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-005-1c8525cf60-option4-c92a7f54.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-1c8525cf60-option1-195c9e42",
+          "text": "A song for fun",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-005-1c8525cf60-option1-195c9e42.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-1c8525cf60-option2-98dc4627",
+          "text": "A book for school",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-005-1c8525cf60-option2-98dc4627.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-1c8525cf60-option3-2a4c475d",
+          "text": "A game for kids",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-005-1c8525cf60-option3-2a4c475d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-1c8525cf60-option4-c92a7f54",
+          "text": "A website for jobs",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-005-1c8525cf60-option4-c92a7f54.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-9bbd32fcdd",
+      "type": "mcq",
+      "order": 5,
+      "text": "What is on your profile?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-006-9bbd32fcdd.mp3",
+      "questionObjectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-006-9bbd32fcdd.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-006-9bbd32fcdd-option1-753ace40.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-006-9bbd32fcdd-option2-bddefb6d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-006-9bbd32fcdd-option3-950903a2.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-006-9bbd32fcdd-option4-c6a98c98.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-9bbd32fcdd-option1-753ace40",
+          "text": "Your car",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-006-9bbd32fcdd-option1-753ace40.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-9bbd32fcdd-option2-bddefb6d",
+          "text": "Your food",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-006-9bbd32fcdd-option2-bddefb6d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-9bbd32fcdd-option3-950903a2",
+          "text": "Your name",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-006-9bbd32fcdd-option3-950903a2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-9bbd32fcdd-option4-c6a98c98",
+          "text": "Your house",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-006-9bbd32fcdd-option4-c6a98c98.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-99ae63558f",
+      "type": "mcq",
+      "order": 6,
+      "text": "Who sees your profile?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-007-99ae63558f.mp3",
+      "questionObjectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-007-99ae63558f.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-007-99ae63558f-option1-e8276f82.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-007-99ae63558f-option2-04a2d017.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-007-99ae63558f-option3-92c6f9da.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-007-99ae63558f-option4-21a993ee.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-99ae63558f-option1-e8276f82",
+          "text": "Your toys",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-007-99ae63558f-option1-e8276f82.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-99ae63558f-option2-04a2d017",
+          "text": "Your pet",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-007-99ae63558f-option2-04a2d017.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-99ae63558f-option3-92c6f9da",
+          "text": "Other people",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-007-99ae63558f-option3-92c6f9da.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-99ae63558f-option4-21a993ee",
+          "text": "Your books",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-007-99ae63558f-option4-21a993ee.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-227c7c3990",
+      "type": "mcq",
+      "order": 7,
+      "text": "What do you say to new people?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-008-227c7c3990.mp3",
+      "questionObjectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-008-227c7c3990.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-008-227c7c3990-option1-ab783ea2.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-008-227c7c3990-option2-778bb4f2.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-008-227c7c3990-option3-5e99e407.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-008-227c7c3990-option4-c7d7f084.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-227c7c3990-option1-ab783ea2",
+          "text": "'Hello'",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-008-227c7c3990-option1-ab783ea2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-227c7c3990-option2-778bb4f2",
+          "text": "'Goodbye'",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-008-227c7c3990-option2-778bb4f2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-227c7c3990-option3-5e99e407",
+          "text": "'Thank you'",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-008-227c7c3990-option3-5e99e407.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-227c7c3990-option4-c7d7f084",
+          "text": "'I'm sorry'",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-008-227c7c3990-option4-c7d7f084.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-1e8df669c5",
+      "type": "mcq",
+      "order": 8,
+      "text": "What do you ask people?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-009-1e8df669c5.mp3",
+      "questionObjectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-009-1e8df669c5.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-009-1e8df669c5-option1-58a15bfe.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-009-1e8df669c5-option2-c291334a.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-009-1e8df669c5-option3-445ec4a4.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-009-1e8df669c5-option4-d7a16d42.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-1e8df669c5-option1-58a15bfe",
+          "text": "'What is your name?'",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-009-1e8df669c5-option1-58a15bfe.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-1e8df669c5-option2-c291334a",
+          "text": "'What is your job?'",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-009-1e8df669c5-option2-c291334a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-1e8df669c5-option3-445ec4a4",
+          "text": "'What is your food?'",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-009-1e8df669c5-option3-445ec4a4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-1e8df669c5-option4-d7a16d42",
+          "text": "'What is your school?'",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-009-1e8df669c5-option4-d7a16d42.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-1537df9116",
+      "type": "mcq",
+      "order": 9,
+      "text": "Is networking good?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-010-1537df9116.mp3",
+      "questionObjectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-010-1537df9116.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-010-1537df9116-option1-e20f8cca.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-010-1537df9116-option2-ab4c5919.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-010-1537df9116-option3-76d12b13.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-010-1537df9116-option4-84a06b08.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-1537df9116-option1-e20f8cca",
+          "text": "Yes",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-010-1537df9116-option1-e20f8cca.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-1537df9116-option2-ab4c5919",
+          "text": "No",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-010-1537df9116-option2-ab4c5919.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-1537df9116-option3-76d12b13",
+          "text": "Maybe",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-010-1537df9116-option3-76d12b13.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-1537df9116-option4-84a06b08",
+          "text": "Sometimes",
+          "objectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/mcq-010-1537df9116-option4-84a06b08.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-d4f7487653",
+      "type": "saq",
+      "order": 10,
+      "text": "What is networking?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/saq-011-d4f7487653.mp3",
+      "questionObjectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/saq-011-d4f7487653.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-93b1dcd2c0",
+      "type": "saq",
+      "order": 11,
+      "text": "Is networking important?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/saq-012-93b1dcd2c0.mp3",
+      "questionObjectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/saq-012-93b1dcd2c0.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-5dc16c601a",
+      "type": "saq",
+      "order": 12,
+      "text": "What is LinkedIn?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/saq-013-5dc16c601a.mp3",
+      "questionObjectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/saq-013-5dc16c601a.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-f53267fbce",
+      "type": "saq",
+      "order": 13,
+      "text": "What do you have on the website?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/saq-014-f53267fbce.mp3",
+      "questionObjectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/saq-014-f53267fbce.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-a98cd1bc42",
+      "type": "saq",
+      "order": 14,
+      "text": "Is networking good?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmitgx6xd000ts60ew7qdd5a4/questions/saq-015-a98cd1bc42.mp3",
+      "questionObjectPath": "articles/cmitgx6xd000ts60ew7qdd5a4/questions/saq-015-a98cd1bc42.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T16:48:13.403Z"
+}

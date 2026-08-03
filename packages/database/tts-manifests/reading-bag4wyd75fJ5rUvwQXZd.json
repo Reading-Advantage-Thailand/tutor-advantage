@@ -1,0 +1,1487 @@
+{
+  "version": 1,
+  "articleId": "bag4wyd75fJ5rUvwQXZd",
+  "source": "READING_ADVANTAGE",
+  "title": "Hiking the Inca Trail to Machu Picchu",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-438bd5a5eb",
+      "order": 0,
+      "text": "Anna loves nature.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-001-438bd5a5eb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-001-438bd5a5eb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-1b1adfe026",
+      "order": 1,
+      "text": "She loves to hike.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-002-1b1adfe026.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-002-1b1adfe026.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-1116355e9d",
+      "order": 2,
+      "text": "One day, she goes to Peru.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-003-1116355e9d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-003-1116355e9d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-3b40ecb540",
+      "order": 3,
+      "text": "She wants to hike the Inca Trail.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-004-3b40ecb540.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-004-3b40ecb540.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-07aa9743d9",
+      "order": 4,
+      "text": "The trail is very old.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-005-07aa9743d9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-005-07aa9743d9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-073494100a",
+      "order": 5,
+      "text": "It is in the mountains.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-006-073494100a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-006-073494100a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-74e44d8d6e",
+      "order": 6,
+      "text": "Anna starts her hike.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-007-74e44d8d6e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-007-74e44d8d6e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-149b582ece",
+      "order": 7,
+      "text": "She sees big trees.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-008-149b582ece.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-008-149b582ece.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-051149c7bf",
+      "order": 8,
+      "text": "She sees green plants.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-009-051149c7bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-009-051149c7bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-daf81989bd",
+      "order": 9,
+      "text": "She hears birds sing.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-010-daf81989bd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-010-daf81989bd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-19bfd610b6",
+      "order": 10,
+      "text": "The air is fresh.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-011-19bfd610b6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-011-19bfd610b6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-65a28e124d",
+      "order": 11,
+      "text": "Anna feels happy.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-012-65a28e124d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-012-65a28e124d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-ed867d252e",
+      "order": 12,
+      "text": "She walks for many hours.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-013-ed867d252e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-013-ed867d252e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-d052aec7f8",
+      "order": 13,
+      "text": "She sees old ruins.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-014-d052aec7f8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-014-d052aec7f8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-c6aabf1802",
+      "order": 14,
+      "text": "The ruins are from the Inca people.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-015-c6aabf1802.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-015-c6aabf1802.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-78d3ea0a83",
+      "order": 15,
+      "text": "They are very old.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-016-78d3ea0a83.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-016-78d3ea0a83.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-cdde93db83",
+      "order": 16,
+      "text": "Anna takes many photos.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-017-cdde93db83.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-017-cdde93db83.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-2c6056a939",
+      "order": 17,
+      "text": "She loves the old stones.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-018-2c6056a939.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-018-2c6056a939.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-93607268b1",
+      "order": 18,
+      "text": "She loves the history.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-019-93607268b1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-019-93607268b1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-fcd289465d",
+      "order": 19,
+      "text": "She walks more.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-020-fcd289465d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-020-fcd289465d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-72c704b45d",
+      "order": 20,
+      "text": "She sees a river.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-021-72c704b45d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-021-72c704b45d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-8b63d83653",
+      "order": 21,
+      "text": "The water is clear.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-022-8b63d83653.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-022-8b63d83653.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-408183b7b2",
+      "order": 22,
+      "text": "She drinks some water.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-023-408183b7b2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-023-408183b7b2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-4fae24f955",
+      "order": 23,
+      "text": "It is cold and good.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-024-4fae24f955.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-024-4fae24f955.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-1a9f566d1b",
+      "order": 24,
+      "text": "Anna walks up a hill.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-025-1a9f566d1b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-025-1a9f566d1b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-cee8f88066",
+      "order": 25,
+      "text": "She is tired.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-026-cee8f88066.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-026-cee8f88066.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-015d1c6520",
+      "order": 26,
+      "text": "But she is excited.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-027-015d1c6520.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-027-015d1c6520.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-02db09ed3a",
+      "order": 27,
+      "text": "She wants to see Machu Picchu.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-028-02db09ed3a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-028-02db09ed3a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-c0ee46ff88",
+      "order": 28,
+      "text": "She walks and walks.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-029-c0ee46ff88.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-029-c0ee46ff88.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-6d6d517369",
+      "order": 29,
+      "text": "Finally, she sees it.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-030-6d6d517369.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-030-6d6d517369.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-9ea4eae246",
+      "order": 30,
+      "text": "Machu Picchu is big.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-031-9ea4eae246.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-031-9ea4eae246.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-54af41c087",
+      "order": 31,
+      "text": "It is very beautiful.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-032-54af41c087.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-032-54af41c087.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-b6f316ec19",
+      "order": 32,
+      "text": "Anna feels amazed.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-033-b6f316ec19.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-033-b6f316ec19.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-8284b102d4",
+      "order": 33,
+      "text": "She takes more photos.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-034-8284b102d4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-034-8284b102d4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-4cf3b142cc",
+      "order": 34,
+      "text": "She sits and rests.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-035-4cf3b142cc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-035-4cf3b142cc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-8132beb948",
+      "order": 35,
+      "text": "She looks at the view.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-036-8132beb948.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-036-8132beb948.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-c7655248f8",
+      "order": 36,
+      "text": "The mountains are high.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-037-c7655248f8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-037-c7655248f8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-703dc90db0",
+      "order": 37,
+      "text": "The sky is blue.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-038-703dc90db0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-038-703dc90db0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-3a9b86483d",
+      "order": 38,
+      "text": "Anna feels peace.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-039-3a9b86483d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-039-3a9b86483d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-b8657e1aa6",
+      "order": 39,
+      "text": "She loves this place.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-040-b8657e1aa6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-040-b8657e1aa6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-b901ed429f",
+      "order": 40,
+      "text": "She will never forget this hike.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-041-b901ed429f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-041-b901ed429f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-57a6548088",
+      "order": 41,
+      "text": "It is a special day.",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-042-57a6548088.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/sentences/sentence-042-57a6548088.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-3e54982882",
+      "order": 0,
+      "text": "hike",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-001-3e54982882.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-001-3e54982882.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-32799f5a0f",
+      "order": 1,
+      "text": "Inca Trail",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-002-32799f5a0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-002-32799f5a0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-8c01f53420",
+      "order": 2,
+      "text": "ruins",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-003-8c01f53420.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-003-8c01f53420.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-184f06ff46",
+      "order": 3,
+      "text": "Machu Picchu",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-004-184f06ff46.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-004-184f06ff46.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-73a760c5b0",
+      "order": 4,
+      "text": "amazed",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-005-73a760c5b0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-005-73a760c5b0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-0e37ae696b",
+      "order": 5,
+      "text": "view",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-006-0e37ae696b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-006-0e37ae696b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-78c61fcf8e",
+      "order": 6,
+      "text": "excited",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-007-78c61fcf8e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-007-78c61fcf8e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-103289e975",
+      "order": 7,
+      "text": "special",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-008-103289e975.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-008-103289e975.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-f16afd1269",
+      "order": 8,
+      "text": "history",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-009-f16afd1269.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-009-f16afd1269.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-a48782370e",
+      "order": 9,
+      "text": "peace",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-010-a48782370e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-010-a48782370e.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-3fa532fafe",
+      "order": 10,
+      "text": "anna",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-011-3fa532fafe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-011-3fa532fafe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-a89f97c15b",
+      "order": 11,
+      "text": "loves",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-012-a89f97c15b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-012-a89f97c15b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-8e657a64c0",
+      "order": 12,
+      "text": "nature",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-013-8e657a64c0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-013-8e657a64c0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-664397a4f3",
+      "order": 13,
+      "text": "she",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-014-664397a4f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-014-664397a4f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-b1fd842a98",
+      "order": 14,
+      "text": "to",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-015-b1fd842a98.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-015-b1fd842a98.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-0a52dc2160",
+      "order": 15,
+      "text": "one",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-016-0a52dc2160.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-016-0a52dc2160.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-674edbb216",
+      "order": 16,
+      "text": "day",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-017-674edbb216.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-017-674edbb216.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-dc7ec63075",
+      "order": 17,
+      "text": "goes",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-018-dc7ec63075.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-018-dc7ec63075.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-16d35b591e",
+      "order": 18,
+      "text": "peru",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-019-16d35b591e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-019-16d35b591e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-bfade8cd19",
+      "order": 19,
+      "text": "wants",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-020-bfade8cd19.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-020-bfade8cd19.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-d7146f105d",
+      "order": 20,
+      "text": "the",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-021-d7146f105d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-021-d7146f105d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-d15d0a2cbe",
+      "order": 21,
+      "text": "inca",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-022-d15d0a2cbe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-022-d15d0a2cbe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-6b836ec30d",
+      "order": 22,
+      "text": "trail",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-023-6b836ec30d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-023-6b836ec30d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-b2e477fb40",
+      "order": 23,
+      "text": "is",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-024-b2e477fb40.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-024-b2e477fb40.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-d7aafdeed4",
+      "order": 24,
+      "text": "very",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-025-d7aafdeed4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-025-d7aafdeed4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-148df928ed",
+      "order": 25,
+      "text": "old",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-026-148df928ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-026-148df928ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-427815fab6",
+      "order": 26,
+      "text": "it",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-027-427815fab6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-027-427815fab6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-b917b9eeea",
+      "order": 27,
+      "text": "in",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-028-b917b9eeea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-028-b917b9eeea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-a1f0f45c13",
+      "order": 28,
+      "text": "mountains",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-029-a1f0f45c13.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-029-a1f0f45c13.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-207c98b60f",
+      "order": 29,
+      "text": "starts",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-030-207c98b60f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-030-207c98b60f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-15b509a849",
+      "order": 30,
+      "text": "her",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-031-15b509a849.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-031-15b509a849.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-7d24db4ad7",
+      "order": 31,
+      "text": "sees",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-032-7d24db4ad7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-032-7d24db4ad7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-73856318c8",
+      "order": 32,
+      "text": "big",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-033-73856318c8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-033-73856318c8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-2b51c83b53",
+      "order": 33,
+      "text": "trees",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-034-2b51c83b53.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-034-2b51c83b53.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-4414bf6918",
+      "order": 34,
+      "text": "green",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-035-4414bf6918.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-035-4414bf6918.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-c5d21a2b0d",
+      "order": 35,
+      "text": "plants",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-036-c5d21a2b0d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-036-c5d21a2b0d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-c78bf66fc7",
+      "order": 36,
+      "text": "hears",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-037-c78bf66fc7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-037-c78bf66fc7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-a523b1cae3",
+      "order": 37,
+      "text": "birds",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-038-a523b1cae3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-038-a523b1cae3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-c02982ce46",
+      "order": 38,
+      "text": "sing",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-039-c02982ce46.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-039-c02982ce46.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-319d5b5e2d",
+      "order": 39,
+      "text": "air",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-040-319d5b5e2d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-040-319d5b5e2d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-a8f520867f",
+      "order": 40,
+      "text": "fresh",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-041-a8f520867f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-041-a8f520867f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-419727beee",
+      "order": 41,
+      "text": "feels",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-042-419727beee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-042-419727beee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-0f302b79e2",
+      "order": 42,
+      "text": "happy",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-043-0f302b79e2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-043-0f302b79e2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-aa1862be5c",
+      "order": 43,
+      "text": "walks",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-044-aa1862be5c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-044-aa1862be5c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-0fb035225c",
+      "order": 44,
+      "text": "for",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-045-0fb035225c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-045-0fb035225c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-9be5defffb",
+      "order": 45,
+      "text": "many",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-046-9be5defffb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-046-9be5defffb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-cae73e500b",
+      "order": 46,
+      "text": "hours",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-047-cae73e500b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-047-cae73e500b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-951048b55b",
+      "order": 47,
+      "text": "are",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-048-951048b55b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-048-951048b55b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-91f58d3a9e",
+      "order": 48,
+      "text": "from",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-049-91f58d3a9e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-049-91f58d3a9e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-91ae0e1729",
+      "order": 49,
+      "text": "people",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-050-91ae0e1729.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-050-91ae0e1729.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-9d10b2b41a",
+      "order": 50,
+      "text": "they",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-051-9d10b2b41a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-051-9d10b2b41a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-8cd104e42b",
+      "order": 51,
+      "text": "takes",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-052-8cd104e42b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-052-8cd104e42b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-85fbe37bcb",
+      "order": 52,
+      "text": "photos",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-053-85fbe37bcb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-053-85fbe37bcb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-e77f00ee1f",
+      "order": 53,
+      "text": "stones",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-054-e77f00ee1f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-054-e77f00ee1f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-2f186641fd",
+      "order": 54,
+      "text": "more",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-055-2f186641fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-055-2f186641fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-e55f931615",
+      "order": 55,
+      "text": "a",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-056-e55f931615.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-056-e55f931615.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-a5e8cb0a55",
+      "order": 56,
+      "text": "river",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-057-a5e8cb0a55.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-057-a5e8cb0a55.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-8a35d31d4c",
+      "order": 57,
+      "text": "water",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-058-8a35d31d4c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-058-8a35d31d4c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-38f5ebba85",
+      "order": 58,
+      "text": "clear",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-059-38f5ebba85.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-059-38f5ebba85.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-fcff8f61be",
+      "order": 59,
+      "text": "drinks",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-060-fcff8f61be.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-060-fcff8f61be.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-f0a40a183a",
+      "order": 60,
+      "text": "some",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-061-f0a40a183a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-061-f0a40a183a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-23b898f7df",
+      "order": 61,
+      "text": "cold",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-062-23b898f7df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-062-23b898f7df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-b94c78754b",
+      "order": 62,
+      "text": "and",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-063-b94c78754b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-063-b94c78754b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-fdae040e89",
+      "order": 63,
+      "text": "good",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-064-fdae040e89.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-064-fdae040e89.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-60b9dc2246",
+      "order": 64,
+      "text": "up",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-065-60b9dc2246.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-065-60b9dc2246.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-b0e851a730",
+      "order": 65,
+      "text": "hill",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-066-b0e851a730.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-066-b0e851a730.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-05a48c3f93",
+      "order": 66,
+      "text": "tired",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-067-05a48c3f93.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-067-05a48c3f93.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-074e6ecd74",
+      "order": 67,
+      "text": "but",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-068-074e6ecd74.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-068-074e6ecd74.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-4fc3af3250",
+      "order": 68,
+      "text": "see",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-069-4fc3af3250.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-069-4fc3af3250.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-f450b83745",
+      "order": 69,
+      "text": "machu",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-070-f450b83745.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-070-f450b83745.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-5c5dfd1b81",
+      "order": 70,
+      "text": "picchu",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-071-5c5dfd1b81.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-071-5c5dfd1b81.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-fdca7ff125",
+      "order": 71,
+      "text": "finally",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-072-fdca7ff125.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-072-fdca7ff125.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-e0d2065459",
+      "order": 72,
+      "text": "beautiful",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-073-e0d2065459.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-073-e0d2065459.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-ce25095679",
+      "order": 73,
+      "text": "sits",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-074-ce25095679.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-074-ce25095679.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-679bd3fa2f",
+      "order": 74,
+      "text": "rests",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-075-679bd3fa2f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-075-679bd3fa2f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-ff5ea69418",
+      "order": 75,
+      "text": "looks",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-076-ff5ea69418.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-076-ff5ea69418.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-61d81b171e",
+      "order": 76,
+      "text": "at",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-077-61d81b171e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-077-61d81b171e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-17a59480b0",
+      "order": 77,
+      "text": "high",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-078-17a59480b0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-078-17a59480b0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-a7887174e3",
+      "order": 78,
+      "text": "sky",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-079-a7887174e3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-079-a7887174e3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-a907d191d9",
+      "order": 79,
+      "text": "blue",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-080-a907d191d9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-080-a907d191d9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-6ea5142f73",
+      "order": 80,
+      "text": "this",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-081-6ea5142f73.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-081-6ea5142f73.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-ea227ea144",
+      "order": 81,
+      "text": "place",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-082-ea227ea144.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-082-ea227ea144.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-894e86bf3f",
+      "order": 82,
+      "text": "will",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-083-894e86bf3f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-083-894e86bf3f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-530a99cb0e",
+      "order": 83,
+      "text": "never",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-084-530a99cb0e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-084-530a99cb0e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-91a354ae75",
+      "order": 84,
+      "text": "forget",
+      "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/words/word-085-91a354ae75.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/words/word-085-91a354ae75.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-d2cbfddc49",
+      "type": "mcq",
+      "order": 0,
+      "text": "What does Anna see after walking for many hours?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-001-d2cbfddc49.mp3",
+      "questionObjectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-001-d2cbfddc49.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-001-d2cbfddc49-option1-32848dda.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-001-d2cbfddc49-option2-b9b0a1da.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-001-d2cbfddc49-option3-f40dd998.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-001-d2cbfddc49-option4-4671e943.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-d2cbfddc49-option1-32848dda",
+          "text": "Old ruins",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-001-d2cbfddc49-option1-32848dda.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-d2cbfddc49-option2-b9b0a1da",
+          "text": "New buildings",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-001-d2cbfddc49-option2-b9b0a1da.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-d2cbfddc49-option3-f40dd998",
+          "text": "Big animals",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-001-d2cbfddc49-option3-f40dd998.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-d2cbfddc49-option4-4671e943",
+          "text": "Tall trees",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-001-d2cbfddc49-option4-4671e943.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-49a7121240",
+      "type": "mcq",
+      "order": 1,
+      "text": "What does Anna see on the trail?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-002-49a7121240.mp3",
+      "questionObjectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-002-49a7121240.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-002-49a7121240-option1-9f1b43fb.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-002-49a7121240-option2-43b110a1.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-002-49a7121240-option3-4de09f41.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-002-49a7121240-option4-d2f3a656.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-49a7121240-option1-9f1b43fb",
+          "text": "Big trees",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-002-49a7121240-option1-9f1b43fb.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-49a7121240-option2-43b110a1",
+          "text": "Big buildings",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-002-49a7121240-option2-43b110a1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-49a7121240-option3-4de09f41",
+          "text": "Big cars",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-002-49a7121240-option3-4de09f41.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-49a7121240-option4-d2f3a656",
+          "text": "Big animals",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-002-49a7121240-option4-d2f3a656.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-8c3b6968eb",
+      "type": "mcq",
+      "order": 2,
+      "text": "What color is the sky when Anna sees Machu Picchu?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-003-8c3b6968eb.mp3",
+      "questionObjectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-003-8c3b6968eb.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-003-8c3b6968eb-option1-4ab20032.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-003-8c3b6968eb-option2-c6d7a0cd.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-003-8c3b6968eb-option3-1a059f04.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-003-8c3b6968eb-option4-7eb92daa.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-8c3b6968eb-option1-4ab20032",
+          "text": "Blue",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-003-8c3b6968eb-option1-4ab20032.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-8c3b6968eb-option2-c6d7a0cd",
+          "text": "Red",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-003-8c3b6968eb-option2-c6d7a0cd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-8c3b6968eb-option3-1a059f04",
+          "text": "Green",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-003-8c3b6968eb-option3-1a059f04.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-8c3b6968eb-option4-7eb92daa",
+          "text": "Yellow",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-003-8c3b6968eb-option4-7eb92daa.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-d804023a6b",
+      "type": "mcq",
+      "order": 3,
+      "text": "How does Anna feel when she starts her hike?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-004-d804023a6b.mp3",
+      "questionObjectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-004-d804023a6b.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-004-d804023a6b-option1-cac6c98b.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-004-d804023a6b-option2-df36ab44.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-004-d804023a6b-option3-fbfd3857.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-004-d804023a6b-option4-b8c8d794.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-d804023a6b-option1-cac6c98b",
+          "text": "Happy",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-004-d804023a6b-option1-cac6c98b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-d804023a6b-option2-df36ab44",
+          "text": "Sad",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-004-d804023a6b-option2-df36ab44.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-d804023a6b-option3-fbfd3857",
+          "text": "Angry",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-004-d804023a6b-option3-fbfd3857.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-d804023a6b-option4-b8c8d794",
+          "text": "Scared",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-004-d804023a6b-option4-b8c8d794.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-147b360f81",
+      "type": "mcq",
+      "order": 4,
+      "text": "How does Anna feel when she sees Machu Picchu?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-005-147b360f81.mp3",
+      "questionObjectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-005-147b360f81.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-005-147b360f81-option1-52de97d4.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-005-147b360f81-option2-ea591912.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-005-147b360f81-option3-ecf17e68.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-005-147b360f81-option4-f7c6c000.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-147b360f81-option1-52de97d4",
+          "text": "Amazed",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-005-147b360f81-option1-52de97d4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-147b360f81-option2-ea591912",
+          "text": "Bored",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-005-147b360f81-option2-ea591912.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-147b360f81-option3-ecf17e68",
+          "text": "Angry",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-005-147b360f81-option3-ecf17e68.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-147b360f81-option4-f7c6c000",
+          "text": "Sad",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-005-147b360f81-option4-f7c6c000.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-1cfc54acff",
+      "type": "mcq",
+      "order": 5,
+      "text": "What does Anna love?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-006-1cfc54acff.mp3",
+      "questionObjectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-006-1cfc54acff.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-006-1cfc54acff-option1-19e9c787.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-006-1cfc54acff-option2-61918904.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-006-1cfc54acff-option3-e0e461c0.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-006-1cfc54acff-option4-dd210302.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-1cfc54acff-option1-19e9c787",
+          "text": "Nature",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-006-1cfc54acff-option1-19e9c787.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-1cfc54acff-option2-61918904",
+          "text": "Cars",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-006-1cfc54acff-option2-61918904.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-1cfc54acff-option3-e0e461c0",
+          "text": "Cities",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-006-1cfc54acff-option3-e0e461c0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-1cfc54acff-option4-dd210302",
+          "text": "Books",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-006-1cfc54acff-option4-dd210302.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-94117dad6e",
+      "type": "mcq",
+      "order": 6,
+      "text": "What does Anna drink?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-007-94117dad6e.mp3",
+      "questionObjectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-007-94117dad6e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-007-94117dad6e-option1-275877a2.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-007-94117dad6e-option2-3f997001.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-007-94117dad6e-option3-646499f9.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-007-94117dad6e-option4-8d9745a8.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-94117dad6e-option1-275877a2",
+          "text": "Water",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-007-94117dad6e-option1-275877a2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-94117dad6e-option2-3f997001",
+          "text": "Juice",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-007-94117dad6e-option2-3f997001.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-94117dad6e-option3-646499f9",
+          "text": "Milk",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-007-94117dad6e-option3-646499f9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-94117dad6e-option4-8d9745a8",
+          "text": "Tea",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-007-94117dad6e-option4-8d9745a8.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-2dca9a4f17",
+      "type": "mcq",
+      "order": 7,
+      "text": "What does Anna do at the end of her hike?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-008-2dca9a4f17.mp3",
+      "questionObjectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-008-2dca9a4f17.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-008-2dca9a4f17-option1-9f42defa.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-008-2dca9a4f17-option2-28d4be7c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-008-2dca9a4f17-option3-4b2cee64.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-008-2dca9a4f17-option4-e3bdd75d.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-2dca9a4f17-option1-9f42defa",
+          "text": "Sits and rests",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-008-2dca9a4f17-option1-9f42defa.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-2dca9a4f17-option2-28d4be7c",
+          "text": "Runs away",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-008-2dca9a4f17-option2-28d4be7c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-2dca9a4f17-option3-4b2cee64",
+          "text": "Climbs a tree",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-008-2dca9a4f17-option3-4b2cee64.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-2dca9a4f17-option4-e3bdd75d",
+          "text": "Swims in the river",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-008-2dca9a4f17-option4-e3bdd75d.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-64ba35165c",
+      "type": "mcq",
+      "order": 8,
+      "text": "What does Anna hear?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-009-64ba35165c.mp3",
+      "questionObjectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-009-64ba35165c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-009-64ba35165c-option1-5bd22718.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-009-64ba35165c-option2-1cf43bc0.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-009-64ba35165c-option3-9c8b5fbf.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-009-64ba35165c-option4-76301557.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-64ba35165c-option1-5bd22718",
+          "text": "Birds sing",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-009-64ba35165c-option1-5bd22718.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-64ba35165c-option2-1cf43bc0",
+          "text": "Cars honk",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-009-64ba35165c-option2-1cf43bc0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-64ba35165c-option3-9c8b5fbf",
+          "text": "People talk",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-009-64ba35165c-option3-9c8b5fbf.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-64ba35165c-option4-76301557",
+          "text": "Dogs bark",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-009-64ba35165c-option4-76301557.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-ec6f2bbae8",
+      "type": "mcq",
+      "order": 9,
+      "text": "Where does Anna go to hike?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-010-ec6f2bbae8.mp3",
+      "questionObjectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-010-ec6f2bbae8.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-010-ec6f2bbae8-option1-5f28982a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-010-ec6f2bbae8-option2-53921d90.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-010-ec6f2bbae8-option3-d7a59223.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-010-ec6f2bbae8-option4-2d1e3827.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-ec6f2bbae8-option1-5f28982a",
+          "text": "Peru",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-010-ec6f2bbae8-option1-5f28982a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ec6f2bbae8-option2-53921d90",
+          "text": "Spain",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-010-ec6f2bbae8-option2-53921d90.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ec6f2bbae8-option3-d7a59223",
+          "text": "Italy",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-010-ec6f2bbae8-option3-d7a59223.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ec6f2bbae8-option4-2d1e3827",
+          "text": "France",
+          "objectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/mcq-010-ec6f2bbae8-option4-2d1e3827.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-ae67d2b5c3",
+      "type": "saq",
+      "order": 10,
+      "text": "What does Anna drink from the river?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/saq-011-ae67d2b5c3.mp3",
+      "questionObjectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/saq-011-ae67d2b5c3.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-db4983ef6e",
+      "type": "saq",
+      "order": 11,
+      "text": "How does Anna feel when she sees Machu Picchu?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/saq-012-db4983ef6e.mp3",
+      "questionObjectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/saq-012-db4983ef6e.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-933176b508",
+      "type": "saq",
+      "order": 12,
+      "text": "What color is the sky when Anna looks at the view?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/saq-013-933176b508.mp3",
+      "questionObjectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/saq-013-933176b508.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-746a0f9e31",
+      "type": "saq",
+      "order": 13,
+      "text": "What does Anna see in the mountains?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/saq-014-746a0f9e31.mp3",
+      "questionObjectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/saq-014-746a0f9e31.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-077422782f",
+      "type": "saq",
+      "order": 14,
+      "text": "Where does Anna go to hike?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/bag4wyd75fJ5rUvwQXZd/questions/saq-015-077422782f.mp3",
+      "questionObjectPath": "articles/bag4wyd75fJ5rUvwQXZd/questions/saq-015-077422782f.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T16:53:43.321Z"
+}

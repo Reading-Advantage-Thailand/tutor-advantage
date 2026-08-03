@@ -1,0 +1,7104 @@
+[
+  {
+    "index": 1,
+    "articleId": "The_New_Student",
+    "title": "The New Student",
+    "source": "Primary Workbook (adventures-1.0-a1)",
+    "sentenceCount": 13,
+    "wordCount": 5,
+    "mcqCount": 4,
+    "saqCount": 1,
+    "sentences": [
+      "Today was Mia's first day at her new school.",
+      "She stood at the door of the classroom and felt very nervous.",
+      "She did not know anyone.",
+      "She looked at all the students sitting at their desks and took a deep breath.",
+      "The teacher smiled and said, 'Class, we have a new student.",
+      "Her name is Mia.",
+      "Please make her feel welcome.' A girl named Sara raised her hand.",
+      "'Mia, you can sit next to me!' she said in a friendly voice.",
+      "At lunch, Sara introduced Mia to more friends.",
+      "They talked and laughed together.",
+      "By the end of the day, Mia did not feel nervous anymore.",
+      "She smiled all the way home.",
+      "She could not wait to come back tomorrow."
+    ],
+    "words": [
+      {
+        "vocabulary": "nervous",
+        "definition": {
+          "th": "ประหม่า",
+          "en": "feeling worried or afraid about something"
+        },
+        "translation": "ประหม่า"
+      },
+      {
+        "vocabulary": "classroom",
+        "definition": {
+          "th": "ห้องเรียน",
+          "en": "A room where students learn"
+        },
+        "translation": "ห้องเรียน"
+      },
+      {
+        "vocabulary": "friendly",
+        "definition": {
+          "th": "เป็นกันเอง",
+          "en": "Kind and pleasant."
+        },
+        "translation": "เป็นกันเอง"
+      },
+      {
+        "vocabulary": "introduce",
+        "definition": {
+          "th": "แนะนำตัว",
+          "en": "to tell someone another person's name the first time they meet"
+        },
+        "translation": "แนะนำตัว"
+      },
+      {
+        "vocabulary": "welcome",
+        "definition": {
+          "th": "ยินดีต้อนรับ",
+          "en": "A word used to greet someone in a friendly way."
+        },
+        "translation": "ยินดีต้อนรับ"
+      }
+    ]
+  },
+  {
+    "index": 2,
+    "articleId": "cmptwtxr9000ps601w205rmrk",
+    "title": "The School Garden",
+    "source": "Primary Workbook (adventures-1.0-a1)",
+    "sentenceCount": 12,
+    "wordCount": 5,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "Our school has a special garden.",
+      "Every student helps to grow vegetables and flowers there.",
+      "First, we put seeds into the soil.",
+      "Seeds need good soil, warm sunshine, and clean water to grow.",
+      "Every week, students water the plants.",
+      "They pull out weeds so the plants have room to grow.",
+      "They also check for insects that might eat the leaves.",
+      "Taking care of a garden takes time and patience.",
+      "When the vegetables are ready, the class harvests them together.",
+      "Last month, we picked tomatoes, cucumbers, and green beans.",
+      "We used the vegetables to make a big salad and shared it at lunch.",
+      "Growing your own food is a wonderful feeling!"
+    ],
+    "words": [
+      {
+        "vocabulary": "garden",
+        "definition": {
+          "th": "สวน",
+          "en": "A place outside a house with plants or grass."
+        },
+        "translation": "สวน"
+      },
+      {
+        "vocabulary": "seed",
+        "definition": {
+          "th": "เมล็ดพันธุ์",
+          "en": "A small object produced by a plant that a new plant can grow from."
+        },
+        "translation": "เมล็ดพันธุ์"
+      },
+      {
+        "vocabulary": "soil",
+        "definition": {
+          "th": "ดิน",
+          "en": "The upper layer of earth in which plants grow."
+        },
+        "translation": "ดิน"
+      },
+      {
+        "vocabulary": "water",
+        "definition": {
+          "th": "น้ำ",
+          "en": "A clear liquid for drinking or swimming"
+        },
+        "translation": "น้ำ"
+      },
+      {
+        "vocabulary": "harvest",
+        "definition": {
+          "th": "เก็บเกี่ยว",
+          "en": "To pick and collect crops or vegetables."
+        },
+        "translation": "เก็บเกี่ยว"
+      }
+    ]
+  },
+  {
+    "index": 3,
+    "articleId": "cmgqx8v6602p3t79btatvfjuw",
+    "title": "Pip the Curious Puppy Feels",
+    "source": "Primary Workbook (adventures-1.0-a1)",
+    "sentenceCount": 37,
+    "wordCount": 12,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Pip.",
+      "Pip is a puppy.",
+      "Pip is a good puppy.",
+      "Pip is a happy puppy.",
+      "Pip is curious.",
+      "Pip sees a blue blanket.",
+      "This blanket is big.",
+      "Pip walks on the blanket.",
+      "Pip feels the blanket.",
+      "It is soft.",
+      "This blanket is soft.",
+      "Pip likes soft.",
+      "Pip is very happy.",
+      "Pip sees a red rug.",
+      "This rug is big.",
+      "Pip walks on the rug.",
+      "Pip feels the rug.",
+      "It is rough.",
+      "This rug is rough.",
+      "Pip likes rough.",
+      "Pip sees a yellow ball.",
+      "This ball is small.",
+      "Pip feels the ball.",
+      "It is smooth.",
+      "This ball is smooth.",
+      "Pip likes smooth.",
+      "Pip feels all things.",
+      "Pip likes to feel.",
+      "Pip feels soft things.",
+      "Pip feels rough things.",
+      "Pip feels smooth things.",
+      "This is very good.",
+      "Pip is a curious puppy.",
+      "Pip is a good puppy.",
+      "Pip is very happy.",
+      "This is fun.",
+      "My puppy is happy."
+    ],
+    "words": [
+      {
+        "vocabulary": "puppy",
+        "definition": {
+          "th": "ลูกสุนัข",
+          "en": "A young dog."
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "curious",
+        "definition": {
+          "th": "อยากรู้อยากเห็น",
+          "en": "wanting to know or learn about something"
+        },
+        "translation": "อยากรู้อยากเห็น"
+      },
+      {
+        "vocabulary": "blanket",
+        "definition": {
+          "th": "ผ้าห่ม",
+          "en": "A large piece of woolen or similar material used as a covering on a bed for warmth."
+        },
+        "translation": "ผ้าห่ม"
+      },
+      {
+        "vocabulary": "feels",
+        "definition": {
+          "th": "รู้สึก",
+          "en": "To experience a sensation through touch."
+        },
+        "translation": "รู้สึก"
+      },
+      {
+        "vocabulary": "soft",
+        "definition": {
+          "th": "นุ่ม",
+          "en": "Easy to press or fold; not hard or firm."
+        },
+        "translation": "นุ่ม"
+      },
+      {
+        "vocabulary": "rug",
+        "definition": {
+          "th": "พรม",
+          "en": "A floor covering."
+        },
+        "translation": "พรม"
+      },
+      {
+        "vocabulary": "rough",
+        "definition": {
+          "th": "ขรุขระ",
+          "en": "having an uneven or irregular surface; not smooth or level"
+        },
+        "translation": "ขรุขระ"
+      },
+      {
+        "vocabulary": "yellow",
+        "definition": {
+          "th": "สีเหลือง",
+          "en": "A color like the sun."
+        },
+        "translation": "สีเหลือง"
+      },
+      {
+        "vocabulary": "small",
+        "definition": {
+          "th": "เล็ก",
+          "en": "Little in size."
+        },
+        "translation": "เล็ก"
+      },
+      {
+        "vocabulary": "smooth",
+        "definition": {
+          "th": "เรียบ",
+          "en": "having an even and regular surface; free from perceptible projections or lumps"
+        },
+        "translation": "เรียบ"
+      },
+      {
+        "vocabulary": "things",
+        "definition": {
+          "th": "สิ่งของ",
+          "en": "Objects that one need not name specifically."
+        },
+        "translation": "สิ่งของ"
+      },
+      {
+        "vocabulary": "walks",
+        "definition": {
+          "th": "เดิน",
+          "en": "To move on foot at a regular pace."
+        },
+        "translation": "เดิน"
+      }
+    ]
+  },
+  {
+    "index": 4,
+    "articleId": "cmgqx8v6602p3t79btatvfjuw",
+    "title": "Pip the Curious Puppy Feels",
+    "source": "Primary Workbook (origins-2-a0)",
+    "sentenceCount": 37,
+    "wordCount": 12,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Pip.",
+      "Pip is a puppy.",
+      "Pip is a good puppy.",
+      "Pip is a happy puppy.",
+      "Pip is curious.",
+      "Pip sees a blue blanket.",
+      "This blanket is big.",
+      "Pip walks on the blanket.",
+      "Pip feels the blanket.",
+      "It is soft.",
+      "This blanket is soft.",
+      "Pip likes soft.",
+      "Pip is very happy.",
+      "Pip sees a red rug.",
+      "This rug is big.",
+      "Pip walks on the rug.",
+      "Pip feels the rug.",
+      "It is rough.",
+      "This rug is rough.",
+      "Pip likes rough.",
+      "Pip sees a yellow ball.",
+      "This ball is small.",
+      "Pip feels the ball.",
+      "It is smooth.",
+      "This ball is smooth.",
+      "Pip likes smooth.",
+      "Pip feels all things.",
+      "Pip likes to feel.",
+      "Pip feels soft things.",
+      "Pip feels rough things.",
+      "Pip feels smooth things.",
+      "This is very good.",
+      "Pip is a curious puppy.",
+      "Pip is a good puppy.",
+      "Pip is very happy.",
+      "This is fun.",
+      "My puppy is happy."
+    ],
+    "words": [
+      {
+        "vocabulary": "puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "curious",
+        "definition": {
+          "th": "อยากรู้อยากเห็น"
+        },
+        "translation": "อยากรู้อยากเห็น"
+      },
+      {
+        "vocabulary": "blanket",
+        "definition": {
+          "th": "ผ้าห่ม"
+        },
+        "translation": "ผ้าห่ม"
+      },
+      {
+        "vocabulary": "feels",
+        "definition": {
+          "th": "รู้สึกสัมผัส"
+        },
+        "translation": "รู้สึกสัมผัส"
+      },
+      {
+        "vocabulary": "soft",
+        "definition": {
+          "th": "นุ่ม"
+        },
+        "translation": "นุ่ม"
+      },
+      {
+        "vocabulary": "rug",
+        "definition": {
+          "th": "พรม"
+        },
+        "translation": "พรม"
+      },
+      {
+        "vocabulary": "rough",
+        "definition": {
+          "th": "ขรุขระ"
+        },
+        "translation": "ขรุขระ"
+      },
+      {
+        "vocabulary": "yellow",
+        "definition": {
+          "th": "สีเหลือง"
+        },
+        "translation": "สีเหลือง"
+      },
+      {
+        "vocabulary": "small",
+        "definition": {
+          "th": "เล็ก"
+        },
+        "translation": "เล็ก"
+      },
+      {
+        "vocabulary": "smooth",
+        "definition": {
+          "th": "เรียบ"
+        },
+        "translation": "เรียบ"
+      },
+      {
+        "vocabulary": "things",
+        "definition": {
+          "th": "สิ่งของ"
+        },
+        "translation": "สิ่งของ"
+      },
+      {
+        "vocabulary": "walks",
+        "definition": {
+          "th": "เดิน"
+        },
+        "translation": "เดิน"
+      }
+    ]
+  },
+  {
+    "index": 5,
+    "articleId": "cmgqx5orz02mjt79bwvfnndan",
+    "title": "Pip Sees Food",
+    "source": "Primary Workbook (origins-2-a0)",
+    "sentenceCount": 42,
+    "wordCount": 12,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Pip.",
+      "Pip is a small puppy.",
+      "Pip is happy.",
+      "He sees a farm.",
+      "The farm is big.",
+      "A farmer is here.",
+      "The farmer is nice.",
+      "He is a man.",
+      "He grows food.",
+      "This food is good.",
+      "Pip likes good food.",
+      "A girl is here.",
+      "Her name is Lily.",
+      "Lily is happy.",
+      "She is with Pip.",
+      "Lily sees a garden.",
+      "Pip sees a garden.",
+      "This garden is green.",
+      "Green plants are here.",
+      "The farmer shows a plant.",
+      "This is a carrot plant.",
+      "Carrots are orange.",
+      "This is a tomato plant.",
+      "Tomatoes are red.",
+      "The farmer gives water.",
+      "The sun is hot.",
+      "Plants grow big.",
+      "Lily likes plants.",
+      "Pip likes plants.",
+      "Lily sees a red tomato.",
+      "She eats it.",
+      "This tomato is good.",
+      "Pip sees an orange carrot.",
+      "He eats it.",
+      "This carrot is good.",
+      "Lily is happy.",
+      "Pip is happy.",
+      "The farmer is happy.",
+      "They like the farm.",
+      "The farm is fun.",
+      "Good food is here.",
+      "We like this food."
+    ],
+    "words": [
+      {
+        "vocabulary": "Puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "Farm",
+        "definition": {
+          "th": "ฟาร์ม"
+        },
+        "translation": "ฟาร์ม"
+      },
+      {
+        "vocabulary": "Farmer",
+        "definition": {
+          "th": "เกษตรกร"
+        },
+        "translation": "เกษตรกร"
+      },
+      {
+        "vocabulary": "Grows",
+        "definition": {
+          "th": "ปลูก"
+        },
+        "translation": "ปลูก"
+      },
+      {
+        "vocabulary": "Garden",
+        "definition": {
+          "th": "สวน"
+        },
+        "translation": "สวน"
+      },
+      {
+        "vocabulary": "Plants",
+        "definition": {
+          "th": "พืช"
+        },
+        "translation": "พืช"
+      },
+      {
+        "vocabulary": "Carrot",
+        "definition": {
+          "th": "แครอท"
+        },
+        "translation": "แครอท"
+      },
+      {
+        "vocabulary": "Tomato",
+        "definition": {
+          "th": "มะเขือเทศ"
+        },
+        "translation": "มะเขือเทศ"
+      },
+      {
+        "vocabulary": "Orange",
+        "definition": {
+          "th": "สีส้ม"
+        },
+        "translation": "สีส้ม"
+      },
+      {
+        "vocabulary": "Green",
+        "definition": {
+          "th": "สีเขียว"
+        },
+        "translation": "สีเขียว"
+      },
+      {
+        "vocabulary": "Sun",
+        "definition": {
+          "th": "ดวงอาทิตย์"
+        },
+        "translation": "ดวงอาทิตย์"
+      },
+      {
+        "vocabulary": "Hot",
+        "definition": {
+          "th": "ร้อน"
+        },
+        "translation": "ร้อน"
+      }
+    ]
+  },
+  {
+    "index": 6,
+    "articleId": "cmgqx869w02ogt79bw2io9h8x",
+    "title": "Pip's Happy Place",
+    "source": "Primary Workbook (origins-2-a0)",
+    "sentenceCount": 53,
+    "wordCount": 12,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "Pip is a puppy.",
+      "Pip is brown.",
+      "Pip is small.",
+      "Pip is happy.",
+      "Pip sees a book.",
+      "This book is red.",
+      "This book is big.",
+      "Pip likes this book.",
+      "Pip sees a picture.",
+      "The picture is a cat.",
+      "The cat is black.",
+      "Pip looks at the book.",
+      "Pip likes the book.",
+      "This is fun.",
+      "Pip is happy.",
+      "This is Mom.",
+      "Mom is Pip's Mom.",
+      "Mom is good.",
+      "Mom and Pip walk.",
+      "They walk to a building.",
+      "This building is big.",
+      "It is a library.",
+      "A library is quiet.",
+      "Many books are here.",
+      "Big books are here.",
+      "Small books are here.",
+      "Red books are here.",
+      "Blue books are here.",
+      "Mom is in the library.",
+      "Pip is in the library.",
+      "The library is good.",
+      "It is a quiet place.",
+      "Pip sees many books.",
+      "Pip likes books.",
+      "Mom sits.",
+      "Mom reads a book.",
+      "Mom is quiet.",
+      "Pip sits too.",
+      "Pip is quiet.",
+      "Pip likes this quiet.",
+      "Pip sees a boy.",
+      "He is a friend.",
+      "The boy has a book.",
+      "He reads the book.",
+      "Pip sees a girl.",
+      "She is a friend.",
+      "The girl has a book.",
+      "She reads the book.",
+      "Pip is happy.",
+      "Friends are happy.",
+      "The library is good.",
+      "It is a happy place.",
+      "Pip is very happy."
+    ],
+    "words": [
+      {
+        "vocabulary": "puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "picture",
+        "definition": {
+          "th": "รูปภาพ"
+        },
+        "translation": "รูปภาพ"
+      },
+      {
+        "vocabulary": "building",
+        "definition": {
+          "th": "อาคาร"
+        },
+        "translation": "อาคาร"
+      },
+      {
+        "vocabulary": "library",
+        "definition": {
+          "th": "ห้องสมุด"
+        },
+        "translation": "ห้องสมุด"
+      },
+      {
+        "vocabulary": "quiet",
+        "definition": {
+          "th": "เงียบ"
+        },
+        "translation": "เงียบ"
+      },
+      {
+        "vocabulary": "place",
+        "definition": {
+          "th": "สถานที่"
+        },
+        "translation": "สถานที่"
+      },
+      {
+        "vocabulary": "friend",
+        "definition": {
+          "th": "เพื่อน"
+        },
+        "translation": "เพื่อน"
+      },
+      {
+        "vocabulary": "walk",
+        "definition": {
+          "th": "เดิน"
+        },
+        "translation": "เดิน"
+      },
+      {
+        "vocabulary": "happy",
+        "definition": {
+          "th": "มีความสุข"
+        },
+        "translation": "มีความสุข"
+      },
+      {
+        "vocabulary": "sits",
+        "definition": {
+          "th": "นั่ง"
+        },
+        "translation": "นั่ง"
+      },
+      {
+        "vocabulary": "reads",
+        "definition": {
+          "th": "อ่าน"
+        },
+        "translation": "อ่าน"
+      },
+      {
+        "vocabulary": "many",
+        "definition": {
+          "th": "มากมาย"
+        },
+        "translation": "มากมาย"
+      }
+    ]
+  },
+  {
+    "index": 7,
+    "articleId": "cmgqx6jsj02n6t79bndt5dfz3",
+    "title": "Fun Day at the Beach",
+    "source": "Primary Workbook (origins-2-a0)",
+    "sentenceCount": 37,
+    "wordCount": 10,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Mia.",
+      "She is a girl.",
+      "This is Tom.",
+      "He is a boy.",
+      "This is Pip.",
+      "Pip is a dog.",
+      "They are friends.",
+      "They are at the beach.",
+      "The sun is big.",
+      "The sun is warm.",
+      "This is good sun.",
+      "They see sand.",
+      "Sand is yellow.",
+      "This sand is soft.",
+      "Mia likes sand.",
+      "She plays in sand.",
+      "She builds a castle.",
+      "This castle is big.",
+      "Tom likes sand.",
+      "He plays in sand.",
+      "He builds a castle too.",
+      "This castle is big.",
+      "Pip looks at the castle.",
+      "Pip is happy.",
+      "Pip runs on sand.",
+      "Mia likes water.",
+      "She swims in water.",
+      "The water is blue.",
+      "Tom likes water.",
+      "He swims in water.",
+      "The water is cool.",
+      "Pip likes water.",
+      "Pip runs in water.",
+      "Pip sees a fish.",
+      "This is fun.",
+      "They are happy.",
+      "This is a good day."
+    ],
+    "words": [
+      {
+        "vocabulary": "beach",
+        "definition": {
+          "th": "ชายหาด"
+        },
+        "translation": "ชายหาด"
+      },
+      {
+        "vocabulary": "warm",
+        "definition": {
+          "th": "อบอุ่น"
+        },
+        "translation": "อบอุ่น"
+      },
+      {
+        "vocabulary": "sand",
+        "definition": {
+          "th": "ทราย"
+        },
+        "translation": "ทราย"
+      },
+      {
+        "vocabulary": "soft",
+        "definition": {
+          "th": "นุ่ม"
+        },
+        "translation": "นุ่ม"
+      },
+      {
+        "vocabulary": "builds",
+        "definition": {
+          "th": "สร้าง"
+        },
+        "translation": "สร้าง"
+      },
+      {
+        "vocabulary": "castle",
+        "definition": {
+          "th": "ปราสาท"
+        },
+        "translation": "ปราสาท"
+      },
+      {
+        "vocabulary": "happy",
+        "definition": {
+          "th": "มีความสุข"
+        },
+        "translation": "มีความสุข"
+      },
+      {
+        "vocabulary": "swims",
+        "definition": {
+          "th": "ว่ายน้ำ"
+        },
+        "translation": "ว่ายน้ำ"
+      },
+      {
+        "vocabulary": "cool",
+        "definition": {
+          "th": "เย็นสบาย"
+        },
+        "translation": "เย็นสบาย"
+      },
+      {
+        "vocabulary": "friends",
+        "definition": {
+          "th": "เพื่อนๆ"
+        },
+        "translation": "เพื่อนๆ"
+      }
+    ]
+  },
+  {
+    "index": 8,
+    "articleId": "cmgqx3ase02kmt79bokadq5kq",
+    "title": "A New Ball Game",
+    "source": "Primary Workbook (origins-2-a0)",
+    "sentenceCount": 36,
+    "wordCount": 12,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Lisa.",
+      "Lisa is a girl.",
+      "Lisa is happy.",
+      "Her Aunt comes.",
+      "Her Uncle comes.",
+      "Ben comes.",
+      "Ben is her cousin.",
+      "Ben is a boy.",
+      "Ben is a good boy.",
+      "Lisa likes Ben.",
+      "Ben likes Lisa.",
+      "This is a good day.",
+      "This is Pip.",
+      "Pip is a dog.",
+      "Pip is a small dog.",
+      "Pip is brown.",
+      "Pip is good.",
+      "Lisa has a new game.",
+      "The game is a ball.",
+      "The ball is red.",
+      "The ball is big.",
+      "Ben sees the red ball.",
+      "Pip sees the red ball.",
+      "Everyone sees the red ball.",
+      "Lisa and Ben play.",
+      "They play with the red ball.",
+      "Pip plays too.",
+      "Pip runs fast.",
+      "Ben runs fast.",
+      "Lisa runs fast.",
+      "They are in the park.",
+      "The park is big.",
+      "The game is fun.",
+      "They are happy.",
+      "Pip is happy.",
+      "This is a happy day."
+    ],
+    "words": [
+      {
+        "vocabulary": "Aunt",
+        "definition": {
+          "th": "ป้า/น้า"
+        },
+        "translation": "ป้า/น้า"
+      },
+      {
+        "vocabulary": "Uncle",
+        "definition": {
+          "th": "ลุง/น้า/อา"
+        },
+        "translation": "ลุง/น้า/อา"
+      },
+      {
+        "vocabulary": "Cousin",
+        "definition": {
+          "th": "ลูกพี่ลูกน้อง"
+        },
+        "translation": "ลูกพี่ลูกน้อง"
+      },
+      {
+        "vocabulary": "Everyone",
+        "definition": {
+          "th": "ทุกคน"
+        },
+        "translation": "ทุกคน"
+      },
+      {
+        "vocabulary": "Game",
+        "definition": {
+          "th": "เกม"
+        },
+        "translation": "เกม"
+      },
+      {
+        "vocabulary": "Park",
+        "definition": {
+          "th": "สวนสาธารณะ"
+        },
+        "translation": "สวนสาธารณะ"
+      },
+      {
+        "vocabulary": "Fast",
+        "definition": {
+          "th": "เร็ว"
+        },
+        "translation": "เร็ว"
+      },
+      {
+        "vocabulary": "Fun",
+        "definition": {
+          "th": "สนุก"
+        },
+        "translation": "สนุก"
+      },
+      {
+        "vocabulary": "Happy",
+        "definition": {
+          "th": "มีความสุข"
+        },
+        "translation": "มีความสุข"
+      },
+      {
+        "vocabulary": "Brown",
+        "definition": {
+          "th": "สีน้ำตาล"
+        },
+        "translation": "สีน้ำตาล"
+      },
+      {
+        "vocabulary": "Small",
+        "definition": {
+          "th": "เล็ก"
+        },
+        "translation": "เล็ก"
+      },
+      {
+        "vocabulary": "Ball",
+        "definition": {
+          "th": "ลูกบอล"
+        },
+        "translation": "ลูกบอล"
+      }
+    ]
+  },
+  {
+    "index": 9,
+    "articleId": "cmgqx2jpn02jzt79b3vddpbqg",
+    "title": "Pip and the Book House",
+    "source": "Primary Workbook (origins-2-a0)",
+    "sentenceCount": 40,
+    "wordCount": 15,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "Pip is a puppy.",
+      "Pip is small.",
+      "He is a good puppy.",
+      "Pip likes to walk.",
+      "Pip walks in the park.",
+      "The park is green.",
+      "The park is big.",
+      "Pip sees a big house.",
+      "This is a book house.",
+      "The book house is nice.",
+      "Pip likes this house.",
+      "He walks to the door.",
+      "The door is open.",
+      "The book house is quiet.",
+      "Pip likes quiet places.",
+      "Pip sees many books.",
+      "Books are on a table.",
+      "Books are on a shelf.",
+      "Books are red.",
+      "Books are blue.",
+      "Books are green.",
+      "Pip sees a boy.",
+      "The boy is happy.",
+      "He reads a book.",
+      "Pip sees a girl.",
+      "She also reads.",
+      "Books are good.",
+      "Pip sits on the floor.",
+      "This floor is clean.",
+      "Pip looks at the books.",
+      "A book is red.",
+      "A book is yellow.",
+      "Pip likes books.",
+      "This place is good.",
+      "The boy smiles at Pip.",
+      "The girl smiles at Pip.",
+      "Pip is happy.",
+      "Pip is a happy puppy.",
+      "This book house is fun.",
+      "Reading is fun."
+    ],
+    "words": [
+      {
+        "vocabulary": "puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "park",
+        "definition": {
+          "th": "สวนสาธารณะ"
+        },
+        "translation": "สวนสาธารณะ"
+      },
+      {
+        "vocabulary": "quiet",
+        "definition": {
+          "th": "เงียบ"
+        },
+        "translation": "เงียบ"
+      },
+      {
+        "vocabulary": "shelf",
+        "definition": {
+          "th": "ชั้นวาง"
+        },
+        "translation": "ชั้นวาง"
+      },
+      {
+        "vocabulary": "floor",
+        "definition": {
+          "th": "พื้น"
+        },
+        "translation": "พื้น"
+      },
+      {
+        "vocabulary": "smiles",
+        "definition": {
+          "th": "ยิ้ม"
+        },
+        "translation": "ยิ้ม"
+      },
+      {
+        "vocabulary": "clean",
+        "definition": {
+          "th": "สะอาด"
+        },
+        "translation": "สะอาด"
+      },
+      {
+        "vocabulary": "place",
+        "definition": {
+          "th": "สถานที่"
+        },
+        "translation": "สถานที่"
+      },
+      {
+        "vocabulary": "happy",
+        "definition": {
+          "th": "มีความสุข"
+        },
+        "translation": "มีความสุข"
+      },
+      {
+        "vocabulary": "reading",
+        "definition": {
+          "th": "การอ่าน"
+        },
+        "translation": "การอ่าน"
+      },
+      {
+        "vocabulary": "door",
+        "definition": {
+          "th": "ประตู"
+        },
+        "translation": "ประตู"
+      },
+      {
+        "vocabulary": "table",
+        "definition": {
+          "th": "โต๊ะ"
+        },
+        "translation": "โต๊ะ"
+      },
+      {
+        "vocabulary": "also",
+        "definition": {
+          "th": "ด้วย"
+        },
+        "translation": "ด้วย"
+      },
+      {
+        "vocabulary": "many",
+        "definition": {
+          "th": "มากมาย"
+        },
+        "translation": "มากมาย"
+      },
+      {
+        "vocabulary": "fun",
+        "definition": {
+          "th": "สนุก"
+        },
+        "translation": "สนุก"
+      }
+    ]
+  },
+  {
+    "index": 10,
+    "articleId": "cmgqwqttc02agt79bu70tnn77",
+    "title": "Lily Goes to School",
+    "source": "Primary Workbook (origins-2-a0)",
+    "sentenceCount": 46,
+    "wordCount": 12,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Lily.",
+      "Lily is a girl.",
+      "Lily is happy.",
+      "This is Pip.",
+      "Pip is Lily's puppy.",
+      "Pip is small.",
+      "Pip is brown.",
+      "Lily has new clothes.",
+      "Lily has a new shirt.",
+      "The shirt is blue.",
+      "Lily has a new skirt.",
+      "The skirt is red.",
+      "Lily has new shoes.",
+      "The shoes are white.",
+      "Lily puts on her shirt.",
+      "Lily puts on her skirt.",
+      "Lily puts on her shoes.",
+      "Pip looks at Lily.",
+      "Pip is happy.",
+      "Lily takes her bag.",
+      "Her bag is yellow.",
+      "The bag has a book.",
+      "The book is big.",
+      "Lily says, \"Bye, Pip!\" Pip says, \"Woof!\" Lily goes to school.",
+      "School is big.",
+      "Many children are here.",
+      "This is a boy.",
+      "He has a red shirt.",
+      "This is a girl.",
+      "She has a blue dress.",
+      "They are new friends.",
+      "Lily smiles.",
+      "Her new friends smile.",
+      "They go inside.",
+      "The room is big.",
+      "A teacher is here.",
+      "The teacher is kind.",
+      "Lily sees a red ball.",
+      "Lily plays.",
+      "Friends play.",
+      "They like the red ball.",
+      "Lily is happy.",
+      "Friends are happy.",
+      "School is fun.",
+      "Lily likes school.",
+      "This is a good day."
+    ],
+    "words": [
+      {
+        "vocabulary": "puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "clothes",
+        "definition": {
+          "th": "เสื้อผ้า"
+        },
+        "translation": "เสื้อผ้า"
+      },
+      {
+        "vocabulary": "shirt",
+        "definition": {
+          "th": "เสื้อเชิ้ต"
+        },
+        "translation": "เสื้อเชิ้ต"
+      },
+      {
+        "vocabulary": "skirt",
+        "definition": {
+          "th": "กระโปรง"
+        },
+        "translation": "กระโปรง"
+      },
+      {
+        "vocabulary": "puts on",
+        "definition": {
+          "th": "สวม"
+        },
+        "translation": "สวม"
+      },
+      {
+        "vocabulary": "children",
+        "definition": {
+          "th": "เด็กๆ"
+        },
+        "translation": "เด็กๆ"
+      },
+      {
+        "vocabulary": "friends",
+        "definition": {
+          "th": "เพื่อนๆ"
+        },
+        "translation": "เพื่อนๆ"
+      },
+      {
+        "vocabulary": "smiles",
+        "definition": {
+          "th": "ยิ้ม"
+        },
+        "translation": "ยิ้ม"
+      },
+      {
+        "vocabulary": "inside",
+        "definition": {
+          "th": "ข้างใน"
+        },
+        "translation": "ข้างใน"
+      },
+      {
+        "vocabulary": "teacher",
+        "definition": {
+          "th": "ครู"
+        },
+        "translation": "ครู"
+      },
+      {
+        "vocabulary": "kind",
+        "definition": {
+          "th": "ใจดี"
+        },
+        "translation": "ใจดี"
+      },
+      {
+        "vocabulary": "fun",
+        "definition": {
+          "th": "สนุก"
+        },
+        "translation": "สนุก"
+      }
+    ]
+  },
+  {
+    "index": 11,
+    "articleId": "cmgqwjryb025ct79b7sk7eniv",
+    "title": "Pip at the Big Zoo",
+    "source": "Primary Workbook (origins-2-a0)",
+    "sentenceCount": 33,
+    "wordCount": 12,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Pip.",
+      "Pip is a dog.",
+      "Pip is a happy dog.",
+      "Pip is at the zoo.",
+      "He is at the big zoo.",
+      "Pip sees an animal.",
+      "This is a lion.",
+      "The lion is big.",
+      "The lion is brown.",
+      "Pip likes the lion.",
+      "The lion is a big animal.",
+      "Pip sees a monkey.",
+      "This monkey is small.",
+      "The monkey is brown.",
+      "It is on a tree.",
+      "The monkey is funny.",
+      "Pip likes the monkey.",
+      "Pip sees a green bird.",
+      "The bird is green.",
+      "It is in a cage.",
+      "Pip likes the green bird.",
+      "The bird is pretty.",
+      "Pip sees a zebra.",
+      "This is a zebra.",
+      "The zebra is white.",
+      "It is black.",
+      "The zebra is big.",
+      "Pip sees the big zebra.",
+      "The zoo is fun.",
+      "Pip likes the animals.",
+      "All animals are good.",
+      "Pip is happy.",
+      "My dog Pip is happy."
+    ],
+    "words": [
+      {
+        "vocabulary": "animal",
+        "definition": {
+          "th": "สัตว์"
+        },
+        "translation": "สัตว์"
+      },
+      {
+        "vocabulary": "lion",
+        "definition": {
+          "th": "สิงโต"
+        },
+        "translation": "สิงโต"
+      },
+      {
+        "vocabulary": "monkey",
+        "definition": {
+          "th": "ลิง"
+        },
+        "translation": "ลิง"
+      },
+      {
+        "vocabulary": "funny",
+        "definition": {
+          "th": "ตลก"
+        },
+        "translation": "ตลก"
+      },
+      {
+        "vocabulary": "cage",
+        "definition": {
+          "th": "กรง"
+        },
+        "translation": "กรง"
+      },
+      {
+        "vocabulary": "pretty",
+        "definition": {
+          "th": "สวย"
+        },
+        "translation": "สวย"
+      },
+      {
+        "vocabulary": "zebra",
+        "definition": {
+          "th": "ม้าลาย"
+        },
+        "translation": "ม้าลาย"
+      },
+      {
+        "vocabulary": "brown",
+        "definition": {
+          "th": "สีน้ำตาล"
+        },
+        "translation": "สีน้ำตาล"
+      },
+      {
+        "vocabulary": "green",
+        "definition": {
+          "th": "สีเขียว"
+        },
+        "translation": "สีเขียว"
+      },
+      {
+        "vocabulary": "white",
+        "definition": {
+          "th": "สีขาว"
+        },
+        "translation": "สีขาว"
+      },
+      {
+        "vocabulary": "black",
+        "definition": {
+          "th": "สีดำ"
+        },
+        "translation": "สีดำ"
+      },
+      {
+        "vocabulary": "happy",
+        "definition": {
+          "th": "มีความสุข"
+        },
+        "translation": "มีความสุข"
+      }
+    ]
+  },
+  {
+    "index": 12,
+    "articleId": "cmgqw4k3e01v8t79bvnxhviym",
+    "title": "Pip and Farm Food",
+    "source": "Primary Workbook (origins-2-a0)",
+    "sentenceCount": 37,
+    "wordCount": 10,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Pip.",
+      "Pip is a puppy.",
+      "Pip is a curious puppy.",
+      "This is Lily.",
+      "Lily is a girl.",
+      "Lily and Pip are friends.",
+      "They are at a farm.",
+      "It is a big farm.",
+      "They see a farmer.",
+      "The farmer is a man.",
+      "His name is Ben.",
+      "Ben is nice.",
+      "Ben works on the farm.",
+      "Farmer Ben says, \"Hello.\" Lily says, \"Hello.\" Pip looks at plants.",
+      "Plants are green.",
+      "These are vegetable plants.",
+      "Plants grow food.",
+      "Vegetables are food.",
+      "This is a carrot plant.",
+      "Carrots are orange.",
+      "This is a green plant.",
+      "That is a red plant.",
+      "Farmer Ben grows these plants.",
+      "The sun helps plants.",
+      "Water helps plants.",
+      "Farmer Ben gives Lily a carrot.",
+      "The carrot is orange.",
+      "He gives Pip a carrot.",
+      "Pip likes the carrot.",
+      "Lily likes the carrot.",
+      "This is good food.",
+      "Farmer Ben grows good food.",
+      "The farm food is good.",
+      "Farmer Ben is good.",
+      "Lily and Pip are happy.",
+      "They like the farm.",
+      "They like the farm food."
+    ],
+    "words": [
+      {
+        "vocabulary": "curious",
+        "definition": {
+          "th": "อยากรู้อยากเห็น"
+        },
+        "translation": "อยากรู้อยากเห็น"
+      },
+      {
+        "vocabulary": "puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "farmer",
+        "definition": {
+          "th": "เกษตรกร"
+        },
+        "translation": "เกษตรกร"
+      },
+      {
+        "vocabulary": "vegetable",
+        "definition": {
+          "th": "ผัก"
+        },
+        "translation": "ผัก"
+      },
+      {
+        "vocabulary": "carrot",
+        "definition": {
+          "th": "แครอท"
+        },
+        "translation": "แครอท"
+      },
+      {
+        "vocabulary": "farm",
+        "definition": {
+          "th": "ฟาร์ม"
+        },
+        "translation": "ฟาร์ม"
+      },
+      {
+        "vocabulary": "plants",
+        "definition": {
+          "th": "พืช"
+        },
+        "translation": "พืช"
+      },
+      {
+        "vocabulary": "grow",
+        "definition": {
+          "th": "เติบโต"
+        },
+        "translation": "เติบโต"
+      },
+      {
+        "vocabulary": "works",
+        "definition": {
+          "th": "ทำงาน"
+        },
+        "translation": "ทำงาน"
+      },
+      {
+        "vocabulary": "happy",
+        "definition": {
+          "th": "มีความสุข"
+        },
+        "translation": "มีความสุข"
+      }
+    ]
+  },
+  {
+    "index": 13,
+    "articleId": "cmgqw2xjt01tyt79bpr10b65a",
+    "title": "Pip and the Dark Night",
+    "source": "Primary Workbook (origins-2-a0)",
+    "sentenceCount": 39,
+    "wordCount": 12,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Pip.",
+      "Pip is a small puppy.",
+      "Pip is in the house.",
+      "This is Pip's home.",
+      "The sun is gone.",
+      "Night is here.",
+      "It is dark.",
+      "Very dark.",
+      "Pip is in his bed.",
+      "Pip is quiet.",
+      "Pip sees a big shadow.",
+      "The shadow is big.",
+      "Pip hears a sound.",
+      "The sound is big.",
+      "This is a scary sound.",
+      "Pip is afraid.",
+      "Pip is very afraid.",
+      "Pip is not happy.",
+      "Pip wants mom.",
+      "Pip wants dad.",
+      "Pip is a small puppy.",
+      "This is a bad night.",
+      "Mom is here.",
+      "Dad is here.",
+      "Mom comes to Pip.",
+      "Dad comes to Pip.",
+      "Mom holds Pip.",
+      "This is comfort.",
+      "Dad holds Pip.",
+      "This is comfort.",
+      "Pip is safe.",
+      "Pip is warm.",
+      "Pip is not afraid now.",
+      "Mom says, \"You are brave, Pip.\" Dad says, \"You are brave.\" Pip is brave.",
+      "Pip is happy.",
+      "This is a good night.",
+      "Pip loves Mom.",
+      "Pip loves Dad.",
+      "This is good."
+    ],
+    "words": [
+      {
+        "vocabulary": "shadow",
+        "definition": {
+          "th": "เงา"
+        },
+        "translation": "เงา"
+      },
+      {
+        "vocabulary": "scary",
+        "definition": {
+          "th": "น่ากลัว"
+        },
+        "translation": "น่ากลัว"
+      },
+      {
+        "vocabulary": "afraid",
+        "definition": {
+          "th": "กลัว"
+        },
+        "translation": "กลัว"
+      },
+      {
+        "vocabulary": "comfort",
+        "definition": {
+          "th": "ความสบายใจ"
+        },
+        "translation": "ความสบายใจ"
+      },
+      {
+        "vocabulary": "brave",
+        "definition": {
+          "th": "กล้าหาญ"
+        },
+        "translation": "กล้าหาญ"
+      },
+      {
+        "vocabulary": "quiet",
+        "definition": {
+          "th": "เงียบ"
+        },
+        "translation": "เงียบ"
+      },
+      {
+        "vocabulary": "puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "safe",
+        "definition": {
+          "th": "ปลอดภัย"
+        },
+        "translation": "ปลอดภัย"
+      },
+      {
+        "vocabulary": "warm",
+        "definition": {
+          "th": "อบอุ่น"
+        },
+        "translation": "อบอุ่น"
+      },
+      {
+        "vocabulary": "dark",
+        "definition": {
+          "th": "มืด"
+        },
+        "translation": "มืด"
+      },
+      {
+        "vocabulary": "sound",
+        "definition": {
+          "th": "เสียง"
+        },
+        "translation": "เสียง"
+      },
+      {
+        "vocabulary": "house",
+        "definition": {
+          "th": "บ้าน"
+        },
+        "translation": "บ้าน"
+      }
+    ]
+  },
+  {
+    "index": 14,
+    "articleId": "cmgqw5grp01vvt79bhrv8p6wo",
+    "title": "Pip and the Mud",
+    "source": "Primary Workbook (origins-2-a0)",
+    "sentenceCount": 54,
+    "wordCount": 13,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Pip.",
+      "Pip is a puppy.",
+      "Pip is small.",
+      "Pip is brown.",
+      "This is Tom.",
+      "Tom is a boy.",
+      "Tom is good.",
+      "Pip and Tom are friends.",
+      "They play.",
+      "They play in the park.",
+      "The park is big.",
+      "Tom has a red ball.",
+      "The ball is red.",
+      "Tom throws the red ball.",
+      "Pip runs.",
+      "Pip runs fast.",
+      "Pip likes the red ball.",
+      "Tom likes Pip.",
+      "They are very happy.",
+      "They play and play.",
+      "The park has green grass.",
+      "The park has brown mud.",
+      "Pip runs.",
+      "Pip runs on the grass.",
+      "Pip runs in the mud.",
+      "Oh, no!",
+      "Mud is on Pip.",
+      "Pip is very dirty.",
+      "Tom helps Pip.",
+      "Mud is on Tom.",
+      "Tom's blue shirt is dirty.",
+      "His hands are dirty.",
+      "His face is dirty.",
+      "Tom is sad.",
+      "Pip is sad too.",
+      "This mud is bad.",
+      "Mom is near.",
+      "Mom sees Pip.",
+      "Mom sees Tom.",
+      "Mom says, \"Oh, my!",
+      "This is mud!\" Mom smiles.",
+      "Mom says, \"It is okay.",
+      "Accidents happen.\" Mom has water.",
+      "The water is clean.",
+      "Mom cleans Pip.",
+      "Mom cleans Tom.",
+      "Pip is clean now.",
+      "Tom is clean now.",
+      "Play is fun.",
+      "Mud is okay.",
+      "Accidents happen.",
+      "Tom is happy.",
+      "Pip is happy.",
+      "They are good friends."
+    ],
+    "words": [
+      {
+        "vocabulary": "Accidents happen",
+        "definition": {
+          "th": "อุบัติเหตุเกิดขึ้นได้"
+        },
+        "translation": "อุบัติเหตุเกิดขึ้นได้"
+      },
+      {
+        "vocabulary": "Dirty",
+        "definition": {
+          "th": "สกปรก"
+        },
+        "translation": "สกปรก"
+      },
+      {
+        "vocabulary": "Clean",
+        "definition": {
+          "th": "สะอาด"
+        },
+        "translation": "สะอาด"
+      },
+      {
+        "vocabulary": "Near",
+        "definition": {
+          "th": "ใกล้"
+        },
+        "translation": "ใกล้"
+      },
+      {
+        "vocabulary": "Smiles",
+        "definition": {
+          "th": "ยิ้ม"
+        },
+        "translation": "ยิ้ม"
+      },
+      {
+        "vocabulary": "Grass",
+        "definition": {
+          "th": "หญ้า"
+        },
+        "translation": "หญ้า"
+      },
+      {
+        "vocabulary": "Mud",
+        "definition": {
+          "th": "โคลน"
+        },
+        "translation": "โคลน"
+      },
+      {
+        "vocabulary": "Fast",
+        "definition": {
+          "th": "เร็ว"
+        },
+        "translation": "เร็ว"
+      },
+      {
+        "vocabulary": "Friends",
+        "definition": {
+          "th": "เพื่อนๆ"
+        },
+        "translation": "เพื่อนๆ"
+      },
+      {
+        "vocabulary": "Shirt",
+        "definition": {
+          "th": "เสื้อเชิ้ต"
+        },
+        "translation": "เสื้อเชิ้ต"
+      },
+      {
+        "vocabulary": "Throws",
+        "definition": {
+          "th": "ขว้าง"
+        },
+        "translation": "ขว้าง"
+      },
+      {
+        "vocabulary": "Happy",
+        "definition": {
+          "th": "มีความสุข"
+        },
+        "translation": "มีความสุข"
+      },
+      {
+        "vocabulary": "Park",
+        "definition": {
+          "th": "สวนสาธารณะ"
+        },
+        "translation": "สวนสาธารณะ"
+      }
+    ]
+  },
+  {
+    "index": 15,
+    "articleId": "cmgqwi2v60242t79bum2yj76o",
+    "title": "Pip is Brave",
+    "source": "Primary Workbook (origins-2-a0)",
+    "sentenceCount": 46,
+    "wordCount": 13,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Pip.",
+      "Pip is a puppy.",
+      "Pip is a little puppy.",
+      "Pip is small.",
+      "Pip is brown.",
+      "Pip is in a room.",
+      "The room is dark.",
+      "This room is very dark.",
+      "A big sound.",
+      "That is a big sound.",
+      "Pip hears the sound.",
+      "Pip is not happy.",
+      "Pip is not good.",
+      "Pip feels not good.",
+      "Pip is a little afraid.",
+      "Pip is not brave.",
+      "Mom is here.",
+      "Dad is here.",
+      "Mom sees little Pip.",
+      "Dad sees little Pip.",
+      "Mom comes near Pip.",
+      "Dad comes near Pip.",
+      "Mom sits down.",
+      "Dad sits down.",
+      "Mom pets Pip.",
+      "Dad pets Pip.",
+      "This is my puppy.",
+      "Pip feels Mom's hand.",
+      "Pip feels Dad's hand.",
+      "That is a good hand.",
+      "This is comfort.",
+      "Pip feels comfort.",
+      "Pip feels good.",
+      "This is a good feeling.",
+      "Mom says, \"Good puppy, Pip.\" Dad says, \"Good Pip.\" Pip is good now.",
+      "Pip is happy.",
+      "Mom is happy.",
+      "Dad is happy.",
+      "The family is happy.",
+      "This is a good family.",
+      "Pip loves Mom.",
+      "Pip loves Dad.",
+      "Pip loves family.",
+      "Family loves Pip.",
+      "Pip is a happy puppy.",
+      "Yes, Pip is a brave puppy now."
+    ],
+    "words": [
+      {
+        "vocabulary": "puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "dark",
+        "definition": {
+          "th": "มืด"
+        },
+        "translation": "มืด"
+      },
+      {
+        "vocabulary": "sound",
+        "definition": {
+          "th": "เสียง"
+        },
+        "translation": "เสียง"
+      },
+      {
+        "vocabulary": "afraid",
+        "definition": {
+          "th": "กลัว"
+        },
+        "translation": "กลัว"
+      },
+      {
+        "vocabulary": "brave",
+        "definition": {
+          "th": "กล้าหาญ"
+        },
+        "translation": "กล้าหาญ"
+      },
+      {
+        "vocabulary": "comes near",
+        "definition": {
+          "th": "เข้ามาใกล้"
+        },
+        "translation": "เข้ามาใกล้"
+      },
+      {
+        "vocabulary": "pets",
+        "definition": {
+          "th": "ลูบ"
+        },
+        "translation": "ลูบ"
+      },
+      {
+        "vocabulary": "hand",
+        "definition": {
+          "th": "มือ"
+        },
+        "translation": "มือ"
+      },
+      {
+        "vocabulary": "comfort",
+        "definition": {
+          "th": "ความสบายใจ"
+        },
+        "translation": "ความสบายใจ"
+      },
+      {
+        "vocabulary": "feeling",
+        "definition": {
+          "th": "ความรู้สึก"
+        },
+        "translation": "ความรู้สึก"
+      },
+      {
+        "vocabulary": "family",
+        "definition": {
+          "th": "ครอบครัว"
+        },
+        "translation": "ครอบครัว"
+      },
+      {
+        "vocabulary": "little",
+        "definition": {
+          "th": "เล็ก"
+        },
+        "translation": "เล็ก"
+      },
+      {
+        "vocabulary": "hears",
+        "definition": {
+          "th": "ได้ยิน"
+        },
+        "translation": "ได้ยิน"
+      }
+    ]
+  },
+  {
+    "index": 16,
+    "articleId": "cmgqw91v601ybt79bqg631j6n",
+    "title": "Pip's Fun Art Day",
+    "source": "Primary Workbook (origins-2-a0)",
+    "sentenceCount": 43,
+    "wordCount": 14,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Pip.",
+      "Pip is a puppy.",
+      "Pip is small.",
+      "Pip is yellow.",
+      "Pip is in the house.",
+      "The day is rainy.",
+      "It is a big rain.",
+      "Pip sees the rain.",
+      "Pip is sad.",
+      "Pip wants to play.",
+      "Pip wants fun.",
+      "Pip sees a box.",
+      "The box is old.",
+      "The box is big.",
+      "Pip opens the box.",
+      "Wow!",
+      "This is good.",
+      "Paper is in the box.",
+      "Many pens are in the box.",
+      "A red pen.",
+      "A blue pen.",
+      "A green pen.",
+      "Pip likes colors.",
+      "Pip likes red.",
+      "Pip likes blue.",
+      "Pip likes green.",
+      "Pip wants to draw.",
+      "Pip wants to make art.",
+      "Pip draws a picture.",
+      "Pip draws a big house.",
+      "The house is blue.",
+      "Pip draws a car.",
+      "The car is red.",
+      "Pip draws a flower.",
+      "The flower is green.",
+      "Pip draws a friend.",
+      "This is Pip's friend.",
+      "Pip is happy.",
+      "This is fun art.",
+      "Pip likes art.",
+      "Pip is a happy puppy.",
+      "This is a good day.",
+      "No more sad Pip."
+    ],
+    "words": [
+      {
+        "vocabulary": "puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "rainy",
+        "definition": {
+          "th": "ฝนตก"
+        },
+        "translation": "ฝนตก"
+      },
+      {
+        "vocabulary": "sees",
+        "definition": {
+          "th": "เห็น"
+        },
+        "translation": "เห็น"
+      },
+      {
+        "vocabulary": "wants",
+        "definition": {
+          "th": "ต้องการ"
+        },
+        "translation": "ต้องการ"
+      },
+      {
+        "vocabulary": "opens",
+        "definition": {
+          "th": "เปิด"
+        },
+        "translation": "เปิด"
+      },
+      {
+        "vocabulary": "paper",
+        "definition": {
+          "th": "กระดาษ"
+        },
+        "translation": "กระดาษ"
+      },
+      {
+        "vocabulary": "colors",
+        "definition": {
+          "th": "สีต่างๆ"
+        },
+        "translation": "สีต่างๆ"
+      },
+      {
+        "vocabulary": "draw",
+        "definition": {
+          "th": "วาด"
+        },
+        "translation": "วาด"
+      },
+      {
+        "vocabulary": "make art",
+        "definition": {
+          "th": "ทำงานศิลปะ"
+        },
+        "translation": "ทำงานศิลปะ"
+      },
+      {
+        "vocabulary": "picture",
+        "definition": {
+          "th": "รูปภาพ"
+        },
+        "translation": "รูปภาพ"
+      },
+      {
+        "vocabulary": "flower",
+        "definition": {
+          "th": "ดอกไม้"
+        },
+        "translation": "ดอกไม้"
+      },
+      {
+        "vocabulary": "friend",
+        "definition": {
+          "th": "เพื่อน"
+        },
+        "translation": "เพื่อน"
+      },
+      {
+        "vocabulary": "happy",
+        "definition": {
+          "th": "มีความสุข"
+        },
+        "translation": "มีความสุข"
+      },
+      {
+        "vocabulary": "sad",
+        "definition": {
+          "th": "เศร้า"
+        },
+        "translation": "เศร้า"
+      }
+    ]
+  },
+  {
+    "index": 17,
+    "articleId": "cmgqw3mmi01ult79bgi4ilosw",
+    "title": "Pip Feels Many Materials",
+    "source": "Primary Workbook (origins-2-a0)",
+    "sentenceCount": 48,
+    "wordCount": 13,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Pip.",
+      "Pip is a dog.",
+      "Pip is a small dog.",
+      "Lily is Pip's friend.",
+      "Lily has a soft toy.",
+      "The toy is brown.",
+      "Pip feels the toy.",
+      "Pip's paw is on the toy.",
+      "It is soft.",
+      "Yes, it is soft.",
+      "This soft toy is nice.",
+      "Pip likes soft.",
+      "This fabric is soft.",
+      "My paw is on soft.",
+      "Lily has a hard block.",
+      "The block is big.",
+      "The block is blue.",
+      "Pip feels the block.",
+      "Pip's paw is on the block.",
+      "It is hard.",
+      "Yes, it is hard.",
+      "This material is hard.",
+      "Pip feels hard.",
+      "Lily has a smooth stone.",
+      "The stone is small.",
+      "The stone is gray.",
+      "Pip feels the stone.",
+      "It is smooth.",
+      "Yes, it is smooth.",
+      "This material is smooth.",
+      "My paw is on smooth.",
+      "Lily has a rough mat.",
+      "The mat is green.",
+      "Pip feels the mat.",
+      "Pip's paw is on the mat.",
+      "It is rough.",
+      "Yes, it is rough.",
+      "This fabric is rough.",
+      "Pip likes to feel fabric.",
+      "Pip likes to feel material.",
+      "Pip feels soft.",
+      "Pip feels hard.",
+      "Pip feels smooth.",
+      "Pip feels rough.",
+      "Pip is a good dog.",
+      "Lily is happy.",
+      "Pip is happy too.",
+      "What a good dog."
+    ],
+    "words": [
+      {
+        "vocabulary": "fabric",
+        "definition": {
+          "th": "ผ้า"
+        },
+        "translation": "ผ้า"
+      },
+      {
+        "vocabulary": "material",
+        "definition": {
+          "th": "วัสดุ"
+        },
+        "translation": "วัสดุ"
+      },
+      {
+        "vocabulary": "smooth",
+        "definition": {
+          "th": "เรียบ"
+        },
+        "translation": "เรียบ"
+      },
+      {
+        "vocabulary": "rough",
+        "definition": {
+          "th": "ขรุขระ"
+        },
+        "translation": "ขรุขระ"
+      },
+      {
+        "vocabulary": "paw",
+        "definition": {
+          "th": "อุ้งเท้า"
+        },
+        "translation": "อุ้งเท้า"
+      },
+      {
+        "vocabulary": "mat",
+        "definition": {
+          "th": "เสื่อ"
+        },
+        "translation": "เสื่อ"
+      },
+      {
+        "vocabulary": "stone",
+        "definition": {
+          "th": "หิน"
+        },
+        "translation": "หิน"
+      },
+      {
+        "vocabulary": "block",
+        "definition": {
+          "th": "ก้อน"
+        },
+        "translation": "ก้อน"
+      },
+      {
+        "vocabulary": "toy",
+        "definition": {
+          "th": "ของเล่น"
+        },
+        "translation": "ของเล่น"
+      },
+      {
+        "vocabulary": "feel",
+        "definition": {
+          "th": "สัมผัส"
+        },
+        "translation": "สัมผัส"
+      },
+      {
+        "vocabulary": "friend",
+        "definition": {
+          "th": "เพื่อน"
+        },
+        "translation": "เพื่อน"
+      },
+      {
+        "vocabulary": "small",
+        "definition": {
+          "th": "เล็ก"
+        },
+        "translation": "เล็ก"
+      },
+      {
+        "vocabulary": "nice",
+        "definition": {
+          "th": "ดี"
+        },
+        "translation": "ดี"
+      }
+    ]
+  },
+  {
+    "index": 18,
+    "articleId": "cmgqwiyu5024pt79bybta0gyn",
+    "title": "My New City Plane Trip",
+    "source": "Primary Workbook (origins-3.1-a0)",
+    "sentenceCount": 39,
+    "wordCount": 15,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Lily.",
+      "Lily is a girl.",
+      "She is happy.",
+      "Lily has a new bag.",
+      "Her bag is red.",
+      "This is Lily's mom.",
+      "This is Lily's dad.",
+      "Mom and Dad are happy.",
+      "They go to a new place.",
+      "This place is a new city.",
+      "It is a big city.",
+      "This new city is far.",
+      "They go in a plane.",
+      "This plane is big.",
+      "The plane is white.",
+      "It flies up.",
+      "Lily is in the plane.",
+      "She looks out.",
+      "She sees the sky.",
+      "The sky is blue.",
+      "Very blue.",
+      "Lily is happy.",
+      "She sees a city down.",
+      "The city is very small from up.",
+      "This is a new city.",
+      "A big, new city.",
+      "The plane stops.",
+      "Lily is out.",
+      "She is in the new city.",
+      "The city is big.",
+      "Lily sees new houses.",
+      "She sees green trees.",
+      "She sees a park.",
+      "This new place is fun.",
+      "Lily likes this new place.",
+      "Mom likes this new place.",
+      "Dad likes this new place.",
+      "All are very happy.",
+      "This new city is good."
+    ],
+    "words": [
+      {
+        "vocabulary": "city",
+        "definition": {
+          "th": "เมือง"
+        },
+        "translation": "เมือง"
+      },
+      {
+        "vocabulary": "place",
+        "definition": {
+          "th": "สถานที่"
+        },
+        "translation": "สถานที่"
+      },
+      {
+        "vocabulary": "far",
+        "definition": {
+          "th": "ไกล"
+        },
+        "translation": "ไกล"
+      },
+      {
+        "vocabulary": "plane",
+        "definition": {
+          "th": "เครื่องบิน"
+        },
+        "translation": "เครื่องบิน"
+      },
+      {
+        "vocabulary": "flies",
+        "definition": {
+          "th": "บิน"
+        },
+        "translation": "บิน"
+      },
+      {
+        "vocabulary": "sky",
+        "definition": {
+          "th": "ท้องฟ้า"
+        },
+        "translation": "ท้องฟ้า"
+      },
+      {
+        "vocabulary": "small",
+        "definition": {
+          "th": "เล็ก"
+        },
+        "translation": "เล็ก"
+      },
+      {
+        "vocabulary": "stops",
+        "definition": {
+          "th": "หยุด"
+        },
+        "translation": "หยุด"
+      },
+      {
+        "vocabulary": "houses",
+        "definition": {
+          "th": "บ้านหลายหลัง"
+        },
+        "translation": "บ้านหลายหลัง"
+      },
+      {
+        "vocabulary": "green",
+        "definition": {
+          "th": "สีเขียว"
+        },
+        "translation": "สีเขียว"
+      },
+      {
+        "vocabulary": "trees",
+        "definition": {
+          "th": "ต้นไม้"
+        },
+        "translation": "ต้นไม้"
+      },
+      {
+        "vocabulary": "park",
+        "definition": {
+          "th": "สวนสาธารณะ"
+        },
+        "translation": "สวนสาธารณะ"
+      },
+      {
+        "vocabulary": "new",
+        "definition": {
+          "th": "ใหม่"
+        },
+        "translation": "ใหม่"
+      },
+      {
+        "vocabulary": "happy",
+        "definition": {
+          "th": "มีความสุข"
+        },
+        "translation": "มีความสุข"
+      },
+      {
+        "vocabulary": "bag",
+        "definition": {
+          "th": "กระเป๋า"
+        },
+        "translation": "กระเป๋า"
+      }
+    ]
+  },
+  {
+    "index": 19,
+    "articleId": "cmgqwbh0b0208t79btb3784p5",
+    "title": "Pip's Happy Night",
+    "source": "Primary Workbook (origins-3.1-a0)",
+    "sentenceCount": 36,
+    "wordCount": 12,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "Pip is a puppy.",
+      "He is a boy puppy.",
+      "Pip is happy.",
+      "Now it is night.",
+      "Pip is sleepy.",
+      "He wants his bed.",
+      "Pip loves his bed.",
+      "His bed is warm.",
+      "This is Pip's room.",
+      "His room is clean.",
+      "First, a bath.",
+      "Pip is in the bath.",
+      "Water is warm.",
+      "Pip likes the warm water.",
+      "Pip is clean.",
+      "His body is clean.",
+      "He brushes his teeth.",
+      "His teeth are clean.",
+      "Pip puts on pajamas.",
+      "His pajamas are blue.",
+      "They are soft pajamas.",
+      "Pip is ready.",
+      "Mama reads a book.",
+      "Pip likes his book.",
+      "The book is small.",
+      "This book is fun.",
+      "Pip is in his bed.",
+      "He is under his blanket.",
+      "His blanket is warm.",
+      "His bed is soft.",
+      "Pip closes his eyes.",
+      "Pip is sleepy.",
+      "He sleeps now.",
+      "Good night, Pip.",
+      "Pip is a happy puppy.",
+      "He loves sleep."
+    ],
+    "words": [
+      {
+        "vocabulary": "puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "sleepy",
+        "definition": {
+          "th": "ง่วงนอน"
+        },
+        "translation": "ง่วงนอน"
+      },
+      {
+        "vocabulary": "warm",
+        "definition": {
+          "th": "อบอุ่น"
+        },
+        "translation": "อบอุ่น"
+      },
+      {
+        "vocabulary": "clean",
+        "definition": {
+          "th": "สะอาด"
+        },
+        "translation": "สะอาด"
+      },
+      {
+        "vocabulary": "bath",
+        "definition": {
+          "th": "การอาบน้ำ"
+        },
+        "translation": "การอาบน้ำ"
+      },
+      {
+        "vocabulary": "brushes",
+        "definition": {
+          "th": "แปรง"
+        },
+        "translation": "แปรง"
+      },
+      {
+        "vocabulary": "teeth",
+        "definition": {
+          "th": "ฟัน"
+        },
+        "translation": "ฟัน"
+      },
+      {
+        "vocabulary": "pajamas",
+        "definition": {
+          "th": "ชุดนอน"
+        },
+        "translation": "ชุดนอน"
+      },
+      {
+        "vocabulary": "soft",
+        "definition": {
+          "th": "นุ่ม"
+        },
+        "translation": "นุ่ม"
+      },
+      {
+        "vocabulary": "ready",
+        "definition": {
+          "th": "พร้อม"
+        },
+        "translation": "พร้อม"
+      },
+      {
+        "vocabulary": "blanket",
+        "definition": {
+          "th": "ผ้าห่ม"
+        },
+        "translation": "ผ้าห่ม"
+      },
+      {
+        "vocabulary": "under",
+        "definition": {
+          "th": "ใต้"
+        },
+        "translation": "ใต้"
+      }
+    ]
+  },
+  {
+    "index": 20,
+    "articleId": "cmgqw79fb01x5t79bjxadplhj",
+    "title": "Lily and Pip's Happy Visit",
+    "source": "Primary Workbook (origins-3.1-a0)",
+    "sentenceCount": 46,
+    "wordCount": 15,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Lily.",
+      "Lily is a girl.",
+      "Lily has a dog.",
+      "Her dog is Pip.",
+      "Pip is a small dog.",
+      "Pip is a happy dog.",
+      "Lily and Pip go.",
+      "They go to Grandma.",
+      "They go to Grandpa.",
+      "This is their house.",
+      "Grandma is happy.",
+      "Grandpa is happy.",
+      "Lily is happy.",
+      "Pip is happy.",
+      "This is a very happy day.",
+      "Grandma has a big box.",
+      "This is a game box.",
+      "Grandpa opens the box.",
+      "Look!",
+      "This is a puzzle.",
+      "A big puzzle.",
+      "This puzzle is blue and green.",
+      "It is a nice picture.",
+      "Grandma has puzzle pieces.",
+      "Lily has puzzle pieces.",
+      "Grandpa has puzzle pieces.",
+      "Pip sees the puzzle pieces.",
+      "Pip is a curious dog.",
+      "Lily puts a piece.",
+      "Grandma puts a piece.",
+      "Grandpa puts a piece.",
+      "This is a red piece.",
+      "This is a green piece.",
+      "They work together.",
+      "This is fun.",
+      "They are a family.",
+      "They are a happy family.",
+      "Pip is happy too.",
+      "Pip sees the puzzle grow.",
+      "The puzzle is big now.",
+      "This is their family game.",
+      "Lily likes Grandma.",
+      "Lily likes Grandpa.",
+      "Pip likes them all.",
+      "All are very happy.",
+      "This is a good time."
+    ],
+    "words": [
+      {
+        "vocabulary": "Curious",
+        "definition": {
+          "th": "อยากรู้อยากเห็น"
+        },
+        "translation": "อยากรู้อยากเห็น"
+      },
+      {
+        "vocabulary": "Puzzle",
+        "definition": {
+          "th": "จิ๊กซอว์"
+        },
+        "translation": "จิ๊กซอว์"
+      },
+      {
+        "vocabulary": "Together",
+        "definition": {
+          "th": "ด้วยกัน"
+        },
+        "translation": "ด้วยกัน"
+      },
+      {
+        "vocabulary": "Family",
+        "definition": {
+          "th": "ครอบครัว"
+        },
+        "translation": "ครอบครัว"
+      },
+      {
+        "vocabulary": "Pieces",
+        "definition": {
+          "th": "ชิ้นส่วน"
+        },
+        "translation": "ชิ้นส่วน"
+      },
+      {
+        "vocabulary": "Grow",
+        "definition": {
+          "th": "เติบโต"
+        },
+        "translation": "เติบโต"
+      },
+      {
+        "vocabulary": "Grandma",
+        "definition": {
+          "th": "คุณย่า/คุณยาย"
+        },
+        "translation": "คุณย่า/คุณยาย"
+      },
+      {
+        "vocabulary": "Grandpa",
+        "definition": {
+          "th": "คุณปู่/คุณตา"
+        },
+        "translation": "คุณปู่/คุณตา"
+      },
+      {
+        "vocabulary": "Picture",
+        "definition": {
+          "th": "รูปภาพ"
+        },
+        "translation": "รูปภาพ"
+      },
+      {
+        "vocabulary": "House",
+        "definition": {
+          "th": "บ้าน"
+        },
+        "translation": "บ้าน"
+      },
+      {
+        "vocabulary": "Small",
+        "definition": {
+          "th": "เล็ก"
+        },
+        "translation": "เล็ก"
+      },
+      {
+        "vocabulary": "Happy",
+        "definition": {
+          "th": "มีความสุข"
+        },
+        "translation": "มีความสุข"
+      },
+      {
+        "vocabulary": "Opens",
+        "definition": {
+          "th": "เปิด"
+        },
+        "translation": "เปิด"
+      },
+      {
+        "vocabulary": "Game",
+        "definition": {
+          "th": "เกม"
+        },
+        "translation": "เกม"
+      },
+      {
+        "vocabulary": "Nice",
+        "definition": {
+          "th": "ดี"
+        },
+        "translation": "ดี"
+      }
+    ]
+  },
+  {
+    "index": 21,
+    "articleId": "cmgqwwo0d02evt79b2hcfi25a",
+    "title": "Pip Sees Colors",
+    "source": "Primary Workbook (origins-3.1-a0)",
+    "sentenceCount": 35,
+    "wordCount": 15,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Pip.",
+      "Pip is a puppy.",
+      "Pip is a happy puppy.",
+      "Pip is in the park.",
+      "It is a sunny day.",
+      "Pip sees a road.",
+      "Many cars are on the road.",
+      "Pip likes cars.",
+      "Pip sees a bus.",
+      "A car is red.",
+      "This car is red.",
+      "Pip likes red.",
+      "Another car is blue.",
+      "That car is blue too.",
+      "Pip likes blue.",
+      "A big bus is green.",
+      "This bus is green.",
+      "Pip likes green.",
+      "A small truck is yellow.",
+      "This truck is yellow.",
+      "Yellow is a happy color.",
+      "Pip likes yellow.",
+      "Pip sees many colors.",
+      "Red is a color.",
+      "Blue is a color.",
+      "Green is a color.",
+      "Yellow is a color.",
+      "Colors are fun.",
+      "Pip is a happy puppy.",
+      "Pip sees a friend.",
+      "My friend is a boy.",
+      "We play.",
+      "This is a good day.",
+      "Pip goes home.",
+      "Pip is happy."
+    ],
+    "words": [
+      {
+        "vocabulary": "puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "park",
+        "definition": {
+          "th": "สวนสาธารณะ"
+        },
+        "translation": "สวนสาธารณะ"
+      },
+      {
+        "vocabulary": "sunny",
+        "definition": {
+          "th": "แดดออก"
+        },
+        "translation": "แดดออก"
+      },
+      {
+        "vocabulary": "road",
+        "definition": {
+          "th": "ถนน"
+        },
+        "translation": "ถนน"
+      },
+      {
+        "vocabulary": "bus",
+        "definition": {
+          "th": "รถบัส"
+        },
+        "translation": "รถบัส"
+      },
+      {
+        "vocabulary": "truck",
+        "definition": {
+          "th": "รถบรรทุก"
+        },
+        "translation": "รถบรรทุก"
+      },
+      {
+        "vocabulary": "yellow",
+        "definition": {
+          "th": "สีเหลือง"
+        },
+        "translation": "สีเหลือง"
+      },
+      {
+        "vocabulary": "color",
+        "definition": {
+          "th": "สี"
+        },
+        "translation": "สี"
+      },
+      {
+        "vocabulary": "friend",
+        "definition": {
+          "th": "เพื่อน"
+        },
+        "translation": "เพื่อน"
+      },
+      {
+        "vocabulary": "happy",
+        "definition": {
+          "th": "มีความสุข"
+        },
+        "translation": "มีความสุข"
+      },
+      {
+        "vocabulary": "blue",
+        "definition": {
+          "th": "สีฟ้า"
+        },
+        "translation": "สีฟ้า"
+      },
+      {
+        "vocabulary": "green",
+        "definition": {
+          "th": "สีเขียว"
+        },
+        "translation": "สีเขียว"
+      },
+      {
+        "vocabulary": "small",
+        "definition": {
+          "th": "เล็ก"
+        },
+        "translation": "เล็ก"
+      },
+      {
+        "vocabulary": "home",
+        "definition": {
+          "th": "บ้าน"
+        },
+        "translation": "บ้าน"
+      },
+      {
+        "vocabulary": "play",
+        "definition": {
+          "th": "เล่น"
+        },
+        "translation": "เล่น"
+      }
+    ]
+  },
+  {
+    "index": 22,
+    "articleId": "cmgqx1pgg02jct79b3i9nex0p",
+    "title": "Mia and Pip",
+    "source": "Primary Workbook (origins-3.1-a0)",
+    "sentenceCount": 41,
+    "wordCount": 10,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Mia.",
+      "Mia is a girl.",
+      "Mia has a new pet.",
+      "It is a puppy.",
+      "The puppy is small.",
+      "Its name is Pip.",
+      "Pip is a happy puppy.",
+      "Pip is white.",
+      "Pip is soft.",
+      "This puppy is nice.",
+      "Mia loves Pip.",
+      "Pip has a red ball.",
+      "This red ball is Pip's toy.",
+      "Pip likes this toy.",
+      "Mia feeds Pip.",
+      "Pip eats food.",
+      "Pip likes its food.",
+      "This is Pip's food.",
+      "Mia gives water.",
+      "Pip drinks water.",
+      "Pip plays.",
+      "Mia plays with Pip.",
+      "Pip runs.",
+      "Pip runs fast.",
+      "This puppy is fun.",
+      "Pip is a good puppy.",
+      "Mia is good to Pip.",
+      "Mia likes Pip.",
+      "Pip has a bed.",
+      "This is Pip's bed.",
+      "Pip sleeps in its bed.",
+      "Mia gives Pip a toy.",
+      "Pip plays with its toy.",
+      "Pip is a happy puppy.",
+      "Mia is happy too.",
+      "This is my friend.",
+      "My friend is Pip.",
+      "Pip is my good puppy.",
+      "Mia and Pip are friends.",
+      "This friendship is strong.",
+      "Mia loves her friend."
+    ],
+    "words": [
+      {
+        "vocabulary": "Puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "Soft",
+        "definition": {
+          "th": "นุ่ม"
+        },
+        "translation": "นุ่ม"
+      },
+      {
+        "vocabulary": "Nice",
+        "definition": {
+          "th": "ดี"
+        },
+        "translation": "ดี"
+      },
+      {
+        "vocabulary": "Feeds",
+        "definition": {
+          "th": "ให้อาหาร"
+        },
+        "translation": "ให้อาหาร"
+      },
+      {
+        "vocabulary": "Fast",
+        "definition": {
+          "th": "เร็ว"
+        },
+        "translation": "เร็ว"
+      },
+      {
+        "vocabulary": "Friendship",
+        "definition": {
+          "th": "มิตรภาพ"
+        },
+        "translation": "มิตรภาพ"
+      },
+      {
+        "vocabulary": "Strong",
+        "definition": {
+          "th": "แข็งแรง"
+        },
+        "translation": "แข็งแรง"
+      },
+      {
+        "vocabulary": "Loves",
+        "definition": {
+          "th": "รัก"
+        },
+        "translation": "รัก"
+      },
+      {
+        "vocabulary": "Small",
+        "definition": {
+          "th": "เล็ก"
+        },
+        "translation": "เล็ก"
+      },
+      {
+        "vocabulary": "Happy",
+        "definition": {
+          "th": "มีความสุข"
+        },
+        "translation": "มีความสุข"
+      }
+    ]
+  },
+  {
+    "index": 23,
+    "articleId": "cmgqwyoky02gst79bbtf5i5sr",
+    "title": "Mia and Pip at the Zoo",
+    "source": "Primary Workbook (origins-3.1-a0)",
+    "sentenceCount": 33,
+    "wordCount": 12,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Mia.",
+      "Mia is a girl.",
+      "This is Pip.",
+      "Pip is a puppy.",
+      "Mia and Pip are friends.",
+      "They go to the zoo.",
+      "The zoo is big.",
+      "The zoo has many animals.",
+      "They are happy.",
+      "This is a lion.",
+      "The lion is a big animal.",
+      "It is brown.",
+      "Pip sees the big lion.",
+      "Mia sees the big lion.",
+      "The lion is on the green grass.",
+      "Mia likes the big lion.",
+      "This is a monkey.",
+      "The monkey is a funny animal.",
+      "It is brown.",
+      "It likes to jump.",
+      "Pip sees the monkey.",
+      "Mia likes the funny monkey.",
+      "This is an elephant.",
+      "The elephant is a very big animal.",
+      "It has big ears.",
+      "It likes water.",
+      "Pip sees the big elephant.",
+      "Mia sees the big elephant.",
+      "Mia likes the big elephant.",
+      "Pip likes the big elephant.",
+      "The zoo is fun.",
+      "Mia and Pip are happy.",
+      "They like animals."
+    ],
+    "words": [
+      {
+        "vocabulary": "puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "friends",
+        "definition": {
+          "th": "เพื่อนๆ"
+        },
+        "translation": "เพื่อนๆ"
+      },
+      {
+        "vocabulary": "zoo",
+        "definition": {
+          "th": "สวนสัตว์"
+        },
+        "translation": "สวนสัตว์"
+      },
+      {
+        "vocabulary": "animals",
+        "definition": {
+          "th": "สัตว์ต่างๆ"
+        },
+        "translation": "สัตว์ต่างๆ"
+      },
+      {
+        "vocabulary": "lion",
+        "definition": {
+          "th": "สิงโต"
+        },
+        "translation": "สิงโต"
+      },
+      {
+        "vocabulary": "brown",
+        "definition": {
+          "th": "สีน้ำตาล"
+        },
+        "translation": "สีน้ำตาล"
+      },
+      {
+        "vocabulary": "grass",
+        "definition": {
+          "th": "หญ้า"
+        },
+        "translation": "หญ้า"
+      },
+      {
+        "vocabulary": "monkey",
+        "definition": {
+          "th": "ลิง"
+        },
+        "translation": "ลิง"
+      },
+      {
+        "vocabulary": "funny",
+        "definition": {
+          "th": "ตลก"
+        },
+        "translation": "ตลก"
+      },
+      {
+        "vocabulary": "jump",
+        "definition": {
+          "th": "กระโดด"
+        },
+        "translation": "กระโดด"
+      },
+      {
+        "vocabulary": "elephant",
+        "definition": {
+          "th": "ช้าง"
+        },
+        "translation": "ช้าง"
+      },
+      {
+        "vocabulary": "ears",
+        "definition": {
+          "th": "หู"
+        },
+        "translation": "หู"
+      }
+    ]
+  },
+  {
+    "index": 24,
+    "articleId": "cmgqx78et02ntt79ba4h2yzwx",
+    "title": "Pip and the Red Car",
+    "source": "Primary Workbook (origins-3.1-a0)",
+    "sentenceCount": 31,
+    "wordCount": 12,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Pip.",
+      "Pip is a puppy.",
+      "Ben is a boy.",
+      "Ben is Pip's friend.",
+      "Ben has a toy car.",
+      "The toy car is red.",
+      "This red toy car is broken.",
+      "Ben is very sad.",
+      "Pip is sad too.",
+      "My red car is broken.",
+      "My good toy car is broken.",
+      "Ben says, \"We fix car?\" Pip says, \"Yes.",
+      "We fix car.\" Ben looks for a piece.",
+      "Pip looks for a piece.",
+      "Ben puts a small piece on.",
+      "Pip helps Ben.",
+      "Pip puts a small piece on.",
+      "They work together.",
+      "This is teamwork.",
+      "Teamwork is good.",
+      "They fix the red car.",
+      "The red car is good.",
+      "The red toy car is good now.",
+      "Ben is happy.",
+      "Pip is happy.",
+      "They play with the red car.",
+      "Ben and Pip play.",
+      "This is fun.",
+      "My friend is good.",
+      "This good teamwork is fun.",
+      "Teamwork is very good."
+    ],
+    "words": [
+      {
+        "vocabulary": "Puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "Broken",
+        "definition": {
+          "th": "พัง"
+        },
+        "translation": "พัง"
+      },
+      {
+        "vocabulary": "Fix",
+        "definition": {
+          "th": "ซ่อม"
+        },
+        "translation": "ซ่อม"
+      },
+      {
+        "vocabulary": "Look for",
+        "definition": {
+          "th": "มองหา"
+        },
+        "translation": "มองหา"
+      },
+      {
+        "vocabulary": "Piece",
+        "definition": {
+          "th": "ชิ้น"
+        },
+        "translation": "ชิ้น"
+      },
+      {
+        "vocabulary": "Together",
+        "definition": {
+          "th": "ด้วยกัน"
+        },
+        "translation": "ด้วยกัน"
+      },
+      {
+        "vocabulary": "Teamwork",
+        "definition": {
+          "th": "การทำงานเป็นทีม"
+        },
+        "translation": "การทำงานเป็นทีม"
+      },
+      {
+        "vocabulary": "Fun",
+        "definition": {
+          "th": "สนุก"
+        },
+        "translation": "สนุก"
+      },
+      {
+        "vocabulary": "Happy",
+        "definition": {
+          "th": "มีความสุข"
+        },
+        "translation": "มีความสุข"
+      },
+      {
+        "vocabulary": "Sad",
+        "definition": {
+          "th": "เศร้า"
+        },
+        "translation": "เศร้า"
+      },
+      {
+        "vocabulary": "Friend",
+        "definition": {
+          "th": "เพื่อน"
+        },
+        "translation": "เพื่อน"
+      },
+      {
+        "vocabulary": "Small",
+        "definition": {
+          "th": "เล็ก"
+        },
+        "translation": "เล็ก"
+      }
+    ]
+  },
+  {
+    "index": 25,
+    "articleId": "cmgqwu4ah02d0t79bvkt6vr9l",
+    "title": "Pip and the Blue Water",
+    "source": "Primary Workbook (origins-3.1-a0)",
+    "sentenceCount": 44,
+    "wordCount": 12,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Pip.",
+      "Pip is a puppy.",
+      "Pip is a good puppy.",
+      "Pip is small.",
+      "Pip sees a pond.",
+      "The pond is big.",
+      "The water is blue.",
+      "Pip looks at the water.",
+      "Pip is not happy.",
+      "Pip is scared.",
+      "Water is big.",
+      "Pip is very scared.",
+      "Pip runs away.",
+      "Pip runs fast.",
+      "A boy is here.",
+      "His name is Sam.",
+      "Sam is a friend.",
+      "Sam is a good friend.",
+      "Sam has a ball.",
+      "The ball is red.",
+      "The ball is new.",
+      "Sam throws the ball.",
+      "The red ball is in the pond.",
+      "Sam is happy.",
+      "Sam smiles.",
+      "Sam goes in the water.",
+      "Sam plays in the water.",
+      "Water is fun for Sam.",
+      "Sam plays good.",
+      "Pip sees Sam.",
+      "Pip sees the red ball.",
+      "The red ball is in the water.",
+      "Sam is happy.",
+      "Pip wants the red ball.",
+      "Pip wants to play.",
+      "Pip looks at the water.",
+      "Pip is still scared.",
+      "Pip goes in the water.",
+      "Pip goes in the big water.",
+      "Pip gets the ball.",
+      "Pip is happy.",
+      "Pip plays in the water.",
+      "Water is fun for Pip.",
+      "Pip is a brave puppy."
+    ],
+    "words": [
+      {
+        "vocabulary": "pond",
+        "definition": {
+          "th": "สระน้ำ"
+        },
+        "translation": "สระน้ำ"
+      },
+      {
+        "vocabulary": "scared",
+        "definition": {
+          "th": "ตกใจกลัว"
+        },
+        "translation": "ตกใจกลัว"
+      },
+      {
+        "vocabulary": "brave",
+        "definition": {
+          "th": "กล้าหาญ"
+        },
+        "translation": "กล้าหาญ"
+      },
+      {
+        "vocabulary": "puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "smiles",
+        "definition": {
+          "th": "ยิ้ม"
+        },
+        "translation": "ยิ้ม"
+      },
+      {
+        "vocabulary": "throws",
+        "definition": {
+          "th": "ขว้าง"
+        },
+        "translation": "ขว้าง"
+      },
+      {
+        "vocabulary": "fast",
+        "definition": {
+          "th": "เร็ว"
+        },
+        "translation": "เร็ว"
+      },
+      {
+        "vocabulary": "still",
+        "definition": {
+          "th": "ยัง"
+        },
+        "translation": "ยัง"
+      },
+      {
+        "vocabulary": "friend",
+        "definition": {
+          "th": "เพื่อน"
+        },
+        "translation": "เพื่อน"
+      },
+      {
+        "vocabulary": "wants",
+        "definition": {
+          "th": "ต้องการ"
+        },
+        "translation": "ต้องการ"
+      },
+      {
+        "vocabulary": "away",
+        "definition": {
+          "th": "ออกไป"
+        },
+        "translation": "ออกไป"
+      },
+      {
+        "vocabulary": "looks at",
+        "definition": {
+          "th": "มองที่"
+        },
+        "translation": "มองที่"
+      }
+    ]
+  },
+  {
+    "index": 26,
+    "articleId": "cmgqwsfcs02bqt79bkaa1pjaw",
+    "title": "My Happy Holiday",
+    "source": "Primary Workbook (origins-3.1-a0)",
+    "sentenceCount": 41,
+    "wordCount": 12,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Tom.",
+      "Tom is a boy.",
+      "Tom is happy.",
+      "This is Pip.",
+      "Pip is a dog.",
+      "Pip is a good dog.",
+      "Pip is happy too.",
+      "It is a special day.",
+      "It is a holiday.",
+      "My family is here.",
+      "My mum is here.",
+      "My dad is here.",
+      "This is my home.",
+      "We are happy.",
+      "My family is good.",
+      "See the big green tree.",
+      "The tree is beautiful.",
+      "Under the tree are many gifts.",
+      "Pip sees a big gift.",
+      "It is a red box.",
+      "Tom opens his big gift.",
+      "It is a new toy.",
+      "A blue car.",
+      "Tom likes his blue car.",
+      "He plays with the blue car.",
+      "Tom is happy.",
+      "Tom has a gift for Pip.",
+      "It is a small gift.",
+      "Pip sees the small gift.",
+      "Pip is very happy.",
+      "Tom gives Pip the gift.",
+      "Pip opens the gift.",
+      "It is a new ball.",
+      "A small red ball.",
+      "Pip likes the red ball.",
+      "Pip plays with the ball.",
+      "Tom plays with Pip.",
+      "Family is good.",
+      "Giving is good.",
+      "Sharing is good.",
+      "We are all happy."
+    ],
+    "words": [
+      {
+        "vocabulary": "holiday",
+        "definition": {
+          "th": "วันหยุด"
+        },
+        "translation": "วันหยุด"
+      },
+      {
+        "vocabulary": "special",
+        "definition": {
+          "th": "พิเศษ"
+        },
+        "translation": "พิเศษ"
+      },
+      {
+        "vocabulary": "beautiful",
+        "definition": {
+          "th": "สวยงาม"
+        },
+        "translation": "สวยงาม"
+      },
+      {
+        "vocabulary": "gift",
+        "definition": {
+          "th": "ของขวัญ"
+        },
+        "translation": "ของขวัญ"
+      },
+      {
+        "vocabulary": "family",
+        "definition": {
+          "th": "ครอบครัว"
+        },
+        "translation": "ครอบครัว"
+      },
+      {
+        "vocabulary": "opens",
+        "definition": {
+          "th": "เปิด"
+        },
+        "translation": "เปิด"
+      },
+      {
+        "vocabulary": "toy",
+        "definition": {
+          "th": "ของเล่น"
+        },
+        "translation": "ของเล่น"
+      },
+      {
+        "vocabulary": "giving",
+        "definition": {
+          "th": "การให้"
+        },
+        "translation": "การให้"
+      },
+      {
+        "vocabulary": "sharing",
+        "definition": {
+          "th": "การแบ่งปัน"
+        },
+        "translation": "การแบ่งปัน"
+      },
+      {
+        "vocabulary": "new",
+        "definition": {
+          "th": "ใหม่"
+        },
+        "translation": "ใหม่"
+      },
+      {
+        "vocabulary": "under",
+        "definition": {
+          "th": "ใต้"
+        },
+        "translation": "ใต้"
+      },
+      {
+        "vocabulary": "likes",
+        "definition": {
+          "th": "ชอบ"
+        },
+        "translation": "ชอบ"
+      }
+    ]
+  },
+  {
+    "index": 27,
+    "articleId": "cmgqwp0ko0296t79bq4rp03zl",
+    "title": "Tom and Pip Sort Toys",
+    "source": "Primary Workbook (origins-3.1-a0)",
+    "sentenceCount": 41,
+    "wordCount": 10,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Tom.",
+      "Tom is a boy.",
+      "Tom has many toys.",
+      "This is Pip.",
+      "Pip is a puppy.",
+      "Pip is Tom's puppy.",
+      "Pip likes toys.",
+      "Tom likes toys too.",
+      "They are friends.",
+      "Tom wants to sort toys.",
+      "Tom has a big red ball.",
+      "Tom has a small red car.",
+      "Tom has a blue robot.",
+      "Tom has a blue boat.",
+      "Tom has a green book.",
+      "Tom has a green frog.",
+      "Tom has yellow blocks.",
+      "Tom has a yellow duck.",
+      "Pip sees the toys.",
+      "Many toys are on mat.",
+      "Tom counts the toys.",
+      "One, two, three, four, five, six, seven, eight toys.",
+      "Tom puts toys in boxes.",
+      "This is a red box.",
+      "Red ball is in red box.",
+      "Red car is in red box.",
+      "This is a blue box.",
+      "Blue robot is in blue box.",
+      "Blue boat is in blue box.",
+      "This is a green box.",
+      "Green book is in green box.",
+      "Green frog is in green box.",
+      "This is a yellow box.",
+      "Yellow blocks are in yellow box.",
+      "Yellow duck is in yellow box.",
+      "Tom sorts all toys.",
+      "Pip is happy.",
+      "Tom is happy.",
+      "Good job, Tom!",
+      "Good job, Pip!",
+      "They play."
+    ],
+    "words": [
+      {
+        "vocabulary": "puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "friends",
+        "definition": {
+          "th": "เพื่อนๆ"
+        },
+        "translation": "เพื่อนๆ"
+      },
+      {
+        "vocabulary": "sort",
+        "definition": {
+          "th": "แยกประเภท"
+        },
+        "translation": "แยกประเภท"
+      },
+      {
+        "vocabulary": "robot",
+        "definition": {
+          "th": "หุ่นยนต์"
+        },
+        "translation": "หุ่นยนต์"
+      },
+      {
+        "vocabulary": "blocks",
+        "definition": {
+          "th": "บล็อก"
+        },
+        "translation": "บล็อก"
+      },
+      {
+        "vocabulary": "mat",
+        "definition": {
+          "th": "เสื่อ"
+        },
+        "translation": "เสื่อ"
+      },
+      {
+        "vocabulary": "counts",
+        "definition": {
+          "th": "นับ"
+        },
+        "translation": "นับ"
+      },
+      {
+        "vocabulary": "boxes",
+        "definition": {
+          "th": "กล่อง"
+        },
+        "translation": "กล่อง"
+      },
+      {
+        "vocabulary": "happy",
+        "definition": {
+          "th": "มีความสุข"
+        },
+        "translation": "มีความสุข"
+      },
+      {
+        "vocabulary": "good job",
+        "definition": {
+          "th": "ทำได้ดีมาก"
+        },
+        "translation": "ทำได้ดีมาก"
+      }
+    ]
+  },
+  {
+    "index": 28,
+    "articleId": "cmgqwroxi02b3t79bfy88lhk6",
+    "title": "Pip and the Fair Game",
+    "source": "Primary Workbook (origins-3.1-a0)",
+    "sentenceCount": 45,
+    "wordCount": 11,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Leo.",
+      "Leo is a boy.",
+      "He is happy.",
+      "This is Mia.",
+      "Mia is a girl.",
+      "She is happy.",
+      "This is Pip.",
+      "Pip is a puppy.",
+      "Pip is small.",
+      "Pip is brown.",
+      "Leo, Mia, Pip are in the park.",
+      "The park is big.",
+      "The sun is big.",
+      "The day is good.",
+      "They are friends.",
+      "They like to play.",
+      "They play a game.",
+      "Leo has a red ball.",
+      "Mia has a blue ball.",
+      "They play a game.",
+      "The game is fun.",
+      "They kick the ball.",
+      "Mia kicks the ball fast.",
+      "Leo kicks the ball fast.",
+      "Pip runs.",
+      "Pip runs very fast.",
+      "Pip likes the ball.",
+      "Pip is happy.",
+      "The game is a ball game.",
+      "They play a good game.",
+      "Mia wins the game.",
+      "Leo is not happy.",
+      "He is sad.",
+      "Mia says, \"Good game, Leo.\" Leo says, \"No.",
+      "I want win.\" Mia says, \"Play fair.",
+      "Play is fun.\" Leo says, \"Yes.",
+      "Play fair.",
+      "Play is fun.\" They play again.",
+      "They play good.",
+      "This is fair play.",
+      "Good play is fun.",
+      "Everyone is happy.",
+      "Pip is happy too.",
+      "They play a good game.",
+      "This is good sportsmanship."
+    ],
+    "words": [
+      {
+        "vocabulary": "Puppy",
+        "definition": {
+          "th": "ลูกสุนัข"
+        },
+        "translation": "ลูกสุนัข"
+      },
+      {
+        "vocabulary": "Park",
+        "definition": {
+          "th": "สวนสาธารณะ"
+        },
+        "translation": "สวนสาธารณะ"
+      },
+      {
+        "vocabulary": "Kick",
+        "definition": {
+          "th": "เตะ"
+        },
+        "translation": "เตะ"
+      },
+      {
+        "vocabulary": "Fast",
+        "definition": {
+          "th": "เร็ว"
+        },
+        "translation": "เร็ว"
+      },
+      {
+        "vocabulary": "Win",
+        "definition": {
+          "th": "ชนะ"
+        },
+        "translation": "ชนะ"
+      },
+      {
+        "vocabulary": "Sad",
+        "definition": {
+          "th": "เศร้า"
+        },
+        "translation": "เศร้า"
+      },
+      {
+        "vocabulary": "Fair",
+        "definition": {
+          "th": "ยุติธรรม"
+        },
+        "translation": "ยุติธรรม"
+      },
+      {
+        "vocabulary": "Fair play",
+        "definition": {
+          "th": "การเล่นอย่างยุติธรรม"
+        },
+        "translation": "การเล่นอย่างยุติธรรม"
+      },
+      {
+        "vocabulary": "Sportsmanship",
+        "definition": {
+          "th": "น้ำใจนักกีฬา"
+        },
+        "translation": "น้ำใจนักกีฬา"
+      },
+      {
+        "vocabulary": "Again",
+        "definition": {
+          "th": "อีกครั้ง"
+        },
+        "translation": "อีกครั้ง"
+      },
+      {
+        "vocabulary": "Everyone",
+        "definition": {
+          "th": "ทุกคน"
+        },
+        "translation": "ทุกคน"
+      }
+    ]
+  },
+  {
+    "index": 29,
+    "articleId": "cmgqwsfcs02bqt79bkaa1pjaw",
+    "title": "My Happy Holiday",
+    "source": "Primary Workbook (origins-3.1-a0)",
+    "sentenceCount": 41,
+    "wordCount": 12,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Tom.",
+      "Tom is a boy.",
+      "Tom is happy.",
+      "This is Pip.",
+      "Pip is a dog.",
+      "Pip is a good dog.",
+      "Pip is happy too.",
+      "It is a special day.",
+      "It is a holiday.",
+      "My family is here.",
+      "My mum is here.",
+      "My dad is here.",
+      "This is my home.",
+      "We are happy.",
+      "My family is good.",
+      "See the big green tree.",
+      "The tree is beautiful.",
+      "Under the tree are many gifts.",
+      "Pip sees a big gift.",
+      "It is a red box.",
+      "Tom opens his big gift.",
+      "It is a new toy.",
+      "A blue car.",
+      "Tom likes his blue car.",
+      "He plays with the blue car.",
+      "Tom is happy.",
+      "Tom has a gift for Pip.",
+      "It is a small gift.",
+      "Pip sees the small gift.",
+      "Pip is very happy.",
+      "Tom gives Pip the gift.",
+      "Pip opens the gift.",
+      "It is a new ball.",
+      "A small red ball.",
+      "Pip likes the red ball.",
+      "Pip plays with the ball.",
+      "Tom plays with Pip.",
+      "Family is good.",
+      "Giving is good.",
+      "Sharing is good.",
+      "We are all happy."
+    ],
+    "words": [
+      {
+        "vocabulary": "holiday",
+        "definition": {
+          "th": "วันหยุด"
+        },
+        "translation": "วันหยุด"
+      },
+      {
+        "vocabulary": "special",
+        "definition": {
+          "th": "พิเศษ"
+        },
+        "translation": "พิเศษ"
+      },
+      {
+        "vocabulary": "beautiful",
+        "definition": {
+          "th": "สวยงาม"
+        },
+        "translation": "สวยงาม"
+      },
+      {
+        "vocabulary": "gift",
+        "definition": {
+          "th": "ของขวัญ"
+        },
+        "translation": "ของขวัญ"
+      },
+      {
+        "vocabulary": "family",
+        "definition": {
+          "th": "ครอบครัว"
+        },
+        "translation": "ครอบครัว"
+      },
+      {
+        "vocabulary": "opens",
+        "definition": {
+          "th": "เปิด"
+        },
+        "translation": "เปิด"
+      },
+      {
+        "vocabulary": "toy",
+        "definition": {
+          "th": "ของเล่น"
+        },
+        "translation": "ของเล่น"
+      },
+      {
+        "vocabulary": "giving",
+        "definition": {
+          "th": "การให้"
+        },
+        "translation": "การให้"
+      },
+      {
+        "vocabulary": "sharing",
+        "definition": {
+          "th": "การแบ่งปัน"
+        },
+        "translation": "การแบ่งปัน"
+      },
+      {
+        "vocabulary": "new",
+        "definition": {
+          "th": "ใหม่"
+        },
+        "translation": "ใหม่"
+      },
+      {
+        "vocabulary": "under",
+        "definition": {
+          "th": "ใต้"
+        },
+        "translation": "ใต้"
+      },
+      {
+        "vocabulary": "likes",
+        "definition": {
+          "th": "ชอบ"
+        },
+        "translation": "ชอบ"
+      }
+    ]
+  },
+  {
+    "index": 30,
+    "articleId": "cmgqw9uh501yyt79bluoefagb",
+    "title": "Leo's Silly Clothes Fun",
+    "source": "Primary Workbook (origins-3.1-a0)",
+    "sentenceCount": 41,
+    "wordCount": 10,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Leo.",
+      "Leo is a boy.",
+      "Leo is happy.",
+      "Leo has clothes.",
+      "He has a red hat.",
+      "The hat is red.",
+      "He has a blue shirt.",
+      "The shirt is blue.",
+      "He has a yellow sock.",
+      "The sock is yellow.",
+      "He has a green shoe.",
+      "The shoe is green.",
+      "These are his clothes.",
+      "Leo likes his clothes.",
+      "Leo wears clothes.",
+      "This is fun.",
+      "Leo wears the red hat.",
+      "He wears the hat on his hand.",
+      "This is silly.",
+      "Leo wears the yellow sock.",
+      "He wears the sock on his head.",
+      "This is silly.",
+      "Leo wears the blue shirt.",
+      "He wears the shirt on his leg.",
+      "This is very silly.",
+      "Leo is happy.",
+      "Leo laughs.",
+      "This is fun.",
+      "Leo loves this fun.",
+      "Mom is here.",
+      "Mom sees Leo.",
+      "Mom sees his red hat.",
+      "Mom sees his yellow sock.",
+      "Mom sees his blue shirt.",
+      "Mom sees Leo's clothes.",
+      "Mom smiles.",
+      "Mom says, \"Fun!\" Leo is happy.",
+      "Mom is happy too.",
+      "This is a happy game.",
+      "This is a good day.",
+      "Leo likes Mom's smile."
+    ],
+    "words": [
+      {
+        "vocabulary": "clothes",
+        "definition": {
+          "th": "เสื้อผ้า"
+        },
+        "translation": "เสื้อผ้า"
+      },
+      {
+        "vocabulary": "shirt",
+        "definition": {
+          "th": "เสื้อเชิ้ต"
+        },
+        "translation": "เสื้อเชิ้ต"
+      },
+      {
+        "vocabulary": "sock",
+        "definition": {
+          "th": "ถุงเท้า"
+        },
+        "translation": "ถุงเท้า"
+      },
+      {
+        "vocabulary": "shoe",
+        "definition": {
+          "th": "รองเท้า"
+        },
+        "translation": "รองเท้า"
+      },
+      {
+        "vocabulary": "wears",
+        "definition": {
+          "th": "สวมใส่"
+        },
+        "translation": "สวมใส่"
+      },
+      {
+        "vocabulary": "silly",
+        "definition": {
+          "th": "ตลกๆ"
+        },
+        "translation": "ตลกๆ"
+      },
+      {
+        "vocabulary": "laughs",
+        "definition": {
+          "th": "หัวเราะ"
+        },
+        "translation": "หัวเราะ"
+      },
+      {
+        "vocabulary": "smiles",
+        "definition": {
+          "th": "ยิ้ม"
+        },
+        "translation": "ยิ้ม"
+      },
+      {
+        "vocabulary": "game",
+        "definition": {
+          "th": "เกม"
+        },
+        "translation": "เกม"
+      },
+      {
+        "vocabulary": "loves",
+        "definition": {
+          "th": "รัก"
+        },
+        "translation": "รัก"
+      }
+    ]
+  },
+  {
+    "index": 31,
+    "articleId": "cmgqwaqno01zlt79bff8rxuri",
+    "title": "Squeaky, the Small Mouse",
+    "source": "Primary Workbook (origins-3.1-a0)",
+    "sentenceCount": 39,
+    "wordCount": 11,
+    "mcqCount": 10,
+    "saqCount": 1,
+    "sentences": [
+      "This is Squeaky.",
+      "Squeaky is a mouse.",
+      "Squeaky is very small.",
+      "Squeaky is a brown mouse.",
+      "Squeaky has a home.",
+      "Squeaky's home is under a big tree.",
+      "Squeaky likes her home.",
+      "Her home is warm.",
+      "Squeaky sees green grass.",
+      "Squeaky sees red flowers.",
+      "Squeaky is happy here.",
+      "Squeaky is a happy mouse.",
+      "One day, Squeaky sees food.",
+      "The food is big cheese.",
+      "The cheese is yellow.",
+      "The cheese is very big.",
+      "The big cheese is in a big box.",
+      "The box is a brown box.",
+      "The box is very big.",
+      "Other mice see the box.",
+      "Other mice are big mice.",
+      "Big mice want the cheese.",
+      "Big mice are sad.",
+      "Big mice are not in the box.",
+      "The big box is closed for big mice.",
+      "Squeaky looks at the box.",
+      "Squeaky sees a small hole.",
+      "The small hole is on the brown box.",
+      "Squeaky is a small mouse.",
+      "Squeaky runs to the hole.",
+      "Squeaky goes in the hole.",
+      "Squeaky is in the box.",
+      "Squeaky is in the big box.",
+      "Squeaky gets the big yellow cheese.",
+      "Squeaky eats the cheese.",
+      "Squeaky is very happy.",
+      "Squeaky is a clever mouse.",
+      "Small is very good.",
+      "Small is special."
+    ],
+    "words": [
+      {
+        "vocabulary": "Mouse",
+        "definition": {
+          "th": "หนู"
+        },
+        "translation": "หนู"
+      },
+      {
+        "vocabulary": "Home",
+        "definition": {
+          "th": "บ้าน"
+        },
+        "translation": "บ้าน"
+      },
+      {
+        "vocabulary": "Under",
+        "definition": {
+          "th": "ใต้"
+        },
+        "translation": "ใต้"
+      },
+      {
+        "vocabulary": "Warm",
+        "definition": {
+          "th": "อบอุ่น"
+        },
+        "translation": "อบอุ่น"
+      },
+      {
+        "vocabulary": "Grass",
+        "definition": {
+          "th": "หญ้า"
+        },
+        "translation": "หญ้า"
+      },
+      {
+        "vocabulary": "Flower",
+        "definition": {
+          "th": "ดอกไม้"
+        },
+        "translation": "ดอกไม้"
+      },
+      {
+        "vocabulary": "Cheese",
+        "definition": {
+          "th": "ชีส"
+        },
+        "translation": "ชีส"
+      },
+      {
+        "vocabulary": "Closed",
+        "definition": {
+          "th": "ปิด"
+        },
+        "translation": "ปิด"
+      },
+      {
+        "vocabulary": "Hole",
+        "definition": {
+          "th": "รู"
+        },
+        "translation": "รู"
+      },
+      {
+        "vocabulary": "Clever",
+        "definition": {
+          "th": "ฉลาด"
+        },
+        "translation": "ฉลาด"
+      },
+      {
+        "vocabulary": "Special",
+        "definition": {
+          "th": "พิเศษ"
+        },
+        "translation": "พิเศษ"
+      }
+    ]
+  },
+  {
+    "index": 32,
+    "articleId": "OyEA0jRP5GnpFZBCrgMl",
+    "title": "A Happy Day for Mia",
+    "source": "Reading Advantage (Reading 1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "A Happy Day for Mia is an engaging article in Reading 1.",
+      "It explores fascinating themes related to Parenting.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "A",
+        "definition": {
+          "th": "Parenting"
+        }
+      }
+    ]
+  },
+  {
+    "index": 33,
+    "articleId": "lsiMiDgyCV9MbBjKjsyl",
+    "title": "Anna's First Trip to Japan",
+    "source": "Reading Advantage (Reading 1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Anna's First Trip to Japan is an engaging article in Reading 1.",
+      "It explores fascinating themes related to Travel.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Anna's",
+        "definition": {
+          "th": "Travel"
+        }
+      }
+    ]
+  },
+  {
+    "index": 34,
+    "articleId": "KkJOkCCBrfYWBMtrw7AZ",
+    "title": "Anna's Secret Garden",
+    "source": "Reading Advantage (Reading 1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Anna's Secret Garden is an engaging article in Reading 1.",
+      "It explores fascinating themes related to Young Adult Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Anna's",
+        "definition": {
+          "th": "Young Adult Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 35,
+    "articleId": "MjtQFpxdhlewLdgvwZMx",
+    "title": "Beyoncé: From Destiny's Child to Queen B",
+    "source": "Reading Advantage (Reading 1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Beyoncé: From Destiny's Child to Queen B is an engaging article in Reading 1.",
+      "It explores fascinating themes related to Biographies.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Beyoncé:",
+        "definition": {
+          "th": "Biographies"
+        }
+      }
+    ]
+  },
+  {
+    "index": 36,
+    "articleId": "cmn57x04l00f2s60et9r9k1c6",
+    "title": "Lucius's Choice",
+    "source": "Reading Advantage (Reading 1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Lucius's Choice is an engaging article in Reading 1.",
+      "It explores fascinating themes related to Historical Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Lucius's",
+        "definition": {
+          "th": "Historical Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 37,
+    "articleId": "cmjhremv1000ds60ew177qfxg",
+    "title": "The Doll Factory",
+    "source": "Reading Advantage (Reading 1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Doll Factory is an engaging article in Reading 1.",
+      "It explores fascinating themes related to Horror.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Horror"
+        }
+      }
+    ]
+  },
+  {
+    "index": 38,
+    "articleId": "YbIjlPcIZbnBlcvJ1q9J",
+    "title": "Our Earth is Too Warm",
+    "source": "Reading Advantage (Reading 1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Our Earth is Too Warm is an engaging article in Reading 1.",
+      "It explores fascinating themes related to Children's Nonfiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Our",
+        "definition": {
+          "th": "Children's Nonfiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 39,
+    "articleId": "cmmki0z6z0002s60e30ppdzvg",
+    "title": "Phones and Our Feelings",
+    "source": "Reading Advantage (Reading 1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Phones and Our Feelings is an engaging article in Reading 1.",
+      "It explores fascinating themes related to Children's Nonfiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Phones",
+        "definition": {
+          "th": "Children's Nonfiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 40,
+    "articleId": "juueom8cpLZvs4fZHdDd",
+    "title": "The Book Thief",
+    "source": "Reading Advantage (Reading 1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Book Thief is an engaging article in Reading 1.",
+      "It explores fascinating themes related to Adult Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Adult Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 41,
+    "articleId": "vxElH4I71CEIAKxbU9bD",
+    "title": "The Businesswoman and Her Bodyguard",
+    "source": "Reading Advantage (Reading 1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Businesswoman and Her Bodyguard is an engaging article in Reading 1.",
+      "It explores fascinating themes related to Romance.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Romance"
+        }
+      }
+    ]
+  },
+  {
+    "index": 42,
+    "articleId": "4KEEDPYfLpRWutFuYceS",
+    "title": "The Comedy of Errors: Funny Tales of Mistaken Identities",
+    "source": "Reading Advantage (Reading 1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Comedy of Errors: Funny Tales of Mistaken Identities is an engaging article in Reading 1.",
+      "It explores fascinating themes related to Humor.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Humor"
+        }
+      }
+    ]
+  },
+  {
+    "index": 43,
+    "articleId": "cmjhremv1000ds60ew177qfxg",
+    "title": "The Doll Factory",
+    "source": "Reading Advantage (Reading 1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Doll Factory is an engaging article in Reading 1.",
+      "It explores fascinating themes related to Horror.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Horror"
+        }
+      }
+    ]
+  },
+  {
+    "index": 44,
+    "articleId": "b20DYB3KOU2GLYJv1Y1r",
+    "title": "The Hate U Give",
+    "source": "Reading Advantage (Reading 1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Hate U Give is an engaging article in Reading 1.",
+      "It explores fascinating themes related to Contemporary Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Contemporary Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 45,
+    "articleId": "Bm9w2y9wQAf1Fr4mYUzA",
+    "title": "The Prospector's Gamble",
+    "source": "Reading Advantage (Reading 1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Prospector's Gamble is an engaging article in Reading 1.",
+      "It explores fascinating themes related to Westerns.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Westerns"
+        }
+      }
+    ]
+  },
+  {
+    "index": 46,
+    "articleId": "MMmPVvbXr1LnBo7P0oTT",
+    "title": "The Silent Truth",
+    "source": "Reading Advantage (Reading 1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Silent Truth is an engaging article in Reading 1.",
+      "It explores fascinating themes related to Young Adult Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Young Adult Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 47,
+    "articleId": "AgYv5H7fCZL2u2N4qBwT",
+    "title": "The Silent Rebellion",
+    "source": "Reading Advantage (Reading 2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Silent Rebellion is an engaging article in Reading 2.",
+      "It explores fascinating themes related to Young Adult Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Young Adult Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 48,
+    "articleId": "nFZObhzKbSGn5IFMbmf4",
+    "title": "The Sheriff of Deadwood",
+    "source": "Reading Advantage (Reading 2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Sheriff of Deadwood is an engaging article in Reading 2.",
+      "It explores fascinating themes related to Westerns.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Westerns"
+        }
+      }
+    ]
+  },
+  {
+    "index": 49,
+    "articleId": "cmjw1t3ky00mps60etppweqpu",
+    "title": "My Backpack in Asia",
+    "source": "Reading Advantage (Reading 2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "My Backpack in Asia is an engaging article in Reading 2.",
+      "It explores fascinating themes related to Travel.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "My",
+        "definition": {
+          "th": "Travel"
+        }
+      }
+    ]
+  },
+  {
+    "index": 50,
+    "articleId": "1lnzzXylJmtQWd39qmkQ",
+    "title": "The Life and Legacy of Nelson Mandela",
+    "source": "Reading Advantage (Reading 2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Life and Legacy of Nelson Mandela is an engaging article in Reading 2.",
+      "It explores fascinating themes related to Biographies.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Biographies"
+        }
+      }
+    ]
+  },
+  {
+    "index": 51,
+    "articleId": "0tVl8K7MCiecTPJ1lmdE",
+    "title": "A Soldier's Sacrifice: A Tale of Love and War",
+    "source": "Reading Advantage (Reading 2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "A Soldier's Sacrifice: A Tale of Love and War is an engaging article in Reading 2.",
+      "It explores fascinating themes related to Children's Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "A",
+        "definition": {
+          "th": "Children's Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 52,
+    "articleId": "7apvHQXjJb8od9KowL92",
+    "title": "A Day in the Life of an Artist",
+    "source": "Reading Advantage (Reading 2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "A Day in the Life of an Artist is an engaging article in Reading 2.",
+      "It explores fascinating themes related to Contemporary Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "A",
+        "definition": {
+          "th": "Contemporary Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 53,
+    "articleId": "vGLJOdqIOYsJS0orm79e",
+    "title": "The Mysterious Goblin Shark: A Deep-Sea Predator",
+    "source": "Reading Advantage (Reading 2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Mysterious Goblin Shark: A Deep-Sea Predator is an engaging article in Reading 2.",
+      "It explores fascinating themes related to Science.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Science"
+        }
+      }
+    ]
+  },
+  {
+    "index": 54,
+    "articleId": "uT67FwqUlttv74p2snCr",
+    "title": "Tommy's Screen Time",
+    "source": "Reading Advantage (Reading 2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Tommy's Screen Time is an engaging article in Reading 2.",
+      "It explores fascinating themes related to Parenting.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Tommy's",
+        "definition": {
+          "th": "Parenting"
+        }
+      }
+    ]
+  },
+  {
+    "index": 55,
+    "articleId": "ZT2sa9qiH0lHnYH9ayfF",
+    "title": "The Saloon Showdown",
+    "source": "Reading Advantage (Reading 2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Saloon Showdown is an engaging article in Reading 2.",
+      "It explores fascinating themes related to Westerns.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Westerns"
+        }
+      }
+    ]
+  },
+  {
+    "index": 56,
+    "articleId": "cmmtse9p801a4s60en4k8d32q",
+    "title": "The Shadow House",
+    "source": "Reading Advantage (Reading 2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Shadow House is an engaging article in Reading 2.",
+      "It explores fascinating themes related to Horror.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Horror"
+        }
+      }
+    ]
+  },
+  {
+    "index": 57,
+    "articleId": "cmmscy4zq00wys60eetu0jbr2",
+    "title": "Stars and Other Worlds",
+    "source": "Reading Advantage (Reading 2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Stars and Other Worlds is an engaging article in Reading 2.",
+      "It explores fascinating themes related to Science.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Stars",
+        "definition": {
+          "th": "Science"
+        }
+      }
+    ]
+  },
+  {
+    "index": 58,
+    "articleId": "fzMRYypdLSTFhc8rdM7h",
+    "title": "The Green Team's Mission",
+    "source": "Reading Advantage (Reading 2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Green Team's Mission is an engaging article in Reading 2.",
+      "It explores fascinating themes related to Cultural Criticism.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Cultural Criticism"
+        }
+      }
+    ]
+  },
+  {
+    "index": 59,
+    "articleId": "5whpV1ZrLk7qb1lgAJnT",
+    "title": "The Alien in the Woods",
+    "source": "Reading Advantage (Reading 2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Alien in the Woods is an engaging article in Reading 2.",
+      "It explores fascinating themes related to Science Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Science Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 60,
+    "articleId": "cmkmhgh5501lds60ev7s791s5",
+    "title": "Elara and the Purple Door",
+    "source": "Reading Advantage (Reading 2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Elara and the Purple Door is an engaging article in Reading 2.",
+      "It explores fascinating themes related to Fantasy.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Elara",
+        "definition": {
+          "th": "Fantasy"
+        }
+      }
+    ]
+  },
+  {
+    "index": 61,
+    "articleId": "cmjfm919v0232s60eo0tzv1x8",
+    "title": "The Library Map",
+    "source": "Reading Advantage (Reading 3.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Library Map is an engaging article in Reading 3.1.",
+      "It explores fascinating themes related to Children's Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Children's Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 62,
+    "articleId": "i4iNzw6AArWrTOU0SE6f",
+    "title": "The Quest for the Golden Sword",
+    "source": "Reading Advantage (Reading 3.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Quest for the Golden Sword is an engaging article in Reading 3.1.",
+      "It explores fascinating themes related to Fantasy.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Fantasy"
+        }
+      }
+    ]
+  },
+  {
+    "index": 63,
+    "articleId": "cmixr8kil000us60esgwguw0z",
+    "title": "Funny People and Jokes",
+    "source": "Reading Advantage (Reading 3.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Funny People and Jokes is an engaging article in Reading 3.1.",
+      "It explores fascinating themes related to Humor.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Funny",
+        "definition": {
+          "th": "Humor"
+        }
+      }
+    ]
+  },
+  {
+    "index": 64,
+    "articleId": "mQBtacaks53c7Djci9n6",
+    "title": "English: Our World Language",
+    "source": "Reading Advantage (Reading 3.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "English: Our World Language is an engaging article in Reading 3.1.",
+      "It explores fascinating themes related to Language.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "English:",
+        "definition": {
+          "th": "Language"
+        }
+      }
+    ]
+  },
+  {
+    "index": 65,
+    "articleId": "cmgu0xb0i00rqs60e2djeq0xt",
+    "title": "The City Under Mars",
+    "source": "Reading Advantage (Reading 3.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The City Under Mars is an engaging article in Reading 3.1.",
+      "It explores fascinating themes related to Young Adult Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Young Adult Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 66,
+    "articleId": "h31ImmMoHtDQS3jxOuOy",
+    "title": "The House on the Hill",
+    "source": "Reading Advantage (Reading 3.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The House on the Hill is an engaging article in Reading 3.1.",
+      "It explores fascinating themes related to Horror.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Horror"
+        }
+      }
+    ]
+  },
+  {
+    "index": 67,
+    "articleId": "PfzjAu0eSyuUokFK2rnk",
+    "title": "Finding Myself",
+    "source": "Reading Advantage (Reading 3.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Finding Myself is an engaging article in Reading 3.1.",
+      "It explores fascinating themes related to Young Adult Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Finding",
+        "definition": {
+          "th": "Young Adult Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 68,
+    "articleId": "7UQDbGLuIPZbE7yYa33x",
+    "title": "The Goal Tree",
+    "source": "Reading Advantage (Reading 3.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Goal Tree is an engaging article in Reading 3.1.",
+      "It explores fascinating themes related to Self-help.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Self-help"
+        }
+      }
+    ]
+  },
+  {
+    "index": 69,
+    "articleId": "5a3MFFCMZSJLOc2CXiy2",
+    "title": "The Water Quest",
+    "source": "Reading Advantage (Reading 3.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Water Quest is an engaging article in Reading 3.1.",
+      "It explores fascinating themes related to Science.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Science"
+        }
+      }
+    ]
+  },
+  {
+    "index": 70,
+    "articleId": "ok5b5Be1QOBPzX2as2S4",
+    "title": "The Quest for the Lost Gem",
+    "source": "Reading Advantage (Reading 3.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Quest for the Lost Gem is an engaging article in Reading 3.1.",
+      "It explores fascinating themes related to Fantasy.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Fantasy"
+        }
+      }
+    ]
+  },
+  {
+    "index": 71,
+    "articleId": "BHusTKr0h8i6vOhbrfpx",
+    "title": "Love in the Time of War",
+    "source": "Reading Advantage (Reading 3.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Love in the Time of War is an engaging article in Reading 3.1.",
+      "It explores fascinating themes related to War.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Love",
+        "definition": {
+          "th": "War"
+        }
+      }
+    ]
+  },
+  {
+    "index": 72,
+    "articleId": "rY1QKnciUBBhE9MyadbF",
+    "title": "The Amazing Human Body",
+    "source": "Reading Advantage (Reading 3.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Amazing Human Body is an engaging article in Reading 3.1.",
+      "It explores fascinating themes related to Children's Nonfiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Children's Nonfiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 73,
+    "articleId": "cmitgx6xd000ts60ew7qdd5a4",
+    "title": "People and Jobs",
+    "source": "Reading Advantage (Reading 3.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "People and Jobs is an engaging article in Reading 3.1.",
+      "It explores fascinating themes related to Career Guides.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "People",
+        "definition": {
+          "th": "Career Guides"
+        }
+      }
+    ]
+  },
+  {
+    "index": 74,
+    "articleId": "AEh9oRp1WDa8CApSdrCr",
+    "title": "Time for School: Prioritize Tasks",
+    "source": "Reading Advantage (Reading 3.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Time for School: Prioritize Tasks is an engaging article in Reading 3.1.",
+      "It explores fascinating themes related to Self-help.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Time",
+        "definition": {
+          "th": "Self-help"
+        }
+      }
+    ]
+  },
+  {
+    "index": 75,
+    "articleId": "hFxfpuViJkutoIqbcUwP",
+    "title": "The Journey of a Young Cowboy",
+    "source": "Reading Advantage (Reading 3.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Journey of a Young Cowboy is an engaging article in Reading 3.2.",
+      "It explores fascinating themes related to Westerns.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Westerns"
+        }
+      }
+    ]
+  },
+  {
+    "index": 76,
+    "articleId": "cmhnbfgmv02aks60ebexfxwjv",
+    "title": "The Picture is a Secret",
+    "source": "Reading Advantage (Reading 3.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Picture is a Secret is an engaging article in Reading 3.2.",
+      "It explores fascinating themes related to Adult Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Adult Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 77,
+    "articleId": "chuRe1DJvPmMoRGW76hF",
+    "title": "The Garden of Hope",
+    "source": "Reading Advantage (Reading 3.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Garden of Hope is an engaging article in Reading 3.2.",
+      "It explores fascinating themes related to Food Writing.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Food Writing"
+        }
+      }
+    ]
+  },
+  {
+    "index": 78,
+    "articleId": "ni2xVrAHyhxgCyv50gkQ",
+    "title": "The Journey of Christopher Columbus",
+    "source": "Reading Advantage (Reading 3.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Journey of Christopher Columbus is an engaging article in Reading 3.2.",
+      "It explores fascinating themes related to History.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "History"
+        }
+      }
+    ]
+  },
+  {
+    "index": 79,
+    "articleId": "ZVpzwnckH1oFrnuDiXuh",
+    "title": "A Second Chance at Love",
+    "source": "Reading Advantage (Reading 3.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "A Second Chance at Love is an engaging article in Reading 3.2.",
+      "It explores fascinating themes related to Romance.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "A",
+        "definition": {
+          "th": "Romance"
+        }
+      }
+    ]
+  },
+  {
+    "index": 80,
+    "articleId": "h31ImmMoHtDQS3jxOuOy",
+    "title": "The House on the Hill",
+    "source": "Reading Advantage (Reading 3.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The House on the Hill is an engaging article in Reading 3.2.",
+      "It explores fascinating themes related to Horror.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Horror"
+        }
+      }
+    ]
+  },
+  {
+    "index": 81,
+    "articleId": "gCxlXVCOY1YnpbwsHOwg",
+    "title": "The Perfect Birdhouse",
+    "source": "Reading Advantage (Reading 3.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Perfect Birdhouse is an engaging article in Reading 3.2.",
+      "It explores fascinating themes related to How-to.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "How-to"
+        }
+      }
+    ]
+  },
+  {
+    "index": 82,
+    "articleId": "ZU86LBsTRTVADkLuBuBN",
+    "title": "The Amazing Journey Inside the Body",
+    "source": "Reading Advantage (Reading 3.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Amazing Journey Inside the Body is an engaging article in Reading 3.2.",
+      "It explores fascinating themes related to Science.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Science"
+        }
+      }
+    ]
+  },
+  {
+    "index": 83,
+    "articleId": "PfzjAu0eSyuUokFK2rnk",
+    "title": "Finding Myself",
+    "source": "Reading Advantage (Reading 3.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Finding Myself is an engaging article in Reading 3.2.",
+      "It explores fascinating themes related to Young Adult Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Finding",
+        "definition": {
+          "th": "Young Adult Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 84,
+    "articleId": "GopoxMhN05ICdRQTzZYw",
+    "title": "The Whispering Shadows",
+    "source": "Reading Advantage (Reading 3.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Whispering Shadows is an engaging article in Reading 3.2.",
+      "It explores fascinating themes related to Horror.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Horror"
+        }
+      }
+    ]
+  },
+  {
+    "index": 85,
+    "articleId": "cmjwrjbp700tis60eq8qzcfpp",
+    "title": "A Good Way to Think",
+    "source": "Reading Advantage (Reading 3.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "A Good Way to Think is an engaging article in Reading 3.2.",
+      "It explores fascinating themes related to Self-help.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "A",
+        "definition": {
+          "th": "Self-help"
+        }
+      }
+    ]
+  },
+  {
+    "index": 86,
+    "articleId": "0o7eOLMiyCT9r3iljbOd",
+    "title": "Old Places, New Life",
+    "source": "Reading Advantage (Reading 3.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Old Places, New Life is an engaging article in Reading 3.2.",
+      "It explores fascinating themes related to Flash Nonfiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Old",
+        "definition": {
+          "th": "Flash Nonfiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 87,
+    "articleId": "PV8t70u68XwKXjWh8DaR",
+    "title": "The Secret Diary of Sam",
+    "source": "Reading Advantage (Reading 3.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Secret Diary of Sam is an engaging article in Reading 3.2.",
+      "It explores fascinating themes related to Contemporary Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Contemporary Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 88,
+    "articleId": "seLILcBfZNSfaapisRra",
+    "title": "The Howl in the Night",
+    "source": "Reading Advantage (Reading 3.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Howl in the Night is an engaging article in Reading 3.2.",
+      "It explores fascinating themes related to Horror.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Horror"
+        }
+      }
+    ]
+  },
+  {
+    "index": 89,
+    "articleId": "4ZZeSspAGo285csIxNcc",
+    "title": "The Haunting Ambition of Victor Frankenstein",
+    "source": "Reading Advantage (Reading 4)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Haunting Ambition of Victor Frankenstein is an engaging article in Reading 4.",
+      "It explores fascinating themes related to Horror.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Horror"
+        }
+      }
+    ]
+  },
+  {
+    "index": 90,
+    "articleId": "9VRaZ4coQyiz4gJW91av",
+    "title": "The Creation Myth of Quetzalcoatl and Tezcatlipoca",
+    "source": "Reading Advantage (Reading 4)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Creation Myth of Quetzalcoatl and Tezcatlipoca is an engaging article in Reading 4.",
+      "It explores fascinating themes related to Fantasy.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Fantasy"
+        }
+      }
+    ]
+  },
+  {
+    "index": 91,
+    "articleId": "gyWWNG0hzEt4bFEHkGX1",
+    "title": "The Impact of Gophers on the Prairie Ecosystem",
+    "source": "Reading Advantage (Reading 4)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Impact of Gophers on the Prairie Ecosystem is an engaging article in Reading 4.",
+      "It explores fascinating themes related to Science.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Science"
+        }
+      }
+    ]
+  },
+  {
+    "index": 92,
+    "articleId": "iSYAqKTgtXABlx5IYuNY",
+    "title": "The Enigmatic Harappan Civilization: A Glimpse into the Ancient Indus Valley",
+    "source": "Reading Advantage (Reading 4)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Enigmatic Harappan Civilization: A Glimpse into the Ancient Indus Valley is an engaging article in Reading 4.",
+      "It explores fascinating themes related to History.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "History"
+        }
+      }
+    ]
+  },
+  {
+    "index": 93,
+    "articleId": "7MrOtihsv9tsz3SaBfVC",
+    "title": "The School Chronicles: A Tale of Friendship and Empowerment",
+    "source": "Reading Advantage (Reading 4)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The School Chronicles: A Tale of Friendship and Empowerment is an engaging article in Reading 4.",
+      "It explores fascinating themes related to Children's Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Children's Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 94,
+    "articleId": "XTXZcvdQ1juCo7wSnmtZ",
+    "title": "The Divide",
+    "source": "Reading Advantage (Reading 4)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Divide is an engaging article in Reading 4.",
+      "It explores fascinating themes related to Young Adult Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Young Adult Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 95,
+    "articleId": "BwJEsTpAiGfxqxvSmRZ3",
+    "title": "The Remarkable Arctic Lousewort: Surviving in the Harshest Environment",
+    "source": "Reading Advantage (Reading 4)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Remarkable Arctic Lousewort: Surviving in the Harshest Environment is an engaging article in Reading 4.",
+      "It explores fascinating themes related to Science.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Science"
+        }
+      }
+    ]
+  },
+  {
+    "index": 96,
+    "articleId": "CRiCha2pxDeP0xx1KqnS",
+    "title": "The Enigmatic Megalodon: A Giant of the Ancient Seas",
+    "source": "Reading Advantage (Reading 4)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Enigmatic Megalodon: A Giant of the Ancient Seas is an engaging article in Reading 4.",
+      "It explores fascinating themes related to Science.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Science"
+        }
+      }
+    ]
+  },
+  {
+    "index": 97,
+    "articleId": "KzUwB5Uc6139Fw5fcnpx",
+    "title": "A Scandalous Affair in Victorian England",
+    "source": "Reading Advantage (Reading 4)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "A Scandalous Affair in Victorian England is an engaging article in Reading 4.",
+      "It explores fascinating themes related to Historical Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "A",
+        "definition": {
+          "th": "Historical Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 98,
+    "articleId": "44QFyTUgeUGPKf9gfLlL",
+    "title": "The Creation Myth of Quetzalcoatl and Tezcatlipoca",
+    "source": "Reading Advantage (Reading 4)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Creation Myth of Quetzalcoatl and Tezcatlipoca is an engaging article in Reading 4.",
+      "It explores fascinating themes related to Fantasy.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Fantasy"
+        }
+      }
+    ]
+  },
+  {
+    "index": 99,
+    "articleId": "xAo8XxZoSl5fpbkicsqe",
+    "title": "The Evolution of Marsupials: A Story of Adaptation and Diversification",
+    "source": "Reading Advantage (Reading 4)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Evolution of Marsupials: A Story of Adaptation and Diversification is an engaging article in Reading 4.",
+      "It explores fascinating themes related to Science.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Science"
+        }
+      }
+    ]
+  },
+  {
+    "index": 100,
+    "articleId": "ayOLHwUR3JnnjVsY43yc",
+    "title": "The Influence of Regional Ingredients on Traditional Dishes: A Study of Southern Cuisine",
+    "source": "Reading Advantage (Reading 4)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Influence of Regional Ingredients on Traditional Dishes: A Study of Southern Cuisine is an engaging article in Reading 4.",
+      "It explores fascinating themes related to Food Writing.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Food Writing"
+        }
+      }
+    ]
+  },
+  {
+    "index": 101,
+    "articleId": "cmkgrpes5003os60ex7cqbzva",
+    "title": "The Chromatic Insurrection",
+    "source": "Reading Advantage (Reading 4)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Chromatic Insurrection is an engaging article in Reading 4.",
+      "It explores fascinating themes related to Science Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Science Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 102,
+    "articleId": "cml5szh5o00aas60e5wv1q9ez",
+    "title": "The Dissonance of Silence",
+    "source": "Reading Advantage (Reading 4)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Dissonance of Silence is an engaging article in Reading 4.",
+      "It explores fascinating themes related to Young Adult Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Young Adult Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 103,
+    "articleId": "VpbPd6AcDo1LXDmwwpcz",
+    "title": "The Curious Cat and the Mysterious Island",
+    "source": "Reading Advantage (Reading 5)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Curious Cat and the Mysterious Island is an engaging article in Reading 5.",
+      "It explores fascinating themes related to Children's Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Children's Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 104,
+    "articleId": "LYoo0xXVqh1vxV5hPY7L",
+    "title": "The Woman in Black",
+    "source": "Reading Advantage (Reading 5)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Woman in Black is an engaging article in Reading 5.",
+      "It explores fascinating themes related to Horror.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Horror"
+        }
+      }
+    ]
+  },
+  {
+    "index": 105,
+    "articleId": "sVt8IafJKn3g5PyjMEDA",
+    "title": "The Influence of Latin on Modern Languages",
+    "source": "Reading Advantage (Reading 5)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Influence of Latin on Modern Languages is an engaging article in Reading 5.",
+      "It explores fascinating themes related to Language.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Language"
+        }
+      }
+    ]
+  },
+  {
+    "index": 106,
+    "articleId": "bag4wyd75fJ5rUvwQXZd",
+    "title": "Hiking the Inca Trail to Machu Picchu",
+    "source": "Reading Advantage (Reading 5)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Hiking the Inca Trail to Machu Picchu is an engaging article in Reading 5.",
+      "It explores fascinating themes related to Travel.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Hiking",
+        "definition": {
+          "th": "Travel"
+        }
+      }
+    ]
+  },
+  {
+    "index": 107,
+    "articleId": "qzevLhkp2cShRgVIQtGN",
+    "title": "The Alien Artifact",
+    "source": "Reading Advantage (Reading 5)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Alien Artifact is an engaging article in Reading 5.",
+      "It explores fascinating themes related to Science Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Science Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 108,
+    "articleId": "30mWkKsXiHcmK5Py82HE",
+    "title": "Moonlight Secrets",
+    "source": "Reading Advantage (Reading 5)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Moonlight Secrets is an engaging article in Reading 5.",
+      "It explores fascinating themes related to Adult Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Moonlight",
+        "definition": {
+          "th": "Adult Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 109,
+    "articleId": "wWSMX7cQ66RHSv9W8RGZ",
+    "title": "A Day at the Market",
+    "source": "Reading Advantage (Reading 5)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "A Day at the Market is an engaging article in Reading 5.",
+      "It explores fascinating themes related to Flash Nonfiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "A",
+        "definition": {
+          "th": "Flash Nonfiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 110,
+    "articleId": "j6ZCQ1jRK2tSwXODUOo0",
+    "title": "The Meme King",
+    "source": "Reading Advantage (Reading 5)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Meme King is an engaging article in Reading 5.",
+      "It explores fascinating themes related to Humor.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Humor"
+        }
+      }
+    ]
+  },
+  {
+    "index": 111,
+    "articleId": "5kA4C3PujXGSSt1OW4oi",
+    "title": "Gone Girl",
+    "source": "Reading Advantage (Reading 5)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Gone Girl is an engaging article in Reading 5.",
+      "It explores fascinating themes related to Mystery/Thriller.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Gone",
+        "definition": {
+          "th": "Mystery/Thriller"
+        }
+      }
+    ]
+  },
+  {
+    "index": 112,
+    "articleId": "JXmRcSQks7LTFN0ipVAy",
+    "title": "Little Fires Everywhere",
+    "source": "Reading Advantage (Reading 5)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Little Fires Everywhere is an engaging article in Reading 5.",
+      "It explores fascinating themes related to Contemporary Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Little",
+        "definition": {
+          "th": "Contemporary Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 113,
+    "articleId": "QQtnABasb5uOCvjoWaPd",
+    "title": "The Hidden Cost of Progress",
+    "source": "Reading Advantage (Reading 5)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Hidden Cost of Progress is an engaging article in Reading 5.",
+      "It explores fascinating themes related to Journalism.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Journalism"
+        }
+      }
+    ]
+  },
+  {
+    "index": 114,
+    "articleId": "RoT9WUo5frmxyfjN2U9J",
+    "title": "The Adaptations of Arctic Animals",
+    "source": "Reading Advantage (Reading 5)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Adaptations of Arctic Animals is an engaging article in Reading 5.",
+      "It explores fascinating themes related to Children's Nonfiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Children's Nonfiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 115,
+    "articleId": "lWXWegLFVjpO1lzmeLUO",
+    "title": "The Outlaw Witch",
+    "source": "Reading Advantage (Reading 5)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Outlaw Witch is an engaging article in Reading 5.",
+      "It explores fascinating themes related to Westerns.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Westerns"
+        }
+      }
+    ]
+  },
+  {
+    "index": 116,
+    "articleId": "mIGa1v9cgtJgkXAnmVGy",
+    "title": "Two Sisters, Two Paths",
+    "source": "Reading Advantage (Reading 5)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Two Sisters, Two Paths is an engaging article in Reading 5.",
+      "It explores fascinating themes related to Contemporary Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Two",
+        "definition": {
+          "th": "Contemporary Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 117,
+    "articleId": "cmimt2el00003dcaobo9b9r3f",
+    "title": "Leo and the Hero Cat",
+    "source": "Reading Advantage (Reading 6.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Leo and the Hero Cat is an engaging article in Reading 6.1.",
+      "It explores fascinating themes related to Literary Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Leo",
+        "definition": {
+          "th": "Literary Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 118,
+    "articleId": "xhNwd3G8tk4zEqI5XYRI",
+    "title": "The Blue Paper",
+    "source": "Reading Advantage (Reading 6.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Blue Paper is an engaging article in Reading 6.1.",
+      "It explores fascinating themes related to Young Adult Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Young Adult Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 119,
+    "articleId": "cml526drc00ges60emv019fn6",
+    "title": "Costa Rica's Green Travel",
+    "source": "Reading Advantage (Reading 6.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Costa Rica's Green Travel is an engaging article in Reading 6.1.",
+      "It explores fascinating themes related to Travel.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Costa",
+        "definition": {
+          "th": "Travel"
+        }
+      }
+    ]
+  },
+  {
+    "index": 120,
+    "articleId": "1fp84I1JPobquiidnSiT",
+    "title": "The Children's Crusade",
+    "source": "Reading Advantage (Reading 6.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Children's Crusade is an engaging article in Reading 6.1.",
+      "It explores fascinating themes related to Children's Nonfiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Children's Nonfiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 121,
+    "articleId": "cmjwriyvf00sts60em3b14w7d",
+    "title": "You Can Learn and Grow",
+    "source": "Reading Advantage (Reading 6.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "You Can Learn and Grow is an engaging article in Reading 6.1.",
+      "It explores fascinating themes related to Self-help.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "You",
+        "definition": {
+          "th": "Self-help"
+        }
+      }
+    ]
+  },
+  {
+    "index": 122,
+    "articleId": "cmjsh7kiu01q6s60ez51ws8r3",
+    "title": "Kael and the Sunstone",
+    "source": "Reading Advantage (Reading 6.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Kael and the Sunstone is an engaging article in Reading 6.1.",
+      "It explores fascinating themes related to Fantasy.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Kael",
+        "definition": {
+          "th": "Fantasy"
+        }
+      }
+    ]
+  },
+  {
+    "index": 123,
+    "articleId": "cmgf0s7ol00dos60efhlwbcgu",
+    "title": "The Secret of the River",
+    "source": "Reading Advantage (Reading 6.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Secret of the River is an engaging article in Reading 6.1.",
+      "It explores fascinating themes related to Contemporary Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Contemporary Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 124,
+    "articleId": "cmjih4iqc006ps60eur0zlqvb",
+    "title": "Lina's Special Lunch",
+    "source": "Reading Advantage (Reading 6.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Lina's Special Lunch is an engaging article in Reading 6.1.",
+      "It explores fascinating themes related to Literary Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Lina's",
+        "definition": {
+          "th": "Literary Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 125,
+    "articleId": "cmkbrnka801c9s60e6y5n61q0",
+    "title": "My Rusty Bike",
+    "source": "Reading Advantage (Reading 6.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "My Rusty Bike is an engaging article in Reading 6.1.",
+      "It explores fascinating themes related to Flash Nonfiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "My",
+        "definition": {
+          "th": "Flash Nonfiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 126,
+    "articleId": "WBTAniq6iDywaXQLBZYF",
+    "title": "Your First Business: A Teen Guide",
+    "source": "Reading Advantage (Reading 6.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Your First Business: A Teen Guide is an engaging article in Reading 6.1.",
+      "It explores fascinating themes related to Career Guides.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Your",
+        "definition": {
+          "th": "Career Guides"
+        }
+      }
+    ]
+  },
+  {
+    "index": 127,
+    "articleId": "cml6hmdgq00n5s60etpeou7u0",
+    "title": "The Secret of the Old Book",
+    "source": "Reading Advantage (Reading 6.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Secret of the Old Book is an engaging article in Reading 6.1.",
+      "It explores fascinating themes related to Children's Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Children's Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 128,
+    "articleId": "cmj2ralem013us60eboxwb8pr",
+    "title": "Clara's New Friend",
+    "source": "Reading Advantage (Reading 6.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Clara's New Friend is an engaging article in Reading 6.1.",
+      "It explores fascinating themes related to Historical Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Clara's",
+        "definition": {
+          "th": "Historical Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 129,
+    "articleId": "cmgpqkvxo01qds60eazl5v6a1",
+    "title": "Mongolia: A Nomadic Life",
+    "source": "Reading Advantage (Reading 6.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Mongolia: A Nomadic Life is an engaging article in Reading 6.1.",
+      "It explores fascinating themes related to Travel.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Mongolia:",
+        "definition": {
+          "th": "Travel"
+        }
+      }
+    ]
+  },
+  {
+    "index": 130,
+    "articleId": "iO4trC2AgGcR843wEx94",
+    "title": "The Art of Letters",
+    "source": "Reading Advantage (Reading 6.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Art of Letters is an engaging article in Reading 6.1.",
+      "It explores fascinating themes related to Crafts and Hobbies.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Crafts and Hobbies"
+        }
+      }
+    ]
+  },
+  {
+    "index": 131,
+    "articleId": "hoJzpKVdEvJRSGN5kZz4",
+    "title": "Timmy the Turtle Learns to Swim",
+    "source": "Reading Advantage (Reading 7.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Timmy the Turtle Learns to Swim is an engaging article in Reading 7.1.",
+      "It explores fascinating themes related to Children's Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Timmy",
+        "definition": {
+          "th": "Children's Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 132,
+    "articleId": "V4lVrdNQsadqMMG4rLEx",
+    "title": "The Underground Journey",
+    "source": "Reading Advantage (Reading 7.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Underground Journey is an engaging article in Reading 7.1.",
+      "It explores fascinating themes related to Contemporary Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Contemporary Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 133,
+    "articleId": "bMkxX79S3wDnV5TunNzH",
+    "title": "The Magic of Positive Words",
+    "source": "Reading Advantage (Reading 7.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Magic of Positive Words is an engaging article in Reading 7.1.",
+      "It explores fascinating themes related to Parenting.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Parenting"
+        }
+      }
+    ]
+  },
+  {
+    "index": 134,
+    "articleId": "UASIW8snbbE4IyQTiyHY",
+    "title": "The Curious Case of Dr. Elara",
+    "source": "Reading Advantage (Reading 7.1)",
+    "sentenceCount": 4,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Curious Case of Dr.",
+      "Elara is an engaging article in Reading 7.1.",
+      "It explores fascinating themes related to Philosophy.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Philosophy"
+        }
+      }
+    ]
+  },
+  {
+    "index": 135,
+    "articleId": "iqPyiVb28JvJWchR2x5n",
+    "title": "New Home on Zeta-5",
+    "source": "Reading Advantage (Reading 7.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "New Home on Zeta-5 is an engaging article in Reading 7.1.",
+      "It explores fascinating themes related to Science Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "New",
+        "definition": {
+          "th": "Science Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 136,
+    "articleId": "kthnsZE0his52tjpyDwI",
+    "title": "The Hidden Flame",
+    "source": "Reading Advantage (Reading 7.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Hidden Flame is an engaging article in Reading 7.1.",
+      "It explores fascinating themes related to Young Adult Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Young Adult Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 137,
+    "articleId": "BINSURK3l0UIjjXQ3Lho",
+    "title": "Steve Jobs: The Innovator Behind Apple",
+    "source": "Reading Advantage (Reading 7.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Steve Jobs: The Innovator Behind Apple is an engaging article in Reading 7.1.",
+      "It explores fascinating themes related to Biographies.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Steve",
+        "definition": {
+          "th": "Biographies"
+        }
+      }
+    ]
+  },
+  {
+    "index": 138,
+    "articleId": "Kngf1cWGxRby0omZRG6B",
+    "title": "The Joys of Parenthood: A Flash Memoir",
+    "source": "Reading Advantage (Reading 7.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Joys of Parenthood: A Flash Memoir is an engaging article in Reading 7.1.",
+      "It explores fascinating themes related to Flash Nonfiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Flash Nonfiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 139,
+    "articleId": "9f3IhYOE7SfJjirJLHte",
+    "title": "The Nightingale Sisters",
+    "source": "Reading Advantage (Reading 7.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Nightingale Sisters is an engaging article in Reading 7.1.",
+      "It explores fascinating themes related to Adult Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Adult Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 140,
+    "articleId": "CZkjBDAcet1AimWjwAjF",
+    "title": "The Future of Global Communication",
+    "source": "Reading Advantage (Reading 7.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Future of Global Communication is an engaging article in Reading 7.1.",
+      "It explores fascinating themes related to Language.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Language"
+        }
+      }
+    ]
+  },
+  {
+    "index": 141,
+    "articleId": "vBZRHhd6lNwTye5af2we",
+    "title": "The Evolution of Mockumentaries",
+    "source": "Reading Advantage (Reading 7.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Evolution of Mockumentaries is an engaging article in Reading 7.1.",
+      "It explores fascinating themes related to Humor.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Humor"
+        }
+      }
+    ]
+  },
+  {
+    "index": 142,
+    "articleId": "9fOD2YynQ86J6U9mcnx8",
+    "title": "The Pilot's Quest",
+    "source": "Reading Advantage (Reading 7.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Pilot's Quest is an engaging article in Reading 7.1.",
+      "It explores fascinating themes related to Science Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Science Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 143,
+    "articleId": "FWSuj1yh5kzajOz2ra4W",
+    "title": "The Battle of the Hills and Rivers",
+    "source": "Reading Advantage (Reading 7.1)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Battle of the Hills and Rivers is an engaging article in Reading 7.1.",
+      "It explores fascinating themes related to War.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "War"
+        }
+      }
+    ]
+  },
+  {
+    "index": 144,
+    "articleId": "mk1cGngBZEvlEMejyY1J",
+    "title": "The Magical Menagerie",
+    "source": "Reading Advantage (Reading 7.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Magical Menagerie is an engaging article in Reading 7.2.",
+      "It explores fascinating themes related to Children's Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Children's Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 145,
+    "articleId": "9fOD2YynQ86J6U9mcnx8",
+    "title": "The Pilot's Quest",
+    "source": "Reading Advantage (Reading 7.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Pilot's Quest is an engaging article in Reading 7.2.",
+      "It explores fascinating themes related to Science Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Science Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 146,
+    "articleId": "Usdm93Q1U6dhVEGsg54x",
+    "title": "A Day at the Market",
+    "source": "Reading Advantage (Reading 7.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "A Day at the Market is an engaging article in Reading 7.2.",
+      "It explores fascinating themes related to Flash Nonfiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "A",
+        "definition": {
+          "th": "Flash Nonfiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 147,
+    "articleId": "WBHMs7EzNCPdrsrTkflF",
+    "title": "The Future of Global Communication",
+    "source": "Reading Advantage (Reading 7.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Future of Global Communication is an engaging article in Reading 7.2.",
+      "It explores fascinating themes related to Language.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Language"
+        }
+      }
+    ]
+  },
+  {
+    "index": 148,
+    "articleId": "j9q5K2q7a3FILal0CxRx",
+    "title": "Super Funny: The Comical Superhero",
+    "source": "Reading Advantage (Reading 7.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Super Funny: The Comical Superhero is an engaging article in Reading 7.2.",
+      "It explores fascinating themes related to Children's Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Super",
+        "definition": {
+          "th": "Children's Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 149,
+    "articleId": "gVYeO54oRcBTNRdgCufB",
+    "title": "The Road to Hidden Hearts",
+    "source": "Reading Advantage (Reading 7.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Road to Hidden Hearts is an engaging article in Reading 7.2.",
+      "It explores fascinating themes related to Young Adult Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Young Adult Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 150,
+    "articleId": "2ERO17dpy8fxPjbF9y6M",
+    "title": "The Evolution of Slang and Jargon",
+    "source": "Reading Advantage (Reading 7.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Evolution of Slang and Jargon is an engaging article in Reading 7.2.",
+      "It explores fascinating themes related to Language.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Language"
+        }
+      }
+    ]
+  },
+  {
+    "index": 151,
+    "articleId": "NSpNkX8OyjXmZl3Aiw5J",
+    "title": "The Three Paths of Peace",
+    "source": "Reading Advantage (Reading 7.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Three Paths of Peace is an engaging article in Reading 7.2.",
+      "It explores fascinating themes related to Religion and Spirituality.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Religion and Spirituality"
+        }
+      }
+    ]
+  },
+  {
+    "index": 152,
+    "articleId": "ArqKbTO9S0QCaJl0r51e",
+    "title": "The Legend of Paul Bunyan and Babe the Blue Ox",
+    "source": "Reading Advantage (Reading 7.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Legend of Paul Bunyan and Babe the Blue Ox is an engaging article in Reading 7.2.",
+      "It explores fascinating themes related to Children's Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Children's Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 153,
+    "articleId": "Yi3OGXBEdqSIyENRySgs",
+    "title": "Percy's Icy Adventure",
+    "source": "Reading Advantage (Reading 7.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Percy's Icy Adventure is an engaging article in Reading 7.2.",
+      "It explores fascinating themes related to Children's Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Percy's",
+        "definition": {
+          "th": "Children's Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 154,
+    "articleId": "BINSURK3l0UIjjXQ3Lho",
+    "title": "Steve Jobs: The Innovator Behind Apple",
+    "source": "Reading Advantage (Reading 7.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "Steve Jobs: The Innovator Behind Apple is an engaging article in Reading 7.2.",
+      "It explores fascinating themes related to Biographies.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "Steve",
+        "definition": {
+          "th": "Biographies"
+        }
+      }
+    ]
+  },
+  {
+    "index": 155,
+    "articleId": "otGARuUmJDBaoxFLJJEW",
+    "title": "The Power of Small Steps",
+    "source": "Reading Advantage (Reading 7.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Power of Small Steps is an engaging article in Reading 7.2.",
+      "It explores fascinating themes related to Self-help.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Self-help"
+        }
+      }
+    ]
+  },
+  {
+    "index": 156,
+    "articleId": "O0NkneVeChqGGbq49fdr",
+    "title": "The Bond of Resilience",
+    "source": "Reading Advantage (Reading 7.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Bond of Resilience is an engaging article in Reading 7.2.",
+      "It explores fascinating themes related to Contemporary Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Contemporary Fiction"
+        }
+      }
+    ]
+  },
+  {
+    "index": 157,
+    "articleId": "vhQPapCRtJ8zdXOODg7n",
+    "title": "The Resistance Fighters of Occupied France in World War II",
+    "source": "Reading Advantage (Reading 7.2)",
+    "sentenceCount": 3,
+    "wordCount": 1,
+    "mcqCount": 1,
+    "saqCount": 0,
+    "sentences": [
+      "The Resistance Fighters of Occupied France in World War II is an engaging article in Reading 7.2.",
+      "It explores fascinating themes related to Historical Fiction.",
+      "Reading this story helps students improve vocabulary and comprehension skills."
+    ],
+    "words": [
+      {
+        "vocabulary": "The",
+        "definition": {
+          "th": "Historical Fiction"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,1151 @@
+{
+  "version": 1,
+  "articleId": "cmgqw9uh501yyt79bluoefagb",
+  "source": "PRIMARY_ADVANTAGE",
+  "title": "Leo's Silly Clothes Fun",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-e44122005e",
+      "order": 0,
+      "text": "This is Leo.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-001-e44122005e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-001-e44122005e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-1f46733d91",
+      "order": 1,
+      "text": "Leo is a boy.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-002-1f46733d91.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-002-1f46733d91.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-0d033cf177",
+      "order": 2,
+      "text": "Leo is happy.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-003-0d033cf177.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-003-0d033cf177.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-6eb2510393",
+      "order": 3,
+      "text": "Leo has clothes.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-004-6eb2510393.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-004-6eb2510393.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-6edcfdc430",
+      "order": 4,
+      "text": "He has a red hat.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-005-6edcfdc430.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-005-6edcfdc430.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-4cc3bcc7a8",
+      "order": 5,
+      "text": "The hat is red.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-006-4cc3bcc7a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-006-4cc3bcc7a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-60d0755a30",
+      "order": 6,
+      "text": "He has a blue shirt.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-007-60d0755a30.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-007-60d0755a30.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-c959e094d7",
+      "order": 7,
+      "text": "The shirt is blue.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-008-c959e094d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-008-c959e094d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-40974a8ba7",
+      "order": 8,
+      "text": "He has a yellow sock.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-009-40974a8ba7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-009-40974a8ba7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-2dd5a454bc",
+      "order": 9,
+      "text": "The sock is yellow.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-010-2dd5a454bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-010-2dd5a454bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-348bc21d07",
+      "order": 10,
+      "text": "He has a green shoe.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-011-348bc21d07.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-011-348bc21d07.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-d18e427d08",
+      "order": 11,
+      "text": "The shoe is green.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-012-d18e427d08.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-012-d18e427d08.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-83112733e2",
+      "order": 12,
+      "text": "These are his clothes.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-013-83112733e2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-013-83112733e2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-60697abd22",
+      "order": 13,
+      "text": "Leo likes his clothes.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-014-60697abd22.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-014-60697abd22.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-b2462bb168",
+      "order": 14,
+      "text": "Leo wears clothes.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-015-b2462bb168.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-015-b2462bb168.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-3973d9fe27",
+      "order": 15,
+      "text": "This is fun.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-016-3973d9fe27.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-016-3973d9fe27.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-a4d167f715",
+      "order": 16,
+      "text": "Leo wears the red hat.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-017-a4d167f715.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-017-a4d167f715.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-d74fd2a63b",
+      "order": 17,
+      "text": "He wears the hat on his hand.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-018-d74fd2a63b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-018-d74fd2a63b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-e92be8380a",
+      "order": 18,
+      "text": "This is silly.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-019-e92be8380a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-019-e92be8380a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-aba1859c97",
+      "order": 19,
+      "text": "Leo wears the yellow sock.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-020-aba1859c97.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-020-aba1859c97.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-d0475028e1",
+      "order": 20,
+      "text": "He wears the sock on his head.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-021-d0475028e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-021-d0475028e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-24e70bed20",
+      "order": 21,
+      "text": "This is silly.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-022-24e70bed20.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-022-24e70bed20.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-eb1ed23d1b",
+      "order": 22,
+      "text": "Leo wears the blue shirt.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-023-eb1ed23d1b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-023-eb1ed23d1b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-8f49355e01",
+      "order": 23,
+      "text": "He wears the shirt on his leg.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-024-8f49355e01.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-024-8f49355e01.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-c97b9f8ecb",
+      "order": 24,
+      "text": "This is very silly.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-025-c97b9f8ecb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-025-c97b9f8ecb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-ccf741c3a0",
+      "order": 25,
+      "text": "Leo is happy.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-026-ccf741c3a0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-026-ccf741c3a0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-c5ad7dcf94",
+      "order": 26,
+      "text": "Leo laughs. This is fun.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-027-c5ad7dcf94.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-027-c5ad7dcf94.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-a4352bf2d7",
+      "order": 27,
+      "text": "Leo loves this fun.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-028-a4352bf2d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-028-a4352bf2d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-3bfc7beb37",
+      "order": 28,
+      "text": "Mom is here.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-029-3bfc7beb37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-029-3bfc7beb37.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-be8fb32649",
+      "order": 29,
+      "text": "Mom sees Leo.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-030-be8fb32649.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-030-be8fb32649.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-b2f6cd694d",
+      "order": 30,
+      "text": "Mom sees his red hat.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-031-b2f6cd694d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-031-b2f6cd694d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-def86eb6d9",
+      "order": 31,
+      "text": "Mom sees his yellow sock.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-032-def86eb6d9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-032-def86eb6d9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-6223345405",
+      "order": 32,
+      "text": "Mom sees his blue shirt.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-033-6223345405.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-033-6223345405.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-f7118abb1a",
+      "order": 33,
+      "text": "Mom sees Leo's clothes.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-034-f7118abb1a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-034-f7118abb1a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-eb97482c0c",
+      "order": 34,
+      "text": "Mom smiles.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-035-eb97482c0c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-035-eb97482c0c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-bd3c4e4096",
+      "order": 35,
+      "text": "Mom says, \"Fun!\"",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-036-bd3c4e4096.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-036-bd3c4e4096.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-4119150e06",
+      "order": 36,
+      "text": "Leo is happy.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-037-4119150e06.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-037-4119150e06.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-3d3bd9986b",
+      "order": 37,
+      "text": "Mom is happy too.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-038-3d3bd9986b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-038-3d3bd9986b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-6bae89a6fe",
+      "order": 38,
+      "text": "This is a happy game.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-039-6bae89a6fe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-039-6bae89a6fe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-fb6e7060ac",
+      "order": 39,
+      "text": "This is a good day.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-040-fb6e7060ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-040-fb6e7060ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-e05ed530ae",
+      "order": 40,
+      "text": "Leo likes Mom's smile.",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-041-e05ed530ae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/sentences/sentence-041-e05ed530ae.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-d2472bb4fe",
+      "order": 0,
+      "text": "clothes",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-001-d2472bb4fe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-001-d2472bb4fe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-20a17eaf27",
+      "order": 1,
+      "text": "shirt",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-002-20a17eaf27.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-002-20a17eaf27.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-3cb7265299",
+      "order": 2,
+      "text": "sock",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-003-3cb7265299.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-003-3cb7265299.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-a36cc5ebfb",
+      "order": 3,
+      "text": "shoe",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-004-a36cc5ebfb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-004-a36cc5ebfb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-38310ef8ab",
+      "order": 4,
+      "text": "wears",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-005-38310ef8ab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-005-38310ef8ab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-2e7a4e0c19",
+      "order": 5,
+      "text": "silly",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-006-2e7a4e0c19.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-006-2e7a4e0c19.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-bc7bfa6b58",
+      "order": 6,
+      "text": "laughs",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-007-bc7bfa6b58.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-007-bc7bfa6b58.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-e4c4393b3b",
+      "order": 7,
+      "text": "smiles",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-008-e4c4393b3b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-008-e4c4393b3b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-ace9d00d79",
+      "order": 8,
+      "text": "game",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-009-ace9d00d79.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-009-ace9d00d79.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-ecc8b1cc82",
+      "order": 9,
+      "text": "loves",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-010-ecc8b1cc82.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-010-ecc8b1cc82.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-438b09494a",
+      "order": 10,
+      "text": "this",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-011-438b09494a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-011-438b09494a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-bc1f05f2e1",
+      "order": 11,
+      "text": "is",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-012-bc1f05f2e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-012-bc1f05f2e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-bfcbfa240a",
+      "order": 12,
+      "text": "leo",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-013-bfcbfa240a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-013-bfcbfa240a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-6f34be13fa",
+      "order": 13,
+      "text": "a",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-014-6f34be13fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-014-6f34be13fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-867af290ad",
+      "order": 14,
+      "text": "boy",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-015-867af290ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-015-867af290ad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-a12b9649e1",
+      "order": 15,
+      "text": "happy",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-016-a12b9649e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-016-a12b9649e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-8b8fcf5182",
+      "order": 16,
+      "text": "has",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-017-8b8fcf5182.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-017-8b8fcf5182.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-b03ab62109",
+      "order": 17,
+      "text": "he",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-018-b03ab62109.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-018-b03ab62109.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-85708ea27f",
+      "order": 18,
+      "text": "red",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-019-85708ea27f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-019-85708ea27f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-db02a2202c",
+      "order": 19,
+      "text": "hat",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-020-db02a2202c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-020-db02a2202c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-d7146f105d",
+      "order": 20,
+      "text": "the",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-021-d7146f105d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-021-d7146f105d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-c9c8ba2191",
+      "order": 21,
+      "text": "blue",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-022-c9c8ba2191.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-022-c9c8ba2191.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-9d65c1855f",
+      "order": 22,
+      "text": "yellow",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-023-9d65c1855f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-023-9d65c1855f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-930cbe44b2",
+      "order": 23,
+      "text": "green",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-024-930cbe44b2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-024-930cbe44b2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-9c95fb187c",
+      "order": 24,
+      "text": "these",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-025-9c95fb187c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-025-9c95fb187c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-6848637ae1",
+      "order": 25,
+      "text": "are",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-026-6848637ae1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-026-6848637ae1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-35e1854597",
+      "order": 26,
+      "text": "his",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-027-35e1854597.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-027-35e1854597.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-c2d284485f",
+      "order": 27,
+      "text": "likes",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-028-c2d284485f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-028-c2d284485f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-cb2aaa7dbb",
+      "order": 28,
+      "text": "fun",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-029-cb2aaa7dbb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-029-cb2aaa7dbb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-f83872b8f6",
+      "order": 29,
+      "text": "on",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-030-f83872b8f6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-030-f83872b8f6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-1e86c8d383",
+      "order": 30,
+      "text": "hand",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-031-1e86c8d383.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-031-1e86c8d383.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-a57d3862d6",
+      "order": 31,
+      "text": "head",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-032-a57d3862d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-032-a57d3862d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-eaadeaf6f3",
+      "order": 32,
+      "text": "leg",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-033-eaadeaf6f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-033-eaadeaf6f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-12bb2014a8",
+      "order": 33,
+      "text": "very",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-034-12bb2014a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-034-12bb2014a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-82d562717d",
+      "order": 34,
+      "text": "mom",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-035-82d562717d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-035-82d562717d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-a79bede13d",
+      "order": 35,
+      "text": "here",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-036-a79bede13d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-036-a79bede13d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-0fd92967d8",
+      "order": 36,
+      "text": "sees",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-037-0fd92967d8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-037-0fd92967d8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-7218432c33",
+      "order": 37,
+      "text": "leo's",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-038-7218432c33.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-038-7218432c33.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-2c72ea12a4",
+      "order": 38,
+      "text": "says",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-039-2c72ea12a4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-039-2c72ea12a4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-5359e83ea9",
+      "order": 39,
+      "text": "too",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-040-5359e83ea9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-040-5359e83ea9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-d1a7fab19c",
+      "order": 40,
+      "text": "good",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-041-d1a7fab19c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-041-d1a7fab19c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-bbdb481455",
+      "order": 41,
+      "text": "day",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-042-bbdb481455.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-042-bbdb481455.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-a49daa4118",
+      "order": 42,
+      "text": "mom's",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-043-a49daa4118.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-043-a49daa4118.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-1c3246cc82",
+      "order": 43,
+      "text": "smile",
+      "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/words/word-044-1c3246cc82.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/words/word-044-1c3246cc82.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-edc2cc81bf",
+      "type": "mcq",
+      "order": 0,
+      "text": "Who is the story about?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-001-edc2cc81bf.mp3",
+      "questionObjectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-001-edc2cc81bf.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-001-edc2cc81bf-option1-b9ddd40f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-001-edc2cc81bf-option2-e86c40b7.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-001-edc2cc81bf-option3-7671c71b.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-001-edc2cc81bf-option4-79186808.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-edc2cc81bf-option1-b9ddd40f",
+          "text": "Mom",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-001-edc2cc81bf-option1-b9ddd40f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-edc2cc81bf-option2-e86c40b7",
+          "text": "Leo",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-001-edc2cc81bf-option2-e86c40b7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-edc2cc81bf-option3-7671c71b",
+          "text": "A hat",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-001-edc2cc81bf-option3-7671c71b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-edc2cc81bf-option4-79186808",
+          "text": "A dog",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-001-edc2cc81bf-option4-79186808.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-24842b3f31",
+      "type": "mcq",
+      "order": 1,
+      "text": "What color is Leo's hat?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-002-24842b3f31.mp3",
+      "questionObjectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-002-24842b3f31.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-002-24842b3f31-option1-0ac24b4a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-002-24842b3f31-option2-b9efab5c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-002-24842b3f31-option3-459ca967.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-002-24842b3f31-option4-dd989a99.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-24842b3f31-option1-0ac24b4a",
+          "text": "Blue",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-002-24842b3f31-option1-0ac24b4a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-24842b3f31-option2-b9efab5c",
+          "text": "Yellow",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-002-24842b3f31-option2-b9efab5c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-24842b3f31-option3-459ca967",
+          "text": "Red",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-002-24842b3f31-option3-459ca967.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-24842b3f31-option4-dd989a99",
+          "text": "Green",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-002-24842b3f31-option4-dd989a99.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-85cf05000c",
+      "type": "mcq",
+      "order": 2,
+      "text": "Where does Leo wear the hat?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-003-85cf05000c.mp3",
+      "questionObjectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-003-85cf05000c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-003-85cf05000c-option1-a684b62a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-003-85cf05000c-option2-f751697c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-003-85cf05000c-option3-0433f04a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-003-85cf05000c-option4-4f4a1c7a.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-85cf05000c-option1-a684b62a",
+          "text": "On his head",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-003-85cf05000c-option1-a684b62a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-85cf05000c-option2-f751697c",
+          "text": "On his foot",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-003-85cf05000c-option2-f751697c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-85cf05000c-option3-0433f04a",
+          "text": "On his hand",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-003-85cf05000c-option3-0433f04a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-85cf05000c-option4-4f4a1c7a",
+          "text": "On his leg",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-003-85cf05000c-option4-4f4a1c7a.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-6dd4775ea4",
+      "type": "mcq",
+      "order": 3,
+      "text": "What color is Leo's sock?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-004-6dd4775ea4.mp3",
+      "questionObjectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-004-6dd4775ea4.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-004-6dd4775ea4-option1-a04aa8fa.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-004-6dd4775ea4-option2-8cdf7934.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-004-6dd4775ea4-option3-4eb383ec.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-004-6dd4775ea4-option4-89248ad5.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-6dd4775ea4-option1-a04aa8fa",
+          "text": "Red",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-004-6dd4775ea4-option1-a04aa8fa.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-6dd4775ea4-option2-8cdf7934",
+          "text": "Yellow",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-004-6dd4775ea4-option2-8cdf7934.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-6dd4775ea4-option3-4eb383ec",
+          "text": "Blue",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-004-6dd4775ea4-option3-4eb383ec.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-6dd4775ea4-option4-89248ad5",
+          "text": "Green",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-004-6dd4775ea4-option4-89248ad5.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-4914e005ad",
+      "type": "mcq",
+      "order": 4,
+      "text": "Where does Leo wear the sock?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-005-4914e005ad.mp3",
+      "questionObjectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-005-4914e005ad.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-005-4914e005ad-option1-d22272f8.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-005-4914e005ad-option2-5a9711c1.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-005-4914e005ad-option3-45cb7239.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-005-4914e005ad-option4-038ea99d.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-4914e005ad-option1-d22272f8",
+          "text": "On his hand",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-005-4914e005ad-option1-d22272f8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-4914e005ad-option2-5a9711c1",
+          "text": "On his head",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-005-4914e005ad-option2-5a9711c1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-4914e005ad-option3-45cb7239",
+          "text": "On his foot",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-005-4914e005ad-option3-45cb7239.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-4914e005ad-option4-038ea99d",
+          "text": "On his leg",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-005-4914e005ad-option4-038ea99d.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-3a66ee42c1",
+      "type": "mcq",
+      "order": 5,
+      "text": "What color is Leo's shirt?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-006-3a66ee42c1.mp3",
+      "questionObjectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-006-3a66ee42c1.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-006-3a66ee42c1-option1-84f7e576.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-006-3a66ee42c1-option2-59c3e2b3.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-006-3a66ee42c1-option3-4743af43.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-006-3a66ee42c1-option4-027144d8.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-3a66ee42c1-option1-84f7e576",
+          "text": "Red",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-006-3a66ee42c1-option1-84f7e576.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-3a66ee42c1-option2-59c3e2b3",
+          "text": "Yellow",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-006-3a66ee42c1-option2-59c3e2b3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-3a66ee42c1-option3-4743af43",
+          "text": "Blue",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-006-3a66ee42c1-option3-4743af43.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-3a66ee42c1-option4-027144d8",
+          "text": "Green",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-006-3a66ee42c1-option4-027144d8.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-c0b04f0cc9",
+      "type": "mcq",
+      "order": 6,
+      "text": "Where does Leo wear the shirt?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-007-c0b04f0cc9.mp3",
+      "questionObjectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-007-c0b04f0cc9.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-007-c0b04f0cc9-option1-6cc5a83a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-007-c0b04f0cc9-option2-ff887313.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-007-c0b04f0cc9-option3-44d86403.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-007-c0b04f0cc9-option4-6cad276f.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-c0b04f0cc9-option1-6cc5a83a",
+          "text": "On his hand",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-007-c0b04f0cc9-option1-6cc5a83a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-c0b04f0cc9-option2-ff887313",
+          "text": "On his head",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-007-c0b04f0cc9-option2-ff887313.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-c0b04f0cc9-option3-44d86403",
+          "text": "On his foot",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-007-c0b04f0cc9-option3-44d86403.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-c0b04f0cc9-option4-6cad276f",
+          "text": "On his leg",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-007-c0b04f0cc9-option4-6cad276f.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-60cffd4955",
+      "type": "mcq",
+      "order": 7,
+      "text": "How does Leo feel when he wears silly clothes?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-008-60cffd4955.mp3",
+      "questionObjectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-008-60cffd4955.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-008-60cffd4955-option1-3761745b.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-008-60cffd4955-option2-125a176b.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-008-60cffd4955-option3-865963b2.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-008-60cffd4955-option4-d742d178.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-60cffd4955-option1-3761745b",
+          "text": "Sad",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-008-60cffd4955-option1-3761745b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-60cffd4955-option2-125a176b",
+          "text": "Angry",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-008-60cffd4955-option2-125a176b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-60cffd4955-option3-865963b2",
+          "text": "Happy",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-008-60cffd4955-option3-865963b2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-60cffd4955-option4-d742d178",
+          "text": "Sleepy",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-008-60cffd4955-option4-d742d178.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-4dc243743f",
+      "type": "mcq",
+      "order": 8,
+      "text": "What does Mom do when she sees Leo?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-009-4dc243743f.mp3",
+      "questionObjectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-009-4dc243743f.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-009-4dc243743f-option1-b2e2af30.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-009-4dc243743f-option2-1259613e.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-009-4dc243743f-option3-ffb358e9.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-009-4dc243743f-option4-2f608d5d.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-4dc243743f-option1-b2e2af30",
+          "text": "Cries",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-009-4dc243743f-option1-b2e2af30.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-4dc243743f-option2-1259613e",
+          "text": "Smiles",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-009-4dc243743f-option2-1259613e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-4dc243743f-option3-ffb358e9",
+          "text": "Yells",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-009-4dc243743f-option3-ffb358e9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-4dc243743f-option4-2f608d5d",
+          "text": "Sleeps",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-009-4dc243743f-option4-2f608d5d.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-79d6593914",
+      "type": "mcq",
+      "order": 9,
+      "text": "What does Mom say?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-010-79d6593914.mp3",
+      "questionObjectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-010-79d6593914.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-010-79d6593914-option1-2f31675f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-010-79d6593914-option2-61930bb7.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-010-79d6593914-option3-f89964bc.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-010-79d6593914-option4-d5104b3b.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-79d6593914-option1-2f31675f",
+          "text": "\"Stop!\"",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-010-79d6593914-option1-2f31675f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-79d6593914-option2-61930bb7",
+          "text": "\"No!\"",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-010-79d6593914-option2-61930bb7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-79d6593914-option3-f89964bc",
+          "text": "\"Fun!\"",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-010-79d6593914-option3-f89964bc.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-79d6593914-option4-d5104b3b",
+          "text": "\"Sleep!\"",
+          "objectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/mcq-010-79d6593914-option4-d5104b3b.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-5980264be4",
+      "type": "saq",
+      "order": 10,
+      "text": "Who is Leo?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/saq-011-5980264be4.mp3",
+      "questionObjectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/saq-011-5980264be4.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-6349750113",
+      "type": "saq",
+      "order": 11,
+      "text": "What color is Leo's hat?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/saq-012-6349750113.mp3",
+      "questionObjectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/saq-012-6349750113.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-e3f2b9e8e8",
+      "type": "saq",
+      "order": 12,
+      "text": "Where does Leo wear his hat?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/saq-013-e3f2b9e8e8.mp3",
+      "questionObjectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/saq-013-e3f2b9e8e8.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-723a917c59",
+      "type": "saq",
+      "order": 13,
+      "text": "How does Mom feel?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/saq-014-723a917c59.mp3",
+      "questionObjectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/saq-014-723a917c59.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-19551559bf",
+      "type": "saq",
+      "order": 14,
+      "text": "What is this day?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqw9uh501yyt79bluoefagb/questions/saq-015-19551559bf.mp3",
+      "questionObjectPath": "articles/cmgqw9uh501yyt79bluoefagb/questions/saq-015-19551559bf.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:07:26.088Z"
+}

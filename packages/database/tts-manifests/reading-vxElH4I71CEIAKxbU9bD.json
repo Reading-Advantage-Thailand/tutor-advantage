@@ -1,0 +1,252 @@
+{
+  "version": 1,
+  "articleId": "vxElH4I71CEIAKxbU9bD",
+  "source": "READING_ADVANTAGE",
+  "title": "The Businesswoman and Her Bodyguard",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-5992e381de",
+      "order": 0,
+      "text": "The Businesswoman and Her Bodyguard is an engaging article in Reading 1.",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/sentences/sentence-001-5992e381de.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/sentences/sentence-001-5992e381de.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-b1325def06",
+      "order": 1,
+      "text": "It explores fascinating themes related to Romance.",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/sentences/sentence-002-b1325def06.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/sentences/sentence-002-b1325def06.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-923f5b049d",
+      "order": 2,
+      "text": "Reading this story helps students improve vocabulary and comprehension skills.",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/sentences/sentence-003-923f5b049d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/sentences/sentence-003-923f5b049d.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-7a7ed62e66",
+      "order": 0,
+      "text": "The",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-001-7a7ed62e66.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-001-7a7ed62e66.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-002-cb6e53d5a5",
+      "order": 1,
+      "text": "businesswoman",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-002-cb6e53d5a5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-002-cb6e53d5a5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-af84e14cc6",
+      "order": 2,
+      "text": "and",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-003-af84e14cc6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-003-af84e14cc6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-3ec698fc59",
+      "order": 3,
+      "text": "her",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-004-3ec698fc59.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-004-3ec698fc59.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-00360d847e",
+      "order": 4,
+      "text": "bodyguard",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-005-00360d847e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-005-00360d847e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-e7890e2627",
+      "order": 5,
+      "text": "is",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-006-e7890e2627.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-006-e7890e2627.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-e099fda6df",
+      "order": 6,
+      "text": "an",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-007-e099fda6df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-007-e099fda6df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-621463f73d",
+      "order": 7,
+      "text": "engaging",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-008-621463f73d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-008-621463f73d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-f8170c1464",
+      "order": 8,
+      "text": "article",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-009-f8170c1464.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-009-f8170c1464.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-7a586e5227",
+      "order": 9,
+      "text": "in",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-010-7a586e5227.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-010-7a586e5227.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-011-2c1deaac84",
+      "order": 10,
+      "text": "reading",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-011-2c1deaac84.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-011-2c1deaac84.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-71fa4a4448",
+      "order": 11,
+      "text": "it",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-012-71fa4a4448.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-012-71fa4a4448.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-3a2eb1ac4d",
+      "order": 12,
+      "text": "explores",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-013-3a2eb1ac4d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-013-3a2eb1ac4d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-7385003166",
+      "order": 13,
+      "text": "fascinating",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-014-7385003166.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-014-7385003166.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-d4eebd266b",
+      "order": 14,
+      "text": "themes",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-015-d4eebd266b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-015-d4eebd266b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-ae0454ed65",
+      "order": 15,
+      "text": "related",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-016-ae0454ed65.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-016-ae0454ed65.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-d211953ce6",
+      "order": 16,
+      "text": "to",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-017-d211953ce6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-017-d211953ce6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-234f1732f9",
+      "order": 17,
+      "text": "romance",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-018-234f1732f9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-018-234f1732f9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-4387984b1d",
+      "order": 18,
+      "text": "this",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-019-4387984b1d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-019-4387984b1d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-d0a8ebda5d",
+      "order": 19,
+      "text": "story",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-020-d0a8ebda5d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-020-d0a8ebda5d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-0b81389db0",
+      "order": 20,
+      "text": "helps",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-021-0b81389db0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-021-0b81389db0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-545434fd0f",
+      "order": 21,
+      "text": "students",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-022-545434fd0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-022-545434fd0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-d9f3133237",
+      "order": 22,
+      "text": "improve",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-023-d9f3133237.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-023-d9f3133237.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-c810d5e7e5",
+      "order": 23,
+      "text": "vocabulary",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-024-c810d5e7e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-024-c810d5e7e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-1b713688d2",
+      "order": 24,
+      "text": "comprehension",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-025-1b713688d2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-025-1b713688d2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-237f163f1e",
+      "order": 25,
+      "text": "skills",
+      "objectPath": "articles/vxElH4I71CEIAKxbU9bD/words/word-026-237f163f1e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vxElH4I71CEIAKxbU9bD/words/word-026-237f163f1e.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [],
+  "generatedAt": "2026-08-02T17:08:07.314Z"
+}

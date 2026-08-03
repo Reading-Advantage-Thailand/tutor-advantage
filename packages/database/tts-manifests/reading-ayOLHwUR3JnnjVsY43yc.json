@@ -1,0 +1,324 @@
+{
+  "version": 1,
+  "articleId": "ayOLHwUR3JnnjVsY43yc",
+  "source": "READING_ADVANTAGE",
+  "title": "The Influence of Regional Ingredients on Traditional Dishes: A Study of Southern Cuisine",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-be6ac018ae",
+      "order": 0,
+      "text": "The Influence of Regional Ingredients on Traditional Dishes: A Study of Southern Cuisine is an engaging article in Reading 4.",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/sentences/sentence-001-be6ac018ae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/sentences/sentence-001-be6ac018ae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-40d45a743c",
+      "order": 1,
+      "text": "It explores fascinating themes related to Food Writing.",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/sentences/sentence-002-40d45a743c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/sentences/sentence-002-40d45a743c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-923f5b049d",
+      "order": 2,
+      "text": "Reading this story helps students improve vocabulary and comprehension skills.",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/sentences/sentence-003-923f5b049d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/sentences/sentence-003-923f5b049d.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-7a7ed62e66",
+      "order": 0,
+      "text": "The",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-001-7a7ed62e66.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-001-7a7ed62e66.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-002-121b500156",
+      "order": 1,
+      "text": "influence",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-002-121b500156.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-002-121b500156.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-462374540c",
+      "order": 2,
+      "text": "of",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-003-462374540c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-003-462374540c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-969d2dc519",
+      "order": 3,
+      "text": "regional",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-004-969d2dc519.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-004-969d2dc519.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-f71dfa1c1b",
+      "order": 4,
+      "text": "ingredients",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-005-f71dfa1c1b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-005-f71dfa1c1b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-76affc21c7",
+      "order": 5,
+      "text": "on",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-006-76affc21c7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-006-76affc21c7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-c189a5833b",
+      "order": 6,
+      "text": "traditional",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-007-c189a5833b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-007-c189a5833b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-4e7dc8ba36",
+      "order": 7,
+      "text": "dishes",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-008-4e7dc8ba36.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-008-4e7dc8ba36.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-f47cea8c36",
+      "order": 8,
+      "text": "a",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-009-f47cea8c36.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-009-f47cea8c36.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-42291920f8",
+      "order": 9,
+      "text": "study",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-010-42291920f8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-010-42291920f8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-011-52aa200077",
+      "order": 10,
+      "text": "southern",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-011-52aa200077.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-011-52aa200077.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-2653e5dbd4",
+      "order": 11,
+      "text": "cuisine",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-012-2653e5dbd4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-012-2653e5dbd4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-870d283f76",
+      "order": 12,
+      "text": "is",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-013-870d283f76.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-013-870d283f76.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-5960e803e0",
+      "order": 13,
+      "text": "an",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-014-5960e803e0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-014-5960e803e0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-0c61de3b15",
+      "order": 14,
+      "text": "engaging",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-015-0c61de3b15.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-015-0c61de3b15.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-014907435d",
+      "order": 15,
+      "text": "article",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-016-014907435d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-016-014907435d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-f1ad06f9ad",
+      "order": 16,
+      "text": "in",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-017-f1ad06f9ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-017-f1ad06f9ad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-a4928f7569",
+      "order": 17,
+      "text": "reading",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-018-a4928f7569.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-018-a4928f7569.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-ceb7b513a3",
+      "order": 18,
+      "text": "it",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-019-ceb7b513a3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-019-ceb7b513a3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-027090c656",
+      "order": 19,
+      "text": "explores",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-020-027090c656.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-020-027090c656.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-64f642067d",
+      "order": 20,
+      "text": "fascinating",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-021-64f642067d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-021-64f642067d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-8a76611ba5",
+      "order": 21,
+      "text": "themes",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-022-8a76611ba5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-022-8a76611ba5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-17124caae7",
+      "order": 22,
+      "text": "related",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-023-17124caae7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-023-17124caae7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-e4b28499f4",
+      "order": 23,
+      "text": "to",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-024-e4b28499f4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-024-e4b28499f4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-3625a731ed",
+      "order": 24,
+      "text": "food",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-025-3625a731ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-025-3625a731ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-31fe2c6ad2",
+      "order": 25,
+      "text": "writing",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-026-31fe2c6ad2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-026-31fe2c6ad2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-92fac0a9e4",
+      "order": 26,
+      "text": "this",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-027-92fac0a9e4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-027-92fac0a9e4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-a3e9aa2241",
+      "order": 27,
+      "text": "story",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-028-a3e9aa2241.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-028-a3e9aa2241.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-9bc6f78449",
+      "order": 28,
+      "text": "helps",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-029-9bc6f78449.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-029-9bc6f78449.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-88275d92c5",
+      "order": 29,
+      "text": "students",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-030-88275d92c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-030-88275d92c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-9935ef7f87",
+      "order": 30,
+      "text": "improve",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-031-9935ef7f87.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-031-9935ef7f87.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-4672ead722",
+      "order": 31,
+      "text": "vocabulary",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-032-4672ead722.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-032-4672ead722.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-55d8b0ee65",
+      "order": 32,
+      "text": "and",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-033-55d8b0ee65.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-033-55d8b0ee65.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-2b46f49134",
+      "order": 33,
+      "text": "comprehension",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-034-2b46f49134.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-034-2b46f49134.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-a9fa7ab319",
+      "order": 34,
+      "text": "skills",
+      "objectPath": "articles/ayOLHwUR3JnnjVsY43yc/words/word-035-a9fa7ab319.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ayOLHwUR3JnnjVsY43yc/words/word-035-a9fa7ab319.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [],
+  "generatedAt": "2026-08-02T16:52:13.734Z"
+}

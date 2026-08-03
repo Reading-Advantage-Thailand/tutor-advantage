@@ -1,0 +1,1967 @@
+{
+  "version": 1,
+  "articleId": "j9q5K2q7a3FILal0CxRx",
+  "source": "READING_ADVANTAGE",
+  "title": "Super Funny: The Comical Superhero",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-fc77da65de",
+      "order": 0,
+      "text": "Once upon a time, in a small town, there lived a comical superhero named Super Funny.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-001-fc77da65de.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-001-fc77da65de.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-8dc4bc78a0",
+      "order": 1,
+      "text": "Super Funny had incredible superpowers, but he couldn't control them very well.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-002-8dc4bc78a0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-002-8dc4bc78a0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-c1cc8a2c4a",
+      "order": 2,
+      "text": "Every time he tried to fly, he would crash into things.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-003-c1cc8a2c4a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-003-c1cc8a2c4a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-3b326d36ab",
+      "order": 3,
+      "text": "And when he tried to use his super strength, he would accidentally break things.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-004-3b326d36ab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-004-3b326d36ab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-10583154f5",
+      "order": 4,
+      "text": "It was always a hilarious mess!",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-005-10583154f5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-005-10583154f5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-5097338231",
+      "order": 5,
+      "text": "One day, Super Funny was walking down the street when he saw a cat stuck in a tree.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-006-5097338231.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-006-5097338231.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-550ecc70e5",
+      "order": 6,
+      "text": "He thought, 'I can save the day!'",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-007-550ecc70e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-007-550ecc70e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-ec0e79a707",
+      "order": 7,
+      "text": "He jumped up and tried to fly towards the tree, but instead, he crashed into a mailbox.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-008-ec0e79a707.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-008-ec0e79a707.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-0a318b2f74",
+      "order": 8,
+      "text": "The people passing by couldn't help but laugh.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-009-0a318b2f74.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-009-0a318b2f74.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-346a490fc7",
+      "order": 9,
+      "text": "Super Funny got up, dusted himself off, and tried again.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-010-346a490fc7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-010-346a490fc7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-916794778f",
+      "order": 10,
+      "text": "This time, he managed to fly towards the tree, but he flew too fast and ended up crashing into the tree instead!",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-011-916794778f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-011-916794778f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-24844eaa52",
+      "order": 11,
+      "text": "The cat meowed in confusion, and Super Funny just laughed.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-012-24844eaa52.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-012-24844eaa52.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-83bd558fe2",
+      "order": 12,
+      "text": "He climbed up the tree and rescued the cat, but as he was coming down, he accidentally broke a branch.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-013-83bd558fe2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-013-83bd558fe2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-13be8df611",
+      "order": 13,
+      "text": "The people watching couldn't stop giggling.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-014-13be8df611.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-014-13be8df611.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-f7ceb2d532",
+      "order": 14,
+      "text": "Super Funny apologized to the tree and promised to be more careful next time.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-015-f7ceb2d532.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-015-f7ceb2d532.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-505dc217fe",
+      "order": 15,
+      "text": "As he continued his walk, Super Funny noticed a group of kids playing soccer.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-016-505dc217fe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-016-505dc217fe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-345bf41a12",
+      "order": 16,
+      "text": "He decided to join in and show off his super strength.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-017-345bf41a12.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-017-345bf41a12.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-d63d364b68",
+      "order": 17,
+      "text": "He kicked the ball with all his might, but instead of going into the goal, the ball flew high up into the sky and landed on a rooftop.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-018-d63d364b68.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-018-d63d364b68.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-8bca361bad",
+      "order": 18,
+      "text": "The kids burst into laughter, and Super Funny couldn't help but join in.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-019-8bca361bad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-019-8bca361bad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-65ef55f697",
+      "order": 19,
+      "text": "He climbed up the rooftop, retrieved the ball, and apologized to the kids.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-020-65ef55f697.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-020-65ef55f697.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-da0777607e",
+      "order": 20,
+      "text": "They all had a good laugh together.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-021-da0777607e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-021-da0777607e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-b6b72c7971",
+      "order": 21,
+      "text": "Super Funny realized that even though he couldn't control his superpowers perfectly, he could still bring joy and laughter to others.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-022-b6b72c7971.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-022-b6b72c7971.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-0bc0955df5",
+      "order": 22,
+      "text": "From that day on, he embraced his comical side and became the town's favorite superhero.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-023-0bc0955df5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-023-0bc0955df5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-ebfb7870af",
+      "order": 23,
+      "text": "People would call him whenever they needed a good laugh, and Super Funny would always be there to save the day, even if it meant crashing into things or breaking a few branches.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-024-ebfb7870af.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-024-ebfb7870af.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-e486431341",
+      "order": 24,
+      "text": "And so, the comical superhero lived happily ever after, spreading laughter and joy wherever he went.",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-025-e486431341.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/sentences/sentence-025-e486431341.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-3ddfdea60d",
+      "order": 0,
+      "text": "comical",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-001-3ddfdea60d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-001-3ddfdea60d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-49817987f6",
+      "order": 1,
+      "text": "incredible",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-002-49817987f6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-002-49817987f6.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-003-08dda005ba",
+      "order": 2,
+      "text": "once",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-003-08dda005ba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-003-08dda005ba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-413ba3e4dc",
+      "order": 3,
+      "text": "upon",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-004-413ba3e4dc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-004-413ba3e4dc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-04012ee586",
+      "order": 4,
+      "text": "a",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-005-04012ee586.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-005-04012ee586.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-cb766e874c",
+      "order": 5,
+      "text": "time",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-006-cb766e874c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-006-cb766e874c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-9741e605db",
+      "order": 6,
+      "text": "in",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-007-9741e605db.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-007-9741e605db.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-555b778d38",
+      "order": 7,
+      "text": "small",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-008-555b778d38.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-008-555b778d38.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-b0a54f36e4",
+      "order": 8,
+      "text": "town",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-009-b0a54f36e4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-009-b0a54f36e4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-401faaf3eb",
+      "order": 9,
+      "text": "there",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-010-401faaf3eb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-010-401faaf3eb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-011-7560d21b69",
+      "order": 10,
+      "text": "lived",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-011-7560d21b69.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-011-7560d21b69.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-e75f8afd71",
+      "order": 11,
+      "text": "superhero",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-012-e75f8afd71.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-012-e75f8afd71.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-5a9aa4b816",
+      "order": 12,
+      "text": "named",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-013-5a9aa4b816.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-013-5a9aa4b816.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-8d0f9d4dd2",
+      "order": 13,
+      "text": "super",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-014-8d0f9d4dd2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-014-8d0f9d4dd2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-773d782382",
+      "order": 14,
+      "text": "funny",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-015-773d782382.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-015-773d782382.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-6a2b587acd",
+      "order": 15,
+      "text": "had",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-016-6a2b587acd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-016-6a2b587acd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-4d2b571799",
+      "order": 16,
+      "text": "superpowers",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-017-4d2b571799.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-017-4d2b571799.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-c3d5ebf116",
+      "order": 17,
+      "text": "but",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-018-c3d5ebf116.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-018-c3d5ebf116.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-b73f2eccb2",
+      "order": 18,
+      "text": "he",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-019-b73f2eccb2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-019-b73f2eccb2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-0d2c11d366",
+      "order": 19,
+      "text": "couldn't",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-020-0d2c11d366.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-020-0d2c11d366.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-078171a5e6",
+      "order": 20,
+      "text": "control",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-021-078171a5e6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-021-078171a5e6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-6ac055b0e5",
+      "order": 21,
+      "text": "them",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-022-6ac055b0e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-022-6ac055b0e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-a7b928df01",
+      "order": 22,
+      "text": "very",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-023-a7b928df01.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-023-a7b928df01.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-e89d19549b",
+      "order": 23,
+      "text": "well",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-024-e89d19549b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-024-e89d19549b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-022e116b20",
+      "order": 24,
+      "text": "every",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-025-022e116b20.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-025-022e116b20.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-46fc4b4862",
+      "order": 25,
+      "text": "tried",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-026-46fc4b4862.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-026-46fc4b4862.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-b5e4e4ac1c",
+      "order": 26,
+      "text": "to",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-027-b5e4e4ac1c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-027-b5e4e4ac1c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-6c127e9e36",
+      "order": 27,
+      "text": "fly",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-028-6c127e9e36.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-028-6c127e9e36.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-58a65c0280",
+      "order": 28,
+      "text": "would",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-029-58a65c0280.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-029-58a65c0280.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-0d62da3581",
+      "order": 29,
+      "text": "crash",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-030-0d62da3581.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-030-0d62da3581.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-9891d4336a",
+      "order": 30,
+      "text": "into",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-031-9891d4336a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-031-9891d4336a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-95b316cffd",
+      "order": 31,
+      "text": "things",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-032-95b316cffd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-032-95b316cffd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-55d8b0ee65",
+      "order": 32,
+      "text": "and",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-033-55d8b0ee65.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-033-55d8b0ee65.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-b0ac1ad7f9",
+      "order": 33,
+      "text": "when",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-034-b0ac1ad7f9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-034-b0ac1ad7f9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-dfbdb7abfb",
+      "order": 34,
+      "text": "use",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-035-dfbdb7abfb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-035-dfbdb7abfb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-d29b066e94",
+      "order": 35,
+      "text": "his",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-036-d29b066e94.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-036-d29b066e94.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-b05b70cc56",
+      "order": 36,
+      "text": "strength",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-037-b05b70cc56.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-037-b05b70cc56.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-351b1d71cc",
+      "order": 37,
+      "text": "accidentally",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-038-351b1d71cc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-038-351b1d71cc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-c0b8e6e61a",
+      "order": 38,
+      "text": "break",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-039-c0b8e6e61a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-039-c0b8e6e61a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-478dd9030b",
+      "order": 39,
+      "text": "it",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-040-478dd9030b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-040-478dd9030b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-5589cceb3a",
+      "order": 40,
+      "text": "was",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-041-5589cceb3a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-041-5589cceb3a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-6c6835eef0",
+      "order": 41,
+      "text": "always",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-042-6c6835eef0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-042-6c6835eef0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-337c036df1",
+      "order": 42,
+      "text": "hilarious",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-043-337c036df1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-043-337c036df1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-05de9f8ab3",
+      "order": 43,
+      "text": "mess",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-044-05de9f8ab3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-044-05de9f8ab3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-5c883d2c94",
+      "order": 44,
+      "text": "one",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-045-5c883d2c94.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-045-5c883d2c94.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-7ce60867a1",
+      "order": 45,
+      "text": "day",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-046-7ce60867a1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-046-7ce60867a1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-366189ecd5",
+      "order": 46,
+      "text": "walking",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-047-366189ecd5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-047-366189ecd5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-d4170e6823",
+      "order": 47,
+      "text": "down",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-048-d4170e6823.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-048-d4170e6823.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-a65b45b14b",
+      "order": 48,
+      "text": "the",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-049-a65b45b14b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-049-a65b45b14b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-a4e98d33c7",
+      "order": 49,
+      "text": "street",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-050-a4e98d33c7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-050-a4e98d33c7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-6f09e0f9b8",
+      "order": 50,
+      "text": "saw",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-051-6f09e0f9b8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-051-6f09e0f9b8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-58efaac860",
+      "order": 51,
+      "text": "cat",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-052-58efaac860.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-052-58efaac860.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-23d0aadb69",
+      "order": 52,
+      "text": "stuck",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-053-23d0aadb69.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-053-23d0aadb69.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-bf90a542c9",
+      "order": 53,
+      "text": "tree",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-054-bf90a542c9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-054-bf90a542c9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-b4c6ffabf5",
+      "order": 54,
+      "text": "thought",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-055-b4c6ffabf5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-055-b4c6ffabf5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-b8df9216a4",
+      "order": 55,
+      "text": "i",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-056-b8df9216a4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-056-b8df9216a4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-510605dc2e",
+      "order": 56,
+      "text": "can",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-057-510605dc2e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-057-510605dc2e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-1d7157291f",
+      "order": 57,
+      "text": "save",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-058-1d7157291f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-058-1d7157291f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-5fc363651a",
+      "order": 58,
+      "text": "jumped",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-059-5fc363651a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-059-5fc363651a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-8b4377f52a",
+      "order": 59,
+      "text": "up",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-060-8b4377f52a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-060-8b4377f52a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-a7a4261df3",
+      "order": 60,
+      "text": "towards",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-061-a7a4261df3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-061-a7a4261df3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-db44fb9c6e",
+      "order": 61,
+      "text": "instead",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-062-db44fb9c6e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-062-db44fb9c6e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-a9349e0c83",
+      "order": 62,
+      "text": "crashed",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-063-a9349e0c83.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-063-a9349e0c83.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-17a88b89a6",
+      "order": 63,
+      "text": "mailbox",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-064-17a88b89a6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-064-17a88b89a6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-a9ebccf2c6",
+      "order": 64,
+      "text": "people",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-065-a9ebccf2c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-065-a9ebccf2c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-05fb4c2b41",
+      "order": 65,
+      "text": "passing",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-066-05fb4c2b41.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-066-05fb4c2b41.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-31e92977ce",
+      "order": 66,
+      "text": "by",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-067-31e92977ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-067-31e92977ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-eec5a1c5ac",
+      "order": 67,
+      "text": "help",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-068-eec5a1c5ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-068-eec5a1c5ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-cb71ae2515",
+      "order": 68,
+      "text": "laugh",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-069-cb71ae2515.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-069-cb71ae2515.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-3d19c68884",
+      "order": 69,
+      "text": "got",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-070-3d19c68884.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-070-3d19c68884.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-b913727dd6",
+      "order": 70,
+      "text": "dusted",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-071-b913727dd6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-071-b913727dd6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-b295d6a45e",
+      "order": 71,
+      "text": "himself",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-072-b295d6a45e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-072-b295d6a45e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-bf5ec45481",
+      "order": 72,
+      "text": "off",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-073-bf5ec45481.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-073-bf5ec45481.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-55d8816b9a",
+      "order": 73,
+      "text": "again",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-074-55d8816b9a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-074-55d8816b9a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-b9c6cb98fe",
+      "order": 74,
+      "text": "this",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-075-b9c6cb98fe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-075-b9c6cb98fe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-c58366b0bf",
+      "order": 75,
+      "text": "managed",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-076-c58366b0bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-076-c58366b0bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-b2d0541aa1",
+      "order": 76,
+      "text": "flew",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-077-b2d0541aa1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-077-b2d0541aa1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-3f55eb0a3c",
+      "order": 77,
+      "text": "too",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-078-3f55eb0a3c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-078-3f55eb0a3c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-a323e45d57",
+      "order": 78,
+      "text": "fast",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-079-a323e45d57.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-079-a323e45d57.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-27f968e331",
+      "order": 79,
+      "text": "ended",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-080-27f968e331.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-080-27f968e331.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-7e37502f0f",
+      "order": 80,
+      "text": "crashing",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-081-7e37502f0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-081-7e37502f0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-ba0ef1451a",
+      "order": 81,
+      "text": "meowed",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-082-ba0ef1451a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-082-ba0ef1451a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-e7961a5a28",
+      "order": 82,
+      "text": "confusion",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-083-e7961a5a28.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-083-e7961a5a28.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-ec8349dd4f",
+      "order": 83,
+      "text": "just",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-084-ec8349dd4f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-084-ec8349dd4f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-5a16caa0f3",
+      "order": 84,
+      "text": "laughed",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-085-5a16caa0f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-085-5a16caa0f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-086-9aef112c6b",
+      "order": 85,
+      "text": "climbed",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-086-9aef112c6b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-086-9aef112c6b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-087-5e433b7ac9",
+      "order": 86,
+      "text": "rescued",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-087-5e433b7ac9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-087-5e433b7ac9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-088-95cb4d0c74",
+      "order": 87,
+      "text": "as",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-088-95cb4d0c74.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-088-95cb4d0c74.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-089-a69c5ce490",
+      "order": 88,
+      "text": "coming",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-089-a69c5ce490.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-089-a69c5ce490.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-090-9d3a21a12f",
+      "order": 89,
+      "text": "broke",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-090-9d3a21a12f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-090-9d3a21a12f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-091-d75d4a5b98",
+      "order": 90,
+      "text": "branch",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-091-d75d4a5b98.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-091-d75d4a5b98.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-092-ce443ce55c",
+      "order": 91,
+      "text": "watching",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-092-ce443ce55c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-092-ce443ce55c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-093-a4bf459a28",
+      "order": 92,
+      "text": "stop",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-093-a4bf459a28.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-093-a4bf459a28.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-094-e1b784343e",
+      "order": 93,
+      "text": "giggling",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-094-e1b784343e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-094-e1b784343e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-095-efeb6a99a6",
+      "order": 94,
+      "text": "apologized",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-095-efeb6a99a6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-095-efeb6a99a6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-096-0f9b814e48",
+      "order": 95,
+      "text": "promised",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-096-0f9b814e48.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-096-0f9b814e48.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-097-c9b4727c9c",
+      "order": 96,
+      "text": "be",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-097-c9b4727c9c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-097-c9b4727c9c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-098-aced0edd4f",
+      "order": 97,
+      "text": "more",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-098-aced0edd4f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-098-aced0edd4f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-099-b617e221c1",
+      "order": 98,
+      "text": "careful",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-099-b617e221c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-099-b617e221c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-100-c55b3eb288",
+      "order": 99,
+      "text": "next",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-100-c55b3eb288.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-100-c55b3eb288.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-101-fee187c8d8",
+      "order": 100,
+      "text": "continued",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-101-fee187c8d8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-101-fee187c8d8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-102-598d16795c",
+      "order": 101,
+      "text": "walk",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-102-598d16795c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-102-598d16795c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-103-9e4a32d954",
+      "order": 102,
+      "text": "noticed",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-103-9e4a32d954.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-103-9e4a32d954.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-104-cd69e927c2",
+      "order": 103,
+      "text": "group",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-104-cd69e927c2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-104-cd69e927c2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-105-d03e6f540e",
+      "order": 104,
+      "text": "of",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-105-d03e6f540e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-105-d03e6f540e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-106-4cb171ea94",
+      "order": 105,
+      "text": "kids",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-106-4cb171ea94.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-106-4cb171ea94.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-107-88b33701a2",
+      "order": 106,
+      "text": "playing",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-107-88b33701a2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-107-88b33701a2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-108-d736ab8b92",
+      "order": 107,
+      "text": "soccer",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-108-d736ab8b92.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-108-d736ab8b92.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-109-43f2bf8c2f",
+      "order": 108,
+      "text": "decided",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-109-43f2bf8c2f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-109-43f2bf8c2f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-110-7a6621ef5c",
+      "order": 109,
+      "text": "join",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-110-7a6621ef5c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-110-7a6621ef5c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-111-b00f77ec33",
+      "order": 110,
+      "text": "show",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-111-b00f77ec33.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-111-b00f77ec33.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-112-cf9d6514b9",
+      "order": 111,
+      "text": "kicked",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-112-cf9d6514b9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-112-cf9d6514b9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-113-9dca04c111",
+      "order": 112,
+      "text": "ball",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-113-9dca04c111.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-113-9dca04c111.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-114-9d19cc5111",
+      "order": 113,
+      "text": "with",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-114-9d19cc5111.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-114-9d19cc5111.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-115-40fe1805f1",
+      "order": 114,
+      "text": "all",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-115-40fe1805f1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-115-40fe1805f1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-116-3561454ed8",
+      "order": 115,
+      "text": "might",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-116-3561454ed8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-116-3561454ed8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-117-e516edc82d",
+      "order": 116,
+      "text": "going",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-117-e516edc82d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-117-e516edc82d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-118-0a088831e0",
+      "order": 117,
+      "text": "goal",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-118-0a088831e0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-118-0a088831e0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-119-0cd466c59b",
+      "order": 118,
+      "text": "high",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-119-0cd466c59b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-119-0cd466c59b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-120-17a35fac15",
+      "order": 119,
+      "text": "sky",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-120-17a35fac15.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-120-17a35fac15.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-121-83663fb47a",
+      "order": 120,
+      "text": "landed",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-121-83663fb47a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-121-83663fb47a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-122-f3610f7638",
+      "order": 121,
+      "text": "on",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-122-f3610f7638.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-122-f3610f7638.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-123-a21e6b8513",
+      "order": 122,
+      "text": "rooftop",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-123-a21e6b8513.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-123-a21e6b8513.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-124-2249596226",
+      "order": 123,
+      "text": "burst",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-124-2249596226.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-124-2249596226.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-125-bc887325db",
+      "order": 124,
+      "text": "laughter",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-125-bc887325db.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-125-bc887325db.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-126-076bacb9bf",
+      "order": 125,
+      "text": "retrieved",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-126-076bacb9bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-126-076bacb9bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-127-680335152d",
+      "order": 126,
+      "text": "they",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-127-680335152d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-127-680335152d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-128-14bc9f6de5",
+      "order": 127,
+      "text": "good",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-128-14bc9f6de5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-128-14bc9f6de5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-129-411161d10f",
+      "order": 128,
+      "text": "together",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-129-411161d10f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-129-411161d10f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-130-5553d9b2b4",
+      "order": 129,
+      "text": "realized",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-130-5553d9b2b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-130-5553d9b2b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-131-63b9efb89d",
+      "order": 130,
+      "text": "that",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-131-63b9efb89d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-131-63b9efb89d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-132-1e6ce18f30",
+      "order": 131,
+      "text": "even",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-132-1e6ce18f30.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-132-1e6ce18f30.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-133-3349934b15",
+      "order": 132,
+      "text": "though",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-133-3349934b15.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-133-3349934b15.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-134-6fa1683232",
+      "order": 133,
+      "text": "perfectly",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-134-6fa1683232.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-134-6fa1683232.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-135-a0b7c9153a",
+      "order": 134,
+      "text": "could",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-135-a0b7c9153a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-135-a0b7c9153a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-136-f70088b05f",
+      "order": 135,
+      "text": "still",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-136-f70088b05f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-136-f70088b05f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-137-0614ef9974",
+      "order": 136,
+      "text": "bring",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-137-0614ef9974.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-137-0614ef9974.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-138-160df9105b",
+      "order": 137,
+      "text": "joy",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-138-160df9105b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-138-160df9105b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-139-36950a7e3c",
+      "order": 138,
+      "text": "others",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-139-36950a7e3c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-139-36950a7e3c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-140-1000ea59aa",
+      "order": 139,
+      "text": "from",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-140-1000ea59aa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-140-1000ea59aa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-141-f12f304c01",
+      "order": 140,
+      "text": "embraced",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-141-f12f304c01.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-141-f12f304c01.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-142-45bda87748",
+      "order": 141,
+      "text": "side",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-142-45bda87748.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-142-45bda87748.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-143-05fc958628",
+      "order": 142,
+      "text": "became",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-143-05fc958628.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-143-05fc958628.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-144-4b2a74f868",
+      "order": 143,
+      "text": "town's",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-144-4b2a74f868.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-144-4b2a74f868.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-145-c8cb79d788",
+      "order": 144,
+      "text": "favorite",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-145-c8cb79d788.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-145-c8cb79d788.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-146-8b073212fb",
+      "order": 145,
+      "text": "call",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-146-8b073212fb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-146-8b073212fb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-147-0738ccfbae",
+      "order": 146,
+      "text": "him",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-147-0738ccfbae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-147-0738ccfbae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-148-0301f4d267",
+      "order": 147,
+      "text": "whenever",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-148-0301f4d267.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-148-0301f4d267.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-149-834b162036",
+      "order": 148,
+      "text": "needed",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-149-834b162036.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-149-834b162036.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-150-4209cd4614",
+      "order": 149,
+      "text": "if",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-150-4209cd4614.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-150-4209cd4614.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-151-8b6a4c5e1b",
+      "order": 150,
+      "text": "meant",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-151-8b6a4c5e1b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-151-8b6a4c5e1b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-152-aba71d155c",
+      "order": 151,
+      "text": "or",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-152-aba71d155c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-152-aba71d155c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-153-ab02931e80",
+      "order": 152,
+      "text": "breaking",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-153-ab02931e80.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-153-ab02931e80.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-154-66875ac925",
+      "order": 153,
+      "text": "few",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-154-66875ac925.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-154-66875ac925.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-155-14a8b58e27",
+      "order": 154,
+      "text": "branches",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-155-14a8b58e27.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-155-14a8b58e27.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-156-a1fdc08252",
+      "order": 155,
+      "text": "so",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-156-a1fdc08252.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-156-a1fdc08252.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-157-126de2359f",
+      "order": 156,
+      "text": "happily",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-157-126de2359f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-157-126de2359f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-158-f761e1bb46",
+      "order": 157,
+      "text": "ever",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-158-f761e1bb46.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-158-f761e1bb46.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-159-a5a55ee3f5",
+      "order": 158,
+      "text": "after",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-159-a5a55ee3f5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-159-a5a55ee3f5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-160-3cb32096d7",
+      "order": 159,
+      "text": "spreading",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-160-3cb32096d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-160-3cb32096d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-161-e78ce8b9c8",
+      "order": 160,
+      "text": "wherever",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-161-e78ce8b9c8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-161-e78ce8b9c8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-162-49fb0a1ae7",
+      "order": 161,
+      "text": "went",
+      "objectPath": "articles/j9q5K2q7a3FILal0CxRx/words/word-162-49fb0a1ae7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/words/word-162-49fb0a1ae7.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-efb337bff8",
+      "type": "mcq",
+      "order": 0,
+      "text": "What did Super Funny see while walking down the street?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-001-efb337bff8.mp3",
+      "questionObjectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-001-efb337bff8.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-001-efb337bff8-option1-57ab2e95.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-001-efb337bff8-option2-b779c2b9.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-001-efb337bff8-option3-6aa2b58b.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-001-efb337bff8-option4-e7bd1bb7.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-efb337bff8-option1-57ab2e95",
+          "text": "A cat stuck in a tree",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-001-efb337bff8-option1-57ab2e95.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-efb337bff8-option2-b779c2b9",
+          "text": "A dog in a pond",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-001-efb337bff8-option2-b779c2b9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-efb337bff8-option3-6aa2b58b",
+          "text": "A bird on the ground",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-001-efb337bff8-option3-6aa2b58b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-efb337bff8-option4-e7bd1bb7",
+          "text": "A mouse in a hole",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-001-efb337bff8-option4-e7bd1bb7.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-bd6ea5c76e",
+      "type": "mcq",
+      "order": 1,
+      "text": "What happened when Super Funny first tried to fly to the tree?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-002-bd6ea5c76e.mp3",
+      "questionObjectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-002-bd6ea5c76e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-002-bd6ea5c76e-option1-54d919b8.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-002-bd6ea5c76e-option2-b820ec6c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-002-bd6ea5c76e-option3-d2c6fe1a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-002-bd6ea5c76e-option4-f808be37.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-bd6ea5c76e-option1-54d919b8",
+          "text": "He crashed into a mailbox",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-002-bd6ea5c76e-option1-54d919b8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-bd6ea5c76e-option2-b820ec6c",
+          "text": "He flew perfectly to the tree",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-002-bd6ea5c76e-option2-b820ec6c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-bd6ea5c76e-option3-d2c6fe1a",
+          "text": "He landed on the tree",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-002-bd6ea5c76e-option3-d2c6fe1a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-bd6ea5c76e-option4-f808be37",
+          "text": "He fell down",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-002-bd6ea5c76e-option4-f808be37.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-6d67de94ef",
+      "type": "mcq",
+      "order": 2,
+      "text": "What problem does Super Funny have with his superpowers?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-003-6d67de94ef.mp3",
+      "questionObjectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-003-6d67de94ef.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-003-6d67de94ef-option1-c9c1635d.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-003-6d67de94ef-option2-f6b6ccc5.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-003-6d67de94ef-option3-8a8ec4db.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-003-6d67de94ef-option4-c5cb6239.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-6d67de94ef-option1-c9c1635d",
+          "text": "He can't control them very well.",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-003-6d67de94ef-option1-c9c1635d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-6d67de94ef-option2-f6b6ccc5",
+          "text": "He uses them too much.",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-003-6d67de94ef-option2-f6b6ccc5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-6d67de94ef-option3-8a8ec4db",
+          "text": "He doesn't have any superpowers.",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-003-6d67de94ef-option3-8a8ec4db.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-6d67de94ef-option4-c5cb6239",
+          "text": "He is too strong.",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-003-6d67de94ef-option4-c5cb6239.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-3161a99387",
+      "type": "mcq",
+      "order": 3,
+      "text": "What sport were the kids playing that Super Funny joined?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-004-3161a99387.mp3",
+      "questionObjectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-004-3161a99387.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-004-3161a99387-option1-e41f52f3.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-004-3161a99387-option2-3b178999.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-004-3161a99387-option3-ca0ec3ac.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-004-3161a99387-option4-1dfef84b.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-3161a99387-option1-e41f52f3",
+          "text": "Soccer",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-004-3161a99387-option1-e41f52f3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-3161a99387-option2-3b178999",
+          "text": "Basketball",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-004-3161a99387-option2-3b178999.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-3161a99387-option3-ca0ec3ac",
+          "text": "Baseball",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-004-3161a99387-option3-ca0ec3ac.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-3161a99387-option4-1dfef84b",
+          "text": "Tennis",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-004-3161a99387-option4-1dfef84b.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-802bfb347f",
+      "type": "mcq",
+      "order": 4,
+      "text": "What did Super Funny promise to the tree?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-005-802bfb347f.mp3",
+      "questionObjectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-005-802bfb347f.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-005-802bfb347f-option1-d825da96.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-005-802bfb347f-option2-be36c3b3.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-005-802bfb347f-option3-c1b5fac1.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-005-802bfb347f-option4-01ee15aa.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-802bfb347f-option1-d825da96",
+          "text": "To be more careful next time",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-005-802bfb347f-option1-d825da96.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-802bfb347f-option2-be36c3b3",
+          "text": "To plant more trees",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-005-802bfb347f-option2-be36c3b3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-802bfb347f-option3-c1b5fac1",
+          "text": "To never climb it again",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-005-802bfb347f-option3-c1b5fac1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-802bfb347f-option4-01ee15aa",
+          "text": "To fix the branch",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-005-802bfb347f-option4-01ee15aa.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-86a97b080c",
+      "type": "mcq",
+      "order": 5,
+      "text": "What did Super Funny break when coming down from the tree?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-006-86a97b080c.mp3",
+      "questionObjectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-006-86a97b080c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-006-86a97b080c-option1-925311ea.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-006-86a97b080c-option2-88712f07.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-006-86a97b080c-option3-1138addc.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-006-86a97b080c-option4-2c04c13b.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-86a97b080c-option1-925311ea",
+          "text": "A branch",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-006-86a97b080c-option1-925311ea.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-86a97b080c-option2-88712f07",
+          "text": "The mailbox",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-006-86a97b080c-option2-88712f07.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-86a97b080c-option3-1138addc",
+          "text": "The tree trunk",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-006-86a97b080c-option3-1138addc.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-86a97b080c-option4-2c04c13b",
+          "text": "His leg",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-006-86a97b080c-option4-2c04c13b.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-0ba59e1b01",
+      "type": "mcq",
+      "order": 6,
+      "text": "Where did the soccer ball end up after Super Funny kicked it?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-007-0ba59e1b01.mp3",
+      "questionObjectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-007-0ba59e1b01.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-007-0ba59e1b01-option1-e0d99edd.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-007-0ba59e1b01-option2-e8ab5634.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-007-0ba59e1b01-option3-8c526f58.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-007-0ba59e1b01-option4-17c39c91.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-0ba59e1b01-option1-e0d99edd",
+          "text": "On a rooftop",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-007-0ba59e1b01-option1-e0d99edd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-0ba59e1b01-option2-e8ab5634",
+          "text": "In the goal",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-007-0ba59e1b01-option2-e8ab5634.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-0ba59e1b01-option3-8c526f58",
+          "text": "In the tree",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-007-0ba59e1b01-option3-8c526f58.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-0ba59e1b01-option4-17c39c91",
+          "text": "In the street",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-007-0ba59e1b01-option4-17c39c91.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-c30a323dd3",
+      "type": "mcq",
+      "order": 7,
+      "text": "What is the name of the comical superhero in the story?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-008-c30a323dd3.mp3",
+      "questionObjectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-008-c30a323dd3.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-008-c30a323dd3-option1-103d7959.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-008-c30a323dd3-option2-633dce26.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-008-c30a323dd3-option3-85360caf.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-008-c30a323dd3-option4-5ed61024.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-c30a323dd3-option1-103d7959",
+          "text": "Super Funny",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-008-c30a323dd3-option1-103d7959.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-c30a323dd3-option2-633dce26",
+          "text": "Super Strong",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-008-c30a323dd3-option2-633dce26.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-c30a323dd3-option3-85360caf",
+          "text": "Super Fast",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-008-c30a323dd3-option3-85360caf.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-c30a323dd3-option4-5ed61024",
+          "text": "Super Smart",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-008-c30a323dd3-option4-5ed61024.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-470032a739",
+      "type": "mcq",
+      "order": 8,
+      "text": "How did Super Funny finally get to the tree on his second attempt?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-009-470032a739.mp3",
+      "questionObjectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-009-470032a739.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-009-470032a739-option1-6b80fec7.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-009-470032a739-option2-385e3ba4.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-009-470032a739-option3-0f3251cc.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-009-470032a739-option4-431749ad.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-470032a739-option1-6b80fec7",
+          "text": "He flew too fast and crashed into it",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-009-470032a739-option1-6b80fec7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-470032a739-option2-385e3ba4",
+          "text": "He climbed the tree",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-009-470032a739-option2-385e3ba4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-470032a739-option3-0f3251cc",
+          "text": "He jumped really high",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-009-470032a739-option3-0f3251cc.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-470032a739-option4-431749ad",
+          "text": "He was lifted by a bird",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-009-470032a739-option4-431749ad.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-1b09b8cfa2",
+      "type": "mcq",
+      "order": 9,
+      "text": "What did Super Funny realize about his superpowers?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-010-1b09b8cfa2.mp3",
+      "questionObjectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-010-1b09b8cfa2.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-010-1b09b8cfa2-option1-8af9ed61.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-010-1b09b8cfa2-option2-b654bed5.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-010-1b09b8cfa2-option3-d0a1f961.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/mcq-010-1b09b8cfa2-option4-ca45e377.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-1b09b8cfa2-option1-8af9ed61",
+          "text": "He could still bring joy and laughter to others",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-010-1b09b8cfa2-option1-8af9ed61.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-1b09b8cfa2-option2-b654bed5",
+          "text": "He needed to get rid of them",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-010-1b09b8cfa2-option2-b654bed5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-1b09b8cfa2-option3-d0a1f961",
+          "text": "He should hide them",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-010-1b09b8cfa2-option3-d0a1f961.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-1b09b8cfa2-option4-ca45e377",
+          "text": "He was too powerful",
+          "objectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/mcq-010-1b09b8cfa2-option4-ca45e377.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-b0f4545c7e",
+      "type": "saq",
+      "order": 10,
+      "text": "How did Super Funny save the cat?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/saq-011-b0f4545c7e.mp3",
+      "questionObjectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/saq-011-b0f4545c7e.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-c94f032a12",
+      "type": "saq",
+      "order": 11,
+      "text": "What did Super Funny do when he saw a cat stuck in a tree?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/saq-012-c94f032a12.mp3",
+      "questionObjectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/saq-012-c94f032a12.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-c94e3cbe34",
+      "type": "saq",
+      "order": 12,
+      "text": "What problem does Super Funny have with his superpowers?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/saq-013-c94e3cbe34.mp3",
+      "questionObjectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/saq-013-c94e3cbe34.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-4e659fca7f",
+      "type": "saq",
+      "order": 13,
+      "text": "What is the name of the superhero in the story?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/saq-014-4e659fca7f.mp3",
+      "questionObjectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/saq-014-4e659fca7f.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-aaecbf0dc9",
+      "type": "saq",
+      "order": 14,
+      "text": "What happened when Super Funny tried to play soccer with the kids?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/j9q5K2q7a3FILal0CxRx/questions/saq-015-aaecbf0dc9.mp3",
+      "questionObjectPath": "articles/j9q5K2q7a3FILal0CxRx/questions/saq-015-aaecbf0dc9.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:20:05.566Z"
+}

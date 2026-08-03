@@ -1,0 +1,1351 @@
+{
+  "version": 1,
+  "articleId": "cmixr8kil000us60esgwguw0z",
+  "source": "READING_ADVANTAGE",
+  "title": "Funny People and Jokes",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-18ad8f6b89",
+      "order": 0,
+      "text": "A comedian is a funny person.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-001-18ad8f6b89.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-001-18ad8f6b89.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-c74b5e6b9b",
+      "order": 1,
+      "text": "Comedians tell jokes.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-002-c74b5e6b9b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-002-c74b5e6b9b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-cf771d1dfc",
+      "order": 2,
+      "text": "People go to a comedy show.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-003-cf771d1dfc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-003-cf771d1dfc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-d80070ca6f",
+      "order": 3,
+      "text": "They laugh at the jokes.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-004-d80070ca6f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-004-d80070ca6f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-4f45b23eda",
+      "order": 4,
+      "text": "A comedy show is fun.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-005-4f45b23eda.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-005-4f45b23eda.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-b374095083",
+      "order": 5,
+      "text": "Old comedy shows are simple.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-006-b374095083.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-006-b374095083.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-f743afc6d6",
+      "order": 6,
+      "text": "A man is on a small stage.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-007-f743afc6d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-007-f743afc6d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-51d4f69591",
+      "order": 7,
+      "text": "He is in a funny suit.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-008-51d4f69591.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-008-51d4f69591.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-775a81a7e3",
+      "order": 8,
+      "text": "He has a hat.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-009-775a81a7e3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-009-775a81a7e3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-48a8e9c0b9",
+      "order": 9,
+      "text": "His jokes are very simple.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-010-48a8e9c0b9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-010-48a8e9c0b9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-5607519d98",
+      "order": 10,
+      "text": "The jokes are for families.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-011-5607519d98.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-011-5607519d98.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-3249a279fe",
+      "order": 11,
+      "text": "The people are in a big room.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-012-3249a279fe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-012-3249a279fe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-33d7c5e57f",
+      "order": 12,
+      "text": "They all laugh together.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-013-33d7c5e57f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-013-33d7c5e57f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-a5e2a79d23",
+      "order": 13,
+      "text": "New comedy is different.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-014-a5e2a79d23.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-014-a5e2a79d23.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-f55e0bd79b",
+      "order": 14,
+      "text": "A man or a woman is on a big stage.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-015-f55e0bd79b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-015-f55e0bd79b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-8eb60d477d",
+      "order": 15,
+      "text": "The lights are bright.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-016-8eb60d477d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-016-8eb60d477d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-57d0b93637",
+      "order": 16,
+      "text": "They talk about many things.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-017-57d0b93637.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-017-57d0b93637.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-92c0d01256",
+      "order": 17,
+      "text": "They talk about life.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-018-92c0d01256.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-018-92c0d01256.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-68a5b1a274",
+      "order": 18,
+      "text": "They talk about school and work.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-019-68a5b1a274.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-019-68a5b1a274.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-9736a8b197",
+      "order": 19,
+      "text": "The jokes are for adults.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-020-9736a8b197.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-020-9736a8b197.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-ad4990e0b0",
+      "order": 20,
+      "text": "The topics are big.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-021-ad4990e0b0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-021-ad4990e0b0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-27c3f2496a",
+      "order": 21,
+      "text": "We watch comedy in new ways.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-022-27c3f2496a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-022-27c3f2496a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-c620b3f3fc",
+      "order": 22,
+      "text": "Old comedy is in a room.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-023-c620b3f3fc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-023-c620b3f3fc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-1701ebe0e8",
+      "order": 23,
+      "text": "You are there.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-024-1701ebe0e8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-024-1701ebe0e8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-6351a5c27a",
+      "order": 24,
+      "text": "New comedy is on TV.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-025-6351a5c27a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-025-6351a5c27a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-78315dfa00",
+      "order": 25,
+      "text": "It is on the internet.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-026-78315dfa00.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-026-78315dfa00.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-948947ff6a",
+      "order": 26,
+      "text": "You are at home.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-027-948947ff6a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-027-948947ff6a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-5ef1f90188",
+      "order": 27,
+      "text": "You watch on a screen.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-028-5ef1f90188.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-028-5ef1f90188.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-ce32d9cb2a",
+      "order": 28,
+      "text": "The screen is big or small.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-029-ce32d9cb2a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-029-ce32d9cb2a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-8613323d2d",
+      "order": 29,
+      "text": "You watch with friends.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-030-8613323d2d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-030-8613323d2d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-9f12584166",
+      "order": 30,
+      "text": "Or you are alone.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-031-9f12584166.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-031-9f12584166.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-3bbf6b25ce",
+      "order": 31,
+      "text": "Comedy is everywhere.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-032-3bbf6b25ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-032-3bbf6b25ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-6d1139ca9e",
+      "order": 32,
+      "text": "Comedy is old and new.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-033-6d1139ca9e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-033-6d1139ca9e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-7981140a1b",
+      "order": 33,
+      "text": "The jokes are different.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-034-7981140a1b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-034-7981140a1b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-17c824d83d",
+      "order": 34,
+      "text": "The stages are different.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-035-17c824d83d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-035-17c824d83d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-4cbbbb9cdd",
+      "order": 35,
+      "text": "But people are the same.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-036-4cbbbb9cdd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-036-4cbbbb9cdd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-54967044bb",
+      "order": 36,
+      "text": "People love to laugh.",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/sentences/sentence-037-54967044bb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/sentences/sentence-037-54967044bb.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-80f622976b",
+      "order": 0,
+      "text": "comedian",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-001-80f622976b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-001-80f622976b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-302c8c1571",
+      "order": 1,
+      "text": "jokes",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-002-302c8c1571.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-002-302c8c1571.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-ab68a7ca68",
+      "order": 2,
+      "text": "stage",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-003-ab68a7ca68.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-003-ab68a7ca68.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-540f04ed98",
+      "order": 3,
+      "text": "suit",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-004-540f04ed98.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-004-540f04ed98.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-3734e2ed4b",
+      "order": 4,
+      "text": "topics",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-005-3734e2ed4b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-005-3734e2ed4b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-0d3a8b9224",
+      "order": 5,
+      "text": "internet",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-006-0d3a8b9224.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-006-0d3a8b9224.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-2de81e72bc",
+      "order": 6,
+      "text": "screen",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-007-2de81e72bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-007-2de81e72bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-e39643f992",
+      "order": 7,
+      "text": "alone",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-008-e39643f992.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-008-e39643f992.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-7b7205b4e0",
+      "order": 8,
+      "text": "everywhere",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-009-7b7205b4e0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-009-7b7205b4e0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-cf98a26418",
+      "order": 9,
+      "text": "different",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-010-cf98a26418.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-010-cf98a26418.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-5cdc594aa2",
+      "order": 10,
+      "text": "a",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-011-5cdc594aa2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-011-5cdc594aa2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-bc1f05f2e1",
+      "order": 11,
+      "text": "is",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-012-bc1f05f2e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-012-bc1f05f2e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-abe2e4a35f",
+      "order": 12,
+      "text": "funny",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-013-abe2e4a35f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-013-abe2e4a35f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-5110159c71",
+      "order": 13,
+      "text": "person",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-014-5110159c71.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-014-5110159c71.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-e62376f35a",
+      "order": 14,
+      "text": "comedians",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-015-e62376f35a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-015-e62376f35a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-2f9f292b37",
+      "order": 15,
+      "text": "tell",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-016-2f9f292b37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-016-2f9f292b37.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-df8bf6fe30",
+      "order": 16,
+      "text": "people",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-017-df8bf6fe30.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-017-df8bf6fe30.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-c544bd3421",
+      "order": 17,
+      "text": "go",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-018-c544bd3421.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-018-c544bd3421.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-a2e073a7f0",
+      "order": 18,
+      "text": "to",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-019-a2e073a7f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-019-a2e073a7f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-90644ac156",
+      "order": 19,
+      "text": "comedy",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-020-90644ac156.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-020-90644ac156.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-32faef10a0",
+      "order": 20,
+      "text": "show",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-021-32faef10a0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-021-32faef10a0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-6b3987244d",
+      "order": 21,
+      "text": "they",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-022-6b3987244d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-022-6b3987244d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-c7d823799a",
+      "order": 22,
+      "text": "laugh",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-023-c7d823799a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-023-c7d823799a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-cf65d5c8cb",
+      "order": 23,
+      "text": "at",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-024-cf65d5c8cb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-024-cf65d5c8cb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-f79e128478",
+      "order": 24,
+      "text": "the",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-025-f79e128478.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-025-f79e128478.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-d9ed45bb3b",
+      "order": 25,
+      "text": "fun",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-026-d9ed45bb3b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-026-d9ed45bb3b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-ee27cb2478",
+      "order": 26,
+      "text": "old",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-027-ee27cb2478.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-027-ee27cb2478.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-49aa19672d",
+      "order": 27,
+      "text": "shows",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-028-49aa19672d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-028-49aa19672d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-5d97f94524",
+      "order": 28,
+      "text": "are",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-029-5d97f94524.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-029-5d97f94524.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-874e871ef3",
+      "order": 29,
+      "text": "simple",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-030-874e871ef3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-030-874e871ef3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-354f8fb91b",
+      "order": 30,
+      "text": "man",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-031-354f8fb91b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-031-354f8fb91b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-8b3c02fd4a",
+      "order": 31,
+      "text": "on",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-032-8b3c02fd4a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-032-8b3c02fd4a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-dc5b0d8aeb",
+      "order": 32,
+      "text": "small",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-033-dc5b0d8aeb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-033-dc5b0d8aeb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-8c591908d6",
+      "order": 33,
+      "text": "he",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-034-8c591908d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-034-8c591908d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-448366b30f",
+      "order": 34,
+      "text": "in",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-035-448366b30f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-035-448366b30f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-f438b3c06e",
+      "order": 35,
+      "text": "has",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-036-f438b3c06e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-036-f438b3c06e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-ab015e146b",
+      "order": 36,
+      "text": "hat",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-037-ab015e146b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-037-ab015e146b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-c080f5b8af",
+      "order": 37,
+      "text": "his",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-038-c080f5b8af.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-038-c080f5b8af.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-53d2ebd847",
+      "order": 38,
+      "text": "very",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-039-53d2ebd847.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-039-53d2ebd847.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-41ad54ff09",
+      "order": 39,
+      "text": "for",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-040-41ad54ff09.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-040-41ad54ff09.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-79120e3f86",
+      "order": 40,
+      "text": "families",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-041-79120e3f86.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-041-79120e3f86.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-f89c2ba091",
+      "order": 41,
+      "text": "big",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-042-f89c2ba091.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-042-f89c2ba091.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-1692f5a97b",
+      "order": 42,
+      "text": "room",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-043-1692f5a97b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-043-1692f5a97b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-f7c590afb9",
+      "order": 43,
+      "text": "all",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-044-f7c590afb9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-044-f7c590afb9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-0f4e6e1fcb",
+      "order": 44,
+      "text": "together",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-045-0f4e6e1fcb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-045-0f4e6e1fcb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-96ffebd0c1",
+      "order": 45,
+      "text": "new",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-046-96ffebd0c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-046-96ffebd0c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-81bfd93334",
+      "order": 46,
+      "text": "or",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-047-81bfd93334.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-047-81bfd93334.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-2b8ab8c537",
+      "order": 47,
+      "text": "woman",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-048-2b8ab8c537.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-048-2b8ab8c537.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-2e53efa8b9",
+      "order": 48,
+      "text": "lights",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-049-2e53efa8b9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-049-2e53efa8b9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-dc845ed50a",
+      "order": 49,
+      "text": "bright",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-050-dc845ed50a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-050-dc845ed50a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-6c53a7d82d",
+      "order": 50,
+      "text": "talk",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-051-6c53a7d82d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-051-6c53a7d82d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-42b32eace0",
+      "order": 51,
+      "text": "about",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-052-42b32eace0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-052-42b32eace0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-e6db0d226a",
+      "order": 52,
+      "text": "many",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-053-e6db0d226a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-053-e6db0d226a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-a467f91bfa",
+      "order": 53,
+      "text": "things",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-054-a467f91bfa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-054-a467f91bfa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-0cd1962e61",
+      "order": 54,
+      "text": "life",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-055-0cd1962e61.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-055-0cd1962e61.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-b801ea527f",
+      "order": 55,
+      "text": "school",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-056-b801ea527f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-056-b801ea527f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-31dc533301",
+      "order": 56,
+      "text": "and",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-057-31dc533301.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-057-31dc533301.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-6e5679d425",
+      "order": 57,
+      "text": "work",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-058-6e5679d425.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-058-6e5679d425.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-c6a56f3972",
+      "order": 58,
+      "text": "adults",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-059-c6a56f3972.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-059-c6a56f3972.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-22671379d7",
+      "order": 59,
+      "text": "we",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-060-22671379d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-060-22671379d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-a961a8cdaa",
+      "order": 60,
+      "text": "watch",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-061-a961a8cdaa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-061-a961a8cdaa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-1cf231397c",
+      "order": 61,
+      "text": "ways",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-062-1cf231397c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-062-1cf231397c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-8ff0d376bf",
+      "order": 62,
+      "text": "you",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-063-8ff0d376bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-063-8ff0d376bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-91189c9b12",
+      "order": 63,
+      "text": "there",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-064-91189c9b12.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-064-91189c9b12.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-ce65a47ded",
+      "order": 64,
+      "text": "tv",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-065-ce65a47ded.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-065-ce65a47ded.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-acd5cf1527",
+      "order": 65,
+      "text": "it",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-066-acd5cf1527.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-066-acd5cf1527.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-9a521e0ab7",
+      "order": 66,
+      "text": "home",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-067-9a521e0ab7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-067-9a521e0ab7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-5142e7bff4",
+      "order": 67,
+      "text": "with",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-068-5142e7bff4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-068-5142e7bff4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-f3d4822013",
+      "order": 68,
+      "text": "friends",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-069-f3d4822013.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-069-f3d4822013.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-07bfb6e45a",
+      "order": 69,
+      "text": "stages",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-070-07bfb6e45a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-070-07bfb6e45a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-c50c8d48c6",
+      "order": 70,
+      "text": "but",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-071-c50c8d48c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-071-c50c8d48c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-363c807d0e",
+      "order": 71,
+      "text": "same",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-072-363c807d0e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-072-363c807d0e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-ae9abdc313",
+      "order": 72,
+      "text": "love",
+      "objectPath": "articles/cmixr8kil000us60esgwguw0z/words/word-073-ae9abdc313.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/words/word-073-ae9abdc313.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-c1bd6d1ef4",
+      "type": "mcq",
+      "order": 0,
+      "text": "What do comedians tell?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-001-c1bd6d1ef4.mp3",
+      "questionObjectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-001-c1bd6d1ef4.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-001-c1bd6d1ef4-option1-1bd27cff.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-001-c1bd6d1ef4-option2-d679180c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-001-c1bd6d1ef4-option3-110fb001.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-001-c1bd6d1ef4-option4-d1b74bba.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-c1bd6d1ef4-option1-1bd27cff",
+          "text": "Jokes",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-001-c1bd6d1ef4-option1-1bd27cff.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-c1bd6d1ef4-option2-d679180c",
+          "text": "Secrets",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-001-c1bd6d1ef4-option2-d679180c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-c1bd6d1ef4-option3-110fb001",
+          "text": "Lies",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-001-c1bd6d1ef4-option3-110fb001.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-c1bd6d1ef4-option4-d1b74bba",
+          "text": "Stories",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-001-c1bd6d1ef4-option4-d1b74bba.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-b912d728ae",
+      "type": "mcq",
+      "order": 1,
+      "text": "What do people do at a comedy show?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-002-b912d728ae.mp3",
+      "questionObjectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-002-b912d728ae.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-002-b912d728ae-option1-f71546a0.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-002-b912d728ae-option2-d1d8c2de.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-002-b912d728ae-option3-72b005fa.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-002-b912d728ae-option4-544cc2a0.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-b912d728ae-option1-f71546a0",
+          "text": "Laugh",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-002-b912d728ae-option1-f71546a0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-b912d728ae-option2-d1d8c2de",
+          "text": "Cry",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-002-b912d728ae-option2-d1d8c2de.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-b912d728ae-option3-72b005fa",
+          "text": "Sing",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-002-b912d728ae-option3-72b005fa.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-b912d728ae-option4-544cc2a0",
+          "text": "Sleep",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-002-b912d728ae-option4-544cc2a0.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-50d668517c",
+      "type": "mcq",
+      "order": 2,
+      "text": "Are old comedy shows simple or hard?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-003-50d668517c.mp3",
+      "questionObjectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-003-50d668517c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-003-50d668517c-option1-3e790044.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-003-50d668517c-option2-c8b49327.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-003-50d668517c-option3-5910c0c8.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-003-50d668517c-option4-d2b64045.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-50d668517c-option1-3e790044",
+          "text": "New",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-003-50d668517c-option1-3e790044.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-50d668517c-option2-c8b49327",
+          "text": "Big",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-003-50d668517c-option2-c8b49327.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-50d668517c-option3-5910c0c8",
+          "text": "Simple",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-003-50d668517c-option3-5910c0c8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-50d668517c-option4-d2b64045",
+          "text": "Hard",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-003-50d668517c-option4-d2b64045.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-6036326344",
+      "type": "mcq",
+      "order": 3,
+      "text": "What does the man wear in old comedy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-004-6036326344.mp3",
+      "questionObjectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-004-6036326344.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-004-6036326344-option1-57f07ee1.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-004-6036326344-option2-a73fb63e.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-004-6036326344-option3-a25a55eb.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-004-6036326344-option4-865e6a35.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-6036326344-option1-57f07ee1",
+          "text": "Blue pants",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-004-6036326344-option1-57f07ee1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-6036326344-option2-a73fb63e",
+          "text": "A red shirt",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-004-6036326344-option2-a73fb63e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-6036326344-option3-a25a55eb",
+          "text": "A big coat",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-004-6036326344-option3-a25a55eb.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-6036326344-option4-865e6a35",
+          "text": "A funny suit",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-004-6036326344-option4-865e6a35.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-f737e6b4be",
+      "type": "mcq",
+      "order": 4,
+      "text": "Are old comedy jokes for adults or families?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-005-f737e6b4be.mp3",
+      "questionObjectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-005-f737e6b4be.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-005-f737e6b4be-option1-d5db5841.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-005-f737e6b4be-option2-0c415d6f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-005-f737e6b4be-option3-90cd0d6f.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-005-f737e6b4be-option4-d2deede0.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-f737e6b4be-option1-d5db5841",
+          "text": "Kids",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-005-f737e6b4be-option1-d5db5841.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-f737e6b4be-option2-0c415d6f",
+          "text": "Families",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-005-f737e6b4be-option2-0c415d6f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-f737e6b4be-option3-90cd0d6f",
+          "text": "Adults",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-005-f737e6b4be-option3-90cd0d6f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-f737e6b4be-option4-d2deede0",
+          "text": "Babies",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-005-f737e6b4be-option4-d2deede0.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-c987891ddb",
+      "type": "mcq",
+      "order": 5,
+      "text": "Is new comedy on a big stage or a small stage?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-006-c987891ddb.mp3",
+      "questionObjectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-006-c987891ddb.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-006-c987891ddb-option1-a4a69421.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-006-c987891ddb-option2-d47a495f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-006-c987891ddb-option3-2a8eb76d.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-006-c987891ddb-option4-c5f8e2ce.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-c987891ddb-option1-a4a69421",
+          "text": "Old stage",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-006-c987891ddb-option1-a4a69421.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-c987891ddb-option2-d47a495f",
+          "text": "Green stage",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-006-c987891ddb-option2-d47a495f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-c987891ddb-option3-2a8eb76d",
+          "text": "Small stage",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-006-c987891ddb-option3-2a8eb76d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-c987891ddb-option4-c5f8e2ce",
+          "text": "Big stage",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-006-c987891ddb-option4-c5f8e2ce.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-d5c8775723",
+      "type": "mcq",
+      "order": 6,
+      "text": "What do they talk about in new comedy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-007-d5c8775723.mp3",
+      "questionObjectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-007-d5c8775723.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-007-d5c8775723-option1-752afccf.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-007-d5c8775723-option2-cb065d2d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-007-d5c8775723-option3-7febd8f9.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-007-d5c8775723-option4-b8a4752f.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-d5c8775723-option1-752afccf",
+          "text": "Life",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-007-d5c8775723-option1-752afccf.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-d5c8775723-option2-cb065d2d",
+          "text": "Games",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-007-d5c8775723-option2-cb065d2d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-d5c8775723-option3-7febd8f9",
+          "text": "Food",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-007-d5c8775723-option3-7febd8f9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-d5c8775723-option4-b8a4752f",
+          "text": "Cars",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-007-d5c8775723-option4-b8a4752f.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-179e95e88e",
+      "type": "mcq",
+      "order": 7,
+      "text": "Where can you watch new comedy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-008-179e95e88e.mp3",
+      "questionObjectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-008-179e95e88e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-008-179e95e88e-option1-1b540b0a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-008-179e95e88e-option2-f042ea27.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-008-179e95e88e-option3-8094d828.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-008-179e95e88e-option4-e9c4e4b7.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-179e95e88e-option1-1b540b0a",
+          "text": "On TV",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-008-179e95e88e-option1-1b540b0a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-179e95e88e-option2-f042ea27",
+          "text": "In a car",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-008-179e95e88e-option2-f042ea27.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-179e95e88e-option3-8094d828",
+          "text": "At school",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-008-179e95e88e-option3-8094d828.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-179e95e88e-option4-e9c4e4b7",
+          "text": "In a store",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-008-179e95e88e-option4-e9c4e4b7.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-69fcd85627",
+      "type": "mcq",
+      "order": 8,
+      "text": "Do you watch new comedy on a screen or a book?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-009-69fcd85627.mp3",
+      "questionObjectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-009-69fcd85627.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-009-69fcd85627-option1-b70a2018.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-009-69fcd85627-option2-c51fbc3d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-009-69fcd85627-option3-dc7fd780.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-009-69fcd85627-option4-ffacdd69.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-69fcd85627-option1-b70a2018",
+          "text": "A table",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-009-69fcd85627-option1-b70a2018.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-69fcd85627-option2-c51fbc3d",
+          "text": "A chair",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-009-69fcd85627-option2-c51fbc3d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-69fcd85627-option3-dc7fd780",
+          "text": "A screen",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-009-69fcd85627-option3-dc7fd780.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-69fcd85627-option4-ffacdd69",
+          "text": "A book",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-009-69fcd85627-option4-ffacdd69.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-ad4e777a8b",
+      "type": "mcq",
+      "order": 9,
+      "text": "Do people love to laugh or cry?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-010-ad4e777a8b.mp3",
+      "questionObjectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-010-ad4e777a8b.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-010-ad4e777a8b-option1-d9e46e75.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-010-ad4e777a8b-option2-53231445.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-010-ad4e777a8b-option3-74b09f63.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/mcq-010-ad4e777a8b-option4-c5f2e394.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-ad4e777a8b-option1-d9e46e75",
+          "text": "Eat",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-010-ad4e777a8b-option1-d9e46e75.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ad4e777a8b-option2-53231445",
+          "text": "Sleep",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-010-ad4e777a8b-option2-53231445.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ad4e777a8b-option3-74b09f63",
+          "text": "Cry",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-010-ad4e777a8b-option3-74b09f63.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ad4e777a8b-option4-c5f2e394",
+          "text": "Laugh",
+          "objectPath": "articles/cmixr8kil000us60esgwguw0z/questions/mcq-010-ad4e777a8b-option4-c5f2e394.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-9923a95cb1",
+      "type": "saq",
+      "order": 10,
+      "text": "What do comedians tell?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/saq-011-9923a95cb1.mp3",
+      "questionObjectPath": "articles/cmixr8kil000us60esgwguw0z/questions/saq-011-9923a95cb1.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-e1bc302f1e",
+      "type": "saq",
+      "order": 11,
+      "text": "Are old comedy shows simple or big?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/saq-012-e1bc302f1e.mp3",
+      "questionObjectPath": "articles/cmixr8kil000us60esgwguw0z/questions/saq-012-e1bc302f1e.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-be8331876a",
+      "type": "saq",
+      "order": 12,
+      "text": "Is the stage big or small in old comedy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/saq-013-be8331876a.mp3",
+      "questionObjectPath": "articles/cmixr8kil000us60esgwguw0z/questions/saq-013-be8331876a.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-49c77a4a56",
+      "type": "saq",
+      "order": 13,
+      "text": "Is new comedy on TV?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/saq-014-49c77a4a56.mp3",
+      "questionObjectPath": "articles/cmixr8kil000us60esgwguw0z/questions/saq-014-49c77a4a56.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-7566a95ba1",
+      "type": "saq",
+      "order": 14,
+      "text": "Do people love to laugh?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmixr8kil000us60esgwguw0z/questions/saq-015-7566a95ba1.mp3",
+      "questionObjectPath": "articles/cmixr8kil000us60esgwguw0z/questions/saq-015-7566a95ba1.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:10:29.788Z"
+}

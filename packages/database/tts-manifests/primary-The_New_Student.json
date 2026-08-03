@@ -1,0 +1,764 @@
+{
+  "version": 1,
+  "articleId": "The_New_Student",
+  "source": "PRIMARY_ADVANTAGE",
+  "title": "The New Student",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-4ec7c7f709",
+      "order": 0,
+      "text": "Today was Mia's first day at her new school.",
+      "objectPath": "articles/The_New_Student/sentences/sentence-001-4ec7c7f709.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/sentences/sentence-001-4ec7c7f709.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-614107eae1",
+      "order": 1,
+      "text": "She stood at the door of the classroom and felt very nervous.",
+      "objectPath": "articles/The_New_Student/sentences/sentence-002-614107eae1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/sentences/sentence-002-614107eae1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-90b23bb455",
+      "order": 2,
+      "text": "She did not know anyone.",
+      "objectPath": "articles/The_New_Student/sentences/sentence-003-90b23bb455.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/sentences/sentence-003-90b23bb455.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-9e82821186",
+      "order": 3,
+      "text": "She looked at all the students sitting at their desks and took a deep breath.",
+      "objectPath": "articles/The_New_Student/sentences/sentence-004-9e82821186.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/sentences/sentence-004-9e82821186.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-6891c8693e",
+      "order": 4,
+      "text": "The teacher smiled and said, 'Class, we have a new student.",
+      "objectPath": "articles/The_New_Student/sentences/sentence-005-6891c8693e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/sentences/sentence-005-6891c8693e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-d3dd78263d",
+      "order": 5,
+      "text": "Her name is Mia.",
+      "objectPath": "articles/The_New_Student/sentences/sentence-006-d3dd78263d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/sentences/sentence-006-d3dd78263d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-0351b1b2da",
+      "order": 6,
+      "text": "Please make her feel welcome.' A girl named Sara raised her hand.",
+      "objectPath": "articles/The_New_Student/sentences/sentence-007-0351b1b2da.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/sentences/sentence-007-0351b1b2da.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-06c443d7b2",
+      "order": 7,
+      "text": "'Mia, you can sit next to me!' she said in a friendly voice.",
+      "objectPath": "articles/The_New_Student/sentences/sentence-008-06c443d7b2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/sentences/sentence-008-06c443d7b2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-1719fff094",
+      "order": 8,
+      "text": "At lunch, Sara introduced Mia to more friends.",
+      "objectPath": "articles/The_New_Student/sentences/sentence-009-1719fff094.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/sentences/sentence-009-1719fff094.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-d0141a3823",
+      "order": 9,
+      "text": "They talked and laughed together.",
+      "objectPath": "articles/The_New_Student/sentences/sentence-010-d0141a3823.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/sentences/sentence-010-d0141a3823.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-a6f94aaef9",
+      "order": 10,
+      "text": "By the end of the day, Mia did not feel nervous anymore.",
+      "objectPath": "articles/The_New_Student/sentences/sentence-011-a6f94aaef9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/sentences/sentence-011-a6f94aaef9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-acfded509a",
+      "order": 11,
+      "text": "She smiled all the way home.",
+      "objectPath": "articles/The_New_Student/sentences/sentence-012-acfded509a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/sentences/sentence-012-acfded509a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-28cd3bf2b8",
+      "order": 12,
+      "text": "She could not wait to come back tomorrow.",
+      "objectPath": "articles/The_New_Student/sentences/sentence-013-28cd3bf2b8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/sentences/sentence-013-28cd3bf2b8.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-cc92cdab3a",
+      "order": 0,
+      "text": "nervous",
+      "objectPath": "articles/The_New_Student/words/word-001-cc92cdab3a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-001-cc92cdab3a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-101bcc9c5c",
+      "order": 1,
+      "text": "classroom",
+      "objectPath": "articles/The_New_Student/words/word-002-101bcc9c5c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-002-101bcc9c5c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-3b91b7a73e",
+      "order": 2,
+      "text": "friendly",
+      "objectPath": "articles/The_New_Student/words/word-003-3b91b7a73e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-003-3b91b7a73e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-efde823c10",
+      "order": 3,
+      "text": "introduce",
+      "objectPath": "articles/The_New_Student/words/word-004-efde823c10.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-004-efde823c10.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-52f505386c",
+      "order": 4,
+      "text": "welcome",
+      "objectPath": "articles/The_New_Student/words/word-005-52f505386c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-005-52f505386c.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-006-57250a42ac",
+      "order": 5,
+      "text": "today",
+      "objectPath": "articles/The_New_Student/words/word-006-57250a42ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-006-57250a42ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-b400549a94",
+      "order": 6,
+      "text": "was",
+      "objectPath": "articles/The_New_Student/words/word-007-b400549a94.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-007-b400549a94.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-75a9e5d468",
+      "order": 7,
+      "text": "mia's",
+      "objectPath": "articles/The_New_Student/words/word-008-75a9e5d468.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-008-75a9e5d468.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-7b02fa08d7",
+      "order": 8,
+      "text": "first",
+      "objectPath": "articles/The_New_Student/words/word-009-7b02fa08d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-009-7b02fa08d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-8fa4375307",
+      "order": 9,
+      "text": "day",
+      "objectPath": "articles/The_New_Student/words/word-010-8fa4375307.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-010-8fa4375307.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-011-aa2a1d8704",
+      "order": 10,
+      "text": "at",
+      "objectPath": "articles/The_New_Student/words/word-011-aa2a1d8704.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-011-aa2a1d8704.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-279e19caea",
+      "order": 11,
+      "text": "her",
+      "objectPath": "articles/The_New_Student/words/word-012-279e19caea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-012-279e19caea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-01dcac7bbb",
+      "order": 12,
+      "text": "new",
+      "objectPath": "articles/The_New_Student/words/word-013-01dcac7bbb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-013-01dcac7bbb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-d4f721914e",
+      "order": 13,
+      "text": "school",
+      "objectPath": "articles/The_New_Student/words/word-014-d4f721914e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-014-d4f721914e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-126bb83b63",
+      "order": 14,
+      "text": "she",
+      "objectPath": "articles/The_New_Student/words/word-015-126bb83b63.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-015-126bb83b63.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-38f57024a7",
+      "order": 15,
+      "text": "stood",
+      "objectPath": "articles/The_New_Student/words/word-016-38f57024a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-016-38f57024a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-85bc82bda3",
+      "order": 16,
+      "text": "the",
+      "objectPath": "articles/The_New_Student/words/word-017-85bc82bda3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-017-85bc82bda3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-ba4d0a84b1",
+      "order": 17,
+      "text": "door",
+      "objectPath": "articles/The_New_Student/words/word-018-ba4d0a84b1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-018-ba4d0a84b1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-b4eb11a4f3",
+      "order": 18,
+      "text": "of",
+      "objectPath": "articles/The_New_Student/words/word-019-b4eb11a4f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-019-b4eb11a4f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-bd37bbdfa1",
+      "order": 19,
+      "text": "and",
+      "objectPath": "articles/The_New_Student/words/word-020-bd37bbdfa1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-020-bd37bbdfa1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-6c54ba49d0",
+      "order": 20,
+      "text": "felt",
+      "objectPath": "articles/The_New_Student/words/word-021-6c54ba49d0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-021-6c54ba49d0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-930f129abf",
+      "order": 21,
+      "text": "very",
+      "objectPath": "articles/The_New_Student/words/word-022-930f129abf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-022-930f129abf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-34a9bac280",
+      "order": 22,
+      "text": "did",
+      "objectPath": "articles/The_New_Student/words/word-023-34a9bac280.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-023-34a9bac280.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-77e77701b4",
+      "order": 23,
+      "text": "not",
+      "objectPath": "articles/The_New_Student/words/word-024-77e77701b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-024-77e77701b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-f17709f913",
+      "order": 24,
+      "text": "know",
+      "objectPath": "articles/The_New_Student/words/word-025-f17709f913.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-025-f17709f913.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-1c9011f478",
+      "order": 25,
+      "text": "anyone",
+      "objectPath": "articles/The_New_Student/words/word-026-1c9011f478.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-026-1c9011f478.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-a0dbf789f9",
+      "order": 26,
+      "text": "looked",
+      "objectPath": "articles/The_New_Student/words/word-027-a0dbf789f9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-027-a0dbf789f9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-d161604d58",
+      "order": 27,
+      "text": "all",
+      "objectPath": "articles/The_New_Student/words/word-028-d161604d58.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-028-d161604d58.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-ed10ace4ab",
+      "order": 28,
+      "text": "students",
+      "objectPath": "articles/The_New_Student/words/word-029-ed10ace4ab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-029-ed10ace4ab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-94f3a07422",
+      "order": 29,
+      "text": "sitting",
+      "objectPath": "articles/The_New_Student/words/word-030-94f3a07422.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-030-94f3a07422.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-440608f7fe",
+      "order": 30,
+      "text": "their",
+      "objectPath": "articles/The_New_Student/words/word-031-440608f7fe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-031-440608f7fe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-c892699a31",
+      "order": 31,
+      "text": "desks",
+      "objectPath": "articles/The_New_Student/words/word-032-c892699a31.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-032-c892699a31.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-2f52e0f645",
+      "order": 32,
+      "text": "took",
+      "objectPath": "articles/The_New_Student/words/word-033-2f52e0f645.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-033-2f52e0f645.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-fbf37e3ff2",
+      "order": 33,
+      "text": "a",
+      "objectPath": "articles/The_New_Student/words/word-034-fbf37e3ff2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-034-fbf37e3ff2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-fd99c361b8",
+      "order": 34,
+      "text": "deep",
+      "objectPath": "articles/The_New_Student/words/word-035-fd99c361b8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-035-fd99c361b8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-aa48f703fa",
+      "order": 35,
+      "text": "breath",
+      "objectPath": "articles/The_New_Student/words/word-036-aa48f703fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-036-aa48f703fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-7a46669bbb",
+      "order": 36,
+      "text": "teacher",
+      "objectPath": "articles/The_New_Student/words/word-037-7a46669bbb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-037-7a46669bbb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-1a74e4bef3",
+      "order": 37,
+      "text": "smiled",
+      "objectPath": "articles/The_New_Student/words/word-038-1a74e4bef3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-038-1a74e4bef3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-1396f21a6c",
+      "order": 38,
+      "text": "said",
+      "objectPath": "articles/The_New_Student/words/word-039-1396f21a6c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-039-1396f21a6c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-b694ffb7f4",
+      "order": 39,
+      "text": "class",
+      "objectPath": "articles/The_New_Student/words/word-040-b694ffb7f4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-040-b694ffb7f4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-12bc350198",
+      "order": 40,
+      "text": "we",
+      "objectPath": "articles/The_New_Student/words/word-041-12bc350198.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-041-12bc350198.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-d66b07a861",
+      "order": 41,
+      "text": "have",
+      "objectPath": "articles/The_New_Student/words/word-042-d66b07a861.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-042-d66b07a861.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-4f70da48e4",
+      "order": 42,
+      "text": "student",
+      "objectPath": "articles/The_New_Student/words/word-043-4f70da48e4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-043-4f70da48e4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-4a0811379a",
+      "order": 43,
+      "text": "name",
+      "objectPath": "articles/The_New_Student/words/word-044-4a0811379a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-044-4a0811379a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-23099f6cab",
+      "order": 44,
+      "text": "is",
+      "objectPath": "articles/The_New_Student/words/word-045-23099f6cab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-045-23099f6cab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-eebe9775c5",
+      "order": 45,
+      "text": "mia",
+      "objectPath": "articles/The_New_Student/words/word-046-eebe9775c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-046-eebe9775c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-4dfc8ba2dd",
+      "order": 46,
+      "text": "please",
+      "objectPath": "articles/The_New_Student/words/word-047-4dfc8ba2dd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-047-4dfc8ba2dd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-b4ffdd238f",
+      "order": 47,
+      "text": "make",
+      "objectPath": "articles/The_New_Student/words/word-048-b4ffdd238f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-048-b4ffdd238f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-873db1e821",
+      "order": 48,
+      "text": "feel",
+      "objectPath": "articles/The_New_Student/words/word-049-873db1e821.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-049-873db1e821.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-d8b54d59b0",
+      "order": 49,
+      "text": "girl",
+      "objectPath": "articles/The_New_Student/words/word-050-d8b54d59b0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-050-d8b54d59b0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-ab53419957",
+      "order": 50,
+      "text": "named",
+      "objectPath": "articles/The_New_Student/words/word-051-ab53419957.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-051-ab53419957.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-da6b9a612a",
+      "order": 51,
+      "text": "sara",
+      "objectPath": "articles/The_New_Student/words/word-052-da6b9a612a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-052-da6b9a612a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-0e58b55682",
+      "order": 52,
+      "text": "raised",
+      "objectPath": "articles/The_New_Student/words/word-053-0e58b55682.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-053-0e58b55682.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-6ac2d3b839",
+      "order": 53,
+      "text": "hand",
+      "objectPath": "articles/The_New_Student/words/word-054-6ac2d3b839.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-054-6ac2d3b839.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-ac21ba5f81",
+      "order": 54,
+      "text": "you",
+      "objectPath": "articles/The_New_Student/words/word-055-ac21ba5f81.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-055-ac21ba5f81.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-e09904240d",
+      "order": 55,
+      "text": "can",
+      "objectPath": "articles/The_New_Student/words/word-056-e09904240d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-056-e09904240d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-b997a1ebe0",
+      "order": 56,
+      "text": "sit",
+      "objectPath": "articles/The_New_Student/words/word-057-b997a1ebe0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-057-b997a1ebe0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-de7fbbaaef",
+      "order": 57,
+      "text": "next",
+      "objectPath": "articles/The_New_Student/words/word-058-de7fbbaaef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-058-de7fbbaaef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-90cc429a93",
+      "order": 58,
+      "text": "to",
+      "objectPath": "articles/The_New_Student/words/word-059-90cc429a93.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-059-90cc429a93.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-96d18ec101",
+      "order": 59,
+      "text": "me",
+      "objectPath": "articles/The_New_Student/words/word-060-96d18ec101.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-060-96d18ec101.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-ad1997e29c",
+      "order": 60,
+      "text": "in",
+      "objectPath": "articles/The_New_Student/words/word-061-ad1997e29c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-061-ad1997e29c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-35eb300cfa",
+      "order": 61,
+      "text": "voice",
+      "objectPath": "articles/The_New_Student/words/word-062-35eb300cfa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-062-35eb300cfa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-c4a176d18a",
+      "order": 62,
+      "text": "lunch",
+      "objectPath": "articles/The_New_Student/words/word-063-c4a176d18a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-063-c4a176d18a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-7632d925a9",
+      "order": 63,
+      "text": "introduced",
+      "objectPath": "articles/The_New_Student/words/word-064-7632d925a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-064-7632d925a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-903f38fa53",
+      "order": 64,
+      "text": "more",
+      "objectPath": "articles/The_New_Student/words/word-065-903f38fa53.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-065-903f38fa53.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-307462636d",
+      "order": 65,
+      "text": "friends",
+      "objectPath": "articles/The_New_Student/words/word-066-307462636d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-066-307462636d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-13fd36bd45",
+      "order": 66,
+      "text": "they",
+      "objectPath": "articles/The_New_Student/words/word-067-13fd36bd45.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-067-13fd36bd45.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-ccb39cd346",
+      "order": 67,
+      "text": "talked",
+      "objectPath": "articles/The_New_Student/words/word-068-ccb39cd346.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-068-ccb39cd346.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-9e13786f39",
+      "order": 68,
+      "text": "laughed",
+      "objectPath": "articles/The_New_Student/words/word-069-9e13786f39.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-069-9e13786f39.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-ab47635005",
+      "order": 69,
+      "text": "together",
+      "objectPath": "articles/The_New_Student/words/word-070-ab47635005.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-070-ab47635005.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-e1eb0394cc",
+      "order": 70,
+      "text": "by",
+      "objectPath": "articles/The_New_Student/words/word-071-e1eb0394cc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-071-e1eb0394cc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-f762b60d93",
+      "order": 71,
+      "text": "end",
+      "objectPath": "articles/The_New_Student/words/word-072-f762b60d93.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-072-f762b60d93.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-a34a7e645b",
+      "order": 72,
+      "text": "anymore",
+      "objectPath": "articles/The_New_Student/words/word-073-a34a7e645b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-073-a34a7e645b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-1134a40af8",
+      "order": 73,
+      "text": "way",
+      "objectPath": "articles/The_New_Student/words/word-074-1134a40af8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-074-1134a40af8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-db94cc51c8",
+      "order": 74,
+      "text": "home",
+      "objectPath": "articles/The_New_Student/words/word-075-db94cc51c8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-075-db94cc51c8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-ad456804e9",
+      "order": 75,
+      "text": "could",
+      "objectPath": "articles/The_New_Student/words/word-076-ad456804e9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-076-ad456804e9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-82f70a231b",
+      "order": 76,
+      "text": "wait",
+      "objectPath": "articles/The_New_Student/words/word-077-82f70a231b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-077-82f70a231b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-a4cf36a612",
+      "order": 77,
+      "text": "come",
+      "objectPath": "articles/The_New_Student/words/word-078-a4cf36a612.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-078-a4cf36a612.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-564083b656",
+      "order": 78,
+      "text": "back",
+      "objectPath": "articles/The_New_Student/words/word-079-564083b656.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-079-564083b656.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-485b3e6bd4",
+      "order": 79,
+      "text": "tomorrow",
+      "objectPath": "articles/The_New_Student/words/word-080-485b3e6bd4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/The_New_Student/words/word-080-485b3e6bd4.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [],
+  "generatedAt": "2026-08-02T17:05:05.532Z"
+}

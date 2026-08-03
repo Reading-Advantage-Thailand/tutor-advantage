@@ -1,0 +1,1623 @@
+{
+  "version": 1,
+  "articleId": "Bm9w2y9wQAf1Fr4mYUzA",
+  "source": "READING_ADVANTAGE",
+  "title": "The Prospector's Gamble",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-ac73ef96c2",
+      "order": 0,
+      "text": "In the year 1849, a man named Jack is a prospector.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-001-ac73ef96c2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-001-ac73ef96c2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-7ef229d3a0",
+      "order": 1,
+      "text": "He is alone in the mountains.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-002-7ef229d3a0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-002-7ef229d3a0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-64dcefb6b4",
+      "order": 2,
+      "text": "Jack has a pickaxe and a pan.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-003-64dcefb6b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-003-64dcefb6b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-940717094d",
+      "order": 3,
+      "text": "He wants gold.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-004-940717094d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-004-940717094d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-c5f2579a92",
+      "order": 4,
+      "text": "Every day, he digs in the dirt.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-005-c5f2579a92.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-005-c5f2579a92.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-49a352d4c5",
+      "order": 5,
+      "text": "He hopes to find gold.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-006-49a352d4c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-006-49a352d4c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-d6a20a2705",
+      "order": 6,
+      "text": "Jack is tired but happy.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-007-d6a20a2705.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-007-d6a20a2705.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-0e99129183",
+      "order": 7,
+      "text": "He loves the mountains.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-008-0e99129183.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-008-0e99129183.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-bb86de72a2",
+      "order": 8,
+      "text": "One day, Jack finds a shiny rock.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-009-bb86de72a2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-009-bb86de72a2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-b88f3eb48c",
+      "order": 9,
+      "text": "It is gold!",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-010-b88f3eb48c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-010-b88f3eb48c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-fa37fb6711",
+      "order": 10,
+      "text": "Jack jumps with joy.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-011-fa37fb6711.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-011-fa37fb6711.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-0b7f3749b3",
+      "order": 11,
+      "text": "He has gold!",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-012-0b7f3749b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-012-0b7f3749b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-e708f95c41",
+      "order": 12,
+      "text": "He puts the gold in his bag.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-013-e708f95c41.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-013-e708f95c41.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-aa5baf5161",
+      "order": 13,
+      "text": "Jack wants more gold.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-014-aa5baf5161.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-014-aa5baf5161.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-341c7a8263",
+      "order": 14,
+      "text": "He digs and digs.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-015-341c7a8263.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-015-341c7a8263.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-18414ac068",
+      "order": 15,
+      "text": "He works hard.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-016-18414ac068.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-016-18414ac068.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-c468c369eb",
+      "order": 16,
+      "text": "But soon, Jack sees other miners.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-017-c468c369eb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-017-c468c369eb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-9852ca3350",
+      "order": 17,
+      "text": "They are many.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-018-9852ca3350.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-018-9852ca3350.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-d9dc09e83a",
+      "order": 18,
+      "text": "They want gold too.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-019-d9dc09e83a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-019-d9dc09e83a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-ccdf18ec10",
+      "order": 19,
+      "text": "Jack feels scared.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-020-ccdf18ec10.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-020-ccdf18ec10.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-074df259b0",
+      "order": 20,
+      "text": "He does not want to share.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-021-074df259b0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-021-074df259b0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-cfb4ba95ac",
+      "order": 21,
+      "text": "He hides his gold.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-022-cfb4ba95ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-022-cfb4ba95ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-0f7bb3d659",
+      "order": 22,
+      "text": "He keeps it safe.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-023-0f7bb3d659.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-023-0f7bb3d659.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-35cd05de48",
+      "order": 23,
+      "text": "Jack works fast.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-024-35cd05de48.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-024-35cd05de48.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-939690a4f0",
+      "order": 24,
+      "text": "He wants to find more gold before the others.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-025-939690a4f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-025-939690a4f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-41b133556d",
+      "order": 25,
+      "text": "Days pass.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-026-41b133556d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-026-41b133556d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-95b126fbd9",
+      "order": 26,
+      "text": "Jack finds more gold.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-027-95b126fbd9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-027-95b126fbd9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-447a33eca6",
+      "order": 27,
+      "text": "He is rich!",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-028-447a33eca6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-028-447a33eca6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-f6cd6037e2",
+      "order": 28,
+      "text": "But he is alone.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-029-f6cd6037e2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-029-f6cd6037e2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-9c58c0b8db",
+      "order": 29,
+      "text": "He misses his friends.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-030-9c58c0b8db.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-030-9c58c0b8db.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-b4a476d8f3",
+      "order": 30,
+      "text": "He thinks about sharing.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-031-b4a476d8f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-031-b4a476d8f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-0d4751248c",
+      "order": 31,
+      "text": "One night, Jack sees a fire.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-032-0d4751248c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-032-0d4751248c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-feab0297c1",
+      "order": 32,
+      "text": "It is other miners.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-033-feab0297c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-033-feab0297c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-14576800df",
+      "order": 33,
+      "text": "They are laughing and talking.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-034-14576800df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-034-14576800df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-361c2ac80a",
+      "order": 34,
+      "text": "Jack feels sad.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-035-361c2ac80a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-035-361c2ac80a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-02e33c9721",
+      "order": 35,
+      "text": "He wants to join them.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-036-02e33c9721.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-036-02e33c9721.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-c4ae90631b",
+      "order": 36,
+      "text": "He takes his gold and walks to the fire.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-037-c4ae90631b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-037-c4ae90631b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-ca7948ef6a",
+      "order": 37,
+      "text": "“Hello!” Jack says.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-038-ca7948ef6a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-038-ca7948ef6a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-54658c431c",
+      "order": 38,
+      "text": "The miners look at him.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-039-54658c431c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-039-54658c431c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-79db96280e",
+      "order": 39,
+      "text": "“I have gold.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-040-79db96280e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-040-79db96280e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-21cf75ca6c",
+      "order": 40,
+      "text": "I want to share.”",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-041-21cf75ca6c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-041-21cf75ca6c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-6d81e0886c",
+      "order": 41,
+      "text": "The miners smile.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-042-6d81e0886c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-042-6d81e0886c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-bc71101538",
+      "order": 42,
+      "text": "They welcome Jack.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-043-bc71101538.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-043-bc71101538.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-044-f60f7a57d9",
+      "order": 43,
+      "text": "They share stories and food.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-044-f60f7a57d9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-044-f60f7a57d9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-045-41b45bc38e",
+      "order": 44,
+      "text": "Jack is happy.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-045-41b45bc38e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-045-41b45bc38e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-046-0936862c52",
+      "order": 45,
+      "text": "He is rich, but now he has friends too.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-046-0936862c52.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-046-0936862c52.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-047-84a4620bde",
+      "order": 46,
+      "text": "Jack learns that gold is good, but friends are better.",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-047-84a4620bde.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/sentences/sentence-047-84a4620bde.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-14b86c4b0c",
+      "order": 0,
+      "text": "prospector",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-001-14b86c4b0c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-001-14b86c4b0c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-355a6de872",
+      "order": 1,
+      "text": "pickaxe",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-002-355a6de872.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-002-355a6de872.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-243a1e9744",
+      "order": 2,
+      "text": "digs",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-003-243a1e9744.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-003-243a1e9744.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-61c110a2d1",
+      "order": 3,
+      "text": "shiny",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-004-61c110a2d1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-004-61c110a2d1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-8b6b9100fd",
+      "order": 4,
+      "text": "jumps with joy",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-005-8b6b9100fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-005-8b6b9100fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-68dc8e70d0",
+      "order": 5,
+      "text": "scared",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-006-68dc8e70d0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-006-68dc8e70d0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-0db0458ae8",
+      "order": 6,
+      "text": "hides",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-007-0db0458ae8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-007-0db0458ae8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-903c6ddf6f",
+      "order": 7,
+      "text": "rich",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-008-903c6ddf6f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-008-903c6ddf6f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-ba8d6fe304",
+      "order": 8,
+      "text": "misses",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-009-ba8d6fe304.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-009-ba8d6fe304.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-9236b40cd8",
+      "order": 9,
+      "text": "learns",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-010-9236b40cd8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-010-9236b40cd8.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-16207836a7",
+      "order": 10,
+      "text": "in",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-011-16207836a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-011-16207836a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-7b218f389f",
+      "order": 11,
+      "text": "the",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-012-7b218f389f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-012-7b218f389f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-488bdf4144",
+      "order": 12,
+      "text": "year",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-013-488bdf4144.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-013-488bdf4144.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-6f34be13fa",
+      "order": 13,
+      "text": "a",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-014-6f34be13fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-014-6f34be13fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-6a34592c6c",
+      "order": 14,
+      "text": "man",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-015-6a34592c6c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-015-6a34592c6c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-81abd5d0e8",
+      "order": 15,
+      "text": "named",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-016-81abd5d0e8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-016-81abd5d0e8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-b8b1f4bcf6",
+      "order": 16,
+      "text": "jack",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-017-b8b1f4bcf6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-017-b8b1f4bcf6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-6cf90b2261",
+      "order": 17,
+      "text": "is",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-018-6cf90b2261.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-018-6cf90b2261.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-b73f2eccb2",
+      "order": 18,
+      "text": "he",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-019-b73f2eccb2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-019-b73f2eccb2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-f20e3761dd",
+      "order": 19,
+      "text": "alone",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-020-f20e3761dd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-020-f20e3761dd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-1cad1769fb",
+      "order": 20,
+      "text": "mountains",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-021-1cad1769fb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-021-1cad1769fb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-64b79b28ce",
+      "order": 21,
+      "text": "has",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-022-64b79b28ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-022-64b79b28ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-b1e9a61b2c",
+      "order": 22,
+      "text": "and",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-023-b1e9a61b2c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-023-b1e9a61b2c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-1579ee5aa1",
+      "order": 23,
+      "text": "pan",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-024-1579ee5aa1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-024-1579ee5aa1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-60876aa69d",
+      "order": 24,
+      "text": "wants",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-025-60876aa69d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-025-60876aa69d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-1ad7e81000",
+      "order": 25,
+      "text": "gold",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-026-1ad7e81000.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-026-1ad7e81000.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-c589c00af0",
+      "order": 26,
+      "text": "every",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-027-c589c00af0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-027-c589c00af0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-c9d2a7888f",
+      "order": 27,
+      "text": "day",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-028-c9d2a7888f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-028-c9d2a7888f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-acbfeaa7fa",
+      "order": 28,
+      "text": "dirt",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-029-acbfeaa7fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-029-acbfeaa7fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-99d043c114",
+      "order": 29,
+      "text": "hopes",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-030-99d043c114.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-030-99d043c114.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-32f1eeb2fb",
+      "order": 30,
+      "text": "to",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-031-32f1eeb2fb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-031-32f1eeb2fb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-44ef3376aa",
+      "order": 31,
+      "text": "find",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-032-44ef3376aa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-032-44ef3376aa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-1825e51ad2",
+      "order": 32,
+      "text": "tired",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-033-1825e51ad2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-033-1825e51ad2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-472cb50902",
+      "order": 33,
+      "text": "but",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-034-472cb50902.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-034-472cb50902.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-b8a840a085",
+      "order": 34,
+      "text": "happy",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-035-b8a840a085.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-035-b8a840a085.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-e504f49c1b",
+      "order": 35,
+      "text": "loves",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-036-e504f49c1b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-036-e504f49c1b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-02f2e5770d",
+      "order": 36,
+      "text": "one",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-037-02f2e5770d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-037-02f2e5770d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-d6e8038935",
+      "order": 37,
+      "text": "finds",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-038-d6e8038935.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-038-d6e8038935.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-993a055205",
+      "order": 38,
+      "text": "rock",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-039-993a055205.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-039-993a055205.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-478dd9030b",
+      "order": 39,
+      "text": "it",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-040-478dd9030b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-040-478dd9030b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-c8a148c515",
+      "order": 40,
+      "text": "jumps",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-041-c8a148c515.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-041-c8a148c515.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-242e67382f",
+      "order": 41,
+      "text": "with",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-042-242e67382f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-042-242e67382f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-6f9c306fb2",
+      "order": 42,
+      "text": "joy",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-043-6f9c306fb2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-043-6f9c306fb2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-c813591605",
+      "order": 43,
+      "text": "puts",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-044-c813591605.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-044-c813591605.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-078a7a6c90",
+      "order": 44,
+      "text": "his",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-045-078a7a6c90.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-045-078a7a6c90.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-8af877db1f",
+      "order": 45,
+      "text": "bag",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-046-8af877db1f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-046-8af877db1f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-16a86f2446",
+      "order": 46,
+      "text": "more",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-047-16a86f2446.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-047-16a86f2446.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-aeff029763",
+      "order": 47,
+      "text": "works",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-048-aeff029763.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-048-aeff029763.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-09212aa167",
+      "order": 48,
+      "text": "hard",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-049-09212aa167.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-049-09212aa167.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-635ecf63f5",
+      "order": 49,
+      "text": "soon",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-050-635ecf63f5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-050-635ecf63f5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-afca9d7e99",
+      "order": 50,
+      "text": "sees",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-051-afca9d7e99.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-051-afca9d7e99.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-00620ce020",
+      "order": 51,
+      "text": "other",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-052-00620ce020.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-052-00620ce020.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-9565aa380c",
+      "order": 52,
+      "text": "miners",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-053-9565aa380c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-053-9565aa380c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-602969dc91",
+      "order": 53,
+      "text": "they",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-054-602969dc91.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-054-602969dc91.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-1f72c84f54",
+      "order": 54,
+      "text": "are",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-055-1f72c84f54.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-055-1f72c84f54.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-51b64a6db8",
+      "order": 55,
+      "text": "many",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-056-51b64a6db8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-056-51b64a6db8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-3fac0ff859",
+      "order": 56,
+      "text": "want",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-057-3fac0ff859.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-057-3fac0ff859.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-e5c9d75028",
+      "order": 57,
+      "text": "too",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-058-e5c9d75028.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-058-e5c9d75028.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-307c1f42b2",
+      "order": 58,
+      "text": "feels",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-059-307c1f42b2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-059-307c1f42b2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-8dd4dd47ce",
+      "order": 59,
+      "text": "does",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-060-8dd4dd47ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-060-8dd4dd47ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-72e2b863e0",
+      "order": 60,
+      "text": "not",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-061-72e2b863e0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-061-72e2b863e0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-d9f089ffaf",
+      "order": 61,
+      "text": "share",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-062-d9f089ffaf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-062-d9f089ffaf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-ea59261101",
+      "order": 62,
+      "text": "keeps",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-063-ea59261101.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-063-ea59261101.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-5a31113b0e",
+      "order": 63,
+      "text": "safe",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-064-5a31113b0e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-064-5a31113b0e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-34a4866cb2",
+      "order": 64,
+      "text": "fast",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-065-34a4866cb2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-065-34a4866cb2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-f71f369da1",
+      "order": 65,
+      "text": "before",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-066-f71f369da1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-066-f71f369da1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-5693dc25dc",
+      "order": 66,
+      "text": "others",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-067-5693dc25dc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-067-5693dc25dc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-73d6ded1bd",
+      "order": 67,
+      "text": "days",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-068-73d6ded1bd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-068-73d6ded1bd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-4dc4d67832",
+      "order": 68,
+      "text": "pass",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-069-4dc4d67832.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-069-4dc4d67832.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-9b316c0b7d",
+      "order": 69,
+      "text": "friends",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-070-9b316c0b7d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-070-9b316c0b7d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-837eab5203",
+      "order": 70,
+      "text": "thinks",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-071-837eab5203.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-071-837eab5203.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-dae8a2b8a7",
+      "order": 71,
+      "text": "about",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-072-dae8a2b8a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-072-dae8a2b8a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-3d78094a32",
+      "order": 72,
+      "text": "sharing",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-073-3d78094a32.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-073-3d78094a32.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-28328c56d0",
+      "order": 73,
+      "text": "night",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-074-28328c56d0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-074-28328c56d0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-60b010b870",
+      "order": 74,
+      "text": "fire",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-075-60b010b870.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-075-60b010b870.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-e8017a8094",
+      "order": 75,
+      "text": "laughing",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-076-e8017a8094.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-076-e8017a8094.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-5a7f658c57",
+      "order": 76,
+      "text": "talking",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-077-5a7f658c57.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-077-5a7f658c57.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-feef96e32f",
+      "order": 77,
+      "text": "sad",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-078-feef96e32f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-078-feef96e32f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-15d85dc207",
+      "order": 78,
+      "text": "join",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-079-15d85dc207.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-079-15d85dc207.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-45674a4d48",
+      "order": 79,
+      "text": "them",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-080-45674a4d48.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-080-45674a4d48.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-9483896bd7",
+      "order": 80,
+      "text": "takes",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-081-9483896bd7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-081-9483896bd7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-c003e320a7",
+      "order": 81,
+      "text": "walks",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-082-c003e320a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-082-c003e320a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-b69de0eb70",
+      "order": 82,
+      "text": "hello",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-083-b69de0eb70.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-083-b69de0eb70.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-111f812fb6",
+      "order": 83,
+      "text": "says",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-084-111f812fb6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-084-111f812fb6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-febc320727",
+      "order": 84,
+      "text": "look",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-085-febc320727.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-085-febc320727.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-086-826e78b751",
+      "order": 85,
+      "text": "at",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-086-826e78b751.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-086-826e78b751.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-087-89c25e40bc",
+      "order": 86,
+      "text": "him",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-087-89c25e40bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-087-89c25e40bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-088-1569f652df",
+      "order": 87,
+      "text": "i",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-088-1569f652df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-088-1569f652df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-089-a7901a3b45",
+      "order": 88,
+      "text": "have",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-089-a7901a3b45.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-089-a7901a3b45.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-090-88c82f551a",
+      "order": 89,
+      "text": "smile",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-090-88c82f551a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-090-88c82f551a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-091-05af1652f7",
+      "order": 90,
+      "text": "welcome",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-091-05af1652f7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-091-05af1652f7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-092-2538b59bde",
+      "order": 91,
+      "text": "stories",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-092-2538b59bde.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-092-2538b59bde.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-093-f0c602a43d",
+      "order": 92,
+      "text": "food",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-093-f0c602a43d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-093-f0c602a43d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-094-2abe1814ac",
+      "order": 93,
+      "text": "now",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-094-2abe1814ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-094-2abe1814ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-095-d2591385bc",
+      "order": 94,
+      "text": "that",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-095-d2591385bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-095-d2591385bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-096-e56d2a40c2",
+      "order": 95,
+      "text": "good",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-096-e56d2a40c2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-096-e56d2a40c2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-097-a6aafc6f37",
+      "order": 96,
+      "text": "better",
+      "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-097-a6aafc6f37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/words/word-097-a6aafc6f37.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-29b76ac16f",
+      "type": "mcq",
+      "order": 0,
+      "text": "What does Jack want to find?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-001-29b76ac16f.mp3",
+      "questionObjectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-001-29b76ac16f.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-001-29b76ac16f-option1-9811cfc6.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-001-29b76ac16f-option2-672009b6.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-001-29b76ac16f-option3-4cbe065b.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-001-29b76ac16f-option4-5315bd6c.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-29b76ac16f-option1-9811cfc6",
+          "text": "Gold",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-001-29b76ac16f-option1-9811cfc6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-29b76ac16f-option2-672009b6",
+          "text": "Silver",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-001-29b76ac16f-option2-672009b6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-29b76ac16f-option3-4cbe065b",
+          "text": "Diamonds",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-001-29b76ac16f-option3-4cbe065b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-29b76ac16f-option4-5315bd6c",
+          "text": "Copper",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-001-29b76ac16f-option4-5315bd6c.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-f7eed478d3",
+      "type": "mcq",
+      "order": 1,
+      "text": "Where is Jack?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-002-f7eed478d3.mp3",
+      "questionObjectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-002-f7eed478d3.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-002-f7eed478d3-option1-3a9ac869.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-002-f7eed478d3-option2-4e7c6eb2.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-002-f7eed478d3-option3-aadfe319.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-002-f7eed478d3-option4-e20a6a33.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-f7eed478d3-option1-3a9ac869",
+          "text": "In the mountains",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-002-f7eed478d3-option1-3a9ac869.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-f7eed478d3-option2-4e7c6eb2",
+          "text": "In the city",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-002-f7eed478d3-option2-4e7c6eb2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-f7eed478d3-option3-aadfe319",
+          "text": "At the beach",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-002-f7eed478d3-option3-aadfe319.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-f7eed478d3-option4-e20a6a33",
+          "text": "In a forest",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-002-f7eed478d3-option4-e20a6a33.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-beec08a549",
+      "type": "mcq",
+      "order": 2,
+      "text": "What does Jack do with the gold?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-003-beec08a549.mp3",
+      "questionObjectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-003-beec08a549.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-003-beec08a549-option1-f0326b27.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-003-beec08a549-option2-cf64601a.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-003-beec08a549-option3-8223267e.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-003-beec08a549-option4-4de36b27.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-beec08a549-option1-f0326b27",
+          "text": "Puts it in his bag",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-003-beec08a549-option1-f0326b27.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-beec08a549-option2-cf64601a",
+          "text": "Gives it away",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-003-beec08a549-option2-cf64601a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-beec08a549-option3-8223267e",
+          "text": "Throws it",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-003-beec08a549-option3-8223267e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-beec08a549-option4-4de36b27",
+          "text": "Sells it",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-003-beec08a549-option4-4de36b27.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-5192fd0089",
+      "type": "mcq",
+      "order": 3,
+      "text": "What is Jack's job?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-004-5192fd0089.mp3",
+      "questionObjectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-004-5192fd0089.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-004-5192fd0089-option1-dda52e1c.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-004-5192fd0089-option2-5b9c420a.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-004-5192fd0089-option3-aaccb22a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-004-5192fd0089-option4-46cb2f20.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-5192fd0089-option1-dda52e1c",
+          "text": "Prospector",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-004-5192fd0089-option1-dda52e1c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-5192fd0089-option2-5b9c420a",
+          "text": "Farmer",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-004-5192fd0089-option2-5b9c420a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-5192fd0089-option3-aaccb22a",
+          "text": "Teacher",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-004-5192fd0089-option3-aaccb22a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-5192fd0089-option4-46cb2f20",
+          "text": "Doctor",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-004-5192fd0089-option4-46cb2f20.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-e48dab7b7b",
+      "type": "mcq",
+      "order": 4,
+      "text": "Who does Jack see in the mountains?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-005-e48dab7b7b.mp3",
+      "questionObjectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-005-e48dab7b7b.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-005-e48dab7b7b-option1-62da0b78.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-005-e48dab7b7b-option2-e85e34e5.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-005-e48dab7b7b-option3-e8c566d1.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-005-e48dab7b7b-option4-08c57af1.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-e48dab7b7b-option1-62da0b78",
+          "text": "Other miners",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-005-e48dab7b7b-option1-62da0b78.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-e48dab7b7b-option2-e85e34e5",
+          "text": "Animals",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-005-e48dab7b7b-option2-e85e34e5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-e48dab7b7b-option3-e8c566d1",
+          "text": "His friends",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-005-e48dab7b7b-option3-e8c566d1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-e48dab7b7b-option4-08c57af1",
+          "text": "A family",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-005-e48dab7b7b-option4-08c57af1.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-373af02b3d",
+      "type": "mcq",
+      "order": 5,
+      "text": "What does Jack use to dig?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-006-373af02b3d.mp3",
+      "questionObjectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-006-373af02b3d.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-006-373af02b3d-option1-50a01266.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-006-373af02b3d-option2-b7cba05f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-006-373af02b3d-option3-43573788.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-006-373af02b3d-option4-39af98f4.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-373af02b3d-option1-50a01266",
+          "text": "A pickaxe",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-006-373af02b3d-option1-50a01266.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-373af02b3d-option2-b7cba05f",
+          "text": "A shovel",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-006-373af02b3d-option2-b7cba05f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-373af02b3d-option3-43573788",
+          "text": "A hammer",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-006-373af02b3d-option3-43573788.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-373af02b3d-option4-39af98f4",
+          "text": "A knife",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-006-373af02b3d-option4-39af98f4.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-97a7afc964",
+      "type": "mcq",
+      "order": 6,
+      "text": "What does Jack feel when he sees other miners?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-007-97a7afc964.mp3",
+      "questionObjectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-007-97a7afc964.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-007-97a7afc964-option1-9c0456a8.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-007-97a7afc964-option2-012239c2.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-007-97a7afc964-option3-37ce4341.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-007-97a7afc964-option4-09d06f33.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-97a7afc964-option1-9c0456a8",
+          "text": "Scared",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-007-97a7afc964-option1-9c0456a8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-97a7afc964-option2-012239c2",
+          "text": "Excited",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-007-97a7afc964-option2-012239c2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-97a7afc964-option3-37ce4341",
+          "text": "Bored",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-007-97a7afc964-option3-37ce4341.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-97a7afc964-option4-09d06f33",
+          "text": "Happy",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-007-97a7afc964-option4-09d06f33.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-eec4d8a7f1",
+      "type": "mcq",
+      "order": 7,
+      "text": "What does Jack learn at the end?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-008-eec4d8a7f1.mp3",
+      "questionObjectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-008-eec4d8a7f1.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-008-eec4d8a7f1-option1-918c117a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-008-eec4d8a7f1-option2-65c00184.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-008-eec4d8a7f1-option3-2c9a9aa9.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-008-eec4d8a7f1-option4-716abe07.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-eec4d8a7f1-option1-918c117a",
+          "text": "Friends are better than gold",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-008-eec4d8a7f1-option1-918c117a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-eec4d8a7f1-option2-65c00184",
+          "text": "Gold is the best",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-008-eec4d8a7f1-option2-65c00184.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-eec4d8a7f1-option3-2c9a9aa9",
+          "text": "Money is not important",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-008-eec4d8a7f1-option3-2c9a9aa9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-eec4d8a7f1-option4-716abe07",
+          "text": "Work is hard",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-008-eec4d8a7f1-option4-716abe07.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-bd7a500de7",
+      "type": "mcq",
+      "order": 8,
+      "text": "How does Jack feel when he finds gold?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-009-bd7a500de7.mp3",
+      "questionObjectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-009-bd7a500de7.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-009-bd7a500de7-option1-efc6036e.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-009-bd7a500de7-option2-66680ef8.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-009-bd7a500de7-option3-e2cb04a7.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-009-bd7a500de7-option4-7572d8b1.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-bd7a500de7-option1-efc6036e",
+          "text": "Happy",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-009-bd7a500de7-option1-efc6036e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-bd7a500de7-option2-66680ef8",
+          "text": "Sad",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-009-bd7a500de7-option2-66680ef8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-bd7a500de7-option3-e2cb04a7",
+          "text": "Angry",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-009-bd7a500de7-option3-e2cb04a7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-bd7a500de7-option4-7572d8b1",
+          "text": "Tired",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-009-bd7a500de7-option4-7572d8b1.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-8ec536c91e",
+      "type": "mcq",
+      "order": 9,
+      "text": "What does Jack want to do at the fire?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-010-8ec536c91e.mp3",
+      "questionObjectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-010-8ec536c91e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-010-8ec536c91e-option1-55611606.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-010-8ec536c91e-option2-400955d5.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-010-8ec536c91e-option3-1ea65b57.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-010-8ec536c91e-option4-f0b3a8ce.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-8ec536c91e-option1-55611606",
+          "text": "Share his gold",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-010-8ec536c91e-option1-55611606.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-8ec536c91e-option2-400955d5",
+          "text": "Hide his gold",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-010-8ec536c91e-option2-400955d5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-8ec536c91e-option3-1ea65b57",
+          "text": "Take their gold",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-010-8ec536c91e-option3-1ea65b57.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-8ec536c91e-option4-f0b3a8ce",
+          "text": "Leave the fire",
+          "objectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/mcq-010-8ec536c91e-option4-f0b3a8ce.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-fdf91b087e",
+      "type": "saq",
+      "order": 10,
+      "text": "What does Jack want to find?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/saq-011-fdf91b087e.mp3",
+      "questionObjectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/saq-011-fdf91b087e.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-f62add3dc9",
+      "type": "saq",
+      "order": 11,
+      "text": "Who is the man in the story?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/saq-012-f62add3dc9.mp3",
+      "questionObjectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/saq-012-f62add3dc9.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-27338c3cab",
+      "type": "saq",
+      "order": 12,
+      "text": "Where is Jack?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/saq-013-27338c3cab.mp3",
+      "questionObjectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/saq-013-27338c3cab.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-cf8d834429",
+      "type": "saq",
+      "order": 13,
+      "text": "What does Jack use to dig?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/saq-014-cf8d834429.mp3",
+      "questionObjectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/saq-014-cf8d834429.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-583821b127",
+      "type": "saq",
+      "order": 14,
+      "text": "What does Jack feel when he sees other miners?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/Bm9w2y9wQAf1Fr4mYUzA/questions/saq-015-583821b127.mp3",
+      "questionObjectPath": "articles/Bm9w2y9wQAf1Fr4mYUzA/questions/saq-015-583821b127.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:08:25.244Z"
+}

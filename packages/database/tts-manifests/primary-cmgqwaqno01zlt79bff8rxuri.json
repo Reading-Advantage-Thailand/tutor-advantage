@@ -1,0 +1,1145 @@
+{
+  "version": 1,
+  "articleId": "cmgqwaqno01zlt79bff8rxuri",
+  "source": "PRIMARY_ADVANTAGE",
+  "title": "Squeaky, the Small Mouse",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-0dd81720c7",
+      "order": 0,
+      "text": "This is Squeaky.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-001-0dd81720c7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-001-0dd81720c7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-d9767924f3",
+      "order": 1,
+      "text": "Squeaky is a mouse.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-002-d9767924f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-002-d9767924f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-8448f3b137",
+      "order": 2,
+      "text": "Squeaky is very small.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-003-8448f3b137.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-003-8448f3b137.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-ff49e70a90",
+      "order": 3,
+      "text": "Squeaky is a brown mouse.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-004-ff49e70a90.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-004-ff49e70a90.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-b94045b399",
+      "order": 4,
+      "text": "Squeaky has a home.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-005-b94045b399.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-005-b94045b399.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-7470364029",
+      "order": 5,
+      "text": "Squeaky's home is under a big tree.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-006-7470364029.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-006-7470364029.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-af319b53e2",
+      "order": 6,
+      "text": "Squeaky likes her home.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-007-af319b53e2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-007-af319b53e2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-74f940bf7a",
+      "order": 7,
+      "text": "Her home is warm.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-008-74f940bf7a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-008-74f940bf7a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-edadcaa790",
+      "order": 8,
+      "text": "Squeaky sees green grass.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-009-edadcaa790.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-009-edadcaa790.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-b623b0612c",
+      "order": 9,
+      "text": "Squeaky sees red flowers.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-010-b623b0612c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-010-b623b0612c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-224eb1141e",
+      "order": 10,
+      "text": "Squeaky is happy here.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-011-224eb1141e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-011-224eb1141e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-f15d09c2b2",
+      "order": 11,
+      "text": "Squeaky is a happy mouse.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-012-f15d09c2b2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-012-f15d09c2b2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-f297e1cae2",
+      "order": 12,
+      "text": "One day, Squeaky sees food.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-013-f297e1cae2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-013-f297e1cae2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-9f7cddd944",
+      "order": 13,
+      "text": "The food is big cheese.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-014-9f7cddd944.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-014-9f7cddd944.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-2985589b54",
+      "order": 14,
+      "text": "The cheese is yellow.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-015-2985589b54.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-015-2985589b54.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-d9b4fd29ff",
+      "order": 15,
+      "text": "The cheese is very big.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-016-d9b4fd29ff.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-016-d9b4fd29ff.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-50686b7a2c",
+      "order": 16,
+      "text": "The big cheese is in a big box.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-017-50686b7a2c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-017-50686b7a2c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-28410e8d9d",
+      "order": 17,
+      "text": "The box is a brown box.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-018-28410e8d9d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-018-28410e8d9d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-95286eff9b",
+      "order": 18,
+      "text": "The box is very big.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-019-95286eff9b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-019-95286eff9b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-3bc6955248",
+      "order": 19,
+      "text": "Other mice see the box.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-020-3bc6955248.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-020-3bc6955248.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-4fbe8a3c37",
+      "order": 20,
+      "text": "Other mice are big mice.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-021-4fbe8a3c37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-021-4fbe8a3c37.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-62c733c2ab",
+      "order": 21,
+      "text": "Big mice want the cheese.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-022-62c733c2ab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-022-62c733c2ab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-3bfd14da69",
+      "order": 22,
+      "text": "Big mice are sad.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-023-3bfd14da69.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-023-3bfd14da69.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-66662d7266",
+      "order": 23,
+      "text": "Big mice are not in the box.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-024-66662d7266.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-024-66662d7266.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-9f34494b87",
+      "order": 24,
+      "text": "The big box is closed for big mice.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-025-9f34494b87.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-025-9f34494b87.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-dd197257a2",
+      "order": 25,
+      "text": "Squeaky looks at the box.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-026-dd197257a2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-026-dd197257a2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-42cc0c1cc7",
+      "order": 26,
+      "text": "Squeaky sees a small hole.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-027-42cc0c1cc7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-027-42cc0c1cc7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-a23e53e0cb",
+      "order": 27,
+      "text": "The small hole is on the brown box.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-028-a23e53e0cb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-028-a23e53e0cb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-fca86949e8",
+      "order": 28,
+      "text": "Squeaky is a small mouse.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-029-fca86949e8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-029-fca86949e8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-85ba38ec2a",
+      "order": 29,
+      "text": "Squeaky runs to the hole.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-030-85ba38ec2a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-030-85ba38ec2a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-60fb8d31b8",
+      "order": 30,
+      "text": "Squeaky goes in the hole.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-031-60fb8d31b8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-031-60fb8d31b8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-2aaed47f47",
+      "order": 31,
+      "text": "Squeaky is in the box.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-032-2aaed47f47.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-032-2aaed47f47.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-a407df2781",
+      "order": 32,
+      "text": "Squeaky is in the big box.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-033-a407df2781.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-033-a407df2781.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-af53211fbe",
+      "order": 33,
+      "text": "Squeaky gets the big yellow cheese.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-034-af53211fbe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-034-af53211fbe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-1830bc6a89",
+      "order": 34,
+      "text": "Squeaky eats the cheese.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-035-1830bc6a89.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-035-1830bc6a89.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-05e2653eb0",
+      "order": 35,
+      "text": "Squeaky is very happy.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-036-05e2653eb0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-036-05e2653eb0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-51b7b8acdb",
+      "order": 36,
+      "text": "Squeaky is a clever mouse.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-037-51b7b8acdb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-037-51b7b8acdb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-c045c11073",
+      "order": 37,
+      "text": "Small is very good.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-038-c045c11073.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-038-c045c11073.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-c984117ac1",
+      "order": 38,
+      "text": "Small is special.",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-039-c984117ac1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/sentences/sentence-039-c984117ac1.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-c5cb34390d",
+      "order": 0,
+      "text": "Mouse",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-001-c5cb34390d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-001-c5cb34390d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-b6e9ae5f0d",
+      "order": 1,
+      "text": "Home",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-002-b6e9ae5f0d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-002-b6e9ae5f0d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-d943f84d43",
+      "order": 2,
+      "text": "Under",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-003-d943f84d43.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-003-d943f84d43.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-83f622c071",
+      "order": 3,
+      "text": "Warm",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-004-83f622c071.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-004-83f622c071.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-471b2939be",
+      "order": 4,
+      "text": "Grass",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-005-471b2939be.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-005-471b2939be.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-7bef69ee15",
+      "order": 5,
+      "text": "Flower",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-006-7bef69ee15.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-006-7bef69ee15.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-6cce397d0d",
+      "order": 6,
+      "text": "Cheese",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-007-6cce397d0d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-007-6cce397d0d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-65f3fb4ed0",
+      "order": 7,
+      "text": "Closed",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-008-65f3fb4ed0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-008-65f3fb4ed0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-9081ac5f9f",
+      "order": 8,
+      "text": "Hole",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-009-9081ac5f9f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-009-9081ac5f9f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-248f71c643",
+      "order": 9,
+      "text": "Clever",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-010-248f71c643.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-010-248f71c643.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-011-821e1f6f27",
+      "order": 10,
+      "text": "Special",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-011-821e1f6f27.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-011-821e1f6f27.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-012-191c1e2b70",
+      "order": 11,
+      "text": "this",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-012-191c1e2b70.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-012-191c1e2b70.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-870d283f76",
+      "order": 12,
+      "text": "is",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-013-870d283f76.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-013-870d283f76.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-ccd2aca3ff",
+      "order": 13,
+      "text": "squeaky",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-014-ccd2aca3ff.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-014-ccd2aca3ff.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-e949998a67",
+      "order": 14,
+      "text": "a",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-015-e949998a67.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-015-e949998a67.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-d0136b2f3f",
+      "order": 15,
+      "text": "very",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-016-d0136b2f3f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-016-d0136b2f3f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-a932a0235b",
+      "order": 16,
+      "text": "small",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-017-a932a0235b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-017-a932a0235b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-96c1c40b8e",
+      "order": 17,
+      "text": "brown",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-018-96c1c40b8e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-018-96c1c40b8e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-9f5f110cae",
+      "order": 18,
+      "text": "has",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-019-9f5f110cae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-019-9f5f110cae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-59bef53a33",
+      "order": 19,
+      "text": "squeaky's",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-020-59bef53a33.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-020-59bef53a33.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-496d88485e",
+      "order": 20,
+      "text": "big",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-021-496d88485e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-021-496d88485e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-1dae223822",
+      "order": 21,
+      "text": "tree",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-022-1dae223822.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-022-1dae223822.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-2163671977",
+      "order": 22,
+      "text": "likes",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-023-2163671977.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-023-2163671977.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-f29628e70c",
+      "order": 23,
+      "text": "her",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-024-f29628e70c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-024-f29628e70c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-843944e28f",
+      "order": 24,
+      "text": "sees",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-025-843944e28f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-025-843944e28f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-ccf4b76675",
+      "order": 25,
+      "text": "green",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-026-ccf4b76675.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-026-ccf4b76675.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-920316d9b4",
+      "order": 26,
+      "text": "red",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-027-920316d9b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-027-920316d9b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-551eca09fe",
+      "order": 27,
+      "text": "flowers",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-028-551eca09fe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-028-551eca09fe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-2386c46cd9",
+      "order": 28,
+      "text": "happy",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-029-2386c46cd9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-029-2386c46cd9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-6450ecaed0",
+      "order": 29,
+      "text": "here",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-030-6450ecaed0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-030-6450ecaed0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-e0d0b020fa",
+      "order": 30,
+      "text": "one",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-031-e0d0b020fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-031-e0d0b020fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-22ca90c447",
+      "order": 31,
+      "text": "day",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-032-22ca90c447.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-032-22ca90c447.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-5ff61f7a8e",
+      "order": 32,
+      "text": "food",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-033-5ff61f7a8e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-033-5ff61f7a8e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-a6baad63e6",
+      "order": 33,
+      "text": "the",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-034-a6baad63e6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-034-a6baad63e6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-517ec09f82",
+      "order": 34,
+      "text": "yellow",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-035-517ec09f82.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-035-517ec09f82.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-65b1542ab0",
+      "order": 35,
+      "text": "in",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-036-65b1542ab0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-036-65b1542ab0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-7082c8cb79",
+      "order": 36,
+      "text": "box",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-037-7082c8cb79.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-037-7082c8cb79.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-ed73f64fc8",
+      "order": 37,
+      "text": "other",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-038-ed73f64fc8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-038-ed73f64fc8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-1d01108326",
+      "order": 38,
+      "text": "mice",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-039-1d01108326.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-039-1d01108326.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-e8fdbd8808",
+      "order": 39,
+      "text": "see",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-040-e8fdbd8808.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-040-e8fdbd8808.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-28cb375715",
+      "order": 40,
+      "text": "are",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-041-28cb375715.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-041-28cb375715.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-098e65f15e",
+      "order": 41,
+      "text": "want",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-042-098e65f15e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-042-098e65f15e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-40d5607689",
+      "order": 42,
+      "text": "sad",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-043-40d5607689.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-043-40d5607689.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-55a6527cbc",
+      "order": 43,
+      "text": "not",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-044-55a6527cbc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-044-55a6527cbc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-0fb035225c",
+      "order": 44,
+      "text": "for",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-045-0fb035225c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-045-0fb035225c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-ec4aeb223b",
+      "order": 45,
+      "text": "looks",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-046-ec4aeb223b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-046-ec4aeb223b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-e0e5cc9a3b",
+      "order": 46,
+      "text": "at",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-047-e0e5cc9a3b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-047-e0e5cc9a3b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-e2bdc10be8",
+      "order": 47,
+      "text": "on",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-048-e2bdc10be8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-048-e2bdc10be8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-7d2b4312a9",
+      "order": 48,
+      "text": "runs",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-049-7d2b4312a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-049-7d2b4312a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-50097be58d",
+      "order": 49,
+      "text": "to",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-050-50097be58d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-050-50097be58d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-3f53f7a53e",
+      "order": 50,
+      "text": "goes",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-051-3f53f7a53e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-051-3f53f7a53e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-7e67636411",
+      "order": 51,
+      "text": "gets",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-052-7e67636411.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-052-7e67636411.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-bb900b42b6",
+      "order": 52,
+      "text": "eats",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-053-bb900b42b6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-053-bb900b42b6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-7c0d1cc015",
+      "order": 53,
+      "text": "good",
+      "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/words/word-054-7c0d1cc015.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/words/word-054-7c0d1cc015.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-d38a126103",
+      "type": "mcq",
+      "order": 0,
+      "text": "What is Squeaky?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-001-d38a126103.mp3",
+      "questionObjectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-001-d38a126103.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-001-d38a126103-option1-89a8c07a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-001-d38a126103-option2-ac34a24c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-001-d38a126103-option3-c85cf7bb.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-d38a126103-option1-89a8c07a",
+          "text": "a cat",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-001-d38a126103-option1-89a8c07a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-d38a126103-option2-ac34a24c",
+          "text": "a mouse",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-001-d38a126103-option2-ac34a24c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-d38a126103-option3-c85cf7bb",
+          "text": "a dog",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-001-d38a126103-option3-c85cf7bb.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-1ac0c08ac6",
+      "type": "mcq",
+      "order": 1,
+      "text": "Where is Squeaky's home?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-002-1ac0c08ac6.mp3",
+      "questionObjectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-002-1ac0c08ac6.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-002-1ac0c08ac6-option1-595eda11.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-002-1ac0c08ac6-option2-a7ad2826.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-002-1ac0c08ac6-option3-6a5a00b9.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-1ac0c08ac6-option1-595eda11",
+          "text": "in a box",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-002-1ac0c08ac6-option1-595eda11.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-1ac0c08ac6-option2-a7ad2826",
+          "text": "under a big tree",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-002-1ac0c08ac6-option2-a7ad2826.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-1ac0c08ac6-option3-6a5a00b9",
+          "text": "on a flower",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-002-1ac0c08ac6-option3-6a5a00b9.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-d256e52be4",
+      "type": "mcq",
+      "order": 2,
+      "text": "What food does Squeaky see?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-003-d256e52be4.mp3",
+      "questionObjectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-003-d256e52be4.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-003-d256e52be4-option1-c8fb162a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-003-d256e52be4-option2-10e914ce.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-003-d256e52be4-option3-9ec16896.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-d256e52be4-option1-c8fb162a",
+          "text": "apple",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-003-d256e52be4-option1-c8fb162a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-d256e52be4-option2-10e914ce",
+          "text": "cheese",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-003-d256e52be4-option2-10e914ce.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-d256e52be4-option3-9ec16896",
+          "text": "grass",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-003-d256e52be4-option3-9ec16896.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-bbdab24005",
+      "type": "mcq",
+      "order": 3,
+      "text": "What color is the cheese?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-004-bbdab24005.mp3",
+      "questionObjectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-004-bbdab24005.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-004-bbdab24005-option1-6850bbe7.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-004-bbdab24005-option2-9f878cb7.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-004-bbdab24005-option3-3a14a821.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-bbdab24005-option1-6850bbe7",
+          "text": "red",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-004-bbdab24005-option1-6850bbe7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-bbdab24005-option2-9f878cb7",
+          "text": "yellow",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-004-bbdab24005-option2-9f878cb7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-bbdab24005-option3-3a14a821",
+          "text": "green",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-004-bbdab24005-option3-3a14a821.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-916f9376fe",
+      "type": "mcq",
+      "order": 4,
+      "text": "What does Squeaky see on the box?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-005-916f9376fe.mp3",
+      "questionObjectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-005-916f9376fe.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-005-916f9376fe-option1-a0bfc367.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-005-916f9376fe-option2-b97ebf95.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-005-916f9376fe-option3-83702a0d.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-916f9376fe-option1-a0bfc367",
+          "text": "a flower",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-005-916f9376fe-option1-a0bfc367.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-916f9376fe-option2-b97ebf95",
+          "text": "a small hole",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-005-916f9376fe-option2-b97ebf95.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-916f9376fe-option3-83702a0d",
+          "text": "big mice",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-005-916f9376fe-option3-83702a0d.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-517042f0d2",
+      "type": "mcq",
+      "order": 5,
+      "text": "Who gets the cheese?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-006-517042f0d2.mp3",
+      "questionObjectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-006-517042f0d2.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-006-517042f0d2-option1-b7c81749.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-006-517042f0d2-option2-dde32147.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-006-517042f0d2-option3-4b4a9980.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-517042f0d2-option1-b7c81749",
+          "text": "big mice",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-006-517042f0d2-option1-b7c81749.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-517042f0d2-option2-dde32147",
+          "text": "other mice",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-006-517042f0d2-option2-dde32147.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-517042f0d2-option3-4b4a9980",
+          "text": "Squeaky",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-006-517042f0d2-option3-4b4a9980.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-2ea06b3f45",
+      "type": "mcq",
+      "order": 6,
+      "text": "Is Squeaky happy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-007-2ea06b3f45.mp3",
+      "questionObjectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-007-2ea06b3f45.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-007-2ea06b3f45-option1-f0e95e07.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-007-2ea06b3f45-option2-f8808ebe.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-007-2ea06b3f45-option3-437d673e.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-2ea06b3f45-option1-f0e95e07",
+          "text": "Yes, she is.",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-007-2ea06b3f45-option1-f0e95e07.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-2ea06b3f45-option2-f8808ebe",
+          "text": "No, she is sad.",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-007-2ea06b3f45-option2-f8808ebe.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-2ea06b3f45-option3-437d673e",
+          "text": "No, she is not.",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-007-2ea06b3f45-option3-437d673e.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-3878bce0c9",
+      "type": "mcq",
+      "order": 7,
+      "text": "Is small good?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-008-3878bce0c9.mp3",
+      "questionObjectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-008-3878bce0c9.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-008-3878bce0c9-option1-a4593711.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-008-3878bce0c9-option2-74bbbb5a.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-008-3878bce0c9-option3-e17cc98f.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-3878bce0c9-option1-a4593711",
+          "text": "Yes, it is.",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-008-3878bce0c9-option1-a4593711.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-3878bce0c9-option2-74bbbb5a",
+          "text": "No, it is not.",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-008-3878bce0c9-option2-74bbbb5a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-3878bce0c9-option3-e17cc98f",
+          "text": "Maybe.",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-008-3878bce0c9-option3-e17cc98f.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-8e67cd3ab0",
+      "type": "mcq",
+      "order": 8,
+      "text": "What color is Squeaky?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-009-8e67cd3ab0.mp3",
+      "questionObjectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-009-8e67cd3ab0.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-009-8e67cd3ab0-option1-3915d01d.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-009-8e67cd3ab0-option2-2eb010dd.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-009-8e67cd3ab0-option3-c23cc049.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-8e67cd3ab0-option1-3915d01d",
+          "text": "red",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-009-8e67cd3ab0-option1-3915d01d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-8e67cd3ab0-option2-2eb010dd",
+          "text": "brown",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-009-8e67cd3ab0-option2-2eb010dd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-8e67cd3ab0-option3-c23cc049",
+          "text": "green",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-009-8e67cd3ab0-option3-c23cc049.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-1351697847",
+      "type": "mcq",
+      "order": 9,
+      "text": "Are big mice in the box?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-010-1351697847.mp3",
+      "questionObjectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-010-1351697847.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-010-1351697847-option1-57ce944d.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-010-1351697847-option2-31d7dc1c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-010-1351697847-option3-e15311a0.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-1351697847-option1-57ce944d",
+          "text": "Yes, they are.",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-010-1351697847-option1-57ce944d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-1351697847-option2-31d7dc1c",
+          "text": "No, they are not.",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-010-1351697847-option2-31d7dc1c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-1351697847-option3-e15311a0",
+          "text": "Maybe.",
+          "objectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/mcq-010-1351697847-option3-e15311a0.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-41fa6a222b",
+      "type": "saq",
+      "order": 10,
+      "text": "What is Squeaky?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/saq-011-41fa6a222b.mp3",
+      "questionObjectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/saq-011-41fa6a222b.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-ddd38e2cfb",
+      "type": "saq",
+      "order": 11,
+      "text": "Where is Squeaky's home?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/saq-012-ddd38e2cfb.mp3",
+      "questionObjectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/saq-012-ddd38e2cfb.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-444124ec58",
+      "type": "saq",
+      "order": 12,
+      "text": "What food is in the box?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/saq-013-444124ec58.mp3",
+      "questionObjectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/saq-013-444124ec58.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-2345df931e",
+      "type": "saq",
+      "order": 13,
+      "text": "What is on the box?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/saq-014-2345df931e.mp3",
+      "questionObjectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/saq-014-2345df931e.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-70f1eaf4b8",
+      "type": "saq",
+      "order": 14,
+      "text": "Is small good for Squeaky?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwaqno01zlt79bff8rxuri/questions/saq-015-70f1eaf4b8.mp3",
+      "questionObjectPath": "articles/cmgqwaqno01zlt79bff8rxuri/questions/saq-015-70f1eaf4b8.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:07:36.649Z"
+}

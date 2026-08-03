@@ -1,0 +1,1047 @@
+{
+  "version": 1,
+  "articleId": "cmgqwyoky02gst79bbtf5i5sr",
+  "source": "PRIMARY_ADVANTAGE",
+  "title": "Mia and Pip at the Zoo",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-62b6f34739",
+      "order": 0,
+      "text": "This is Mia.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-001-62b6f34739.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-001-62b6f34739.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-66112bc25b",
+      "order": 1,
+      "text": "Mia is a girl.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-002-66112bc25b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-002-66112bc25b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-522c27b87d",
+      "order": 2,
+      "text": "This is Pip.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-003-522c27b87d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-003-522c27b87d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-cb4a04f41e",
+      "order": 3,
+      "text": "Pip is a puppy.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-004-cb4a04f41e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-004-cb4a04f41e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-a9abaa6e03",
+      "order": 4,
+      "text": "Mia and Pip are friends.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-005-a9abaa6e03.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-005-a9abaa6e03.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-140610c76c",
+      "order": 5,
+      "text": "They go to the zoo.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-006-140610c76c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-006-140610c76c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-a49453e978",
+      "order": 6,
+      "text": "The zoo is big.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-007-a49453e978.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-007-a49453e978.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-d2894297ea",
+      "order": 7,
+      "text": "The zoo has many animals.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-008-d2894297ea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-008-d2894297ea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-4df4e1c15a",
+      "order": 8,
+      "text": "They are happy.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-009-4df4e1c15a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-009-4df4e1c15a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-be5b7398b8",
+      "order": 9,
+      "text": "This is a lion.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-010-be5b7398b8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-010-be5b7398b8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-a890eb21ca",
+      "order": 10,
+      "text": "The lion is a big animal.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-011-a890eb21ca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-011-a890eb21ca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-138ba7b476",
+      "order": 11,
+      "text": "It is brown.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-012-138ba7b476.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-012-138ba7b476.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-284cd3ebd1",
+      "order": 12,
+      "text": "Pip sees the big lion.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-013-284cd3ebd1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-013-284cd3ebd1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-28cc413973",
+      "order": 13,
+      "text": "Mia sees the big lion.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-014-28cc413973.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-014-28cc413973.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-82abb7b2d4",
+      "order": 14,
+      "text": "The lion is on the green grass.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-015-82abb7b2d4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-015-82abb7b2d4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-7b1219ec68",
+      "order": 15,
+      "text": "Mia likes the big lion.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-016-7b1219ec68.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-016-7b1219ec68.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-b56e229c6d",
+      "order": 16,
+      "text": "This is a monkey.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-017-b56e229c6d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-017-b56e229c6d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-a5e5caaf6b",
+      "order": 17,
+      "text": "The monkey is a funny animal.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-018-a5e5caaf6b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-018-a5e5caaf6b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-dc6d71d333",
+      "order": 18,
+      "text": "It is brown.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-019-dc6d71d333.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-019-dc6d71d333.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-f8adcb8a0c",
+      "order": 19,
+      "text": "It likes to jump.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-020-f8adcb8a0c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-020-f8adcb8a0c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-37203a7007",
+      "order": 20,
+      "text": "Pip sees the monkey.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-021-37203a7007.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-021-37203a7007.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-39bda72ba4",
+      "order": 21,
+      "text": "Mia likes the funny monkey.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-022-39bda72ba4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-022-39bda72ba4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-f010f65ded",
+      "order": 22,
+      "text": "This is an elephant.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-023-f010f65ded.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-023-f010f65ded.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-cff34f83f8",
+      "order": 23,
+      "text": "The elephant is a very big animal.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-024-cff34f83f8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-024-cff34f83f8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-9b9888cdfc",
+      "order": 24,
+      "text": "It has big ears.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-025-9b9888cdfc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-025-9b9888cdfc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-507d4094bf",
+      "order": 25,
+      "text": "It likes water.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-026-507d4094bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-026-507d4094bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-6d6c504144",
+      "order": 26,
+      "text": "Pip sees the big elephant.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-027-6d6c504144.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-027-6d6c504144.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-a745decb62",
+      "order": 27,
+      "text": "Mia sees the big elephant.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-028-a745decb62.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-028-a745decb62.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-09f02b43bf",
+      "order": 28,
+      "text": "Mia likes the big elephant.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-029-09f02b43bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-029-09f02b43bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-bca3d20a6b",
+      "order": 29,
+      "text": "Pip likes the big elephant.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-030-bca3d20a6b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-030-bca3d20a6b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-22a2eac27f",
+      "order": 30,
+      "text": "The zoo is fun.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-031-22a2eac27f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-031-22a2eac27f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-65937368db",
+      "order": 31,
+      "text": "Mia and Pip are happy.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-032-65937368db.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-032-65937368db.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-1c39cb2348",
+      "order": 32,
+      "text": "They like animals.",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-033-1c39cb2348.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/sentences/sentence-033-1c39cb2348.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-a58b05aa49",
+      "order": 0,
+      "text": "puppy",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-001-a58b05aa49.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-001-a58b05aa49.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-1fcf298351",
+      "order": 1,
+      "text": "friends",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-002-1fcf298351.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-002-1fcf298351.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-549eb50c8e",
+      "order": 2,
+      "text": "zoo",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-003-549eb50c8e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-003-549eb50c8e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-bb8b49ca5b",
+      "order": 3,
+      "text": "animals",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-004-bb8b49ca5b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-004-bb8b49ca5b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-af38ee170e",
+      "order": 4,
+      "text": "lion",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-005-af38ee170e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-005-af38ee170e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-a43aa2fc4d",
+      "order": 5,
+      "text": "brown",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-006-a43aa2fc4d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-006-a43aa2fc4d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-afaa53355b",
+      "order": 6,
+      "text": "grass",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-007-afaa53355b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-007-afaa53355b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-44ef62b2a8",
+      "order": 7,
+      "text": "monkey",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-008-44ef62b2a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-008-44ef62b2a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-4f27702d77",
+      "order": 8,
+      "text": "funny",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-009-4f27702d77.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-009-4f27702d77.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-14011dab05",
+      "order": 9,
+      "text": "jump",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-010-14011dab05.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-010-14011dab05.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-011-ada1337cc3",
+      "order": 10,
+      "text": "elephant",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-011-ada1337cc3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-011-ada1337cc3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-7933c371ef",
+      "order": 11,
+      "text": "ears",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-012-7933c371ef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-012-7933c371ef.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-013-24a47075b7",
+      "order": 12,
+      "text": "this",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-013-24a47075b7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-013-24a47075b7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-5d6a8a6a67",
+      "order": 13,
+      "text": "is",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-014-5d6a8a6a67.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-014-5d6a8a6a67.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-4a994bbdd3",
+      "order": 14,
+      "text": "mia",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-015-4a994bbdd3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-015-4a994bbdd3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-67507d7509",
+      "order": 15,
+      "text": "a",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-016-67507d7509.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-016-67507d7509.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-d616b46aff",
+      "order": 16,
+      "text": "girl",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-017-d616b46aff.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-017-d616b46aff.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-9ceacf6393",
+      "order": 17,
+      "text": "pip",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-018-9ceacf6393.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-018-9ceacf6393.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-f89d67463e",
+      "order": 18,
+      "text": "and",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-019-f89d67463e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-019-f89d67463e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-740fd86ce5",
+      "order": 19,
+      "text": "are",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-020-740fd86ce5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-020-740fd86ce5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-7ab3caa57f",
+      "order": 20,
+      "text": "they",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-021-7ab3caa57f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-021-7ab3caa57f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-a93fe09627",
+      "order": 21,
+      "text": "go",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-022-a93fe09627.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-022-a93fe09627.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-75bfa46853",
+      "order": 22,
+      "text": "to",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-023-75bfa46853.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-023-75bfa46853.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-68fc411b3b",
+      "order": 23,
+      "text": "the",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-024-68fc411b3b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-024-68fc411b3b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-3c3e936d11",
+      "order": 24,
+      "text": "big",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-025-3c3e936d11.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-025-3c3e936d11.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-1839932079",
+      "order": 25,
+      "text": "has",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-026-1839932079.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-026-1839932079.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-48695b7635",
+      "order": 26,
+      "text": "many",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-027-48695b7635.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-027-48695b7635.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-8e70800dca",
+      "order": 27,
+      "text": "happy",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-028-8e70800dca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-028-8e70800dca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-b6607ee099",
+      "order": 28,
+      "text": "animal",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-029-b6607ee099.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-029-b6607ee099.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-5f7a091831",
+      "order": 29,
+      "text": "it",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-030-5f7a091831.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-030-5f7a091831.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-f9eca72cc1",
+      "order": 30,
+      "text": "sees",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-031-f9eca72cc1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-031-f9eca72cc1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-8b3c02fd4a",
+      "order": 31,
+      "text": "on",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-032-8b3c02fd4a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-032-8b3c02fd4a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-86dbd2ba62",
+      "order": 32,
+      "text": "green",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-033-86dbd2ba62.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-033-86dbd2ba62.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-ebdd4c9a0f",
+      "order": 33,
+      "text": "likes",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-034-ebdd4c9a0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-034-ebdd4c9a0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-4f3d24e89f",
+      "order": 34,
+      "text": "an",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-035-4f3d24e89f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-035-4f3d24e89f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-30e10e91e5",
+      "order": 35,
+      "text": "very",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-036-30e10e91e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-036-30e10e91e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-7ec904c5f1",
+      "order": 36,
+      "text": "water",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-037-7ec904c5f1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-037-7ec904c5f1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-915d1bb03a",
+      "order": 37,
+      "text": "fun",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-038-915d1bb03a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-038-915d1bb03a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-100388041c",
+      "order": 38,
+      "text": "like",
+      "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/words/word-039-100388041c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/words/word-039-100388041c.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-a5e77578cf",
+      "type": "mcq",
+      "order": 0,
+      "text": "Who is Mia?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-001-a5e77578cf.mp3",
+      "questionObjectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-001-a5e77578cf.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-001-a5e77578cf-option1-2274e27e.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-001-a5e77578cf-option2-b7cd0540.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-001-a5e77578cf-option3-58003fa5.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-001-a5e77578cf-option4-8def5d2f.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-a5e77578cf-option1-2274e27e",
+          "text": "A puppy",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-001-a5e77578cf-option1-2274e27e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-a5e77578cf-option2-b7cd0540",
+          "text": "A girl",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-001-a5e77578cf-option2-b7cd0540.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-a5e77578cf-option3-58003fa5",
+          "text": "A lion",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-001-a5e77578cf-option3-58003fa5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-a5e77578cf-option4-8def5d2f",
+          "text": "An elephant",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-001-a5e77578cf-option4-8def5d2f.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-69b4853473",
+      "type": "mcq",
+      "order": 1,
+      "text": "What is Pip?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-002-69b4853473.mp3",
+      "questionObjectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-002-69b4853473.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-002-69b4853473-option1-dbd3251c.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-002-69b4853473-option2-b48daf9f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-002-69b4853473-option3-66968e91.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-002-69b4853473-option4-f9fa25c4.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-69b4853473-option1-dbd3251c",
+          "text": "A girl",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-002-69b4853473-option1-dbd3251c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-69b4853473-option2-b48daf9f",
+          "text": "A monkey",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-002-69b4853473-option2-b48daf9f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-69b4853473-option3-66968e91",
+          "text": "A puppy",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-002-69b4853473-option3-66968e91.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-69b4853473-option4-f9fa25c4",
+          "text": "A zoo",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-002-69b4853473-option4-f9fa25c4.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-a8603e6c6f",
+      "type": "mcq",
+      "order": 2,
+      "text": "Where do Mia and Pip go?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-003-a8603e6c6f.mp3",
+      "questionObjectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-003-a8603e6c6f.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-003-a8603e6c6f-option1-472570a5.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-003-a8603e6c6f-option2-68ba61a0.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-003-a8603e6c6f-option3-1f201083.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-003-a8603e6c6f-option4-807a7a8f.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-a8603e6c6f-option1-472570a5",
+          "text": "To a park",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-003-a8603e6c6f-option1-472570a5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-a8603e6c6f-option2-68ba61a0",
+          "text": "To a house",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-003-a8603e6c6f-option2-68ba61a0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-a8603e6c6f-option3-1f201083",
+          "text": "To the zoo",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-003-a8603e6c6f-option3-1f201083.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-a8603e6c6f-option4-807a7a8f",
+          "text": "To school",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-003-a8603e6c6f-option4-807a7a8f.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-dd26d37c60",
+      "type": "mcq",
+      "order": 3,
+      "text": "What color is the lion?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-004-dd26d37c60.mp3",
+      "questionObjectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-004-dd26d37c60.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-004-dd26d37c60-option1-8009e3f9.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-004-dd26d37c60-option2-f075e765.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-004-dd26d37c60-option3-af6ff85e.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-004-dd26d37c60-option4-2389993d.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-dd26d37c60-option1-8009e3f9",
+          "text": "Blue",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-004-dd26d37c60-option1-8009e3f9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-dd26d37c60-option2-f075e765",
+          "text": "Red",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-004-dd26d37c60-option2-f075e765.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-dd26d37c60-option3-af6ff85e",
+          "text": "Brown",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-004-dd26d37c60-option3-af6ff85e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-dd26d37c60-option4-2389993d",
+          "text": "Yellow",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-004-dd26d37c60-option4-2389993d.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-2079cafbd4",
+      "type": "mcq",
+      "order": 4,
+      "text": "What does the monkey like to do?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-005-2079cafbd4.mp3",
+      "questionObjectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-005-2079cafbd4.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-005-2079cafbd4-option1-bd992e88.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-005-2079cafbd4-option2-ca3d70fc.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-005-2079cafbd4-option3-7422e041.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-005-2079cafbd4-option4-deb1a0a6.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-2079cafbd4-option1-bd992e88",
+          "text": "Eat water",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-005-2079cafbd4-option1-bd992e88.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-2079cafbd4-option2-ca3d70fc",
+          "text": "Sleep on grass",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-005-2079cafbd4-option2-ca3d70fc.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-2079cafbd4-option3-7422e041",
+          "text": "Jump",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-005-2079cafbd4-option3-7422e041.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-2079cafbd4-option4-deb1a0a6",
+          "text": "Run fast",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-005-2079cafbd4-option4-deb1a0a6.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-863d942413",
+      "type": "mcq",
+      "order": 5,
+      "text": "What color is the monkey?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-006-863d942413.mp3",
+      "questionObjectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-006-863d942413.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-006-863d942413-option1-752dc6fb.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-006-863d942413-option2-57b83f56.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-006-863d942413-option3-a4509a5a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-006-863d942413-option4-2d8c3169.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-863d942413-option1-752dc6fb",
+          "text": "Green",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-006-863d942413-option1-752dc6fb.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-863d942413-option2-57b83f56",
+          "text": "Brown",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-006-863d942413-option2-57b83f56.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-863d942413-option3-a4509a5a",
+          "text": "Black",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-006-863d942413-option3-a4509a5a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-863d942413-option4-2d8c3169",
+          "text": "White",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-006-863d942413-option4-2d8c3169.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-0813d3110a",
+      "type": "mcq",
+      "order": 6,
+      "text": "Is the elephant big or small?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-007-0813d3110a.mp3",
+      "questionObjectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-007-0813d3110a.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-007-0813d3110a-option1-7f21866c.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-007-0813d3110a-option2-046a9683.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-007-0813d3110a-option3-0af7073e.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-007-0813d3110a-option4-96762f1b.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-0813d3110a-option1-7f21866c",
+          "text": "Small",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-007-0813d3110a-option1-7f21866c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-0813d3110a-option2-046a9683",
+          "text": "Big",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-007-0813d3110a-option2-046a9683.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-0813d3110a-option3-0af7073e",
+          "text": "Tiny",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-007-0813d3110a-option3-0af7073e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-0813d3110a-option4-96762f1b",
+          "text": "Medium",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-007-0813d3110a-option4-96762f1b.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-ba5ea357ff",
+      "type": "mcq",
+      "order": 7,
+      "text": "What does the elephant like?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-008-ba5ea357ff.mp3",
+      "questionObjectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-008-ba5ea357ff.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-008-ba5ea357ff-option1-9a99734d.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-008-ba5ea357ff-option2-cce2f70b.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-008-ba5ea357ff-option3-7a8a873c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-008-ba5ea357ff-option4-aaa9f7df.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-ba5ea357ff-option1-9a99734d",
+          "text": "Grass",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-008-ba5ea357ff-option1-9a99734d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-ba5ea357ff-option2-cce2f70b",
+          "text": "Water",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-008-ba5ea357ff-option2-cce2f70b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-ba5ea357ff-option3-7a8a873c",
+          "text": "Jumping",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-008-ba5ea357ff-option3-7a8a873c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-ba5ea357ff-option4-aaa9f7df",
+          "text": "Lions",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-008-ba5ea357ff-option4-aaa9f7df.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-76e0583b33",
+      "type": "mcq",
+      "order": 8,
+      "text": "Are Mia and Pip happy at the zoo?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-009-76e0583b33.mp3",
+      "questionObjectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-009-76e0583b33.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-009-76e0583b33-option1-e8ed6051.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-009-76e0583b33-option2-eb6091d3.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-009-76e0583b33-option3-66efad18.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-009-76e0583b33-option4-33866529.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-76e0583b33-option1-e8ed6051",
+          "text": "No",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-009-76e0583b33-option1-e8ed6051.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-76e0583b33-option2-eb6091d3",
+          "text": "Yes",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-009-76e0583b33-option2-eb6091d3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-76e0583b33-option3-66efad18",
+          "text": "Maybe",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-009-76e0583b33-option3-66efad18.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-76e0583b33-option4-33866529",
+          "text": "Sometimes",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-009-76e0583b33-option4-33866529.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-96723615a2",
+      "type": "mcq",
+      "order": 9,
+      "text": "What do Mia and Pip like?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-010-96723615a2.mp3",
+      "questionObjectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-010-96723615a2.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-010-96723615a2-option1-22a9a14b.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-010-96723615a2-option2-7e58d3d4.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-010-96723615a2-option3-18140a51.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-010-96723615a2-option4-ed53e1be.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-96723615a2-option1-22a9a14b",
+          "text": "Books",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-010-96723615a2-option1-22a9a14b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-96723615a2-option2-7e58d3d4",
+          "text": "Animals",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-010-96723615a2-option2-7e58d3d4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-96723615a2-option3-18140a51",
+          "text": "Cars",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-010-96723615a2-option3-18140a51.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-96723615a2-option4-ed53e1be",
+          "text": "Pencils",
+          "objectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/mcq-010-96723615a2-option4-ed53e1be.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-6bac0b5e43",
+      "type": "saq",
+      "order": 10,
+      "text": "Who is Pip?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/saq-011-6bac0b5e43.mp3",
+      "questionObjectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/saq-011-6bac0b5e43.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-572879c9b7",
+      "type": "saq",
+      "order": 11,
+      "text": "What kind of animal is the lion?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/saq-012-572879c9b7.mp3",
+      "questionObjectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/saq-012-572879c9b7.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-8d18e4a440",
+      "type": "saq",
+      "order": 12,
+      "text": "What color is the monkey?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/saq-013-8d18e4a440.mp3",
+      "questionObjectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/saq-013-8d18e4a440.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-8b7f893a5c",
+      "type": "saq",
+      "order": 13,
+      "text": "What does the elephant like?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/saq-014-8b7f893a5c.mp3",
+      "questionObjectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/saq-014-8b7f893a5c.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-482bb23754",
+      "type": "saq",
+      "order": 14,
+      "text": "Are Mia and Pip friends?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwyoky02gst79bbtf5i5sr/questions/saq-015-482bb23754.mp3",
+      "questionObjectPath": "articles/cmgqwyoky02gst79bbtf5i5sr/questions/saq-015-482bb23754.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:06:54.386Z"
+}

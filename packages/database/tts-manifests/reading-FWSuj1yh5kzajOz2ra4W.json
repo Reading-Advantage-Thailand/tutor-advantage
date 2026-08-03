@@ -1,0 +1,1759 @@
+{
+  "version": 1,
+  "articleId": "FWSuj1yh5kzajOz2ra4W",
+  "source": "READING_ADVANTAGE",
+  "title": "The Battle of the Hills and Rivers",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-4d0dc2d631",
+      "order": 0,
+      "text": "The big country declares war.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-001-4d0dc2d631.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-001-4d0dc2d631.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-c8b0f6751c",
+      "order": 1,
+      "text": "Their army crosses the border.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-002-c8b0f6751c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-002-c8b0f6751c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-34b4d2eedc",
+      "order": 2,
+      "text": "People in the small country are scared.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-003-34b4d2eedc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-003-34b4d2eedc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-f94a85e697",
+      "order": 3,
+      "text": "They hear the sound of tanks and soldiers.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-004-f94a85e697.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-004-f94a85e697.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-7f626d5959",
+      "order": 4,
+      "text": "The king and his generals meet.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-005-7f626d5959.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-005-7f626d5959.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-5b10712005",
+      "order": 5,
+      "text": "They need a smart plan.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-006-5b10712005.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-006-5b10712005.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-0bf5ae8715",
+      "order": 6,
+      "text": "They cannot win in a normal fight.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-007-0bf5ae8715.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-007-0bf5ae8715.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-deec64e7a0",
+      "order": 7,
+      "text": "They think about using the hills and rivers.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-008-deec64e7a0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-008-deec64e7a0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-c53c1485f3",
+      "order": 8,
+      "text": "The small country starts to fight back.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-009-c53c1485f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-009-c53c1485f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-2b08c9c98a",
+      "order": 9,
+      "text": "They use the hills to hide.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-010-2b08c9c98a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-010-2b08c9c98a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-ca04056a44",
+      "order": 10,
+      "text": "They use the rivers to slow the enemy.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-011-ca04056a44.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-011-ca04056a44.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-e1e1136961",
+      "order": 11,
+      "text": "The soldiers are brave.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-012-e1e1136961.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-012-e1e1136961.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-96397b09b0",
+      "order": 12,
+      "text": "They move quickly and quietly.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-013-96397b09b0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-013-96397b09b0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-0421f06740",
+      "order": 13,
+      "text": "Sometimes they use tricks.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-014-0421f06740.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-014-0421f06740.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-674fa0a8f0",
+      "order": 14,
+      "text": "They make noises to confuse the enemy.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-015-674fa0a8f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-015-674fa0a8f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-180f9f6dfa",
+      "order": 15,
+      "text": "The big country's soldiers are strong but confused.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-016-180f9f6dfa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-016-180f9f6dfa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-8417e853ce",
+      "order": 16,
+      "text": "The small country's people start to hope.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-017-8417e853ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-017-8417e853ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-34f81dcdd5",
+      "order": 17,
+      "text": "The big battle happens near a big river.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-018-34f81dcdd5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-018-34f81dcdd5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-ba78228667",
+      "order": 18,
+      "text": "The small country's soldiers are ready.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-019-ba78228667.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-019-ba78228667.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-ddef81b9df",
+      "order": 19,
+      "text": "They have a plan.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-020-ddef81b9df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-020-ddef81b9df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-fa458cb018",
+      "order": 20,
+      "text": "When the big country's army tries to cross the river, the small country attacks.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-021-fa458cb018.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-021-fa458cb018.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-d6a8760b2c",
+      "order": 21,
+      "text": "They use fire and noise.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-022-d6a8760b2c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-022-d6a8760b2c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-f037a24720",
+      "order": 22,
+      "text": "It is a big surprise.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-023-f037a24720.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-023-f037a24720.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-3e332efe12",
+      "order": 23,
+      "text": "The large army is stuck.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-024-3e332efe12.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-024-3e332efe12.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-8e4b24f85e",
+      "order": 24,
+      "text": "They cannot move forward or back.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-025-8e4b24f85e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-025-8e4b24f85e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-ae73827cb4",
+      "order": 25,
+      "text": "The large country's army tries to retreat.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-026-ae73827cb4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-026-ae73827cb4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-8b5482520f",
+      "order": 26,
+      "text": "They are tired and scared.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-027-8b5482520f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-027-8b5482520f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-66ae73c4cb",
+      "order": 27,
+      "text": "The small country's soldiers follow them carefully.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-028-66ae73c4cb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-028-66ae73c4cb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-088936e474",
+      "order": 28,
+      "text": "They make sure the big army leaves their land.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-029-088936e474.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-029-088936e474.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-2515a415cc",
+      "order": 29,
+      "text": "The king and his people are happy but tired.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-030-2515a415cc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-030-2515a415cc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-380495d76a",
+      "order": 30,
+      "text": "They start to fix their farms and shops.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-031-380495d76a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-031-380495d76a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-8d9f60cb9e",
+      "order": 31,
+      "text": "Peace returns to the small country.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-032-8d9f60cb9e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-032-8d9f60cb9e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-dc77c18611",
+      "order": 32,
+      "text": "The people celebrate their victory.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-033-dc77c18611.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-033-dc77c18611.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-6d659e93e8",
+      "order": 33,
+      "text": "They sing and dance in the streets.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-034-6d659e93e8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-034-6d659e93e8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-86bbc3f9ce",
+      "order": 34,
+      "text": "The king thanks everyone.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-035-86bbc3f9ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-035-86bbc3f9ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-f93f11f063",
+      "order": 35,
+      "text": "He is proud of his people.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-036-f93f11f063.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-036-f93f11f063.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-b010321ffa",
+      "order": 36,
+      "text": "They were clever and brave.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-037-b010321ffa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-037-b010321ffa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-95704ad737",
+      "order": 37,
+      "text": "Now, they are safe again.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-038-95704ad737.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-038-95704ad737.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-15671b88af",
+      "order": 38,
+      "text": "They go back to their normal lives, stronger than before.",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-039-15671b88af.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/sentences/sentence-039-15671b88af.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-d298623ecd",
+      "order": 0,
+      "text": "declare war",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-001-d298623ecd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-001-d298623ecd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-b0be643e8b",
+      "order": 1,
+      "text": "crosses the border",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-002-b0be643e8b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-002-b0be643e8b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-7747cf70b3",
+      "order": 2,
+      "text": "smart plan",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-003-7747cf70b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-003-7747cf70b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-723454bfa3",
+      "order": 3,
+      "text": "normal fight",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-004-723454bfa3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-004-723454bfa3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-6f6f1c24f0",
+      "order": 4,
+      "text": "use tricks",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-005-6f6f1c24f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-005-6f6f1c24f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-78041ff138",
+      "order": 5,
+      "text": "confuse the enemy",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-006-78041ff138.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-006-78041ff138.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-2991e988e5",
+      "order": 6,
+      "text": "big surprise",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-007-2991e988e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-007-2991e988e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-98ac52f946",
+      "order": 7,
+      "text": "tries to retreat",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-008-98ac52f946.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-008-98ac52f946.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-f68290be5a",
+      "order": 8,
+      "text": "celebrate their victory",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-009-f68290be5a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-009-f68290be5a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-707313e923",
+      "order": 9,
+      "text": "stronger than before",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-010-707313e923.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-010-707313e923.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-9ec763d8a5",
+      "order": 10,
+      "text": "the",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-011-9ec763d8a5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-011-9ec763d8a5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-1998dea513",
+      "order": 11,
+      "text": "big",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-012-1998dea513.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-012-1998dea513.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-be0ac501ed",
+      "order": 12,
+      "text": "country",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-013-be0ac501ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-013-be0ac501ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-67cc4672df",
+      "order": 13,
+      "text": "declares",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-014-67cc4672df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-014-67cc4672df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-b9fce142c6",
+      "order": 14,
+      "text": "war",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-015-b9fce142c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-015-b9fce142c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-598e311d21",
+      "order": 15,
+      "text": "their",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-016-598e311d21.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-016-598e311d21.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-569ef35404",
+      "order": 16,
+      "text": "army",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-017-569ef35404.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-017-569ef35404.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-667b6d5777",
+      "order": 17,
+      "text": "crosses",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-018-667b6d5777.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-018-667b6d5777.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-4b6c65e56c",
+      "order": 18,
+      "text": "border",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-019-4b6c65e56c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-019-4b6c65e56c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-08066994a7",
+      "order": 19,
+      "text": "people",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-020-08066994a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-020-08066994a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-1023754163",
+      "order": 20,
+      "text": "in",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-021-1023754163.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-021-1023754163.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-a27b468dd7",
+      "order": 21,
+      "text": "small",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-022-a27b468dd7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-022-a27b468dd7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-b2c98746d6",
+      "order": 22,
+      "text": "are",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-023-b2c98746d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-023-b2c98746d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-0e019cf3cf",
+      "order": 23,
+      "text": "scared",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-024-0e019cf3cf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-024-0e019cf3cf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-883b88dd36",
+      "order": 24,
+      "text": "they",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-025-883b88dd36.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-025-883b88dd36.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-e6455a1790",
+      "order": 25,
+      "text": "hear",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-026-e6455a1790.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-026-e6455a1790.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-46bf256d22",
+      "order": 26,
+      "text": "sound",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-027-46bf256d22.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-027-46bf256d22.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-2b1ec98bde",
+      "order": 27,
+      "text": "of",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-028-2b1ec98bde.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-028-2b1ec98bde.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-22fe8c7f73",
+      "order": 28,
+      "text": "tanks",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-029-22fe8c7f73.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-029-22fe8c7f73.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-693fb6d2c5",
+      "order": 29,
+      "text": "and",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-030-693fb6d2c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-030-693fb6d2c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-0c96ad48a6",
+      "order": 30,
+      "text": "soldiers",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-031-0c96ad48a6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-031-0c96ad48a6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-c881f61c56",
+      "order": 31,
+      "text": "king",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-032-c881f61c56.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-032-c881f61c56.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-0f4647d166",
+      "order": 32,
+      "text": "his",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-033-0f4647d166.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-033-0f4647d166.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-d2d2d270e5",
+      "order": 33,
+      "text": "generals",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-034-d2d2d270e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-034-d2d2d270e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-1dc6c9922e",
+      "order": 34,
+      "text": "meet",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-035-1dc6c9922e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-035-1dc6c9922e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-dd9f859569",
+      "order": 35,
+      "text": "need",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-036-dd9f859569.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-036-dd9f859569.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-7685c7c01a",
+      "order": 36,
+      "text": "a",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-037-7685c7c01a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-037-7685c7c01a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-c822fa1dce",
+      "order": 37,
+      "text": "smart",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-038-c822fa1dce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-038-c822fa1dce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-d10a39a621",
+      "order": 38,
+      "text": "plan",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-039-d10a39a621.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-039-d10a39a621.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-6f79ec0df9",
+      "order": 39,
+      "text": "cannot",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-040-6f79ec0df9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-040-6f79ec0df9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-75fcde910f",
+      "order": 40,
+      "text": "win",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-041-75fcde910f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-041-75fcde910f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-b4d5e33ee4",
+      "order": 41,
+      "text": "normal",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-042-b4d5e33ee4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-042-b4d5e33ee4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-427b8a645d",
+      "order": 42,
+      "text": "fight",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-043-427b8a645d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-043-427b8a645d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-985b2cc674",
+      "order": 43,
+      "text": "think",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-044-985b2cc674.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-044-985b2cc674.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-9c84fa4e56",
+      "order": 44,
+      "text": "about",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-045-9c84fa4e56.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-045-9c84fa4e56.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-d83c8591e8",
+      "order": 45,
+      "text": "using",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-046-d83c8591e8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-046-d83c8591e8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-2d4ee7e348",
+      "order": 46,
+      "text": "hills",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-047-2d4ee7e348.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-047-2d4ee7e348.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-6ed881c959",
+      "order": 47,
+      "text": "rivers",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-048-6ed881c959.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-048-6ed881c959.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-98e3a2b962",
+      "order": 48,
+      "text": "starts",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-049-98e3a2b962.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-049-98e3a2b962.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-50097be58d",
+      "order": 49,
+      "text": "to",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-050-50097be58d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-050-50097be58d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-c8d42fb63c",
+      "order": 50,
+      "text": "back",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-051-c8d42fb63c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-051-c8d42fb63c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-0533f26647",
+      "order": 51,
+      "text": "use",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-052-0533f26647.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-052-0533f26647.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-7121ab3b61",
+      "order": 52,
+      "text": "hide",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-053-7121ab3b61.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-053-7121ab3b61.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-6b9fee5072",
+      "order": 53,
+      "text": "slow",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-054-6b9fee5072.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-054-6b9fee5072.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-4df85c9d1c",
+      "order": 54,
+      "text": "enemy",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-055-4df85c9d1c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-055-4df85c9d1c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-f40c9a9e2f",
+      "order": 55,
+      "text": "brave",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-056-f40c9a9e2f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-056-f40c9a9e2f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-7161340ceb",
+      "order": 56,
+      "text": "move",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-057-7161340ceb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-057-7161340ceb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-663f0f45d8",
+      "order": 57,
+      "text": "quickly",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-058-663f0f45d8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-058-663f0f45d8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-f1f895a021",
+      "order": 58,
+      "text": "quietly",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-059-f1f895a021.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-059-f1f895a021.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-240ddd6f00",
+      "order": 59,
+      "text": "sometimes",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-060-240ddd6f00.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-060-240ddd6f00.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-ab17e1dc66",
+      "order": 60,
+      "text": "tricks",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-061-ab17e1dc66.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-061-ab17e1dc66.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-fd5bccc93f",
+      "order": 61,
+      "text": "make",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-062-fd5bccc93f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-062-fd5bccc93f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-d4681f7cf1",
+      "order": 62,
+      "text": "noises",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-063-d4681f7cf1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-063-d4681f7cf1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-be47e720ff",
+      "order": 63,
+      "text": "confuse",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-064-be47e720ff.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-064-be47e720ff.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-bf0ea1fc37",
+      "order": 64,
+      "text": "country's",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-065-bf0ea1fc37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-065-bf0ea1fc37.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-cf44b7a2ad",
+      "order": 65,
+      "text": "strong",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-066-cf44b7a2ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-066-cf44b7a2ad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-73d2b5e891",
+      "order": 66,
+      "text": "but",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-067-73d2b5e891.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-067-73d2b5e891.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-cf25014953",
+      "order": 67,
+      "text": "confused",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-068-cf25014953.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-068-cf25014953.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-c5e117ed9d",
+      "order": 68,
+      "text": "start",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-069-c5e117ed9d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-069-c5e117ed9d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-0f615ddb9d",
+      "order": 69,
+      "text": "hope",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-070-0f615ddb9d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-070-0f615ddb9d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-e70c730177",
+      "order": 70,
+      "text": "battle",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-071-e70c730177.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-071-e70c730177.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-f4e84d5a46",
+      "order": 71,
+      "text": "happens",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-072-f4e84d5a46.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-072-f4e84d5a46.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-31a354f2d3",
+      "order": 72,
+      "text": "near",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-073-31a354f2d3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-073-31a354f2d3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-f0ffe493b6",
+      "order": 73,
+      "text": "river",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-074-f0ffe493b6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-074-f0ffe493b6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-fe3cc414ef",
+      "order": 74,
+      "text": "ready",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-075-fe3cc414ef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-075-fe3cc414ef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-0aaebf9e5d",
+      "order": 75,
+      "text": "have",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-076-0aaebf9e5d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-076-0aaebf9e5d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-fe931f417e",
+      "order": 76,
+      "text": "when",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-077-fe931f417e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-077-fe931f417e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-f2988fcf16",
+      "order": 77,
+      "text": "tries",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-078-f2988fcf16.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-078-f2988fcf16.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-74f2f64e74",
+      "order": 78,
+      "text": "cross",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-079-74f2f64e74.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-079-74f2f64e74.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-fd23857afd",
+      "order": 79,
+      "text": "attacks",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-080-fd23857afd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-080-fd23857afd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-246f290972",
+      "order": 80,
+      "text": "fire",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-081-246f290972.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-081-246f290972.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-22bacbb305",
+      "order": 81,
+      "text": "noise",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-082-22bacbb305.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-082-22bacbb305.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-8e3961f198",
+      "order": 82,
+      "text": "it",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-083-8e3961f198.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-083-8e3961f198.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-fbb4a28c72",
+      "order": 83,
+      "text": "is",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-084-fbb4a28c72.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-084-fbb4a28c72.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-c21f554a74",
+      "order": 84,
+      "text": "surprise",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-085-c21f554a74.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-085-c21f554a74.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-086-9a9327b3a8",
+      "order": 85,
+      "text": "large",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-086-9a9327b3a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-086-9a9327b3a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-087-7517b9282e",
+      "order": 86,
+      "text": "stuck",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-087-7517b9282e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-087-7517b9282e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-088-7468cf41ed",
+      "order": 87,
+      "text": "forward",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-088-7468cf41ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-088-7468cf41ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-089-eec2ba130c",
+      "order": 88,
+      "text": "or",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-089-eec2ba130c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-089-eec2ba130c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-090-761ba9c53a",
+      "order": 89,
+      "text": "retreat",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-090-761ba9c53a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-090-761ba9c53a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-091-5884c3562f",
+      "order": 90,
+      "text": "tired",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-091-5884c3562f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-091-5884c3562f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-092-a6c7488841",
+      "order": 91,
+      "text": "follow",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-092-a6c7488841.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-092-a6c7488841.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-093-7d68a125a8",
+      "order": 92,
+      "text": "them",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-093-7d68a125a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-093-7d68a125a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-094-99463ea6a8",
+      "order": 93,
+      "text": "carefully",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-094-99463ea6a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-094-99463ea6a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-095-6e7705be7e",
+      "order": 94,
+      "text": "sure",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-095-6e7705be7e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-095-6e7705be7e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-096-4bb303fbb9",
+      "order": 95,
+      "text": "leaves",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-096-4bb303fbb9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-096-4bb303fbb9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-097-892949a06c",
+      "order": 96,
+      "text": "land",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-097-892949a06c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-097-892949a06c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-098-d476256198",
+      "order": 97,
+      "text": "happy",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-098-d476256198.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-098-d476256198.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-099-f02bd1da5e",
+      "order": 98,
+      "text": "fix",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-099-f02bd1da5e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-099-f02bd1da5e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-100-334bbd4377",
+      "order": 99,
+      "text": "farms",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-100-334bbd4377.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-100-334bbd4377.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-101-0275210023",
+      "order": 100,
+      "text": "shops",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-101-0275210023.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-101-0275210023.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-102-99fd9af60c",
+      "order": 101,
+      "text": "peace",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-102-99fd9af60c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-102-99fd9af60c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-103-c86d8e7109",
+      "order": 102,
+      "text": "returns",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-103-c86d8e7109.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-103-c86d8e7109.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-104-8f6cf94f30",
+      "order": 103,
+      "text": "celebrate",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-104-8f6cf94f30.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-104-8f6cf94f30.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-105-2da27cccc6",
+      "order": 104,
+      "text": "victory",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-105-2da27cccc6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-105-2da27cccc6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-106-282a3d63e5",
+      "order": 105,
+      "text": "sing",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-106-282a3d63e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-106-282a3d63e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-107-31ef7ddd7e",
+      "order": 106,
+      "text": "dance",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-107-31ef7ddd7e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-107-31ef7ddd7e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-108-ee91724864",
+      "order": 107,
+      "text": "streets",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-108-ee91724864.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-108-ee91724864.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-109-9715bde730",
+      "order": 108,
+      "text": "thanks",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-109-9715bde730.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-109-9715bde730.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-110-cce779bafc",
+      "order": 109,
+      "text": "everyone",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-110-cce779bafc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-110-cce779bafc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-111-b6c02eb9a5",
+      "order": 110,
+      "text": "he",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-111-b6c02eb9a5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-111-b6c02eb9a5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-112-1f2fb0e789",
+      "order": 111,
+      "text": "proud",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-112-1f2fb0e789.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-112-1f2fb0e789.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-113-4e5d3d7b81",
+      "order": 112,
+      "text": "were",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-113-4e5d3d7b81.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-113-4e5d3d7b81.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-114-d4c40f7c0f",
+      "order": 113,
+      "text": "clever",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-114-d4c40f7c0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-114-d4c40f7c0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-115-e46ce37eea",
+      "order": 114,
+      "text": "now",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-115-e46ce37eea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-115-e46ce37eea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-116-98cb8467ca",
+      "order": 115,
+      "text": "safe",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-116-98cb8467ca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-116-98cb8467ca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-117-5ac57bc5c7",
+      "order": 116,
+      "text": "again",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-117-5ac57bc5c7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-117-5ac57bc5c7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-118-9e4b8161ff",
+      "order": 117,
+      "text": "go",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-118-9e4b8161ff.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-118-9e4b8161ff.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-119-a9e0f62e26",
+      "order": 118,
+      "text": "lives",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-119-a9e0f62e26.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-119-a9e0f62e26.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-120-be5d4a97f3",
+      "order": 119,
+      "text": "stronger",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-120-be5d4a97f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-120-be5d4a97f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-121-5dd5fedf3d",
+      "order": 120,
+      "text": "than",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-121-5dd5fedf3d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-121-5dd5fedf3d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-122-eb90de098c",
+      "order": 121,
+      "text": "before",
+      "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/words/word-122-eb90de098c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/words/word-122-eb90de098c.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-baa6e5d592",
+      "type": "mcq",
+      "order": 0,
+      "text": "What was the small country's strategy during the big battle?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-001-baa6e5d592.mp3",
+      "questionObjectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-001-baa6e5d592.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-001-baa6e5d592-option1-4518dcf6.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-001-baa6e5d592-option2-4aea0891.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-001-baa6e5d592-option3-a00c2511.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-001-baa6e5d592-option4-4b0f1db1.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-baa6e5d592-option1-4518dcf6",
+          "text": "Surprise the enemy as they tried to cross the river.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-001-baa6e5d592-option1-4518dcf6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-baa6e5d592-option2-4aea0891",
+          "text": "Wait for the enemy to attack first.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-001-baa6e5d592-option2-4aea0891.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-baa6e5d592-option3-a00c2511",
+          "text": "Negotiate peace.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-001-baa6e5d592-option3-a00c2511.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-baa6e5d592-option4-4b0f1db1",
+          "text": "Retreat to safer ground.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-001-baa6e5d592-option4-4b0f1db1.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-737009037b",
+      "type": "mcq",
+      "order": 1,
+      "text": "What did the people of the small country do after peace returned?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-002-737009037b.mp3",
+      "questionObjectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-002-737009037b.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-002-737009037b-option1-4f2dc06d.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-002-737009037b-option2-91a3ea60.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-002-737009037b-option3-e1f4f547.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-002-737009037b-option4-f3f1e902.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-737009037b-option1-4f2dc06d",
+          "text": "They celebrated by singing and dancing.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-002-737009037b-option1-4f2dc06d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-737009037b-option2-91a3ea60",
+          "text": "They moved to another country.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-002-737009037b-option2-91a3ea60.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-737009037b-option3-e1f4f547",
+          "text": "They continued fighting.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-002-737009037b-option3-e1f4f547.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-737009037b-option4-f3f1e902",
+          "text": "They built a new palace.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-002-737009037b-option4-f3f1e902.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-0cbd0aa582",
+      "type": "mcq",
+      "order": 2,
+      "text": "What tactic did the small country's soldiers use to confuse the enemy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-003-0cbd0aa582.mp3",
+      "questionObjectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-003-0cbd0aa582.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-003-0cbd0aa582-option1-cb2c8be2.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-003-0cbd0aa582-option2-deaf146d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-003-0cbd0aa582-option3-1c8f2e35.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-003-0cbd0aa582-option4-74779c4b.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-0cbd0aa582-option1-cb2c8be2",
+          "text": "They made noises.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-003-0cbd0aa582-option1-cb2c8be2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-0cbd0aa582-option2-deaf146d",
+          "text": "They wore disguises.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-003-0cbd0aa582-option2-deaf146d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-0cbd0aa582-option3-1c8f2e35",
+          "text": "They sent false messages.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-003-0cbd0aa582-option3-1c8f2e35.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-0cbd0aa582-option4-74779c4b",
+          "text": "They pretended to surrender.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-003-0cbd0aa582-option4-74779c4b.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-d117e3787c",
+      "type": "mcq",
+      "order": 3,
+      "text": "How did the king feel about his people after the war?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-004-d117e3787c.mp3",
+      "questionObjectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-004-d117e3787c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-004-d117e3787c-option1-01c1fbf3.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-004-d117e3787c-option2-1a7c858b.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-004-d117e3787c-option3-3fed50da.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-004-d117e3787c-option4-8160b844.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-d117e3787c-option1-01c1fbf3",
+          "text": "Proud of their cleverness and bravery.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-004-d117e3787c-option1-01c1fbf3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-d117e3787c-option2-1a7c858b",
+          "text": "Disappointed in their performance.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-004-d117e3787c-option2-1a7c858b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-d117e3787c-option3-3fed50da",
+          "text": "Surprised by their actions.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-004-d117e3787c-option3-3fed50da.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-d117e3787c-option4-8160b844",
+          "text": "Indifferent to their efforts.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-004-d117e3787c-option4-8160b844.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-fd2455d1f3",
+      "type": "mcq",
+      "order": 4,
+      "text": "What did the king and his generals decide they needed to do?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-005-fd2455d1f3.mp3",
+      "questionObjectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-005-fd2455d1f3.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-005-fd2455d1f3-option1-28511537.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-005-fd2455d1f3-option2-4a898d1e.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-005-fd2455d1f3-option3-757fff92.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-005-fd2455d1f3-option4-2038b10e.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-fd2455d1f3-option1-28511537",
+          "text": "Come up with a smart plan.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-005-fd2455d1f3-option1-28511537.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-fd2455d1f3-option2-4a898d1e",
+          "text": "Surrender immediately.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-005-fd2455d1f3-option2-4a898d1e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-fd2455d1f3-option3-757fff92",
+          "text": "Ask for help from another country.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-005-fd2455d1f3-option3-757fff92.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-fd2455d1f3-option4-2038b10e",
+          "text": "Hide in the castle.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-005-fd2455d1f3-option4-2038b10e.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-d6d6303909",
+      "type": "mcq",
+      "order": 5,
+      "text": "Why did the small country's people feel scared?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-006-d6d6303909.mp3",
+      "questionObjectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-006-d6d6303909.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-006-d6d6303909-option1-be452b72.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-006-d6d6303909-option2-8e718f67.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-006-d6d6303909-option3-ca3e557c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-006-d6d6303909-option4-27c98f49.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-d6d6303909-option1-be452b72",
+          "text": "The big country's army crossed the border.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-006-d6d6303909-option1-be452b72.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-d6d6303909-option2-8e718f67",
+          "text": "The king was absent.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-006-d6d6303909-option2-8e718f67.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-d6d6303909-option3-ca3e557c",
+          "text": "There was a natural disaster.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-006-d6d6303909-option3-ca3e557c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-d6d6303909-option4-27c98f49",
+          "text": "They heard a loud celebration.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-006-d6d6303909-option4-27c98f49.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-c237c67bd0",
+      "type": "mcq",
+      "order": 6,
+      "text": "Where did the big battle take place?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-007-c237c67bd0.mp3",
+      "questionObjectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-007-c237c67bd0.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-007-c237c67bd0-option1-0578e676.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-007-c237c67bd0-option2-4a2ee19c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-007-c237c67bd0-option3-12c211aa.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-007-c237c67bd0-option4-8e212be5.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-c237c67bd0-option1-0578e676",
+          "text": "Near a big river.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-007-c237c67bd0-option1-0578e676.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-c237c67bd0-option2-4a2ee19c",
+          "text": "In the capital city.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-007-c237c67bd0-option2-4a2ee19c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-c237c67bd0-option3-12c211aa",
+          "text": "At the border.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-007-c237c67bd0-option3-12c211aa.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-c237c67bd0-option4-8e212be5",
+          "text": "In a dense forest.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-007-c237c67bd0-option4-8e212be5.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-ae603436a6",
+      "type": "mcq",
+      "order": 7,
+      "text": "How did the small country use the geography to their advantage?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-008-ae603436a6.mp3",
+      "questionObjectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-008-ae603436a6.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-008-ae603436a6-option1-0f2b7085.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-008-ae603436a6-option2-3eaacd20.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-008-ae603436a6-option3-44004917.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-008-ae603436a6-option4-57d13116.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-ae603436a6-option1-0f2b7085",
+          "text": "They hid in the hills and used rivers to slow the enemy.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-008-ae603436a6-option1-0f2b7085.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-ae603436a6-option2-3eaacd20",
+          "text": "They built walls around their cities.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-008-ae603436a6-option2-3eaacd20.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-ae603436a6-option3-44004917",
+          "text": "They moved everyone to the mountains.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-008-ae603436a6-option3-44004917.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-ae603436a6-option4-57d13116",
+          "text": "They flooded their own land.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-008-ae603436a6-option4-57d13116.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-32d0272685",
+      "type": "mcq",
+      "order": 8,
+      "text": "How did the large country's army react after the big battle?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-009-32d0272685.mp3",
+      "questionObjectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-009-32d0272685.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-009-32d0272685-option1-bc2dd8a2.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-009-32d0272685-option2-6edbe21e.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-009-32d0272685-option3-3596308c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-009-32d0272685-option4-5f353778.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-32d0272685-option1-bc2dd8a2",
+          "text": "They tried to retreat.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-009-32d0272685-option1-bc2dd8a2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-32d0272685-option2-6edbe21e",
+          "text": "They asked for a truce.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-009-32d0272685-option2-6edbe21e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-32d0272685-option3-3596308c",
+          "text": "They captured the king.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-009-32d0272685-option3-3596308c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-32d0272685-option4-5f353778",
+          "text": "They fortified their position.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-009-32d0272685-option4-5f353778.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-fc4911d923",
+      "type": "mcq",
+      "order": 9,
+      "text": "What did the small country's soldiers do as the big army retreated?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-010-fc4911d923.mp3",
+      "questionObjectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-010-fc4911d923.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-010-fc4911d923-option1-41304a02.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-010-fc4911d923-option2-edab9796.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-010-fc4911d923-option3-2c04a101.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-010-fc4911d923-option4-bddeb6ff.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-fc4911d923-option1-41304a02",
+          "text": "They followed them to make sure they left.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-010-fc4911d923-option1-41304a02.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-fc4911d923-option2-edab9796",
+          "text": "They celebrated immediately.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-010-fc4911d923-option2-edab9796.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-fc4911d923-option3-2c04a101",
+          "text": "They joined the big army.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-010-fc4911d923-option3-2c04a101.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-fc4911d923-option4-bddeb6ff",
+          "text": "They went back to their homes.",
+          "objectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/mcq-010-fc4911d923-option4-bddeb6ff.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-f6d26ae4b9",
+      "type": "saq",
+      "order": 10,
+      "text": "What do the people do to celebrate their victory?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/saq-011-f6d26ae4b9.mp3",
+      "questionObjectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/saq-011-f6d26ae4b9.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-89dd0eb253",
+      "type": "saq",
+      "order": 11,
+      "text": "Who declares war in the story?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/saq-012-89dd0eb253.mp3",
+      "questionObjectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/saq-012-89dd0eb253.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-e3d794a5ab",
+      "type": "saq",
+      "order": 12,
+      "text": "What happens when the big country's army tries to cross the river?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/saq-013-e3d794a5ab.mp3",
+      "questionObjectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/saq-013-e3d794a5ab.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-4085cc0afd",
+      "type": "saq",
+      "order": 13,
+      "text": "What do the people of the small country use to hide and slow the enemy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/saq-014-4085cc0afd.mp3",
+      "questionObjectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/saq-014-4085cc0afd.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-3668b5119f",
+      "type": "saq",
+      "order": 14,
+      "text": "How do the people of the small country feel after the war?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/FWSuj1yh5kzajOz2ra4W/questions/saq-015-3668b5119f.mp3",
+      "questionObjectPath": "articles/FWSuj1yh5kzajOz2ra4W/questions/saq-015-3668b5119f.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:16:19.002Z"
+}

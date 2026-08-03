@@ -8,7 +8,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { ArticleDisplay } from "./ArticleDisplay";
-import { ChevronRight, Check, Eye, EyeOff, Lock, Maximize2, Minimize2 } from "lucide-react";
+import { ChevronRight, Check, Eye, EyeOff, Lock, Maximize2, Minimize2, Volume2, AlertTriangle } from "lucide-react";
 import { playSound } from "@/lib/sounds";
 import { t } from "@/lib/i18n";
 import confetti from "canvas-confetti";
@@ -341,6 +341,164 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     { pairNumber: number; members: { studentId: string; name: string; pictureUrl?: string }[] }[] | null
   >(null);
   const fullscreenRef = React.useRef<HTMLDivElement>(null);
+  const standaloneAudioRef = React.useRef<HTMLAudioElement | null>(null);
+  const [audioToastText, setAudioToastText] = React.useState<string | null>(null);
+  const [remoteAudioManifest, setRemoteAudioManifest] = React.useState<any | null>(null);
+  const inlineAudioManifest = (articleData as any)?.audio_manifest;
+  const manifestArticleId = (articleData as any)?.id || (articleData as any)?.articleId;
+  const manifestUrl = manifestArticleId
+    ? `/api/tts-manifest/${encodeURIComponent(manifestArticleId)}`
+    : null;
+  const inlineQuestions = Array.isArray(inlineAudioManifest?.questions)
+    ? inlineAudioManifest.questions
+    : [];
+  const sourceQuestions = [
+    ...(((articleData as any)?.multipleChoiceQuestions || []).map((item: any) => item?.question)),
+    ...(((articleData as any)?.shortAnswerQuestions || []).map((item: any) => item?.question)),
+  ].filter(Boolean).map((text: string) => text.trim().toLowerCase());
+  const sourceSentences = ((articleData as any)?.sentences || []).map((sentence: any) =>
+    String(typeof sentence === "object"
+      ? sentence?.sentences || sentence?.text || sentence?.sentence || ""
+      : sentence || "").trim(),
+  ).filter(Boolean);
+  const inlineSentences = Array.isArray(inlineAudioManifest?.sentences)
+    ? inlineAudioManifest.sentences
+    : [];
+  const inlineQuestionsMatch = sourceQuestions.length > 0
+    ? sourceQuestions.every((text) => inlineQuestions.some((item: any) =>
+        String(item?.text || "").trim().toLowerCase() === text,
+      ))
+    : inlineQuestions.length > 0;
+  const inlineSentencesMatch = sourceSentences.length > 0
+    ? sourceSentences.every((text: string, index: number) => String(inlineSentences[index]?.text || "").trim() === text)
+    : inlineSentences.length > 0;
+  const inlineManifestIsComplete = inlineQuestionsMatch && inlineSentencesMatch;
+  const inlineNeedsSentenceWordRefresh = sourceSentences.length > 0 && !Array.isArray(inlineAudioManifest?.sentenceWords);
+
+  React.useEffect(() => {
+    if ((inlineManifestIsComplete && !inlineNeedsSentenceWordRefresh) || !manifestUrl) {
+      setRemoteAudioManifest(null);
+      return;
+    }
+
+    let cancelled = false;
+    fetch(manifestUrl, { headers: { accept: "application/json" }, cache: "no-store" })
+      .then((response) => response.ok ? response.json() : null)
+      .then((manifest) => {
+        if (!cancelled && manifest?.version === 1) setRemoteAudioManifest(manifest);
+      })
+      .catch(() => {
+        // The explicit per-question URLs remain the next source of truth.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [articleData, inlineManifestIsComplete, inlineNeedsSentenceWordRefresh, manifestUrl]);
+
+  const audioManifest = remoteAudioManifest || (inlineManifestIsComplete
+    ? inlineAudioManifest
+    : inlineAudioManifest);
+  const manifestQuestions = Array.isArray(audioManifest?.questions)
+    ? audioManifest.questions
+    : [];
+  const getManifestQuestion = (type: "mcq" | "saq", index: number) =>
+    manifestQuestions.filter((item: any) => item?.type === type)[index] as any;
+  const getManifestQuestionByText = (text: string, type?: "mcq" | "saq") => {
+    const questionKey = String(text || "").trim().toLowerCase();
+    return manifestQuestions.find((item: any) =>
+      (!type || item?.type === type) &&
+      String(item?.text || "").trim().toLowerCase() === questionKey,
+    ) as any;
+  };
+  const getWordAudioUrl = (text: string) => {
+    const word = (articleData?.words || []).find((item: any) =>
+      String(item?.vocabulary || item?.word || item?.text || "").toLowerCase() === text.toLowerCase(),
+    ) as any;
+    if (word?.audioUrl || word?.audio_url) return word.audioUrl || word.audio_url;
+    const manifestWords = [
+      ...(Array.isArray(audioManifest?.words) ? audioManifest.words : []),
+      ...(Array.isArray(audioManifest?.sentenceWords) ? audioManifest.sentenceWords : []),
+    ];
+    const manifestWord = manifestWords.find(
+        (item: any) => String(item?.text || "").toLowerCase() === text.toLowerCase(),
+      );
+    return manifestWord?.audioUrl;
+  };
+  const normaliseOptionAudioUrls = (urls?: Record<string, string>) => {
+    if (!urls) return undefined;
+    const normalised: Record<string, string> = { ...urls };
+    ["A", "B", "C", "D"].forEach((label, index) => {
+      const legacyKey = `option${index + 1}`;
+      if (!normalised[label] && normalised[legacyKey]) {
+        normalised[label] = normalised[legacyKey];
+      }
+    });
+    return normalised;
+  };
+  const getSentenceAudioUrl = (sentence: any, index: number) => {
+    const directUrl = typeof sentence === "object"
+      ? sentence?.audioUrl || sentence?.audio_url
+      : undefined;
+    const manifestSentence = Array.isArray(audioManifest?.sentences)
+      ? audioManifest.sentences[index]
+      : undefined;
+    return directUrl || manifestSentence?.audioUrl;
+  };
+
+  const showAudioFallbackToast = (text: string) => {
+    setAudioToastText(text);
+    setTimeout(() => setAudioToastText(null), 4500);
+  };
+
+  const playMcqAudio = (url: string | null | undefined, fallbackText: string, _subpath: string) => {
+    standaloneAudioRef.current?.pause();
+    standaloneAudioRef.current = null;
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+
+    const playFallback = () => {
+      showAudioFallbackToast(fallbackText);
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        try {
+          window.speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(fallbackText);
+          u.lang = "en-US";
+          window.speechSynthesis.speak(u);
+        } catch {
+          // ignore
+        }
+      }
+    };
+
+    const clipUrl = url && /^https?:\/\//i.test(url) ? url : null;
+
+    if (!clipUrl) {
+      playFallback();
+      return;
+    }
+
+    const clip = new Audio();
+    standaloneAudioRef.current = clip;
+    clip.oncanplay = () => {
+      try { clip.playbackRate = 1.0; } catch {}
+    };
+    clip.onended = () => {
+      if (standaloneAudioRef.current === clip) standaloneAudioRef.current = null;
+    };
+    clip.onerror = () => {
+      if (standaloneAudioRef.current === clip) {
+        standaloneAudioRef.current = null;
+        playFallback();
+      }
+    };
+    clip.src = clipUrl;
+    clip.play().catch((err) => {
+      if (err?.name !== "AbortError") {
+        playFallback();
+      }
+    });
+  };
 
   // Reset loading state when phase actually changes
   React.useEffect(() => {
@@ -549,7 +707,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   const renderPresentation = () => (
     <ArticleDisplay
-      articleData={articleData}
+      articleData={audioManifest && articleData
+        ? { ...articleData, audio_manifest: audioManifest }
+        : articleData}
       phase={currentPhase}
       isFullscreen={isFullscreen}
       flagCounts={flagCounts}
@@ -566,7 +726,91 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     mappedOptions: Record<string, string>,
     correctAnswer: string,
     answerTranslationItems: Array<{ label: string; text: string }> = [],
+    activeQuestionIndex?: number,
+    mcqQuestionObj?: any,
+    audioOverrides?: {
+      questionAudioUrl?: string;
+      questionAudioText?: string;
+      optionAudioUrls?: Record<string, string>;
+      speakQuestion?: boolean;
+      speakOptions?: boolean;
+    },
   ) => {
+    const qIdx = activeQuestionIndex ?? (sessionData?.questionIndex ?? 0);
+    const playMcqOptionAudio = (optionText: string, labelKey: string) => {
+      standaloneAudioRef.current?.pause();
+      standaloneAudioRef.current = null;
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+
+      const playFallback = () => {
+        showAudioFallbackToast(optionText);
+        if (typeof window !== "undefined" && "speechSynthesis" in window) {
+          try {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(optionText);
+            u.lang = "en-US";
+            window.speechSynthesis.speak(u);
+          } catch {}
+        }
+      };
+
+      const candidateKeys: string[] = [labelKey];
+      if (mcqQuestionObj?.options) {
+        if (Array.isArray(mcqQuestionObj.options)) {
+          const idx = mcqQuestionObj.options.indexOf(optionText);
+          if (idx !== -1) {
+            candidateKeys.unshift(`option${idx + 1}`, `${idx}`);
+          }
+        } else if (typeof mcqQuestionObj.options === "object") {
+          for (const [k, v] of Object.entries(mcqQuestionObj.options)) {
+            if (v === optionText) {
+              candidateKeys.unshift(k);
+              break;
+            }
+          }
+        }
+      }
+
+      const explicitUrl = candidateKeys
+        .map((key) => audioOverrides?.optionAudioUrls?.[key] || mcqQuestionObj?.optionAudioUrls?.[key])
+        .find((value) => typeof value === "string" && /^https?:\/\//i.test(value));
+      const candidates = explicitUrl ? [explicitUrl] : [];
+
+      let candidateIndex = 0;
+      const tryNext = () => {
+        if (candidateIndex >= candidates.length) {
+          playFallback();
+          return;
+        }
+        const clip = new Audio();
+        standaloneAudioRef.current = clip;
+        clip.oncanplay = () => {
+          try { clip.playbackRate = 1.0; } catch {}
+        };
+        clip.onended = () => {
+          if (standaloneAudioRef.current === clip) standaloneAudioRef.current = null;
+        };
+        clip.onerror = () => {
+          if (standaloneAudioRef.current !== clip) return;
+          standaloneAudioRef.current = null;
+          candidateIndex++;
+          tryNext();
+        };
+        clip.src = candidates[candidateIndex];
+        clip.play().catch((err) => {
+          if (err?.name !== "AbortError") {
+            if (standaloneAudioRef.current === clip) standaloneAudioRef.current = null;
+            candidateIndex++;
+            tryNext();
+          }
+        });
+      };
+
+      tryNext();
+    };
+
     if (showQuestionResults) {
       // Show results chart — EduPop colors
       const optionFills: Record<string, string> = {
@@ -720,16 +964,28 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         <div className="flex-1 flex flex-col items-center justify-center gap-5 min-w-0 overflow-hidden">
           {/* Question card with indigo gradient header */}
           <div className="w-full max-w-3xl rounded-3xl overflow-hidden shadow-xl border border-indigo-500/20">
-            <div className="bg-gradient-to-r from-indigo-500 to-violet-600 px-8 py-5">
-              <div className="flex items-center gap-2 mb-2 opacity-80">
-                <span className="size-2 rounded-full bg-white animate-pulse" />
-                <span className="text-white/80 text-xs font-bold uppercase tracking-widest">
-                  Multiple Choice
-                </span>
+            <div className="bg-gradient-to-r from-indigo-500 to-violet-600 px-8 py-5 flex items-start justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 mb-2 opacity-80">
+                  <span className="size-2 rounded-full bg-white animate-pulse" />
+                  <span className="text-white/80 text-xs font-bold uppercase tracking-widest">
+                    Multiple Choice
+                  </span>
+                </div>
+                <h2 className="text-2xl font-black text-white leading-snug">
+                  {question}
+                </h2>
               </div>
-              <h2 className="text-2xl font-black text-white leading-snug">
-                {question}
-              </h2>
+              {audioOverrides?.speakQuestion !== false && (
+                <button
+                  type="button"
+                  onClick={() => playMcqAudio(audioOverrides?.questionAudioUrl || mcqQuestionObj?.questionAudioUrl || mcqQuestionObj?.audioUrl, audioOverrides?.questionAudioText || question, `mcq/question_${qIdx}.mp3`)}
+                  title={t("lesson.interactive.speakTitle")}
+                  className="size-10 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center shrink-0 transition-colors"
+                >
+                  <Volume2 size={20} />
+                </button>
+              )}
             </div>
           </div>
 
@@ -741,19 +997,35 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 shadow: "shadow-[0_6px_0_theme(colors.slate.700)]",
                 badge: "bg-slate-700/40",
               };
+              const optionText = mappedOptions[key];
               return (
                 <div
                   key={key}
-                  className={`${style.bg} ${style.shadow} text-white p-5 rounded-2xl font-bold flex items-center gap-3 transition-transform active:translate-y-1 active:shadow-none`}
+                  className={`${style.bg} ${style.shadow} text-white p-5 rounded-2xl font-bold flex items-center justify-between gap-3 transition-transform active:translate-y-1 active:shadow-none`}
                 >
-                  <span
-                    className={`${style.badge} text-white text-lg font-black w-10 h-10 rounded-xl flex items-center justify-center shrink-0`}
-                  >
-                    {key}
-                  </span>
-                  <span className="text-base leading-snug">
-                    {mappedOptions[key]}
-                  </span>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span
+                      className={`${style.badge} text-white text-lg font-black w-10 h-10 rounded-xl flex items-center justify-center shrink-0`}
+                    >
+                      {key}
+                    </span>
+                    <span className="text-base leading-snug truncate">
+                      {optionText}
+                    </span>
+                  </div>
+                  {audioOverrides?.speakOptions !== false && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        playMcqOptionAudio(optionText, key);
+                      }}
+                      title={t("lesson.interactive.speakTitle")}
+                      className="size-8 rounded-full bg-white/20 hover:bg-white/35 text-white flex items-center justify-center shrink-0 transition-colors"
+                    >
+                      <Volume2 size={16} />
+                    </button>
+                  )}
                 </div>
               );
             })}
@@ -778,6 +1050,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   const renderMCQ = () => {
     const idx = sessionData?.phaseSelectedIndices?.[7] || 0;
     const mcqQuestion = articleData?.multipleChoiceQuestions?.[idx];
+    const manifestMcqQuestion =
+      getManifestQuestionByText(mcqQuestion?.question, "mcq") ||
+      getManifestQuestion("mcq", idx);
     const rawAnswer = mcqQuestion?.answer || "";
     const optionsData = mcqQuestion?.options || {};
     const optionKeys = Object.keys(optionsData).sort();
@@ -834,6 +1109,17 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       mcqQuestion?.question || t("lesson.interactive.genericQuestion"),
       mappedOptions,
       correctAnswer,
+      [],
+      idx,
+      mcqQuestion,
+      {
+        // Match the published audio by the question text first. The source
+        // question list can be re-ordered independently from the manifest.
+        questionAudioUrl: manifestMcqQuestion?.questionAudioUrl || mcqQuestion?.questionAudioUrl || mcqQuestion?.audioUrl,
+        optionAudioUrls: normaliseOptionAudioUrls(
+          manifestMcqQuestion?.optionAudioUrls || mcqQuestion?.optionAudioUrls,
+        ),
+      },
     );
   };
 
@@ -896,7 +1182,12 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     return renderKahootGame(question, mappedOptions, correctLabel, [
       { label: "Vocab Word", text: String(targetWord.vocabulary || targetWord.word || targetWord.text) },
       { label: "Translation", text: correctTranslation },
-    ]);
+    ], undefined, undefined, {
+      // The prompt and options are Thai in this phase; do not expose an
+      // English TTS button or trigger browser fallback for them.
+      speakQuestion: false,
+      speakOptions: false,
+    });
   };
 
   const renderSentenceFlashcardKahoot = () => {
@@ -955,10 +1246,20 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       mappedOptions[label] = val;
     });
 
+    const optionAudioUrls: Record<string, string> = {};
+    shuffledOptions.forEach((value, optionIndex) => {
+      const url = getWordAudioUrl(value);
+      if (url) optionAudioUrls[String.fromCharCode(65 + optionIndex)] = url;
+    });
+
     return renderKahootGame(question, mappedOptions, correctLabel, [
       { label: "Full sentence", text: String(targetSentence) },
       { label: "Answer word", text: correctWord },
-    ]);
+    ], idx, undefined, {
+      questionAudioUrl: getSentenceAudioUrl(sentences[idx], idx),
+      questionAudioText: String(targetSentence),
+      optionAudioUrls,
+    });
   };
 
   const renderSentenceOrderingKahoot = () => {
@@ -1025,7 +1326,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         : question;
     return renderKahootGame(finalQuestion, mappedOptions, correctLabel, [
       { label: "Sentence", text: String(targetSentence) },
-    ]);
+    ], idx, undefined, {
+      questionAudioUrl: getSentenceAudioUrl(sentences[idx], idx),
+      questionAudioText: String(targetSentence),
+      speakOptions: false,
+    });
   };
 
   const renderShortAnswer = () => {
@@ -1033,6 +1338,13 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const shortAnswerQuestion =
       articleData?.shortAnswerQuestions?.[idx] ||
       articleData?.shortAnswerQuestions?.[0];
+    const shortAnswerManifestQuestion =
+      getManifestQuestionByText(shortAnswerQuestion?.question, "saq") ||
+      getManifestQuestion("saq", idx) || getManifestQuestion("saq", 0);
+    const shortAnswerAudioUrl =
+      shortAnswerManifestQuestion?.questionAudioUrl ||
+      shortAnswerQuestion?.questionAudioUrl ||
+      shortAnswerQuestion?.audioUrl;
 
     // ── Results view (after all students answered) ──────────────────────────
     if (showQuestionResults) {
@@ -1331,10 +1643,22 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                   Short Answer
                 </span>
               </div>
-              <h2 className="text-2xl font-bold text-foreground leading-snug">
-                {shortAnswerQuestion?.question ||
-                  t("lesson.interactive.shortAnswerPrompt")}
-              </h2>
+              <div className="flex items-center justify-center gap-3">
+                <h2 className="text-2xl font-bold text-foreground leading-snug">
+                  {shortAnswerQuestion?.question ||
+                    t("lesson.interactive.shortAnswerPrompt")}
+                </h2>
+                {shortAnswerQuestion?.question && (
+                  <button
+                    type="button"
+                    onClick={() => playMcqAudio(shortAnswerAudioUrl, shortAnswerQuestion.question, "")}
+                    title={t("lesson.interactive.speakTitle")}
+                    className="size-10 rounded-full bg-violet-500/15 hover:bg-violet-500/25 text-violet-600 dark:text-violet-300 flex items-center justify-center shrink-0 transition-colors"
+                  >
+                    <Volume2 size={20} />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -1602,9 +1926,19 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   // ── Step 11: Guided Writing (AI-scored) ──
   const renderWriting = () => {
     const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
+    const writingQuestion =
+      articleData?.shortAnswerQuestions?.[idx] ||
+      articleData?.shortAnswerQuestions?.[0];
+    const writingManifestQuestion =
+      getManifestQuestionByText(writingQuestion?.question) ||
+      getManifestQuestion("saq", idx) || getManifestQuestion("saq", 0);
     const prompt =
-      articleData?.shortAnswerQuestions?.[idx]?.question ||
+      writingQuestion?.question ||
       t("lesson.interactive.writingPromptLabel");
+    const writingAudioUrl =
+      writingManifestQuestion?.questionAudioUrl ||
+      writingQuestion?.questionAudioUrl ||
+      writingQuestion?.audioUrl;
 
     if (showQuestionResults) {
       const sum = allAnsweredData.reduce(
@@ -1640,9 +1974,21 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 <span className="text-white/80 text-xs font-bold uppercase tracking-widest">
                   {t("lesson.interactive.writingTitle")}
                 </span>
-                <h2 className="text-2xl font-black text-white leading-snug mt-1">
-                  {prompt}
-                </h2>
+                <div className="flex items-center gap-3 mt-1">
+                  <h2 className="text-2xl font-black text-white leading-snug">
+                    {prompt}
+                  </h2>
+                  {writingQuestion?.question && (
+                    <button
+                      type="button"
+                      onClick={() => playMcqAudio(writingAudioUrl, writingQuestion.question, "")}
+                      title={t("lesson.interactive.speakTitle")}
+                      className="size-10 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center shrink-0 transition-colors"
+                    >
+                      <Volume2 size={20} />
+                    </button>
+                  )}
+                </div>
               </div>
               <AnswerTranslations items={[{ label: "", text: prompt }]} />
             </div>
@@ -2800,6 +3146,15 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         {renderPhaseContent()}
       </FitToViewport>
       {renderControlToolbar()}
+      {audioToastText && (
+        <div className="fixed bottom-6 right-6 z-[200] flex items-center gap-3 bg-amber-500 text-amber-950 font-bold px-4 py-3 rounded-2xl shadow-2xl border border-amber-300 animate-in fade-in slide-in-from-bottom-5 duration-300">
+          <AlertTriangle className="size-5 shrink-0 text-amber-950" />
+          <div className="text-xs">
+            <p className="font-bold uppercase tracking-wider">⚠️ Web Speech Fallback Active</p>
+            <p className="opacity-90 font-normal mt-0.5">Playing via browser TTS: &quot;{audioToastText}&quot;</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

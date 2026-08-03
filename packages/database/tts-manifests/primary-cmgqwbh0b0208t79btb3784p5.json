@@ -1,0 +1,1151 @@
+{
+  "version": 1,
+  "articleId": "cmgqwbh0b0208t79btb3784p5",
+  "source": "PRIMARY_ADVANTAGE",
+  "title": "Pip's Happy Night",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-c4568c4c82",
+      "order": 0,
+      "text": "Pip is a puppy.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-001-c4568c4c82.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-001-c4568c4c82.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-e316b98c4d",
+      "order": 1,
+      "text": "He is a boy puppy.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-002-e316b98c4d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-002-e316b98c4d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-8a1b6b74b1",
+      "order": 2,
+      "text": "Pip is happy.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-003-8a1b6b74b1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-003-8a1b6b74b1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-06f177aa3a",
+      "order": 3,
+      "text": "Now it is night.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-004-06f177aa3a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-004-06f177aa3a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-e65ece92d9",
+      "order": 4,
+      "text": "Pip is sleepy.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-005-e65ece92d9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-005-e65ece92d9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-c806c43e7a",
+      "order": 5,
+      "text": "He wants his bed.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-006-c806c43e7a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-006-c806c43e7a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-28d0ba7de9",
+      "order": 6,
+      "text": "Pip loves his bed.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-007-28d0ba7de9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-007-28d0ba7de9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-f6bd152b22",
+      "order": 7,
+      "text": "His bed is warm.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-008-f6bd152b22.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-008-f6bd152b22.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-5685166ffb",
+      "order": 8,
+      "text": "This is Pip's room.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-009-5685166ffb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-009-5685166ffb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-1d17be5263",
+      "order": 9,
+      "text": "His room is clean.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-010-1d17be5263.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-010-1d17be5263.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-e30a2f1e0f",
+      "order": 10,
+      "text": "First, a bath.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-011-e30a2f1e0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-011-e30a2f1e0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-95cde51713",
+      "order": 11,
+      "text": "Pip is in the bath.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-012-95cde51713.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-012-95cde51713.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-f01050ad0a",
+      "order": 12,
+      "text": "Water is warm.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-013-f01050ad0a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-013-f01050ad0a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-c8e6944631",
+      "order": 13,
+      "text": "Pip likes the warm water.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-014-c8e6944631.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-014-c8e6944631.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-76987ee3a9",
+      "order": 14,
+      "text": "Pip is clean.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-015-76987ee3a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-015-76987ee3a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-1fb5efce22",
+      "order": 15,
+      "text": "His body is clean.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-016-1fb5efce22.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-016-1fb5efce22.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-d54571bed9",
+      "order": 16,
+      "text": "He brushes his teeth.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-017-d54571bed9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-017-d54571bed9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-3341251987",
+      "order": 17,
+      "text": "His teeth are clean.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-018-3341251987.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-018-3341251987.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-cfda2392e1",
+      "order": 18,
+      "text": "Pip puts on pajamas.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-019-cfda2392e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-019-cfda2392e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-cdb5e8ea88",
+      "order": 19,
+      "text": "His pajamas are blue.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-020-cdb5e8ea88.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-020-cdb5e8ea88.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-04478f52be",
+      "order": 20,
+      "text": "They are soft pajamas.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-021-04478f52be.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-021-04478f52be.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-07d8eeb73e",
+      "order": 21,
+      "text": "Pip is ready.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-022-07d8eeb73e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-022-07d8eeb73e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-f93dbc62da",
+      "order": 22,
+      "text": "Mama reads a book.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-023-f93dbc62da.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-023-f93dbc62da.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-1740e6ab4d",
+      "order": 23,
+      "text": "Pip likes his book.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-024-1740e6ab4d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-024-1740e6ab4d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-d15ccc3399",
+      "order": 24,
+      "text": "The book is small.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-025-d15ccc3399.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-025-d15ccc3399.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-940c7949c3",
+      "order": 25,
+      "text": "This book is fun.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-026-940c7949c3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-026-940c7949c3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-e8426dfa89",
+      "order": 26,
+      "text": "Pip is in his bed.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-027-e8426dfa89.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-027-e8426dfa89.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-2784ef3b3b",
+      "order": 27,
+      "text": "He is under his blanket.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-028-2784ef3b3b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-028-2784ef3b3b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-001e89f33c",
+      "order": 28,
+      "text": "His blanket is warm.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-029-001e89f33c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-029-001e89f33c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-aa83a610b4",
+      "order": 29,
+      "text": "His bed is soft.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-030-aa83a610b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-030-aa83a610b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-b9f959971f",
+      "order": 30,
+      "text": "Pip closes his eyes.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-031-b9f959971f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-031-b9f959971f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-26d052b4e3",
+      "order": 31,
+      "text": "Pip is sleepy.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-032-26d052b4e3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-032-26d052b4e3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-c79e6c900d",
+      "order": 32,
+      "text": "He sleeps now.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-033-c79e6c900d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-033-c79e6c900d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-3e70be8629",
+      "order": 33,
+      "text": "Good night, Pip.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-034-3e70be8629.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-034-3e70be8629.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-cb51d12453",
+      "order": 34,
+      "text": "Pip is a happy puppy.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-035-cb51d12453.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-035-cb51d12453.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-33cee8b041",
+      "order": 35,
+      "text": "He loves sleep.",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-036-33cee8b041.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/sentences/sentence-036-33cee8b041.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-a58b05aa49",
+      "order": 0,
+      "text": "puppy",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-001-a58b05aa49.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-001-a58b05aa49.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-6dc357191b",
+      "order": 1,
+      "text": "sleepy",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-002-6dc357191b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-002-6dc357191b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-a6fc6e4450",
+      "order": 2,
+      "text": "warm",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-003-a6fc6e4450.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-003-a6fc6e4450.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-fc53c24fbf",
+      "order": 3,
+      "text": "clean",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-004-fc53c24fbf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-004-fc53c24fbf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-79844b5280",
+      "order": 4,
+      "text": "bath",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-005-79844b5280.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-005-79844b5280.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-aba4520f62",
+      "order": 5,
+      "text": "brushes",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-006-aba4520f62.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-006-aba4520f62.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-f853536c37",
+      "order": 6,
+      "text": "teeth",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-007-f853536c37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-007-f853536c37.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-278f4864cf",
+      "order": 7,
+      "text": "pajamas",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-008-278f4864cf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-008-278f4864cf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-e869929c5a",
+      "order": 8,
+      "text": "soft",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-009-e869929c5a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-009-e869929c5a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-14119984d0",
+      "order": 9,
+      "text": "ready",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-010-14119984d0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-010-14119984d0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-011-22d1194ca8",
+      "order": 10,
+      "text": "blanket",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-011-22d1194ca8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-011-22d1194ca8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-f669ac7d04",
+      "order": 11,
+      "text": "under",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-012-f669ac7d04.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-012-f669ac7d04.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-013-e7b07dcfbb",
+      "order": 12,
+      "text": "pip",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-013-e7b07dcfbb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-013-e7b07dcfbb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-5d6a8a6a67",
+      "order": 13,
+      "text": "is",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-014-5d6a8a6a67.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-014-5d6a8a6a67.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-e949998a67",
+      "order": 14,
+      "text": "a",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-015-e949998a67.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-015-e949998a67.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-a85b8cecfc",
+      "order": 15,
+      "text": "he",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-016-a85b8cecfc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-016-a85b8cecfc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-8807a5d3e8",
+      "order": 16,
+      "text": "boy",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-017-8807a5d3e8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-017-8807a5d3e8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-762a776bd1",
+      "order": 17,
+      "text": "happy",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-018-762a776bd1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-018-762a776bd1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-2ccbabaeef",
+      "order": 18,
+      "text": "now",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-019-2ccbabaeef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-019-2ccbabaeef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-c30b3fbca4",
+      "order": 19,
+      "text": "it",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-020-c30b3fbca4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-020-c30b3fbca4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-6c166fd24d",
+      "order": 20,
+      "text": "night",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-021-6c166fd24d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-021-6c166fd24d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-dc037e6874",
+      "order": 21,
+      "text": "wants",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-022-dc037e6874.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-022-dc037e6874.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-a1b0a3856c",
+      "order": 22,
+      "text": "his",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-023-a1b0a3856c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-023-a1b0a3856c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-aa98d5606f",
+      "order": 23,
+      "text": "bed",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-024-aa98d5606f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-024-aa98d5606f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-d4bcec93f7",
+      "order": 24,
+      "text": "loves",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-025-d4bcec93f7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-025-d4bcec93f7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-87e0969272",
+      "order": 25,
+      "text": "this",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-026-87e0969272.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-026-87e0969272.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-3044c9270f",
+      "order": 26,
+      "text": "pip's",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-027-3044c9270f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-027-3044c9270f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-8f7922a7be",
+      "order": 27,
+      "text": "room",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-028-8f7922a7be.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-028-8f7922a7be.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-81f34a72ac",
+      "order": 28,
+      "text": "first",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-029-81f34a72ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-029-81f34a72ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-dd28153ced",
+      "order": 29,
+      "text": "in",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-030-dd28153ced.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-030-dd28153ced.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-aefa0f25d5",
+      "order": 30,
+      "text": "the",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-031-aefa0f25d5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-031-aefa0f25d5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-70be79e758",
+      "order": 31,
+      "text": "water",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-032-70be79e758.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-032-70be79e758.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-372ebf3c94",
+      "order": 32,
+      "text": "likes",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-033-372ebf3c94.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-033-372ebf3c94.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-317c1dea32",
+      "order": 33,
+      "text": "body",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-034-317c1dea32.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-034-317c1dea32.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-e8ed84f820",
+      "order": 34,
+      "text": "are",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-035-e8ed84f820.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-035-e8ed84f820.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-869205f41e",
+      "order": 35,
+      "text": "puts",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-036-869205f41e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-036-869205f41e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-cbe706aa1d",
+      "order": 36,
+      "text": "on",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-037-cbe706aa1d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-037-cbe706aa1d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-6ebfc74835",
+      "order": 37,
+      "text": "blue",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-038-6ebfc74835.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-038-6ebfc74835.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-a35687bb50",
+      "order": 38,
+      "text": "they",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-039-a35687bb50.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-039-a35687bb50.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-bf8dc69881",
+      "order": 39,
+      "text": "mama",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-040-bf8dc69881.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-040-bf8dc69881.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-6f8133d198",
+      "order": 40,
+      "text": "reads",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-041-6f8133d198.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-041-6f8133d198.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-b6124d4e97",
+      "order": 41,
+      "text": "book",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-042-b6124d4e97.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-042-b6124d4e97.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-689504bb94",
+      "order": 42,
+      "text": "small",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-043-689504bb94.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-043-689504bb94.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-c5404b3574",
+      "order": 43,
+      "text": "fun",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-044-c5404b3574.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-044-c5404b3574.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-71c1071d2b",
+      "order": 44,
+      "text": "closes",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-045-71c1071d2b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-045-71c1071d2b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-a934ba0926",
+      "order": 45,
+      "text": "eyes",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-046-a934ba0926.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-046-a934ba0926.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-d41e97cbb4",
+      "order": 46,
+      "text": "sleeps",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-047-d41e97cbb4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-047-d41e97cbb4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-362575b236",
+      "order": 47,
+      "text": "good",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-048-362575b236.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-048-362575b236.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-6d2b54aeac",
+      "order": 48,
+      "text": "sleep",
+      "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/words/word-049-6d2b54aeac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/words/word-049-6d2b54aeac.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-e9205d6bfc",
+      "type": "mcq",
+      "order": 0,
+      "text": "Who is Pip?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-001-e9205d6bfc.mp3",
+      "questionObjectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-001-e9205d6bfc.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-001-e9205d6bfc-option1-757570fa.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-001-e9205d6bfc-option2-e7bc4c3c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-001-e9205d6bfc-option3-7e3b306b.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-001-e9205d6bfc-option4-ee52bb31.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-e9205d6bfc-option1-757570fa",
+          "text": "A cat",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-001-e9205d6bfc-option1-757570fa.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-e9205d6bfc-option2-e7bc4c3c",
+          "text": "A boy",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-001-e9205d6bfc-option2-e7bc4c3c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-e9205d6bfc-option3-7e3b306b",
+          "text": "A puppy",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-001-e9205d6bfc-option3-7e3b306b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-e9205d6bfc-option4-ee52bb31",
+          "text": "A girl",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-001-e9205d6bfc-option4-ee52bb31.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-10b32bca85",
+      "type": "mcq",
+      "order": 1,
+      "text": "What time is it?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-002-10b32bca85.mp3",
+      "questionObjectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-002-10b32bca85.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-002-10b32bca85-option1-b0c8cb0a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-002-10b32bca85-option2-fed18097.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-002-10b32bca85-option3-7e3a6253.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-002-10b32bca85-option4-f2fac735.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-10b32bca85-option1-b0c8cb0a",
+          "text": "Morning",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-002-10b32bca85-option1-b0c8cb0a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-10b32bca85-option2-fed18097",
+          "text": "Night",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-002-10b32bca85-option2-fed18097.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-10b32bca85-option3-7e3a6253",
+          "text": "Afternoon",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-002-10b32bca85-option3-7e3a6253.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-10b32bca85-option4-f2fac735",
+          "text": "Day",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-002-10b32bca85-option4-f2fac735.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-26e8e683f9",
+      "type": "mcq",
+      "order": 2,
+      "text": "What color are Pip's pajamas?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-003-26e8e683f9.mp3",
+      "questionObjectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-003-26e8e683f9.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-003-26e8e683f9-option1-4ff7917f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-003-26e8e683f9-option2-146ca903.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-003-26e8e683f9-option3-22c81ebf.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-003-26e8e683f9-option4-9b08f82b.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-26e8e683f9-option1-4ff7917f",
+          "text": "Red",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-003-26e8e683f9-option1-4ff7917f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-26e8e683f9-option2-146ca903",
+          "text": "Green",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-003-26e8e683f9-option2-146ca903.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-26e8e683f9-option3-22c81ebf",
+          "text": "Yellow",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-003-26e8e683f9-option3-22c81ebf.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-26e8e683f9-option4-9b08f82b",
+          "text": "Blue",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-003-26e8e683f9-option4-9b08f82b.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-544d649fb5",
+      "type": "mcq",
+      "order": 3,
+      "text": "What is Pip under in bed?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-004-544d649fb5.mp3",
+      "questionObjectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-004-544d649fb5.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-004-544d649fb5-option1-0ec7be90.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-004-544d649fb5-option2-a5a3416e.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-004-544d649fb5-option3-7de94c5c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-004-544d649fb5-option4-fe975e6e.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-544d649fb5-option1-0ec7be90",
+          "text": "A table",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-004-544d649fb5-option1-0ec7be90.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-544d649fb5-option2-a5a3416e",
+          "text": "A chair",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-004-544d649fb5-option2-a5a3416e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-544d649fb5-option3-7de94c5c",
+          "text": "His blanket",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-004-544d649fb5-option3-7de94c5c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-544d649fb5-option4-fe975e6e",
+          "text": "A toy",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-004-544d649fb5-option4-fe975e6e.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-12148cbda0",
+      "type": "mcq",
+      "order": 4,
+      "text": "How does Pip feel at night?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-005-12148cbda0.mp3",
+      "questionObjectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-005-12148cbda0.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-005-12148cbda0-option1-1e34cad3.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-005-12148cbda0-option2-ce7baeb1.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-005-12148cbda0-option3-746f0d9a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-005-12148cbda0-option4-e2240cd4.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-12148cbda0-option1-1e34cad3",
+          "text": "Angry",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-005-12148cbda0-option1-1e34cad3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-12148cbda0-option2-ce7baeb1",
+          "text": "Sad",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-005-12148cbda0-option2-ce7baeb1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-12148cbda0-option3-746f0d9a",
+          "text": "Sleepy",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-005-12148cbda0-option3-746f0d9a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-12148cbda0-option4-e2240cd4",
+          "text": "Hungry",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-005-12148cbda0-option4-e2240cd4.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-c4904e7cb6",
+      "type": "mcq",
+      "order": 5,
+      "text": "What does Pip do first?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-006-c4904e7cb6.mp3",
+      "questionObjectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-006-c4904e7cb6.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-006-c4904e7cb6-option1-ed75b89f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-006-c4904e7cb6-option2-666c90f8.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-006-c4904e7cb6-option3-f35d1d33.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-006-c4904e7cb6-option4-5570d441.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-c4904e7cb6-option1-ed75b89f",
+          "text": "Reads a book",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-006-c4904e7cb6-option1-ed75b89f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-c4904e7cb6-option2-666c90f8",
+          "text": "Has a bath",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-006-c4904e7cb6-option2-666c90f8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-c4904e7cb6-option3-f35d1d33",
+          "text": "Brushes teeth",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-006-c4904e7cb6-option3-f35d1d33.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-c4904e7cb6-option4-5570d441",
+          "text": "Plays",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-006-c4904e7cb6-option4-5570d441.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-14704a10d9",
+      "type": "mcq",
+      "order": 6,
+      "text": "What is warm?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-007-14704a10d9.mp3",
+      "questionObjectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-007-14704a10d9.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-007-14704a10d9-option1-558beba4.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-007-14704a10d9-option2-6f3774a6.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-007-14704a10d9-option3-9798b198.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-007-14704a10d9-option4-57918eb7.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-14704a10d9-option1-558beba4",
+          "text": "The bed",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-007-14704a10d9-option1-558beba4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-14704a10d9-option2-6f3774a6",
+          "text": "The water",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-007-14704a10d9-option2-6f3774a6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-14704a10d9-option3-9798b198",
+          "text": "The blanket",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-007-14704a10d9-option3-9798b198.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-14704a10d9-option4-57918eb7",
+          "text": "All of these",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-007-14704a10d9-option4-57918eb7.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-866f561e67",
+      "type": "mcq",
+      "order": 7,
+      "text": "Who reads a book to Pip?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-008-866f561e67.mp3",
+      "questionObjectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-008-866f561e67.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-008-866f561e67-option1-d3fd484b.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-008-866f561e67-option2-de3b5bb1.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-008-866f561e67-option3-486067fa.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-008-866f561e67-option4-c9f9a28c.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-866f561e67-option1-d3fd484b",
+          "text": "Papa",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-008-866f561e67-option1-d3fd484b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-866f561e67-option2-de3b5bb1",
+          "text": "Mama",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-008-866f561e67-option2-de3b5bb1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-866f561e67-option3-486067fa",
+          "text": "A friend",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-008-866f561e67-option3-486067fa.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-866f561e67-option4-c9f9a28c",
+          "text": "Pip",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-008-866f561e67-option4-c9f9a28c.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-1f0014fdaa",
+      "type": "mcq",
+      "order": 8,
+      "text": "What is clean?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-009-1f0014fdaa.mp3",
+      "questionObjectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-009-1f0014fdaa.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-009-1f0014fdaa-option1-195aed28.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-009-1f0014fdaa-option2-1f61afc3.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-009-1f0014fdaa-option3-10f41b0f.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-009-1f0014fdaa-option4-15f5fa29.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-1f0014fdaa-option1-195aed28",
+          "text": "Pip's body",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-009-1f0014fdaa-option1-195aed28.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-1f0014fdaa-option2-1f61afc3",
+          "text": "Pip's teeth",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-009-1f0014fdaa-option2-1f61afc3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-1f0014fdaa-option3-10f41b0f",
+          "text": "Pip's room",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-009-1f0014fdaa-option3-10f41b0f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-1f0014fdaa-option4-15f5fa29",
+          "text": "All of these",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-009-1f0014fdaa-option4-15f5fa29.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-97f4f441d0",
+      "type": "mcq",
+      "order": 9,
+      "text": "Is Pip happy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-010-97f4f441d0.mp3",
+      "questionObjectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-010-97f4f441d0.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-010-97f4f441d0-option1-3fd4bc14.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-010-97f4f441d0-option2-1b7d74c0.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-010-97f4f441d0-option3-e15311a0.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-010-97f4f441d0-option4-13884893.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-97f4f441d0-option1-3fd4bc14",
+          "text": "Yes, he is.",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-010-97f4f441d0-option1-3fd4bc14.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-97f4f441d0-option2-1b7d74c0",
+          "text": "No, he is not.",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-010-97f4f441d0-option2-1b7d74c0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-97f4f441d0-option3-e15311a0",
+          "text": "Maybe.",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-010-97f4f441d0-option3-e15311a0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-97f4f441d0-option4-13884893",
+          "text": "I do not know.",
+          "objectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/mcq-010-97f4f441d0-option4-13884893.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-80114b117e",
+      "type": "saq",
+      "order": 10,
+      "text": "What is Pip?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/saq-011-80114b117e.mp3",
+      "questionObjectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/saq-011-80114b117e.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-81015b9ae9",
+      "type": "saq",
+      "order": 11,
+      "text": "What color are Pip's pajamas?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/saq-012-81015b9ae9.mp3",
+      "questionObjectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/saq-012-81015b9ae9.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-6103df8ea5",
+      "type": "saq",
+      "order": 12,
+      "text": "What does Pip do in the bath?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/saq-013-6103df8ea5.mp3",
+      "questionObjectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/saq-013-6103df8ea5.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-0395e6b57c",
+      "type": "saq",
+      "order": 13,
+      "text": "Who reads a book to Pip?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/saq-014-0395e6b57c.mp3",
+      "questionObjectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/saq-014-0395e6b57c.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-69afa2dc8f",
+      "type": "saq",
+      "order": 14,
+      "text": "How does Pip feel when he sleeps?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqwbh0b0208t79btb3784p5/questions/saq-015-69afa2dc8f.mp3",
+      "questionObjectPath": "articles/cmgqwbh0b0208t79btb3784p5/questions/saq-015-69afa2dc8f.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:06:33.609Z"
+}

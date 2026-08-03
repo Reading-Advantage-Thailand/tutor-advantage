@@ -1,0 +1,1543 @@
+{
+  "version": 1,
+  "articleId": "uT67FwqUlttv74p2snCr",
+  "source": "READING_ADVANTAGE",
+  "title": "Tommy's Screen Time",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-93baacf1c4",
+      "order": 0,
+      "text": "Tommy is a happy boy.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-001-93baacf1c4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-001-93baacf1c4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-6ab05a8e84",
+      "order": 1,
+      "text": "He is six years old.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-002-6ab05a8e84.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-002-6ab05a8e84.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-624e1ac4ec",
+      "order": 2,
+      "text": "He loves to play.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-003-624e1ac4ec.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-003-624e1ac4ec.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-15a7476f95",
+      "order": 3,
+      "text": "He loves to run.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-004-15a7476f95.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-004-15a7476f95.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-11c2f84e13",
+      "order": 4,
+      "text": "He loves to watch cartoons.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-005-11c2f84e13.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-005-11c2f84e13.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-39e4923ebf",
+      "order": 5,
+      "text": "Tommy watches cartoons every day.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-006-39e4923ebf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-006-39e4923ebf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-9e8e945516",
+      "order": 6,
+      "text": "His mom says, \"Tommy, time to play outside!\"",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-007-9e8e945516.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-007-9e8e945516.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-23cf2aa8a4",
+      "order": 7,
+      "text": "But Tommy says, \"No, I want to watch!\"",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-008-23cf2aa8a4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-008-23cf2aa8a4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-38a8dda2cc",
+      "order": 8,
+      "text": "Tommy's mom is worried.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-009-38a8dda2cc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-009-38a8dda2cc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-fb614906c4",
+      "order": 9,
+      "text": "She thinks too much screen time is not good for Tommy.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-010-fb614906c4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-010-fb614906c4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-30484ff62b",
+      "order": 10,
+      "text": "One day, Tommy's mom has an idea.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-011-30484ff62b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-011-30484ff62b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-a0416081c4",
+      "order": 11,
+      "text": "She says, \"Let’s go to the park!\"",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-012-a0416081c4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-012-a0416081c4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-7c0224db7a",
+      "order": 12,
+      "text": "Tommy says, \"Okay!\"",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-013-7c0224db7a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-013-7c0224db7a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-cbadc0ba91",
+      "order": 13,
+      "text": "They go to the park.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-014-cbadc0ba91.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-014-cbadc0ba91.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-996f3bd45b",
+      "order": 14,
+      "text": "The sun is bright.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-015-996f3bd45b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-015-996f3bd45b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-76e6f4ace3",
+      "order": 15,
+      "text": "The grass is green.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-016-76e6f4ace3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-016-76e6f4ace3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-50b13d5956",
+      "order": 16,
+      "text": "Tommy sees other kids.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-017-50b13d5956.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-017-50b13d5956.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-83b607694c",
+      "order": 17,
+      "text": "They play with a ball.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-018-83b607694c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-018-83b607694c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-fbb7374c69",
+      "order": 18,
+      "text": "They run and laugh.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-019-fbb7374c69.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-019-fbb7374c69.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-94324d3fbc",
+      "order": 19,
+      "text": "Tommy smiles.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-020-94324d3fbc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-020-94324d3fbc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-435e3972a5",
+      "order": 20,
+      "text": "Tommy plays with the kids.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-021-435e3972a5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-021-435e3972a5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-466dc21109",
+      "order": 21,
+      "text": "They kick the ball.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-022-466dc21109.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-022-466dc21109.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-262b54d3bd",
+      "order": 22,
+      "text": "They run fast.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-023-262b54d3bd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-023-262b54d3bd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-1a3b4d4289",
+      "order": 23,
+      "text": "Tommy feels happy.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-024-1a3b4d4289.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-024-1a3b4d4289.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-aba3d7d8a9",
+      "order": 24,
+      "text": "He forgets about the screen.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-025-aba3d7d8a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-025-aba3d7d8a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-2dfee85bfa",
+      "order": 25,
+      "text": "He plays for a long time.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-026-2dfee85bfa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-026-2dfee85bfa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-52061dcda7",
+      "order": 26,
+      "text": "After playing, Tommy is tired.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-027-52061dcda7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-027-52061dcda7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-34887cda02",
+      "order": 27,
+      "text": "He sits with his mom.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-028-34887cda02.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-028-34887cda02.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-7b12518299",
+      "order": 28,
+      "text": "\"I had fun!\" he says.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-029-7b12518299.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-029-7b12518299.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-285276a5d7",
+      "order": 29,
+      "text": "His mom smiles.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-030-285276a5d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-030-285276a5d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-e153fe1821",
+      "order": 30,
+      "text": "\"Yes, you did!\" she replies.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-031-e153fe1821.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-031-e153fe1821.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-5ee4e076b3",
+      "order": 31,
+      "text": "Tommy thinks about the park.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-032-5ee4e076b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-032-5ee4e076b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-ce950136a0",
+      "order": 32,
+      "text": "He thinks about the fun.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-033-ce950136a0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-033-ce950136a0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-b7f05d6df8",
+      "order": 33,
+      "text": "He says, \"Can we go again?\"",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-034-b7f05d6df8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-034-b7f05d6df8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-9e3df289d5",
+      "order": 34,
+      "text": "His mom says, \"Yes! But no more cartoons today.\"",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-035-9e3df289d5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-035-9e3df289d5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-ab97c6f033",
+      "order": 35,
+      "text": "Tommy nods.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-036-ab97c6f033.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-036-ab97c6f033.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-290219eb74",
+      "order": 36,
+      "text": "He likes the park.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-037-290219eb74.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-037-290219eb74.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-c9f61e8685",
+      "order": 37,
+      "text": "He likes to play with friends.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-038-c9f61e8685.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-038-c9f61e8685.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-63ff03ce11",
+      "order": 38,
+      "text": "Now, Tommy plays more.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-039-63ff03ce11.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-039-63ff03ce11.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-ff51d4b2c9",
+      "order": 39,
+      "text": "He watches less.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-040-ff51d4b2c9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-040-ff51d4b2c9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-4973281b64",
+      "order": 40,
+      "text": "He is happy.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-041-4973281b64.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-041-4973281b64.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-ca8fc85d0a",
+      "order": 41,
+      "text": "His mom is happy too.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-042-ca8fc85d0a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-042-ca8fc85d0a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-a8b6c0844c",
+      "order": 42,
+      "text": "They both enjoy time together.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-043-a8b6c0844c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-043-a8b6c0844c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-044-46dce13ecf",
+      "order": 43,
+      "text": "They both enjoy the park.",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/sentences/sentence-044-46dce13ecf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/sentences/sentence-044-46dce13ecf.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-6a5a2bf5b7",
+      "order": 0,
+      "text": "screen time",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-001-6a5a2bf5b7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-001-6a5a2bf5b7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-c3d8642de5",
+      "order": 1,
+      "text": "worried",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-002-c3d8642de5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-002-c3d8642de5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-cfc587dac1",
+      "order": 2,
+      "text": "idea",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-003-cfc587dac1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-003-cfc587dac1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-180235be18",
+      "order": 3,
+      "text": "park",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-004-180235be18.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-004-180235be18.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-8b66f11b09",
+      "order": 4,
+      "text": "bright",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-005-8b66f11b09.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-005-8b66f11b09.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-9484d86ce4",
+      "order": 5,
+      "text": "grass",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-006-9484d86ce4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-006-9484d86ce4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-2c721cbc86",
+      "order": 6,
+      "text": "happy",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-007-2c721cbc86.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-007-2c721cbc86.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-3933d2cd5d",
+      "order": 7,
+      "text": "friends",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-008-3933d2cd5d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-008-3933d2cd5d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-c9cf5b45a7",
+      "order": 8,
+      "text": "enjoy",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-009-c9cf5b45a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-009-c9cf5b45a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-99ab7874e9",
+      "order": 9,
+      "text": "tired",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-010-99ab7874e9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-010-99ab7874e9.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-6e821d0e36",
+      "order": 10,
+      "text": "tommy",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-011-6e821d0e36.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-011-6e821d0e36.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-bc1f05f2e1",
+      "order": 11,
+      "text": "is",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-012-bc1f05f2e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-012-bc1f05f2e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-fe2767449c",
+      "order": 12,
+      "text": "a",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-013-fe2767449c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-013-fe2767449c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-75d14a2716",
+      "order": 13,
+      "text": "boy",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-014-75d14a2716.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-014-75d14a2716.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-fd7b6adf0f",
+      "order": 14,
+      "text": "he",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-015-fd7b6adf0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-015-fd7b6adf0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-988202acb3",
+      "order": 15,
+      "text": "six",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-016-988202acb3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-016-988202acb3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-b621b8804a",
+      "order": 16,
+      "text": "years",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-017-b621b8804a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-017-b621b8804a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-92b3dfa00e",
+      "order": 17,
+      "text": "old",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-018-92b3dfa00e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-018-92b3dfa00e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-2f86f6eec5",
+      "order": 18,
+      "text": "loves",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-019-2f86f6eec5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-019-2f86f6eec5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-7f877659e0",
+      "order": 19,
+      "text": "to",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-020-7f877659e0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-020-7f877659e0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-8c40bb8ece",
+      "order": 20,
+      "text": "play",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-021-8c40bb8ece.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-021-8c40bb8ece.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-0277c35ac6",
+      "order": 21,
+      "text": "run",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-022-0277c35ac6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-022-0277c35ac6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-019d4f1b1a",
+      "order": 22,
+      "text": "watch",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-023-019d4f1b1a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-023-019d4f1b1a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-fd34cadd7e",
+      "order": 23,
+      "text": "cartoons",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-024-fd34cadd7e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-024-fd34cadd7e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-07e119bb62",
+      "order": 24,
+      "text": "watches",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-025-07e119bb62.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-025-07e119bb62.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-cca4518eb3",
+      "order": 25,
+      "text": "every",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-026-cca4518eb3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-026-cca4518eb3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-63a560ad8d",
+      "order": 26,
+      "text": "day",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-027-63a560ad8d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-027-63a560ad8d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-199b63d4b1",
+      "order": 27,
+      "text": "his",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-028-199b63d4b1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-028-199b63d4b1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-dfba1aa5d6",
+      "order": 28,
+      "text": "mom",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-029-dfba1aa5d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-029-dfba1aa5d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-c422d8bb02",
+      "order": 29,
+      "text": "says",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-030-c422d8bb02.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-030-c422d8bb02.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-208f1e4501",
+      "order": 30,
+      "text": "time",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-031-208f1e4501.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-031-208f1e4501.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-9290fc3c42",
+      "order": 31,
+      "text": "outside",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-032-9290fc3c42.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-032-9290fc3c42.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-6df7232549",
+      "order": 32,
+      "text": "but",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-033-6df7232549.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-033-6df7232549.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-e17eafdfe9",
+      "order": 33,
+      "text": "no",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-034-e17eafdfe9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-034-e17eafdfe9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-bae22f7dba",
+      "order": 34,
+      "text": "i",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-035-bae22f7dba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-035-bae22f7dba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-cdf6ce88ce",
+      "order": 35,
+      "text": "want",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-036-cdf6ce88ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-036-cdf6ce88ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-f153639bbc",
+      "order": 36,
+      "text": "tommy's",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-037-f153639bbc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-037-f153639bbc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-5c0acabfdd",
+      "order": 37,
+      "text": "she",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-038-5c0acabfdd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-038-5c0acabfdd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-95f4449683",
+      "order": 38,
+      "text": "thinks",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-039-95f4449683.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-039-95f4449683.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-5359e83ea9",
+      "order": 39,
+      "text": "too",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-040-5359e83ea9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-040-5359e83ea9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-7e119cf462",
+      "order": 40,
+      "text": "much",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-041-7e119cf462.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-041-7e119cf462.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-1b5361e8fc",
+      "order": 41,
+      "text": "screen",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-042-1b5361e8fc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-042-1b5361e8fc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-0c88495c4c",
+      "order": 42,
+      "text": "not",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-043-0c88495c4c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-043-0c88495c4c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-38583b0a96",
+      "order": 43,
+      "text": "good",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-044-38583b0a96.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-044-38583b0a96.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-0fb035225c",
+      "order": 44,
+      "text": "for",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-045-0fb035225c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-045-0fb035225c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-368eac980d",
+      "order": 45,
+      "text": "one",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-046-368eac980d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-046-368eac980d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-cea61e4074",
+      "order": 46,
+      "text": "has",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-047-cea61e4074.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-047-cea61e4074.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-76bf8f353c",
+      "order": 47,
+      "text": "an",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-048-76bf8f353c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-048-76bf8f353c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-02b935ded8",
+      "order": 48,
+      "text": "let's",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-049-02b935ded8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-049-02b935ded8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-8ab0b597df",
+      "order": 49,
+      "text": "go",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-050-8ab0b597df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-050-8ab0b597df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-9c3706de16",
+      "order": 50,
+      "text": "the",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-051-9c3706de16.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-051-9c3706de16.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-72f381646c",
+      "order": 51,
+      "text": "okay",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-052-72f381646c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-052-72f381646c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-66b2fd5e39",
+      "order": 52,
+      "text": "they",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-053-66b2fd5e39.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-053-66b2fd5e39.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-b60740b095",
+      "order": 53,
+      "text": "sun",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-054-b60740b095.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-054-b60740b095.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-79a5999625",
+      "order": 54,
+      "text": "green",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-055-79a5999625.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-055-79a5999625.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-01739e8afa",
+      "order": 55,
+      "text": "sees",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-056-01739e8afa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-056-01739e8afa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-bb61853877",
+      "order": 56,
+      "text": "other",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-057-bb61853877.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-057-bb61853877.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-dc8cd2883b",
+      "order": 57,
+      "text": "kids",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-058-dc8cd2883b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-058-dc8cd2883b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-56e3dfa7fd",
+      "order": 58,
+      "text": "with",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-059-56e3dfa7fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-059-56e3dfa7fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-de3592cd62",
+      "order": 59,
+      "text": "ball",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-060-de3592cd62.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-060-de3592cd62.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-b1dd936454",
+      "order": 60,
+      "text": "and",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-061-b1dd936454.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-061-b1dd936454.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-174c96bcb3",
+      "order": 61,
+      "text": "laugh",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-062-174c96bcb3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-062-174c96bcb3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-71710f8e9b",
+      "order": 62,
+      "text": "smiles",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-063-71710f8e9b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-063-71710f8e9b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-1bcb46a6f5",
+      "order": 63,
+      "text": "plays",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-064-1bcb46a6f5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-064-1bcb46a6f5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-1668386a85",
+      "order": 64,
+      "text": "kick",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-065-1668386a85.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-065-1668386a85.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-0c033ff132",
+      "order": 65,
+      "text": "fast",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-066-0c033ff132.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-066-0c033ff132.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-8aa4569e54",
+      "order": 66,
+      "text": "feels",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-067-8aa4569e54.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-067-8aa4569e54.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-8d7896d1c4",
+      "order": 67,
+      "text": "forgets",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-068-8d7896d1c4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-068-8d7896d1c4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-ab6157467e",
+      "order": 68,
+      "text": "about",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-069-ab6157467e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-069-ab6157467e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-4c4b25b6f6",
+      "order": 69,
+      "text": "long",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-070-4c4b25b6f6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-070-4c4b25b6f6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-5a580dd617",
+      "order": 70,
+      "text": "after",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-071-5a580dd617.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-071-5a580dd617.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-cec516348b",
+      "order": 71,
+      "text": "playing",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-072-cec516348b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-072-cec516348b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-225d06895e",
+      "order": 72,
+      "text": "sits",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-073-225d06895e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-073-225d06895e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-1d32b8f3b8",
+      "order": 73,
+      "text": "had",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-074-1d32b8f3b8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-074-1d32b8f3b8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-e835b705e9",
+      "order": 74,
+      "text": "fun",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-075-e835b705e9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-075-e835b705e9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-d9c734af2d",
+      "order": 75,
+      "text": "yes",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-076-d9c734af2d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-076-d9c734af2d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-959700d253",
+      "order": 76,
+      "text": "you",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-077-959700d253.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-077-959700d253.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-dde46c17c6",
+      "order": 77,
+      "text": "did",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-078-dde46c17c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-078-dde46c17c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-40006e490e",
+      "order": 78,
+      "text": "replies",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-079-40006e490e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-079-40006e490e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-1de57fbb75",
+      "order": 79,
+      "text": "can",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-080-1de57fbb75.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-080-1de57fbb75.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-b0695c7e7f",
+      "order": 80,
+      "text": "we",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-081-b0695c7e7f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-081-b0695c7e7f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-0caa2499ed",
+      "order": 81,
+      "text": "again",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-082-0caa2499ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-082-0caa2499ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-94271c581f",
+      "order": 82,
+      "text": "more",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-083-94271c581f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-083-94271c581f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-ee0387ca3a",
+      "order": 83,
+      "text": "today",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-084-ee0387ca3a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-084-ee0387ca3a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-adb2573b95",
+      "order": 84,
+      "text": "nods",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-085-adb2573b95.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-085-adb2573b95.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-086-5bef0d4494",
+      "order": 85,
+      "text": "likes",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-086-5bef0d4494.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-086-5bef0d4494.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-087-83246d9339",
+      "order": 86,
+      "text": "now",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-087-83246d9339.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-087-83246d9339.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-088-369893e98e",
+      "order": 87,
+      "text": "less",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-088-369893e98e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-088-369893e98e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-089-cb473840ef",
+      "order": 88,
+      "text": "both",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-089-cb473840ef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-089-cb473840ef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-090-3b357414e7",
+      "order": 89,
+      "text": "together",
+      "objectPath": "articles/uT67FwqUlttv74p2snCr/words/word-090-3b357414e7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/words/word-090-3b357414e7.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-3f511dfd1b",
+      "type": "mcq",
+      "order": 0,
+      "text": "What do the kids play with?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-001-3f511dfd1b.mp3",
+      "questionObjectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-001-3f511dfd1b.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-001-3f511dfd1b-option1-3bdc9bcb.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-001-3f511dfd1b-option2-e5e9557c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-001-3f511dfd1b-option3-5b2cfa97.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-001-3f511dfd1b-option4-cb2d753e.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-3f511dfd1b-option1-3bdc9bcb",
+          "text": "A ball",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-001-3f511dfd1b-option1-3bdc9bcb.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-3f511dfd1b-option2-e5e9557c",
+          "text": "A toy",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-001-3f511dfd1b-option2-e5e9557c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-3f511dfd1b-option3-5b2cfa97",
+          "text": "A book",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-001-3f511dfd1b-option3-5b2cfa97.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-3f511dfd1b-option4-cb2d753e",
+          "text": "A bike",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-001-3f511dfd1b-option4-cb2d753e.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-f515531c27",
+      "type": "mcq",
+      "order": 1,
+      "text": "What does Tommy want to do again?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-002-f515531c27.mp3",
+      "questionObjectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-002-f515531c27.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-002-f515531c27-option1-8a72129e.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-002-f515531c27-option2-fed7f358.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-002-f515531c27-option3-b6111415.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-002-f515531c27-option4-ae3530f5.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-f515531c27-option1-8a72129e",
+          "text": "Go to the park",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-002-f515531c27-option1-8a72129e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-f515531c27-option2-fed7f358",
+          "text": "Watch cartoons",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-002-f515531c27-option2-fed7f358.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-f515531c27-option3-b6111415",
+          "text": "Play video games",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-002-f515531c27-option3-b6111415.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-f515531c27-option4-ae3530f5",
+          "text": "Go to school",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-002-f515531c27-option4-ae3530f5.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-8539496498",
+      "type": "mcq",
+      "order": 2,
+      "text": "How old is Tommy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-003-8539496498.mp3",
+      "questionObjectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-003-8539496498.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-003-8539496498-option1-f28d573b.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-003-8539496498-option2-6a20ac35.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-003-8539496498-option3-acec40f7.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-003-8539496498-option4-5ec5649a.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-8539496498-option1-f28d573b",
+          "text": "Six years old",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-003-8539496498-option1-f28d573b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-8539496498-option2-6a20ac35",
+          "text": "Five years old",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-003-8539496498-option2-6a20ac35.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-8539496498-option3-acec40f7",
+          "text": "Seven years old",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-003-8539496498-option3-acec40f7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-8539496498-option4-5ec5649a",
+          "text": "Eight years old",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-003-8539496498-option4-5ec5649a.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-b0136b882a",
+      "type": "mcq",
+      "order": 3,
+      "text": "What color is the grass in the park?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-004-b0136b882a.mp3",
+      "questionObjectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-004-b0136b882a.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-004-b0136b882a-option1-2d26e132.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-004-b0136b882a-option2-cbd822df.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-004-b0136b882a-option3-2e138cc6.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-004-b0136b882a-option4-0f7ed40d.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-b0136b882a-option1-2d26e132",
+          "text": "Green",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-004-b0136b882a-option1-2d26e132.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-b0136b882a-option2-cbd822df",
+          "text": "Brown",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-004-b0136b882a-option2-cbd822df.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-b0136b882a-option3-2e138cc6",
+          "text": "Yellow",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-004-b0136b882a-option3-2e138cc6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-b0136b882a-option4-0f7ed40d",
+          "text": "Blue",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-004-b0136b882a-option4-0f7ed40d.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-0188680f36",
+      "type": "mcq",
+      "order": 4,
+      "text": "What does Tommy watch every day?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-005-0188680f36.mp3",
+      "questionObjectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-005-0188680f36.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-005-0188680f36-option1-c84922fd.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-005-0188680f36-option2-a9091ec4.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-005-0188680f36-option3-7b201f79.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-005-0188680f36-option4-55a0c71f.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-0188680f36-option1-c84922fd",
+          "text": "Cartoons",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-005-0188680f36-option1-c84922fd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-0188680f36-option2-a9091ec4",
+          "text": "Movies",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-005-0188680f36-option2-a9091ec4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-0188680f36-option3-7b201f79",
+          "text": "News",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-005-0188680f36-option3-7b201f79.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-0188680f36-option4-55a0c71f",
+          "text": "Sports",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-005-0188680f36-option4-55a0c71f.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-9196df9dcc",
+      "type": "mcq",
+      "order": 5,
+      "text": "What does Tommy's mom suggest?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-006-9196df9dcc.mp3",
+      "questionObjectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-006-9196df9dcc.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-006-9196df9dcc-option1-10907db2.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-006-9196df9dcc-option2-ab67c3b0.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-006-9196df9dcc-option3-2de51ac4.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-006-9196df9dcc-option4-579a796e.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-9196df9dcc-option1-10907db2",
+          "text": "Go to the park",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-006-9196df9dcc-option1-10907db2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-9196df9dcc-option2-ab67c3b0",
+          "text": "Go to the store",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-006-9196df9dcc-option2-ab67c3b0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-9196df9dcc-option3-2de51ac4",
+          "text": "Go to the zoo",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-006-9196df9dcc-option3-2de51ac4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-9196df9dcc-option4-579a796e",
+          "text": "Go to the beach",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-006-9196df9dcc-option4-579a796e.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-eec98c98c0",
+      "type": "mcq",
+      "order": 6,
+      "text": "What is Tommy's mom worried about?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-007-eec98c98c0.mp3",
+      "questionObjectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-007-eec98c98c0.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-007-eec98c98c0-option1-e1dab6a5.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-007-eec98c98c0-option2-f1fa5f4c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-007-eec98c98c0-option3-9c22daa8.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-007-eec98c98c0-option4-d0a7b970.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-eec98c98c0-option1-e1dab6a5",
+          "text": "Too much screen time",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-007-eec98c98c0-option1-e1dab6a5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-eec98c98c0-option2-f1fa5f4c",
+          "text": "Too much playing",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-007-eec98c98c0-option2-f1fa5f4c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-eec98c98c0-option3-9c22daa8",
+          "text": "Too much eating",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-007-eec98c98c0-option3-9c22daa8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-eec98c98c0-option4-d0a7b970",
+          "text": "Too much sleeping",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-007-eec98c98c0-option4-d0a7b970.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-13b02752d5",
+      "type": "mcq",
+      "order": 7,
+      "text": "How does Tommy feel after playing?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-008-13b02752d5.mp3",
+      "questionObjectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-008-13b02752d5.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-008-13b02752d5-option1-726a677e.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-008-13b02752d5-option2-fbda67e8.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-008-13b02752d5-option3-c918541c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-008-13b02752d5-option4-e2c72f27.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-13b02752d5-option1-726a677e",
+          "text": "Happy",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-008-13b02752d5-option1-726a677e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-13b02752d5-option2-fbda67e8",
+          "text": "Sad",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-008-13b02752d5-option2-fbda67e8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-13b02752d5-option3-c918541c",
+          "text": "Angry",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-008-13b02752d5-option3-c918541c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-13b02752d5-option4-e2c72f27",
+          "text": "Bored",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-008-13b02752d5-option4-e2c72f27.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-754e1e9caa",
+      "type": "mcq",
+      "order": 8,
+      "text": "What does Tommy love to do?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-009-754e1e9caa.mp3",
+      "questionObjectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-009-754e1e9caa.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-009-754e1e9caa-option1-ec4552c8.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-009-754e1e9caa-option2-43429cfe.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-009-754e1e9caa-option3-c25a6bab.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-009-754e1e9caa-option4-38492649.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-754e1e9caa-option1-ec4552c8",
+          "text": "Play",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-009-754e1e9caa-option1-ec4552c8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-754e1e9caa-option2-43429cfe",
+          "text": "Sleep",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-009-754e1e9caa-option2-43429cfe.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-754e1e9caa-option3-c25a6bab",
+          "text": "Read",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-009-754e1e9caa-option3-c25a6bab.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-754e1e9caa-option4-38492649",
+          "text": "Cook",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-009-754e1e9caa-option4-38492649.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-083c34ac98",
+      "type": "mcq",
+      "order": 9,
+      "text": "Where does Tommy's mom want him to play?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-010-083c34ac98.mp3",
+      "questionObjectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-010-083c34ac98.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-010-083c34ac98-option1-0665cb31.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-010-083c34ac98-option2-18bcecbe.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-010-083c34ac98-option3-c56b6e48.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/mcq-010-083c34ac98-option4-e5529411.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-083c34ac98-option1-0665cb31",
+          "text": "Outside",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-010-083c34ac98-option1-0665cb31.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-083c34ac98-option2-18bcecbe",
+          "text": "Inside",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-010-083c34ac98-option2-18bcecbe.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-083c34ac98-option3-c56b6e48",
+          "text": "In the car",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-010-083c34ac98-option3-c56b6e48.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-083c34ac98-option4-e5529411",
+          "text": "At school",
+          "objectPath": "articles/uT67FwqUlttv74p2snCr/questions/mcq-010-083c34ac98-option4-e5529411.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-70a4f04614",
+      "type": "saq",
+      "order": 10,
+      "text": "How does Tommy feel after playing?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/saq-011-70a4f04614.mp3",
+      "questionObjectPath": "articles/uT67FwqUlttv74p2snCr/questions/saq-011-70a4f04614.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-4546770716",
+      "type": "saq",
+      "order": 11,
+      "text": "Where do Tommy and his mom go?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/saq-012-4546770716.mp3",
+      "questionObjectPath": "articles/uT67FwqUlttv74p2snCr/questions/saq-012-4546770716.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-e2eb211c68",
+      "type": "saq",
+      "order": 12,
+      "text": "How old is Tommy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/saq-013-e2eb211c68.mp3",
+      "questionObjectPath": "articles/uT67FwqUlttv74p2snCr/questions/saq-013-e2eb211c68.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-747b63b2a4",
+      "type": "saq",
+      "order": 13,
+      "text": "What does Tommy love to watch?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/saq-014-747b63b2a4.mp3",
+      "questionObjectPath": "articles/uT67FwqUlttv74p2snCr/questions/saq-014-747b63b2a4.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-9655afc9c3",
+      "type": "saq",
+      "order": 14,
+      "text": "What color is the grass in the park?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/uT67FwqUlttv74p2snCr/questions/saq-015-9655afc9c3.mp3",
+      "questionObjectPath": "articles/uT67FwqUlttv74p2snCr/questions/saq-015-9655afc9c3.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:09:27.456Z"
+}

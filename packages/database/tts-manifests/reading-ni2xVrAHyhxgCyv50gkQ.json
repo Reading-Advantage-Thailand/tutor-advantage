@@ -1,0 +1,1231 @@
+{
+  "version": 1,
+  "articleId": "ni2xVrAHyhxgCyv50gkQ",
+  "source": "READING_ADVANTAGE",
+  "title": "The Journey of Christopher Columbus",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-b767b7ae37",
+      "order": 0,
+      "text": "We talk about Christopher Columbus.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-001-b767b7ae37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-001-b767b7ae37.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-90c07722e9",
+      "order": 1,
+      "text": "He loves the sea.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-002-90c07722e9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-002-90c07722e9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-6887f0aa8d",
+      "order": 2,
+      "text": "He is born in Italy.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-003-6887f0aa8d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-003-6887f0aa8d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-9a0e81b03f",
+      "order": 3,
+      "text": "He lives many years ago.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-004-9a0e81b03f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-004-9a0e81b03f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-8085bb5b1c",
+      "order": 4,
+      "text": "Columbus wants to sail.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-005-8085bb5b1c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-005-8085bb5b1c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-dccf8955e7",
+      "order": 5,
+      "text": "He wants to find India.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-006-dccf8955e7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-006-dccf8955e7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-cd0d421745",
+      "order": 6,
+      "text": "He thinks the world is round.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-007-cd0d421745.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-007-cd0d421745.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-deba700d43",
+      "order": 7,
+      "text": "Columbus sails from Spain.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-008-deba700d43.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-008-deba700d43.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-a12dbc1f18",
+      "order": 8,
+      "text": "He has three ships.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-009-a12dbc1f18.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-009-a12dbc1f18.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-782873b08d",
+      "order": 9,
+      "text": "They are small.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-010-782873b08d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-010-782873b08d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-fc797c3e68",
+      "order": 10,
+      "text": "The sea is big.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-011-fc797c3e68.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-011-fc797c3e68.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-7be97e365d",
+      "order": 11,
+      "text": "His voyage is long.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-012-7be97e365d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-012-7be97e365d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-112eb9d94f",
+      "order": 12,
+      "text": "Many days pass.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-013-112eb9d94f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-013-112eb9d94f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-5ba45cc205",
+      "order": 13,
+      "text": "Then, he sees land.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-014-5ba45cc205.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-014-5ba45cc205.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-5deb4f406e",
+      "order": 14,
+      "text": "It is not India.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-015-5deb4f406e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-015-5deb4f406e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-5f35a163d5",
+      "order": 15,
+      "text": "It is a new place.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-016-5f35a163d5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-016-5f35a163d5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-2f52696021",
+      "order": 16,
+      "text": "Columbus finds America.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-017-2f52696021.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-017-2f52696021.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-a91e650128",
+      "order": 17,
+      "text": "People live there.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-018-a91e650128.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-018-a91e650128.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-f5afebeb64",
+      "order": 18,
+      "text": "They see his ships.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-019-f5afebeb64.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-019-f5afebeb64.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-5f26023052",
+      "order": 19,
+      "text": "Columbus comes to America in 1492.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-020-5f26023052.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-020-5f26023052.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-8d819391e3",
+      "order": 20,
+      "text": "This year is important.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-021-8d819391e3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-021-8d819391e3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-03004244c5",
+      "order": 21,
+      "text": "Columbus's voyage changes the world.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-022-03004244c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-022-03004244c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-98d61d9804",
+      "order": 22,
+      "text": "We remember him.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-023-98d61d9804.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-023-98d61d9804.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-b5a73bce77",
+      "order": 23,
+      "text": "We remember his ships.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-024-b5a73bce77.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-024-b5a73bce77.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-4d76e330f5",
+      "order": 24,
+      "text": "His life is an adventure.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-025-4d76e330f5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-025-4d76e330f5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-4306ede72e",
+      "order": 25,
+      "text": "Columbus is a famous explorer.",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-026-4306ede72e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/sentences/sentence-026-4306ede72e.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-b152fba0e1",
+      "order": 0,
+      "text": "voyage",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-001-b152fba0e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-001-b152fba0e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-9a0e55c88c",
+      "order": 1,
+      "text": "explorer",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-002-9a0e55c88c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-002-9a0e55c88c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-1061e511d3",
+      "order": 2,
+      "text": "important",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-003-1061e511d3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-003-1061e511d3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-4ca351a5d7",
+      "order": 3,
+      "text": "Italy",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-004-4ca351a5d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-004-4ca351a5d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-3b104f5731",
+      "order": 4,
+      "text": "Columbus",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-005-3b104f5731.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-005-3b104f5731.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-a843104f61",
+      "order": 5,
+      "text": "sail",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-006-a843104f61.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-006-a843104f61.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-2084822076",
+      "order": 6,
+      "text": "discover",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-007-2084822076.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-007-2084822076.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-9e360d41e0",
+      "order": 7,
+      "text": "significance",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-008-9e360d41e0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-008-9e360d41e0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-111adc4d78",
+      "order": 8,
+      "text": "land",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-009-111adc4d78.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-009-111adc4d78.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-e2dd44e164",
+      "order": 9,
+      "text": "America",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-010-e2dd44e164.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-010-e2dd44e164.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-4cb44059ac",
+      "order": 10,
+      "text": "we",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-011-4cb44059ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-011-4cb44059ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-afd8d7642c",
+      "order": 11,
+      "text": "talk",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-012-afd8d7642c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-012-afd8d7642c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-5d5efab4e4",
+      "order": 12,
+      "text": "about",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-013-5d5efab4e4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-013-5d5efab4e4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-d502e91090",
+      "order": 13,
+      "text": "christopher",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-014-d502e91090.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-014-d502e91090.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-fd7b6adf0f",
+      "order": 14,
+      "text": "he",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-015-fd7b6adf0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-015-fd7b6adf0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-2de564b869",
+      "order": 15,
+      "text": "loves",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-016-2de564b869.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-016-2de564b869.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-85bc82bda3",
+      "order": 16,
+      "text": "the",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-017-85bc82bda3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-017-85bc82bda3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-8f96c5f202",
+      "order": 17,
+      "text": "sea",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-018-8f96c5f202.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-018-8f96c5f202.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-fc7d3e53a8",
+      "order": 18,
+      "text": "is",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-019-fc7d3e53a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-019-fc7d3e53a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-b2d074553f",
+      "order": 19,
+      "text": "born",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-020-b2d074553f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-020-b2d074553f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-1023754163",
+      "order": 20,
+      "text": "in",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-021-1023754163.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-021-1023754163.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-e2b64cb4fe",
+      "order": 21,
+      "text": "lives",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-022-e2b64cb4fe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-022-e2b64cb4fe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-64e0bf0e3e",
+      "order": 22,
+      "text": "many",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-023-64e0bf0e3e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-023-64e0bf0e3e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-edcb7933bf",
+      "order": 23,
+      "text": "years",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-024-edcb7933bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-024-edcb7933bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-2bbed6c141",
+      "order": 24,
+      "text": "ago",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-025-2bbed6c141.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-025-2bbed6c141.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-07156ba7c8",
+      "order": 25,
+      "text": "wants",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-026-07156ba7c8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-026-07156ba7c8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-b5e4e4ac1c",
+      "order": 26,
+      "text": "to",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-027-b5e4e4ac1c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-027-b5e4e4ac1c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-62918ebaee",
+      "order": 27,
+      "text": "find",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-028-62918ebaee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-028-62918ebaee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-6c9ffc93e3",
+      "order": 28,
+      "text": "india",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-029-6c9ffc93e3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-029-6c9ffc93e3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-b33841a231",
+      "order": 29,
+      "text": "thinks",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-030-b33841a231.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-030-b33841a231.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-93fe5a7f69",
+      "order": 30,
+      "text": "world",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-031-93fe5a7f69.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-031-93fe5a7f69.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-eb9cb3e44c",
+      "order": 31,
+      "text": "round",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-032-eb9cb3e44c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-032-eb9cb3e44c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-673005ae30",
+      "order": 32,
+      "text": "sails",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-033-673005ae30.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-033-673005ae30.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-3a87d20e0e",
+      "order": 33,
+      "text": "from",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-034-3a87d20e0e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-034-3a87d20e0e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-84d82466eb",
+      "order": 34,
+      "text": "spain",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-035-84d82466eb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-035-84d82466eb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-f438b3c06e",
+      "order": 35,
+      "text": "has",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-036-f438b3c06e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-036-f438b3c06e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-6f9ce13a6a",
+      "order": 36,
+      "text": "three",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-037-6f9ce13a6a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-037-6f9ce13a6a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-580afc9dd4",
+      "order": 37,
+      "text": "ships",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-038-580afc9dd4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-038-580afc9dd4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-a35687bb50",
+      "order": 38,
+      "text": "they",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-039-a35687bb50.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-039-a35687bb50.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-f4ad516469",
+      "order": 39,
+      "text": "are",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-040-f4ad516469.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-040-f4ad516469.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-e38957a82a",
+      "order": 40,
+      "text": "small",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-041-e38957a82a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-041-e38957a82a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-f89c2ba091",
+      "order": 41,
+      "text": "big",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-042-f89c2ba091.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-042-f89c2ba091.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-b485f3dcc9",
+      "order": 42,
+      "text": "his",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-043-b485f3dcc9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-043-b485f3dcc9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-32968de83d",
+      "order": 43,
+      "text": "long",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-044-32968de83d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-044-32968de83d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-6bf677ee10",
+      "order": 44,
+      "text": "days",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-045-6bf677ee10.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-045-6bf677ee10.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-03120941c5",
+      "order": 45,
+      "text": "pass",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-046-03120941c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-046-03120941c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-13619c1c01",
+      "order": 46,
+      "text": "then",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-047-13619c1c01.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-047-13619c1c01.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-f763a487b0",
+      "order": 47,
+      "text": "sees",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-048-f763a487b0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-048-f763a487b0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-f27d77bbc2",
+      "order": 48,
+      "text": "it",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-049-f27d77bbc2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-049-f27d77bbc2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-ecae98cd0a",
+      "order": 49,
+      "text": "not",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-050-ecae98cd0a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-050-ecae98cd0a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-1f1ff12f33",
+      "order": 50,
+      "text": "a",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-051-1f1ff12f33.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-051-1f1ff12f33.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-bff08c2f61",
+      "order": 51,
+      "text": "new",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-052-bff08c2f61.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-052-bff08c2f61.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-1c1506900a",
+      "order": 52,
+      "text": "place",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-053-1c1506900a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-053-1c1506900a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-696af00e5c",
+      "order": 53,
+      "text": "finds",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-054-696af00e5c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-054-696af00e5c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-ccbba64754",
+      "order": 54,
+      "text": "people",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-055-ccbba64754.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-055-ccbba64754.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-457a6cf50b",
+      "order": 55,
+      "text": "live",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-056-457a6cf50b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-056-457a6cf50b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-732d83389a",
+      "order": 56,
+      "text": "there",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-057-732d83389a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-057-732d83389a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-af4248f6bc",
+      "order": 57,
+      "text": "see",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-058-af4248f6bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-058-af4248f6bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-a5f8516b4d",
+      "order": 58,
+      "text": "comes",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-059-a5f8516b4d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-059-a5f8516b4d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-5b48bc826c",
+      "order": 59,
+      "text": "this",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-060-5b48bc826c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-060-5b48bc826c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-8b6f3b6fbd",
+      "order": 60,
+      "text": "year",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-061-8b6f3b6fbd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-061-8b6f3b6fbd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-638b9112f6",
+      "order": 61,
+      "text": "columbus's",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-062-638b9112f6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-062-638b9112f6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-ae4b3a92ae",
+      "order": 62,
+      "text": "changes",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-063-ae4b3a92ae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-063-ae4b3a92ae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-01b2b8e141",
+      "order": 63,
+      "text": "remember",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-064-01b2b8e141.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-064-01b2b8e141.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-def5d7d701",
+      "order": 64,
+      "text": "him",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-065-def5d7d701.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-065-def5d7d701.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-a40a181942",
+      "order": 65,
+      "text": "life",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-066-a40a181942.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-066-a40a181942.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-7495bfdd76",
+      "order": 66,
+      "text": "an",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-067-7495bfdd76.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-067-7495bfdd76.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-cca21413ca",
+      "order": 67,
+      "text": "adventure",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-068-cca21413ca.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-068-cca21413ca.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-e23b58e470",
+      "order": 68,
+      "text": "famous",
+      "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/words/word-069-e23b58e470.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/words/word-069-e23b58e470.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-17744849a6",
+      "type": "mcq",
+      "order": 0,
+      "text": "What does Columbus find instead of India?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-001-17744849a6.mp3",
+      "questionObjectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-001-17744849a6.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-001-17744849a6-option1-d9793d55.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-001-17744849a6-option2-e17f2b6f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-001-17744849a6-option3-94c474d2.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-001-17744849a6-option4-d8ae15d7.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-17744849a6-option1-d9793d55",
+          "text": "a new place",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-001-17744849a6-option1-d9793d55.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-17744849a6-option2-e17f2b6f",
+          "text": "Italy",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-001-17744849a6-option2-e17f2b6f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-17744849a6-option3-94c474d2",
+          "text": "Spain",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-001-17744849a6-option3-94c474d2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-17744849a6-option4-d8ae15d7",
+          "text": "India",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-001-17744849a6-option4-d8ae15d7.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-cdc873292f",
+      "type": "mcq",
+      "order": 1,
+      "text": "How many ships does Columbus have?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-002-cdc873292f.mp3",
+      "questionObjectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-002-cdc873292f.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-002-cdc873292f-option1-3338426b.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-002-cdc873292f-option2-753cb896.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-002-cdc873292f-option3-b427a1d7.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-002-cdc873292f-option4-d03babff.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-cdc873292f-option1-3338426b",
+          "text": "three",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-002-cdc873292f-option1-3338426b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-cdc873292f-option2-753cb896",
+          "text": "one",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-002-cdc873292f-option2-753cb896.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-cdc873292f-option3-b427a1d7",
+          "text": "two",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-002-cdc873292f-option3-b427a1d7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-cdc873292f-option4-d03babff",
+          "text": "four",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-002-cdc873292f-option4-d03babff.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-fb76ac4adf",
+      "type": "mcq",
+      "order": 2,
+      "text": "What does Columbus want to find?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-003-fb76ac4adf.mp3",
+      "questionObjectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-003-fb76ac4adf.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-003-fb76ac4adf-option1-48a0a518.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-003-fb76ac4adf-option2-d158db05.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-003-fb76ac4adf-option3-2d854017.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-003-fb76ac4adf-option4-f5aa424a.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-fb76ac4adf-option1-48a0a518",
+          "text": "India",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-003-fb76ac4adf-option1-48a0a518.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-fb76ac4adf-option2-d158db05",
+          "text": "Spain",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-003-fb76ac4adf-option2-d158db05.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-fb76ac4adf-option3-2d854017",
+          "text": "Italy",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-003-fb76ac4adf-option3-2d854017.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-fb76ac4adf-option4-f5aa424a",
+          "text": "America",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-003-fb76ac4adf-option4-f5aa424a.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-541af98301",
+      "type": "mcq",
+      "order": 3,
+      "text": "Where is Christopher Columbus from?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-004-541af98301.mp3",
+      "questionObjectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-004-541af98301.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-004-541af98301-option1-1e65332b.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-004-541af98301-option2-65f37266.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-004-541af98301-option3-02e14d87.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-004-541af98301-option4-39840096.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-541af98301-option1-1e65332b",
+          "text": "Italy",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-004-541af98301-option1-1e65332b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-541af98301-option2-65f37266",
+          "text": "Spain",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-004-541af98301-option2-65f37266.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-541af98301-option3-02e14d87",
+          "text": "India",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-004-541af98301-option3-02e14d87.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-541af98301-option4-39840096",
+          "text": "America",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-004-541af98301-option4-39840096.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-28c93409ce",
+      "type": "mcq",
+      "order": 4,
+      "text": "What does Columbus think about the world?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-005-28c93409ce.mp3",
+      "questionObjectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-005-28c93409ce.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-005-28c93409ce-option1-c844cd98.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-005-28c93409ce-option2-8fd47402.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-005-28c93409ce-option3-8fa9899f.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-005-28c93409ce-option4-341c08eb.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-28c93409ce-option1-c844cd98",
+          "text": "It is round",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-005-28c93409ce-option1-c844cd98.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-28c93409ce-option2-8fd47402",
+          "text": "It is flat",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-005-28c93409ce-option2-8fd47402.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-28c93409ce-option3-8fa9899f",
+          "text": "It is square",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-005-28c93409ce-option3-8fa9899f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-28c93409ce-option4-341c08eb",
+          "text": "It is small",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-005-28c93409ce-option4-341c08eb.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-cf376f5cc6",
+      "type": "mcq",
+      "order": 5,
+      "text": "What year does Columbus come to America?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-006-cf376f5cc6.mp3",
+      "questionObjectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-006-cf376f5cc6.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-006-cf376f5cc6-option1-75c5198f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-006-cf376f5cc6-option2-ecc0214b.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-006-cf376f5cc6-option3-7566e387.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-006-cf376f5cc6-option4-babdde75.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-cf376f5cc6-option1-75c5198f",
+          "text": "1492",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-006-cf376f5cc6-option1-75c5198f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-cf376f5cc6-option2-ecc0214b",
+          "text": "1400",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-006-cf376f5cc6-option2-ecc0214b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-cf376f5cc6-option3-7566e387",
+          "text": "1500",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-006-cf376f5cc6-option3-7566e387.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-cf376f5cc6-option4-babdde75",
+          "text": "1600",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-006-cf376f5cc6-option4-babdde75.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-14117b5eb2",
+      "type": "mcq",
+      "order": 6,
+      "text": "Where does Columbus sail from?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-007-14117b5eb2.mp3",
+      "questionObjectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-007-14117b5eb2.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-007-14117b5eb2-option1-500b4f6d.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-007-14117b5eb2-option2-b00c9f91.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-007-14117b5eb2-option3-80ee180c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-007-14117b5eb2-option4-2182265b.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-14117b5eb2-option1-500b4f6d",
+          "text": "Spain",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-007-14117b5eb2-option1-500b4f6d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-14117b5eb2-option2-b00c9f91",
+          "text": "Italy",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-007-14117b5eb2-option2-b00c9f91.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-14117b5eb2-option3-80ee180c",
+          "text": "India",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-007-14117b5eb2-option3-80ee180c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-14117b5eb2-option4-2182265b",
+          "text": "America",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-007-14117b5eb2-option4-2182265b.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-48ad67df89",
+      "type": "mcq",
+      "order": 7,
+      "text": "What does Columbus's voyage change?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-008-48ad67df89.mp3",
+      "questionObjectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-008-48ad67df89.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-008-48ad67df89-option1-23b76c99.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-008-48ad67df89-option2-4713ed1f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-008-48ad67df89-option3-cf6d9d12.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-008-48ad67df89-option4-ddc18e7b.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-48ad67df89-option1-23b76c99",
+          "text": "the world",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-008-48ad67df89-option1-23b76c99.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-48ad67df89-option2-4713ed1f",
+          "text": "the sea",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-008-48ad67df89-option2-4713ed1f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-48ad67df89-option3-cf6d9d12",
+          "text": "the ships",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-008-48ad67df89-option3-cf6d9d12.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-48ad67df89-option4-ddc18e7b",
+          "text": "the weather",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-008-48ad67df89-option4-ddc18e7b.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-10393c58f9",
+      "type": "mcq",
+      "order": 8,
+      "text": "What are Columbus's ships like?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-009-10393c58f9.mp3",
+      "questionObjectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-009-10393c58f9.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-009-10393c58f9-option1-941cd0d8.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-009-10393c58f9-option2-1afbc149.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-009-10393c58f9-option3-ec448c22.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-009-10393c58f9-option4-c2881f31.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-10393c58f9-option1-941cd0d8",
+          "text": "small",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-009-10393c58f9-option1-941cd0d8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-10393c58f9-option2-1afbc149",
+          "text": "big",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-009-10393c58f9-option2-1afbc149.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-10393c58f9-option3-ec448c22",
+          "text": "fast",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-009-10393c58f9-option3-ec448c22.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-10393c58f9-option4-c2881f31",
+          "text": "slow",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-009-10393c58f9-option4-c2881f31.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-5f04b37616",
+      "type": "mcq",
+      "order": 9,
+      "text": "Who lives in the place Columbus finds?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-010-5f04b37616.mp3",
+      "questionObjectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-010-5f04b37616.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-010-5f04b37616-option1-ddfca7da.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-010-5f04b37616-option2-7e58d3d4.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-010-5f04b37616-option3-e5902892.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-010-5f04b37616-option4-6d633d09.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-5f04b37616-option1-ddfca7da",
+          "text": "People",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-010-5f04b37616-option1-ddfca7da.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-5f04b37616-option2-7e58d3d4",
+          "text": "Animals",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-010-5f04b37616-option2-7e58d3d4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-5f04b37616-option3-e5902892",
+          "text": "No one",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-010-5f04b37616-option3-e5902892.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-5f04b37616-option4-6d633d09",
+          "text": "Aliens",
+          "objectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/mcq-010-5f04b37616-option4-6d633d09.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-5591cfc276",
+      "type": "saq",
+      "order": 10,
+      "text": "Where is Columbus from?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/saq-011-5591cfc276.mp3",
+      "questionObjectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/saq-011-5591cfc276.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-f9bb636b94",
+      "type": "saq",
+      "order": 11,
+      "text": "What does Columbus want to find?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/saq-012-f9bb636b94.mp3",
+      "questionObjectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/saq-012-f9bb636b94.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-4a7b9d31c6",
+      "type": "saq",
+      "order": 12,
+      "text": "What year does Columbus come to America?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/saq-013-4a7b9d31c6.mp3",
+      "questionObjectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/saq-013-4a7b9d31c6.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-8a16332e4c",
+      "type": "saq",
+      "order": 13,
+      "text": "How many ships does Columbus have?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/saq-014-8a16332e4c.mp3",
+      "questionObjectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/saq-014-8a16332e4c.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-be4b67f31f",
+      "type": "saq",
+      "order": 14,
+      "text": "What does Columbus find instead of India?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/ni2xVrAHyhxgCyv50gkQ/questions/saq-015-be4b67f31f.mp3",
+      "questionObjectPath": "articles/ni2xVrAHyhxgCyv50gkQ/questions/saq-015-be4b67f31f.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T16:49:37.523Z"
+}

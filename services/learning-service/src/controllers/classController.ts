@@ -12,11 +12,15 @@ import { redeemCoupon, validateCoupon, CouponError } from "../services/couponSer
 const MAX_CLASS_HOURS = 22;
 // Keep the legacy code until every deployed database has run the Reading rename migration.
 const AVAILABLE_BOOK_CODES = new Set(["Reading 3.1", "Origins 3.1"]);
+// Adventure 1 is being held back while Primary starts from Origins 2.
+// Existing classes/cycles are left intact; this only affects new selection/opening flows.
+const DISABLED_PRIMARY_BOOK_CODES = new Set(["Primary Adventures 1.0"]);
 
 function isBookAvailable(book?: { bookCode?: string | null } | null) {
   return Boolean(
     book?.bookCode &&
-      (AVAILABLE_BOOK_CODES.has(book.bookCode) || book.bookCode.startsWith("Primary ")),
+      (AVAILABLE_BOOK_CODES.has(book.bookCode) ||
+        (book.bookCode.startsWith("Primary ") && !DISABLED_PRIMARY_BOOK_CODES.has(book.bookCode))),
   );
 }
 
@@ -1085,7 +1089,12 @@ export async function getBooks(_req: AuthenticatedRequest, res: Response) {
       where: {
         OR: [
           { bookCode: { in: Array.from(AVAILABLE_BOOK_CODES) } },
-          { bookCode: { startsWith: "Primary " } },
+          {
+            bookCode: {
+              startsWith: "Primary ",
+              notIn: Array.from(DISABLED_PRIMARY_BOOK_CODES),
+            },
+          },
         ],
       },
       include: { series: true },
@@ -1593,7 +1602,12 @@ export async function createClassBookCycle(req: AuthenticatedRequest, res: Respo
         const isPrimaryBook = book.bookCode.startsWith("Primary ");
         const orderedBooks = await tx.book.findMany({
           where: isPrimaryBook
-            ? { bookCode: { startsWith: "Primary " } }
+            ? {
+                bookCode: {
+                  startsWith: "Primary ",
+                  notIn: Array.from(DISABLED_PRIMARY_BOOK_CODES),
+                },
+              }
             // Only enforce ordering against Reading books that tutors can
             // currently select.  For example, Reading 3.1 can be the first
             // available Reading book while earlier levels are not imported.

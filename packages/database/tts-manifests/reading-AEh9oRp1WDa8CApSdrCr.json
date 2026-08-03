@@ -1,0 +1,1255 @@
+{
+  "version": 1,
+  "articleId": "AEh9oRp1WDa8CApSdrCr",
+  "source": "READING_ADVANTAGE",
+  "title": "Time for School: Prioritize Tasks",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-a890672324",
+      "order": 0,
+      "text": "Time is important.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-001-a890672324.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-001-a890672324.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-3c8edb1eb6",
+      "order": 1,
+      "text": "Students are busy.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-002-3c8edb1eb6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-002-3c8edb1eb6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-640509c77f",
+      "order": 2,
+      "text": "They have school.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-003-640509c77f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-003-640509c77f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-cd26a04645",
+      "order": 3,
+      "text": "They have homework.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-004-cd26a04645.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-004-cd26a04645.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-326de0206b",
+      "order": 4,
+      "text": "They have friends.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-005-326de0206b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-005-326de0206b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-1834166edb",
+      "order": 5,
+      "text": "It is important to use time well.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-006-1834166edb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-006-1834166edb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-67693691da",
+      "order": 6,
+      "text": "This is time management.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-007-67693691da.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-007-67693691da.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-d27dbbb956",
+      "order": 7,
+      "text": "What is important?",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-008-d27dbbb956.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-008-d27dbbb956.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-8a8ce81abe",
+      "order": 8,
+      "text": "Some tasks are very important.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-009-8a8ce81abe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-009-8a8ce81abe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-b76e3c6bae",
+      "order": 9,
+      "text": "Some tasks are not very important.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-010-b76e3c6bae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-010-b76e3c6bae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-a581719b4a",
+      "order": 10,
+      "text": "You must decide.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-011-a581719b4a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-011-a581719b4a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-5101052ec3",
+      "order": 11,
+      "text": "This is prioritizing.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-012-5101052ec3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-012-5101052ec3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-600fe0f3a9",
+      "order": 12,
+      "text": "Make a list.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-013-600fe0f3a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-013-600fe0f3a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-c6abb14b48",
+      "order": 13,
+      "text": "Write all your tasks.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-014-c6abb14b48.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-014-c6abb14b48.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-67f9eb9803",
+      "order": 14,
+      "text": "What is first?",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-015-67f9eb9803.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-015-67f9eb9803.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-5003e04002",
+      "order": 15,
+      "text": "What is next?",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-016-5003e04002.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-016-5003e04002.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-e334cdeadb",
+      "order": 16,
+      "text": "Do the important tasks first.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-017-e334cdeadb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-017-e334cdeadb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-13996d9c00",
+      "order": 17,
+      "text": "This helps you.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-018-13996d9c00.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-018-13996d9c00.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-b0f4481ef5",
+      "order": 18,
+      "text": "This is good time management.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-019-b0f4481ef5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-019-b0f4481ef5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-12bbde7f37",
+      "order": 19,
+      "text": "Some students wait.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-020-12bbde7f37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-020-12bbde7f37.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-2fc1113871",
+      "order": 20,
+      "text": "They wait to do tasks.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-021-2fc1113871.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-021-2fc1113871.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-a0d57e29d5",
+      "order": 21,
+      "text": "This is procrastination.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-022-a0d57e29d5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-022-a0d57e29d5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-3b05e9b899",
+      "order": 22,
+      "text": "It is not good.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-023-3b05e9b899.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-023-3b05e9b899.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-da803ba0c4",
+      "order": 23,
+      "text": "Do not wait!",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-024-da803ba0c4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-024-da803ba0c4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-2fc0e22750",
+      "order": 24,
+      "text": "Start now.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-025-2fc0e22750.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-025-2fc0e22750.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-c40053997e",
+      "order": 25,
+      "text": "Small steps help.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-026-c40053997e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-026-c40053997e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-fa5eb4fecf",
+      "order": 26,
+      "text": "Finish one task.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-027-fa5eb4fecf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-027-fa5eb4fecf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-81d07c605e",
+      "order": 27,
+      "text": "Then, start the next task.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-028-81d07c605e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-028-81d07c605e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-e6dae863ff",
+      "order": 28,
+      "text": "For example, math homework is important.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-029-e6dae863ff.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-029-e6dae863ff.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-881016c234",
+      "order": 29,
+      "text": "Talking to friends is fun.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-030-881016c234.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-030-881016c234.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-f5357895b3",
+      "order": 30,
+      "text": "Do math first.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-031-f5357895b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-031-f5357895b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-1d8bff6ab7",
+      "order": 31,
+      "text": "Talk to friends later.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-032-1d8bff6ab7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-032-1d8bff6ab7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-cc09cc81ee",
+      "order": 32,
+      "text": "This is a good plan.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-033-cc09cc81ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-033-cc09cc81ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-81ea72183b",
+      "order": 33,
+      "text": "Time management helps students.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-034-81ea72183b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-034-81ea72183b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-027caf10c4",
+      "order": 34,
+      "text": "Prioritizing is important.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-035-027caf10c4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-035-027caf10c4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-5635bdc654",
+      "order": 35,
+      "text": "Do not procrastinate.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-036-5635bdc654.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-036-5635bdc654.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-caf6adb75b",
+      "order": 36,
+      "text": "Start tasks now.",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-037-caf6adb75b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-037-caf6adb75b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-1133282946",
+      "order": 37,
+      "text": "You can do it!",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-038-1133282946.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/sentences/sentence-038-1133282946.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-1661ef78c1",
+      "order": 0,
+      "text": "time management",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-001-1661ef78c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-001-1661ef78c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-5dae31a5ab",
+      "order": 1,
+      "text": "prioritizing",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-002-5dae31a5ab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-002-5dae31a5ab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-ae2cb3b1ad",
+      "order": 2,
+      "text": "tasks",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-003-ae2cb3b1ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-003-ae2cb3b1ad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-5e3286cbe8",
+      "order": 3,
+      "text": "procrastination",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-004-5e3286cbe8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-004-5e3286cbe8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-a2a520edc9",
+      "order": 4,
+      "text": "steps",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-005-a2a520edc9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-005-a2a520edc9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-a340638250",
+      "order": 5,
+      "text": "plan",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-006-a340638250.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-006-a340638250.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-007-e016e40fdc",
+      "order": 6,
+      "text": "time",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-007-e016e40fdc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-007-e016e40fdc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-a67bf82b25",
+      "order": 7,
+      "text": "is",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-008-a67bf82b25.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-008-a67bf82b25.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-c81a2b7945",
+      "order": 8,
+      "text": "important",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-009-c81a2b7945.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-009-c81a2b7945.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-759f27fd9e",
+      "order": 9,
+      "text": "students",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-010-759f27fd9e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-010-759f27fd9e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-011-d7e3af95ee",
+      "order": 10,
+      "text": "are",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-011-d7e3af95ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-011-d7e3af95ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-91330d3bdd",
+      "order": 11,
+      "text": "busy",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-012-91330d3bdd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-012-91330d3bdd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-b441c61ac8",
+      "order": 12,
+      "text": "they",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-013-b441c61ac8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-013-b441c61ac8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-856b5a8226",
+      "order": 13,
+      "text": "have",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-014-856b5a8226.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-014-856b5a8226.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-97fb881e83",
+      "order": 14,
+      "text": "school",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-015-97fb881e83.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-015-97fb881e83.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-ee38311895",
+      "order": 15,
+      "text": "homework",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-016-ee38311895.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-016-ee38311895.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-a5f2bcd9a0",
+      "order": 16,
+      "text": "friends",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-017-a5f2bcd9a0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-017-a5f2bcd9a0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-eb2e2f20b3",
+      "order": 17,
+      "text": "it",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-018-eb2e2f20b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-018-eb2e2f20b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-a2e073a7f0",
+      "order": 18,
+      "text": "to",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-019-a2e073a7f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-019-a2e073a7f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-8573adf169",
+      "order": 19,
+      "text": "use",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-020-8573adf169.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-020-8573adf169.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-956d45e074",
+      "order": 20,
+      "text": "well",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-021-956d45e074.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-021-956d45e074.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-134554d75d",
+      "order": 21,
+      "text": "this",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-022-134554d75d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-022-134554d75d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-6583bdc7c4",
+      "order": 22,
+      "text": "management",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-023-6583bdc7c4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-023-6583bdc7c4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-a0d54fbc9f",
+      "order": 23,
+      "text": "what",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-024-a0d54fbc9f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-024-a0d54fbc9f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-0ac0a24fd3",
+      "order": 24,
+      "text": "some",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-025-0ac0a24fd3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-025-0ac0a24fd3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-cc79a2067e",
+      "order": 25,
+      "text": "very",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-026-cc79a2067e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-026-cc79a2067e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-ed7add5724",
+      "order": 26,
+      "text": "not",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-027-ed7add5724.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-027-ed7add5724.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-98e8119d8a",
+      "order": 27,
+      "text": "you",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-028-98e8119d8a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-028-98e8119d8a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-6e426a058c",
+      "order": 28,
+      "text": "must",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-029-6e426a058c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-029-6e426a058c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-d1892efbd1",
+      "order": 29,
+      "text": "decide",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-030-d1892efbd1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-030-d1892efbd1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-513d627dd3",
+      "order": 30,
+      "text": "make",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-031-513d627dd3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-031-513d627dd3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-130e6d5546",
+      "order": 31,
+      "text": "a",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-032-130e6d5546.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-032-130e6d5546.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-e68b9aab55",
+      "order": 32,
+      "text": "list",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-033-e68b9aab55.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-033-e68b9aab55.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-65a8447132",
+      "order": 33,
+      "text": "write",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-034-65a8447132.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-034-65a8447132.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-3551c8d83d",
+      "order": 34,
+      "text": "all",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-035-3551c8d83d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-035-3551c8d83d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-3413f49658",
+      "order": 35,
+      "text": "your",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-036-3413f49658.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-036-3413f49658.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-b60b4e4b47",
+      "order": 36,
+      "text": "first",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-037-b60b4e4b47.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-037-b60b4e4b47.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-3d01dfcf1b",
+      "order": 37,
+      "text": "next",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-038-3d01dfcf1b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-038-3d01dfcf1b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-a2215d5a96",
+      "order": 38,
+      "text": "do",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-039-a2215d5a96.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-039-a2215d5a96.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-b8a4236a7b",
+      "order": 39,
+      "text": "the",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-040-b8a4236a7b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-040-b8a4236a7b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-6f342d56f4",
+      "order": 40,
+      "text": "helps",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-041-6f342d56f4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-041-6f342d56f4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-ae46455f94",
+      "order": 41,
+      "text": "good",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-042-ae46455f94.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-042-ae46455f94.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-d89bac33d8",
+      "order": 42,
+      "text": "wait",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-043-d89bac33d8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-043-d89bac33d8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-ac5508a5e6",
+      "order": 43,
+      "text": "start",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-044-ac5508a5e6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-044-ac5508a5e6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-a74f586d4f",
+      "order": 44,
+      "text": "now",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-045-a74f586d4f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-045-a74f586d4f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-8ee4501ad4",
+      "order": 45,
+      "text": "small",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-046-8ee4501ad4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-046-8ee4501ad4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-e0026aeee4",
+      "order": 46,
+      "text": "help",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-047-e0026aeee4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-047-e0026aeee4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-f5f4012a12",
+      "order": 47,
+      "text": "finish",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-048-f5f4012a12.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-048-f5f4012a12.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-7714395c8f",
+      "order": 48,
+      "text": "one",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-049-7714395c8f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-049-7714395c8f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-c1fe318308",
+      "order": 49,
+      "text": "task",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-050-c1fe318308.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-050-c1fe318308.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-816cc1c4ff",
+      "order": 50,
+      "text": "then",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-051-816cc1c4ff.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-051-816cc1c4ff.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-78e4fae76a",
+      "order": 51,
+      "text": "for",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-052-78e4fae76a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-052-78e4fae76a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-a82cbc1278",
+      "order": 52,
+      "text": "example",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-053-a82cbc1278.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-053-a82cbc1278.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-2ba147cd8d",
+      "order": 53,
+      "text": "math",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-054-2ba147cd8d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-054-2ba147cd8d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-0838f6eb07",
+      "order": 54,
+      "text": "talking",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-055-0838f6eb07.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-055-0838f6eb07.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-4e7babd995",
+      "order": 55,
+      "text": "fun",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-056-4e7babd995.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-056-4e7babd995.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-608e5c789b",
+      "order": 56,
+      "text": "talk",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-057-608e5c789b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-057-608e5c789b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-69c0952408",
+      "order": 57,
+      "text": "later",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-058-69c0952408.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-058-69c0952408.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-30a175dae0",
+      "order": 58,
+      "text": "procrastinate",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-059-30a175dae0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-059-30a175dae0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-2529c21205",
+      "order": 59,
+      "text": "can",
+      "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/words/word-060-2529c21205.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/words/word-060-2529c21205.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-f350ed8eee",
+      "type": "mcq",
+      "order": 0,
+      "text": "What is procrastination?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-001-f350ed8eee.mp3",
+      "questionObjectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-001-f350ed8eee.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-001-f350ed8eee-option1-152099f1.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-001-f350ed8eee-option2-9ba3fd28.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-001-f350ed8eee-option3-8c406b34.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-001-f350ed8eee-option4-2c16ba59.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-f350ed8eee-option1-152099f1",
+          "text": "Wait to do tasks",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-001-f350ed8eee-option1-152099f1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-f350ed8eee-option2-9ba3fd28",
+          "text": "Start tasks now",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-001-f350ed8eee-option2-9ba3fd28.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-f350ed8eee-option3-8c406b34",
+          "text": "Finish tasks quickly",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-001-f350ed8eee-option3-8c406b34.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-f350ed8eee-option4-2c16ba59",
+          "text": "Ask for help",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-001-f350ed8eee-option4-2c16ba59.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-cdec12d751",
+      "type": "mcq",
+      "order": 1,
+      "text": "What helps you start?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-002-cdec12d751.mp3",
+      "questionObjectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-002-cdec12d751.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-002-cdec12d751-option1-00828c6d.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-002-cdec12d751-option2-10f1b447.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-002-cdec12d751-option3-4c84b96f.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-002-cdec12d751-option4-a7ec1b73.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-cdec12d751-option1-00828c6d",
+          "text": "Small steps",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-002-cdec12d751-option1-00828c6d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-cdec12d751-option2-10f1b447",
+          "text": "Big jumps",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-002-cdec12d751-option2-10f1b447.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-cdec12d751-option3-4c84b96f",
+          "text": "Long naps",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-002-cdec12d751-option3-4c84b96f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-cdec12d751-option4-a7ec1b73",
+          "text": "Fast runs",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-002-cdec12d751-option4-a7ec1b73.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-f52102355e",
+      "type": "mcq",
+      "order": 2,
+      "text": "What does time management do?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-003-f52102355e.mp3",
+      "questionObjectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-003-f52102355e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-003-f52102355e-option1-6edbc2c6.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-003-f52102355e-option2-d4d398e4.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-003-f52102355e-option3-3f048a26.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-003-f52102355e-option4-5278825e.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-f52102355e-option1-6edbc2c6",
+          "text": "Helps students",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-003-f52102355e-option1-6edbc2c6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-f52102355e-option2-d4d398e4",
+          "text": "Hurts students",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-003-f52102355e-option2-d4d398e4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-f52102355e-option3-3f048a26",
+          "text": "Confuses students",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-003-f52102355e-option3-3f048a26.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-f52102355e-option4-5278825e",
+          "text": "Bores students",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-003-f52102355e-option4-5278825e.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-4298ae4814",
+      "type": "mcq",
+      "order": 3,
+      "text": "When should you start tasks?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-004-4298ae4814.mp3",
+      "questionObjectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-004-4298ae4814.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-004-4298ae4814-option1-009938ac.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-004-4298ae4814-option2-991f1e20.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-004-4298ae4814-option3-f09ded81.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-004-4298ae4814-option4-84223418.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-4298ae4814-option1-009938ac",
+          "text": "Start now",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-004-4298ae4814-option1-009938ac.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-4298ae4814-option2-991f1e20",
+          "text": "Wait until tomorrow",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-004-4298ae4814-option2-991f1e20.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-4298ae4814-option3-f09ded81",
+          "text": "Wait for a friend",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-004-4298ae4814-option3-f09ded81.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-4298ae4814-option4-84223418",
+          "text": "Wait for help",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-004-4298ae4814-option4-84223418.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-e82af263ba",
+      "type": "mcq",
+      "order": 4,
+      "text": "What should you write in a list?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-005-e82af263ba.mp3",
+      "questionObjectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-005-e82af263ba.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-005-e82af263ba-option1-8b993ca2.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-005-e82af263ba-option2-09ce21db.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-005-e82af263ba-option3-f7a75fc1.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-005-e82af263ba-option4-f28c3392.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-e82af263ba-option1-8b993ca2",
+          "text": "Write all your tasks",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-005-e82af263ba-option1-8b993ca2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-e82af263ba-option2-09ce21db",
+          "text": "Eat a snack",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-005-e82af263ba-option2-09ce21db.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-e82af263ba-option3-f7a75fc1",
+          "text": "Watch TV",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-005-e82af263ba-option3-f7a75fc1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-e82af263ba-option4-f28c3392",
+          "text": "Go to sleep",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-005-e82af263ba-option4-f28c3392.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-9e937f9b51",
+      "type": "mcq",
+      "order": 5,
+      "text": "When should you talk to friends?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-006-9e937f9b51.mp3",
+      "questionObjectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-006-9e937f9b51.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-006-9e937f9b51-option1-f9610eb0.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-006-9e937f9b51-option2-5d8b5d35.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-006-9e937f9b51-option3-ec90f7e8.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-006-9e937f9b51-option4-afd650a9.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-9e937f9b51-option1-f9610eb0",
+          "text": "Talk to friends later",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-006-9e937f9b51-option1-f9610eb0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-9e937f9b51-option2-5d8b5d35",
+          "text": "Talk to friends first",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-006-9e937f9b51-option2-5d8b5d35.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-9e937f9b51-option3-ec90f7e8",
+          "text": "Never talk to friends",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-006-9e937f9b51-option3-ec90f7e8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-9e937f9b51-option4-afd650a9",
+          "text": "Only talk to family",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-006-9e937f9b51-option4-afd650a9.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-9b1de22e62",
+      "type": "mcq",
+      "order": 6,
+      "text": "What must you do with tasks?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-007-9b1de22e62.mp3",
+      "questionObjectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-007-9b1de22e62.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-007-9b1de22e62-option1-d095b428.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-007-9b1de22e62-option2-8da03cee.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-007-9b1de22e62-option3-5ca8e315.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-007-9b1de22e62-option4-2b0d70a8.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-9b1de22e62-option1-d095b428",
+          "text": "Decide what is important",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-007-9b1de22e62-option1-d095b428.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-9b1de22e62-option2-8da03cee",
+          "text": "Sleep all day",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-007-9b1de22e62-option2-8da03cee.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-9b1de22e62-option3-5ca8e315",
+          "text": "Eat candy",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-007-9b1de22e62-option3-5ca8e315.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-9b1de22e62-option4-2b0d70a8",
+          "text": "Play outside",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-007-9b1de22e62-option4-2b0d70a8.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-446854f49f",
+      "type": "mcq",
+      "order": 7,
+      "text": "What tasks should you do first?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-008-446854f49f.mp3",
+      "questionObjectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-008-446854f49f.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-008-446854f49f-option1-df1a38df.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-008-446854f49f-option2-4822c7f8.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-008-446854f49f-option3-806bb4fb.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-008-446854f49f-option4-b5012225.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-446854f49f-option1-df1a38df",
+          "text": "Do important tasks first",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-008-446854f49f-option1-df1a38df.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-446854f49f-option2-4822c7f8",
+          "text": "Play with friends first",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-008-446854f49f-option2-4822c7f8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-446854f49f-option3-806bb4fb",
+          "text": "Sleep first",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-008-446854f49f-option3-806bb4fb.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-446854f49f-option4-b5012225",
+          "text": "Eat dessert first",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-008-446854f49f-option4-b5012225.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-8ef2371aae",
+      "type": "mcq",
+      "order": 8,
+      "text": "What homework is important?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-009-8ef2371aae.mp3",
+      "questionObjectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-009-8ef2371aae.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-009-8ef2371aae-option1-fe9c1753.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-009-8ef2371aae-option2-a87f7c40.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-009-8ef2371aae-option3-e26561f7.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-009-8ef2371aae-option4-65122623.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-8ef2371aae-option1-fe9c1753",
+          "text": "Math homework",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-009-8ef2371aae-option1-fe9c1753.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-8ef2371aae-option2-a87f7c40",
+          "text": "Play games",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-009-8ef2371aae-option2-a87f7c40.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-8ef2371aae-option3-e26561f7",
+          "text": "Watch TV",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-009-8ef2371aae-option3-e26561f7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-8ef2371aae-option4-65122623",
+          "text": "Eat candy",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-009-8ef2371aae-option4-65122623.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-ebfcc64291",
+      "type": "mcq",
+      "order": 9,
+      "text": "What is important for students?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-010-ebfcc64291.mp3",
+      "questionObjectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-010-ebfcc64291.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-010-ebfcc64291-option1-94f2b312.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-010-ebfcc64291-option2-32e4e599.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-010-ebfcc64291-option3-196fbcdd.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-010-ebfcc64291-option4-0dee21e2.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-ebfcc64291-option1-94f2b312",
+          "text": "Use time well",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-010-ebfcc64291-option1-94f2b312.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ebfcc64291-option2-32e4e599",
+          "text": "Play games all day",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-010-ebfcc64291-option2-32e4e599.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ebfcc64291-option3-196fbcdd",
+          "text": "Sleep all day",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-010-ebfcc64291-option3-196fbcdd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ebfcc64291-option4-0dee21e2",
+          "text": "Eat lots of food",
+          "objectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/mcq-010-ebfcc64291-option4-0dee21e2.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-27995ff201",
+      "type": "saq",
+      "order": 10,
+      "text": "What helps students?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/saq-011-27995ff201.mp3",
+      "questionObjectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/saq-011-27995ff201.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-57e9db63b2",
+      "type": "saq",
+      "order": 11,
+      "text": "Is talking to friends fun?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/saq-012-57e9db63b2.mp3",
+      "questionObjectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/saq-012-57e9db63b2.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-3dde6743d4",
+      "type": "saq",
+      "order": 12,
+      "text": "Is it good to wait?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/saq-013-3dde6743d4.mp3",
+      "questionObjectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/saq-013-3dde6743d4.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-198a8d3d85",
+      "type": "saq",
+      "order": 13,
+      "text": "What is important to do first?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/saq-014-198a8d3d85.mp3",
+      "questionObjectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/saq-014-198a8d3d85.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-dfd32f2593",
+      "type": "saq",
+      "order": 14,
+      "text": "What are students busy with?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/AEh9oRp1WDa8CApSdrCr/questions/saq-015-dfd32f2593.mp3",
+      "questionObjectPath": "articles/AEh9oRp1WDa8CApSdrCr/questions/saq-015-dfd32f2593.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T16:48:00.522Z"
+}

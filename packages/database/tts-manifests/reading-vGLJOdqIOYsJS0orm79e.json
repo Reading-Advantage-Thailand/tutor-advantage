@@ -1,0 +1,1167 @@
+{
+  "version": 1,
+  "articleId": "vGLJOdqIOYsJS0orm79e",
+  "source": "READING_ADVANTAGE",
+  "title": "The Mysterious Goblin Shark: A Deep-Sea Predator",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-4e02453769",
+      "order": 0,
+      "text": "The goblin shark is a weird creature.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-001-4e02453769.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-001-4e02453769.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-7cf9ca632b",
+      "order": 1,
+      "text": "It lives in the ocean deep.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-002-7cf9ca632b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-002-7cf9ca632b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-1b8ad84e2a",
+      "order": 2,
+      "text": "The shark has a long nose.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-003-1b8ad84e2a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-003-1b8ad84e2a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-180688918a",
+      "order": 3,
+      "text": "It can catch fish with its fierce jaws.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-004-180688918a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-004-180688918a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-3b7bc18734",
+      "order": 4,
+      "text": "The goblin shark is a scary predator.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-005-3b7bc18734.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-005-3b7bc18734.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-0d53e8d9d6",
+      "order": 5,
+      "text": "It hunts at night.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-006-0d53e8d9d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-006-0d53e8d9d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-23bb41e1d0",
+      "order": 6,
+      "text": "It has pink skin.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-007-23bb41e1d0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-007-23bb41e1d0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-4b30bd507b",
+      "order": 7,
+      "text": "Good camouflage in dark waters.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-008-4b30bd507b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-008-4b30bd507b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-10d43ad7a8",
+      "order": 8,
+      "text": "The goblin shark can grow up to 13 feet long.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-009-10d43ad7a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-009-10d43ad7a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-e382a54512",
+      "order": 9,
+      "text": "It is a slow swimmer.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-010-e382a54512.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-010-e382a54512.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-3b9d0e6029",
+      "order": 10,
+      "text": "The average speed is 1.5 miles per hour.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-011-3b9d0e6029.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-011-3b9d0e6029.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-713aac5c7a",
+      "order": 11,
+      "text": "The goblin shark has small eyes.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-012-713aac5c7a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-012-713aac5c7a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-6de475a45c",
+      "order": 12,
+      "text": "They can see in darkness.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-013-6de475a45c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-013-6de475a45c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-caedd40f48",
+      "order": 13,
+      "text": "It is a fascinating creature.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-014-caedd40f48.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-014-caedd40f48.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-c6e98d4517",
+      "order": 14,
+      "text": "Its rostrum is unique.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-015-c6e98d4517.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-015-c6e98d4517.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-db235d811c",
+      "order": 15,
+      "text": "It can detect movement in the water.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-016-db235d811c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-016-db235d811c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-e429e56f70",
+      "order": 16,
+      "text": "The goblin shark is very rare.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-017-e429e56f70.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-017-e429e56f70.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-d4308c404d",
+      "order": 17,
+      "text": "Not many people have seen it.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-018-d4308c404d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-018-d4308c404d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-542d07ad6e",
+      "order": 18,
+      "text": "Scientists still study this fascinating creature.",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-019-542d07ad6e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/sentences/sentence-019-542d07ad6e.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-d6d0ee936b",
+      "order": 0,
+      "text": "goblin shark",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-001-d6d0ee936b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-001-d6d0ee936b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-4c0dd157be",
+      "order": 1,
+      "text": "weird",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-002-4c0dd157be.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-002-4c0dd157be.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-991656275b",
+      "order": 2,
+      "text": "predator",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-003-991656275b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-003-991656275b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-157809802a",
+      "order": 3,
+      "text": "camouflage",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-004-157809802a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-004-157809802a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-6cfa6f9b9c",
+      "order": 4,
+      "text": "fascinating",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-005-6cfa6f9b9c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-005-6cfa6f9b9c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-00c85f54f8",
+      "order": 5,
+      "text": "rostrum",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-006-00c85f54f8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-006-00c85f54f8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-9b7b840d4f",
+      "order": 6,
+      "text": "detect",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-007-9b7b840d4f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-007-9b7b840d4f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-c9fd5ab78d",
+      "order": 7,
+      "text": "rare",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-008-c9fd5ab78d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-008-c9fd5ab78d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-3aa2965b4e",
+      "order": 8,
+      "text": "average speed",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-009-3aa2965b4e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-009-3aa2965b4e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-dfcace76ff",
+      "order": 9,
+      "text": "movement",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-010-dfcace76ff.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-010-dfcace76ff.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-9ec763d8a5",
+      "order": 10,
+      "text": "the",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-011-9ec763d8a5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-011-9ec763d8a5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-ce62dc0bfb",
+      "order": 11,
+      "text": "goblin",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-012-ce62dc0bfb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-012-ce62dc0bfb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-fdfb6bafed",
+      "order": 12,
+      "text": "shark",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-013-fdfb6bafed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-013-fdfb6bafed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-5d6a8a6a67",
+      "order": 13,
+      "text": "is",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-014-5d6a8a6a67.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-014-5d6a8a6a67.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-e949998a67",
+      "order": 14,
+      "text": "a",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-015-e949998a67.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-015-e949998a67.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-8eb8426a90",
+      "order": 15,
+      "text": "creature",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-016-8eb8426a90.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-016-8eb8426a90.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-cf51ee8159",
+      "order": 16,
+      "text": "it",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-017-cf51ee8159.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-017-cf51ee8159.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-7199912e23",
+      "order": 17,
+      "text": "lives",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-018-7199912e23.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-018-7199912e23.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-1da67892ac",
+      "order": 18,
+      "text": "in",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-019-1da67892ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-019-1da67892ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-eb9738a52c",
+      "order": 19,
+      "text": "ocean",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-020-eb9738a52c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-020-eb9738a52c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-eecdce859e",
+      "order": 20,
+      "text": "deep",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-021-eecdce859e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-021-eecdce859e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-64b79b28ce",
+      "order": 21,
+      "text": "has",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-022-64b79b28ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-022-64b79b28ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-90e3dce9b7",
+      "order": 22,
+      "text": "long",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-023-90e3dce9b7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-023-90e3dce9b7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-f7260793f1",
+      "order": 23,
+      "text": "nose",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-024-f7260793f1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-024-f7260793f1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-60305527de",
+      "order": 24,
+      "text": "can",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-025-60305527de.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-025-60305527de.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-06dc794e80",
+      "order": 25,
+      "text": "catch",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-026-06dc794e80.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-026-06dc794e80.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-69b3f22407",
+      "order": 26,
+      "text": "fish",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-027-69b3f22407.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-027-69b3f22407.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-5eaac66928",
+      "order": 27,
+      "text": "with",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-028-5eaac66928.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-028-5eaac66928.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-9d12a5c68c",
+      "order": 28,
+      "text": "its",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-029-9d12a5c68c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-029-9d12a5c68c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-a6005ca028",
+      "order": 29,
+      "text": "fierce",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-030-a6005ca028.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-030-a6005ca028.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-a75bd6df10",
+      "order": 30,
+      "text": "jaws",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-031-a75bd6df10.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-031-a75bd6df10.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-5a2ebcb590",
+      "order": 31,
+      "text": "scary",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-032-5a2ebcb590.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-032-5a2ebcb590.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-97d11d3a21",
+      "order": 32,
+      "text": "hunts",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-033-97d11d3a21.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-033-97d11d3a21.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-e669d10d6d",
+      "order": 33,
+      "text": "at",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-034-e669d10d6d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-034-e669d10d6d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-a42494b480",
+      "order": 34,
+      "text": "night",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-035-a42494b480.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-035-a42494b480.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-72b529de54",
+      "order": 35,
+      "text": "pink",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-036-72b529de54.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-036-72b529de54.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-fb886b5a34",
+      "order": 36,
+      "text": "skin",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-037-fb886b5a34.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-037-fb886b5a34.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-c1bd6be83e",
+      "order": 37,
+      "text": "good",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-038-c1bd6be83e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-038-c1bd6be83e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-7848289e9a",
+      "order": 38,
+      "text": "dark",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-039-7848289e9a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-039-7848289e9a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-c27a666244",
+      "order": 39,
+      "text": "waters",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-040-c27a666244.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-040-c27a666244.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-38418d0e88",
+      "order": 40,
+      "text": "grow",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-041-38418d0e88.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-041-38418d0e88.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-bfa0210dec",
+      "order": 41,
+      "text": "up",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-042-bfa0210dec.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-042-bfa0210dec.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-262abdaf87",
+      "order": 42,
+      "text": "to",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-043-262abdaf87.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-043-262abdaf87.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-7597cb1228",
+      "order": 43,
+      "text": "feet",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-044-7597cb1228.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-044-7597cb1228.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-c13d1c2400",
+      "order": 44,
+      "text": "slow",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-045-c13d1c2400.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-045-c13d1c2400.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-8900377da1",
+      "order": 45,
+      "text": "swimmer",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-046-8900377da1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-046-8900377da1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-2e0961706a",
+      "order": 46,
+      "text": "average",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-047-2e0961706a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-047-2e0961706a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-9b8ce5e973",
+      "order": 47,
+      "text": "speed",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-048-9b8ce5e973.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-048-9b8ce5e973.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-33dba1dd74",
+      "order": 48,
+      "text": "miles",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-049-33dba1dd74.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-049-33dba1dd74.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-180ed8f5b0",
+      "order": 49,
+      "text": "per",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-050-180ed8f5b0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-050-180ed8f5b0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-20133b9a11",
+      "order": 50,
+      "text": "hour",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-051-20133b9a11.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-051-20133b9a11.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-191e1e960f",
+      "order": 51,
+      "text": "small",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-052-191e1e960f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-052-191e1e960f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-20a983264b",
+      "order": 52,
+      "text": "eyes",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-053-20a983264b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-053-20a983264b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-602969dc91",
+      "order": 53,
+      "text": "they",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-054-602969dc91.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-054-602969dc91.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-fe3e1f7379",
+      "order": 54,
+      "text": "see",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-055-fe3e1f7379.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-055-fe3e1f7379.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-0ced44052b",
+      "order": 55,
+      "text": "darkness",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-056-0ced44052b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-056-0ced44052b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-f391d3b51f",
+      "order": 56,
+      "text": "unique",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-057-f391d3b51f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-057-f391d3b51f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-8a35d31d4c",
+      "order": 57,
+      "text": "water",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-058-8a35d31d4c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-058-8a35d31d4c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-d2d7c224ee",
+      "order": 58,
+      "text": "very",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-059-d2d7c224ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-059-d2d7c224ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-157a357760",
+      "order": 59,
+      "text": "not",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-060-157a357760.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-060-157a357760.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-274e105b5e",
+      "order": 60,
+      "text": "many",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-061-274e105b5e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-061-274e105b5e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-9a496d17f3",
+      "order": 61,
+      "text": "people",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-062-9a496d17f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-062-9a496d17f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-c105fba304",
+      "order": 62,
+      "text": "have",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-063-c105fba304.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-063-c105fba304.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-e6664b4c17",
+      "order": 63,
+      "text": "seen",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-064-e6664b4c17.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-064-e6664b4c17.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-bfb4981755",
+      "order": 64,
+      "text": "scientists",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-065-bfb4981755.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-065-bfb4981755.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-a95fae5cea",
+      "order": 65,
+      "text": "still",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-066-a95fae5cea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-066-a95fae5cea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-7dc5b17041",
+      "order": 66,
+      "text": "study",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-067-7dc5b17041.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-067-7dc5b17041.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-6ce0d4ee0d",
+      "order": 67,
+      "text": "this",
+      "objectPath": "articles/vGLJOdqIOYsJS0orm79e/words/word-068-6ce0d4ee0d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/words/word-068-6ce0d4ee0d.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-47e06ce149",
+      "type": "mcq",
+      "order": 0,
+      "text": "How does the goblin shark catch fish?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-001-47e06ce149.mp3",
+      "questionObjectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-001-47e06ce149.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-001-47e06ce149-option1-11ead146.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-001-47e06ce149-option2-84e8067f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-001-47e06ce149-option3-a88fa7c2.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-001-47e06ce149-option4-840118a8.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-47e06ce149-option1-11ead146",
+          "text": "With its fierce jaws",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-001-47e06ce149-option1-11ead146.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-47e06ce149-option2-84e8067f",
+          "text": "With its tail",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-001-47e06ce149-option2-84e8067f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-47e06ce149-option3-a88fa7c2",
+          "text": "With its fins",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-001-47e06ce149-option3-a88fa7c2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-47e06ce149-option4-840118a8",
+          "text": "With its nose",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-001-47e06ce149-option4-840118a8.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-7bb6c04bba",
+      "type": "mcq",
+      "order": 1,
+      "text": "What is the average speed of the goblin shark?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-002-7bb6c04bba.mp3",
+      "questionObjectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-002-7bb6c04bba.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-002-7bb6c04bba-option1-1a1f2b86.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-002-7bb6c04bba-option2-3301da9b.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-002-7bb6c04bba-option3-db855a6f.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-002-7bb6c04bba-option4-a0597133.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-7bb6c04bba-option1-1a1f2b86",
+          "text": "1.5 miles per hour",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-002-7bb6c04bba-option1-1a1f2b86.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-7bb6c04bba-option2-3301da9b",
+          "text": "10 miles per hour",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-002-7bb6c04bba-option2-3301da9b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-7bb6c04bba-option3-db855a6f",
+          "text": "5 miles per hour",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-002-7bb6c04bba-option3-db855a6f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-7bb6c04bba-option4-a0597133",
+          "text": "0.5 miles per hour",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-002-7bb6c04bba-option4-a0597133.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-329c1dea8d",
+      "type": "mcq",
+      "order": 2,
+      "text": "When does the goblin shark hunt?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-003-329c1dea8d.mp3",
+      "questionObjectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-003-329c1dea8d.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-003-329c1dea8d-option1-934dfb69.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-003-329c1dea8d-option2-8e4f4b86.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-003-329c1dea8d-option3-eca01615.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-003-329c1dea8d-option4-03caf13f.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-329c1dea8d-option1-934dfb69",
+          "text": "At night",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-003-329c1dea8d-option1-934dfb69.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-329c1dea8d-option2-8e4f4b86",
+          "text": "In the morning",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-003-329c1dea8d-option2-8e4f4b86.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-329c1dea8d-option3-eca01615",
+          "text": "At noon",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-003-329c1dea8d-option3-eca01615.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-329c1dea8d-option4-03caf13f",
+          "text": "In the evening",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-003-329c1dea8d-option4-03caf13f.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-4c19b11dda",
+      "type": "mcq",
+      "order": 3,
+      "text": "Is the goblin shark common or rare?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-004-4c19b11dda.mp3",
+      "questionObjectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-004-4c19b11dda.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-004-4c19b11dda-option1-a2796fff.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-004-4c19b11dda-option2-6b2dbce4.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-004-4c19b11dda-option3-1b7dddf5.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-004-4c19b11dda-option4-75ab1a14.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-4c19b11dda-option1-a2796fff",
+          "text": "Rare",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-004-4c19b11dda-option1-a2796fff.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-4c19b11dda-option2-6b2dbce4",
+          "text": "Very common",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-004-4c19b11dda-option2-6b2dbce4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-4c19b11dda-option3-1b7dddf5",
+          "text": "Somewhat common",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-004-4c19b11dda-option3-1b7dddf5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-4c19b11dda-option4-75ab1a14",
+          "text": "Extremely common",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-004-4c19b11dda-option4-75ab1a14.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-f6d55e6a81",
+      "type": "mcq",
+      "order": 4,
+      "text": "What is unique about the goblin shark's rostrum?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-005-f6d55e6a81.mp3",
+      "questionObjectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-005-f6d55e6a81.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-005-f6d55e6a81-option1-8d50d6d4.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-005-f6d55e6a81-option2-218df2ea.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-005-f6d55e6a81-option3-01c38c36.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-005-f6d55e6a81-option4-957ab554.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-f6d55e6a81-option1-8d50d6d4",
+          "text": "It can detect movement in the water",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-005-f6d55e6a81-option1-8d50d6d4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-f6d55e6a81-option2-218df2ea",
+          "text": "It can change colors",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-005-f6d55e6a81-option2-218df2ea.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-f6d55e6a81-option3-01c38c36",
+          "text": "It can glow in the dark",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-005-f6d55e6a81-option3-01c38c36.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-f6d55e6a81-option4-957ab554",
+          "text": "It is very short",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-005-f6d55e6a81-option4-957ab554.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-22d6374cab",
+      "type": "mcq",
+      "order": 5,
+      "text": "What color is the goblin shark?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-006-22d6374cab.mp3",
+      "questionObjectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-006-22d6374cab.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-006-22d6374cab-option1-bedd8490.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-006-22d6374cab-option2-025fd68e.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-006-22d6374cab-option3-11f23e27.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-006-22d6374cab-option4-7a60ce14.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-22d6374cab-option1-bedd8490",
+          "text": "Pink",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-006-22d6374cab-option1-bedd8490.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-22d6374cab-option2-025fd68e",
+          "text": "Blue",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-006-22d6374cab-option2-025fd68e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-22d6374cab-option3-11f23e27",
+          "text": "Green",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-006-22d6374cab-option3-11f23e27.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-22d6374cab-option4-7a60ce14",
+          "text": "Yellow",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-006-22d6374cab-option4-7a60ce14.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-d6f11644ad",
+      "type": "mcq",
+      "order": 6,
+      "text": "How long can a goblin shark grow?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-007-d6f11644ad.mp3",
+      "questionObjectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-007-d6f11644ad.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-007-d6f11644ad-option1-b3a9376c.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-007-d6f11644ad-option2-bff8c352.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-007-d6f11644ad-option3-7abc5916.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-007-d6f11644ad-option4-5e7f087a.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-d6f11644ad-option1-b3a9376c",
+          "text": "Up to 13 feet",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-007-d6f11644ad-option1-b3a9376c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-d6f11644ad-option2-bff8c352",
+          "text": "Up to 5 feet",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-007-d6f11644ad-option2-bff8c352.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-d6f11644ad-option3-7abc5916",
+          "text": "Up to 10 feet",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-007-d6f11644ad-option3-7abc5916.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-d6f11644ad-option4-5e7f087a",
+          "text": "Up to 20 feet",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-007-d6f11644ad-option4-5e7f087a.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-ef2f2671f3",
+      "type": "mcq",
+      "order": 7,
+      "text": "What size are the goblin shark's eyes?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-008-ef2f2671f3.mp3",
+      "questionObjectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-008-ef2f2671f3.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-008-ef2f2671f3-option1-22c5cb19.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-008-ef2f2671f3-option2-f0c11d7d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-008-ef2f2671f3-option3-a21583ec.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-008-ef2f2671f3-option4-154f8739.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-ef2f2671f3-option1-22c5cb19",
+          "text": "Small",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-008-ef2f2671f3-option1-22c5cb19.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-ef2f2671f3-option2-f0c11d7d",
+          "text": "Big",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-008-ef2f2671f3-option2-f0c11d7d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-ef2f2671f3-option3-a21583ec",
+          "text": "Medium",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-008-ef2f2671f3-option3-a21583ec.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-ef2f2671f3-option4-154f8739",
+          "text": "Very large",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-008-ef2f2671f3-option4-154f8739.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-e46591af50",
+      "type": "mcq",
+      "order": 8,
+      "text": "Why is the goblin shark's pink skin good?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-009-e46591af50.mp3",
+      "questionObjectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-009-e46591af50.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-009-e46591af50-option1-1a45c9a1.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-009-e46591af50-option2-9ff1445f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-009-e46591af50-option3-edc1e454.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-009-e46591af50-option4-610a03c3.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-e46591af50-option1-1a45c9a1",
+          "text": "Good camouflage in dark waters",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-009-e46591af50-option1-1a45c9a1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-e46591af50-option2-9ff1445f",
+          "text": "It looks pretty",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-009-e46591af50-option2-9ff1445f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-e46591af50-option3-edc1e454",
+          "text": "It scares other fish",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-009-e46591af50-option3-edc1e454.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-e46591af50-option4-610a03c3",
+          "text": "It absorbs more sunlight",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-009-e46591af50-option4-610a03c3.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-ee76591a87",
+      "type": "mcq",
+      "order": 9,
+      "text": "Where does the goblin shark live?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-010-ee76591a87.mp3",
+      "questionObjectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-010-ee76591a87.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-010-ee76591a87-option1-0b33aee6.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-010-ee76591a87-option2-086f0701.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-010-ee76591a87-option3-4f450a2d.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/mcq-010-ee76591a87-option4-8971cace.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-ee76591a87-option1-0b33aee6",
+          "text": "In the ocean deep",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-010-ee76591a87-option1-0b33aee6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ee76591a87-option2-086f0701",
+          "text": "In rivers",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-010-ee76591a87-option2-086f0701.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ee76591a87-option3-4f450a2d",
+          "text": "In lakes",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-010-ee76591a87-option3-4f450a2d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ee76591a87-option4-8971cace",
+          "text": "On land",
+          "objectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/mcq-010-ee76591a87-option4-8971cace.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-4638eece76",
+      "type": "saq",
+      "order": 10,
+      "text": "What does the goblin shark use to catch fish?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/saq-011-4638eece76.mp3",
+      "questionObjectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/saq-011-4638eece76.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-2746dd5ec4",
+      "type": "saq",
+      "order": 11,
+      "text": "What color is the goblin shark?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/saq-012-2746dd5ec4.mp3",
+      "questionObjectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/saq-012-2746dd5ec4.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-4bedc55697",
+      "type": "saq",
+      "order": 12,
+      "text": "Where does the goblin shark live?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/saq-013-4bedc55697.mp3",
+      "questionObjectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/saq-013-4bedc55697.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-2338c9d2f9",
+      "type": "saq",
+      "order": 13,
+      "text": "How long can the goblin shark grow?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/saq-014-2338c9d2f9.mp3",
+      "questionObjectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/saq-014-2338c9d2f9.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-0993a76e1d",
+      "type": "saq",
+      "order": 14,
+      "text": "When does the goblin shark hunt?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/vGLJOdqIOYsJS0orm79e/questions/saq-015-0993a76e1d.mp3",
+      "questionObjectPath": "articles/vGLJOdqIOYsJS0orm79e/questions/saq-015-0993a76e1d.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:09:23.206Z"
+}

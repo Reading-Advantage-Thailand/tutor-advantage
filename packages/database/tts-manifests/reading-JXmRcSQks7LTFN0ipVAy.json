@@ -1,0 +1,1455 @@
+{
+  "version": 1,
+  "articleId": "JXmRcSQks7LTFN0ipVAy",
+  "source": "READING_ADVANTAGE",
+  "title": "Little Fires Everywhere",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-38dd709fd1",
+      "order": 0,
+      "text": "Anna lives in a small town.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-001-38dd709fd1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-001-38dd709fd1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-14d5d16c27",
+      "order": 1,
+      "text": "The town is quiet.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-002-14d5d16c27.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-002-14d5d16c27.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-172869f41d",
+      "order": 2,
+      "text": "People are friendly.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-003-172869f41d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-003-172869f41d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-d35d05acc5",
+      "order": 3,
+      "text": "But, there is a problem.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-004-d35d05acc5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-004-d35d05acc5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-37e2d98915",
+      "order": 4,
+      "text": "Some people are rich.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-005-37e2d98915.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-005-37e2d98915.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-f83217c66a",
+      "order": 5,
+      "text": "Some people are poor.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-006-f83217c66a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-006-f83217c66a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-104ad1eecb",
+      "order": 6,
+      "text": "Anna sees this every day.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-007-104ad1eecb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-007-104ad1eecb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-b39ca505ef",
+      "order": 7,
+      "text": "Anna goes to school.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-008-b39ca505ef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-008-b39ca505ef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-e49554f88e",
+      "order": 8,
+      "text": "Her school is big.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-009-e49554f88e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-009-e49554f88e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-42cde20a38",
+      "order": 9,
+      "text": "Some kids have new clothes.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-010-42cde20a38.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-010-42cde20a38.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-6f250d3cd4",
+      "order": 10,
+      "text": "Some kids have old clothes.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-011-6f250d3cd4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-011-6f250d3cd4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-fc84678b40",
+      "order": 11,
+      "text": "Anna has old clothes.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-012-fc84678b40.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-012-fc84678b40.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-0cbaf87ae4",
+      "order": 12,
+      "text": "She feels sad.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-013-0cbaf87ae4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-013-0cbaf87ae4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-0febe1da70",
+      "order": 13,
+      "text": "One day, Anna has an idea.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-014-0febe1da70.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-014-0febe1da70.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-bddc54906b",
+      "order": 14,
+      "text": "She talks to her teacher.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-015-bddc54906b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-015-bddc54906b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-c8ddf6d2ea",
+      "order": 15,
+      "text": "\"Can we help?\" she asks.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-016-c8ddf6d2ea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-016-c8ddf6d2ea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-8fe6ccbb41",
+      "order": 16,
+      "text": "The teacher smiles.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-017-8fe6ccbb41.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-017-8fe6ccbb41.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-eb4713b6dc",
+      "order": 17,
+      "text": "\"Yes, we can,\" she says.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-018-eb4713b6dc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-018-eb4713b6dc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-9a652a5b28",
+      "order": 18,
+      "text": "The next day, Anna and her friends bring old clothes.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-019-9a652a5b28.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-019-9a652a5b28.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-011674dc95",
+      "order": 19,
+      "text": "They give the clothes to the school.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-020-011674dc95.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-020-011674dc95.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-9e4cdd8bd7",
+      "order": 20,
+      "text": "The school gives the clothes to kids who need them.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-021-9e4cdd8bd7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-021-9e4cdd8bd7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-d812c94398",
+      "order": 21,
+      "text": "Anna is happy.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-022-d812c94398.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-022-d812c94398.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-c7013e9098",
+      "order": 22,
+      "text": "But, there is more to do.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-023-c7013e9098.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-023-c7013e9098.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-c082782062",
+      "order": 23,
+      "text": "Anna sees other problems.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-024-c082782062.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-024-c082782062.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-f19a16b5b4",
+      "order": 24,
+      "text": "Some kids have no lunch.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-025-f19a16b5b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-025-f19a16b5b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-861ef09cd7",
+      "order": 25,
+      "text": "Some kids have no books.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-026-861ef09cd7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-026-861ef09cd7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-9847ac36a7",
+      "order": 26,
+      "text": "Anna talks to her teacher again.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-027-9847ac36a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-027-9847ac36a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-0a9f18932a",
+      "order": 27,
+      "text": "\"Can we help more?\" she asks.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-028-0a9f18932a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-028-0a9f18932a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-3e0d340f6e",
+      "order": 28,
+      "text": "The teacher smiles again.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-029-3e0d340f6e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-029-3e0d340f6e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-28ef2553ba",
+      "order": 29,
+      "text": "\"Yes, we can,\" she says.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-030-28ef2553ba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-030-28ef2553ba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-12c0c78476",
+      "order": 30,
+      "text": "Anna and her friends bring food.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-031-12c0c78476.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-031-12c0c78476.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-1692c289a8",
+      "order": 31,
+      "text": "They bring books.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-032-1692c289a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-032-1692c289a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-28ecf52ff9",
+      "order": 32,
+      "text": "They give them to the school.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-033-28ecf52ff9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-033-28ecf52ff9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-81582c7147",
+      "order": 33,
+      "text": "The school gives them to kids who need them.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-034-81582c7147.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-034-81582c7147.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-9141250a65",
+      "order": 34,
+      "text": "Anna is very happy.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-035-9141250a65.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-035-9141250a65.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-9d160c3839",
+      "order": 35,
+      "text": "Now, the town is better.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-036-9d160c3839.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-036-9d160c3839.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-0d066deab6",
+      "order": 36,
+      "text": "Kids have clothes.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-037-0d066deab6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-037-0d066deab6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-073012d629",
+      "order": 37,
+      "text": "Kids have food.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-038-073012d629.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-038-073012d629.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-af6ba0129c",
+      "order": 38,
+      "text": "Kids have books.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-039-af6ba0129c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-039-af6ba0129c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-9a1501e758",
+      "order": 39,
+      "text": "Anna sees smiles everywhere.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-040-9a1501e758.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-040-9a1501e758.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-e1dc35ec1b",
+      "order": 40,
+      "text": "She feels proud.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-041-e1dc35ec1b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-041-e1dc35ec1b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-e7f3c8ab1f",
+      "order": 41,
+      "text": "She knows small actions can help.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-042-e7f3c8ab1f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-042-e7f3c8ab1f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-df876dc7fc",
+      "order": 42,
+      "text": "Little fires can make a big change.",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-043-df876dc7fc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/sentences/sentence-043-df876dc7fc.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-ca39d7efef",
+      "order": 0,
+      "text": "problem",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-001-ca39d7efef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-001-ca39d7efef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-9424abaab7",
+      "order": 1,
+      "text": "idea",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-002-9424abaab7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-002-9424abaab7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-47de56989a",
+      "order": 2,
+      "text": "help",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-003-47de56989a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-003-47de56989a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-2c8f538e96",
+      "order": 3,
+      "text": "bring",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-004-2c8f538e96.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-004-2c8f538e96.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-e0a2547fa8",
+      "order": 4,
+      "text": "need",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-005-e0a2547fa8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-005-e0a2547fa8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-925cd4d7dd",
+      "order": 5,
+      "text": "smile",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-006-925cd4d7dd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-006-925cd4d7dd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-91fbf07a71",
+      "order": 6,
+      "text": "proud",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-007-91fbf07a71.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-007-91fbf07a71.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-ea6aa4068c",
+      "order": 7,
+      "text": "actions",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-008-ea6aa4068c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-008-ea6aa4068c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-36c07be947",
+      "order": 8,
+      "text": "change",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-009-36c07be947.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-009-36c07be947.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-1e12f6cb68",
+      "order": 9,
+      "text": "fires",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-010-1e12f6cb68.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-010-1e12f6cb68.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-3fa532fafe",
+      "order": 10,
+      "text": "anna",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-011-3fa532fafe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-011-3fa532fafe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-65a528965b",
+      "order": 11,
+      "text": "lives",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-012-65a528965b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-012-65a528965b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-e6a24040ac",
+      "order": 12,
+      "text": "in",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-013-e6a24040ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-013-e6a24040ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-6f34be13fa",
+      "order": 13,
+      "text": "a",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-014-6f34be13fa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-014-6f34be13fa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-7167291a44",
+      "order": 14,
+      "text": "small",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-015-7167291a44.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-015-7167291a44.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-94f0a23e43",
+      "order": 15,
+      "text": "town",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-016-94f0a23e43.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-016-94f0a23e43.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-85bc82bda3",
+      "order": 16,
+      "text": "the",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-017-85bc82bda3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-017-85bc82bda3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-6cf90b2261",
+      "order": 17,
+      "text": "is",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-018-6cf90b2261.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-018-6cf90b2261.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-b76de62bbc",
+      "order": 18,
+      "text": "quiet",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-019-b76de62bbc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-019-b76de62bbc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-08066994a7",
+      "order": 19,
+      "text": "people",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-020-08066994a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-020-08066994a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-8f3af54692",
+      "order": 20,
+      "text": "are",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-021-8f3af54692.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-021-8f3af54692.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-159e09c893",
+      "order": 21,
+      "text": "friendly",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-022-159e09c893.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-022-159e09c893.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-b4d2688459",
+      "order": 22,
+      "text": "but",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-023-b4d2688459.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-023-b4d2688459.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-83106806f0",
+      "order": 23,
+      "text": "there",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-024-83106806f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-024-83106806f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-0ac0a24fd3",
+      "order": 24,
+      "text": "some",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-025-0ac0a24fd3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-025-0ac0a24fd3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-7fe440acee",
+      "order": 25,
+      "text": "rich",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-026-7fe440acee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-026-7fe440acee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-e479c0399f",
+      "order": 26,
+      "text": "poor",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-027-e479c0399f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-027-e479c0399f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-daaec035c0",
+      "order": 27,
+      "text": "sees",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-028-daaec035c0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-028-daaec035c0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-63470b708b",
+      "order": 28,
+      "text": "this",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-029-63470b708b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-029-63470b708b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-f4b6a20b77",
+      "order": 29,
+      "text": "every",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-030-f4b6a20b77.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-030-f4b6a20b77.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-756556a416",
+      "order": 30,
+      "text": "day",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-031-756556a416.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-031-756556a416.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-8e6b2f22a5",
+      "order": 31,
+      "text": "goes",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-032-8e6b2f22a5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-032-8e6b2f22a5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-fd1505989c",
+      "order": 32,
+      "text": "to",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-033-fd1505989c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-033-fd1505989c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-93fedd4d0b",
+      "order": 33,
+      "text": "school",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-034-93fedd4d0b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-034-93fedd4d0b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-7fde2f454d",
+      "order": 34,
+      "text": "her",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-035-7fde2f454d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-035-7fde2f454d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-abe34ad946",
+      "order": 35,
+      "text": "big",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-036-abe34ad946.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-036-abe34ad946.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-e79a9e7ed0",
+      "order": 36,
+      "text": "kids",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-037-e79a9e7ed0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-037-e79a9e7ed0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-496318dc8c",
+      "order": 37,
+      "text": "have",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-038-496318dc8c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-038-496318dc8c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-b3e148ff31",
+      "order": 38,
+      "text": "new",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-039-b3e148ff31.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-039-b3e148ff31.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-b8995e02cf",
+      "order": 39,
+      "text": "clothes",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-040-b8995e02cf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-040-b8995e02cf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-d44cde013a",
+      "order": 40,
+      "text": "old",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-041-d44cde013a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-041-d44cde013a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-2888df0d0e",
+      "order": 41,
+      "text": "has",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-042-2888df0d0e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-042-2888df0d0e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-aa9bcdb063",
+      "order": 42,
+      "text": "she",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-043-aa9bcdb063.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-043-aa9bcdb063.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-6ea600909c",
+      "order": 43,
+      "text": "feels",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-044-6ea600909c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-044-6ea600909c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-495d4df000",
+      "order": 44,
+      "text": "sad",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-045-495d4df000.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-045-495d4df000.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-368eac980d",
+      "order": 45,
+      "text": "one",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-046-368eac980d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-046-368eac980d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-32c826cfbb",
+      "order": 46,
+      "text": "an",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-047-32c826cfbb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-047-32c826cfbb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-a582e23c46",
+      "order": 47,
+      "text": "talks",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-048-a582e23c46.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-048-a582e23c46.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-018d4f47d6",
+      "order": 48,
+      "text": "teacher",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-049-018d4f47d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-049-018d4f47d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-23ca944f81",
+      "order": 49,
+      "text": "can",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-050-23ca944f81.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-050-23ca944f81.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-dda2bf79bb",
+      "order": 50,
+      "text": "we",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-051-dda2bf79bb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-051-dda2bf79bb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-8463ee2738",
+      "order": 51,
+      "text": "asks",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-052-8463ee2738.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-052-8463ee2738.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-74f4ccbab5",
+      "order": 52,
+      "text": "smiles",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-053-74f4ccbab5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-053-74f4ccbab5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-1139e71027",
+      "order": 53,
+      "text": "yes",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-054-1139e71027.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-054-1139e71027.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-ed11f02730",
+      "order": 54,
+      "text": "says",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-055-ed11f02730.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-055-ed11f02730.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-e01edc35a5",
+      "order": 55,
+      "text": "next",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-056-e01edc35a5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-056-e01edc35a5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-31dc533301",
+      "order": 56,
+      "text": "and",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-057-31dc533301.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-057-31dc533301.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-ba9e0b48a8",
+      "order": 57,
+      "text": "friends",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-058-ba9e0b48a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-058-ba9e0b48a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-e399a30837",
+      "order": 58,
+      "text": "they",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-059-e399a30837.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-059-e399a30837.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-4a49386d28",
+      "order": 59,
+      "text": "give",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-060-4a49386d28.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-060-4a49386d28.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-32de925220",
+      "order": 60,
+      "text": "gives",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-061-32de925220.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-061-32de925220.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-eac59404cd",
+      "order": 61,
+      "text": "who",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-062-eac59404cd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-062-eac59404cd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-333720662f",
+      "order": 62,
+      "text": "them",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-063-333720662f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-063-333720662f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-d94def21d1",
+      "order": 63,
+      "text": "happy",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-064-d94def21d1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-064-d94def21d1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-903f38fa53",
+      "order": 64,
+      "text": "more",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-065-903f38fa53.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-065-903f38fa53.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-eadc569bbc",
+      "order": 65,
+      "text": "do",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-066-eadc569bbc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-066-eadc569bbc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-631c1280f7",
+      "order": 66,
+      "text": "other",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-067-631c1280f7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-067-631c1280f7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-b64881b0ef",
+      "order": 67,
+      "text": "problems",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-068-b64881b0ef.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-068-b64881b0ef.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-6d6dd8ef81",
+      "order": 68,
+      "text": "no",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-069-6d6dd8ef81.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-069-6d6dd8ef81.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-9b992c412b",
+      "order": 69,
+      "text": "lunch",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-070-9b992c412b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-070-9b992c412b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-462a030eda",
+      "order": 70,
+      "text": "books",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-071-462a030eda.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-071-462a030eda.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-1f5ee41adc",
+      "order": 71,
+      "text": "again",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-072-1f5ee41adc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-072-1f5ee41adc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-396a7aea94",
+      "order": 72,
+      "text": "food",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-073-396a7aea94.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-073-396a7aea94.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-74c623c24d",
+      "order": 73,
+      "text": "very",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-074-74c623c24d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-074-74c623c24d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-20297a98b9",
+      "order": 74,
+      "text": "now",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-075-20297a98b9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-075-20297a98b9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-2d17f73674",
+      "order": 75,
+      "text": "better",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-076-2d17f73674.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-076-2d17f73674.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-82a47b82f2",
+      "order": 76,
+      "text": "everywhere",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-077-82a47b82f2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-077-82a47b82f2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-b1f861528b",
+      "order": 77,
+      "text": "knows",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-078-b1f861528b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-078-b1f861528b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-8775e88517",
+      "order": 78,
+      "text": "little",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-079-8775e88517.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-079-8775e88517.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-b58d4a5565",
+      "order": 79,
+      "text": "make",
+      "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/words/word-080-b58d4a5565.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/words/word-080-b58d4a5565.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-55afc68dfb",
+      "type": "mcq",
+      "order": 0,
+      "text": "What do Anna and her friends bring to school after clothes?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-001-55afc68dfb.mp3",
+      "questionObjectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-001-55afc68dfb.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-001-55afc68dfb-option1-2563bb1c.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-001-55afc68dfb-option2-9e596c6e.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-001-55afc68dfb-option3-b6ce331a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-001-55afc68dfb-option4-03f54cfb.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-55afc68dfb-option1-2563bb1c",
+          "text": "Food and books",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-001-55afc68dfb-option1-2563bb1c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-55afc68dfb-option2-9e596c6e",
+          "text": "Toys and games",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-001-55afc68dfb-option2-9e596c6e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-55afc68dfb-option3-b6ce331a",
+          "text": "Shoes and bags",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-001-55afc68dfb-option3-b6ce331a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-55afc68dfb-option4-03f54cfb",
+          "text": "Pens and pencils",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-001-55afc68dfb-option4-03f54cfb.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-ce716b297c",
+      "type": "mcq",
+      "order": 1,
+      "text": "What is the problem in Anna's town?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-002-ce716b297c.mp3",
+      "questionObjectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-002-ce716b297c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-002-ce716b297c-option1-0c945824.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-002-ce716b297c-option2-df26dafe.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-002-ce716b297c-option3-ea0735da.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-002-ce716b297c-option4-fce8f3b9.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-ce716b297c-option1-0c945824",
+          "text": "Some people are poor",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-002-ce716b297c-option1-0c945824.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-ce716b297c-option2-df26dafe",
+          "text": "There is no school",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-002-ce716b297c-option2-df26dafe.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-ce716b297c-option3-ea0735da",
+          "text": "There is no food",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-002-ce716b297c-option3-ea0735da.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-ce716b297c-option4-fce8f3b9",
+          "text": "There are no houses",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-002-ce716b297c-option4-fce8f3b9.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-5d8cf63d1c",
+      "type": "mcq",
+      "order": 2,
+      "text": "How are the people in Anna's town?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-003-5d8cf63d1c.mp3",
+      "questionObjectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-003-5d8cf63d1c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-003-5d8cf63d1c-option1-af629bb2.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-003-5d8cf63d1c-option2-932b3d47.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-003-5d8cf63d1c-option3-24f3346e.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-003-5d8cf63d1c-option4-ce2dcd30.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-5d8cf63d1c-option1-af629bb2",
+          "text": "Friendly",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-003-5d8cf63d1c-option1-af629bb2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-5d8cf63d1c-option2-932b3d47",
+          "text": "Angry",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-003-5d8cf63d1c-option2-932b3d47.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-5d8cf63d1c-option3-24f3346e",
+          "text": "Sad",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-003-5d8cf63d1c-option3-24f3346e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-5d8cf63d1c-option4-ce2dcd30",
+          "text": "Busy",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-003-5d8cf63d1c-option4-ce2dcd30.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-d8a84156fa",
+      "type": "mcq",
+      "order": 3,
+      "text": "How does Anna feel about her old clothes?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-004-d8a84156fa.mp3",
+      "questionObjectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-004-d8a84156fa.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-004-d8a84156fa-option1-d6726134.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-004-d8a84156fa-option2-d3d86274.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-004-d8a84156fa-option3-fbfd3857.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-004-d8a84156fa-option4-447a10af.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-d8a84156fa-option1-d6726134",
+          "text": "Sad",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-004-d8a84156fa-option1-d6726134.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-d8a84156fa-option2-d3d86274",
+          "text": "Happy",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-004-d8a84156fa-option2-d3d86274.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-d8a84156fa-option3-fbfd3857",
+          "text": "Angry",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-004-d8a84156fa-option3-fbfd3857.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-d8a84156fa-option4-447a10af",
+          "text": "Excited",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-004-d8a84156fa-option4-447a10af.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-9f7cdd1a5c",
+      "type": "mcq",
+      "order": 4,
+      "text": "Where does Anna live?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-005-9f7cdd1a5c.mp3",
+      "questionObjectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-005-9f7cdd1a5c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-005-9f7cdd1a5c-option1-230377c0.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-005-9f7cdd1a5c-option2-1d6c29c1.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-005-9f7cdd1a5c-option3-7043b6e9.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-005-9f7cdd1a5c-option4-8ab617bb.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-9f7cdd1a5c-option1-230377c0",
+          "text": "In a small town",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-005-9f7cdd1a5c-option1-230377c0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-9f7cdd1a5c-option2-1d6c29c1",
+          "text": "In a big city",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-005-9f7cdd1a5c-option2-1d6c29c1.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-9f7cdd1a5c-option3-7043b6e9",
+          "text": "In a village",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-005-9f7cdd1a5c-option3-7043b6e9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-9f7cdd1a5c-option4-8ab617bb",
+          "text": "In a forest",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-005-9f7cdd1a5c-option4-8ab617bb.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-1866c88ac7",
+      "type": "mcq",
+      "order": 5,
+      "text": "What other problems does Anna see?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-006-1866c88ac7.mp3",
+      "questionObjectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-006-1866c88ac7.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-006-1866c88ac7-option1-5ac85c80.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-006-1866c88ac7-option2-586ea0c5.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-006-1866c88ac7-option3-02b22785.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-006-1866c88ac7-option4-2e742c22.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-1866c88ac7-option1-5ac85c80",
+          "text": "Kids have no lunch and no books",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-006-1866c88ac7-option1-5ac85c80.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-1866c88ac7-option2-586ea0c5",
+          "text": "Kids have no toys",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-006-1866c88ac7-option2-586ea0c5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-1866c88ac7-option3-02b22785",
+          "text": "Kids have no shoes",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-006-1866c88ac7-option3-02b22785.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-1866c88ac7-option4-2e742c22",
+          "text": "Kids have no games",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-006-1866c88ac7-option4-2e742c22.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-651f3d2558",
+      "type": "mcq",
+      "order": 6,
+      "text": "Who does Anna talk to about helping?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-007-651f3d2558.mp3",
+      "questionObjectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-007-651f3d2558.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-007-651f3d2558-option1-adc3eaeb.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-007-651f3d2558-option2-f4ccaa8d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-007-651f3d2558-option3-e86ea7b4.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-007-651f3d2558-option4-0d0e084b.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-651f3d2558-option1-adc3eaeb",
+          "text": "Her teacher",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-007-651f3d2558-option1-adc3eaeb.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-651f3d2558-option2-f4ccaa8d",
+          "text": "Her friend",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-007-651f3d2558-option2-f4ccaa8d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-651f3d2558-option3-e86ea7b4",
+          "text": "Her mother",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-007-651f3d2558-option3-e86ea7b4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-651f3d2558-option4-0d0e084b",
+          "text": "Her brother",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-007-651f3d2558-option4-0d0e084b.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-68e5ee4212",
+      "type": "mcq",
+      "order": 7,
+      "text": "How does Anna feel at the end?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-008-68e5ee4212.mp3",
+      "questionObjectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-008-68e5ee4212.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-008-68e5ee4212-option1-99633cbc.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-008-68e5ee4212-option2-125a176b.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-008-68e5ee4212-option3-b1d4587c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-008-68e5ee4212-option4-ee168007.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-68e5ee4212-option1-99633cbc",
+          "text": "Proud",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-008-68e5ee4212-option1-99633cbc.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-68e5ee4212-option2-125a176b",
+          "text": "Angry",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-008-68e5ee4212-option2-125a176b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-68e5ee4212-option3-b1d4587c",
+          "text": "Tired",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-008-68e5ee4212-option3-b1d4587c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-68e5ee4212-option4-ee168007",
+          "text": "Scared",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-008-68e5ee4212-option4-ee168007.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-83a22294a5",
+      "type": "mcq",
+      "order": 8,
+      "text": "Where does Anna go every day?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-009-83a22294a5.mp3",
+      "questionObjectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-009-83a22294a5.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-009-83a22294a5-option1-8476f389.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-009-83a22294a5-option2-0746e580.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-009-83a22294a5-option3-5963ab2f.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-009-83a22294a5-option4-9bbf4a5d.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-83a22294a5-option1-8476f389",
+          "text": "To school",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-009-83a22294a5-option1-8476f389.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-83a22294a5-option2-0746e580",
+          "text": "To the park",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-009-83a22294a5-option2-0746e580.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-83a22294a5-option3-5963ab2f",
+          "text": "To the market",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-009-83a22294a5-option3-5963ab2f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-83a22294a5-option4-9bbf4a5d",
+          "text": "To the library",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-009-83a22294a5-option4-9bbf4a5d.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-ae6b0158bd",
+      "type": "mcq",
+      "order": 9,
+      "text": "What do Anna and her friends bring to school first?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-010-ae6b0158bd.mp3",
+      "questionObjectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-010-ae6b0158bd.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-010-ae6b0158bd-option1-6c23bf08.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-010-ae6b0158bd-option2-f19fe459.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-010-ae6b0158bd-option3-6709a451.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-010-ae6b0158bd-option4-108f2119.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-ae6b0158bd-option1-6c23bf08",
+          "text": "Old clothes",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-010-ae6b0158bd-option1-6c23bf08.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ae6b0158bd-option2-f19fe459",
+          "text": "New clothes",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-010-ae6b0158bd-option2-f19fe459.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ae6b0158bd-option3-6709a451",
+          "text": "Books",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-010-ae6b0158bd-option3-6709a451.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-ae6b0158bd-option4-108f2119",
+          "text": "Food",
+          "objectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/mcq-010-ae6b0158bd-option4-108f2119.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-6b215e9126",
+      "type": "saq",
+      "order": 10,
+      "text": "Who does Anna talk to about helping?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/saq-011-6b215e9126.mp3",
+      "questionObjectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/saq-011-6b215e9126.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-9fc9ec94b1",
+      "type": "saq",
+      "order": 11,
+      "text": "Where does Anna live?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/saq-012-9fc9ec94b1.mp3",
+      "questionObjectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/saq-012-9fc9ec94b1.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-0762aeb049",
+      "type": "saq",
+      "order": 12,
+      "text": "What does Anna bring to school first?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/saq-013-0762aeb049.mp3",
+      "questionObjectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/saq-013-0762aeb049.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-81297c83b9",
+      "type": "saq",
+      "order": 13,
+      "text": "What does Anna see every day?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/saq-014-81297c83b9.mp3",
+      "questionObjectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/saq-014-81297c83b9.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-07abffd1c1",
+      "type": "saq",
+      "order": 14,
+      "text": "How does Anna feel at the end?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/JXmRcSQks7LTFN0ipVAy/questions/saq-015-07abffd1c1.mp3",
+      "questionObjectPath": "articles/JXmRcSQks7LTFN0ipVAy/questions/saq-015-07abffd1c1.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T16:56:45.653Z"
+}

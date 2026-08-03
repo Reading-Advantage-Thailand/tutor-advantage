@@ -1,0 +1,1663 @@
+{
+  "version": 1,
+  "articleId": "5whpV1ZrLk7qb1lgAJnT",
+  "source": "READING_ADVANTAGE",
+  "title": "The Alien in the Woods",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-16599822c8",
+      "order": 0,
+      "text": "One sunny day, five friends walk in the woods.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-001-16599822c8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-001-16599822c8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-c2881a2b5c",
+      "order": 1,
+      "text": "They are Mia, Tom, Jake, Lily, and Sam.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-002-c2881a2b5c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-002-c2881a2b5c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-49cef1ad9c",
+      "order": 2,
+      "text": "They like to explore.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-003-49cef1ad9c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-003-49cef1ad9c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-25d71e4803",
+      "order": 3,
+      "text": "They find a strange light.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-004-25d71e4803.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-004-25d71e4803.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-fb62929949",
+      "order": 4,
+      "text": "The light is bright and blue.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-005-fb62929949.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-005-fb62929949.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-8c809c7106",
+      "order": 5,
+      "text": "They go closer.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-006-8c809c7106.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-006-8c809c7106.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-5b56df2034",
+      "order": 6,
+      "text": "They see a crashed spaceship.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-007-5b56df2034.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-007-5b56df2034.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-322b70c553",
+      "order": 7,
+      "text": "The spaceship is big and round.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-008-322b70c553.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-008-322b70c553.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-4561d4a6f1",
+      "order": 8,
+      "text": "It is not from Earth.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-009-4561d4a6f1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-009-4561d4a6f1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-a6e35d79ec",
+      "order": 9,
+      "text": "The friends are scared but curious.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-010-a6e35d79ec.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-010-a6e35d79ec.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-64a0787e31",
+      "order": 10,
+      "text": "They look inside the spaceship.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-011-64a0787e31.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-011-64a0787e31.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-88666ab245",
+      "order": 11,
+      "text": "They see an alien.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-012-88666ab245.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-012-88666ab245.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-c962000a12",
+      "order": 12,
+      "text": "The alien is small and green.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-013-c962000a12.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-013-c962000a12.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-d56008c218",
+      "order": 13,
+      "text": "It is hurt.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-014-d56008c218.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-014-d56008c218.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-8e2c6863b4",
+      "order": 14,
+      "text": "The alien makes a soft sound.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-015-8e2c6863b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-015-8e2c6863b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-5fcfff8cee",
+      "order": 15,
+      "text": "It needs help.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-016-5fcfff8cee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-016-5fcfff8cee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-54003bc434",
+      "order": 16,
+      "text": "\"We should help it!\" says Mia.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-017-54003bc434.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-017-54003bc434.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-3016463894",
+      "order": 17,
+      "text": "\"It is hurt!\"",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-018-3016463894.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-018-3016463894.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-b590dd4830",
+      "order": 18,
+      "text": "\"No!\" says Tom.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-019-b590dd4830.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-019-b590dd4830.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-8847497284",
+      "order": 19,
+      "text": "\"We should call the government.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-020-8847497284.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-020-8847497284.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-7a8587b91d",
+      "order": 20,
+      "text": "They can help.\"",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-021-7a8587b91d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-021-7a8587b91d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-2e00e662ea",
+      "order": 21,
+      "text": "The friends argue.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-022-2e00e662ea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-022-2e00e662ea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-28da5d4c76",
+      "order": 22,
+      "text": "Jake wants to help.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-023-28da5d4c76.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-023-28da5d4c76.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-d4e80932d8",
+      "order": 23,
+      "text": "Lily is afraid.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-024-d4e80932d8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-024-d4e80932d8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-7334aa6b5e",
+      "order": 24,
+      "text": "Sam is quiet.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-025-7334aa6b5e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-025-7334aa6b5e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-6dca89514b",
+      "order": 25,
+      "text": "The alien looks at them.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-026-6dca89514b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-026-6dca89514b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-d9716ae61c",
+      "order": 26,
+      "text": "Its eyes are big and sad.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-027-d9716ae61c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-027-d9716ae61c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-93469bcb5b",
+      "order": 27,
+      "text": "\"Please help me,\" the alien says in a weak voice.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-028-93469bcb5b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-028-93469bcb5b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-bf71d97f74",
+      "order": 28,
+      "text": "The friends look at each other.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-029-bf71d97f74.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-029-bf71d97f74.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-ab20f7b73a",
+      "order": 29,
+      "text": "They feel sorry for the alien.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-030-ab20f7b73a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-030-ab20f7b73a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-a36f1a8547",
+      "order": 30,
+      "text": "\"Okay, we help!\" says Jake.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-031-a36f1a8547.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-031-a36f1a8547.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-11cb31553c",
+      "order": 31,
+      "text": "They take the alien out of the spaceship.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-032-11cb31553c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-032-11cb31553c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-11404a268b",
+      "order": 32,
+      "text": "They find a safe place.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-033-11404a268b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-033-11404a268b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-5ef6eab921",
+      "order": 33,
+      "text": "They give it water and food.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-034-5ef6eab921.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-034-5ef6eab921.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-3c88ec30d3",
+      "order": 34,
+      "text": "The alien smiles.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-035-3c88ec30d3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-035-3c88ec30d3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-b40434d0b6",
+      "order": 35,
+      "text": "It feels better.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-036-b40434d0b6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-036-b40434d0b6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-f3a6d0a5d6",
+      "order": 36,
+      "text": "Suddenly, they hear a noise.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-037-f3a6d0a5d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-037-f3a6d0a5d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-b02741f055",
+      "order": 37,
+      "text": "It is a government car.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-038-b02741f055.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-038-b02741f055.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-3e934824e5",
+      "order": 38,
+      "text": "The friends hide.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-039-3e934824e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-039-3e934824e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-7dcd116c0d",
+      "order": 39,
+      "text": "They do not want to give the alien away.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-040-7dcd116c0d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-040-7dcd116c0d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-7ae5ef836a",
+      "order": 40,
+      "text": "They want to keep it safe.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-041-7ae5ef836a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-041-7ae5ef836a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-090512c1a9",
+      "order": 41,
+      "text": "They look at the alien.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-042-090512c1a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-042-090512c1a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-701debbd81",
+      "order": 42,
+      "text": "It looks back.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-043-701debbd81.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-043-701debbd81.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-044-c785e57df5",
+      "order": 43,
+      "text": "They know they made the right choice.",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-044-c785e57df5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/sentences/sentence-044-c785e57df5.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-071bfc2be1",
+      "order": 0,
+      "text": "explore",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-001-071bfc2be1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-001-071bfc2be1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-c7fb7be37c",
+      "order": 1,
+      "text": "strange",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-002-c7fb7be37c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-002-c7fb7be37c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-906ef9f1f3",
+      "order": 2,
+      "text": "crashed",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-003-906ef9f1f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-003-906ef9f1f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-8a38be936e",
+      "order": 3,
+      "text": "curious",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-004-8a38be936e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-004-8a38be936e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-e5dab4c598",
+      "order": 4,
+      "text": "hurt",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-005-e5dab4c598.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-005-e5dab4c598.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-da00e317e9",
+      "order": 5,
+      "text": "weak",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-006-da00e317e9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-006-da00e317e9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-be509f8eae",
+      "order": 6,
+      "text": "argue",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-007-be509f8eae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-007-be509f8eae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-595e65e8cb",
+      "order": 7,
+      "text": "safe",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-008-595e65e8cb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-008-595e65e8cb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-2aff705c0e",
+      "order": 8,
+      "text": "government",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-009-2aff705c0e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-009-2aff705c0e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-ae0eb82a4d",
+      "order": 9,
+      "text": "choice",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-010-ae0eb82a4d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-010-ae0eb82a4d.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-272e35c13b",
+      "order": 10,
+      "text": "one",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-011-272e35c13b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-011-272e35c13b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-e9ebeb683d",
+      "order": 11,
+      "text": "sunny",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-012-e9ebeb683d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-012-e9ebeb683d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-2db36312ee",
+      "order": 12,
+      "text": "day",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-013-2db36312ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-013-2db36312ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-8771fc733e",
+      "order": 13,
+      "text": "five",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-014-8771fc733e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-014-8771fc733e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-9da4f371c9",
+      "order": 14,
+      "text": "friends",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-015-9da4f371c9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-015-9da4f371c9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-d84e72359c",
+      "order": 15,
+      "text": "walk",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-016-d84e72359c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-016-d84e72359c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-f1ad06f9ad",
+      "order": 16,
+      "text": "in",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-017-f1ad06f9ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-017-f1ad06f9ad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-fe9a531c4e",
+      "order": 17,
+      "text": "the",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-018-fe9a531c4e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-018-fe9a531c4e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-3c5dfb8dfc",
+      "order": 18,
+      "text": "woods",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-019-3c5dfb8dfc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-019-3c5dfb8dfc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-35a7f14193",
+      "order": 19,
+      "text": "they",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-020-35a7f14193.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-020-35a7f14193.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-8f3af54692",
+      "order": 20,
+      "text": "are",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-021-8f3af54692.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-021-8f3af54692.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-e10c6a465d",
+      "order": 21,
+      "text": "mia",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-022-e10c6a465d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-022-e10c6a465d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-d5449c2632",
+      "order": 22,
+      "text": "tom",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-023-d5449c2632.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-023-d5449c2632.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-1625abde5c",
+      "order": 23,
+      "text": "jake",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-024-1625abde5c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-024-1625abde5c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-cc0820b621",
+      "order": 24,
+      "text": "lily",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-025-cc0820b621.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-025-cc0820b621.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-15cb63d4ac",
+      "order": 25,
+      "text": "and",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-026-15cb63d4ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-026-15cb63d4ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-15c454e832",
+      "order": 26,
+      "text": "sam",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-027-15c454e832.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-027-15c454e832.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-a49e16b673",
+      "order": 27,
+      "text": "like",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-028-a49e16b673.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-028-a49e16b673.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-9ba80a29ba",
+      "order": 28,
+      "text": "to",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-029-9ba80a29ba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-029-9ba80a29ba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-d09ee53424",
+      "order": 29,
+      "text": "find",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-030-d09ee53424.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-030-d09ee53424.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-800aad0bdb",
+      "order": 30,
+      "text": "a",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-031-800aad0bdb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-031-800aad0bdb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-a5a696971c",
+      "order": 31,
+      "text": "light",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-032-a5a696971c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-032-a5a696971c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-4e1cae68b5",
+      "order": 32,
+      "text": "is",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-033-4e1cae68b5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-033-4e1cae68b5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-5fd11b7479",
+      "order": 33,
+      "text": "bright",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-034-5fd11b7479.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-034-5fd11b7479.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-4ee51c6497",
+      "order": 34,
+      "text": "blue",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-035-4ee51c6497.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-035-4ee51c6497.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-0f87a88bd7",
+      "order": 35,
+      "text": "go",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-036-0f87a88bd7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-036-0f87a88bd7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-1fa25e9978",
+      "order": 36,
+      "text": "closer",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-037-1fa25e9978.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-037-1fa25e9978.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-e0adb36110",
+      "order": 37,
+      "text": "see",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-038-e0adb36110.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-038-e0adb36110.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-36b6159554",
+      "order": 38,
+      "text": "spaceship",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-039-36b6159554.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-039-36b6159554.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-ab0e00b8e3",
+      "order": 39,
+      "text": "big",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-040-ab0e00b8e3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-040-ab0e00b8e3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-4bf0b0e402",
+      "order": 40,
+      "text": "round",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-041-4bf0b0e402.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-041-4bf0b0e402.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-6df878829b",
+      "order": 41,
+      "text": "it",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-042-6df878829b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-042-6df878829b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-0c88495c4c",
+      "order": 42,
+      "text": "not",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-043-0c88495c4c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-043-0c88495c4c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-4a31e96b9e",
+      "order": 43,
+      "text": "from",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-044-4a31e96b9e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-044-4a31e96b9e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-8e10cf8f22",
+      "order": 44,
+      "text": "earth",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-045-8e10cf8f22.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-045-8e10cf8f22.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-9617d20f0e",
+      "order": 45,
+      "text": "scared",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-046-9617d20f0e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-046-9617d20f0e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-c167ccc10e",
+      "order": 46,
+      "text": "but",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-047-c167ccc10e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-047-c167ccc10e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-3f58427f54",
+      "order": 47,
+      "text": "look",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-048-3f58427f54.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-048-3f58427f54.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-481279aa78",
+      "order": 48,
+      "text": "inside",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-049-481279aa78.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-049-481279aa78.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-718d44e7c5",
+      "order": 49,
+      "text": "an",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-050-718d44e7c5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-050-718d44e7c5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-90d761aa9b",
+      "order": 50,
+      "text": "alien",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-051-90d761aa9b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-051-90d761aa9b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-191e1e960f",
+      "order": 51,
+      "text": "small",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-052-191e1e960f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-052-191e1e960f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-aa73fd36ce",
+      "order": 52,
+      "text": "green",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-053-aa73fd36ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-053-aa73fd36ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-62fc87b11e",
+      "order": 53,
+      "text": "makes",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-054-62fc87b11e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-054-62fc87b11e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-45401d2752",
+      "order": 54,
+      "text": "soft",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-055-45401d2752.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-055-45401d2752.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-f569141ace",
+      "order": 55,
+      "text": "sound",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-056-f569141ace.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-056-f569141ace.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-69e8558023",
+      "order": 56,
+      "text": "needs",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-057-69e8558023.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-057-69e8558023.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-36011f5ddc",
+      "order": 57,
+      "text": "help",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-058-36011f5ddc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-058-36011f5ddc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-385316557d",
+      "order": 58,
+      "text": "we",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-059-385316557d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-059-385316557d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-c7675d1b4a",
+      "order": 59,
+      "text": "should",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-060-c7675d1b4a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-060-c7675d1b4a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-f8f8b14473",
+      "order": 60,
+      "text": "says",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-061-f8f8b14473.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-061-f8f8b14473.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-07f4274e20",
+      "order": 61,
+      "text": "no",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-062-07f4274e20.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-062-07f4274e20.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-b1762b6a0a",
+      "order": 62,
+      "text": "call",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-063-b1762b6a0a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-063-b1762b6a0a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-c33cd26814",
+      "order": 63,
+      "text": "can",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-064-c33cd26814.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-064-c33cd26814.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-01e9c88c4d",
+      "order": 64,
+      "text": "wants",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-065-01e9c88c4d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-065-01e9c88c4d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-dbba2b2d04",
+      "order": 65,
+      "text": "afraid",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-066-dbba2b2d04.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-066-dbba2b2d04.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-c3664e9cfb",
+      "order": 66,
+      "text": "quiet",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-067-c3664e9cfb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-067-c3664e9cfb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-20d07eda32",
+      "order": 67,
+      "text": "looks",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-068-20d07eda32.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-068-20d07eda32.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-ec811f1313",
+      "order": 68,
+      "text": "at",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-069-ec811f1313.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-069-ec811f1313.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-182dd867c1",
+      "order": 69,
+      "text": "them",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-070-182dd867c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-070-182dd867c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-0335bf503f",
+      "order": 70,
+      "text": "its",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-071-0335bf503f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-071-0335bf503f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-fd9832ca95",
+      "order": 71,
+      "text": "eyes",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-072-fd9832ca95.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-072-fd9832ca95.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-3c542c4319",
+      "order": 72,
+      "text": "sad",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-073-3c542c4319.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-073-3c542c4319.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-42880e4fa0",
+      "order": 73,
+      "text": "please",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-074-42880e4fa0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-074-42880e4fa0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-a612a8cde8",
+      "order": 74,
+      "text": "me",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-075-a612a8cde8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-075-a612a8cde8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-076-80e7ad9027",
+      "order": 75,
+      "text": "voice",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-076-80e7ad9027.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-076-80e7ad9027.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-077-97fd67cf7b",
+      "order": 76,
+      "text": "each",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-077-97fd67cf7b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-077-97fd67cf7b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-078-cb946163e3",
+      "order": 77,
+      "text": "other",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-078-cb946163e3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-078-cb946163e3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-079-8e53763c97",
+      "order": 78,
+      "text": "feel",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-079-8e53763c97.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-079-8e53763c97.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-080-462370071d",
+      "order": 79,
+      "text": "sorry",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-080-462370071d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-080-462370071d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-081-75efa21934",
+      "order": 80,
+      "text": "for",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-081-75efa21934.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-081-75efa21934.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-082-1d8ef4f0bb",
+      "order": 81,
+      "text": "okay",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-082-1d8ef4f0bb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-082-1d8ef4f0bb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-083-4ad6e5737b",
+      "order": 82,
+      "text": "take",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-083-4ad6e5737b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-083-4ad6e5737b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-084-85e4508ff0",
+      "order": 83,
+      "text": "out",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-084-85e4508ff0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-084-85e4508ff0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-085-763fe3eb17",
+      "order": 84,
+      "text": "of",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-085-763fe3eb17.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-085-763fe3eb17.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-086-4683d63603",
+      "order": 85,
+      "text": "place",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-086-4683d63603.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-086-4683d63603.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-087-31ad497269",
+      "order": 86,
+      "text": "give",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-087-31ad497269.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-087-31ad497269.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-088-d92afb55c9",
+      "order": 87,
+      "text": "water",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-088-d92afb55c9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-088-d92afb55c9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-089-34e287030e",
+      "order": 88,
+      "text": "food",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-089-34e287030e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-089-34e287030e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-090-b86fa9699e",
+      "order": 89,
+      "text": "smiles",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-090-b86fa9699e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-090-b86fa9699e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-091-8a684676d3",
+      "order": 90,
+      "text": "feels",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-091-8a684676d3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-091-8a684676d3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-092-3c61435dc9",
+      "order": 91,
+      "text": "better",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-092-3c61435dc9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-092-3c61435dc9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-093-c5f935f96b",
+      "order": 92,
+      "text": "suddenly",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-093-c5f935f96b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-093-c5f935f96b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-094-b2336695ed",
+      "order": 93,
+      "text": "hear",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-094-b2336695ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-094-b2336695ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-095-3d4199cc8b",
+      "order": 94,
+      "text": "noise",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-095-3d4199cc8b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-095-3d4199cc8b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-096-a36149031e",
+      "order": 95,
+      "text": "car",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-096-a36149031e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-096-a36149031e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-097-3522e4089e",
+      "order": 96,
+      "text": "hide",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-097-3522e4089e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-097-3522e4089e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-098-1897b7bb47",
+      "order": 97,
+      "text": "do",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-098-1897b7bb47.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-098-1897b7bb47.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-099-f31353e881",
+      "order": 98,
+      "text": "want",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-099-f31353e881.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-099-f31353e881.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-100-2fa165bfa3",
+      "order": 99,
+      "text": "away",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-100-2fa165bfa3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-100-2fa165bfa3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-101-bfef1ef1f5",
+      "order": 100,
+      "text": "keep",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-101-bfef1ef1f5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-101-bfef1ef1f5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-102-62894ae185",
+      "order": 101,
+      "text": "back",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-102-62894ae185.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-102-62894ae185.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-103-c44ad1afa9",
+      "order": 102,
+      "text": "know",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-103-c44ad1afa9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-103-c44ad1afa9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-104-0899f85e1e",
+      "order": 103,
+      "text": "made",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-104-0899f85e1e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-104-0899f85e1e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-105-311fcc3031",
+      "order": 104,
+      "text": "right",
+      "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/words/word-105-311fcc3031.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/words/word-105-311fcc3031.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-5f66015326",
+      "type": "mcq",
+      "order": 0,
+      "text": "What do the friends give the alien?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-001-5f66015326.mp3",
+      "questionObjectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-001-5f66015326.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-001-5f66015326-option1-7b049578.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-001-5f66015326-option2-30276b86.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-001-5f66015326-option3-3c960482.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-001-5f66015326-option4-3b159164.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-5f66015326-option1-7b049578",
+          "text": "water and food",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-001-5f66015326-option1-7b049578.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-5f66015326-option2-30276b86",
+          "text": "medicine",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-001-5f66015326-option2-30276b86.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-5f66015326-option3-3c960482",
+          "text": "clothes",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-001-5f66015326-option3-3c960482.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-5f66015326-option4-3b159164",
+          "text": "toys",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-001-5f66015326-option4-3b159164.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-83d96b286b",
+      "type": "mcq",
+      "order": 1,
+      "text": "What do they hear suddenly?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-002-83d96b286b.mp3",
+      "questionObjectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-002-83d96b286b.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-002-83d96b286b-option1-fe869b31.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-002-83d96b286b-option2-1b0db815.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-002-83d96b286b-option3-13df3a3c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-002-83d96b286b-option4-288a837a.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-83d96b286b-option1-fe869b31",
+          "text": "car",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-002-83d96b286b-option1-fe869b31.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-83d96b286b-option2-1b0db815",
+          "text": "plane",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-002-83d96b286b-option2-1b0db815.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-83d96b286b-option3-13df3a3c",
+          "text": "helicopter",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-002-83d96b286b-option3-13df3a3c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-83d96b286b-option4-288a837a",
+          "text": "bike",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-002-83d96b286b-option4-288a837a.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-efbb5d75e8",
+      "type": "mcq",
+      "order": 2,
+      "text": "Where do the friends walk?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-003-efbb5d75e8.mp3",
+      "questionObjectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-003-efbb5d75e8.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-003-efbb5d75e8-option1-b40282b4.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-003-efbb5d75e8-option2-f65d577f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-003-efbb5d75e8-option3-b7e79978.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-003-efbb5d75e8-option4-5144f4bb.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-efbb5d75e8-option1-b40282b4",
+          "text": "woods",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-003-efbb5d75e8-option1-b40282b4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-efbb5d75e8-option2-f65d577f",
+          "text": "beach",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-003-efbb5d75e8-option2-f65d577f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-efbb5d75e8-option3-b7e79978",
+          "text": "city",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-003-efbb5d75e8-option3-b7e79978.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-efbb5d75e8-option4-5144f4bb",
+          "text": "park",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-003-efbb5d75e8-option4-5144f4bb.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-face30d448",
+      "type": "mcq",
+      "order": 3,
+      "text": "What do they find crashed?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-004-face30d448.mp3",
+      "questionObjectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-004-face30d448.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-004-face30d448-option1-c08db96a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-004-face30d448-option2-95632e97.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-004-face30d448-option3-601b2518.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-004-face30d448-option4-59cd57df.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-face30d448-option1-c08db96a",
+          "text": "spaceship",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-004-face30d448-option1-c08db96a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-face30d448-option2-95632e97",
+          "text": "car",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-004-face30d448-option2-95632e97.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-face30d448-option3-601b2518",
+          "text": "house",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-004-face30d448-option3-601b2518.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-face30d448-option4-59cd57df",
+          "text": "boat",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-004-face30d448-option4-59cd57df.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-865be7fec6",
+      "type": "mcq",
+      "order": 4,
+      "text": "What does the alien look like?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-005-865be7fec6.mp3",
+      "questionObjectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-005-865be7fec6.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-005-865be7fec6-option1-b910a5f0.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-005-865be7fec6-option2-45cadf9c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-005-865be7fec6-option3-22157b12.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-005-865be7fec6-option4-0873f69f.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-865be7fec6-option1-b910a5f0",
+          "text": "small and green",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-005-865be7fec6-option1-b910a5f0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-865be7fec6-option2-45cadf9c",
+          "text": "big and blue",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-005-865be7fec6-option2-45cadf9c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-865be7fec6-option3-22157b12",
+          "text": "small and red",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-005-865be7fec6-option3-22157b12.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-865be7fec6-option4-0873f69f",
+          "text": "big and yellow",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-005-865be7fec6-option4-0873f69f.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-f3281d6f66",
+      "type": "mcq",
+      "order": 5,
+      "text": "How many friends are there?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-006-f3281d6f66.mp3",
+      "questionObjectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-006-f3281d6f66.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-006-f3281d6f66-option1-aaa7a039.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-006-f3281d6f66-option2-62dd2266.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-006-f3281d6f66-option3-a7ae89f8.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-006-f3281d6f66-option4-29601b95.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-f3281d6f66-option1-aaa7a039",
+          "text": "five",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-006-f3281d6f66-option1-aaa7a039.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-f3281d6f66-option2-62dd2266",
+          "text": "three",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-006-f3281d6f66-option2-62dd2266.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-f3281d6f66-option3-a7ae89f8",
+          "text": "four",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-006-f3281d6f66-option3-a7ae89f8.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-f3281d6f66-option4-29601b95",
+          "text": "six",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-006-f3281d6f66-option4-29601b95.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-9cdc357e0f",
+      "type": "mcq",
+      "order": 6,
+      "text": "Who does Tom want to call?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-007-9cdc357e0f.mp3",
+      "questionObjectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-007-9cdc357e0f.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-007-9cdc357e0f-option1-f70a4982.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-007-9cdc357e0f-option2-86fef608.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-007-9cdc357e0f-option3-f7638cb3.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-007-9cdc357e0f-option4-7f7e6d59.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-9cdc357e0f-option1-f70a4982",
+          "text": "government",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-007-9cdc357e0f-option1-f70a4982.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-9cdc357e0f-option2-86fef608",
+          "text": "police",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-007-9cdc357e0f-option2-86fef608.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-9cdc357e0f-option3-f7638cb3",
+          "text": "firefighters",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-007-9cdc357e0f-option3-f7638cb3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-9cdc357e0f-option4-7f7e6d59",
+          "text": "doctors",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-007-9cdc357e0f-option4-7f7e6d59.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-29b27c958a",
+      "type": "mcq",
+      "order": 7,
+      "text": "What is the weather like?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-008-29b27c958a.mp3",
+      "questionObjectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-008-29b27c958a.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-008-29b27c958a-option1-af35e234.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-008-29b27c958a-option2-c97e62b9.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-008-29b27c958a-option3-6ef1982e.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-008-29b27c958a-option4-f69976d5.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-29b27c958a-option1-af35e234",
+          "text": "sunny",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-008-29b27c958a-option1-af35e234.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-29b27c958a-option2-c97e62b9",
+          "text": "rainy",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-008-29b27c958a-option2-c97e62b9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-29b27c958a-option3-6ef1982e",
+          "text": "cloudy",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-008-29b27c958a-option3-6ef1982e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-29b27c958a-option4-f69976d5",
+          "text": "snowy",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-008-29b27c958a-option4-f69976d5.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-233af4b422",
+      "type": "mcq",
+      "order": 8,
+      "text": "What color is the light?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-009-233af4b422.mp3",
+      "questionObjectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-009-233af4b422.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-009-233af4b422-option1-2ca3d4a7.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-009-233af4b422-option2-6d20e062.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-009-233af4b422-option3-c23cc049.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-009-233af4b422-option4-c69e7c35.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-233af4b422-option1-2ca3d4a7",
+          "text": "blue",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-009-233af4b422-option1-2ca3d4a7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-233af4b422-option2-6d20e062",
+          "text": "red",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-009-233af4b422-option2-6d20e062.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-233af4b422-option3-c23cc049",
+          "text": "green",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-009-233af4b422-option3-c23cc049.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-233af4b422-option4-c69e7c35",
+          "text": "yellow",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-009-233af4b422-option4-c69e7c35.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-86a8fde698",
+      "type": "mcq",
+      "order": 9,
+      "text": "Who wants to help the alien first?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-010-86a8fde698.mp3",
+      "questionObjectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-010-86a8fde698.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-010-86a8fde698-option1-db1c59ce.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-010-86a8fde698-option2-803cfc34.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-010-86a8fde698-option3-7339d59a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-010-86a8fde698-option4-c4ca3768.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-86a8fde698-option1-db1c59ce",
+          "text": "Mia",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-010-86a8fde698-option1-db1c59ce.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-86a8fde698-option2-803cfc34",
+          "text": "Tom",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-010-86a8fde698-option2-803cfc34.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-86a8fde698-option3-7339d59a",
+          "text": "Jake",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-010-86a8fde698-option3-7339d59a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-86a8fde698-option4-c4ca3768",
+          "text": "Lily",
+          "objectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/mcq-010-86a8fde698-option4-c4ca3768.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-8265ba0477",
+      "type": "saq",
+      "order": 10,
+      "text": "How many friends walk in the woods?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/saq-011-8265ba0477.mp3",
+      "questionObjectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/saq-011-8265ba0477.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-a10bb59384",
+      "type": "saq",
+      "order": 11,
+      "text": "What does the alien need?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/saq-012-a10bb59384.mp3",
+      "questionObjectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/saq-012-a10bb59384.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-ab2e942edc",
+      "type": "saq",
+      "order": 12,
+      "text": "What color is the light they find?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/saq-013-ab2e942edc.mp3",
+      "questionObjectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/saq-013-ab2e942edc.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-1c8cbe7d82",
+      "type": "saq",
+      "order": 13,
+      "text": "Who says, 'We should help it!'?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/saq-014-1c8cbe7d82.mp3",
+      "questionObjectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/saq-014-1c8cbe7d82.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-059a4099bf",
+      "type": "saq",
+      "order": 14,
+      "text": "What do they see inside the spaceship?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/5whpV1ZrLk7qb1lgAJnT/questions/saq-015-059a4099bf.mp3",
+      "questionObjectPath": "articles/5whpV1ZrLk7qb1lgAJnT/questions/saq-015-059a4099bf.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:10:02.711Z"
+}

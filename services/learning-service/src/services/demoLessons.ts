@@ -266,7 +266,38 @@ export function getDemoArticle(articleId: string): DemoArticle | null {
   // Return a deep copy so the live flow can mutate (e.g. pad fallback questions)
   // without corrupting the shared catalog for the next demo session.
   const lesson = DEMO_LESSONS.find((item) => item.articleId === articleId);
-  return lesson ? JSON.parse(JSON.stringify(lesson.article)) : null;
+  if (!lesson) return null;
+
+  const copy = JSON.parse(JSON.stringify(lesson.article));
+  const bucketName = process.env.GCS_BUCKET_NAME || "artifacts.reading-advantage.appspot.com";
+
+  if (Array.isArray(copy.sentences)) {
+    copy.sentences = copy.sentences.map((sent: any, idx: number) => {
+      const text = typeof sent === "object" ? (sent.sentences || sent.text || sent.sentence || "") : String(sent);
+      const existingUrl = typeof sent === "object" ? (sent.audioUrl || sent.audio_url) : null;
+      const defaultUrl = `https://storage.googleapis.com/${bucketName}/articles/${articleId}/sentences/sentence_${idx}.mp3`;
+      return {
+        ...(typeof sent === "object" ? sent : {}),
+        sentences: text,
+        audioUrl: existingUrl || defaultUrl,
+      };
+    });
+  }
+
+  if (Array.isArray(copy.words)) {
+    copy.words = copy.words.map((word: any, idx: number) => {
+      const vocab = typeof word === "object" ? (word.vocabulary || word.word || "") : String(word);
+      const existingUrl = typeof word === "object" ? (word.audioUrl || word.audio_url) : null;
+      const defaultUrl = `https://storage.googleapis.com/${bucketName}/articles/${articleId}/words/word_${idx}.mp3`;
+      return {
+        ...(typeof word === "object" ? word : {}),
+        vocabulary: vocab,
+        audioUrl: existingUrl || defaultUrl,
+      };
+    });
+  }
+
+  return copy;
 }
 
 export function isDemoArticleId(articleId: string): boolean {

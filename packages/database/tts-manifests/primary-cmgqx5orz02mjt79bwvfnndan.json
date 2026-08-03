@@ -1,0 +1,1137 @@
+{
+  "version": 1,
+  "articleId": "cmgqx5orz02mjt79bwvfnndan",
+  "source": "PRIMARY_ADVANTAGE",
+  "title": "Pip Sees Food",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-028d286b0a",
+      "order": 0,
+      "text": "This is Pip.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-001-028d286b0a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-001-028d286b0a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-e01318e688",
+      "order": 1,
+      "text": "Pip is a small puppy.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-002-e01318e688.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-002-e01318e688.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-8a1b6b74b1",
+      "order": 2,
+      "text": "Pip is happy.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-003-8a1b6b74b1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-003-8a1b6b74b1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-873563fad6",
+      "order": 3,
+      "text": "He sees a farm.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-004-873563fad6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-004-873563fad6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-faa60e0952",
+      "order": 4,
+      "text": "The farm is big.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-005-faa60e0952.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-005-faa60e0952.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-1e709fa8dc",
+      "order": 5,
+      "text": "A farmer is here.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-006-1e709fa8dc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-006-1e709fa8dc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-a1157351ce",
+      "order": 6,
+      "text": "The farmer is nice.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-007-a1157351ce.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-007-a1157351ce.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-6865d1bbd1",
+      "order": 7,
+      "text": "He is a man.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-008-6865d1bbd1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-008-6865d1bbd1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-0fc53bca3e",
+      "order": 8,
+      "text": "He grows food.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-009-0fc53bca3e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-009-0fc53bca3e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-cc1c54b04e",
+      "order": 9,
+      "text": "This food is good.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-010-cc1c54b04e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-010-cc1c54b04e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-77f10b12cf",
+      "order": 10,
+      "text": "Pip likes good food.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-011-77f10b12cf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-011-77f10b12cf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-5e1b3b85d6",
+      "order": 11,
+      "text": "A girl is here.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-012-5e1b3b85d6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-012-5e1b3b85d6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-4ad065554f",
+      "order": 12,
+      "text": "Her name is Lily.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-013-4ad065554f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-013-4ad065554f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-54149755f9",
+      "order": 13,
+      "text": "Lily is happy.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-014-54149755f9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-014-54149755f9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-135a70a97d",
+      "order": 14,
+      "text": "She is with Pip.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-015-135a70a97d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-015-135a70a97d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-e107c96f37",
+      "order": 15,
+      "text": "Lily sees a garden.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-016-e107c96f37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-016-e107c96f37.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-27c1b005b6",
+      "order": 16,
+      "text": "Pip sees a garden.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-017-27c1b005b6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-017-27c1b005b6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-16656c33a3",
+      "order": 17,
+      "text": "This garden is green.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-018-16656c33a3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-018-16656c33a3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-bca6118508",
+      "order": 18,
+      "text": "Green plants are here.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-019-bca6118508.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-019-bca6118508.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-17aca74bcf",
+      "order": 19,
+      "text": "The farmer shows a plant.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-020-17aca74bcf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-020-17aca74bcf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-28b74cc7e1",
+      "order": 20,
+      "text": "This is a carrot plant.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-021-28b74cc7e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-021-28b74cc7e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-2ff190468b",
+      "order": 21,
+      "text": "Carrots are orange.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-022-2ff190468b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-022-2ff190468b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-4e09dba160",
+      "order": 22,
+      "text": "This is a tomato plant.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-023-4e09dba160.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-023-4e09dba160.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-c5d878b7e5",
+      "order": 23,
+      "text": "Tomatoes are red.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-024-c5d878b7e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-024-c5d878b7e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-e18152fe49",
+      "order": 24,
+      "text": "The farmer gives water.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-025-e18152fe49.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-025-e18152fe49.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-7dd62b9c33",
+      "order": 25,
+      "text": "The sun is hot.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-026-7dd62b9c33.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-026-7dd62b9c33.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-b20bd1a75c",
+      "order": 26,
+      "text": "Plants grow big.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-027-b20bd1a75c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-027-b20bd1a75c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-fe28d5ec58",
+      "order": 27,
+      "text": "Lily likes plants.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-028-fe28d5ec58.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-028-fe28d5ec58.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-b9d43c050b",
+      "order": 28,
+      "text": "Pip likes plants.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-029-b9d43c050b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-029-b9d43c050b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-56174d0db8",
+      "order": 29,
+      "text": "Lily sees a red tomato.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-030-56174d0db8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-030-56174d0db8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-f25962ea64",
+      "order": 30,
+      "text": "She eats it.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-031-f25962ea64.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-031-f25962ea64.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-c01054ee12",
+      "order": 31,
+      "text": "This tomato is good.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-032-c01054ee12.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-032-c01054ee12.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-a15b16cf3b",
+      "order": 32,
+      "text": "Pip sees an orange carrot.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-033-a15b16cf3b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-033-a15b16cf3b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-6efe58d436",
+      "order": 33,
+      "text": "He eats it.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-034-6efe58d436.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-034-6efe58d436.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-7787a56e1d",
+      "order": 34,
+      "text": "This carrot is good.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-035-7787a56e1d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-035-7787a56e1d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-bcfbd4da11",
+      "order": 35,
+      "text": "Lily is happy.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-036-bcfbd4da11.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-036-bcfbd4da11.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-88aa6c47cb",
+      "order": 36,
+      "text": "Pip is happy.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-037-88aa6c47cb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-037-88aa6c47cb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-d26b97fd13",
+      "order": 37,
+      "text": "The farmer is happy.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-038-d26b97fd13.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-038-d26b97fd13.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-b05de0ae62",
+      "order": 38,
+      "text": "They like the farm.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-039-b05de0ae62.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-039-b05de0ae62.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-459fcd9500",
+      "order": 39,
+      "text": "The farm is fun.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-040-459fcd9500.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-040-459fcd9500.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-9d4a33570d",
+      "order": 40,
+      "text": "Good food is here.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-041-9d4a33570d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-041-9d4a33570d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-344ec19369",
+      "order": 41,
+      "text": "We like this food.",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-042-344ec19369.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/sentences/sentence-042-344ec19369.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-53594bfe7f",
+      "order": 0,
+      "text": "Puppy",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-001-53594bfe7f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-001-53594bfe7f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-6ff7c92f21",
+      "order": 1,
+      "text": "Farm",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-002-6ff7c92f21.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-002-6ff7c92f21.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-0b9ed2b57a",
+      "order": 2,
+      "text": "Farmer",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-003-0b9ed2b57a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-003-0b9ed2b57a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-b4c6adb78d",
+      "order": 3,
+      "text": "Grows",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-004-b4c6adb78d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-004-b4c6adb78d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-8e5a48145d",
+      "order": 4,
+      "text": "Garden",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-005-8e5a48145d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-005-8e5a48145d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-8aa17e5d0f",
+      "order": 5,
+      "text": "Plants",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-006-8aa17e5d0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-006-8aa17e5d0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-bdc0247a3f",
+      "order": 6,
+      "text": "Carrot",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-007-bdc0247a3f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-007-bdc0247a3f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-8de50bad7f",
+      "order": 7,
+      "text": "Tomato",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-008-8de50bad7f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-008-8de50bad7f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-0e77e23345",
+      "order": 8,
+      "text": "Orange",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-009-0e77e23345.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-009-0e77e23345.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-633b9a1821",
+      "order": 9,
+      "text": "Green",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-010-633b9a1821.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-010-633b9a1821.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-011-d23e9e08da",
+      "order": 10,
+      "text": "Sun",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-011-d23e9e08da.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-011-d23e9e08da.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-df1605e417",
+      "order": 11,
+      "text": "Hot",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-012-df1605e417.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-012-df1605e417.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-013-24a47075b7",
+      "order": 12,
+      "text": "this",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-013-24a47075b7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-013-24a47075b7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-5d6a8a6a67",
+      "order": 13,
+      "text": "is",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-014-5d6a8a6a67.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-014-5d6a8a6a67.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-0e8cc1ef62",
+      "order": 14,
+      "text": "pip",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-015-0e8cc1ef62.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-015-0e8cc1ef62.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-67507d7509",
+      "order": 15,
+      "text": "a",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-016-67507d7509.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-016-67507d7509.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-a932a0235b",
+      "order": 16,
+      "text": "small",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-017-a932a0235b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-017-a932a0235b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-762a776bd1",
+      "order": 17,
+      "text": "happy",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-018-762a776bd1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-018-762a776bd1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-b73f2eccb2",
+      "order": 18,
+      "text": "he",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-019-b73f2eccb2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-019-b73f2eccb2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-f7280bddf7",
+      "order": 19,
+      "text": "sees",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-020-f7280bddf7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-020-f7280bddf7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-d7146f105d",
+      "order": 20,
+      "text": "the",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-021-d7146f105d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-021-d7146f105d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-cae84ebfc8",
+      "order": 21,
+      "text": "big",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-022-cae84ebfc8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-022-cae84ebfc8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-0c4d938db8",
+      "order": 22,
+      "text": "here",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-023-0c4d938db8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-023-0c4d938db8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-8aab3406bc",
+      "order": 23,
+      "text": "nice",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-024-8aab3406bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-024-8aab3406bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-fe560dfe7b",
+      "order": 24,
+      "text": "man",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-025-fe560dfe7b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-025-fe560dfe7b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-bfe72fbf9e",
+      "order": 25,
+      "text": "food",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-026-bfe72fbf9e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-026-bfe72fbf9e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-92048515b7",
+      "order": 26,
+      "text": "good",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-027-92048515b7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-027-92048515b7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-c2d284485f",
+      "order": 27,
+      "text": "likes",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-028-c2d284485f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-028-c2d284485f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-a2521a786a",
+      "order": 28,
+      "text": "girl",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-029-a2521a786a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-029-a2521a786a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-d8be8e3421",
+      "order": 29,
+      "text": "her",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-030-d8be8e3421.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-030-d8be8e3421.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-1d448fa5c4",
+      "order": 30,
+      "text": "name",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-031-1d448fa5c4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-031-1d448fa5c4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-dfcf03515f",
+      "order": 31,
+      "text": "lily",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-032-dfcf03515f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-032-dfcf03515f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-e8a8cf1a98",
+      "order": 32,
+      "text": "she",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-033-e8a8cf1a98.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-033-e8a8cf1a98.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-c8abf7be88",
+      "order": 33,
+      "text": "with",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-034-c8abf7be88.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-034-c8abf7be88.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-e8ed84f820",
+      "order": 34,
+      "text": "are",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-035-e8ed84f820.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-035-e8ed84f820.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-cf3c6c28d8",
+      "order": 35,
+      "text": "shows",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-036-cf3c6c28d8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-036-cf3c6c28d8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-eace2e9eb6",
+      "order": 36,
+      "text": "plant",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-037-eace2e9eb6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-037-eace2e9eb6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-340677cfd5",
+      "order": 37,
+      "text": "carrots",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-038-340677cfd5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-038-340677cfd5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-bfdf052e26",
+      "order": 38,
+      "text": "tomatoes",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-039-bfdf052e26.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-039-bfdf052e26.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-ce558a4a8c",
+      "order": 39,
+      "text": "red",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-040-ce558a4a8c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-040-ce558a4a8c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-3349ab1f53",
+      "order": 40,
+      "text": "gives",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-041-3349ab1f53.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-041-3349ab1f53.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-3def5b602b",
+      "order": 41,
+      "text": "water",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-042-3def5b602b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-042-3def5b602b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-855f9390f8",
+      "order": 42,
+      "text": "grow",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-043-855f9390f8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-043-855f9390f8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-d860fcc32a",
+      "order": 43,
+      "text": "eats",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-044-d860fcc32a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-044-d860fcc32a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-232f5cd0b3",
+      "order": 44,
+      "text": "it",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-045-232f5cd0b3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-045-232f5cd0b3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-afc5883dd8",
+      "order": 45,
+      "text": "an",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-046-afc5883dd8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-046-afc5883dd8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-82e2697148",
+      "order": 46,
+      "text": "they",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-047-82e2697148.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-047-82e2697148.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-2f2fed8fa8",
+      "order": 47,
+      "text": "like",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-048-2f2fed8fa8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-048-2f2fed8fa8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-35c53dcff2",
+      "order": 48,
+      "text": "fun",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-049-35c53dcff2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-049-35c53dcff2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-4f0cf155b8",
+      "order": 49,
+      "text": "we",
+      "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/words/word-050-4f0cf155b8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/words/word-050-4f0cf155b8.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-e9205d6bfc",
+      "type": "mcq",
+      "order": 0,
+      "text": "Who is Pip?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-001-e9205d6bfc.mp3",
+      "questionObjectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-001-e9205d6bfc.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-001-e9205d6bfc-option1-600aa143.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-001-e9205d6bfc-option2-cfb52ba0.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-001-e9205d6bfc-option3-7e3b306b.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-e9205d6bfc-option1-600aa143",
+          "text": "A boy",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-001-e9205d6bfc-option1-600aa143.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-e9205d6bfc-option2-cfb52ba0",
+          "text": "A farmer",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-001-e9205d6bfc-option2-cfb52ba0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-e9205d6bfc-option3-7e3b306b",
+          "text": "A puppy",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-001-e9205d6bfc-option3-7e3b306b.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-e96b72d92f",
+      "type": "mcq",
+      "order": 1,
+      "text": "What is Lily?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-002-e96b72d92f.mp3",
+      "questionObjectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-002-e96b72d92f.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-002-e96b72d92f-option1-c2cc4790.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-002-e96b72d92f-option2-418fe8da.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-002-e96b72d92f-option3-c74ad77a.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-e96b72d92f-option1-c2cc4790",
+          "text": "A puppy",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-002-e96b72d92f-option1-c2cc4790.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-e96b72d92f-option2-418fe8da",
+          "text": "A girl",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-002-e96b72d92f-option2-418fe8da.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-e96b72d92f-option3-c74ad77a",
+          "text": "A farmer",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-002-e96b72d92f-option3-c74ad77a.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-0f76600348",
+      "type": "mcq",
+      "order": 2,
+      "text": "Who grows food?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-003-0f76600348.mp3",
+      "questionObjectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-003-0f76600348.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-003-0f76600348-option1-148edd1c.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-003-0f76600348-option2-35c41a8b.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-003-0f76600348-option3-b736df05.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-0f76600348-option1-148edd1c",
+          "text": "Pip",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-003-0f76600348-option1-148edd1c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-0f76600348-option2-35c41a8b",
+          "text": "The farmer",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-003-0f76600348-option2-35c41a8b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-0f76600348-option3-b736df05",
+          "text": "Lily",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-003-0f76600348-option3-b736df05.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-5e5bdc4304",
+      "type": "mcq",
+      "order": 3,
+      "text": "What color are carrots?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-004-5e5bdc4304.mp3",
+      "questionObjectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-004-5e5bdc4304.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-004-5e5bdc4304-option1-a04aa8fa.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-004-5e5bdc4304-option2-a35bf09b.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-004-5e5bdc4304-option3-7a7dbd89.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-5e5bdc4304-option1-a04aa8fa",
+          "text": "Red",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-004-5e5bdc4304-option1-a04aa8fa.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-5e5bdc4304-option2-a35bf09b",
+          "text": "Green",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-004-5e5bdc4304-option2-a35bf09b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-5e5bdc4304-option3-7a7dbd89",
+          "text": "Orange",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-004-5e5bdc4304-option3-7a7dbd89.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-ceac39a23d",
+      "type": "mcq",
+      "order": 4,
+      "text": "What color are tomatoes?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-005-ceac39a23d.mp3",
+      "questionObjectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-005-ceac39a23d.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-005-ceac39a23d-option1-168d5c79.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-005-ceac39a23d-option2-383ba036.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-005-ceac39a23d-option3-c787b16e.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-ceac39a23d-option1-168d5c79",
+          "text": "Red",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-005-ceac39a23d-option1-168d5c79.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-ceac39a23d-option2-383ba036",
+          "text": "Orange",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-005-ceac39a23d-option2-383ba036.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-ceac39a23d-option3-c787b16e",
+          "text": "Green",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-005-ceac39a23d-option3-c787b16e.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-11a0cad9bf",
+      "type": "mcq",
+      "order": 5,
+      "text": "What does the farmer give to plants?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-006-11a0cad9bf.mp3",
+      "questionObjectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-006-11a0cad9bf.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-006-11a0cad9bf-option1-dd9d9073.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-006-11a0cad9bf-option2-964badb7.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-006-11a0cad9bf-option3-af457734.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-11a0cad9bf-option1-dd9d9073",
+          "text": "Food",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-006-11a0cad9bf-option1-dd9d9073.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-11a0cad9bf-option2-964badb7",
+          "text": "Water",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-006-11a0cad9bf-option2-964badb7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-11a0cad9bf-option3-af457734",
+          "text": "Toys",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-006-11a0cad9bf-option3-af457734.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-fc4170bbdf",
+      "type": "mcq",
+      "order": 6,
+      "text": "What is hot for plants?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-007-fc4170bbdf.mp3",
+      "questionObjectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-007-fc4170bbdf.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-007-fc4170bbdf-option1-d20a9317.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-007-fc4170bbdf-option2-793f249f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-007-fc4170bbdf-option3-6e885a1d.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-fc4170bbdf-option1-d20a9317",
+          "text": "The water",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-007-fc4170bbdf-option1-d20a9317.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-fc4170bbdf-option2-793f249f",
+          "text": "The sun",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-007-fc4170bbdf-option2-793f249f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-fc4170bbdf-option3-6e885a1d",
+          "text": "The farm",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-007-fc4170bbdf-option3-6e885a1d.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-0b678d2b40",
+      "type": "mcq",
+      "order": 7,
+      "text": "What is good?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-008-0b678d2b40.mp3",
+      "questionObjectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-008-0b678d2b40.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-008-0b678d2b40-option1-e62573ae.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-008-0b678d2b40-option2-67778c6f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-008-0b678d2b40-option3-35409b5a.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-0b678d2b40-option1-e62573ae",
+          "text": "The farm",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-008-0b678d2b40-option1-e62573ae.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-0b678d2b40-option2-67778c6f",
+          "text": "The sun",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-008-0b678d2b40-option2-67778c6f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-0b678d2b40-option3-35409b5a",
+          "text": "This food",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-008-0b678d2b40-option3-35409b5a.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-78bee2b6ce",
+      "type": "mcq",
+      "order": 8,
+      "text": "Is the farm fun?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-009-78bee2b6ce.mp3",
+      "questionObjectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-009-78bee2b6ce.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-009-78bee2b6ce-option1-05cb592b.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-009-78bee2b6ce-option2-ad1206eb.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-009-78bee2b6ce-option3-c09c41e6.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-78bee2b6ce-option1-05cb592b",
+          "text": "Yes, it is fun.",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-009-78bee2b6ce-option1-05cb592b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-78bee2b6ce-option2-ad1206eb",
+          "text": "No, it is not fun.",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-009-78bee2b6ce-option2-ad1206eb.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-78bee2b6ce-option3-c09c41e6",
+          "text": "It is big.",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-009-78bee2b6ce-option3-c09c41e6.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-6c38d15309",
+      "type": "mcq",
+      "order": 9,
+      "text": "Who eats a red tomato?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-010-6c38d15309.mp3",
+      "questionObjectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-010-6c38d15309.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-010-6c38d15309-option1-1f0f175a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-010-6c38d15309-option2-63c13479.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-010-6c38d15309-option3-2784d355.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-6c38d15309-option1-1f0f175a",
+          "text": "Pip",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-010-6c38d15309-option1-1f0f175a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-6c38d15309-option2-63c13479",
+          "text": "Lily",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-010-6c38d15309-option2-63c13479.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-6c38d15309-option3-2784d355",
+          "text": "The farmer",
+          "objectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/mcq-010-6c38d15309-option3-2784d355.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-0d3cd33445",
+      "type": "saq",
+      "order": 10,
+      "text": "Who is with Pip?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/saq-011-0d3cd33445.mp3",
+      "questionObjectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/saq-011-0d3cd33445.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-0808b62f64",
+      "type": "saq",
+      "order": 11,
+      "text": "What is in the garden?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/saq-012-0808b62f64.mp3",
+      "questionObjectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/saq-012-0808b62f64.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-24499d1d07",
+      "type": "saq",
+      "order": 12,
+      "text": "What color are carrot plants?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/saq-013-24499d1d07.mp3",
+      "questionObjectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/saq-013-24499d1d07.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-e8c0a12b2c",
+      "type": "saq",
+      "order": 13,
+      "text": "What do plants need?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/saq-014-e8c0a12b2c.mp3",
+      "questionObjectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/saq-014-e8c0a12b2c.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-76c1a2c8c0",
+      "type": "saq",
+      "order": 14,
+      "text": "Is Pip happy?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmgqx5orz02mjt79bwvfnndan/questions/saq-015-76c1a2c8c0.mp3",
+      "questionObjectPath": "articles/cmgqx5orz02mjt79bwvfnndan/questions/saq-015-76c1a2c8c0.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:05:18.423Z"
+}

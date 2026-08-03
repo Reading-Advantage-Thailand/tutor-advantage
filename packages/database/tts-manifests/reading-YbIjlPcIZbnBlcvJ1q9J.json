@@ -1,0 +1,1423 @@
+{
+  "version": 1,
+  "articleId": "YbIjlPcIZbnBlcvJ1q9J",
+  "source": "READING_ADVANTAGE",
+  "title": "Our Earth is Too Warm",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-726d19b260",
+      "order": 0,
+      "text": "Earth is our home.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-001-726d19b260.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-001-726d19b260.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-8b2e68b2bf",
+      "order": 1,
+      "text": "It is big and round.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-002-8b2e68b2bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-002-8b2e68b2bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-5d716f5370",
+      "order": 2,
+      "text": "The sun is hot.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-003-5d716f5370.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-003-5d716f5370.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-099535c8df",
+      "order": 3,
+      "text": "The sun makes Earth warm.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-004-099535c8df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-004-099535c8df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-75a0ba94c1",
+      "order": 4,
+      "text": "This warmth is good.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-005-75a0ba94c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-005-75a0ba94c1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-40dbb9385d",
+      "order": 5,
+      "text": "We need warmth to live.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-006-40dbb9385d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-006-40dbb9385d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-02d584719e",
+      "order": 6,
+      "text": "Air is all around Earth.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-007-02d584719e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-007-02d584719e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-63032e14ba",
+      "order": 7,
+      "text": "The air is like a blanket.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-008-63032e14ba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-008-63032e14ba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-447430e946",
+      "order": 8,
+      "text": "It keeps Earth warm.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-009-447430e946.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-009-447430e946.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-75459b75fb",
+      "order": 9,
+      "text": "This is normal.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-010-75459b75fb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-010-75459b75fb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-d9394a6c2a",
+      "order": 10,
+      "text": "We are people.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-011-d9394a6c2a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-011-d9394a6c2a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-ee055f576f",
+      "order": 11,
+      "text": "We have cars.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-012-ee055f576f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-012-ee055f576f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-20298cf2c9",
+      "order": 12,
+      "text": "We have factories.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-013-20298cf2c9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-013-20298cf2c9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-44697a5f5c",
+      "order": 13,
+      "text": "Cars make pollution.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-014-44697a5f5c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-014-44697a5f5c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-15493cad87",
+      "order": 14,
+      "text": "Factories make pollution.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-015-15493cad87.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-015-15493cad87.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-8ed36a7c0e",
+      "order": 15,
+      "text": "Pollution goes in the air.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-016-8ed36a7c0e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-016-8ed36a7c0e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-df797cb148",
+      "order": 16,
+      "text": "The pollution makes the air blanket thick.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-017-df797cb148.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-017-df797cb148.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-0d3ba5e53e",
+      "order": 17,
+      "text": "Now, Earth is too warm.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-018-0d3ba5e53e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-018-0d3ba5e53e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-1cb0dbe7a2",
+      "order": 18,
+      "text": "It is very hot.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-019-1cb0dbe7a2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-019-1cb0dbe7a2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-84e42f9674",
+      "order": 19,
+      "text": "This is a problem.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-020-84e42f9674.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-020-84e42f9674.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-3d8d5e9421",
+      "order": 20,
+      "text": "Hot Earth means change.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-021-3d8d5e9421.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-021-3d8d5e9421.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-fba5dfc6b8",
+      "order": 21,
+      "text": "Ice is water.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-022-fba5dfc6b8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-022-fba5dfc6b8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-6c7fb817c8",
+      "order": 22,
+      "text": "Ice is very cold.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-023-6c7fb817c8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-023-6c7fb817c8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-e0883d6e08",
+      "order": 23,
+      "text": "Hot Earth makes ice melt.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-024-e0883d6e08.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-024-e0883d6e08.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-e7b9dd38f1",
+      "order": 24,
+      "text": "The sea water goes up.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-025-e7b9dd38f1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-025-e7b9dd38f1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-fea0702feb",
+      "order": 25,
+      "text": "This is change.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-026-fea0702feb.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-026-fea0702feb.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-5ccfa183a5",
+      "order": 26,
+      "text": "The weather changes too.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-027-5ccfa183a5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-027-5ccfa183a5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-215fdc2f13",
+      "order": 27,
+      "text": "Some places are very hot and dry.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-028-215fdc2f13.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-028-215fdc2f13.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-b7f023753d",
+      "order": 28,
+      "text": "No rain.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-029-b7f023753d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-029-b7f023753d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-66f7d60bc8",
+      "order": 29,
+      "text": "Some places have big rain.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-030-66f7d60bc8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-030-66f7d60bc8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-9c5ecb7424",
+      "order": 30,
+      "text": "Big storms.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-031-9c5ecb7424.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-031-9c5ecb7424.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-4f1700b544",
+      "order": 31,
+      "text": "This change is hard.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-032-4f1700b544.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-032-4f1700b544.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-1b433fea2e",
+      "order": 32,
+      "text": "It is hard for people.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-033-1b433fea2e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-033-1b433fea2e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-e33bc2de4a",
+      "order": 33,
+      "text": "It is hard for animals.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-034-e33bc2de4a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-034-e33bc2de4a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-71914ca028",
+      "order": 34,
+      "text": "It is hard for plants.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-035-71914ca028.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-035-71914ca028.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-3e6aa0cd37",
+      "order": 35,
+      "text": "This is climate change.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-036-3e6aa0cd37.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-036-3e6aa0cd37.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-6fc3d96a2e",
+      "order": 36,
+      "text": "We can help Earth.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-037-6fc3d96a2e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-037-6fc3d96a2e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-caf1d56fc6",
+      "order": 37,
+      "text": "We can make less pollution.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-038-caf1d56fc6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-038-caf1d56fc6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-039-3848396de8",
+      "order": 38,
+      "text": "Use a bike.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-039-3848396de8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-039-3848396de8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-040-f7122a0f92",
+      "order": 39,
+      "text": "Walk.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-040-f7122a0f92.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-040-f7122a0f92.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-041-bc63fadd94",
+      "order": 40,
+      "text": "Plant trees.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-041-bc63fadd94.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-041-bc63fadd94.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-042-32638d4225",
+      "order": 41,
+      "text": "Trees are good for the air.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-042-32638d4225.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-042-32638d4225.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-043-f98aad53e5",
+      "order": 42,
+      "text": "We need a good Earth.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-043-f98aad53e5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-043-f98aad53e5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-044-633450d0c1",
+      "order": 43,
+      "text": "Help our home.",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-044-633450d0c1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/sentences/sentence-044-633450d0c1.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-dd990a0a00",
+      "order": 0,
+      "text": "pollution",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-001-dd990a0a00.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-001-dd990a0a00.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-48097146f8",
+      "order": 1,
+      "text": "factories",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-002-48097146f8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-002-48097146f8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-c96d112ff4",
+      "order": 2,
+      "text": "melt",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-003-c96d112ff4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-003-c96d112ff4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-90d37ef0a6",
+      "order": 3,
+      "text": "climate change",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-004-90d37ef0a6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-004-90d37ef0a6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-eabc33d32f",
+      "order": 4,
+      "text": "change",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-005-eabc33d32f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-005-eabc33d32f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-e3031ccae5",
+      "order": 5,
+      "text": "dry",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-006-e3031ccae5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-006-e3031ccae5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-b11141d7a8",
+      "order": 6,
+      "text": "storms",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-007-b11141d7a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-007-b11141d7a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-90211cf927",
+      "order": 7,
+      "text": "air blanket",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-008-90211cf927.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-008-90211cf927.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-3e3816ccf4",
+      "order": 8,
+      "text": "too warm",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-009-3e3816ccf4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-009-3e3816ccf4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-330e03f440",
+      "order": 9,
+      "text": "goes up",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-010-330e03f440.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-010-330e03f440.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-751a817854",
+      "order": 10,
+      "text": "earth",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-011-751a817854.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-011-751a817854.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-bc1f05f2e1",
+      "order": 11,
+      "text": "is",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-012-bc1f05f2e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-012-bc1f05f2e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-8ed6bb44bc",
+      "order": 12,
+      "text": "our",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-013-8ed6bb44bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-013-8ed6bb44bc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-7e7b6a761c",
+      "order": 13,
+      "text": "home",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-014-7e7b6a761c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-014-7e7b6a761c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-08a72593bf",
+      "order": 14,
+      "text": "it",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-015-08a72593bf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-015-08a72593bf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-6e3e95a990",
+      "order": 15,
+      "text": "big",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-016-6e3e95a990.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-016-6e3e95a990.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-9f31ba9725",
+      "order": 16,
+      "text": "and",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-017-9f31ba9725.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-017-9f31ba9725.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-3a92141754",
+      "order": 17,
+      "text": "round",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-018-3a92141754.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-018-3a92141754.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-72fc7da4b7",
+      "order": 18,
+      "text": "the",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-019-72fc7da4b7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-019-72fc7da4b7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-26fb8a960c",
+      "order": 19,
+      "text": "sun",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-020-26fb8a960c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-020-26fb8a960c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-4aa61f1db3",
+      "order": 20,
+      "text": "hot",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-021-4aa61f1db3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-021-4aa61f1db3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-4bec1b28ae",
+      "order": 21,
+      "text": "makes",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-022-4bec1b28ae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-022-4bec1b28ae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-04c4452e4e",
+      "order": 22,
+      "text": "warm",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-023-04c4452e4e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-023-04c4452e4e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-7b3dae0f69",
+      "order": 23,
+      "text": "this",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-024-7b3dae0f69.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-024-7b3dae0f69.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-aa90fe9d99",
+      "order": 24,
+      "text": "warmth",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-025-aa90fe9d99.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-025-aa90fe9d99.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-a400eaec21",
+      "order": 25,
+      "text": "good",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-026-a400eaec21.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-026-a400eaec21.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-53bffb94b4",
+      "order": 26,
+      "text": "we",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-027-53bffb94b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-027-53bffb94b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-487b3f3ade",
+      "order": 27,
+      "text": "need",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-028-487b3f3ade.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-028-487b3f3ade.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-9ba80a29ba",
+      "order": 28,
+      "text": "to",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-029-9ba80a29ba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-029-9ba80a29ba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-603e25ebff",
+      "order": 29,
+      "text": "live",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-030-603e25ebff.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-030-603e25ebff.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-f8aa2698a8",
+      "order": 30,
+      "text": "air",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-031-f8aa2698a8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-031-f8aa2698a8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-72eed720d5",
+      "order": 31,
+      "text": "all",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-032-72eed720d5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-032-72eed720d5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-4836cf189a",
+      "order": 32,
+      "text": "around",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-033-4836cf189a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-033-4836cf189a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-5616a64d0c",
+      "order": 33,
+      "text": "like",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-034-5616a64d0c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-034-5616a64d0c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-18e77bd128",
+      "order": 34,
+      "text": "a",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-035-18e77bd128.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-035-18e77bd128.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-45d3fca348",
+      "order": 35,
+      "text": "blanket",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-036-45d3fca348.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-036-45d3fca348.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-698f52bfd0",
+      "order": 36,
+      "text": "keeps",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-037-698f52bfd0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-037-698f52bfd0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-348236221f",
+      "order": 37,
+      "text": "normal",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-038-348236221f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-038-348236221f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-61212fb43d",
+      "order": 38,
+      "text": "are",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-039-61212fb43d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-039-61212fb43d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-41a59ab810",
+      "order": 39,
+      "text": "people",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-040-41a59ab810.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-040-41a59ab810.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-647b007ede",
+      "order": 40,
+      "text": "have",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-041-647b007ede.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-041-647b007ede.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-625d95a202",
+      "order": 41,
+      "text": "cars",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-042-625d95a202.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-042-625d95a202.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-c79f995b51",
+      "order": 42,
+      "text": "make",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-043-c79f995b51.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-043-c79f995b51.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-ba171f071b",
+      "order": 43,
+      "text": "goes",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-044-ba171f071b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-044-ba171f071b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-c3d81a6ae4",
+      "order": 44,
+      "text": "in",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-045-c3d81a6ae4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-045-c3d81a6ae4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-4d5ace3ab5",
+      "order": 45,
+      "text": "thick",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-046-4d5ace3ab5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-046-4d5ace3ab5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-8b27837d2f",
+      "order": 46,
+      "text": "now",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-047-8b27837d2f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-047-8b27837d2f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-01fd67108d",
+      "order": 47,
+      "text": "too",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-048-01fd67108d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-048-01fd67108d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-0df034c012",
+      "order": 48,
+      "text": "very",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-049-0df034c012.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-049-0df034c012.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-371624cd39",
+      "order": 49,
+      "text": "problem",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-050-371624cd39.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-050-371624cd39.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-992b2c3b83",
+      "order": 50,
+      "text": "means",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-051-992b2c3b83.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-051-992b2c3b83.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-d7305ad4e8",
+      "order": 51,
+      "text": "ice",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-052-d7305ad4e8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-052-d7305ad4e8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-c29b54dacf",
+      "order": 52,
+      "text": "water",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-053-c29b54dacf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-053-c29b54dacf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-026c44cfd9",
+      "order": 53,
+      "text": "cold",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-054-026c44cfd9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-054-026c44cfd9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-4f91fd51be",
+      "order": 54,
+      "text": "sea",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-055-4f91fd51be.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-055-4f91fd51be.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-d86efc1991",
+      "order": 55,
+      "text": "up",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-056-d86efc1991.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-056-d86efc1991.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-ae1bc80a49",
+      "order": 56,
+      "text": "weather",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-057-ae1bc80a49.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-057-ae1bc80a49.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-ac11365a0b",
+      "order": 57,
+      "text": "changes",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-058-ac11365a0b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-058-ac11365a0b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-e17045c7ac",
+      "order": 58,
+      "text": "some",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-059-e17045c7ac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-059-e17045c7ac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-e08128f01f",
+      "order": 59,
+      "text": "places",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-060-e08128f01f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-060-e08128f01f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-e25ee8e4b7",
+      "order": 60,
+      "text": "no",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-061-e25ee8e4b7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-061-e25ee8e4b7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-62f7f7387f",
+      "order": 61,
+      "text": "rain",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-062-62f7f7387f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-062-62f7f7387f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-bfcba87106",
+      "order": 62,
+      "text": "hard",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-063-bfcba87106.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-063-bfcba87106.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-4700a189ea",
+      "order": 63,
+      "text": "for",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-064-4700a189ea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-064-4700a189ea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-fb7b8b5197",
+      "order": 64,
+      "text": "animals",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-065-fb7b8b5197.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-065-fb7b8b5197.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-422d386c85",
+      "order": 65,
+      "text": "plants",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-066-422d386c85.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-066-422d386c85.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-d44605fca3",
+      "order": 66,
+      "text": "climate",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-067-d44605fca3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-067-d44605fca3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-e7c6ba78ad",
+      "order": 67,
+      "text": "can",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-068-e7c6ba78ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-068-e7c6ba78ad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-95c7e6d1f9",
+      "order": 68,
+      "text": "help",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-069-95c7e6d1f9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-069-95c7e6d1f9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-d64c8ee39b",
+      "order": 69,
+      "text": "less",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-070-d64c8ee39b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-070-d64c8ee39b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-07c4d4a344",
+      "order": 70,
+      "text": "use",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-071-07c4d4a344.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-071-07c4d4a344.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-1531c36dab",
+      "order": 71,
+      "text": "bike",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-072-1531c36dab.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-072-1531c36dab.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-2d8a72855f",
+      "order": 72,
+      "text": "walk",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-073-2d8a72855f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-073-2d8a72855f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-074-ee8b7c4f9a",
+      "order": 73,
+      "text": "plant",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-074-ee8b7c4f9a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-074-ee8b7c4f9a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-075-2e1ed52b71",
+      "order": 74,
+      "text": "trees",
+      "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/words/word-075-2e1ed52b71.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/words/word-075-2e1ed52b71.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-e42b1ca7aa",
+      "type": "mcq",
+      "order": 0,
+      "text": "How can we help Earth?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-001-e42b1ca7aa.mp3",
+      "questionObjectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-001-e42b1ca7aa.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-001-e42b1ca7aa-option1-ab9fb4c4.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-001-e42b1ca7aa-option2-f0b989c4.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-001-e42b1ca7aa-option3-b0791743.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-001-e42b1ca7aa-option4-496d61da.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-e42b1ca7aa-option1-ab9fb4c4",
+          "text": "Use a bike",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-001-e42b1ca7aa-option1-ab9fb4c4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-e42b1ca7aa-option2-f0b989c4",
+          "text": "Drive a car",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-001-e42b1ca7aa-option2-f0b989c4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-e42b1ca7aa-option3-b0791743",
+          "text": "Fly a plane",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-001-e42b1ca7aa-option3-b0791743.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-e42b1ca7aa-option4-496d61da",
+          "text": "Take a train",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-001-e42b1ca7aa-option4-496d61da.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-2c2fe2d820",
+      "type": "mcq",
+      "order": 1,
+      "text": "What shape is Earth?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-002-2c2fe2d820.mp3",
+      "questionObjectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-002-2c2fe2d820.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-002-2c2fe2d820-option1-baf6ffad.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-002-2c2fe2d820-option2-b2af29d6.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-002-2c2fe2d820-option3-0d186261.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-002-2c2fe2d820-option4-9b699c18.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-2c2fe2d820-option1-baf6ffad",
+          "text": "Big and round",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-002-2c2fe2d820-option1-baf6ffad.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-2c2fe2d820-option2-b2af29d6",
+          "text": "Small and square",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-002-2c2fe2d820-option2-b2af29d6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-2c2fe2d820-option3-0d186261",
+          "text": "Hot and dry",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-002-2c2fe2d820-option3-0d186261.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-2c2fe2d820-option4-9b699c18",
+          "text": "Cold and wet",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-002-2c2fe2d820-option4-9b699c18.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-0c859cbfca",
+      "type": "mcq",
+      "order": 2,
+      "text": "Hot Earth makes ice what?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-003-0c859cbfca.mp3",
+      "questionObjectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-003-0c859cbfca.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-003-0c859cbfca-option1-324c1a76.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-003-0c859cbfca-option2-3721aded.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-003-0c859cbfca-option3-d73db66b.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-003-0c859cbfca-option4-f379a713.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-0c859cbfca-option1-324c1a76",
+          "text": "Melt",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-003-0c859cbfca-option1-324c1a76.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-0c859cbfca-option2-3721aded",
+          "text": "Grow",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-003-0c859cbfca-option2-3721aded.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-0c859cbfca-option3-d73db66b",
+          "text": "Fly",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-003-0c859cbfca-option3-d73db66b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-0c859cbfca-option4-f379a713",
+          "text": "Sleep",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-003-0c859cbfca-option4-f379a713.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-f8057f86ae",
+      "type": "mcq",
+      "order": 3,
+      "text": "Earth is what?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-004-f8057f86ae.mp3",
+      "questionObjectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-004-f8057f86ae.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-004-f8057f86ae-option1-8a51483f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-004-f8057f86ae-option2-cd48dbda.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-004-f8057f86ae-option3-d1c5ebdd.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-004-f8057f86ae-option4-34fd6f05.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-f8057f86ae-option1-8a51483f",
+          "text": "Our home",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-004-f8057f86ae-option1-8a51483f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-f8057f86ae-option2-cd48dbda",
+          "text": "A star",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-004-f8057f86ae-option2-cd48dbda.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-f8057f86ae-option3-d1c5ebdd",
+          "text": "A car",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-004-f8057f86ae-option3-d1c5ebdd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-f8057f86ae-option4-34fd6f05",
+          "text": "A tree",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-004-f8057f86ae-option4-34fd6f05.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-d8e0d42089",
+      "type": "mcq",
+      "order": 4,
+      "text": "The sun makes Earth what?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-005-d8e0d42089.mp3",
+      "questionObjectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-005-d8e0d42089.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-005-d8e0d42089-option1-191acebe.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-005-d8e0d42089-option2-066788e2.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-005-d8e0d42089-option3-cbd0fa63.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-005-d8e0d42089-option4-0636b87b.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-d8e0d42089-option1-191acebe",
+          "text": "Warm",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-005-d8e0d42089-option1-191acebe.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-d8e0d42089-option2-066788e2",
+          "text": "Cold",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-005-d8e0d42089-option2-066788e2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-d8e0d42089-option3-cbd0fa63",
+          "text": "Wet",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-005-d8e0d42089-option3-cbd0fa63.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-d8e0d42089-option4-0636b87b",
+          "text": "Dark",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-005-d8e0d42089-option4-0636b87b.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-9e52fe7ffd",
+      "type": "mcq",
+      "order": 5,
+      "text": "Where does pollution go?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-006-9e52fe7ffd.mp3",
+      "questionObjectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-006-9e52fe7ffd.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-006-9e52fe7ffd-option1-838d6d2a.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-006-9e52fe7ffd-option2-3b410110.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-006-9e52fe7ffd-option3-04cbc83a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-006-9e52fe7ffd-option4-56468f21.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-9e52fe7ffd-option1-838d6d2a",
+          "text": "In the air",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-006-9e52fe7ffd-option1-838d6d2a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-9e52fe7ffd-option2-3b410110",
+          "text": "In the water",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-006-9e52fe7ffd-option2-3b410110.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-9e52fe7ffd-option3-04cbc83a",
+          "text": "On the ground",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-006-9e52fe7ffd-option3-04cbc83a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-9e52fe7ffd-option4-56468f21",
+          "text": "In the trees",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-006-9e52fe7ffd-option4-56468f21.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-d41ca105db",
+      "type": "mcq",
+      "order": 6,
+      "text": "What makes pollution?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-007-d41ca105db.mp3",
+      "questionObjectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-007-d41ca105db.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-007-d41ca105db-option1-6ee6446f.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-007-d41ca105db-option2-b1552ef7.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-007-d41ca105db-option3-d6474924.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-007-d41ca105db-option4-52fe5939.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-d41ca105db-option1-6ee6446f",
+          "text": "Cars and factories",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-007-d41ca105db-option1-6ee6446f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-d41ca105db-option2-b1552ef7",
+          "text": "Trees and flowers",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-007-d41ca105db-option2-b1552ef7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-d41ca105db-option3-d6474924",
+          "text": "Sun and moon",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-007-d41ca105db-option3-d6474924.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-d41ca105db-option4-52fe5939",
+          "text": "Birds and bees",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-007-d41ca105db-option4-52fe5939.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-19db5623aa",
+      "type": "mcq",
+      "order": 7,
+      "text": "What is good for the air?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-008-19db5623aa.mp3",
+      "questionObjectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-008-19db5623aa.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-008-19db5623aa-option1-2934fe7b.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-008-19db5623aa-option2-8bef67d9.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-008-19db5623aa-option3-15868d9a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-008-19db5623aa-option4-ebbc58db.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-19db5623aa-option1-2934fe7b",
+          "text": "Plant trees",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-008-19db5623aa-option1-2934fe7b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-19db5623aa-option2-8bef67d9",
+          "text": "Cut trees",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-008-19db5623aa-option2-8bef67d9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-19db5623aa-option3-15868d9a",
+          "text": "Burn trees",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-008-19db5623aa-option3-15868d9a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-19db5623aa-option4-ebbc58db",
+          "text": "Ignore trees",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-008-19db5623aa-option4-ebbc58db.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-c0afa03f5e",
+      "type": "mcq",
+      "order": 8,
+      "text": "Now, Earth is what?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-009-c0afa03f5e.mp3",
+      "questionObjectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-009-c0afa03f5e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-009-c0afa03f5e-option1-275d3314.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-009-c0afa03f5e-option2-1bdda6bb.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-009-c0afa03f5e-option3-88618a86.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-009-c0afa03f5e-option4-0fbe36cd.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-c0afa03f5e-option1-275d3314",
+          "text": "Too warm",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-009-c0afa03f5e-option1-275d3314.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-c0afa03f5e-option2-1bdda6bb",
+          "text": "Too cold",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-009-c0afa03f5e-option2-1bdda6bb.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-c0afa03f5e-option3-88618a86",
+          "text": "Too wet",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-009-c0afa03f5e-option3-88618a86.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-c0afa03f5e-option4-0fbe36cd",
+          "text": "Too dry",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-009-c0afa03f5e-option4-0fbe36cd.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-62c8bc6ee9",
+      "type": "mcq",
+      "order": 9,
+      "text": "The sun is what?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-010-62c8bc6ee9.mp3",
+      "questionObjectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-010-62c8bc6ee9.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-010-62c8bc6ee9-option1-db6aa66d.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-010-62c8bc6ee9-option2-95d2ee09.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-010-62c8bc6ee9-option3-9bf37ce5.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-010-62c8bc6ee9-option4-2844d909.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-62c8bc6ee9-option1-db6aa66d",
+          "text": "Hot",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-010-62c8bc6ee9-option1-db6aa66d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-62c8bc6ee9-option2-95d2ee09",
+          "text": "Cold",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-010-62c8bc6ee9-option2-95d2ee09.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-62c8bc6ee9-option3-9bf37ce5",
+          "text": "Wet",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-010-62c8bc6ee9-option3-9bf37ce5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-62c8bc6ee9-option4-2844d909",
+          "text": "Dry",
+          "objectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/mcq-010-62c8bc6ee9-option4-2844d909.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-55bf719020",
+      "type": "saq",
+      "order": 10,
+      "text": "Are trees good for the air?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/saq-011-55bf719020.mp3",
+      "questionObjectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/saq-011-55bf719020.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-bcd10c7023",
+      "type": "saq",
+      "order": 11,
+      "text": "Is Earth big or small?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/saq-012-bcd10c7023.mp3",
+      "questionObjectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/saq-012-bcd10c7023.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-6ce2578a58",
+      "type": "saq",
+      "order": 12,
+      "text": "Do cars make pollution?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/saq-013-6ce2578a58.mp3",
+      "questionObjectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/saq-013-6ce2578a58.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-d6a6d2e2cb",
+      "type": "saq",
+      "order": 13,
+      "text": "Does hot Earth make ice melt?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/saq-014-d6a6d2e2cb.mp3",
+      "questionObjectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/saq-014-d6a6d2e2cb.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-3451d17093",
+      "type": "saq",
+      "order": 14,
+      "text": "Is the sun hot or cold?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/YbIjlPcIZbnBlcvJ1q9J/questions/saq-015-3451d17093.mp3",
+      "questionObjectPath": "articles/YbIjlPcIZbnBlcvJ1q9J/questions/saq-015-3451d17093.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:08:03.077Z"
+}

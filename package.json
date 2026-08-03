@@ -21,7 +21,8 @@
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "test:integration": "vitest run --config vitest.config.integration.ts",
-    "contract:check": "node scripts/check-openapi-routes.mjs"
+    "contract:check": "node scripts/check-openapi-routes.mjs",
+    "tts:generate": "node scripts/generate-article-tts.mjs"
   },
   "devDependencies": {
     "@types/supertest": "^6.0.3",

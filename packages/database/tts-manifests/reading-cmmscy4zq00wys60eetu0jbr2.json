@@ -1,0 +1,1359 @@
+{
+  "version": 1,
+  "articleId": "cmmscy4zq00wys60eetu0jbr2",
+  "source": "READING_ADVANTAGE",
+  "title": "Stars and Other Worlds",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-dafe780a59",
+      "order": 0,
+      "text": "Look at the sky at night.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-001-dafe780a59.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-001-dafe780a59.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-c2b44d5b2b",
+      "order": 1,
+      "text": "You see many stars.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-002-c2b44d5b2b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-002-c2b44d5b2b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-f54267616b",
+      "order": 2,
+      "text": "The stars are small points of light.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-003-f54267616b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-003-f54267616b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-93f1ffc656",
+      "order": 3,
+      "text": "They are very far away.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-004-93f1ffc656.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-004-93f1ffc656.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-a46c8007b1",
+      "order": 4,
+      "text": "Our sun is a star.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-005-a46c8007b1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-005-a46c8007b1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-562c76f1a5",
+      "order": 5,
+      "text": "It is a big, hot star.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-006-562c76f1a5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-006-562c76f1a5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-8b502a8132",
+      "order": 6,
+      "text": "It is very close to us.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-007-8b502a8132.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-007-8b502a8132.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-62990240b2",
+      "order": 7,
+      "text": "We live on a planet.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-008-62990240b2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-008-62990240b2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-470549ab3b",
+      "order": 8,
+      "text": "Our planet is Earth.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-009-470549ab3b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-009-470549ab3b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-6ffd8c5dde",
+      "order": 9,
+      "text": "Earth is our world.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-010-6ffd8c5dde.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-010-6ffd8c5dde.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-af0448f8d4",
+      "order": 10,
+      "text": "It is not a star.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-011-af0448f8d4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-011-af0448f8d4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-0a7e449212",
+      "order": 11,
+      "text": "It is a home.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-012-0a7e449212.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-012-0a7e449212.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-58c388b8ad",
+      "order": 12,
+      "text": "Earth goes around the sun.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-013-58c388b8ad.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-013-58c388b8ad.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-4ea08d17b5",
+      "order": 13,
+      "text": "Are there other planets?",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-014-4ea08d17b5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-014-4ea08d17b5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-42c1c11f58",
+      "order": 14,
+      "text": "Yes.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-015-42c1c11f58.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-015-42c1c11f58.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-53e744d8d7",
+      "order": 15,
+      "text": "There are many planets.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-016-53e744d8d7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-016-53e744d8d7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-c69449a30c",
+      "order": 16,
+      "text": "Other stars are suns too.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-017-c69449a30c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-017-c69449a30c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-927a80aea1",
+      "order": 17,
+      "text": "They are far away.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-018-927a80aea1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-018-927a80aea1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-060a4c2d9f",
+      "order": 18,
+      "text": "Do they have planets?",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-019-060a4c2d9f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-019-060a4c2d9f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-f430715296",
+      "order": 19,
+      "text": "Yes.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-020-f430715296.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-020-f430715296.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-8e806af65a",
+      "order": 20,
+      "text": "We look for these planets.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-021-8e806af65a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-021-8e806af65a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-1eda638a06",
+      "order": 21,
+      "text": "We call them other worlds.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-022-1eda638a06.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-022-1eda638a06.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-826aa5e92a",
+      "order": 22,
+      "text": "We use big tools to look.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-023-826aa5e92a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-023-826aa5e92a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-78db8b2ea8",
+      "order": 23,
+      "text": "The tools are on Earth.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-024-78db8b2ea8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-024-78db8b2ea8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-13ce28d7fe",
+      "order": 24,
+      "text": "The tools are also in space.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-025-13ce28d7fe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-025-13ce28d7fe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-ad918b698a",
+      "order": 25,
+      "text": "Some worlds are very big.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-026-ad918b698a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-026-ad918b698a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-dd3d51332d",
+      "order": 26,
+      "text": "Some are small.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-027-dd3d51332d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-027-dd3d51332d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-5df8df7d67",
+      "order": 27,
+      "text": "Some worlds are very hot.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-028-5df8df7d67.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-028-5df8df7d67.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-94df026ae4",
+      "order": 28,
+      "text": "Some are very cold.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-029-94df026ae4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-029-94df026ae4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-71bf5a88a6",
+      "order": 29,
+      "text": "We look for a special world.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-030-71bf5a88a6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-030-71bf5a88a6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-2dc2c6a92d",
+      "order": 30,
+      "text": "A world like Earth.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-031-2dc2c6a92d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-031-2dc2c6a92d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-746b7d2878",
+      "order": 31,
+      "text": "A world with water.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-032-746b7d2878.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-032-746b7d2878.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-42529da57c",
+      "order": 32,
+      "text": "Water is very important.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-033-42529da57c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-033-42529da57c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-6f0049b4f3",
+      "order": 33,
+      "text": "We ask a big question.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-034-6f0049b4f3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-034-6f0049b4f3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-76b622b82a",
+      "order": 34,
+      "text": "Are there other worlds with water?",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-035-76b622b82a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-035-76b622b82a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-4041eaa7c7",
+      "order": 35,
+      "text": "Are we alone in the sky?",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-036-4041eaa7c7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-036-4041eaa7c7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-6a47a523aa",
+      "order": 36,
+      "text": "The sky is very big.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-037-6a47a523aa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-037-6a47a523aa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-e24770785f",
+      "order": 37,
+      "text": "There are many stars and many worlds.",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-038-e24770785f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/sentences/sentence-038-e24770785f.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-22e2a082cd",
+      "order": 0,
+      "text": "points of light",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-001-22e2a082cd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-001-22e2a082cd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-b18780a45b",
+      "order": 1,
+      "text": "far away",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-002-b18780a45b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-002-b18780a45b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-0a2e5d7e15",
+      "order": 2,
+      "text": "planet",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-003-0a2e5d7e15.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-003-0a2e5d7e15.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-d0854b805e",
+      "order": 3,
+      "text": "goes around",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-004-d0854b805e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-004-d0854b805e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-1396e362b9",
+      "order": 4,
+      "text": "other worlds",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-005-1396e362b9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-005-1396e362b9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-1ff0782854",
+      "order": 5,
+      "text": "tools",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-006-1ff0782854.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-006-1ff0782854.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-5dc6e769f0",
+      "order": 6,
+      "text": "special",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-007-5dc6e769f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-007-5dc6e769f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-6860a5b01d",
+      "order": 7,
+      "text": "important",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-008-6860a5b01d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-008-6860a5b01d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-e0eab09c07",
+      "order": 8,
+      "text": "alone",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-009-e0eab09c07.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-009-e0eab09c07.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-5088812b9e",
+      "order": 9,
+      "text": "in the sky",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-010-5088812b9e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-010-5088812b9e.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-2deda5ef0c",
+      "order": 10,
+      "text": "look",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-011-2deda5ef0c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-011-2deda5ef0c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-3b8add27a9",
+      "order": 11,
+      "text": "at",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-012-3b8add27a9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-012-3b8add27a9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-5903d835ea",
+      "order": 12,
+      "text": "the",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-013-5903d835ea.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-013-5903d835ea.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-62317b5099",
+      "order": 13,
+      "text": "sky",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-014-62317b5099.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-014-62317b5099.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-45cf78a728",
+      "order": 14,
+      "text": "night",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-015-45cf78a728.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-015-45cf78a728.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-090c8e8af1",
+      "order": 15,
+      "text": "you",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-016-090c8e8af1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-016-090c8e8af1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-e0e5b51d88",
+      "order": 16,
+      "text": "see",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-017-e0e5b51d88.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-017-e0e5b51d88.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-5cd3cc5310",
+      "order": 17,
+      "text": "many",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-018-5cd3cc5310.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-018-5cd3cc5310.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-c33c8f69b5",
+      "order": 18,
+      "text": "stars",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-019-c33c8f69b5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-019-c33c8f69b5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-740fd86ce5",
+      "order": 19,
+      "text": "are",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-020-740fd86ce5.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-020-740fd86ce5.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-0fe3983020",
+      "order": 20,
+      "text": "small",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-021-0fe3983020.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-021-0fe3983020.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-2026cb61aa",
+      "order": 21,
+      "text": "points",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-022-2026cb61aa.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-022-2026cb61aa.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-a03c08cc0f",
+      "order": 22,
+      "text": "of",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-023-a03c08cc0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-023-a03c08cc0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-a45d4e5c48",
+      "order": 23,
+      "text": "light",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-024-a45d4e5c48.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-024-a45d4e5c48.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-883b88dd36",
+      "order": 24,
+      "text": "they",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-025-883b88dd36.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-025-883b88dd36.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-cc79a2067e",
+      "order": 25,
+      "text": "very",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-026-cc79a2067e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-026-cc79a2067e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-a184575dba",
+      "order": 26,
+      "text": "far",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-027-a184575dba.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-027-a184575dba.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-cec2230590",
+      "order": 27,
+      "text": "away",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-028-cec2230590.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-028-cec2230590.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-2f27ef128f",
+      "order": 28,
+      "text": "our",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-029-2f27ef128f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-029-2f27ef128f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-761a93c53b",
+      "order": 29,
+      "text": "sun",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-030-761a93c53b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-030-761a93c53b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-1d71a49fc2",
+      "order": 30,
+      "text": "is",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-031-1d71a49fc2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-031-1d71a49fc2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-130e6d5546",
+      "order": 31,
+      "text": "a",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-032-130e6d5546.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-032-130e6d5546.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-6117d93849",
+      "order": 32,
+      "text": "star",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-033-6117d93849.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-033-6117d93849.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-1b5252c656",
+      "order": 33,
+      "text": "it",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-034-1b5252c656.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-034-1b5252c656.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-4bd033f6de",
+      "order": 34,
+      "text": "big",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-035-4bd033f6de.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-035-4bd033f6de.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-52dc33299c",
+      "order": 35,
+      "text": "hot",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-036-52dc33299c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-036-52dc33299c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-6eb89dcef0",
+      "order": 36,
+      "text": "close",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-037-6eb89dcef0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-037-6eb89dcef0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-80a0488459",
+      "order": 37,
+      "text": "to",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-038-80a0488459.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-038-80a0488459.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-3194b9c157",
+      "order": 38,
+      "text": "us",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-039-3194b9c157.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-039-3194b9c157.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-645b7373ed",
+      "order": 39,
+      "text": "we",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-040-645b7373ed.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-040-645b7373ed.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-84d093ac87",
+      "order": 40,
+      "text": "live",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-041-84d093ac87.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-041-84d093ac87.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-8964589b3b",
+      "order": 41,
+      "text": "on",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-042-8964589b3b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-042-8964589b3b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-70ece3f861",
+      "order": 42,
+      "text": "earth",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-043-70ece3f861.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-043-70ece3f861.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-30170ac830",
+      "order": 43,
+      "text": "world",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-044-30170ac830.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-044-30170ac830.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-75e8b3a142",
+      "order": 44,
+      "text": "not",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-045-75e8b3a142.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-045-75e8b3a142.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-1be986e889",
+      "order": 45,
+      "text": "home",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-046-1be986e889.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-046-1be986e889.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-fe6c48edac",
+      "order": 46,
+      "text": "goes",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-047-fe6c48edac.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-047-fe6c48edac.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-0614a72797",
+      "order": 47,
+      "text": "around",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-048-0614a72797.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-048-0614a72797.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-95d81ec640",
+      "order": 48,
+      "text": "there",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-049-95d81ec640.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-049-95d81ec640.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-e6360d4bf9",
+      "order": 49,
+      "text": "other",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-050-e6360d4bf9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-050-e6360d4bf9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-80a0b8e8ec",
+      "order": 50,
+      "text": "planets",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-051-80a0b8e8ec.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-051-80a0b8e8ec.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-d43b41b715",
+      "order": 51,
+      "text": "yes",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-052-d43b41b715.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-052-d43b41b715.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-c95e4562af",
+      "order": 52,
+      "text": "suns",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-053-c95e4562af.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-053-c95e4562af.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-a6520a23a6",
+      "order": 53,
+      "text": "too",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-054-a6520a23a6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-054-a6520a23a6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-7b0943c29e",
+      "order": 54,
+      "text": "do",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-055-7b0943c29e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-055-7b0943c29e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-994be91c08",
+      "order": 55,
+      "text": "have",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-056-994be91c08.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-056-994be91c08.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-6c06143944",
+      "order": 56,
+      "text": "for",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-057-6c06143944.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-057-6c06143944.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-61f0f04c0c",
+      "order": 57,
+      "text": "these",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-058-61f0f04c0c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-058-61f0f04c0c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-9564339ca2",
+      "order": 58,
+      "text": "call",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-059-9564339ca2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-059-9564339ca2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-5bd3b2c825",
+      "order": 59,
+      "text": "them",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-060-5bd3b2c825.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-060-5bd3b2c825.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-5b0a5508a6",
+      "order": 60,
+      "text": "worlds",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-061-5b0a5508a6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-061-5b0a5508a6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-80a7491fa6",
+      "order": 61,
+      "text": "use",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-062-80a7491fa6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-062-80a7491fa6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-364ff4d9f2",
+      "order": 62,
+      "text": "also",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-063-364ff4d9f2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-063-364ff4d9f2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-79ebd93a16",
+      "order": 63,
+      "text": "in",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-064-79ebd93a16.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-064-79ebd93a16.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-8fa15b7aae",
+      "order": 64,
+      "text": "space",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-065-8fa15b7aae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-065-8fa15b7aae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-e984409666",
+      "order": 65,
+      "text": "some",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-066-e984409666.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-066-e984409666.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-b8f4d56fae",
+      "order": 66,
+      "text": "cold",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-067-b8f4d56fae.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-067-b8f4d56fae.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-7a17b8c132",
+      "order": 67,
+      "text": "like",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-068-7a17b8c132.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-068-7a17b8c132.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-9d9fc912fd",
+      "order": 68,
+      "text": "with",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-069-9d9fc912fd.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-069-9d9fc912fd.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-3d1d572195",
+      "order": 69,
+      "text": "water",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-070-3d1d572195.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-070-3d1d572195.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-17eaa5af21",
+      "order": 70,
+      "text": "ask",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-071-17eaa5af21.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-071-17eaa5af21.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-072-6d3db3726d",
+      "order": 71,
+      "text": "question",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-072-6d3db3726d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-072-6d3db3726d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-073-2b4775cbf6",
+      "order": 72,
+      "text": "and",
+      "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/words/word-073-2b4775cbf6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/words/word-073-2b4775cbf6.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-41cb4d3839",
+      "type": "mcq",
+      "order": 0,
+      "text": "What do you see at night?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-001-41cb4d3839.mp3",
+      "questionObjectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-001-41cb4d3839.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-001-41cb4d3839-option1-4fb07c8d.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-001-41cb4d3839-option2-54833d79.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-001-41cb4d3839-option3-c19ff8cd.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-001-41cb4d3839-option4-faa99c96.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-41cb4d3839-option1-4fb07c8d",
+          "text": "Green grass",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-001-41cb4d3839-option1-4fb07c8d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-41cb4d3839-option2-54833d79",
+          "text": "Many stars",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-001-41cb4d3839-option2-54833d79.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-41cb4d3839-option3-c19ff8cd",
+          "text": "Big houses",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-001-41cb4d3839-option3-c19ff8cd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-41cb4d3839-option4-faa99c96",
+          "text": "Fast cars",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-001-41cb4d3839-option4-faa99c96.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-a23f91b150",
+      "type": "mcq",
+      "order": 1,
+      "text": "What is our sun?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-002-a23f91b150.mp3",
+      "questionObjectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-002-a23f91b150.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-002-a23f91b150-option1-d9601639.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-002-a23f91b150-option2-b22ea94c.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-002-a23f91b150-option3-ac6ddd50.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-002-a23f91b150-option4-bb6563a7.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-a23f91b150-option1-d9601639",
+          "text": "A star",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-002-a23f91b150-option1-d9601639.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-a23f91b150-option2-b22ea94c",
+          "text": "A planet",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-002-a23f91b150-option2-b22ea94c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-a23f91b150-option3-ac6ddd50",
+          "text": "A moon",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-002-a23f91b150-option3-ac6ddd50.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-a23f91b150-option4-bb6563a7",
+          "text": "A cloud",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-002-a23f91b150-option4-bb6563a7.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-983275f881",
+      "type": "mcq",
+      "order": 2,
+      "text": "Where do we live?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-003-983275f881.mp3",
+      "questionObjectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-003-983275f881.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-003-983275f881-option1-47942ef0.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-003-983275f881-option2-eff4f989.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-003-983275f881-option3-36e81a20.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-003-983275f881-option4-eba90283.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-983275f881-option1-47942ef0",
+          "text": "On a star",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-003-983275f881-option1-47942ef0.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-983275f881-option2-eff4f989",
+          "text": "On the sun",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-003-983275f881-option2-eff4f989.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-983275f881-option3-36e81a20",
+          "text": "On Earth",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-003-983275f881-option3-36e81a20.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-983275f881-option4-eba90283",
+          "text": "In space",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-003-983275f881-option4-eba90283.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-2d9067ecd1",
+      "type": "mcq",
+      "order": 3,
+      "text": "What goes around the sun?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-004-2d9067ecd1.mp3",
+      "questionObjectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-004-2d9067ecd1.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-004-2d9067ecd1-option1-49e526c6.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-004-2d9067ecd1-option2-73f3ae01.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-004-2d9067ecd1-option3-3b1023f6.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-004-2d9067ecd1-option4-511b7707.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-2d9067ecd1-option1-49e526c6",
+          "text": "The clouds",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-004-2d9067ecd1-option1-49e526c6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-2d9067ecd1-option2-73f3ae01",
+          "text": "The moon",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-004-2d9067ecd1-option2-73f3ae01.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-2d9067ecd1-option3-3b1023f6",
+          "text": "The stars",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-004-2d9067ecd1-option3-3b1023f6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-2d9067ecd1-option4-511b7707",
+          "text": "Earth",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-004-2d9067ecd1-option4-511b7707.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-703538d040",
+      "type": "mcq",
+      "order": 4,
+      "text": "Are there other planets?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-005-703538d040.mp3",
+      "questionObjectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-005-703538d040.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-005-703538d040-option1-33059dc7.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-005-703538d040-option2-c4f6b6d3.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-005-703538d040-option3-a498270f.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-005-703538d040-option4-9e7e88b9.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-703538d040-option1-33059dc7",
+          "text": "Yes",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-005-703538d040-option1-33059dc7.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-703538d040-option2-c4f6b6d3",
+          "text": "I don't know",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-005-703538d040-option2-c4f6b6d3.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-703538d040-option3-a498270f",
+          "text": "No",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-005-703538d040-option3-a498270f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-703538d040-option4-9e7e88b9",
+          "text": "Maybe",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-005-703538d040-option4-9e7e88b9.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-a58f6fd4bf",
+      "type": "mcq",
+      "order": 5,
+      "text": "What are other stars?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-006-a58f6fd4bf.mp3",
+      "questionObjectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-006-a58f6fd4bf.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-006-a58f6fd4bf-option1-5c7aff80.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-006-a58f6fd4bf-option2-7bc5362f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-006-a58f6fd4bf-option3-bfc13436.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-006-a58f6fd4bf-option4-99ea7ae9.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-a58f6fd4bf-option1-5c7aff80",
+          "text": "Rocks",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-006-a58f6fd4bf-option1-5c7aff80.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-a58f6fd4bf-option2-7bc5362f",
+          "text": "Planets",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-006-a58f6fd4bf-option2-7bc5362f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-a58f6fd4bf-option3-bfc13436",
+          "text": "Moons",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-006-a58f6fd4bf-option3-bfc13436.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-a58f6fd4bf-option4-99ea7ae9",
+          "text": "Suns",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-006-a58f6fd4bf-option4-99ea7ae9.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-13a7e5875c",
+      "type": "mcq",
+      "order": 6,
+      "text": "What do we call other planets?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-007-13a7e5875c.mp3",
+      "questionObjectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-007-13a7e5875c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-007-13a7e5875c-option1-1f5ddd57.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-007-13a7e5875c-option2-686eac97.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-007-13a7e5875c-option3-c4818648.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-007-13a7e5875c-option4-3cb73462.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-13a7e5875c-option1-1f5ddd57",
+          "text": "New moons",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-007-13a7e5875c-option1-1f5ddd57.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-13a7e5875c-option2-686eac97",
+          "text": "Small suns",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-007-13a7e5875c-option2-686eac97.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-13a7e5875c-option3-c4818648",
+          "text": "Big stars",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-007-13a7e5875c-option3-c4818648.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-13a7e5875c-option4-3cb73462",
+          "text": "Other worlds",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-007-13a7e5875c-option4-3cb73462.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-b9dded1379",
+      "type": "mcq",
+      "order": 7,
+      "text": "What do we use to look for planets?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-008-b9dded1379.mp3",
+      "questionObjectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-008-b9dded1379.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-008-b9dded1379-option1-794e05c5.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-008-b9dded1379-option2-18d0a99a.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-008-b9dded1379-option3-57985a7c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-008-b9dded1379-option4-646fe7e6.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-b9dded1379-option1-794e05c5",
+          "text": "Big tools",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-008-b9dded1379-option1-794e05c5.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-b9dded1379-option2-18d0a99a",
+          "text": "Small cars",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-008-b9dded1379-option2-18d0a99a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-b9dded1379-option3-57985a7c",
+          "text": "Green trees",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-008-b9dded1379-option3-57985a7c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-b9dded1379-option4-646fe7e6",
+          "text": "Blue water",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-008-b9dded1379-option4-646fe7e6.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-4e45d73fb8",
+      "type": "mcq",
+      "order": 8,
+      "text": "What is important on a world like Earth?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-009-4e45d73fb8.mp3",
+      "questionObjectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-009-4e45d73fb8.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-009-4e45d73fb8-option1-a5d9b37c.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-009-4e45d73fb8-option2-ab56225f.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-009-4e45d73fb8-option3-203b7504.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-009-4e45d73fb8-option4-0fd94cbf.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-4e45d73fb8-option1-a5d9b37c",
+          "text": "Rocks",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-009-4e45d73fb8-option1-a5d9b37c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-4e45d73fb8-option2-ab56225f",
+          "text": "Water",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-009-4e45d73fb8-option2-ab56225f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-4e45d73fb8-option3-203b7504",
+          "text": "Sand",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-009-4e45d73fb8-option3-203b7504.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-4e45d73fb8-option4-0fd94cbf",
+          "text": "Fire",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-009-4e45d73fb8-option4-0fd94cbf.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-5568b10fe8",
+      "type": "mcq",
+      "order": 9,
+      "text": "Is the sky big?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-010-5568b10fe8.mp3",
+      "questionObjectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-010-5568b10fe8.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-010-5568b10fe8-option1-2a3009cd.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-010-5568b10fe8-option2-716078ce.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-010-5568b10fe8-option3-d6c53246.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-010-5568b10fe8-option4-3dc911ad.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-5568b10fe8-option1-2a3009cd",
+          "text": "Small",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-010-5568b10fe8-option1-2a3009cd.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-5568b10fe8-option2-716078ce",
+          "text": "Maybe",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-010-5568b10fe8-option2-716078ce.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-5568b10fe8-option3-d6c53246",
+          "text": "No",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-010-5568b10fe8-option3-d6c53246.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-5568b10fe8-option4-3dc911ad",
+          "text": "Yes",
+          "objectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/mcq-010-5568b10fe8-option4-3dc911ad.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-0ebe43c034",
+      "type": "saq",
+      "order": 10,
+      "text": "What is our sun?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/saq-011-0ebe43c034.mp3",
+      "questionObjectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/saq-011-0ebe43c034.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-ce2f47255a",
+      "type": "saq",
+      "order": 11,
+      "text": "Do we live on a star?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/saq-012-ce2f47255a.mp3",
+      "questionObjectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/saq-012-ce2f47255a.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-2faab09536",
+      "type": "saq",
+      "order": 12,
+      "text": "What goes around the sun?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/saq-013-2faab09536.mp3",
+      "questionObjectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/saq-013-2faab09536.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-a45624ca72",
+      "type": "saq",
+      "order": 13,
+      "text": "Are there other planets?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/saq-014-a45624ca72.mp3",
+      "questionObjectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/saq-014-a45624ca72.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-03534c394c",
+      "type": "saq",
+      "order": 14,
+      "text": "Is water important?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/cmmscy4zq00wys60eetu0jbr2/questions/saq-015-03534c394c.mp3",
+      "questionObjectPath": "articles/cmmscy4zq00wys60eetu0jbr2/questions/saq-015-03534c394c.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:09:48.164Z"
+}

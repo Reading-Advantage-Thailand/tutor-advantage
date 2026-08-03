@@ -255,6 +255,12 @@ jobs:
             )
           fi
 
+          if [[ "${{ matrix.service }}" == "learning-service" ]]; then
+            DEPLOY_FLAGS+=(
+              "--update-secrets=DATABASE_URL_PRIMARY_ADVANTAGE=ta-database_url_primary_advantage:latest"
+            )
+          fi
+
           gcloud run deploy ${{ matrix.service }} \
             --image=${{ env.REGISTRY }}/${{ matrix.service }}:${DEPLOY_SHA} \
             --region=${{ env.REGION }} \

@@ -1,0 +1,1343 @@
+{
+  "version": 1,
+  "articleId": "4KEEDPYfLpRWutFuYceS",
+  "source": "READING_ADVANTAGE",
+  "title": "The Comedy of Errors: Funny Tales of Mistaken Identities",
+  "voice": {
+    "provider": "google-cloud-text-to-speech",
+    "voiceId": "en-US-Neural2-C",
+    "languageCode": "en-US",
+    "speakingRate": 0.9
+  },
+  "sentences": [
+    {
+      "id": "sentence-001-d07ce3ae1a",
+      "order": 0,
+      "text": "Tom is a funny man.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-001-d07ce3ae1a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-001-d07ce3ae1a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-002-ed9ba42bd8",
+      "order": 1,
+      "text": "He likes jokes.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-002-ed9ba42bd8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-002-ed9ba42bd8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-003-0961d75636",
+      "order": 2,
+      "text": "One day, Tom goes to a party.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-003-0961d75636.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-003-0961d75636.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-004-751c36d2f0",
+      "order": 3,
+      "text": "He sees a man.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-004-751c36d2f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-004-751c36d2f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-005-f136e6d5a3",
+      "order": 4,
+      "text": "The man looks like his friend, Bob.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-005-f136e6d5a3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-005-f136e6d5a3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-006-dbd526b3f7",
+      "order": 5,
+      "text": "Tom says, \"Hi, Bob!\"",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-006-dbd526b3f7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-006-dbd526b3f7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-007-2a9cebd6d8",
+      "order": 6,
+      "text": "The man smiles.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-007-2a9cebd6d8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-007-2a9cebd6d8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-008-10cce770d4",
+      "order": 7,
+      "text": "Tom tells a joke.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-008-10cce770d4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-008-10cce770d4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-009-f75bd97144",
+      "order": 8,
+      "text": "The man laughs.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-009-f75bd97144.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-009-f75bd97144.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-010-e441b41e75",
+      "order": 9,
+      "text": "Tom tells more jokes.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-010-e441b41e75.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-010-e441b41e75.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-011-f28808cdb3",
+      "order": 10,
+      "text": "The man laughs a lot.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-011-f28808cdb3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-011-f28808cdb3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-012-939e824395",
+      "order": 11,
+      "text": "Tom is happy.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-012-939e824395.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-012-939e824395.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-013-4a5dd457c6",
+      "order": 12,
+      "text": "Later, Tom sees Bob.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-013-4a5dd457c6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-013-4a5dd457c6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-014-2b6b529d8c",
+      "order": 13,
+      "text": "Tom is confused.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-014-2b6b529d8c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-014-2b6b529d8c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-015-a80eb6d263",
+      "order": 14,
+      "text": "\"Bob, how are you here?\"",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-015-a80eb6d263.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-015-a80eb6d263.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-016-0664308686",
+      "order": 15,
+      "text": "Tom asks.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-016-0664308686.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-016-0664308686.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-017-4c8d968650",
+      "order": 16,
+      "text": "Bob says, \"I just came.\"",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-017-4c8d968650.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-017-4c8d968650.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-018-22628f27c3",
+      "order": 17,
+      "text": "Tom looks at the other man.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-018-22628f27c3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-018-22628f27c3.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-019-a82ca36c64",
+      "order": 18,
+      "text": "The man is not Bob.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-019-a82ca36c64.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-019-a82ca36c64.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-020-17d12197e1",
+      "order": 19,
+      "text": "Tom laughs.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-020-17d12197e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-020-17d12197e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-021-033ab20569",
+      "order": 20,
+      "text": "\"I made a mistake!\"",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-021-033ab20569.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-021-033ab20569.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-022-355f7adf2e",
+      "order": 21,
+      "text": "he says.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-022-355f7adf2e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-022-355f7adf2e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-023-f88a77cf25",
+      "order": 22,
+      "text": "Bob laughs too.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-023-f88a77cf25.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-023-f88a77cf25.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-024-02e2b64d5c",
+      "order": 23,
+      "text": "Tom and Bob go to the man.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-024-02e2b64d5c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-024-02e2b64d5c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-025-437863bc3f",
+      "order": 24,
+      "text": "Tom says, \"I am sorry.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-025-437863bc3f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-025-437863bc3f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-026-5d6a044f9f",
+      "order": 25,
+      "text": "I thought you were Bob.\"",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-026-5d6a044f9f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-026-5d6a044f9f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-027-79f4d3d5a4",
+      "order": 26,
+      "text": "The man smiles.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-027-79f4d3d5a4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-027-79f4d3d5a4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-028-5813cc8f8f",
+      "order": 27,
+      "text": "\"No problem,\" he says.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-028-5813cc8f8f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-028-5813cc8f8f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-029-a418031132",
+      "order": 28,
+      "text": "\"I like your jokes.\"",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-029-a418031132.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-029-a418031132.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-030-d07395406b",
+      "order": 29,
+      "text": "Tom and Bob laugh.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-030-d07395406b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-030-d07395406b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-031-98e3d9ec53",
+      "order": 30,
+      "text": "They all become friends.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-031-98e3d9ec53.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-031-98e3d9ec53.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-032-96d1b5de57",
+      "order": 31,
+      "text": "Tom tells the story to his friends.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-032-96d1b5de57.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-032-96d1b5de57.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-033-44f231e661",
+      "order": 32,
+      "text": "They all laugh.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-033-44f231e661.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-033-44f231e661.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-034-4730297439",
+      "order": 33,
+      "text": "Tom says, \"Mistakes can be funny!\"",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-034-4730297439.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-034-4730297439.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-035-50ead5b3ee",
+      "order": 34,
+      "text": "Everyone agrees.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-035-50ead5b3ee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-035-50ead5b3ee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-036-13c49eed00",
+      "order": 35,
+      "text": "They all enjoy the party.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-036-13c49eed00.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-036-13c49eed00.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-037-7cd2e8dccc",
+      "order": 36,
+      "text": "Tom learns that mistakes can be good.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-037-7cd2e8dccc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-037-7cd2e8dccc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "sentence-038-2189aae0d3",
+      "order": 37,
+      "text": "He is happy to have new friends.",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-038-2189aae0d3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/sentences/sentence-038-2189aae0d3.mp3",
+      "status": "ready"
+    }
+  ],
+  "words": [
+    {
+      "id": "word-001-9abe391a2d",
+      "order": 0,
+      "text": "confused",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-001-9abe391a2d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-001-9abe391a2d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-002-7542b430e9",
+      "order": 1,
+      "text": "mistake",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-002-7542b430e9.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-002-7542b430e9.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-003-6cd5e21d0d",
+      "order": 2,
+      "text": "friends",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-003-6cd5e21d0d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-003-6cd5e21d0d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-004-3403625274",
+      "order": 3,
+      "text": "jokes",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-004-3403625274.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-004-3403625274.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-005-6fb53fceaf",
+      "order": 4,
+      "text": "happy",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-005-6fb53fceaf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-005-6fb53fceaf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-006-6875941d94",
+      "order": 5,
+      "text": "party",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-006-6875941d94.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-006-6875941d94.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-007-976f0cfa21",
+      "order": 6,
+      "text": "smiles",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-007-976f0cfa21.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-007-976f0cfa21.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-008-e23eb5aa80",
+      "order": 7,
+      "text": "laughs",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-008-e23eb5aa80.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-008-e23eb5aa80.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-009-c9cf5b45a7",
+      "order": 8,
+      "text": "enjoy",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-009-c9cf5b45a7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-009-c9cf5b45a7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-010-6e82aaf1bc",
+      "order": 9,
+      "text": "agrees",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-010-6e82aaf1bc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-010-6e82aaf1bc.mp3",
+      "status": "ready"
+    }
+  ],
+  "sentenceWords": [
+    {
+      "id": "word-011-6b20409cee",
+      "order": 10,
+      "text": "tom",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-011-6b20409cee.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-011-6b20409cee.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-012-bc1f05f2e1",
+      "order": 11,
+      "text": "is",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-012-bc1f05f2e1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-012-bc1f05f2e1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-013-fe2767449c",
+      "order": 12,
+      "text": "a",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-013-fe2767449c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-013-fe2767449c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-014-fb2ea40f8c",
+      "order": 13,
+      "text": "funny",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-014-fb2ea40f8c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-014-fb2ea40f8c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-015-6a34592c6c",
+      "order": 14,
+      "text": "man",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-015-6a34592c6c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-015-6a34592c6c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-016-a85b8cecfc",
+      "order": 15,
+      "text": "he",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-016-a85b8cecfc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-016-a85b8cecfc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-017-66de5a6421",
+      "order": 16,
+      "text": "likes",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-017-66de5a6421.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-017-66de5a6421.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-018-d545523064",
+      "order": 17,
+      "text": "one",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-018-d545523064.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-018-d545523064.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-019-22ff7d2d43",
+      "order": 18,
+      "text": "day",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-019-22ff7d2d43.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-019-22ff7d2d43.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-020-32fcd93b53",
+      "order": 19,
+      "text": "goes",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-020-32fcd93b53.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-020-32fcd93b53.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-021-23ac58ab90",
+      "order": 20,
+      "text": "to",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-021-23ac58ab90.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-021-23ac58ab90.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-022-4b99265fa8",
+      "order": 21,
+      "text": "sees",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-022-4b99265fa8.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-022-4b99265fa8.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-023-c7c0ba88dc",
+      "order": 22,
+      "text": "the",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-023-c7c0ba88dc.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-023-c7c0ba88dc.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-024-a23f7c290b",
+      "order": 23,
+      "text": "looks",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-024-a23f7c290b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-024-a23f7c290b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-025-439fc22a9e",
+      "order": 24,
+      "text": "like",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-025-439fc22a9e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-025-439fc22a9e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-026-61295d65e4",
+      "order": 25,
+      "text": "his",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-026-61295d65e4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-026-61295d65e4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-027-2b5643189d",
+      "order": 26,
+      "text": "friend",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-027-2b5643189d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-027-2b5643189d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-028-7a14526c6a",
+      "order": 27,
+      "text": "bob",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-028-7a14526c6a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-028-7a14526c6a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-029-b7e85f7d09",
+      "order": 28,
+      "text": "says",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-029-b7e85f7d09.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-029-b7e85f7d09.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-030-c99ad0a4b4",
+      "order": 29,
+      "text": "hi",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-030-c99ad0a4b4.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-030-c99ad0a4b4.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-031-5b8419a765",
+      "order": 30,
+      "text": "tells",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-031-5b8419a765.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-031-5b8419a765.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-032-0aea3f2c09",
+      "order": 31,
+      "text": "joke",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-032-0aea3f2c09.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-032-0aea3f2c09.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-033-78656bfabe",
+      "order": 32,
+      "text": "more",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-033-78656bfabe.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-033-78656bfabe.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-034-4c64fdb29a",
+      "order": 33,
+      "text": "lot",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-034-4c64fdb29a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-034-4c64fdb29a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-035-74834dca24",
+      "order": 34,
+      "text": "later",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-035-74834dca24.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-035-74834dca24.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-036-e70ff9f2d1",
+      "order": 35,
+      "text": "how",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-036-e70ff9f2d1.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-036-e70ff9f2d1.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-037-f40332da81",
+      "order": 36,
+      "text": "are",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-037-f40332da81.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-037-f40332da81.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-038-fcc36c55b2",
+      "order": 37,
+      "text": "you",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-038-fcc36c55b2.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-038-fcc36c55b2.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-039-63e5eef047",
+      "order": 38,
+      "text": "here",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-039-63e5eef047.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-039-63e5eef047.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-040-98f7ecc52b",
+      "order": 39,
+      "text": "asks",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-040-98f7ecc52b.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-040-98f7ecc52b.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-041-d58cc20776",
+      "order": 40,
+      "text": "i",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-041-d58cc20776.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-041-d58cc20776.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-042-54b7b9838a",
+      "order": 41,
+      "text": "just",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-042-54b7b9838a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-042-54b7b9838a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-043-bae129a65e",
+      "order": 42,
+      "text": "came",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-043-bae129a65e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-043-bae129a65e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-044-ef28caa2f0",
+      "order": 43,
+      "text": "at",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-044-ef28caa2f0.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-044-ef28caa2f0.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-045-1545b59c3d",
+      "order": 44,
+      "text": "other",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-045-1545b59c3d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-045-1545b59c3d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-046-c968013037",
+      "order": 45,
+      "text": "not",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-046-c968013037.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-046-c968013037.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-047-4d48a6c405",
+      "order": 46,
+      "text": "made",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-047-4d48a6c405.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-047-4d48a6c405.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-048-01fd67108d",
+      "order": 47,
+      "text": "too",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-048-01fd67108d.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-048-01fd67108d.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-049-1dcc66e37c",
+      "order": 48,
+      "text": "and",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-049-1dcc66e37c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-049-1dcc66e37c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-050-8ab0b597df",
+      "order": 49,
+      "text": "go",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-050-8ab0b597df.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-050-8ab0b597df.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-051-bc138f8560",
+      "order": 50,
+      "text": "am",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-051-bc138f8560.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-051-bc138f8560.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-052-f5408fed55",
+      "order": 51,
+      "text": "sorry",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-052-f5408fed55.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-052-f5408fed55.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-053-b9e36d5fbf",
+      "order": 52,
+      "text": "thought",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-053-b9e36d5fbf.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-053-b9e36d5fbf.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-054-22dc6d214c",
+      "order": 53,
+      "text": "were",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-054-22dc6d214c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-054-22dc6d214c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-055-9ff1eab9f6",
+      "order": 54,
+      "text": "no",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-055-9ff1eab9f6.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-055-9ff1eab9f6.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-056-204762dee7",
+      "order": 55,
+      "text": "problem",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-056-204762dee7.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-056-204762dee7.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-057-cd485d102a",
+      "order": 56,
+      "text": "your",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-057-cd485d102a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-057-cd485d102a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-058-10ba5f5b0f",
+      "order": 57,
+      "text": "laugh",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-058-10ba5f5b0f.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-058-10ba5f5b0f.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-059-e399a30837",
+      "order": 58,
+      "text": "they",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-059-e399a30837.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-059-e399a30837.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-060-865334a05c",
+      "order": 59,
+      "text": "all",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-060-865334a05c.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-060-865334a05c.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-061-b86676fb25",
+      "order": 60,
+      "text": "become",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-061-b86676fb25.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-061-b86676fb25.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-062-265b4e0d1a",
+      "order": 61,
+      "text": "story",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-062-265b4e0d1a.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-062-265b4e0d1a.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-063-8737e86188",
+      "order": 62,
+      "text": "mistakes",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-063-8737e86188.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-063-8737e86188.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-064-c33cd26814",
+      "order": 63,
+      "text": "can",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-064-c33cd26814.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-064-c33cd26814.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-065-0abfdcf468",
+      "order": 64,
+      "text": "be",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-065-0abfdcf468.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-065-0abfdcf468.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-066-0fd39f4199",
+      "order": 65,
+      "text": "everyone",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-066-0fd39f4199.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-066-0fd39f4199.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-067-488c39520e",
+      "order": 66,
+      "text": "learns",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-067-488c39520e.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-067-488c39520e.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-068-c5b06f0468",
+      "order": 67,
+      "text": "that",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-068-c5b06f0468.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-068-c5b06f0468.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-069-122f311150",
+      "order": 68,
+      "text": "good",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-069-122f311150.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-069-122f311150.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-070-b941441a91",
+      "order": 69,
+      "text": "have",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-070-b941441a91.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-070-b941441a91.mp3",
+      "status": "ready"
+    },
+    {
+      "id": "word-071-11b7fcd7d3",
+      "order": 70,
+      "text": "new",
+      "objectPath": "articles/4KEEDPYfLpRWutFuYceS/words/word-071-11b7fcd7d3.mp3",
+      "audioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/words/word-071-11b7fcd7d3.mp3",
+      "status": "ready"
+    }
+  ],
+  "questions": [
+    {
+      "id": "mcq-001-28a044817e",
+      "type": "mcq",
+      "order": 0,
+      "text": "Who does Tom see later?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-001-28a044817e.mp3",
+      "questionObjectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-001-28a044817e.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-001-28a044817e-option1-45f4393e.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-001-28a044817e-option2-ea59d6c2.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-001-28a044817e-option3-ff118bed.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-001-28a044817e-option4-c5250595.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-001-28a044817e-option1-45f4393e",
+          "text": "Bob",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-001-28a044817e-option1-45f4393e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-28a044817e-option2-ea59d6c2",
+          "text": "the man",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-001-28a044817e-option2-ea59d6c2.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-28a044817e-option3-ff118bed",
+          "text": "a woman",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-001-28a044817e-option3-ff118bed.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-001-28a044817e-option4-c5250595",
+          "text": "a child",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-001-28a044817e-option4-c5250595.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-002-d00c9a3b7c",
+      "type": "mcq",
+      "order": 1,
+      "text": "Who does Tom see at the party?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-002-d00c9a3b7c.mp3",
+      "questionObjectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-002-d00c9a3b7c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-002-d00c9a3b7c-option1-078a4f89.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-002-d00c9a3b7c-option2-e8a3c4d4.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-002-d00c9a3b7c-option3-885636c6.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-002-d00c9a3b7c-option4-8b839c1f.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-002-d00c9a3b7c-option1-078a4f89",
+          "text": "a man",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-002-d00c9a3b7c-option1-078a4f89.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-d00c9a3b7c-option2-e8a3c4d4",
+          "text": "a woman",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-002-d00c9a3b7c-option2-e8a3c4d4.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-d00c9a3b7c-option3-885636c6",
+          "text": "a child",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-002-d00c9a3b7c-option3-885636c6.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-002-d00c9a3b7c-option4-8b839c1f",
+          "text": "a dog",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-002-d00c9a3b7c-option4-8b839c1f.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-003-96e8134723",
+      "type": "mcq",
+      "order": 2,
+      "text": "Where does Tom go one day?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-003-96e8134723.mp3",
+      "questionObjectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-003-96e8134723.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-003-96e8134723-option1-f8830b06.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-003-96e8134723-option2-a7af7721.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-003-96e8134723-option3-3be13772.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-003-96e8134723-option4-0a2387a4.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-003-96e8134723-option1-f8830b06",
+          "text": "a party",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-003-96e8134723-option1-f8830b06.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-96e8134723-option2-a7af7721",
+          "text": "a park",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-003-96e8134723-option2-a7af7721.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-96e8134723-option3-3be13772",
+          "text": "a shop",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-003-96e8134723-option3-3be13772.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-003-96e8134723-option4-0a2387a4",
+          "text": "a school",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-003-96e8134723-option4-0a2387a4.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-004-faa1523db4",
+      "type": "mcq",
+      "order": 3,
+      "text": "What does Tom say to the man?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-004-faa1523db4.mp3",
+      "questionObjectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-004-faa1523db4.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-004-faa1523db4-option1-4bd9390e.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-004-faa1523db4-option2-1667ac64.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-004-faa1523db4-option3-f9328d9c.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-004-faa1523db4-option4-bacc1ccd.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-004-faa1523db4-option1-4bd9390e",
+          "text": "Hi, Bob!",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-004-faa1523db4-option1-4bd9390e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-faa1523db4-option2-1667ac64",
+          "text": "Hello!",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-004-faa1523db4-option2-1667ac64.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-faa1523db4-option3-f9328d9c",
+          "text": "Goodbye!",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-004-faa1523db4-option3-f9328d9c.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-004-faa1523db4-option4-bacc1ccd",
+          "text": "How are you?",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-004-faa1523db4-option4-bacc1ccd.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-005-f78abbf72c",
+      "type": "mcq",
+      "order": 4,
+      "text": "Who is funny?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-005-f78abbf72c.mp3",
+      "questionObjectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-005-f78abbf72c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-005-f78abbf72c-option1-09c3b65b.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-005-f78abbf72c-option2-57c02b8d.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-005-f78abbf72c-option3-ae58a285.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-005-f78abbf72c-option4-f6f40e88.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-005-f78abbf72c-option1-09c3b65b",
+          "text": "Tom",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-005-f78abbf72c-option1-09c3b65b.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-f78abbf72c-option2-57c02b8d",
+          "text": "Bob",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-005-f78abbf72c-option2-57c02b8d.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-f78abbf72c-option3-ae58a285",
+          "text": "The man",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-005-f78abbf72c-option3-ae58a285.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-005-f78abbf72c-option4-f6f40e88",
+          "text": "Tom's friend",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-005-f78abbf72c-option4-f6f40e88.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-006-0c3ed32cd1",
+      "type": "mcq",
+      "order": 5,
+      "text": "What does the man do when Tom tells a joke?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-006-0c3ed32cd1.mp3",
+      "questionObjectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-006-0c3ed32cd1.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-006-0c3ed32cd1-option1-9b8682ea.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-006-0c3ed32cd1-option2-fc5b86ee.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-006-0c3ed32cd1-option3-4245a80f.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-006-0c3ed32cd1-option4-ef7c0799.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-006-0c3ed32cd1-option1-9b8682ea",
+          "text": "laughs",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-006-0c3ed32cd1-option1-9b8682ea.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-0c3ed32cd1-option2-fc5b86ee",
+          "text": "cries",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-006-0c3ed32cd1-option2-fc5b86ee.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-0c3ed32cd1-option3-4245a80f",
+          "text": "sings",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-006-0c3ed32cd1-option3-4245a80f.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-006-0c3ed32cd1-option4-ef7c0799",
+          "text": "dances",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-006-0c3ed32cd1-option4-ef7c0799.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-007-b7515db441",
+      "type": "mcq",
+      "order": 6,
+      "text": "What does Tom say to Bob?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-007-b7515db441.mp3",
+      "questionObjectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-007-b7515db441.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-007-b7515db441-option1-a3489ced.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-007-b7515db441-option2-c082df84.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-007-b7515db441-option3-050b0914.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-007-b7515db441-option4-a83edad4.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-007-b7515db441-option1-a3489ced",
+          "text": "How are you here?",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-007-b7515db441-option1-a3489ced.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-b7515db441-option2-c082df84",
+          "text": "Where are you?",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-007-b7515db441-option2-c082df84.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-b7515db441-option3-050b0914",
+          "text": "Who are you?",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-007-b7515db441-option3-050b0914.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-007-b7515db441-option4-a83edad4",
+          "text": "What are you doing?",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-007-b7515db441-option4-a83edad4.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-008-37ae66e64c",
+      "type": "mcq",
+      "order": 7,
+      "text": "What does Tom do when he knows the man is not Bob?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-008-37ae66e64c.mp3",
+      "questionObjectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-008-37ae66e64c.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-008-37ae66e64c-option1-aafffe68.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-008-37ae66e64c-option2-c40f5427.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-008-37ae66e64c-option3-ab121f8e.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-008-37ae66e64c-option4-89b80452.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-008-37ae66e64c-option1-aafffe68",
+          "text": "laughs",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-008-37ae66e64c-option1-aafffe68.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-37ae66e64c-option2-c40f5427",
+          "text": "cries",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-008-37ae66e64c-option2-c40f5427.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-37ae66e64c-option3-ab121f8e",
+          "text": "runs",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-008-37ae66e64c-option3-ab121f8e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-008-37ae66e64c-option4-89b80452",
+          "text": "sleeps",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-008-37ae66e64c-option4-89b80452.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-009-223c1e0def",
+      "type": "mcq",
+      "order": 8,
+      "text": "What do Tom and Bob do at the end?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-009-223c1e0def.mp3",
+      "questionObjectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-009-223c1e0def.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-009-223c1e0def-option1-c5220d1e.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-009-223c1e0def-option2-8bcc1a01.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-009-223c1e0def-option3-f4d50080.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-009-223c1e0def-option4-83128522.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-009-223c1e0def-option1-c5220d1e",
+          "text": "laugh",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-009-223c1e0def-option1-c5220d1e.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-223c1e0def-option2-8bcc1a01",
+          "text": "cry",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-009-223c1e0def-option2-8bcc1a01.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-223c1e0def-option3-f4d50080",
+          "text": "sing",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-009-223c1e0def-option3-f4d50080.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-009-223c1e0def-option4-83128522",
+          "text": "dance",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-009-223c1e0def-option4-83128522.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "mcq-010-02385a0383",
+      "type": "mcq",
+      "order": 9,
+      "text": "What does Tom like?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-010-02385a0383.mp3",
+      "questionObjectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-010-02385a0383.mp3",
+      "optionAudioUrls": {
+        "option1": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-010-02385a0383-option1-695bd7a9.mp3",
+        "option2": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-010-02385a0383-option2-43ff8c94.mp3",
+        "option3": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-010-02385a0383-option3-012f740a.mp3",
+        "option4": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/mcq-010-02385a0383-option4-88239769.mp3"
+      },
+      "optionFiles": [
+        {
+          "id": "mcq-010-02385a0383-option1-695bd7a9",
+          "text": "jokes",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-010-02385a0383-option1-695bd7a9.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-02385a0383-option2-43ff8c94",
+          "text": "games",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-010-02385a0383-option2-43ff8c94.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-02385a0383-option3-012f740a",
+          "text": "music",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-010-02385a0383-option3-012f740a.mp3",
+          "status": "pending"
+        },
+        {
+          "id": "mcq-010-02385a0383-option4-88239769",
+          "text": "dancing",
+          "objectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/mcq-010-02385a0383-option4-88239769.mp3",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "saq-011-e29cd81dc6",
+      "type": "saq",
+      "order": 10,
+      "text": "Who is the funny man?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/saq-011-e29cd81dc6.mp3",
+      "questionObjectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/saq-011-e29cd81dc6.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-012-7fb1f52bd2",
+      "type": "saq",
+      "order": 11,
+      "text": "Where does Tom go one day?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/saq-012-7fb1f52bd2.mp3",
+      "questionObjectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/saq-012-7fb1f52bd2.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-013-5f39ba7f43",
+      "type": "saq",
+      "order": 12,
+      "text": "Who does Tom think the man is?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/saq-013-5f39ba7f43.mp3",
+      "questionObjectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/saq-013-5f39ba7f43.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-014-2e2b64be56",
+      "type": "saq",
+      "order": 13,
+      "text": "What does Tom learn about mistakes?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/saq-014-2e2b64be56.mp3",
+      "questionObjectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/saq-014-2e2b64be56.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    },
+    {
+      "id": "saq-015-1fee30ae8f",
+      "type": "saq",
+      "order": 14,
+      "text": "What does the man do when Tom tells a joke?",
+      "questionAudioUrl": "https://storage.googleapis.com/tutor_advantage_bucket/articles/4KEEDPYfLpRWutFuYceS/questions/saq-015-1fee30ae8f.mp3",
+      "questionObjectPath": "articles/4KEEDPYfLpRWutFuYceS/questions/saq-015-1fee30ae8f.mp3",
+      "optionAudioUrls": {},
+      "optionFiles": []
+    }
+  ],
+  "generatedAt": "2026-08-02T17:08:18.574Z"
+}
