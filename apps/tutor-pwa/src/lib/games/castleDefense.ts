@@ -666,7 +666,7 @@ export function inRange(
 
 // Parse an English sentence into individual words
 export function parseSentenceWords(sentence: string): string[] {
-  return sentence
+  return String(sentence ?? "")
     .trim()
     .split(/\s+/)
     .map((word) => word.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, ""))

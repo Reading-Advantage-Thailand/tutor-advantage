@@ -96,8 +96,20 @@ describe("lessonSessionService", () => {
       score: 8,
     });
     expect(first?.accepted).toBe(true);
+    expect(first?.allSubmitted).toBe(false);
+    expect(first?.gameState.status).toBe("playing");
     expect(duplicate?.accepted).toBe(false);
     expect(session.participants.get("student-1")?.score).toBe(8);
+
+    const second = service.submitGameResult(session.sessionId, "student-2", {
+      gameId: "dragon-flight",
+      score: 10,
+      correct: 5,
+      total: 5,
+    });
+    expect(second?.accepted).toBe(true);
+    expect(second?.allSubmitted).toBe(true);
+    expect(second?.gameState.status).toBe("results");
 
     service.setPhase(session.sessionId, 14);
     expect(session.gameState).toMatchObject({ phase: 14, category: "sentence", status: "voting" });

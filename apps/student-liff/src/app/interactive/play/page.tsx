@@ -713,6 +713,21 @@ function PlayLessonContent() {
       );
     }
 
+    // A result phase normally means every participant has submitted. Keep a
+    // late/reconnected student in a waiting state instead of rendering the
+    // legacy quick-game fallback with no way to submit the selected game.
+    if (gameState.status === "results") {
+      return (
+        <div className="phase-enter flex w-full max-w-sm flex-1 min-h-0 flex-col gap-4 overflow-hidden">
+          <div className="rounded-3xl border border-amber-500/30 bg-amber-500/10 p-6 text-center shadow-xl">
+            <p className="text-xs font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">{t("interactivePlay.gameComplete")}</p>
+            <p className="mt-3 text-lg font-black text-foreground">{t("interactivePlay.gameWaitTeacher")}</p>
+          </div>
+          <MobileLeaderboard participants={participants} studentId={studentId} />
+        </div>
+      );
+    }
+
     if (gameState.status === "voting") {
       return (
         <div className="phase-enter flex w-full max-w-sm flex-1 min-h-0 flex-col gap-4 overflow-hidden">

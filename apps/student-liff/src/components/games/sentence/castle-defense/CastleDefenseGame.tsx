@@ -89,13 +89,13 @@ type Props = {
 const GAME_DURATION_MS = 60_000;
 const MAX_ROUND_SENTENCES = 10;
 const CASTLE_ASSET_PATHS = {
-  player: "/games/sentence/castle-defense/soldier_3x3_pose_sheet.png",
-  soldier: "/games/sentence/castle-defense/soldier_3x3_pose_sheet.png",
-  tank: "/games/sentence/castle-defense/tank_3x3_pose_sheet.png",
-  boss: "/games/sentence/castle-defense/boss_3x3_pose_sheet.png",
-  towerBase: "/games/sentence/castle-defense/tower_base.png",
-  towerBuilt: "/games/sentence/castle-defense/tower_built.png",
-  base: "/games/sentence/castle-defense/castle_background.png",
+  player: "/games/sentence/castle-defense/player_3x3_pose_sheet.png",
+  soldier: "/games/sentence/castle-defense/goblin_3x3_pose_sheet.png",
+  tank: "/games/sentence/castle-defense/orc_3x3_pose_sheet.png",
+  boss: "/games/sentence/castle-defense/troll_3x3_pose_sheet.png",
+  towerBase: "/games/sentence/castle-defense/tower-base.png",
+  towerBuilt: "/games/sentence/castle-defense/tower-built.png",
+  base: "/games/sentence/castle-defense/player-castle.png",
 };
 
 const buildRoundSentences = (items: SentenceItem[]) =>
@@ -382,6 +382,14 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, t
             difficulty: nextState.difficulty,
             durationMs: Math.min(GAME_DURATION_MS, Math.max(0, nextState.gameTime)),
           });
+          if (autoStart || tutorialMode) {
+            completedRef.current = false;
+            return createCastleDefenseState(gameVocabulary, {
+              difficulty,
+              maxSentences: Math.min(MAX_ROUND_SENTENCES, gameVocabulary.length || 1),
+              durationMs: GAME_DURATION_MS,
+            });
+          }
           exitFullscreen();
         }
 
@@ -483,19 +491,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, t
     );
   }
 
-  if (gameState?.status === "gameover" || gameState?.status === "victory") {
-    if (autoStart) {
-      return (
-        <div className="flex h-dvh w-full items-center justify-center bg-slate-950 text-white">
-          <div className="rounded-3xl border border-white/10 bg-white/10 px-6 py-5 text-center shadow-2xl backdrop-blur">
-            <p className="text-sm font-black uppercase tracking-[0.2em] text-white/60">
-              Castle Defense
-            </p>
-            <p className="mt-2 text-3xl font-black">{gameState.score}</p>
-          </div>
-        </div>
-      );
-    }
+  if ((gameState?.status === "gameover" || gameState?.status === "victory") && !autoStart && !tutorialMode) {
 
     const totalAttempts =
       gameState.correctWordCollections + gameState.incorrectWordCollections;

@@ -114,7 +114,7 @@ export function RuneMatchGame({
     if (!gameState || gameState.grid.length === 0) return null;
     const moves = findPossibleMoves(gameState.grid);
     return moves.length > 0 ? moves[0] : null;
-  }, [gameState?.grid]);
+  }, [gameState]);
 
   const [loadError, setLoadError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);

@@ -125,7 +125,7 @@ export default function PotionRushGame({
         durationMs: Math.round(gameTime * 1000),
       });
     }
-  }, [gameState, autoStart, tutorialMode, totalXpEarned, reputation, difficulty, score, completedSentences, vocabList.length, gameTime, onComplete, exitFullscreen, startGame]);
+  }, [gameState, autoStart, tutorialMode, totalXpEarned, reputation, difficulty, score, completedSentences, vocabList, gameTime, onComplete, exitFullscreen, startGame]);
 
   // Mobile-first portrait reference: 390x844
   const VIRTUAL_WIDTH = 390;

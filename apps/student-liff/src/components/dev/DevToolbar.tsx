@@ -287,6 +287,17 @@ export function DevToolbar() {
           </div>
 
           <div className="overflow-y-auto flex-1">
+            <div className="px-4 py-3 border-b border-border/50 bg-emerald-500/5">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 mb-2">
+                Authentication
+              </p>
+              <Link
+                href="/api/auth/dev-login?redirect=/classes"
+                className="block rounded-lg bg-emerald-600 px-3 py-2 text-center text-xs font-bold text-white hover:bg-emerald-700"
+              >
+                Login as DEV student
+              </Link>
+            </div>
             {/* ── User info ────────────────────────────────────────────── */}
             {user && (
               <div className="px-4 py-3 border-b border-border/50 bg-muted/20">

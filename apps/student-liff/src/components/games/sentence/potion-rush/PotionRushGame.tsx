@@ -110,6 +110,10 @@ export default function PotionRushGame({
 
   useEffect(() => {
     if (gameState === "GAME_OVER") {
+      if (autoStart || tutorialMode) {
+        startGame(vocabList, difficulty);
+        return;
+      }
       exitFullscreen();
       onComplete({
         xp: totalXpEarned,
@@ -121,7 +125,7 @@ export default function PotionRushGame({
         durationMs: Math.round(gameTime * 1000),
       });
     }
-  }, [gameState, totalXpEarned, reputation, difficulty, score, completedSentences, vocabList.length, gameTime, onComplete, exitFullscreen]);
+  }, [gameState, autoStart, tutorialMode, totalXpEarned, reputation, difficulty, score, completedSentences, vocabList, gameTime, onComplete, exitFullscreen, startGame]);
 
   // Mobile-first portrait reference: 390x844
   const VIRTUAL_WIDTH = 390;
@@ -214,7 +218,7 @@ export default function PotionRushGame({
       <PotionRushSoundController />
 
       <AnimatePresence>
-        {!hasStarted && (
+        {!hasStarted && !autoStart && !tutorialMode && (
           <GameStartScreen
             gameTitle={t("title")}
             gameSubtitle={t("gameSubtitle")}

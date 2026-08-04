@@ -89,13 +89,13 @@ type Props = {
 const GAME_DURATION_MS = 60_000;
 const MAX_ROUND_SENTENCES = 10;
 const CASTLE_ASSET_PATHS = {
-  player: "/games/sentence/castle-defense/soldier_3x3_pose_sheet.png",
-  soldier: "/games/sentence/castle-defense/soldier_3x3_pose_sheet.png",
-  tank: "/games/sentence/castle-defense/tank_3x3_pose_sheet.png",
-  boss: "/games/sentence/castle-defense/boss_3x3_pose_sheet.png",
-  towerBase: "/games/sentence/castle-defense/tower_base.png",
-  towerBuilt: "/games/sentence/castle-defense/tower_built.png",
-  base: "/games/sentence/castle-defense/castle_background.png",
+  player: "/games/sentence/castle-defense/player_3x3_pose_sheet.png",
+  soldier: "/games/sentence/castle-defense/goblin_3x3_pose_sheet.png",
+  tank: "/games/sentence/castle-defense/orc_3x3_pose_sheet.png",
+  boss: "/games/sentence/castle-defense/troll_3x3_pose_sheet.png",
+  towerBase: "/games/sentence/castle-defense/tower-base.png",
+  towerBuilt: "/games/sentence/castle-defense/tower-built.png",
+  base: "/games/sentence/castle-defense/player-castle.png",
 };
 
 const buildRoundSentences = (items: SentenceItem[]) =>

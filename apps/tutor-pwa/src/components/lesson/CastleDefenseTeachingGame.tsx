@@ -69,8 +69,7 @@ export function CastleDefenseTeachingGame({ vocabulary, mode, fullscreen = false
   const formattedVocab = React.useMemo(() => {
     return sentences.map((s, idx) => ({
       id: `sent-${idx}`,
-      sentence: s.term,
-      sentences: s.term,
+      term: s.term,
       translation: s.translation || "",
     }));
   }, [sentences]);

@@ -559,12 +559,16 @@ class LessonSessionService {
       durationMs: result.durationMs,
       submittedAt: Date.now(),
     };
-    gameState.status = "results";
+    // Keep the game mounted for students who have not submitted yet. The
+    // tutor can still monitor partial results, while the shared results view
+    // only becomes final once every current participant has submitted.
+    const allSubmitted = Object.keys(gameState.results).length >= session.participants.size;
+    gameState.status = allSubmitted ? "results" : "playing";
     return {
       session,
       gameState: this.getGameStatePayload(session)!,
       accepted: true,
-      allSubmitted: Object.keys(gameState.results).length >= session.participants.size,
+      allSubmitted,
     };
   }
 

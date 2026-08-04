@@ -459,7 +459,7 @@ export function EnchantedLibraryGame({
     return () => {
       cancelAnimationFrame(rafRef.current);
     };
-  }, [autoStart, gamePhase, assets, gameState?.status]);
+  }, [autoStart, tutorialMode, gamePhase, assets, gameState?.status]);
 
   useEffect(() => {
     if (!gameState) return;
