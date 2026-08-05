@@ -5,7 +5,7 @@
   "title": "Leo's Silly Clothes Fun",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-A",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1147,5 +1147,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:07:26.088Z"
+  "generatedAt": "2026-08-04T12:57:34.156Z"
 }

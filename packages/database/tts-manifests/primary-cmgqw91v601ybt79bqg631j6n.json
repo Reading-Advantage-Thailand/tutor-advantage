@@ -5,7 +5,7 @@
   "title": "Pip's Fun Art Day",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-A",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1203,5 +1203,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:06:22.185Z"
+  "generatedAt": "2026-08-04T12:47:28.806Z"
 }

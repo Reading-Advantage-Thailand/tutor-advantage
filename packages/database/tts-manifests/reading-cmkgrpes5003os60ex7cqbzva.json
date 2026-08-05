@@ -5,7 +5,7 @@
   "title": "The Chromatic Insurrection",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-I",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -5115,5 +5115,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T16:57:45.523Z"
+  "generatedAt": "2026-08-04T13:33:47.322Z"
 }

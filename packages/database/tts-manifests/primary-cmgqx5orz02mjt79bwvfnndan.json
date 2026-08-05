@@ -5,7 +5,7 @@
   "title": "Pip Sees Food",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-A",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1133,5 +1133,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:05:18.423Z"
+  "generatedAt": "2026-08-04T12:38:58.975Z"
 }

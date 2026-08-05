@@ -5,7 +5,7 @@
   "title": "The Book Thief",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-H",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -248,5 +248,5 @@
     }
   ],
   "questions": [],
-  "generatedAt": "2026-08-02T17:08:07.266Z"
+  "generatedAt": "2026-08-04T12:58:04.596Z"
 }

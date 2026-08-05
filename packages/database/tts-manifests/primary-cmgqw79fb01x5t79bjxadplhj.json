@@ -5,7 +5,7 @@
   "title": "Lily and Pip's Happy Visit",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-A",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1251,5 +1251,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:06:44.482Z"
+  "generatedAt": "2026-08-04T12:51:08.519Z"
 }

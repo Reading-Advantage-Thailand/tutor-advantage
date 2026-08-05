@@ -5,7 +5,7 @@
   "title": "The Bond of Resilience",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-H",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -2907,5 +2907,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:29:02.787Z"
+  "generatedAt": "2026-08-04T14:19:27.694Z"
 }

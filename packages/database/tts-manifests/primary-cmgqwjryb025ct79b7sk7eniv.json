@@ -5,7 +5,7 @@
   "title": "Pip at the Big Zoo",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-E",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1027,5 +1027,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:05:49.928Z"
+  "generatedAt": "2026-08-04T12:43:03.852Z"
 }

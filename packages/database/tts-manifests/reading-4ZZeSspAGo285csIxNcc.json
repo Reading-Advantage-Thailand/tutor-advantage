@@ -5,7 +5,7 @@
   "title": "The Haunting Ambition of Victor Frankenstein",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-J",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -264,5 +264,5 @@
     }
   ],
   "questions": [],
-  "generatedAt": "2026-08-02T16:51:09.233Z"
+  "generatedAt": "2026-08-04T13:20:57.064Z"
 }

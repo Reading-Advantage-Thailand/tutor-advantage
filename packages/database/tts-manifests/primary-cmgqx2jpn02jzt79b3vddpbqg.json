@@ -5,7 +5,7 @@
   "title": "Pip and the Book House",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-E",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1179,5 +1179,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:05:39.687Z"
+  "generatedAt": "2026-08-04T12:41:51.198Z"
 }

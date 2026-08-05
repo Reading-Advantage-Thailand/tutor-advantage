@@ -5,7 +5,7 @@
   "title": "The Resistance Fighters of Occupied France in World War II",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-J",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -2355,5 +2355,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:29:30.775Z"
+  "generatedAt": "2026-08-04T14:18:09.794Z"
 }

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { readFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import process from "node:process";
 import { spawn } from "node:child_process";
@@ -8,6 +9,17 @@ import { spawn } from "node:child_process";
 const ROOT = process.cwd();
 const CATALOG_PATH = path.join(ROOT, "packages", "database", "catalog-157-articles.json");
 const GENERATOR_PATH = path.join(ROOT, "scripts", "generate-article-tts.mjs");
+const VOICE_POOL = [
+  "en-US-Neural2-A",
+  "en-US-Neural2-C",
+  "en-US-Neural2-D",
+  "en-US-Neural2-E",
+  "en-US-Neural2-F",
+  "en-US-Neural2-G",
+  "en-US-Neural2-H",
+  "en-US-Neural2-I",
+  "en-US-Neural2-J",
+];
 
 const args = {};
 for (let index = 2; index < process.argv.length; index++) {
@@ -22,6 +34,7 @@ const concurrency = Math.max(1, Math.min(16, Number(args.concurrency || 4)));
 const retries = Math.max(0, Math.min(5, Number(args.retries ?? 2)));
 const requestedSource = String(args.source || "all").toLowerCase();
 const dryRun = Boolean(args["dry-run"]);
+const force = Boolean(args.force);
 
 if (!["all", "reading", "primary"].includes(requestedSource)) {
   console.error("Usage: node scripts/generate-catalog-tts.mjs [--source all|reading|primary] [--concurrency 4] [--retries 2] [--dry-run]");
@@ -32,15 +45,24 @@ function normalizeSource(value) {
   return String(value || "").toLowerCase().includes("primary") ? "primary" : "reading";
 }
 
+function voiceForArticle(articleId) {
+  const digest = createHash("sha1").update(articleId).digest();
+  return VOICE_POOL[digest[0] % VOICE_POOL.length];
+}
+
 function runGenerator(job) {
   return new Promise((resolve) => {
+    const manifestPath = path.join(ROOT, "packages", "database", "tts-manifests", `${job.source}-${job.articleId}.json`);
     const child = spawn(process.execPath, [
       GENERATOR_PATH,
       "--source", job.source,
-      "--from-db", job.source,
-      "--input", CATALOG_PATH,
+      ...(force
+        ? ["--input", manifestPath]
+        : ["--from-db", job.source, "--input", CATALOG_PATH]),
       "--article-id", job.articleId,
+      "--voice", voiceForArticle(job.articleId),
       ...(dryRun ? ["--dry-run"] : []),
+      ...(force ? ["--force"] : []),
     ], {
       cwd: ROOT,
       env: process.env,
@@ -89,7 +111,9 @@ for (const job of allJobs) {
     try {
       const manifestPath = path.join(ROOT, "packages", "database", "tts-manifests", `${job.source}-${job.articleId}.json`);
       const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
-      if (manifest.generatedAt) {
+      const completeForRequestedVoice = manifest.generatedAt
+        && (!force || manifest.voice?.voiceId === voiceForArticle(job.articleId));
+      if (completeForRequestedVoice) {
         skipped++;
         continue;
       }
@@ -99,7 +123,7 @@ for (const job of allJobs) {
   }
   jobs.push(job);
 }
-console.log(`Queued ${jobs.length} pending of ${allJobs.length} unique articles from catalog (${requestedSource}), skipped ${skipped} completed, concurrency ${concurrency}, retries ${retries}${dryRun ? ", dry-run" : ""}`);
+console.log(`Queued ${jobs.length} articles from catalog (${requestedSource}), skipped ${skipped} completed, concurrency ${concurrency}, retries ${retries}${dryRun ? ", dry-run" : ""}${force ? ", force regenerate" : ""}`);
 
 let nextIndex = 0;
 let completed = 0;

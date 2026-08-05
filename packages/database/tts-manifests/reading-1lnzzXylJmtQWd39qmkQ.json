@@ -5,7 +5,7 @@
   "title": "The Life and Legacy of Nelson Mandela",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-J",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1259,5 +1259,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:08:56.488Z"
+  "generatedAt": "2026-08-04T13:02:11.970Z"
 }

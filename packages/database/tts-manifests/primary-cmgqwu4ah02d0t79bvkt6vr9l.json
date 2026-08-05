@@ -5,7 +5,7 @@
   "title": "Pip and the Blue Water",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-D",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1089,5 +1089,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:07:04.412Z"
+  "generatedAt": "2026-08-04T12:55:05.214Z"
 }

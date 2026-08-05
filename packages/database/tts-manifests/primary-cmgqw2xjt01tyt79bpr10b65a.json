@@ -5,7 +5,7 @@
   "title": "Pip and the Dark Night",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-E",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1171,5 +1171,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:06:00.854Z"
+  "generatedAt": "2026-08-04T12:44:15.565Z"
 }

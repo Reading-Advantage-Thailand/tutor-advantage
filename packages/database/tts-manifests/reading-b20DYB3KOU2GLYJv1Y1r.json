@@ -5,7 +5,7 @@
   "title": "The Hate U Give",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-F",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -256,5 +256,5 @@
     }
   ],
   "questions": [],
-  "generatedAt": "2026-08-02T17:08:10.892Z"
+  "generatedAt": "2026-08-04T12:58:53.750Z"
 }

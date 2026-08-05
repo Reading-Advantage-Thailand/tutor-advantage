@@ -5,7 +5,7 @@
   "title": "The Divide",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-J",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -248,5 +248,5 @@
     }
   ],
   "questions": [],
-  "generatedAt": "2026-08-02T16:51:43.855Z"
+  "generatedAt": "2026-08-04T13:22:00.714Z"
 }

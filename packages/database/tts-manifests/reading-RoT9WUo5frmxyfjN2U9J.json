@@ -5,7 +5,7 @@
   "title": "The Adaptations of Arctic Animals",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-D",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1731,5 +1731,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T16:57:16.115Z"
+  "generatedAt": "2026-08-04T13:38:25.678Z"
 }

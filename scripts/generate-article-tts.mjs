@@ -44,6 +44,7 @@ const fromDatabase = String(args["from-db"] || "").toLowerCase();
 const bucketName = String(args.bucket || process.env.GCS_BUCKET_NAME || DEFAULT_BUCKET);
 const voiceId = String(args.voice || process.env.TTS_VOICE_ID || DEFAULT_VOICE);
 const dryRun = Boolean(args["dry-run"]);
+const force = Boolean(args.force);
 
 if ((!inputPath && !["reading", "primary"].includes(fromDatabase)) || !articleId || !["reading", "primary"].includes(source)) {
   console.error("Usage: node scripts/generate-article-tts.mjs --source reading|primary --input <workbook.json> --article-id <id> [--voice <voice>] [--dry-run]");
@@ -201,6 +202,23 @@ async function loadInput() {
 function normalizeCatalogInput(input) {
   if (!input) throw new Error(`Catalog article not found: ${articleId}`);
   if (Array.isArray(input.article_paragraphs)) return input;
+  if (Array.isArray(input.sentences) && input.voice) {
+    return {
+      lesson_title: input.title,
+      preserve_sentences: true,
+      article_paragraphs: input.sentences.map((sentence) => ({ text: textOf(sentence?.text ?? sentence) })),
+      vocabulary: (input.words || []).map((word) => ({ word: textOf(word?.text ?? word?.word ?? word) })),
+      comprehension_questions: (input.questions || [])
+        .filter((question) => question.type === "mcq")
+        .map((question) => ({
+          question: question.text,
+          options: (question.optionFiles || []).map((option) => option.text),
+        })),
+      short_answer_questions: (input.questions || [])
+        .filter((question) => question.type === "saq")
+        .map((question) => ({ question: question.text })),
+    };
+  }
   return {
     lesson_title: input.title,
     preserve_sentences: true,
@@ -298,7 +316,7 @@ async function main() {
   for (const item of [...manifest.sentences, ...manifest.words, ...manifest.sentenceWords, ...questionFiles]) {
     const remoteFile = storage.bucket(bucketName).file(item.objectPath);
     const [alreadyUploaded] = await remoteFile.exists();
-    if (alreadyUploaded) {
+    if (alreadyUploaded && !force) {
       item.status = "ready";
       console.log(`Already exists ${item.id}`);
       continue;

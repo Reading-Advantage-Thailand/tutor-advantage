@@ -5,7 +5,7 @@
   "title": "The Businesswoman and Her Bodyguard",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-E",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -248,5 +248,5 @@
     }
   ],
   "questions": [],
-  "generatedAt": "2026-08-02T17:08:07.314Z"
+  "generatedAt": "2026-08-04T12:58:31.227Z"
 }
