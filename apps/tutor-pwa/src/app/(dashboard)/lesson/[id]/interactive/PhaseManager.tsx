@@ -9,6 +9,7 @@ import {
 } from "recharts";
 import { ArticleDisplay } from "./ArticleDisplay";
 import {
+  ChevronLeft,
   ChevronRight,
   Check,
   Eye,
@@ -534,6 +535,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   }, [currentPhase]);
 
   const isGamePhase = [VOCAB_GAME_PHASE, SENTENCE_GAME_PHASE].includes(currentPhase);
+  const isRewoundPhase = Boolean(sessionData?.phaseRestored);
   const gameState = sessionData?.gameState ?? null;
   const gameResultsCount = Object.keys(gameState?.results || {}).length;
   const currentGameCategory =
@@ -553,6 +555,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   // Can proceed if everyone answered OR if results are already showing OR if no participants
   const canProceed =
+    isRewoundPhase ||
     (!isInteractivePhase && !isGamePhase) ||
     totalParticipants === 0 ||
     (isGamePhase && !hasPlayableGameForPhase) ||
@@ -577,8 +580,13 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     if (!isChangingPhase && canProceedDelayed) {
       setIsChangingPhase(true);
       playSound("phaseChange");
-      if (currentPhase < TOTAL_PHASES) {
-        changePhase(currentPhase + 1);
+      const nextPhase = isRewoundPhase && sessionData?.resumePhase && sessionData.resumePhase > currentPhase
+        ? sessionData.resumePhase
+        : currentPhase < TOTAL_PHASES
+          ? currentPhase + 1
+          : 0;
+      if (nextPhase > 0) {
+        changePhase(nextPhase);
       } else {
         // Safely loop back to lobby (Phase 0).
         // The Backend is now smart enough to automatically cycle a fresh DB session
@@ -586,13 +594,29 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         changePhase(0);
       }
     }
-  }, [currentPhase, isChangingPhase, canProceedDelayed, changePhase]);
+  }, [currentPhase, isChangingPhase, canProceedDelayed, changePhase, isRewoundPhase, sessionData?.resumePhase]);
+
+  const handlePreviousPhase = React.useCallback(() => {
+    if (currentPhase <= 1 || isChangingPhase) return;
+
+    const targetPhase = currentPhase - 1;
+    const confirmed = typeof window === "undefined"
+      ? true
+      : window.confirm(
+          `Go back to Phase ${targetPhase}? Everyone will see the saved state of that phase in review mode.`,
+        );
+    if (!confirmed) return;
+
+    setIsChangingPhase(true);
+    playSound("phaseChange");
+    changePhase(targetPhase);
+  }, [currentPhase, isChangingPhase, changePhase]);
 
   const handleEndQuestion = React.useCallback(() => {
-    if (!endQuestion || questionEnded || totalParticipants === 0) return;
+    if (!endQuestion || isRewoundPhase || questionEnded || totalParticipants === 0) return;
     playSound("submit");
     endQuestion();
-  }, [endQuestion, questionEnded, totalParticipants]);
+  }, [endQuestion, isRewoundPhase, questionEnded, totalParticipants]);
 
   const toggleMockLeaderboard = React.useCallback(() => {
     if (mockLeaderboard) {
@@ -3073,10 +3097,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const hasGameResults = isGamePhase && gameResultsCount > 0;
     const canEndQuestion =
       isInteractivePhase &&
+      !isRewoundPhase &&
       !questionEnded &&
       totalParticipants > 0 &&
       totalAnswered < totalParticipants;
-    const useGamePrimaryAction = isGamePhase && !hasGameResults && hasPlayableGameForPhase;
+    const useGamePrimaryAction = isGamePhase && !isRewoundPhase && !hasGameResults && hasPlayableGameForPhase;
     const gamePrimaryLabel =
       gameStatus === "voting" && !hasPlayableGameForPhase
         ? t("lesson.interactive.gamesComingSoon")
@@ -3254,9 +3279,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
           <div className="flex shrink-0 items-center gap-2">
             <button
-              onClick={() => changePhase(Math.max(1, currentPhase - 1))}
-              className={quietButtonClass}
+              onClick={handlePreviousPhase}
+              disabled={currentPhase <= 1 || isChangingPhase}
+              className={`${quietButtonClass} disabled:cursor-not-allowed disabled:opacity-45`}
             >
+              <ChevronLeft size={16} />
               {t("lesson.interactive.previous")}
             </button>
             {canEndQuestion && (
@@ -3296,6 +3323,13 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 <>
                   <span className="hidden sm:inline">
                     {t("lesson.interactive.startNewRound")}
+                  </span>
+                  <ChevronRight size={18} />
+                </>
+              ) : isRewoundPhase ? (
+                <>
+                  <span className="hidden sm:inline">
+                    กลับไป Phase {sessionData?.resumePhase ?? currentPhase + 1}
                   </span>
                   <ChevronRight size={18} />
                 </>
@@ -3355,6 +3389,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       >
         {renderPhaseProgressBar()}
       </div>
+      {isRewoundPhase && (
+        <div className="mb-4 flex items-center justify-center rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-center text-sm font-bold text-amber-700 dark:text-amber-300">
+          กำลังดู Phase ย้อนหลัง — กดถัดไปเพื่อกลับไปสอนต่อที่ Phase {sessionData?.resumePhase ?? currentPhase + 1}
+        </div>
+      )}
       <FitToViewport enabled={isFullscreen}>
         {renderPhaseContent()}
       </FitToViewport>

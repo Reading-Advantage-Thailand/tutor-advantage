@@ -119,9 +119,13 @@ export const setupLessonSocket = (io: Server) => {
           );
           socket.join(demoSession.sessionId);
           socket.emit("session_created", {
-            sessionId: demoSession.sessionId,
-            currentPhase: demoSession.currentPhase,
-            articleData: demoSession.articleData,
+          sessionId: demoSession.sessionId,
+          currentPhase: demoSession.currentPhase,
+          phaseRestored: demoSession.phaseRestored ?? false,
+          resumePhase: demoSession.resumePhase,
+          articleData: demoSession.articleData,
+          activeSentenceIndex: demoSession.activeSentenceIndex,
+          flagCounts: lessonSessionService.getFlagCounts(demoSession),
             gameState: lessonSessionService.getGameStatePayload(demoSession),
           });
           logger.info(`[Socket] DEMO session created: ${demoSession.sessionId}`);
@@ -199,7 +203,13 @@ export const setupLessonSocket = (io: Server) => {
         socket.emit("session_created", {
           sessionId: session.sessionId,
           currentPhase: session.currentPhase,
+          phaseRestored: session.phaseRestored ?? false,
+          resumePhase: session.resumePhase,
           articleData: session.articleData,
+          phaseSelectedIndices: session.phaseSelectedIndices,
+          activeSentenceIndex: session.activeSentenceIndex,
+          flagCounts: lessonSessionService.getFlagCounts(session),
+          pairs: session.currentPhase === PAIR_CONVERSATION_PHASE ? lessonSessionService.getPairsPayload(session) : null,
           gameState: lessonSessionService.getGameStatePayload(session),
         });
         logger.info(`[Socket] Session created: ${session.sessionId} for class ${classId}`);
@@ -310,6 +320,10 @@ export const setupLessonSocket = (io: Server) => {
           currentPhase: session.currentPhase,
           articleData: session.articleData,
           phaseSelectedIndices: session.phaseSelectedIndices,
+          phaseRestored: session.phaseRestored ?? false,
+          resumePhase: session.resumePhase,
+          activeSentenceIndex: session.activeSentenceIndex,
+          flagCounts: lessonSessionService.getFlagCounts(session),
           // Reconnecting mid Pair Conversation still shows the student's pair
           pairs: session.currentPhase === PAIR_CONVERSATION_PHASE ? lessonSessionService.getPairsPayload(session) : null,
           gameState: lessonSessionService.getGameStatePayload(session),
@@ -347,19 +361,23 @@ export const setupLessonSocket = (io: Server) => {
     });
 
     // Tutor changes phase
-    socket.on("change_phase", ({ sessionId, phase }) => {
+    socket.on("change_phase", async ({ sessionId, phase }) => {
       const authorizedSession = lessonSessionService.getSession(sessionId);
       if (!isTutorSessionOwner(actor, socket.id, authorizedSession)) {
         rejectForbidden("change_phase");
         return;
       }
 
-      const session = lessonSessionService.setPhase(sessionId, phase);
+      const previousPhase = authorizedSession?.currentPhase ?? 0;
+      const shouldRewind = phase > 0 && phase < previousPhase;
+      const session = shouldRewind
+        ? lessonSessionService.rewindPhase(sessionId, phase)
+        : lessonSessionService.setPhase(sessionId, phase);
       if (session) {
         // --- CRITICAL: DYNAMIC RESTART RECORDING ---
         // If starting a new instructional cycle (Phase 0 -> Phase 1), determine if we need a FRESH DB identity.
         // Demo sessions skip all persistence — they only loop the in-memory phase state.
-        if (phase === 1 && !session.isDemo) {
+        if (phase === 1 && !session.isDemo && !session.phaseRestored) {
           if (!session.currentDbSessionId) {
             // --- FIRST CYCLE ---
             // Set explicit key to lock current cycle, but reuse original initialized DB record to avoid double logging!
@@ -397,16 +415,34 @@ export const setupLessonSocket = (io: Server) => {
           phaseSelectedIndices: session.phaseSelectedIndices,
           pairs: phase === PAIR_CONVERSATION_PHASE ? lessonSessionService.getPairsPayload(session) : null,
           gameState: lessonSessionService.getGameStatePayload(session),
+          phaseRestored: session.phaseRestored ?? false,
+          resumePhase: session.resumePhase,
+          activeSentenceIndex: session.activeSentenceIndex,
+          flagCounts: lessonSessionService.getFlagCounts(session),
         });
         io.to(sessionId).emit("participants_updated", {
           participants: Array.from(session.participants.values())
         });
         logger.info(`Session ${sessionId} changed to phase ${phase}`);
 
+        // Returning to the lobby closes the current DB round while keeping the
+        // in-memory room available for a fresh cycle. Phase 1 will create a
+        // new DB identity when the tutor starts again.
+        if (phase === 0 && previousPhase > 0 && !session.isDemo) {
+          await dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
+        }
+
         // If changing to final leaderboard, mark ACTIVE DB ROUND as FINISHED
         // Demo sessions have no DB round, no badges to unlock, and no students to notify.
-        if (phase === FINAL_LEADERBOARD_PHASE && !session.isDemo) {
+        if (phase === FINAL_LEADERBOARD_PHASE && !session.isDemo && !session.phaseRestored) {
           dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
+
+          if (session.finalNotificationSent) {
+            // The round may have been rewound from the final leaderboard.
+            // Re-open the DB status above, but do not notify students twice.
+            return;
+          }
+          session.finalNotificationSent = true;
 
           // Non-blocking badge unlock check for the tutor
           if (session.tutorId) {
@@ -437,6 +473,16 @@ export const setupLessonSocket = (io: Server) => {
             }
           })();
         }
+
+        if (shouldRewind && !session.isDemo) {
+          // A rewind re-opens the current DB round so the Tutor can continue
+          // the lesson after reviewing the restored phase.
+          dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "ACTIVE");
+        }
+      } else if (shouldRewind) {
+        socket.emit("error", {
+          message: "This phase cannot be rewound because its saved state is no longer available.",
+        });
       }
     });
 
@@ -989,6 +1035,34 @@ export const setupLessonSocket = (io: Server) => {
         lessonSessionService.deleteSession(sessionId);
         logger.info(`[Socket] Session ${sessionId} deleted by tutor`);
       }
+    });
+
+    // Tutor finishes the lesson and leaves the teaching screen. This is
+    // intentionally separate from delete_session: closing/cancelling a room
+    // must not mark its DB history as completed, while a completed lesson
+    // should remain visible in student history even after the live session is
+    // removed from memory.
+    socket.on("finish_session", async ({ sessionId }, acknowledge?: (result: { ok: boolean }) => void) => {
+      const session = lessonSessionService.getSession(sessionId);
+      if (!isTutorSessionOwner(actor, socket.id, session)) {
+        rejectForbidden("finish_session");
+        acknowledge?.({ ok: false });
+        return;
+      }
+
+      if (!session) {
+        acknowledge?.({ ok: false });
+        return;
+      }
+
+      if (!session.isDemo) {
+        await dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
+      }
+
+      io.to(sessionId).emit("session_deleted", { message: "บทเรียนจบแล้ว ขอบคุณที่เข้าร่วมเรียนครับ" });
+      lessonSessionService.deleteSession(sessionId);
+      acknowledge?.({ ok: true });
+      logger.info(`[Socket] Session ${sessionId} finished by tutor`);
     });
 
     socket.on("disconnect", () => {

@@ -115,6 +115,7 @@ export default function TutorLobbyClient({
     nudgeStudent,
     kickStudent,
     deleteSession,
+    finishSession,
   } = useLessonSocket(tutorId, articleId, classId, socketUrl, classBookCycleId, bookId, demo);
 
   const readyCount = participants.filter((participant) => participant.isReady).length;
@@ -126,6 +127,18 @@ export default function TutorLobbyClient({
   const [bypassEmptyStudentGuard, setBypassEmptyStudentGuard] = React.useState(false);
   const [isSendingLobbyNotification, setIsSendingLobbyNotification] = React.useState(false);
   const [lobbyNotificationStatus, setLobbyNotificationStatus] = React.useState<string | null>(null);
+  const [isFinishingSession, setIsFinishingSession] = React.useState(false);
+
+  const handleFinishAndNavigate = React.useCallback(async () => {
+    if (isFinishingSession) return;
+    setIsFinishingSession(true);
+    const finished = await finishSession();
+    if (finished) {
+      router.push(backHref);
+      return;
+    }
+    setIsFinishingSession(false);
+  }, [backHref, finishSession, isFinishingSession, router]);
 
   const handleSendLobbyNotification = async () => {
     setIsSendingLobbyNotification(true);
@@ -159,11 +172,16 @@ export default function TutorLobbyClient({
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href={backHref}>
-                <Button variant="ghost" size="icon" className="rounded-xl">
-                  <ArrowLeft />
-                </Button>
-              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-xl"
+                onClick={() => { void handleFinishAndNavigate(); }}
+                disabled={isFinishingSession}
+                aria-label="Finish lesson and return"
+              >
+                <ArrowLeft />
+              </Button>
               <div>
                 <h1 className="text-2xl font-bold text-foreground">
                   {t("lesson.interactive.teachingPrefix")} {articleData?.title}
@@ -200,10 +218,7 @@ export default function TutorLobbyClient({
               startGameIntro={startGameIntro}
               advanceGameIntro={advanceGameIntro}
               bypassEmptyStudentGuard={bypassEmptyStudentGuard}
-              onFinishSession={() => {
-                deleteSession();
-                router.push(backHref);
-              }}
+              onFinishSession={() => { void handleFinishAndNavigate(); }}
             />
           </div>
         </div>

@@ -64,7 +64,8 @@ function PlayLessonContent() {
     flagCounts,
     flagSentence,
     submitGameVote,
-    submitGameResult
+    submitGameResult,
+    phaseReadOnly,
   } = useLessonSocket(classId || undefined, studentId, name, profile?.pictureUrl);
 
   const [typedAnswer, setTypedAnswer] = useState('');
@@ -118,6 +119,7 @@ function PlayLessonContent() {
       setLanguageSkipped(false);
       setUnderstanding('');
       setEffort('');
+      setMyFlags(new Set());
     }
     if (sessionData) setPrevPhase(sessionData.currentPhase);
     setIsSubmitting(false);
@@ -333,6 +335,7 @@ function PlayLessonContent() {
   // ─── Handlers ──────────────────────────────────────────────────────────────
 
   const handleMcqClick = (answer: string) => {
+    if (phaseReadOnly) return;
     playSound('select');
     setIsSubmitting(true);
     setSelectedChoice(answer);
@@ -367,6 +370,7 @@ function PlayLessonContent() {
   };
 
   const handleTextSubmit = () => {
+    if (phaseReadOnly) return;
     if (typedAnswer.trim()) {
       playSound('submit');
       setIsSubmitting(true);
@@ -380,6 +384,7 @@ function PlayLessonContent() {
   };
 
   const handleFlagToggle = (sentenceIndex: number) => {
+    if (phaseReadOnly) return;
     playSound('select');
     setMyFlags(prev => {
       const next = new Set(prev);
@@ -392,7 +397,7 @@ function PlayLessonContent() {
 
   // Step 11 Guided Writing — submit draft for AI feedback
   const handleWritingSubmit = () => {
-    if (!writingDraft.trim() || hasAnswered || isSubmitting) return;
+    if (phaseReadOnly || !writingDraft.trim() || hasAnswered || isSubmitting) return;
     playSound('submit');
     setIsSubmitting(true);
     setSelectedChoice(writingDraft);
@@ -403,7 +408,7 @@ function PlayLessonContent() {
 
   // Step 12 Language Questions — submit question for teacher-mediated AI answer
   const handleLanguageSubmit = () => {
-    if (!languageQuestion.trim() || hasAnswered || isSubmitting) return;
+    if (phaseReadOnly || !languageQuestion.trim() || hasAnswered || isSubmitting) return;
     playSound('submit');
     setIsSubmitting(true);
     submitAnswer(languageQuestion, 'Language question', '');
@@ -411,7 +416,7 @@ function PlayLessonContent() {
 
   // Step 12 — skip when the student has no question (counts as answered, no AI)
   const handleLanguageSkip = () => {
-    if (hasAnswered || isSubmitting) return;
+    if (phaseReadOnly || hasAnswered || isSubmitting) return;
     playSound('select');
     setLanguageSkipped(true);
     setIsSubmitting(true);
@@ -420,7 +425,7 @@ function PlayLessonContent() {
 
   // Step 13 Reflection — submit understanding + effort ratings (and tutor star review if given)
   const handleReflectionSubmit = async () => {
-    if (!understanding || !effort || hasAnswered || isSubmitting) return;
+    if (phaseReadOnly || !understanding || !effort || hasAnswered || isSubmitting) return;
     playSound('submit');
     setIsSubmitting(true);
     if (reviewRating > 0) {
@@ -652,6 +657,7 @@ function PlayLessonContent() {
   };
 
   const handleQuickGameComplete = () => {
+    if (phaseReadOnly) return;
     const questions = buildGameQuestions();
     const total = Math.max(questions.length, 1);
     const correct = questions.filter((question, index) => gameSelections[index] === question.answer).length;
@@ -922,6 +928,7 @@ function PlayLessonContent() {
             category={gameState.category}
             articleData={articleData}
             onComplete={(result) => {
+              if (phaseReadOnly) return;
               submitGameResult({
                 gameId: gameState.selectedGameId || "",
                 score: result.score,
@@ -998,7 +1005,12 @@ function PlayLessonContent() {
                 {question.options.map((option) => (
                   <button
                     key={option}
-                    onClick={() => setGameSelections((prev) => ({ ...prev, [index]: option }))}
+                    onClick={() => {
+                      if (!phaseReadOnly) {
+                        setGameSelections((prev) => ({ ...prev, [index]: option }));
+                      }
+                    }}
+                    disabled={phaseReadOnly}
                     className={`btn-3d rounded-xl px-3 py-3 text-left text-xs font-black text-white transition-all ${theme.target} ${theme.shadow} ${
                       gameSelections[index] === option
                         ? "ring-4 ring-white/70 brightness-110"
@@ -1014,7 +1026,7 @@ function PlayLessonContent() {
         </div>
         <button
           onClick={handleQuickGameComplete}
-          disabled={questions.some((_question, index) => !gameSelections[index])}
+          disabled={phaseReadOnly || questions.some((_question, index) => !gameSelections[index])}
           className="w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 py-4 text-base font-black text-white shadow-lg active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         >
           ส่งคะแนนเกม
@@ -1043,6 +1055,13 @@ function PlayLessonContent() {
           </div>
         )}
       </header>
+
+      {phaseReadOnly && (
+        <div className="flex items-center justify-center gap-2 border-b border-amber-500/30 bg-amber-500/10 px-4 py-2 text-center text-xs font-bold text-amber-700 dark:text-amber-300">
+          <Lock size={14} />
+          <span>กำลังดู Phase ย้อนหลัง — ไม่รับคำตอบหรือเพิ่มคะแนน</span>
+        </div>
+      )}
 
       <main className="flex-1 flex flex-col p-4 items-center justify-center relative overflow-hidden">
 
@@ -1202,6 +1221,8 @@ function PlayLessonContent() {
                 return (
                   <button
                     onClick={() => handleFlagToggle(activeIdx)}
+                    disabled={phaseReadOnly}
+                    aria-disabled={phaseReadOnly}
                     className={`w-full text-left rounded-xl px-4 py-6 transition-all flex items-start gap-3 shadow-md ${
                       isFlagged
                         ? 'bg-rose-500/15 border border-rose-400/50'
