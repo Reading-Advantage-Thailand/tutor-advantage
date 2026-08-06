@@ -90,6 +90,7 @@ interface PotionRushState {
 
   // Actions
   startGame: (vocabList: SentenceItem[], difficulty?: 'easy' | 'normal' | 'hard' | 'extreme') => void
+  prepareTutorialScene: (vocabList: SentenceItem[], difficulty?: 'easy' | 'normal' | 'hard' | 'extreme', screenWidth?: number) => void
   pauseGame: () => void
   resumeGame: () => void
   endGame: () => void
@@ -114,7 +115,7 @@ interface PotionRushState {
   discardIngredient: (ingredientId: string) => void
   setIngredientDragging: (ingredientId: string, isDragging: boolean) => void
   spawnEffect: (type: PotionRushEffectType, x: number, y: number) => void
-  handleHoldIngredient: (ingredientId: string, slotIndex: number) => void
+  handleHoldIngredient: (ingredientId: string, slotIndex: number, screenWidth?: number) => void
   releaseHold: (ingredientId: string) => void
   
   // Helpers
@@ -190,6 +191,68 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
       timeToNextIngredientSpawn: 0.5,
       gameTime: 0,
       totalCustomerSpawns: 0,
+      angryCustomers: 0,
+      cauldrons: [
+        { id: 0, state: 'IDLE', targetSentence: null, currentWords: [], shake: false },
+        { id: 1, state: 'IDLE', targetSentence: null, currentWords: [], shake: false },
+        { id: 2, state: 'IDLE', targetSentence: null, currentWords: [], shake: false },
+      ],
+    })
+  },
+
+  prepareTutorialScene: (vocabList, difficulty = 'normal', screenWidth = 390) => {
+    const sentence = vocabList.find((item) => item.term.trim()) || {
+      id: 'tutorial-sentence',
+      term: 'Students read the article carefully',
+      translation: 'นักเรียนอ่านบทความอย่างละเอียด',
+    }
+    const words = sentence.term.trim().split(/\s+/).filter(Boolean)
+    const types: Ingredient['type'][] = ['potion', 'mushroom', 'mineral', 'herb']
+    const sceneWidth = Math.max(390, screenWidth)
+    const tutorialCustomer: Customer = {
+      id: 'tutorial-customer',
+      type: 'wizard',
+      request: sentence,
+      patience: BASE_PATIENCE,
+      maxPatience: BASE_PATIENCE,
+      state: 'WAITING',
+    }
+    const tutorialItems: Ingredient[] = words.map((word, index) => ({
+      id: `tutorial-ingredient-${index}`,
+      word,
+      x: sceneWidth * (0.16 + index * 0.12),
+      y: BELT_Y,
+      type: types[index % types.length],
+      width: INGREDIENT_WIDTH,
+      isDragging: false,
+    }))
+    const diffSettings = {
+      easy: { baseBeltSpeed: 70, spawnRate: 1500 },
+      normal: { baseBeltSpeed: 100, spawnRate: 1000 },
+      hard: { baseBeltSpeed: 130, spawnRate: 800 },
+      extreme: { baseBeltSpeed: 160, spawnRate: 600 },
+    }[difficulty]
+
+    set({
+      gameState: 'PAUSED',
+      score: 0,
+      reputation: 100,
+      dayTime: 0,
+      customers: [tutorialCustomer, null, null],
+      conveyorItems: tutorialItems,
+      effects: [],
+      activeWordPool: [],
+      completedSentences: 0,
+      totalXpEarned: 0,
+      beltSpeed: diffSettings.baseBeltSpeed,
+      baseBeltSpeed: diffSettings.baseBeltSpeed,
+      spawnRate: diffSettings.spawnRate,
+      vocabList,
+      difficulty,
+      timeToNextCustomerSpawn: BASE_PATIENCE,
+      timeToNextIngredientSpawn: 999,
+      gameTime: 0,
+      totalCustomerSpawns: 1,
       angryCustomers: 0,
       cauldrons: [
         { id: 0, state: 'IDLE', targetSentence: null, currentWords: [], shake: false },
@@ -352,7 +415,10 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
       // --- 2. MOVEMENT & TIMERS ---
 
       // Calculate speed
-      const targetSpeed = baseBeltSpeed * Math.pow(1.1, completedSentences)
+      // The wide layout has more conveyor distance. Scale world speed so an
+      // ingredient still crosses the visible belt in roughly the same time.
+      const widthScale = Math.max(1, screenWidth / 390)
+      const targetSpeed = baseBeltSpeed * widthScale * Math.pow(1.1, completedSentences)
 
       // Move Conveyor Items & Recycle Words
       const recycledWords: string[] = []
@@ -636,14 +702,14 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
     })
   },
 
-  handleHoldIngredient: (ingredientId, slotIndex) => {
+  handleHoldIngredient: (ingredientId, slotIndex, screenWidth = 390) => {
     const { conveyorItems } = get()
     const item = conveyorItems.find(i => i.id === ingredientId)
     if (!item) return
 
-    // Position of slot index:
-    // Slot 0: 85, Slot 1: 195, Slot 2: 305
-    const slotX = slotIndex === 0 ? 85 : slotIndex === 1 ? 195 : 305
+    // Keep held items aligned with the responsive HOLD slots rendered by the
+    // game instead of using the old fixed 390px positions.
+    const slotX = (Math.max(390, screenWidth) * (slotIndex + 0.5)) / 3
     const slotY = 510 // Hold slot Y coordinate
 
     const nextItems = conveyorItems.map(i => {

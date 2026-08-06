@@ -4,7 +4,7 @@ import { usePotionRushStore, SentenceItem } from "@/store/usePotionRushStore";
 import { withBasePath } from "@/lib/games/basePath";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { Beaker } from "lucide-react";
+import { Beaker, Hand, MousePointer2, Trash2 } from "lucide-react";
 import { GameEndScreen } from "@/components/games/game/GameEndScreen";
 import { GameStartScreen } from "@/components/games/game/GameStartScreen";
 import { useScopedI18n } from "@/locales/client";
@@ -34,6 +34,7 @@ interface PotionRushGameProps {
   onComplete: (results: PotionRushGameResult) => void;
   autoStart?: boolean;
   tutorialMode?: boolean;
+  manageFullscreen?: boolean;
 }
 
 export default function PotionRushGame({
@@ -42,6 +43,7 @@ export default function PotionRushGame({
   onComplete,
   autoStart = false,
   tutorialMode = false,
+  manageFullscreen = true,
 }: PotionRushGameProps) {
   const t = useScopedI18n("pages.student.gamesPage.potionRush");
   const router = useRouter();
@@ -53,6 +55,7 @@ export default function PotionRushGame({
 
   const [images, setImages] = useState<Record<string, HTMLImageElement>>({});
   const assetsLoaded = Object.keys(images).length === 3;
+  const showControls = autoStart || tutorialMode;
 
 
   useEffect(() => {
@@ -114,7 +117,7 @@ export default function PotionRushGame({
         startGame(vocabList, difficulty);
         return;
       }
-      exitFullscreen();
+      if (manageFullscreen) exitFullscreen();
       onComplete({
         xp: totalXpEarned,
         accuracy: Math.max(0, Math.min(reputation, 100)) / 100,
@@ -125,17 +128,23 @@ export default function PotionRushGame({
         durationMs: Math.round(gameTime * 1000),
       });
     }
-  }, [gameState, autoStart, tutorialMode, totalXpEarned, reputation, difficulty, score, completedSentences, vocabList, gameTime, onComplete, exitFullscreen, startGame]);
+  }, [gameState, autoStart, tutorialMode, manageFullscreen, totalXpEarned, reputation, difficulty, score, completedSentences, vocabList, gameTime, onComplete, exitFullscreen, startGame]);
 
-  // Mobile-first portrait reference: 390x844
-  const VIRTUAL_WIDTH = 390;
+  // Keep the original portrait scene as the minimum layout, but let a wide
+  // viewport grow horizontally instead of leaving most of the screen empty.
+  const BASE_VIRTUAL_WIDTH = 390;
   const VIRTUAL_HEIGHT = 844;
 
-  const scaleX = dimensions.width / VIRTUAL_WIDTH;
+  const scaleX = dimensions.width / BASE_VIRTUAL_WIDTH;
   const scaleY = dimensions.height / VIRTUAL_HEIGHT;
-  const scale = Math.min(scaleX, scaleY);
+  const isLandscape = dimensions.width >= dimensions.height;
+  const scale = isLandscape ? scaleY : Math.min(scaleX, scaleY);
+  const virtualWidth = Math.max(
+    BASE_VIRTUAL_WIDTH,
+    dimensions.width / Math.max(scale, 0.001),
+  );
 
-  const stageX = (dimensions.width - VIRTUAL_WIDTH * scale) / 2;
+  const stageX = Math.max(0, (dimensions.width - virtualWidth * scale) / 2);
   const stageY = (dimensions.height - VIRTUAL_HEIGHT * scale) / 2;
 
   const LAYOUT = {
@@ -145,9 +154,9 @@ export default function PotionRushGame({
     customerY: 301,
     cauldronY: 400,
     beltY: 720,
-    trashX: 195,
+    trashX: virtualWidth / 2,
     trashY: 620,
-    isPortrait: true,
+    isPortrait: !isLandscape,
   };
 
   useEffect(() => {
@@ -183,7 +192,7 @@ export default function PotionRushGame({
       const delta = lastFrameRef.current ? timestamp - lastFrameRef.current : 16.67;
       lastFrameRef.current = timestamp;
       const clampedDelta = Math.min(delta, 50);
-      tick(clampedDelta / 1000, VIRTUAL_WIDTH);
+      tick(clampedDelta / 1000, virtualWidth);
       rafRef.current = requestAnimationFrame(loop);
     };
 
@@ -193,7 +202,7 @@ export default function PotionRushGame({
       lastFrameRef.current = 0;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameState, dimensions.width, dimensions.height]);
+  }, [gameState, dimensions.width, dimensions.height, virtualWidth, tick]);
 
   useEffect(() => {
     return () => reset();
@@ -202,20 +211,39 @@ export default function PotionRushGame({
   useEffect(() => {
     if ((autoStart || tutorialMode) && assetsLoaded && !hasStarted && vocabList.length > 0) {
       setHasStarted(true);
-      enterFullscreen();
+      if (manageFullscreen) enterFullscreen();
       startGame(vocabList, difficulty);
     }
-  }, [autoStart, tutorialMode, assetsLoaded, hasStarted, vocabList, difficulty, enterFullscreen, startGame]);
+  }, [autoStart, tutorialMode, manageFullscreen, assetsLoaded, hasStarted, vocabList, difficulty, enterFullscreen, startGame]);
 
-  if (dimensions.width === 0)
-    return <div ref={containerRef} className="w-screen h-dvh bg-slate-950" />;
+  const setFullscreenContainerRef = (node: HTMLDivElement | null) => {
+    (fsContainerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+  };
+
+  if (dimensions.width === 0) {
+    return (
+      <div
+        ref={setFullscreenContainerRef}
+        className="flex h-dvh w-screen overflow-hidden bg-slate-950"
+      >
+        {showControls && <PotionRushControlPanel variant="sidebar" />}
+        <div ref={containerRef} className="h-full min-w-0 flex-1 bg-slate-950" />
+      </div>
+    );
+  }
 
   return (
-    <div ref={(node) => {
-      (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-      (fsContainerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-    }} className="w-screen h-dvh relative font-sans overflow-hidden bg-slate-950 rounded-none touch-none select-none">
+    <div
+      ref={setFullscreenContainerRef}
+      className="relative flex h-dvh w-screen overflow-hidden bg-slate-950 font-sans touch-none select-none"
+    >
       <PotionRushSoundController />
+      {showControls && <PotionRushControlPanel variant="sidebar" />}
+
+      <div
+        ref={containerRef}
+        className="relative h-full min-w-0 flex-1 overflow-hidden bg-slate-950"
+      >
 
       <AnimatePresence>
         {!hasStarted && !autoStart && !tutorialMode && (
@@ -253,20 +281,20 @@ export default function PotionRushGame({
       </AnimatePresence>
 
       {hasStarted && (
-        <div className="absolute top-0 left-0 w-full p-2 sm:p-4 text-white z-10 pointer-events-none flex justify-between items-start">
+        <div className="absolute inset-x-0 top-0 z-10 grid grid-cols-[1fr_auto_1fr] items-start gap-2 p-2 text-white pointer-events-none sm:p-4">
           <div>
             <div className="text-base sm:text-xl font-bold text-amber-400 drop-shadow-lg">
-              {t("hud.score")}: {score}
+              Score: {score}
             </div>
             <div className="text-xs sm:text-sm text-slate-300 drop-shadow-md">
-              {t("hud.reputation")}: {Math.max(0, Math.round(reputation))}%
+              Reputation: {Math.max(0, Math.round(reputation))}%
             </div>
           </div>
-          <div className="text-lg sm:text-2xl font-bold text-amber-400 drop-shadow-lg bg-black/40 border border-amber-500/35 px-3 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-sm">
+          <div className="justify-self-center text-lg sm:text-2xl font-bold text-amber-400 drop-shadow-lg bg-black/40 border border-amber-500/35 px-3 py-1 rounded-full flex items-center gap-1.5 backdrop-blur-sm">
             ⏱️ {Math.max(0, Math.ceil(60 - gameTime))}s
           </div>
-          <div className="text-lg sm:text-2xl font-bold text-white drop-shadow-lg bg-black/30 px-2 sm:px-4 py-1 rounded-full">
-            {t("hud.served")}: {completedSentences}
+          <div className="justify-self-end text-right text-lg sm:text-2xl font-bold text-white drop-shadow-lg bg-black/30 px-2 sm:px-4 py-1 rounded-full">
+            Served: {completedSentences}
           </div>
         </div>
       )}
@@ -294,7 +322,7 @@ export default function PotionRushGame({
             {images.wall && (
               <KonvaImage
                 image={images.wall}
-                width={VIRTUAL_WIDTH}
+                width={virtualWidth}
                 height={LAYOUT.wallH}
               />
             )}
@@ -303,25 +331,25 @@ export default function PotionRushGame({
               <KonvaImage
                 image={images.floor}
                 y={LAYOUT.wallH}
-                width={VIRTUAL_WIDTH}
+                width={virtualWidth}
                 height={LAYOUT.floorH}
               />
             )}
 
-            <CustomerQueue y={LAYOUT.customerY} width={VIRTUAL_WIDTH} />
+            <CustomerQueue y={LAYOUT.customerY} width={virtualWidth} />
 
             {images.counter && (
               <KonvaImage
                 image={images.counter}
                 y={LAYOUT.counterY}
-                width={VIRTUAL_WIDTH}
+                width={virtualWidth}
                 height={160}
               />
             )}
 
             <CauldronStation
               y={LAYOUT.cauldronY}
-              width={VIRTUAL_WIDTH}
+              width={virtualWidth}
               layout={LAYOUT}
             />
 
@@ -330,7 +358,7 @@ export default function PotionRushGame({
             {/* Word Holding Area (3 slots) */}
             <Group y={510}>
               {[0, 1, 2].map((i) => {
-                const slotX = i === 0 ? 85 : i === 1 ? 195 : 305;
+                const slotX = (virtualWidth * (i + 0.5)) / 3;
                 return (
                   <Group key={i} x={slotX}>
                     <Rect
@@ -361,7 +389,7 @@ export default function PotionRushGame({
 
             <ConveyorBelt
               y={LAYOUT.beltY}
-              width={VIRTUAL_WIDTH}
+              width={virtualWidth}
               dragBoundFunc={(pos) => pos}
               layout={LAYOUT}
             />
@@ -404,12 +432,61 @@ export default function PotionRushGame({
           ]}
           restartButtonText={t("messages.openAgain")}
           onRestart={() => {
-            enterFullscreen();
+            if (manageFullscreen) enterFullscreen();
             startGame(vocabList, difficulty);
           }}
           onExit={() => router.push("/")}
         />
       )}
+        {showControls && <PotionRushControlPanel variant="bottom" />}
+      </div>
     </div>
+  );
+}
+
+function PotionRushControlPanel({ variant }: { variant: "sidebar" | "bottom" }) {
+  const items = [
+    { icon: MousePointer2, text: "Drag ingredients into the matching cauldron" },
+    { icon: Hand, text: "Use HOLD slots to save a word for later" },
+    { icon: Trash2, text: "Drop wrong items into the trash" },
+  ];
+
+  return (
+    <aside
+      aria-label="Potion Rush controls"
+      className={
+        variant === "sidebar"
+          ? "hidden w-[clamp(220px,18vw,300px)] shrink-0 flex-col justify-center gap-4 border-r border-white/10 bg-slate-950/95 p-5 text-white shadow-2xl lg:flex"
+          : "absolute inset-x-2 bottom-2 z-20 flex justify-center lg:hidden"
+      }
+    >
+      <div
+        className={
+          variant === "sidebar"
+            ? "rounded-3xl border border-violet-400/25 bg-violet-500/10 p-4 backdrop-blur-md"
+            : "w-full max-w-xl rounded-2xl border border-violet-400/30 bg-slate-950/90 px-3 py-2 shadow-2xl backdrop-blur-md"
+        }
+      >
+        <div className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-violet-200">
+          <Beaker className="size-4 text-violet-300" aria-hidden="true" />
+          How to play
+        </div>
+        <div className={variant === "sidebar" ? "space-y-3" : "grid grid-cols-3 gap-2"}>
+          {items.map(({ icon: Icon, text }) => (
+            <div
+              key={text}
+              className={
+                variant === "sidebar"
+                  ? "flex items-start gap-2.5 text-xs font-semibold leading-snug text-white/80"
+                  : "flex items-center gap-1.5 text-[10px] font-bold leading-tight text-white/80"
+              }
+            >
+              <Icon className="mt-0.5 size-4 shrink-0 text-violet-300" aria-hidden="true" />
+              <span>{text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </aside>
   );
 }

@@ -38,13 +38,13 @@ const TUTORIAL_STEPS = [
   {
     step: 3,
     title: "3. สร้างป้อมปราการป้องกันทางเดิน",
-    detail: "เมื่อเรียงประโยคสมบูรณ์ เดินไปที่จุดสร้างป้อมแล้วกดปุ่ม Build เพื่อตั้งป้อมยิง",
+    detail: "เมื่อเรียงประโยคสมบูรณ์ ระบบจะเดินไปที่จุดสร้างป้อมและกด Build ให้ดูอัตโนมัติ",
     icon: Hammer,
   },
   {
     step: 4,
     title: "4. ป้องกันปราสาทจากฝูงศัตรู",
-    detail: "ป้อมจะยิงโจมตีศัตรูที่เดินเข้ามาตามทางอัตโนมัติ รักษาระดับเลือดของปราสาทไว้",
+    detail: "ดูศัตรูเข้าระยะป้อม → ป้อมล็อกเป้าและยิงอัตโนมัติ → ศัตรูถูกกำจัด โดยเวลายังหยุดอยู่",
     icon: Shield,
   },
 ];
@@ -59,11 +59,7 @@ export function CastleDefenseTeachingGame({ vocabulary, mode, fullscreen = false
   const [tutorialStep, setTutorialStep] = useState(0);
 
   useEffect(() => {
-    if (mode !== "tutorial") return;
-    const interval = setInterval(() => {
-      setTutorialStep((prev) => (prev + 1) % TUTORIAL_STEPS.length);
-    }, 4500);
-    return () => clearInterval(interval);
+    setTutorialStep(0);
   }, [mode]);
 
   const formattedVocab = React.useMemo(() => {
@@ -76,6 +72,12 @@ export function CastleDefenseTeachingGame({ vocabulary, mode, fullscreen = false
 
   const currentStep = TUTORIAL_STEPS[tutorialStep];
   const StepIcon = currentStep.icon;
+  const handleTutorialStepChange = React.useCallback((step: number) => {
+    setTutorialStep(Math.max(0, Math.min(TUTORIAL_STEPS.length - 1, step)));
+  }, []);
+  const handleComplete = React.useCallback(() => {
+    if (mode !== "tutorial") setKey((k) => k + 1);
+  }, [mode]);
 
   return (
     <div
@@ -89,7 +91,8 @@ export function CastleDefenseTeachingGame({ vocabulary, mode, fullscreen = false
         vocabulary={formattedVocab as any}
         autoStart={true}
         tutorialMode={mode === "tutorial"}
-        onComplete={() => setKey((k) => k + 1)}
+        onTutorialStepChange={handleTutorialStepChange}
+        onComplete={handleComplete}
       />
 
       {mode === "tutorial" && (
@@ -107,14 +110,12 @@ export function CastleDefenseTeachingGame({ vocabulary, mode, fullscreen = false
               <p className="mt-1 text-lg font-black text-white leading-tight">{currentStep.title}</p>
               <p className="text-xs font-semibold text-white/70 leading-snug mt-0.5">{currentStep.detail}</p>
             </div>
-            <div className="flex items-center gap-1.5 shrink-0">
+            <div className="flex items-center gap-1.5 shrink-0" aria-hidden="true">
               {TUTORIAL_STEPS.map((_, idx) => (
-                <button
+                <span
                   key={idx}
-                  type="button"
-                  onClick={() => setTutorialStep(idx)}
-                  className={`h-2.5 rounded-full transition-all pointer-events-auto ${
-                    idx === tutorialStep ? "w-7 bg-emerald-400 shadow-md shadow-emerald-400/50" : "w-2.5 bg-white/20 hover:bg-white/40"
+                  className={`h-2.5 rounded-full transition-all ${
+                    idx === tutorialStep ? "w-7 bg-emerald-400 shadow-md shadow-emerald-400/50" : "w-2.5 bg-white/20"
                   }`}
                 />
               ))}

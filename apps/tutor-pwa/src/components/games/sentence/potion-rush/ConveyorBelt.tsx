@@ -91,7 +91,7 @@ export default function ConveyorBelt({ y, width, layout }: ConveyorBeltProps) {
       if (y > 460 && y < 560) {
           const slotIndex = Math.floor(x / stationWidth)
           if (slotIndex >= 0 && slotIndex <= 2) {
-              handleHold(item.id, slotIndex)
+              handleHold(item.id, slotIndex, width)
               return
           }
       }

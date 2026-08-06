@@ -600,13 +600,6 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     if (currentPhase <= 1 || isChangingPhase) return;
 
     const targetPhase = currentPhase - 1;
-    const confirmed = typeof window === "undefined"
-      ? true
-      : window.confirm(
-          `Go back to Phase ${targetPhase}? Everyone will see the saved state of that phase in review mode.`,
-        );
-    if (!confirmed) return;
-
     setIsChangingPhase(true);
     playSound("phaseChange");
     changePhase(targetPhase);
@@ -3150,7 +3143,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       ? "border-white/15 bg-slate-950/78 text-white shadow-2xl backdrop-blur-xl"
       : "border-border bg-slate-950 text-white shadow-xl";
     const quietButtonClass =
-      "rounded-xl bg-white/10 px-3 py-2 text-xs font-black text-white transition-colors hover:bg-white/20";
+      "inline-flex h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl bg-white/10 px-3 text-xs font-black text-white transition-colors hover:bg-white/20";
+    const isDevelopmentMode = process.env.NODE_ENV === "development";
 
     if (isToolbarHidden) {
       return (
@@ -3175,26 +3169,30 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     return (
       <div className={toolbarShellClass}>
         <div
-          className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 ${toolbarClass}`}
+          className={`flex flex-col gap-3 rounded-2xl border px-4 py-3 ${toolbarClass}`}
         >
-          <div className="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto pr-2">
-            <div className="shrink-0 rounded-xl bg-white/10 px-3 py-2">
+          <div className="grid items-center gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
+          <div className="grid min-w-0 items-center gap-3 sm:grid-cols-[auto_minmax(0,1fr)]">
+            <div className="flex shrink-0 items-center gap-3">
+              <div className="rounded-xl bg-white/10 px-3 py-2">
               <p className="text-[10px] font-black uppercase tracking-widest text-white/50">
                 {t("lesson.interactive.phaseLabel")}
               </p>
               <p className="text-sm font-black text-white">
                 {currentPhase} / {TOTAL_PHASES}
               </p>
-            </div>
-            <div className="hidden shrink-0 rounded-xl bg-white/10 px-3 py-2 sm:block">
+              </div>
+              <div className="hidden rounded-xl bg-white/10 px-3 py-2 sm:block">
               <p className="text-[10px] font-black uppercase tracking-widest text-white/50">
                 {t("lesson.interactive.studentsLabel")}
               </p>
               <p className="text-sm font-black text-white">
                 {totalParticipants}
               </p>
+              </div>
             </div>
 
+            <div className="flex min-w-0 flex-wrap items-center justify-center gap-3">
             <button
               onClick={toggleFullscreen}
               title={
@@ -3222,62 +3220,15 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
             <button
               onClick={() => changePhase(0)}
-              className="shrink-0 rounded-xl bg-rose-500/15 px-3 py-2 text-xs font-black text-rose-100 transition-colors hover:bg-rose-500/25"
+              className="inline-flex h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl bg-rose-500/15 px-3 text-xs font-black text-rose-100 transition-colors hover:bg-rose-500/25"
             >
               {t("lesson.interactive.returnLobby")}
             </button>
+            </div>
 
-            {process.env.NODE_ENV === "development" && (
-              <div className="flex shrink-0 items-center gap-2 border-l border-white/15 pl-3">
-                <span className="rounded bg-orange-400/15 px-2 py-1 text-[10px] font-black text-orange-200">
-                  DEV
-                </span>
-                <button
-                  onClick={() => changePhase(Math.max(1, currentPhase - 1))}
-                  className={quietButtonClass}
-                >
-                  Prev
-                </button>
-                <button
-                  onClick={() => changePhase(Math.min(TOTAL_PHASES, currentPhase + 1))}
-                  className={quietButtonClass}
-                >
-                  Skip
-                </button>
-                <button
-                  onClick={toggleMockLeaderboard}
-                  className={`rounded-xl px-3 py-2 text-xs font-black transition-colors ${
-                    mockLeaderboard
-                      ? "bg-orange-500 text-white"
-                      : "bg-white/10 text-white hover:bg-white/20"
-                  }`}
-                >
-                  {mockLeaderboard ? "Mock ON" : "Mock LB"}
-                </button>
-                <button
-                  onClick={toggleMockPairs}
-                  className={`rounded-xl px-3 py-2 text-xs font-black transition-colors ${
-                    mockPairs
-                      ? "bg-orange-500 text-white"
-                      : "bg-white/10 text-white hover:bg-white/20"
-                  }`}
-                >
-                  {mockPairs ? "Pairs ON" : "Mock Pairs"}
-                </button>
-              </div>
-            )}
-
-            <button
-              onClick={onFinishSession}
-              disabled={!onFinishSession}
-              className="flex shrink-0 items-center gap-1 rounded-xl bg-white/10 px-3 py-2 text-xs font-black text-white transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-45"
-            >
-              <Check size={14} />
-              {t("lesson.interactive.finishLesson")}
-            </button>
           </div>
 
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 lg:border-l lg:border-white/10 lg:pl-3">
             <button
               onClick={handlePreviousPhase}
               disabled={currentPhase <= 1 || isChangingPhase}
@@ -3291,7 +3242,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 onClick={handleEndQuestion}
                 disabled={!endQuestion}
                 title={`แสดงผลจากคำตอบ ${totalAnswered}/${totalParticipants} คน`}
-                className="flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-4 py-2 text-sm font-black text-slate-950 shadow-lg transition-all hover:bg-amber-400 active:scale-95 disabled:cursor-not-allowed disabled:opacity-45"
+                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-amber-500 px-4 text-sm font-black text-slate-950 shadow-lg transition-all hover:bg-amber-400 active:scale-95 disabled:cursor-not-allowed disabled:opacity-45"
               >
                 จบคำถาม
               </button>
@@ -3299,7 +3250,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             <button
               onClick={useGamePrimaryAction ? handleGamePrimaryAction : handleNextPhase}
               disabled={useGamePrimaryAction ? isGamePrimaryDisabled : isNextDisabled}
-              className={`flex items-center justify-center gap-2 rounded-xl px-5 py-2 text-sm font-black transition-all ${
+              className={`inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl px-5 text-sm font-black transition-all ${
                 (useGamePrimaryAction ? isGamePrimaryDisabled : isNextDisabled)
                   ? "cursor-not-allowed bg-white/10 text-white/45"
                   : useGamePrimaryAction
@@ -3342,7 +3293,83 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 </>
               )}
             </button>
+            {!isDevelopmentMode && (
+              <button
+                onClick={onFinishSession}
+                disabled={!onFinishSession}
+                className="inline-flex h-11 shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-xl bg-white/10 px-3 text-xs font-black text-white transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                <Check size={14} />
+                {t("lesson.interactive.finishLesson")}
+              </button>
+            )}
           </div>
+          </div>
+
+          {isDevelopmentMode && (
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-3">
+              <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+                <div className="flex min-w-0 flex-wrap items-center gap-2">
+                  <span className="rounded-lg bg-orange-400/15 px-2.5 py-2 text-[10px] font-black text-orange-200">
+                    DEV
+                  </span>
+                  <button
+                    onClick={() => changePhase(Math.max(1, currentPhase - 1))}
+                    className={quietButtonClass}
+                  >
+                    Prev
+                  </button>
+                  <button
+                    onClick={() => changePhase(Math.min(TOTAL_PHASES, currentPhase + 1))}
+                    className={quietButtonClass}
+                  >
+                    Skip
+                  </button>
+                  {isGamePhase && (
+                    <button
+                      onClick={() => {
+                        changePhase(currentPhase);
+                        playSound("phaseChange");
+                      }}
+                      className="inline-flex h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl bg-amber-400/20 px-3 text-xs font-black text-amber-100 transition-colors hover:bg-amber-400/30"
+                      title="Reset the current game phase as a fresh live phase"
+                    >
+                      Reopen Phase ใหม่
+                    </button>
+                  )}
+                  <button
+                    onClick={toggleMockLeaderboard}
+                    className={`inline-flex h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl px-3 text-xs font-black transition-colors ${
+                      mockLeaderboard
+                        ? "bg-orange-500 text-white"
+                        : "bg-white/10 text-white hover:bg-white/20"
+                    }`}
+                  >
+                    {mockLeaderboard ? "Mock ON" : "Mock LB"}
+                  </button>
+                  <button
+                    onClick={toggleMockPairs}
+                    className={`inline-flex h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl px-3 text-xs font-black transition-colors ${
+                      mockPairs
+                        ? "bg-orange-500 text-white"
+                        : "bg-white/10 text-white hover:bg-white/20"
+                    }`}
+                  >
+                    {mockPairs ? "Pairs ON" : "Mock Pairs"}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                onClick={onFinishSession}
+                disabled={!onFinishSession}
+                className="inline-flex h-11 shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-xl bg-white/10 px-3 text-xs font-black text-white transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                <Check size={14} />
+                {t("lesson.interactive.finishLesson")}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );

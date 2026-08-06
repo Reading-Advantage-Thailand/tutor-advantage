@@ -16,7 +16,7 @@ import {
   Image as KonvaImage,
   Group,
 } from "react-konva";
-import { Shield, Trophy } from "lucide-react";
+import { MousePointer2, Shield, Trophy } from "lucide-react";
 import { useScopedI18n } from "@/locales/client";
 import {
   GameStartScreen,
@@ -38,13 +38,21 @@ import {
   TILE_SIZE,
   GAME_TICK_MS,
   ANIMATION_FRAME_MS,
+  buildTowerAtSlot,
+  collectWords,
   createCastleDefenseState,
   advanceCastleDefenseTime,
+  isSentenceComplete,
   CastleDefenseState,
   WORD_RADIUS,
   inRange,
   calculateCastleDefenseXP,
+  updateProjectiles,
+  updateTowers,
   type SentenceItem,
+  type Enemy,
+  type TowerSlot,
+  type Word,
 } from "@/lib/games/castleDefense";
 import { BackgroundLayer } from "./BackgroundLayer";
 
@@ -84,6 +92,7 @@ type Props = {
   }) => void;
   autoStart?: boolean;
   tutorialMode?: boolean;
+  onTutorialStepChange?: (step: number) => void;
 };
 
 const GAME_DURATION_MS = 60_000;
@@ -114,7 +123,19 @@ const getCachedCastleAssets = (): GameAssets | null => {
     : null;
 };
 
-export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, tutorialMode = false }: Props) {
+type TutorialPointer = {
+  x: number;
+  y: number;
+  label: string;
+};
+
+export function CastleDefenseGame({
+  vocabulary,
+  onComplete,
+  autoStart = false,
+  tutorialMode = false,
+  onTutorialStepChange,
+}: Props) {
   const t = useScopedI18n("pages.student.gamesPage.castleDefense");
   const gameVocabulary = useMemo(() => buildRoundSentences(vocabulary), [vocabulary]);
 
@@ -155,6 +176,9 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, t
 
   const [playerFrame, setPlayerFrame] = useState(0);
   const [enemyFrame, setEnemyFrame] = useState(0);
+  const [tutorialPointer, setTutorialPointer] = useState<TutorialPointer | null>(null);
+  const [tutorialDirection, setTutorialDirection] = useState({ dx: 0, walking: false });
+  const [tutorialCycle, setTutorialCycle] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const previousTowerIds = useRef<string[]>([]);
@@ -164,7 +188,10 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, t
   const buildEffectsRef = useRef(buildEffects);
   const gameStateRef = useRef(gameState);
   const onCompleteRef = useRef(onComplete);
+  const onTutorialStepChangeRef = useRef(onTutorialStepChange);
   const completedRef = useRef(false);
+  const tutorialSceneRef = useRef<{ words: Word[]; slot: TowerSlot } | null>(null);
+  const tutorialStartedRef = useRef(false);
   // Keep input in a ref so the game loop doesn't restart on every D-pad move
   const inputRef = useRef({ dx: 0, dy: 0, cast: false });
   const { enterFullscreen, exitFullscreen } = useGameFullscreen();
@@ -189,6 +216,19 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, t
   useEffect(() => {
     onCompleteRef.current = onComplete;
   }, [onComplete]);
+
+  useEffect(() => {
+    onTutorialStepChangeRef.current = onTutorialStepChange;
+  }, [onTutorialStepChange]);
+
+  useEffect(() => {
+    if (tutorialMode) return;
+    tutorialSceneRef.current = null;
+    tutorialStartedRef.current = false;
+    setTutorialPointer(null);
+    setTutorialDirection({ dx: 0, walking: false });
+    setTutorialCycle(0);
+  }, [tutorialMode]);
 
   const handleBackToMenu = useCallback(() => {
     setHasStarted(false);
@@ -287,8 +327,32 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, t
     };
   }, [hasStarted, assets]);
 
+  // The regular game loop owns the camera during play. Tutorial mode is
+  // intentionally paused, so keep the same responsive camera calculation in
+  // a small separate effect while the scripted player moves around the map.
+  useEffect(() => {
+    if (!tutorialMode || !gameState || dimensions.width <= 0 || dimensions.height <= 0) return;
+
+    const scaleX = dimensions.width / GAME_WIDTH;
+    const scaleY = dimensions.height / GAME_HEIGHT;
+    const scale = Math.max(scaleX, scaleY, 0.8);
+    let x = dimensions.width / 2 - gameState.player.x * scale;
+    let y = dimensions.height / 2 - gameState.player.y * scale;
+    const minX = dimensions.width - GAME_WIDTH * scale;
+    const minY = dimensions.height - GAME_HEIGHT * scale;
+
+    x = minX > 0 ? (dimensions.width - GAME_WIDTH * scale) / 2 : Math.max(minX, Math.min(0, x));
+    y = minY > 0 ? (dimensions.height - GAME_HEIGHT * scale) / 2 : Math.max(minY, Math.min(0, y));
+    setCamera({ x, y, scale });
+  }, [dimensions.height, dimensions.width, gameState, tutorialMode]);
+
   const startGame = useCallback(() => {
     completedRef.current = false;
+    tutorialSceneRef.current = null;
+    tutorialStartedRef.current = false;
+    setTutorialPointer(null);
+    setTutorialDirection({ dx: 0, walking: false });
+    setTutorialCycle(0);
     setGameState(createCastleDefenseState(gameVocabulary, {
       difficulty,
       maxSentences: Math.min(MAX_ROUND_SENTENCES, gameVocabulary.length || 1),
@@ -303,9 +367,320 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, t
     startGame();
   }, [autoStart, gameVocabulary.length, hasStarted, startGame]);
 
+  // Tutorial mode uses a frozen, deterministic action script. It moves the
+  // player to each real word orb, collects it through the same game logic, and
+  // then builds a real tower. The normal RAF loop stays off while this runs so
+  // the timer and enemies cannot interfere with the walkthrough.
+  useEffect(() => {
+    if (!tutorialMode || !hasStarted || !gameState || tutorialSceneRef.current) return;
+
+    const words = gameState.words.filter((word) => !word.isCollected);
+    const slot = gameState.towerSlots.find(
+      (candidate) => !gameState.towers.some((tower) => tower.id === `tower-${candidate.id}`),
+    );
+    if (words.length === 0 || !slot) return;
+
+    tutorialSceneRef.current = { words: [...words], slot };
+  }, [gameState, hasStarted, tutorialMode]);
+
+  useEffect(() => {
+    if (
+      !tutorialMode ||
+      !hasStarted ||
+      gameState?.status !== "playing" ||
+      !tutorialSceneRef.current ||
+      tutorialStartedRef.current
+    ) {
+      return;
+    }
+
+    const { words, slot } = tutorialSceneRef.current;
+    tutorialStartedRef.current = true;
+    let cancelled = false;
+
+    const wait = (ms: number) => new Promise<void>((resolve) => window.setTimeout(resolve, ms));
+    const setStep = (step: number) => onTutorialStepChangeRef.current?.(step);
+    const movePointer = (pointer: TutorialPointer) => setTutorialPointer(pointer);
+    let walkingFrame = 0;
+
+    const walkTutorialPlayerTo = (target: { x: number; y: number }) => new Promise<void>((resolve) => {
+      const current = gameStateRef.current?.player;
+      if (!current) {
+        resolve();
+        return;
+      }
+
+      const start = { x: current.x, y: current.y };
+      const distance = Math.hypot(target.x - start.x, target.y - start.y);
+      const duration = Math.min(920, Math.max(420, distance * 1.55));
+      const startedAt = performance.now();
+      const direction = Math.sign(target.x - start.x);
+      setTutorialDirection({ dx: direction, walking: true });
+
+      const animate = (timestamp: number) => {
+        if (cancelled) {
+          resolve();
+          return;
+        }
+
+        const progress = Math.min(1, (timestamp - startedAt) / duration);
+        const easedProgress = 1 - (1 - progress) ** 2;
+        setGameState((previous) => previous
+          ? {
+              ...previous,
+              player: {
+                ...previous.player,
+                x: start.x + (target.x - start.x) * easedProgress,
+                y: start.y + (target.y - start.y) * easedProgress,
+              },
+            }
+          : previous);
+        setPlayerFrame(Math.floor(timestamp / ANIMATION_FRAME_MS) % 3);
+
+        if (progress < 1) {
+          walkingFrame = window.requestAnimationFrame(animate);
+        } else {
+          setTutorialDirection({ dx: 0, walking: false });
+          resolve();
+        }
+      };
+
+      walkingFrame = window.requestAnimationFrame(animate);
+    });
+
+    const moveTutorialEnemyTo = (enemyId: string, target: { x: number; y: number }) => new Promise<void>((resolve) => {
+      const current = gameStateRef.current?.enemies.find((enemy) => enemy.id === enemyId);
+      if (!current) {
+        resolve();
+        return;
+      }
+
+      const start = { x: current.x, y: current.y };
+      const distance = Math.hypot(target.x - start.x, target.y - start.y);
+      const duration = Math.min(850, Math.max(420, distance * 1.4));
+      const startedAt = performance.now();
+
+      const animate = (timestamp: number) => {
+        if (cancelled) {
+          resolve();
+          return;
+        }
+
+        const progress = Math.min(1, (timestamp - startedAt) / duration);
+        const easedProgress = 1 - (1 - progress) ** 2;
+        setGameState((previous) => previous
+          ? {
+              ...previous,
+              enemies: previous.enemies.map((enemy) => enemy.id === enemyId
+                ? {
+                    ...enemy,
+                    x: start.x + (target.x - start.x) * easedProgress,
+                    y: start.y + (target.y - start.y) * easedProgress,
+                  }
+                : enemy),
+            }
+          : previous);
+        setEnemyFrame(Math.floor(timestamp / ANIMATION_FRAME_MS) % 3);
+
+        if (progress < 1) {
+          walkingFrame = window.requestAnimationFrame(animate);
+        } else {
+          resolve();
+        }
+      };
+
+      walkingFrame = window.requestAnimationFrame(animate);
+    });
+
+    const demonstrateTowerAttack = () => new Promise<void>((resolve) => {
+      let previousTimestamp = performance.now();
+      let defeated = false;
+
+      setGameState((previous) => {
+        if (!previous) return previous;
+        const towerUpdate = updateTowers(
+          previous.towers,
+          previous.enemies,
+          previous.projectiles,
+          previous.gameTime + 1000,
+        );
+        return {
+          ...previous,
+          towers: towerUpdate.towers,
+          projectiles: towerUpdate.projectiles,
+        };
+      });
+
+      const animate = (timestamp: number) => {
+        if (cancelled) {
+          resolve();
+          return;
+        }
+
+        const delta = Math.min(50, Math.max(16, timestamp - previousTimestamp));
+        previousTimestamp = timestamp;
+        setGameState((previous) => {
+          if (!previous) return previous;
+          const projectileUpdate = updateProjectiles(previous.projectiles, previous.enemies, delta);
+          if (projectileUpdate.hits.includes("tutorial-enemy")) defeated = true;
+          return {
+            ...previous,
+            projectiles: projectileUpdate.projectiles,
+            enemies: projectileUpdate.enemies,
+          };
+        });
+        setEnemyFrame(Math.floor(timestamp / ANIMATION_FRAME_MS) % 3);
+
+        if (defeated) {
+          resolve();
+        } else {
+          walkingFrame = window.requestAnimationFrame(animate);
+        }
+      };
+
+      walkingFrame = window.requestAnimationFrame(animate);
+    });
+
+    const collectTutorialWord = (wordId: string) => {
+      setGameState((previous) => {
+        if (!previous) return previous;
+        const target = previous.words.find((word) => word.id === wordId);
+        if (!target) return previous;
+
+        const collection = collectWords(
+          { ...previous.player, x: target.x, y: target.y },
+          previous.words,
+          previous.sentenceWords,
+          previous.collectedWordIndices,
+        );
+        const sentenceCompleted = isSentenceComplete(
+          collection.collectedWordIndices,
+          previous.sentenceWords.length,
+        );
+        const completedSentences =
+          sentenceCompleted && !previous.sentenceCompleted
+            ? previous.completedSentences + 1
+            : previous.completedSentences;
+
+        return {
+          ...previous,
+          player: collection.player,
+          words: collection.words,
+          collectedWordIndices: collection.collectedWordIndices,
+          sentenceCompleted,
+          completedSentences,
+          score: Math.min(10, completedSentences),
+          correctWordCollections:
+            previous.correctWordCollections + (collection.collectedWord && !collection.invalidCollection ? 1 : 0),
+          incorrectWordCollections:
+            previous.incorrectWordCollections + (collection.collectedWord && collection.invalidCollection ? 1 : 0),
+        };
+      });
+    };
+
+    const buildTutorialTower = () => {
+      setGameState((previous) => {
+        if (!previous) return previous;
+        const positionedState = {
+          ...previous,
+          player: { ...previous.player, x: slot.x, y: slot.y },
+          sentenceCompleted: true,
+        };
+        return buildTowerAtSlot(positionedState, slot.id, gameVocabulary);
+      });
+    };
+
+    const run = async () => {
+      setStep(0);
+      movePointer({ x: GAME_WIDTH / 2, y: 112, label: "อ่านคำแปลก่อน" });
+      await wait(1500);
+      if (cancelled) return;
+
+      setStep(1);
+      for (const word of words) {
+        movePointer({ x: word.x, y: word.y, label: `เก็บ “${word.term}”` });
+        await walkTutorialPlayerTo(word);
+        if (cancelled) return;
+        collectTutorialWord(word.id);
+        await wait(260);
+        if (cancelled) return;
+      }
+
+      setStep(2);
+      movePointer({ x: slot.x, y: slot.y, label: "สร้างป้อมตรงจุดนี้" });
+      await walkTutorialPlayerTo(slot);
+      if (cancelled) return;
+      buildTutorialTower();
+      await wait(500);
+      if (cancelled) return;
+
+      setStep(3);
+      movePointer({ x: 725, y: 75, label: "ป้อมพร้อมป้องกันปราสาท" });
+      await walkTutorialPlayerTo({ x: 725, y: 75 });
+      if (cancelled) return;
+
+      const enemyFromLeft = slot.x < GAME_WIDTH / 2;
+      const enemyStartX = enemyFromLeft
+        ? Math.min(GAME_WIDTH - 40, slot.x + 230)
+        : Math.max(40, slot.x - 230);
+      const enemyTargetX = enemyFromLeft ? slot.x + 105 : slot.x - 105;
+      const tutorialEnemy: Enemy = {
+        id: "tutorial-enemy",
+        x: enemyStartX,
+        y: slot.y,
+        radius: 12,
+        type: "soldier",
+        hp: 10,
+        maxHp: 10,
+        speed: 0.8,
+        waypointIndex: 0,
+      };
+
+      setGameState((previous) => previous
+        ? { ...previous, enemies: [tutorialEnemy], projectiles: [] }
+        : previous);
+      movePointer({ x: enemyStartX, y: slot.y, label: "ศัตรูกำลังเข้ามา" });
+      await wait(400);
+      if (cancelled) return;
+
+      await moveTutorialEnemyTo(tutorialEnemy.id, { x: enemyTargetX, y: slot.y });
+      if (cancelled) return;
+      movePointer({ x: enemyTargetX, y: slot.y, label: "ศัตรูเข้าระยะป้อมแล้ว" });
+      await wait(350);
+      if (cancelled) return;
+
+      movePointer({ x: enemyTargetX, y: slot.y, label: "ป้อมล็อกเป้าและยิงอัตโนมัติ" });
+      await demonstrateTowerAttack();
+      if (cancelled) return;
+      movePointer({ x: enemyTargetX, y: slot.y, label: "ศัตรูถูกกำจัด ✓" });
+      await wait(900);
+      if (cancelled) return;
+
+      // Keep the teaching scene looping so the teacher can leave it running
+      // while explaining. Reset the real game state before the next pass.
+      setStep(0);
+      setTutorialPointer(null);
+      setTutorialDirection({ dx: 0, walking: false });
+      tutorialSceneRef.current = null;
+      tutorialStartedRef.current = false;
+      setGameState(createCastleDefenseState(gameVocabulary, {
+        difficulty,
+        maxSentences: Math.min(MAX_ROUND_SENTENCES, gameVocabulary.length || 1),
+        durationMs: GAME_DURATION_MS,
+      }));
+      setTutorialCycle((cycle) => cycle + 1);
+    };
+
+    void run();
+    return () => {
+      cancelled = true;
+      if (walkingFrame) window.cancelAnimationFrame(walkingFrame);
+    };
+  }, [gameState?.status, gameVocabulary, hasStarted, tutorialCycle, tutorialMode]);
+
   // Game loop with requestAnimationFrame
   useEffect(() => {
-    if (!gameState || gameState.status !== "playing" || !assets || !hasStarted) {
+    if (tutorialMode || !gameState || gameState.status !== "playing" || !assets || !hasStarted) {
       return;
     }
 
@@ -409,7 +784,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, t
       lastFrameRef.current = 0;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameState?.status, assets, hasStarted, gameVocabulary, dimensions.width, dimensions.height, consumeCast, exitFullscreen]);
+  }, [gameState?.status, assets, hasStarted, gameVocabulary, dimensions.width, dimensions.height, consumeCast, exitFullscreen, tutorialMode]);
 
   const grids = useMemo(() => {
     if (!assets) return null;
@@ -738,9 +1113,9 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, t
                   grids.player.fw,
                   grids.player.fh,
                   playerFrame,
-                  input.dx === 0 && input.dy === 0 ? 0 : 1,
+                  tutorialDirection.walking || input.dx !== 0 || input.dy !== 0 ? 1 : 0,
                 )}
-                scaleX={input.dx < 0 ? -1 : 1}
+                scaleX={tutorialDirection.walking ? (tutorialDirection.dx < 0 ? -1 : 1) : input.dx < 0 ? -1 : 1}
               />
             )}
           </Layer>
@@ -829,6 +1204,37 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, t
         </div>
       )}
 
+      {tutorialMode && tutorialPointer && dimensions.width > 0 && dimensions.height > 0 && (
+        <div
+          className="pointer-events-none absolute inset-0 z-[25] overflow-hidden bg-slate-950/25"
+          aria-hidden="true"
+        >
+          <div
+            className="absolute flex flex-col items-center gap-1 transition-[left,top] duration-1000 ease-in-out"
+            style={{
+              left: camera.x + tutorialPointer.x * camera.scale,
+              top: camera.y + tutorialPointer.y * camera.scale,
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            <div className="relative flex size-20 items-center justify-center rounded-full border-2 border-violet-300 bg-violet-400/10 shadow-[0_0_0_10px_rgba(167,139,250,0.16),0_0_40px_rgba(167,139,250,0.8)] animate-pulse">
+              <div className="flex size-11 items-center justify-center rounded-full bg-slate-950/90 text-violet-200 shadow-xl">
+                <MousePointer2 size={25} fill="currentColor" />
+              </div>
+            </div>
+            <span className="whitespace-nowrap rounded-full border border-violet-200/60 bg-slate-950/95 px-3 py-1 text-xs font-black text-white shadow-2xl">
+              {tutorialPointer.label}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {tutorialMode && (
+        <div className="pointer-events-none absolute right-3 top-[max(0.5rem,env(safe-area-inset-top))] z-30 rounded-full border border-violet-300/50 bg-slate-950/90 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-violet-200 shadow-xl backdrop-blur-md">
+          ⏸ หยุดเวลา · สาธิตอัตโนมัติ
+        </div>
+      )}
+
       {/* Score and Castle HP are now rendered in the top HUD bar above */}
 
       {activeBuildSlot && (
@@ -847,23 +1253,27 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, t
         </div>
       )}
 
-      <div
-        className="absolute bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] left-1/2 z-30 -translate-x-1/2 scale-90 pointer-events-auto md:scale-100"
-        data-testid="virtual-dpad"
-      >
-        <VirtualDPad onInput={setVirtualInput} />
-      </div>
+      {!tutorialMode && (
+        <>
+          <div
+            className="absolute bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] left-1/2 z-30 -translate-x-1/2 scale-90 pointer-events-auto md:scale-100"
+            data-testid="virtual-dpad"
+          >
+            <VirtualDPad onInput={setVirtualInput} />
+          </div>
 
-      <button
-        type="button"
-        onPointerDown={(event) => {
-          event.preventDefault();
-          triggerCast();
-        }}
-        className="absolute bottom-[calc(env(safe-area-inset-bottom)+2.25rem)] right-5 z-30 flex size-16 items-center justify-center rounded-full border-2 border-emerald-300/60 bg-emerald-500 text-xs font-black text-white shadow-2xl shadow-emerald-950/40 active:scale-95 md:bottom-8 md:right-8 md:size-20 md:text-sm"
-      >
-        {t("controls.build")}
-      </button>
+          <button
+            type="button"
+            onPointerDown={(event) => {
+              event.preventDefault();
+              triggerCast();
+            }}
+            className="absolute bottom-[calc(env(safe-area-inset-bottom)+2.25rem)] right-5 z-30 flex size-16 items-center justify-center rounded-full border-2 border-emerald-300/60 bg-emerald-500 text-xs font-black text-white shadow-2xl shadow-emerald-950/40 active:scale-95 md:bottom-8 md:right-8 md:size-20 md:text-sm"
+          >
+            {t("controls.build")}
+          </button>
+        </>
+      )}
     </div>
   );
 }
