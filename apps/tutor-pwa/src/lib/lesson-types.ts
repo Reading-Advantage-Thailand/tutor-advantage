@@ -50,7 +50,7 @@ export interface LessonPair {
 }
 
 export type GameCategory = "vocabulary" | "sentence";
-export type GamePhaseStatus = "voting" | "countdown" | "playing" | "results";
+export type GamePhaseStatus = "voting" | "ready" | "teacher_demo" | "tutorial" | "countdown" | "playing" | "results";
 
 export interface GamePhaseResult {
   studentId: string;
@@ -69,6 +69,8 @@ export interface GamePhaseState {
   status: GamePhaseStatus;
   votes: Record<string, string>;
   selectedGameId?: string;
+  tutorialEnabled?: boolean;
+  teacherDemoEnabled?: boolean;
   countdownEndsAt?: number;
   results: Record<string, GamePhaseResult>;
 }
@@ -76,6 +78,10 @@ export interface GamePhaseState {
 export interface TutorSessionData {
   sessionId: string;
   currentPhase: number;
+  phaseRestored?: boolean;
+  resumePhase?: number;
+  activeSentenceIndex?: number;
+  flagCounts?: Record<number, number>;
   articleData?: ArticleData;
   phaseSelectedIndices?: Record<number, number>;
   pairs?: LessonPair[] | null;

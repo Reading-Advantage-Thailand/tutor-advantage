@@ -14,7 +14,7 @@ import { LessonPairPhase } from '@/components/lesson/phases/LessonPairPhase';
 import { LessonWrapUpPhase } from '@/components/lesson/phases/LessonWrapUpPhase';
 import { AdvantageArcadeRuntime } from '@/components/lesson/AdvantageArcadeRuntime';
 import { toast } from 'sonner';
-import { getGameById, getGamesByCategory } from '@/lib/liveLessonGames';
+import { getGameById, getGamesByCategory, getGameTutorial } from '@/lib/liveLessonGames';
 import { preloadGameAssets } from '@/lib/games/gameAssetPreloader';
 import { Lock } from 'lucide-react';
 
@@ -64,7 +64,8 @@ function PlayLessonContent() {
     flagCounts,
     flagSentence,
     submitGameVote,
-    submitGameResult
+    submitGameResult,
+    phaseReadOnly,
   } = useLessonSocket(classId || undefined, studentId, name, profile?.pictureUrl);
 
   const [typedAnswer, setTypedAnswer] = useState('');
@@ -118,6 +119,7 @@ function PlayLessonContent() {
       setLanguageSkipped(false);
       setUnderstanding('');
       setEffort('');
+      setMyFlags(new Set());
     }
     if (sessionData) setPrevPhase(sessionData.currentPhase);
     setIsSubmitting(false);
@@ -137,7 +139,7 @@ function PlayLessonContent() {
 
   useEffect(() => {
     if (!gameIdForPreload) return;
-    if (!["voting", "countdown", "playing", "results"].includes(gameStatusForPreload)) return;
+    if (!["voting", "ready", "teacher_demo", "tutorial", "countdown", "playing", "results"].includes(gameStatusForPreload)) return;
     void preloadGameAssets(gameIdForPreload);
   }, [gameIdForPreload, gameStatusForPreload]);
 
@@ -333,6 +335,7 @@ function PlayLessonContent() {
   // ─── Handlers ──────────────────────────────────────────────────────────────
 
   const handleMcqClick = (answer: string) => {
+    if (phaseReadOnly) return;
     playSound('select');
     setIsSubmitting(true);
     setSelectedChoice(answer);
@@ -367,6 +370,7 @@ function PlayLessonContent() {
   };
 
   const handleTextSubmit = () => {
+    if (phaseReadOnly) return;
     if (typedAnswer.trim()) {
       playSound('submit');
       setIsSubmitting(true);
@@ -380,6 +384,7 @@ function PlayLessonContent() {
   };
 
   const handleFlagToggle = (sentenceIndex: number) => {
+    if (phaseReadOnly) return;
     playSound('select');
     setMyFlags(prev => {
       const next = new Set(prev);
@@ -392,7 +397,7 @@ function PlayLessonContent() {
 
   // Step 11 Guided Writing — submit draft for AI feedback
   const handleWritingSubmit = () => {
-    if (!writingDraft.trim() || hasAnswered || isSubmitting) return;
+    if (phaseReadOnly || !writingDraft.trim() || hasAnswered || isSubmitting) return;
     playSound('submit');
     setIsSubmitting(true);
     setSelectedChoice(writingDraft);
@@ -403,7 +408,7 @@ function PlayLessonContent() {
 
   // Step 12 Language Questions — submit question for teacher-mediated AI answer
   const handleLanguageSubmit = () => {
-    if (!languageQuestion.trim() || hasAnswered || isSubmitting) return;
+    if (phaseReadOnly || !languageQuestion.trim() || hasAnswered || isSubmitting) return;
     playSound('submit');
     setIsSubmitting(true);
     submitAnswer(languageQuestion, 'Language question', '');
@@ -411,7 +416,7 @@ function PlayLessonContent() {
 
   // Step 12 — skip when the student has no question (counts as answered, no AI)
   const handleLanguageSkip = () => {
-    if (hasAnswered || isSubmitting) return;
+    if (phaseReadOnly || hasAnswered || isSubmitting) return;
     playSound('select');
     setLanguageSkipped(true);
     setIsSubmitting(true);
@@ -420,7 +425,7 @@ function PlayLessonContent() {
 
   // Step 13 Reflection — submit understanding + effort ratings (and tutor star review if given)
   const handleReflectionSubmit = async () => {
-    if (!understanding || !effort || hasAnswered || isSubmitting) return;
+    if (phaseReadOnly || !understanding || !effort || hasAnswered || isSubmitting) return;
     playSound('submit');
     setIsSubmitting(true);
     if (reviewRating > 0) {
@@ -652,6 +657,7 @@ function PlayLessonContent() {
   };
 
   const handleQuickGameComplete = () => {
+    if (phaseReadOnly) return;
     const questions = buildGameQuestions();
     const total = Math.max(questions.length, 1);
     const correct = questions.filter((question, index) => gameSelections[index] === question.answer).length;
@@ -707,6 +713,21 @@ function PlayLessonContent() {
             <p className="text-xs font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">{t("interactivePlay.gameComplete")}</p>
             <p className="mt-3 text-6xl font-black text-emerald-600 dark:text-emerald-400">{myResult.score}</p>
             <p className="mt-2 text-sm font-bold text-muted-foreground">{t("interactivePlay.gameWaitTeacher")}</p>
+          </div>
+          <MobileLeaderboard participants={participants} studentId={studentId} />
+        </div>
+      );
+    }
+
+    // A result phase normally means every participant has submitted. Keep a
+    // late/reconnected student in a waiting state instead of rendering the
+    // legacy quick-game fallback with no way to submit the selected game.
+    if (gameState.status === "results") {
+      return (
+        <div className="phase-enter flex w-full max-w-sm flex-1 min-h-0 flex-col gap-4 overflow-hidden">
+          <div className="rounded-3xl border border-amber-500/30 bg-amber-500/10 p-6 text-center shadow-xl">
+            <p className="text-xs font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">{t("interactivePlay.gameComplete")}</p>
+            <p className="mt-3 text-lg font-black text-foreground">{t("interactivePlay.gameWaitTeacher")}</p>
           </div>
           <MobileLeaderboard participants={participants} studentId={studentId} />
         </div>
@@ -799,6 +820,74 @@ function PlayLessonContent() {
       );
     }
 
+    if (gameState.status === "ready") {
+      return (
+        <div className="phase-enter w-full max-w-sm overflow-hidden rounded-[32px] border border-border bg-card shadow-2xl">
+          {selected?.cover && (
+            <div className="relative h-56 w-full">
+              <Image src={selected.cover} alt={selected.title} fill sizes="384px" className="object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+              <div className="absolute inset-x-5 bottom-5 text-white">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70">ผลโหวต</p>
+                <h2 className="mt-1 text-3xl font-black">{selected.title}</h2>
+              </div>
+            </div>
+          )}
+          <div className="p-6 text-center">
+            <div className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-indigo-500/10 text-2xl">🎮</div>
+            <h3 className="mt-4 text-xl font-black text-foreground">รอคุณครูเตรียมเกม</h3>
+            <p className="mt-2 text-sm font-semibold text-muted-foreground">คุณครูกำลังเลือกว่าจะสาธิตและเปิด Tutorial ก่อนเล่นหรือไม่</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (gameState.status === "teacher_demo") {
+      return (
+        <div className="phase-enter fixed inset-0 z-50 flex h-dvh w-screen items-center justify-center overflow-hidden bg-slate-950 p-6 text-center text-white">
+          {selected?.cover && <Image src={selected.cover} alt={selected.title} fill sizes="100vw" className="absolute inset-0 size-full object-cover opacity-25" />}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-slate-950/80 to-indigo-950/70" />
+          <div className="relative z-10 w-full max-w-sm">
+            <div className="mx-auto flex size-20 items-center justify-center rounded-[28px] border border-white/20 bg-white/10 text-4xl backdrop-blur">👀</div>
+            <p className="mt-6 text-xs font-black uppercase tracking-[0.24em] text-amber-300">Teacher Demo</p>
+            <h2 className="mt-2 text-3xl font-black">ดูคุณครูเล่นก่อน</h2>
+            <p className="mt-3 text-base font-bold text-white/65">มองที่หน้าจอคุณครู แล้วสังเกตวิธีเล่น {selected?.title || "เกมนี้"}</p>
+            <div className="mt-8 rounded-3xl border border-white/15 bg-white/10 p-5 text-left backdrop-blur">
+              <p className="text-sm font-black text-white">ระหว่างดู ให้สังเกต</p>
+              <p className="mt-2 text-sm font-semibold leading-relaxed text-white/65">เป้าหมายของเกม · วิธีบังคับ · วิธีเลือกคำตอบที่ถูกต้อง</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (gameState.status === "tutorial") {
+      const tutorialSteps = getGameTutorial(gameState.selectedGameId, gameState.category);
+      return (
+        <div className="phase-enter fixed inset-0 z-50 h-dvh w-screen overflow-y-auto bg-slate-950 p-5 text-white">
+          {selected?.cover && <Image src={selected.cover} alt={selected.title} fill sizes="100vw" className="fixed inset-0 size-full object-cover opacity-20" />}
+          <div className="fixed inset-0 bg-gradient-to-b from-indigo-950/85 via-slate-950/95 to-black" />
+          <div className="relative z-10 mx-auto flex min-h-full w-full max-w-sm flex-col justify-center py-6">
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-indigo-300">Tutorial</p>
+            <h2 className="mt-2 text-3xl font-black">วิธีเล่น {selected?.title || "เกม"}</h2>
+            <p className="mt-2 text-sm font-semibold text-white/60">อ่านให้ครบก่อนเริ่มเกมจริง</p>
+            <div className="mt-7 grid gap-3">
+              {tutorialSteps.map((step, index) => (
+                <div key={step} className="flex gap-4 rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-indigo-400 text-lg font-black text-indigo-950">{index + 1}</div>
+                  <p className="self-center text-sm font-bold leading-relaxed text-white">{step}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-7 flex items-center justify-center gap-2 rounded-2xl bg-amber-400/10 px-4 py-3 text-sm font-black text-amber-200">
+              <span className="size-2 animate-pulse rounded-full bg-amber-300" />
+              รอคุณครูเริ่มเกม
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     if (gameState.status === "countdown") {
       return (
         <div className="phase-enter fixed inset-0 z-50 flex h-dvh w-screen items-center justify-center overflow-hidden bg-slate-950 p-6 text-center text-white">
@@ -839,6 +928,7 @@ function PlayLessonContent() {
             category={gameState.category}
             articleData={articleData}
             onComplete={(result) => {
+              if (phaseReadOnly) return;
               submitGameResult({
                 gameId: gameState.selectedGameId || "",
                 score: result.score,
@@ -915,7 +1005,12 @@ function PlayLessonContent() {
                 {question.options.map((option) => (
                   <button
                     key={option}
-                    onClick={() => setGameSelections((prev) => ({ ...prev, [index]: option }))}
+                    onClick={() => {
+                      if (!phaseReadOnly) {
+                        setGameSelections((prev) => ({ ...prev, [index]: option }));
+                      }
+                    }}
+                    disabled={phaseReadOnly}
                     className={`btn-3d rounded-xl px-3 py-3 text-left text-xs font-black text-white transition-all ${theme.target} ${theme.shadow} ${
                       gameSelections[index] === option
                         ? "ring-4 ring-white/70 brightness-110"
@@ -931,7 +1026,7 @@ function PlayLessonContent() {
         </div>
         <button
           onClick={handleQuickGameComplete}
-          disabled={questions.some((_question, index) => !gameSelections[index])}
+          disabled={phaseReadOnly || questions.some((_question, index) => !gameSelections[index])}
           className="w-full rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 py-4 text-base font-black text-white shadow-lg active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         >
           ส่งคะแนนเกม
@@ -960,6 +1055,13 @@ function PlayLessonContent() {
           </div>
         )}
       </header>
+
+      {phaseReadOnly && (
+        <div className="flex items-center justify-center gap-2 border-b border-amber-500/30 bg-amber-500/10 px-4 py-2 text-center text-xs font-bold text-amber-700 dark:text-amber-300">
+          <Lock size={14} />
+          <span>กำลังดู Phase ย้อนหลัง — ไม่รับคำตอบหรือเพิ่มคะแนน</span>
+        </div>
+      )}
 
       <main className="flex-1 flex flex-col p-4 items-center justify-center relative overflow-hidden">
 
@@ -1119,6 +1221,8 @@ function PlayLessonContent() {
                 return (
                   <button
                     onClick={() => handleFlagToggle(activeIdx)}
+                    disabled={phaseReadOnly}
+                    aria-disabled={phaseReadOnly}
                     className={`w-full text-left rounded-xl px-4 py-6 transition-all flex items-start gap-3 shadow-md ${
                       isFlagged
                         ? 'bg-rose-500/15 border border-rose-400/50'

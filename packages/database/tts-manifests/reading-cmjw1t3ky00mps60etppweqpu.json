@@ -5,7 +5,7 @@
   "title": "My Backpack in Asia",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-E",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1427,5 +1427,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:08:57.510Z"
+  "generatedAt": "2026-08-04T13:01:34.118Z"
 }

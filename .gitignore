@@ -3,6 +3,7 @@ node_modules
 coverage
 **/dist/
 **/.next/
+.tmp/
 
 # Cloud SQL Proxy
 cloud-sql-proxy.exe

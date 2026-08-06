@@ -19,9 +19,28 @@ export const useLessonSocket = (
   socketUrl?: string,
   classBookCycleId?: string,
   bookId?: string,
-  demo?: boolean,
+  demo?: boolean
 ) => {
-  const lessonSocketUrl = socketUrl || 'http://localhost:3002';
+  const getEffectiveSocketUrl = () => {
+    const candidate = socketUrl || process.env.NEXT_PUBLIC_LEARNING_SERVICE_URL || 'http://localhost:3002';
+    if (typeof window === 'undefined') return candidate;
+
+    if (!candidate || candidate === '/' || candidate === window.location.origin) {
+      return 'http://localhost:3002';
+    }
+
+    try {
+      const url = new URL(candidate, window.location.origin);
+      if (url.port === '3000' && window.location.port === '3000') {
+        return `${url.protocol}//${url.hostname}:3002`;
+      }
+      return candidate;
+    } catch {
+      return candidate;
+    }
+  };
+
+  const lessonSocketUrl = getEffectiveSocketUrl();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [sessionData, setSessionData] = useState<TutorSessionData | null>(null);
   const [participants, setParticipants] = useState<Participant[]>([]);
@@ -34,6 +53,7 @@ export const useLessonSocket = (
 
   const socketRef = useRef<Socket | null>(null);
   const sessionDataRef = useRef<TutorSessionData | null>(null);
+  const finishRequestRef = useRef<Promise<boolean> | null>(null);
 
   useEffect(() => {
     sessionDataRef.current = sessionData;
@@ -82,6 +102,7 @@ export const useLessonSocket = (
           sessionDataRef.current = data;
           setSessionData(data);
           setArticleData(data.articleData);
+          setFlagCounts(data.flagCounts || {});
         });
 
         // Updated to listen for participants_updated from the new backend logic
@@ -98,15 +119,16 @@ export const useLessonSocket = (
           setParticipants(data.participants);
         });
 
-        socketInstance.on('phase_changed', (data) => {
+        socketInstance.on('phase_changed', (data: { phase: number; phaseSelectedIndices?: Record<number, number>; pairs?: TutorSessionData['pairs']; gameState?: GamePhaseState | null; phaseRestored?: boolean; resumePhase?: number; activeSentenceIndex?: number; flagCounts?: Record<number, number> }) => {
           setSessionData(prev => {
-            const next = prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null } : null;
+            const next = prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null, phaseRestored: data.phaseRestored ?? false, resumePhase: data.resumePhase, activeSentenceIndex: data.activeSentenceIndex, flagCounts: data.flagCounts ?? {} } : null;
             sessionDataRef.current = next;
             return next;
           });
           setTotalAnswered(0);
           setAllAnsweredData([]);
           setQuestionEnded(false);
+          setFlagCounts(data.flagCounts || {});
           // Sentence flags reset at the start of a fresh instructional cycle
           if (data.phase === 1) setFlagCounts({});
         });
@@ -203,6 +225,24 @@ export const useLessonSocket = (
     }
   };
 
+  const startGameIntro = (options: { tutorialEnabled: boolean; teacherDemoEnabled: boolean }) => {
+    if (socketRef.current && sessionData) {
+      socketRef.current.emit('start_game_intro', {
+        sessionId: sessionData.sessionId,
+        ...options,
+      });
+    }
+  };
+
+  const advanceGameIntro = (durationMs = 5000) => {
+    if (socketRef.current && sessionData) {
+      socketRef.current.emit('advance_game_intro', {
+        sessionId: sessionData.sessionId,
+        durationMs,
+      });
+    }
+  };
+
   const startGameCountdown = (durationMs = 5000) => {
     if (socketRef.current && sessionData) {
       socketRef.current.emit('start_game_countdown', { sessionId: sessionData.sessionId, durationMs });
@@ -230,6 +270,50 @@ export const useLessonSocket = (
     }
   };
 
+  const finishSession = (): Promise<boolean> => {
+    const activeSession = sessionDataRef.current;
+    const activeSocket = socketRef.current;
+    if (!activeSocket || !activeSession) return Promise.resolve(true);
+    if (finishRequestRef.current) return finishRequestRef.current;
+
+    const request = new Promise<boolean>((resolve) => {
+      let settled = false;
+      const timeout = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        finishRequestRef.current = null;
+        setError('Could not finish the lesson. Please try again while the connection is available.');
+        resolve(false);
+      }, 5000);
+
+      activeSocket.emit(
+        'finish_session',
+        { sessionId: activeSession.sessionId },
+        (result: { ok?: boolean } | undefined) => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timeout);
+          finishRequestRef.current = null;
+
+          if (!result?.ok) {
+            setError('Could not finish the lesson. Please try again.');
+            resolve(false);
+            return;
+          }
+
+          // Prevent the hook cleanup from sending delete_session after the
+          // Tutor navigates away. The server has already persisted FINISHED.
+          sessionDataRef.current = null;
+          setSessionData(null);
+          resolve(true);
+        },
+      );
+    });
+
+    finishRequestRef.current = request;
+    return request;
+  };
+
   return {
     socket,
     sessionData,
@@ -245,9 +329,12 @@ export const useLessonSocket = (
     endQuestion,
     startGameVote,
     lockGameVote,
+    startGameIntro,
+    advanceGameIntro,
     startGameCountdown,
     nudgeStudent,
     kickStudent,
-    deleteSession
+    deleteSession,
+    finishSession
   };
 };

@@ -5,7 +5,7 @@
   "title": "Mongolia: A Nomadic Life",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-F",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1843,5 +1843,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:02:01.147Z"
+  "generatedAt": "2026-08-04T13:51:08.870Z"
 }

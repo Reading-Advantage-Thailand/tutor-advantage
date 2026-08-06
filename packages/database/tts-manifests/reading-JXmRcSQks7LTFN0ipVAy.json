@@ -5,7 +5,7 @@
   "title": "Little Fires Everywhere",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-E",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1451,5 +1451,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T16:56:45.653Z"
+  "generatedAt": "2026-08-04T13:38:44.656Z"
 }

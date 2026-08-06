@@ -5,7 +5,7 @@
   "title": "The House on the Hill",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-J",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1275,5 +1275,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T16:46:15.827Z"
+  "generatedAt": "2026-08-04T13:11:06.447Z"
 }

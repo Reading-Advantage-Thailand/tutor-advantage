@@ -137,7 +137,38 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
           isInClient: liff.isInClient(),
         });
 
-        if (liff.isLoggedIn()) {
+        let devSessionProfileLoaded = false;
+        const hasDevSession = useMock && document.cookie
+          .split("; ")
+          .some((cookie) => cookie.startsWith("student-session="));
+
+        if (hasDevSession) {
+          try {
+            const devStateRes = await fetch("/api/dev/state", { cache: "no-store" });
+            if (devStateRes.ok) {
+              const devState = await devStateRes.json() as {
+                user?: {
+                  userId?: string;
+                  displayName?: string;
+                  profilePictureUrl?: string | null;
+                };
+              };
+              const devUser = devState.user;
+              if (devUser?.userId) {
+                setProfile({
+                  userId: devUser.userId,
+                  displayName: devUser.displayName || "Dev Student",
+                  pictureUrl: devUser.profilePictureUrl || undefined,
+                });
+                devSessionProfileLoaded = true;
+              }
+            }
+          } catch (devAuthErr) {
+            reportError("dev_auth_profile_error", devAuthErr);
+          }
+        }
+
+        if (!devSessionProfileLoaded && liff.isLoggedIn()) {
           const userProfile = await liff.getProfile();
           setProfile(userProfile);
 

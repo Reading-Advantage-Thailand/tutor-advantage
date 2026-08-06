@@ -5,7 +5,7 @@
   "title": "The Quest for the Golden Sword",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-I",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1723,5 +1723,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:10:23.190Z"
+  "generatedAt": "2026-08-04T13:10:05.158Z"
 }

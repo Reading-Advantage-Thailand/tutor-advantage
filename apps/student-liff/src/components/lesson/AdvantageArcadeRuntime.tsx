@@ -67,6 +67,7 @@ type AdvantageArcadeRuntimeProps = {
   category: LiveLessonGameCategory
   articleData?: ArticleData | null
   autoStart?: boolean
+  tutorialMode?: boolean
   onComplete: (result: {
     score: number
     correct: number
@@ -155,6 +156,7 @@ export function AdvantageArcadeRuntime({
   category,
   articleData,
   autoStart = true,
+  tutorialMode = false,
   onComplete,
 }: AdvantageArcadeRuntimeProps) {
   const startedAt = useRef(Date.now())
@@ -228,10 +230,10 @@ export function AdvantageArcadeRuntime({
   return (
     <div ref={rootRef} className={commonClass}>
       {resolvedGameId === "dragon-flight" && (
-        <DragonFlightGame vocabulary={vocabulary} autoStart={autoStart} onComplete={handleComplete} />
+        <DragonFlightGame vocabulary={vocabulary} autoStart={autoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
       )}
       {resolvedGameId === "wizard-vs-zombie" && (
-        <WizardZombieGame vocabulary={vocabulary} autoStart={autoStart} onComplete={handleComplete} />
+        <WizardZombieGame vocabulary={vocabulary} autoStart={autoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
       )}
       {resolvedGameId === "enchanted-library" && (
         <EnchantedLibraryGame
@@ -240,11 +242,12 @@ export function AdvantageArcadeRuntime({
           onDifficultyChange={() => undefined}
           rankings={{ easy: [], normal: [], hard: [], extreme: [] }}
           autoStart={autoStart}
+          tutorialMode={tutorialMode}
           onComplete={handleComplete}
         />
       )}
       {resolvedGameId === "rune-match" && (
-        <RuneMatchGame vocabulary={vocabulary} onComplete={handleComplete} />
+        <RuneMatchGame vocabulary={vocabulary} tutorialMode={tutorialMode} onComplete={handleComplete} />
       )}
       {resolvedGameId === "alchemists-synthesis" && (
         <AlchemistsSynthesisGame vocabulary={vocabulary} onComplete={handleComplete} />
@@ -256,10 +259,10 @@ export function AdvantageArcadeRuntime({
         <PaladinsTwinSoulGame vocabulary={vocabulary} onComplete={handleComplete} />
       )}
       {resolvedGameId === "castle-defense" && (
-        <CastleDefenseGame vocabulary={sentences} autoStart={autoStart} onComplete={handleComplete} />
+        <CastleDefenseGame vocabulary={sentences} autoStart={autoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
       )}
       {resolvedGameId === "potion-rush" && (
-        <PotionRushGame vocabList={sentences} difficulty="normal" autoStart={autoStart} onComplete={handleComplete} />
+        <PotionRushGame vocabList={sentences} difficulty="normal" autoStart={autoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
       )}
       {resolvedGameId === "dungeon-liberator" && (
         <DungeonLiberatorGame vocabulary={sentences} onComplete={handleComplete} />

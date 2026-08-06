@@ -5,7 +5,7 @@
   "title": "Anna's First Trip to Japan",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-D",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -248,5 +248,5 @@
     }
   ],
   "questions": [],
-  "generatedAt": "2026-08-02T17:07:33.717Z"
+  "generatedAt": "2026-08-04T12:56:57.205Z"
 }

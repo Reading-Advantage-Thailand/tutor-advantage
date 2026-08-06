@@ -5,7 +5,7 @@
   "title": "Pip and the Red Car",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-I",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1059,5 +1059,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:07:04.005Z"
+  "generatedAt": "2026-08-04T12:54:23.415Z"
 }

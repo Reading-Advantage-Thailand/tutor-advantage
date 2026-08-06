@@ -83,6 +83,7 @@ type Props = {
     durationMs?: number;
   }) => void;
   autoStart?: boolean;
+  tutorialMode?: boolean;
 };
 
 const GAME_DURATION_MS = 60_000;
@@ -97,18 +98,8 @@ const CASTLE_ASSET_PATHS = {
   base: "/games/sentence/castle-defense/player-castle.png",
 };
 
-const buildRoundSentences = (items: SentenceItem[]) => {
-  const seen = new Set<string>();
-  return [...items]
-    .sort(() => Math.random() - 0.5)
-    .filter((item) => {
-      const key = item.term.trim().toLowerCase();
-      if (!key || seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    })
-    .slice(0, MAX_ROUND_SENTENCES);
-};
+const buildRoundSentences = (items: SentenceItem[]) =>
+  [...items].sort(() => Math.random() - 0.5).slice(0, MAX_ROUND_SENTENCES);
 
 const getCachedCastleAssets = (): GameAssets | null => {
   const player = getCachedGameImage(CASTLE_ASSET_PATHS.player);
@@ -123,7 +114,7 @@ const getCachedCastleAssets = (): GameAssets | null => {
     : null;
 };
 
-export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false }: Props) {
+export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, tutorialMode = false }: Props) {
   const t = useScopedI18n("pages.student.gamesPage.castleDefense");
   const gameVocabulary = useMemo(() => buildRoundSentences(vocabulary), [vocabulary]);
 
@@ -391,6 +382,14 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false }:
             difficulty: nextState.difficulty,
             durationMs: Math.min(GAME_DURATION_MS, Math.max(0, nextState.gameTime)),
           });
+          if (autoStart || tutorialMode) {
+            completedRef.current = false;
+            return createCastleDefenseState(gameVocabulary, {
+              difficulty,
+              maxSentences: Math.min(MAX_ROUND_SENTENCES, gameVocabulary.length || 1),
+              durationMs: GAME_DURATION_MS,
+            });
+          }
           exitFullscreen();
         }
 
@@ -492,19 +491,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false }:
     );
   }
 
-  if (gameState?.status === "gameover" || gameState?.status === "victory") {
-    if (autoStart) {
-      return (
-        <div className="flex h-dvh w-full items-center justify-center bg-slate-950 text-white">
-          <div className="rounded-3xl border border-white/10 bg-white/10 px-6 py-5 text-center shadow-2xl backdrop-blur">
-            <p className="text-sm font-black uppercase tracking-[0.2em] text-white/60">
-              Castle Defense
-            </p>
-            <p className="mt-2 text-3xl font-black">{gameState.score}</p>
-          </div>
-        </div>
-      );
-    }
+  if ((gameState?.status === "gameover" || gameState?.status === "victory") && !autoStart && !tutorialMode) {
 
     const totalAttempts =
       gameState.correctWordCollections + gameState.incorrectWordCollections;

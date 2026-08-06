@@ -109,10 +109,13 @@ export default function TutorLobbyClient({
     syncActiveSentence,
     endQuestion,
     startGameVote,
-    startGameCountdown,
+    lockGameVote,
+    startGameIntro,
+    advanceGameIntro,
     nudgeStudent,
     kickStudent,
     deleteSession,
+    finishSession,
   } = useLessonSocket(tutorId, articleId, classId, socketUrl, classBookCycleId, bookId, demo);
 
   const readyCount = participants.filter((participant) => participant.isReady).length;
@@ -124,6 +127,18 @@ export default function TutorLobbyClient({
   const [bypassEmptyStudentGuard, setBypassEmptyStudentGuard] = React.useState(false);
   const [isSendingLobbyNotification, setIsSendingLobbyNotification] = React.useState(false);
   const [lobbyNotificationStatus, setLobbyNotificationStatus] = React.useState<string | null>(null);
+  const [isFinishingSession, setIsFinishingSession] = React.useState(false);
+
+  const handleFinishAndNavigate = React.useCallback(async () => {
+    if (isFinishingSession) return;
+    setIsFinishingSession(true);
+    const finished = await finishSession();
+    if (finished) {
+      router.push(backHref);
+      return;
+    }
+    setIsFinishingSession(false);
+  }, [backHref, finishSession, isFinishingSession, router]);
 
   const handleSendLobbyNotification = async () => {
     setIsSendingLobbyNotification(true);
@@ -157,11 +172,16 @@ export default function TutorLobbyClient({
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href={backHref}>
-                <Button variant="ghost" size="icon" className="rounded-xl">
-                  <ArrowLeft />
-                </Button>
-              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-xl"
+                onClick={() => { void handleFinishAndNavigate(); }}
+                disabled={isFinishingSession}
+                aria-label="Finish lesson and return"
+              >
+                <ArrowLeft />
+              </Button>
               <div>
                 <h1 className="text-2xl font-bold text-foreground">
                   {t("lesson.interactive.teachingPrefix")} {articleData?.title}
@@ -194,12 +214,11 @@ export default function TutorLobbyClient({
               syncActiveSentence={syncActiveSentence}
               endQuestion={endQuestion}
               startGameVote={startGameVote}
-              startGameCountdown={startGameCountdown}
+              lockGameVote={lockGameVote}
+              startGameIntro={startGameIntro}
+              advanceGameIntro={advanceGameIntro}
               bypassEmptyStudentGuard={bypassEmptyStudentGuard}
-              onFinishSession={() => {
-                deleteSession();
-                router.push(backHref);
-              }}
+              onFinishSession={() => { void handleFinishAndNavigate(); }}
             />
           </div>
         </div>
@@ -413,7 +432,7 @@ export default function TutorLobbyClient({
             </div>
           </div>
 
-          <div className={`grid min-h-[28rem] flex-1 gap-4 ${participants.length === 0 ? 'grid-cols-1' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'}`}>
+          <div className={`grid min-h-[28rem] flex-1 content-start items-start auto-rows-max gap-4 ${participants.length === 0 ? 'grid-cols-1' : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'}`}>
             {participants.length === 0 ? (
               <div className="h-full min-h-[28rem] bg-card rounded-3xl border-2 border-dashed border-border flex flex-col items-center justify-center text-center">
                 <div className="w-16 h-16 bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-4">
@@ -430,7 +449,7 @@ export default function TutorLobbyClient({
               participants.map((participant) => (
                 <div
                   key={participant.studentId}
-                  className={`group relative flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all duration-300 ${
+                  className={`group relative h-fit self-start flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all duration-300 ${
                     participant.isReady
                       ? "border-emerald-400/60 bg-emerald-500/5 shadow-md shadow-emerald-500/10"
                       : "border-dashed border-border bg-card"

@@ -5,7 +5,7 @@
   "title": "Tom and Pip Sort Toys",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-E",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1181,5 +1181,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:07:15.434Z"
+  "generatedAt": "2026-08-04T12:57:49.542Z"
 }

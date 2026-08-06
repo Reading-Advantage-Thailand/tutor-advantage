@@ -5,7 +5,7 @@
   "title": "Phones and Our Feelings",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-A",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1355,5 +1355,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:08:03.396Z"
+  "generatedAt": "2026-08-04T12:59:04.405Z"
 }

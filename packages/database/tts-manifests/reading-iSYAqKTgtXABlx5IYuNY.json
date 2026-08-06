@@ -5,7 +5,7 @@
   "title": "The Enigmatic Harappan Civilization: A Glimpse into the Ancient Indus Valley",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-J",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -296,5 +296,5 @@
     }
   ],
   "questions": [],
-  "generatedAt": "2026-08-02T16:51:36.279Z"
+  "generatedAt": "2026-08-04T13:21:40.912Z"
 }

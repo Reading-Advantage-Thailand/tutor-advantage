@@ -13,8 +13,27 @@ export interface SessionParticipant {
   isReady: boolean;
 }
 
+interface PhaseSnapshot {
+  currentPhase: number;
+  status: LessonSession["status"];
+  participants: SessionParticipant[];
+  activeSentenceIndex?: number;
+  phaseSelectedIndices?: Record<number, number>;
+  sentenceFlags: Array<[number, string[]]>;
+  pairs?: { pairNumber: number; studentIds: string[] }[];
+  gameState?: GamePhaseState;
+  currentDbSessionId?: string;
+}
+
 export type GameCategory = "vocabulary" | "sentence";
-export type GamePhaseStatus = "voting" | "countdown" | "playing" | "results";
+export type GamePhaseStatus =
+  | "voting"
+  | "ready"
+  | "teacher_demo"
+  | "tutorial"
+  | "countdown"
+  | "playing"
+  | "results";
 
 export interface GamePhaseResult {
   studentId: string;
@@ -33,6 +52,8 @@ export interface GamePhaseState {
   status: GamePhaseStatus;
   votes: Record<string, string>;
   selectedGameId?: string;
+  tutorialEnabled?: boolean;
+  teacherDemoEnabled?: boolean;
   countdownEndsAt?: number;
   results: Record<string, GamePhaseResult>;
   voteFirstSeen: Record<string, number>;
@@ -48,6 +69,12 @@ export interface LessonSession {
   articleId: string;
   articleData: any;
   currentPhase: number;
+  // True when the tutor navigated back to a previously completed phase.
+  // The client uses this to render the phase as review-only.
+  phaseRestored?: boolean;
+  // The phase to resume after review. This prevents interactive phases from
+  // being replayed and scored a second time.
+  resumePhase?: number;
   participants: Map<string, SessionParticipant>;
   status: 'LOBBY' | 'ACTIVE' | 'FINISHED';
   activeSentenceIndex?: number;
@@ -58,8 +85,12 @@ export interface LessonSession {
   pairs?: { pairNumber: number; studentIds: string[] }[];
   gameState?: GamePhaseState;
   currentDbSessionId?: string; // Track active DB ID for dynamic restarting
+  finalNotificationSent?: boolean;
   // Demo sessions are ephemeral previews: never persisted, never AI-scored, no class.
   isDemo?: boolean;
+  // In-memory checkpoints for safe tutor-only phase rewind. These are scoped
+  // to the live session and are discarded with the session.
+  phaseSnapshots: Map<number, PhaseSnapshot>;
 }
 
 export interface PairMember {
@@ -125,6 +156,11 @@ function isEnabledGameForCategory(category: GameCategory, gameId?: string | null
 function getDefaultGameForCategory(category: GameCategory): string | undefined {
   const defaultGameId = DEFAULT_GAME_BY_CATEGORY[category];
   return isEnabledGameForCategory(category, defaultGameId) ? defaultGameId : undefined;
+}
+
+function cloneJson<T>(value: T): T {
+  if (value === undefined || value === null) return value;
+  return JSON.parse(JSON.stringify(value)) as T;
 }
 
 export function getGameCategoryForPhase(phase: number): GameCategory | null {
@@ -240,12 +276,16 @@ class LessonSessionService {
       articleId,
       articleData,
       currentPhase: 0,
+      phaseRestored: false,
+      resumePhase: undefined,
       participants: new Map(),
       status: 'LOBBY',
       activeSentenceIndex: -1,
       phaseSelectedIndices,
       sentenceFlags: new Map(),
       isDemo: isDemo ?? false,
+      phaseSnapshots: new Map(),
+      finalNotificationSent: false,
     };
 
     this.sessions.set(sessionId, session);
@@ -298,7 +338,7 @@ class LessonSessionService {
 
   toggleReady(sessionId: string, studentId: string): LessonSession | undefined {
     const session = this.sessions.get(sessionId);
-    if (!session) return undefined;
+    if (!session || session.phaseRestored) return undefined;
 
     const participant = session.participants.get(studentId);
     if (participant) {
@@ -323,7 +363,19 @@ class LessonSessionService {
     const session = this.sessions.get(sessionId);
     if (!session) return undefined;
 
+    // Starting a new lesson cycle must not be able to rewind into the prior
+    // cycle's checkpoints. Keep the existing cycle behavior intact while
+    // clearing only the in-memory rewind history.
+    if (phase === 1 && session.currentPhase === FINAL_LEADERBOARD_PHASE) {
+      session.phaseSnapshots.clear();
+      session.finalNotificationSent = false;
+    } else {
+      this.savePhaseSnapshot(session);
+    }
+
     session.currentPhase = phase;
+    session.phaseRestored = false;
+    session.resumePhase = undefined;
     for (const participant of session.participants.values()) {
       participant.hasAnsweredCurrentPhase = false;
       participant.latestAnswer = undefined;
@@ -387,6 +439,80 @@ class LessonSessionService {
     return session;
   }
 
+  rewindPhase(sessionId: string, phase: number): LessonSession | undefined {
+    const session = this.sessions.get(sessionId);
+    if (!session || phase >= session.currentPhase || phase < 1) return undefined;
+
+    const snapshot = session.phaseSnapshots.get(phase);
+    if (!snapshot) return undefined;
+
+    const currentParticipants = session.participants;
+    const restoredParticipants = new Map<string, SessionParticipant>();
+
+    for (const saved of snapshot.participants) {
+      const liveParticipant = currentParticipants.get(saved.studentId);
+      restoredParticipants.set(saved.studentId, {
+        ...cloneJson(saved),
+        // A participant may have reconnected since this checkpoint was made;
+        // never restore an obsolete socket id.
+        socketId: liveParticipant?.socketId || saved.socketId,
+      });
+    }
+
+    // Keep students who joined after the checkpoint in the room. They remain
+    // eligible for the live session but have not answered the restored phase.
+    for (const [studentId, participant] of currentParticipants.entries()) {
+      if (restoredParticipants.has(studentId)) continue;
+      restoredParticipants.set(studentId, {
+        ...participant,
+        hasAnsweredCurrentPhase: false,
+        latestAnswer: undefined,
+      });
+    }
+
+    const resumePhase = session.phaseRestored && session.resumePhase !== undefined
+      ? session.resumePhase
+      : session.currentPhase;
+
+    session.currentPhase = snapshot.currentPhase;
+    session.phaseRestored = true;
+    session.resumePhase = resumePhase;
+    session.status = snapshot.status === "LOBBY" ? "ACTIVE" : snapshot.status;
+    session.participants = restoredParticipants;
+    session.activeSentenceIndex = snapshot.activeSentenceIndex;
+    session.phaseSelectedIndices = cloneJson(snapshot.phaseSelectedIndices);
+    session.sentenceFlags = new Map(
+      snapshot.sentenceFlags.map(([index, studentIds]) => [index, new Set(studentIds)]),
+    );
+    session.pairs = cloneJson(snapshot.pairs);
+    session.gameState = cloneJson(snapshot.gameState);
+    session.currentDbSessionId = snapshot.currentDbSessionId;
+
+    logger.info(`[Service] Rewound session ${sessionId} to phase ${phase}`);
+    return session;
+  }
+
+  private savePhaseSnapshot(session: LessonSession) {
+    // Phase 0 is a lobby and is not a valid target for the tutor's Previous
+    // action, so it does not need a checkpoint.
+    if (session.currentPhase < 1) return;
+
+    session.phaseSnapshots.set(session.currentPhase, {
+      currentPhase: session.currentPhase,
+      status: session.status,
+      participants: Array.from(session.participants.values()).map((participant) => cloneJson(participant)),
+      activeSentenceIndex: session.activeSentenceIndex,
+      phaseSelectedIndices: cloneJson(session.phaseSelectedIndices),
+      sentenceFlags: Array.from(session.sentenceFlags?.entries() || []).map(([index, studentIds]) => [
+        index,
+        Array.from(studentIds),
+      ]),
+      pairs: cloneJson(session.pairs),
+      gameState: cloneJson(session.gameState),
+      currentDbSessionId: session.currentDbSessionId,
+    });
+  }
+
   getGameStatePayload(session?: LessonSession): GamePhaseState | null {
     if (!session?.gameState) return null;
     return {
@@ -400,7 +526,7 @@ class LessonSessionService {
   startGameVote(sessionId: string, phase: number): GamePhaseState | null {
     const session = this.sessions.get(sessionId);
     const category = getGameCategoryForPhase(phase);
-    if (!session || !category) return null;
+    if (!session || session.phaseRestored || !category) return null;
     session.gameState = {
       phase,
       category,
@@ -414,7 +540,7 @@ class LessonSessionService {
 
   submitGameVote(sessionId: string, studentId: string, gameId: string): GamePhaseState | null {
     const session = this.sessions.get(sessionId);
-    if (!session?.gameState || session.gameState.status !== "voting") return null;
+    if (!session || session.phaseRestored || !session.gameState || session.gameState.status !== "voting") return null;
     if (!isEnabledGameForCategory(session.gameState.category, gameId)) return null;
     session.gameState.votes[studentId] = gameId;
     if (!session.gameState.voteFirstSeen[gameId]) {
@@ -425,7 +551,7 @@ class LessonSessionService {
 
   lockGameVote(sessionId: string): GamePhaseState | null {
     const session = this.sessions.get(sessionId);
-    if (!session?.gameState) return null;
+    if (!session || session.phaseRestored || !session.gameState) return null;
     const counts = new Map<string, number>();
     for (const gameId of Object.values(session.gameState.votes)) {
       counts.set(gameId, (counts.get(gameId) || 0) + 1);
@@ -444,15 +570,55 @@ class LessonSessionService {
     }
     if (selectedGameId) {
       session.gameState.selectedGameId = selectedGameId;
+      session.gameState.status = "ready";
+      session.gameState.tutorialEnabled = true;
+      session.gameState.teacherDemoEnabled = false;
     } else {
       delete session.gameState.selectedGameId;
     }
     return this.getGameStatePayload(session);
   }
 
+  startGameIntro(
+    sessionId: string,
+    options: { tutorialEnabled?: boolean; teacherDemoEnabled?: boolean } = {},
+  ): GamePhaseState | null {
+    const session = this.sessions.get(sessionId);
+    if (!session || session.phaseRestored || !session.gameState || session.gameState.status !== "ready") return null;
+
+    session.gameState.tutorialEnabled = options.tutorialEnabled !== false;
+    session.gameState.teacherDemoEnabled = options.teacherDemoEnabled === true;
+    if (session.gameState.teacherDemoEnabled) {
+      session.gameState.status = "teacher_demo";
+    } else if (session.gameState.tutorialEnabled) {
+      session.gameState.status = "tutorial";
+    } else {
+      return this.startGameCountdown(sessionId);
+    }
+
+    return this.getGameStatePayload(session);
+  }
+
+  advanceGameIntro(sessionId: string, durationMs = 5000): GamePhaseState | null {
+    const session = this.sessions.get(sessionId);
+    const gameState = session?.gameState;
+    if (!session || session.phaseRestored || !gameState) return null;
+
+    if (gameState.status === "teacher_demo" && gameState.tutorialEnabled) {
+      gameState.status = "tutorial";
+      return this.getGameStatePayload(session);
+    }
+
+    if (["ready", "teacher_demo", "tutorial"].includes(gameState.status)) {
+      return this.startGameCountdown(sessionId, durationMs);
+    }
+
+    return null;
+  }
+
   startGameCountdown(sessionId: string, durationMs = 5000): GamePhaseState | null {
     const session = this.sessions.get(sessionId);
-    if (!session?.gameState) return null;
+    if (!session || session.phaseRestored || !session.gameState) return null;
     if (!session.gameState.selectedGameId) {
       this.lockGameVote(sessionId);
     }
@@ -462,9 +628,16 @@ class LessonSessionService {
     return this.getGameStatePayload(session);
   }
 
-  markGamePlaying(sessionId: string): GamePhaseState | null {
+  markGamePlaying(sessionId: string, expectedCountdownEndsAt?: number): GamePhaseState | null {
     const session = this.sessions.get(sessionId);
-    if (!session?.gameState) return null;
+    if (!session || session.phaseRestored || !session.gameState) return null;
+    if (
+      expectedCountdownEndsAt !== undefined &&
+      (session.gameState.status !== "countdown" ||
+        session.gameState.countdownEndsAt !== expectedCountdownEndsAt)
+    ) {
+      return null;
+    }
     session.gameState.status = "playing";
     return this.getGameStatePayload(session);
   }
@@ -476,7 +649,7 @@ class LessonSessionService {
   ): { session: LessonSession; gameState: GamePhaseState; accepted: boolean; allSubmitted: boolean } | null {
     const session = this.sessions.get(sessionId);
     const gameState = session?.gameState;
-    if (!session || !gameState || !["playing", "results"].includes(gameState.status)) return null;
+    if (!session || session.phaseRestored || !gameState || !["playing", "results"].includes(gameState.status)) return null;
     if (gameState.results[studentId]) {
       return {
         session,
@@ -503,12 +676,16 @@ class LessonSessionService {
       durationMs: result.durationMs,
       submittedAt: Date.now(),
     };
-    gameState.status = "results";
+    // Keep the game mounted for students who have not submitted yet. The
+    // tutor can still monitor partial results, while the shared results view
+    // only becomes final once every current participant has submitted.
+    const allSubmitted = Object.keys(gameState.results).length >= session.participants.size;
+    gameState.status = allSubmitted ? "results" : "playing";
     return {
       session,
       gameState: this.getGameStatePayload(session)!,
       accepted: true,
-      allSubmitted: Object.keys(gameState.results).length >= session.participants.size,
+      allSubmitted,
     };
   }
 
@@ -566,7 +743,7 @@ class LessonSessionService {
 
   submitAnswer(sessionId: string, studentId: string, answer: any): { session: LessonSession, allAnswered: boolean } | undefined {
     const session = this.sessions.get(sessionId);
-    if (!session) return undefined;
+    if (!session || session.phaseRestored) return undefined;
 
     const participant = session.participants.get(studentId);
     if (!participant) return undefined;
@@ -594,7 +771,7 @@ class LessonSessionService {
 
   endQuestion(sessionId: string): { session: LessonSession; answers: Array<{ studentId: string; answer: any }> } | undefined {
     const session = this.sessions.get(sessionId);
-    if (!session) return undefined;
+    if (!session || session.phaseRestored) return undefined;
 
     const answers = Array.from(session.participants.values())
       .filter((participant) => participant.hasAnsweredCurrentPhase)
@@ -610,7 +787,7 @@ class LessonSessionService {
   toggleSentenceFlag(sessionId: string, studentId: string, sentenceIndex: number):
     { session: LessonSession; sentenceIndex: number; count: number; flagged: boolean } | undefined {
     const session = this.sessions.get(sessionId);
-    if (!session) return undefined;
+    if (!session || session.phaseRestored) return undefined;
 
     if (!session.sentenceFlags) session.sentenceFlags = new Map();
 

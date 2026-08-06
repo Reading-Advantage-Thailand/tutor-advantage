@@ -33,6 +33,7 @@ interface PotionRushGameProps {
   difficulty: "easy" | "normal" | "hard" | "extreme";
   onComplete: (results: PotionRushGameResult) => void;
   autoStart?: boolean;
+  tutorialMode?: boolean;
 }
 
 export default function PotionRushGame({
@@ -40,6 +41,7 @@ export default function PotionRushGame({
   difficulty,
   onComplete,
   autoStart = false,
+  tutorialMode = false,
 }: PotionRushGameProps) {
   const t = useScopedI18n("pages.student.gamesPage.potionRush");
   const router = useRouter();
@@ -108,6 +110,10 @@ export default function PotionRushGame({
 
   useEffect(() => {
     if (gameState === "GAME_OVER") {
+      if (autoStart || tutorialMode) {
+        startGame(vocabList, difficulty);
+        return;
+      }
       exitFullscreen();
       onComplete({
         xp: totalXpEarned,
@@ -119,7 +125,7 @@ export default function PotionRushGame({
         durationMs: Math.round(gameTime * 1000),
       });
     }
-  }, [gameState, totalXpEarned, reputation, difficulty, score, completedSentences, vocabList.length, gameTime, onComplete, exitFullscreen]);
+  }, [gameState, autoStart, tutorialMode, totalXpEarned, reputation, difficulty, score, completedSentences, vocabList, gameTime, onComplete, exitFullscreen, startGame]);
 
   // Mobile-first portrait reference: 390x844
   const VIRTUAL_WIDTH = 390;
@@ -194,12 +200,12 @@ export default function PotionRushGame({
   }, [reset]);
 
   useEffect(() => {
-    if (autoStart && assetsLoaded && !hasStarted && vocabList.length > 0) {
+    if ((autoStart || tutorialMode) && assetsLoaded && !hasStarted && vocabList.length > 0) {
       setHasStarted(true);
       enterFullscreen();
       startGame(vocabList, difficulty);
     }
-  }, [autoStart, assetsLoaded, hasStarted, vocabList, difficulty, enterFullscreen, startGame]);
+  }, [autoStart, tutorialMode, assetsLoaded, hasStarted, vocabList, difficulty, enterFullscreen, startGame]);
 
   if (dimensions.width === 0)
     return <div ref={containerRef} className="w-screen h-dvh bg-slate-950" />;
@@ -212,7 +218,7 @@ export default function PotionRushGame({
       <PotionRushSoundController />
 
       <AnimatePresence>
-        {!hasStarted && (
+        {!hasStarted && !autoStart && !tutorialMode && (
           <GameStartScreen
             gameTitle={t("title")}
             gameSubtitle={t("gameSubtitle")}

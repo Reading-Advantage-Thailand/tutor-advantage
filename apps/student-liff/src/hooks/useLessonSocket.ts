@@ -4,20 +4,24 @@ import { io, Socket } from 'socket.io-client';
 const getSocketUrl = () => {
   const configuredUrl = process.env.NEXT_PUBLIC_LEARNING_SERVICE_URL;
 
-  if (typeof window === 'undefined') {
-    return configuredUrl || 'http://localhost:3002';
+  if (configuredUrl) {
+    if (typeof window === 'undefined') return configuredUrl;
+    try {
+      const configuredHost = new URL(configuredUrl).hostname;
+      const pageHost = window.location.hostname;
+      const isPageOnLocalhost = pageHost === 'localhost' || pageHost === '127.0.0.1';
+      const isConfiguredLocalhost = configuredHost === 'localhost' || configuredHost === '127.0.0.1';
+      return isConfiguredLocalhost && !isPageOnLocalhost ? window.location.origin : configuredUrl;
+    } catch {
+      return configuredUrl;
+    }
   }
 
-  if (!configuredUrl) {
-    return window.location.origin;
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return 'http://localhost:3002';
   }
 
-  const configuredHost = new URL(configuredUrl).hostname;
-  const pageHost = window.location.hostname;
-  const isPageOnLocalhost = pageHost === 'localhost' || pageHost === '127.0.0.1';
-  const isConfiguredLocalhost = configuredHost === 'localhost' || configuredHost === '127.0.0.1';
-
-  return isConfiguredLocalhost && !isPageOnLocalhost ? window.location.origin : configuredUrl;
+  return typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3002';
 };
 
 export interface LessonPair {
@@ -26,7 +30,7 @@ export interface LessonPair {
 }
 
 export type GameCategory = "vocabulary" | "sentence";
-export type GamePhaseStatus = "voting" | "countdown" | "playing" | "results";
+export type GamePhaseStatus = "voting" | "ready" | "teacher_demo" | "tutorial" | "countdown" | "playing" | "results";
 
 export interface GamePhaseResult {
   studentId: string;
@@ -45,6 +49,8 @@ export interface GamePhaseState {
   status: GamePhaseStatus;
   votes: Record<string, string>;
   selectedGameId?: string;
+  tutorialEnabled?: boolean;
+  teacherDemoEnabled?: boolean;
   countdownEndsAt?: number;
   results: Record<string, GamePhaseResult>;
 }
@@ -58,6 +64,9 @@ export interface LessonSessionData {
   phaseSelectedIndices?: Record<number, number>;
   pairs?: LessonPair[] | null;
   gameState?: GamePhaseState | null;
+  phaseRestored?: boolean;
+  resumePhase?: number;
+  flagCounts?: Record<number, number>;
 }
 
 export interface LessonParticipant {
@@ -123,6 +132,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   const [kicked, setKicked] = useState<string | null>(null);
   const [flagCounts, setFlagCounts] = useState<Record<number, number>>({});
   const [languageAnswer, setLanguageAnswer] = useState<{ question: string; answer: string } | null>(null);
+  const [phaseReadOnly, setPhaseReadOnly] = useState(false);
 
   const socketRef = useRef<Socket | null>(null);
   const hasAnsweredRef = useRef(false);
@@ -159,6 +169,8 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
       setPaymentRequired(null);
       setSessionData(data);
       setArticleData(data.articleData ?? null);
+      setPhaseReadOnly(Boolean(data.phaseRestored));
+      setFlagCounts(data.flagCounts || {});
     });
 
     newSocket.on('participants_updated', (data: { participants: LessonParticipant[] }) => {
@@ -196,8 +208,10 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
       setPaymentRequired(data);
     });
 
-    newSocket.on('phase_changed', (data: { phase: number; phaseSelectedIndices?: Record<number, number>; pairs?: LessonPair[] | null; gameState?: GamePhaseState | null }) => {
-      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null } : null);
+    newSocket.on('phase_changed', (data: { phase: number; phaseSelectedIndices?: Record<number, number>; pairs?: LessonPair[] | null; gameState?: GamePhaseState | null; phaseRestored?: boolean; resumePhase?: number; activeSentenceIndex?: number; flagCounts?: Record<number, number> }) => {
+      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null, phaseRestored: data.phaseRestored ?? false, resumePhase: data.resumePhase, activeSentenceIndex: data.activeSentenceIndex, flagCounts: data.flagCounts ?? {} } : null);
+      setPhaseReadOnly(Boolean(data.phaseRestored));
+      setFlagCounts(data.flagCounts || {});
       setHasAnswered(false);
       hasAnsweredRef.current = false;
       setQuestionEnded(false);
@@ -251,6 +265,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   }, [classId, studentId, name, pictureUrl]);
 
   const submitAnswer = (answer: string, question?: string, expectedAnswer?: string) => {
+    if (phaseReadOnly) return;
     if (socketRef.current && sessionData) {
       socketRef.current.emit('submit_answer', { 
         sessionId: sessionData.sessionId, 
@@ -263,6 +278,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   };
 
   const toggleReady = () => {
+    if (phaseReadOnly) return;
     if (socketRef.current && sessionData) {
       socketRef.current.emit('toggle_ready', {
         sessionId: sessionData.sessionId,
@@ -272,6 +288,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   };
 
   const flagSentence = (sentenceIndex: number) => {
+    if (phaseReadOnly) return;
     if (socketRef.current && sessionData) {
       socketRef.current.emit('flag_sentence', {
         sessionId: sessionData.sessionId,
@@ -282,6 +299,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   };
 
   const submitGameVote = (gameId: string) => {
+    if (phaseReadOnly) return;
     if (socketRef.current && sessionData) {
       socketRef.current.emit('submit_game_vote', {
         sessionId: sessionData.sessionId,
@@ -291,6 +309,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   };
 
   const submitGameResult = (result: { gameId: string; score: number; correct?: number; total?: number; durationMs?: number }) => {
+    if (phaseReadOnly) return;
     if (socketRef.current && sessionData) {
       socketRef.current.emit('submit_game_result', {
         sessionId: sessionData.sessionId,
@@ -319,6 +338,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     toggleReady,
     flagSentence,
     submitGameVote,
-    submitGameResult
+    submitGameResult,
+    phaseReadOnly,
   };
 };

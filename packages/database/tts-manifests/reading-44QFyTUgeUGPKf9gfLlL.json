@@ -5,7 +5,7 @@
   "title": "The Creation Myth of Quetzalcoatl and Tezcatlipoca",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-G",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -264,5 +264,5 @@
     }
   ],
   "questions": [],
-  "generatedAt": "2026-08-02T16:52:00.725Z"
+  "generatedAt": "2026-08-04T13:22:57.372Z"
 }

@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef } from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import {
   Terminal, X, RefreshCw, ChevronUp, ChevronDown,
   Copy, Check, AlertTriangle, Loader2, User,
@@ -271,6 +272,17 @@ export function DevToolbar() {
           </div>
 
           <div className="overflow-y-auto flex-1">
+            <div className="px-4 py-3 border-b border-border/50 bg-orange-500/5">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400 mb-2">
+                Authentication
+              </p>
+              <Link
+                href="/api/auth/dev-login?redirect=/dashboard/demo"
+                className="block rounded-lg bg-orange-500 px-3 py-2 text-center text-xs font-bold text-white hover:bg-orange-600"
+              >
+                Login as DEV tutor
+              </Link>
+            </div>
             {/* ── User info ────────────────────────────────────────────── */}
             {user && (
               <div className="px-4 py-3 border-b border-border/50 bg-muted/20">

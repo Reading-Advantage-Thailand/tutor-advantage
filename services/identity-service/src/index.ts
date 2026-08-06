@@ -26,6 +26,7 @@ dotenv.config({
 logger.info(`[Identity] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
 
 import { handleOAuthCallback } from "./controllers/authController";
+import { handleDevLogin } from "./controllers/devAuthController";
 import { getSession } from "./controllers/sessionController";
 import { getGuardianConsentStatus, submitGuardianConsent, submitUserConsent } from "./controllers/consentController";
 import { getCurrentUser, submitVerification, updateCurrentUserProfile } from "./controllers/userController";
@@ -105,6 +106,9 @@ app.get("/version", (_req: Request, res: Response) => {
 
 // OAuth Callback Endpoint
 app.post("/v1/auth/callback", authLimiter, handleOAuthCallback);
+if (process.env.NODE_ENV !== "production" && process.env.ENABLE_DEV_ROUTES === "true") {
+  app.post("/v1/auth/dev", authLimiter, handleDevLogin);
+}
 
 import { getSystemRoles, upsertSystemRole } from "./controllers/roleController";
 

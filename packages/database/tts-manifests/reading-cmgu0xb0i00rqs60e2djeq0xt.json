@@ -5,7 +5,7 @@
   "title": "The City Under Mars",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-G",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1507,5 +1507,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:10:43.501Z"
+  "generatedAt": "2026-08-04T13:10:40.269Z"
 }

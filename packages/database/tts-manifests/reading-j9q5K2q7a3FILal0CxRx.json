@@ -5,7 +5,7 @@
   "title": "Super Funny: The Comical Superhero",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-H",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -1963,5 +1963,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:20:05.566Z"
+  "generatedAt": "2026-08-04T14:11:49.551Z"
 }

@@ -5,7 +5,7 @@
   "title": "The Art of Letters",
   "voice": {
     "provider": "google-cloud-text-to-speech",
-    "voiceId": "en-US-Neural2-C",
+    "voiceId": "en-US-Neural2-G",
     "languageCode": "en-US",
     "speakingRate": 0.9
   },
@@ -3139,5 +3139,5 @@
       "optionFiles": []
     }
   ],
-  "generatedAt": "2026-08-02T17:03:58.459Z"
+  "generatedAt": "2026-08-04T13:55:01.418Z"
 }
