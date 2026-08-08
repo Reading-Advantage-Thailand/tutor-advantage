@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "id": "Reading-Advantage-Thailand--tutor-advantage",
+      "repository": "https://github.com/Reading-Advantage-Thailand/tutor-advantage.git",
+      "revision": "6a97980efafea00b8934b52ee022b4d12a22f1c9",
+      "mode": "standard"
+    }
+  ]
+}
