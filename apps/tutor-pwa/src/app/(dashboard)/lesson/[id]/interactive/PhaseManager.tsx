@@ -39,11 +39,12 @@ import { EnchantedLibraryTeachingGame } from "@/components/lesson/EnchantedLibra
 import { RuneMatchTeachingGame } from "@/components/lesson/RuneMatchTeachingGame";
 import { CastleDefenseTeachingGame } from "@/components/lesson/CastleDefenseTeachingGame";
 import { PotionRushTeachingGame } from "@/components/lesson/PotionRushTeachingGame";
+import { FlashcardTeachingGame } from "@/components/lesson/FlashcardTeachingGame";
 
-const TOTAL_PHASES = 18;
-const VOCAB_GAME_PHASE = 10;
-const SENTENCE_GAME_PHASE = 14;
-const FINAL_LEADERBOARD_PHASE = 18;
+const TOTAL_PHASES = 19;
+const VOCAB_GAME_PHASE = 11;
+const SENTENCE_GAME_PHASE = 15;
+const FINAL_LEADERBOARD_PHASE = 19;
 
 function seededShuffle<T>(array: T[], seedInput: string): T[] {
   const result = [...array];
@@ -547,7 +548,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   const hasPlayableGameForPhase = currentGameCategory
     ? getGamesByCategory(currentGameCategory).some((game) => game.enabled !== false)
     : true;
-  const isInteractivePhase = [7, 8, 9, 11, 12, 13, 15, 16].includes(
+  const isInteractivePhase = [3, 8, 9, 10, 12, 13, 14, 16, 17].includes(
     currentPhase,
   );
   const totalParticipants = participants.length;
@@ -716,7 +717,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   // Confetti effect when results are ready
   React.useEffect(() => {
-    if ([7, 9, 11, 12].includes(currentPhase) && showQuestionResults) {
+    if ([3, 8, 10, 12, 13].includes(currentPhase) && showQuestionResults) {
       confetti({
         particleCount: 150,
         spread: 80,
@@ -1093,7 +1094,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   };
 
   const renderMCQ = () => {
-    const idx = sessionData?.phaseSelectedIndices?.[7] || 0;
+      const idx = sessionData?.phaseSelectedIndices?.[8] || 0;
     const mcqQuestion = articleData?.multipleChoiceQuestions?.[idx];
     const manifestMcqQuestion =
       getManifestQuestionByText(mcqQuestion?.question, "mcq") ||
@@ -1132,7 +1133,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const shuffledOptions = seededShuffle(
       rawOptions,
       (sessionData?.sessionId || "fallback") +
-        "_phase7_" +
+        "_phase8_" +
         mcqQuestion?.question,
     );
 
@@ -1177,7 +1178,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         </div>
       );
 
-    const idx = sessionData?.phaseSelectedIndices?.[9] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
     const targetWord = words[idx] || words[0];
     const question = `${t("lesson.interactive.vocabQuestionPrefix")} "${targetWord.vocabulary || targetWord.word || targetWord.text}" ${t("lesson.interactive.vocabQuestionSuffix")}`;
 
@@ -1244,7 +1245,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         </div>
       );
 
-    const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
     const targetSentence =
       typeof sentences[idx] === "object"
         ? sentences[idx].sentences
@@ -1279,7 +1280,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
     const shuffledOptions = seededShuffle(
       optionsArray,
-      (sessionData?.sessionId || "fallback") + "_phase11_" + targetSentence,
+      (sessionData?.sessionId || "fallback") + "_phase12_" + targetSentence,
     );
 
     const newCorrectIdx = shuffledOptions.indexOf(correctWord);
@@ -1316,7 +1317,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         </div>
       );
 
-    const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
     const targetSentence =
       typeof sentences[idx] === "object"
         ? sentences[idx].sentences
@@ -1329,7 +1330,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       const res = seededShuffle(
         array,
         (sessionData?.sessionId || "fallback") +
-          "_phase12_words_" +
+      "_phase13_words_" +
           targetSentence,
       );
       if (res.join(" ") === array.join(" ")) res.reverse(); // Ensure it is actually different from the original
@@ -1353,7 +1354,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
     const shuffledOptions = seededShuffle(
       optionsArray,
-      (sessionData?.sessionId || "fallback") + "_phase12b_" + targetSentence,
+      (sessionData?.sessionId || "fallback") + "_phase13b_" + targetSentence,
     );
 
     const newCorrectIdx = shuffledOptions.indexOf(targetSentence);
@@ -1970,7 +1971,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   // ── Step 11: Guided Writing (AI-scored) ──
   const renderWriting = () => {
-    const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[14] || 0;
     const writingQuestion =
       articleData?.shortAnswerQuestions?.[idx] ||
       articleData?.shortAnswerQuestions?.[0];
@@ -2234,6 +2235,14 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       </div>
     );
   };
+
+  const renderFlashcards = () => (
+    <FlashcardTeachingGame
+      words={(articleData as any)?.words || []}
+      participants={participants}
+      answered={totalAnswered}
+    />
+  );
 
   const renderGamePhase = (category: "vocabulary" | "sentence") => {
     const games = getGamesByCategory(category);
@@ -2943,82 +2952,84 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   const renderPhaseContent = () => {
     if (currentPhase === 0 && participants.length === 0) return renderLobby();
-    if (currentPhase === 7) return renderMCQ(); // Comprehension Check
-    if (currentPhase === 8) return renderShortAnswer(); // Guided Response
-    if (currentPhase === 9) return renderVocabKahoot(); // Vocabulary Practice
+    if (currentPhase === 3) return renderFlashcards(); // Vocabulary Flashcards
+    if (currentPhase === 8) return renderMCQ(); // Comprehension Check
+    if (currentPhase === 9) return renderShortAnswer(); // Guided Response
+    if (currentPhase === 10) return renderVocabKahoot(); // Vocabulary Practice
     if (currentPhase === VOCAB_GAME_PHASE) return renderGamePhase("vocabulary");
-    if (currentPhase === 11) return renderSentenceFlashcardKahoot(); // Sentence Practice (fill)
-    if (currentPhase === 12) return renderSentenceOrderingKahoot(); // Sentence Practice (order)
-    if (currentPhase === 13) return renderWriting(); // Guided Writing
+    if (currentPhase === 12) return renderSentenceFlashcardKahoot(); // Sentence Practice (fill)
+    if (currentPhase === 13) return renderSentenceOrderingKahoot(); // Sentence Practice (order)
+    if (currentPhase === 14) return renderWriting(); // Guided Writing
     if (currentPhase === SENTENCE_GAME_PHASE) return renderGamePhase("sentence");
-    if (currentPhase === 15) return renderLanguageQuestions(); // Language Questions
-    if (currentPhase === 16) return renderReflection(); // Lesson Reflection
-    if (currentPhase === 17) return renderPairConversation(); // Pair Conversation
+    if (currentPhase === 16) return renderLanguageQuestions(); // Language Questions
+    if (currentPhase === 17) return renderReflection(); // Lesson Reflection
+    if (currentPhase === 18) return renderPairConversation(); // Pair Conversation
     if (currentPhase === FINAL_LEADERBOARD_PHASE) return renderLeaderboard(); // Wrap-up
 
-    // Presentation phases 1-6 (Launch, Vocab, Read+audio, Collect Vocab, Deep Reading, Collect Sentences)
+    // Presentation phases 1-2 and 4-7 (Launch, Vocab, Read+audio, Collect Vocab, Deep Reading, Collect Sentences)
     return renderPresentation();
   };
 
   const phaseGroups = [
     {
       label: t("lesson.interactive.period1"),
-      phases: [1, 2, 3, 4],
+      phases: [1, 2, 3, 4, 5],
       color: "bg-indigo-500",
       lightColor: "bg-indigo-100",
       textColor: "text-indigo-700",
     },
     {
       label: t("lesson.interactive.period2"),
-      phases: [5, 6, 7],
+      phases: [6, 7, 8],
       color: "bg-blue-500",
       lightColor: "bg-blue-100",
       textColor: "text-blue-700",
     },
     {
       label: t("lesson.interactive.period3"),
-      phases: [8, 9, 10, 11, 12, 13, 14],
+      phases: [9, 10, 11, 12, 13, 14, 15],
       color: "bg-purple-500",
       lightColor: "bg-purple-100",
       textColor: "text-purple-700",
     },
     {
       label: t("lesson.interactive.period4"),
-      phases: [15, 16, 17],
+      phases: [16, 17, 18],
       color: "bg-amber-500",
       lightColor: "bg-amber-100",
       textColor: "text-amber-700",
     },
     {
       label: t("lesson.interactive.wrapUp"),
-      phases: [18],
+      phases: [19],
       color: "bg-emerald-500",
       lightColor: "bg-emerald-100",
       textColor: "text-emerald-700",
     },
   ];
 
-  // phase 11 & 12 are both Step 10 (Sentence Practice); game phases live at 10 and 14
+  // phase 12 & 13 are both Step 10 (Sentence Practice); game phases live at 11 and 15
   const phaseNames: Record<number, string> = {
     0: "Lobby",
     1: t("lesson.interactive.step1"),
     2: t("lesson.interactive.step2"),
-    3: t("lesson.interactive.step3"),
-    4: t("lesson.interactive.step4"),
-    5: t("lesson.interactive.step5"),
-    6: t("lesson.interactive.step6"),
-    7: t("lesson.interactive.step7"),
-    8: t("lesson.interactive.step8"),
-    9: t("lesson.interactive.step9"),
-    10: "Vocabulary Game",
-    11: t("lesson.interactive.step10"),
+    3: "Vocabulary Flashcards",
+    4: t("lesson.interactive.step3"),
+    5: t("lesson.interactive.step4"),
+    6: t("lesson.interactive.step5"),
+    7: t("lesson.interactive.step6"),
+    8: t("lesson.interactive.step7"),
+    9: t("lesson.interactive.step8"),
+    10: t("lesson.interactive.step9"),
+    11: "Vocabulary Game",
     12: t("lesson.interactive.step10"),
-    13: t("lesson.interactive.step11"),
-    14: "Sentence Game",
-    15: t("lesson.interactive.step12"),
-    16: t("lesson.interactive.step13"),
-    17: t("lesson.interactive.step14"),
-    18: t("lesson.interactive.wrapUp"),
+    13: t("lesson.interactive.step10"),
+    14: t("lesson.interactive.step11"),
+    15: "Sentence Game",
+    16: t("lesson.interactive.step12"),
+    17: t("lesson.interactive.step13"),
+    18: t("lesson.interactive.step14"),
+    19: t("lesson.interactive.wrapUp"),
   };
 
   const renderPhaseProgressBar = () => {

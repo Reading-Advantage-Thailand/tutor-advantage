@@ -127,8 +127,8 @@ describe("lessonSessionService", () => {
     service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
     service.joinSessionByClassId("class-1", "student-2", "Bob", "socket-b");
 
-    service.setPhase(session.sessionId, 10);
-    expect(session.gameState).toMatchObject({ phase: 10, category: "vocabulary", status: "voting" });
+    service.setPhase(session.sessionId, 11);
+    expect(session.gameState).toMatchObject({ phase: 11, category: "vocabulary", status: "voting" });
 
     service.submitGameVote(session.sessionId, "student-1", "dragon-flight");
     service.submitGameVote(session.sessionId, "student-2", "dragon-flight");
@@ -160,18 +160,18 @@ describe("lessonSessionService", () => {
     expect(second?.allSubmitted).toBe(true);
     expect(second?.gameState.status).toBe("results");
 
-    service.setPhase(session.sessionId, 14);
-    expect(session.gameState).toMatchObject({ phase: 14, category: "sentence", status: "voting" });
+    service.setPhase(session.sessionId, 15);
+    expect(session.gameState).toMatchObject({ phase: 15, category: "sentence", status: "voting" });
     expect(session.gameState?.results).toEqual({});
   });
 
   it("falls back to default games when no one votes", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
 
-    service.setPhase(session.sessionId, 10);
+    service.setPhase(session.sessionId, 11);
     expect(service.lockGameVote(session.sessionId)?.selectedGameId).toBe("dragon-flight");
 
-    service.setPhase(session.sessionId, 14);
+    service.setPhase(session.sessionId, 15);
     expect(service.lockGameVote(session.sessionId)?.selectedGameId).toBe("castle-defense");
   });
 
@@ -179,7 +179,7 @@ describe("lessonSessionService", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
     service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
 
-    service.setPhase(session.sessionId, 10);
+    service.setPhase(session.sessionId, 11);
     expect(service.submitGameVote(session.sessionId, "student-1", "alchemists-synthesis")).toBeNull();
     expect(session.gameState?.votes).toEqual({});
     expect(service.lockGameVote(session.sessionId)?.selectedGameId).toBe("dragon-flight");
@@ -188,7 +188,7 @@ describe("lessonSessionService", () => {
   it("supports an optional teacher demo and tutorial before the countdown", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
 
-    service.setPhase(session.sessionId, 10);
+    service.setPhase(session.sessionId, 11);
     expect(service.lockGameVote(session.sessionId)).toMatchObject({
       status: "ready",
       selectedGameId: "dragon-flight",
@@ -210,7 +210,7 @@ describe("lessonSessionService", () => {
   it("lets the tutor disable tutorial and start the countdown directly", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
 
-    service.setPhase(session.sessionId, 14);
+    service.setPhase(session.sessionId, 15);
     service.lockGameVote(session.sessionId);
     expect(service.startGameIntro(session.sessionId, {
       teacherDemoEnabled: false,

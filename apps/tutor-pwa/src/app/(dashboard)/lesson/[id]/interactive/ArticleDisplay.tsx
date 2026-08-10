@@ -182,8 +182,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   );
   const clipAudioRef = useRef<HTMLAudioElement | null>(null);
   const clipStopRafRef = useRef<number | null>(null);
-  const phase4PassageRef = useRef<HTMLDivElement>(null);
-  const phase4VocabRef = useRef<HTMLDivElement>(null);
+  const phase5PassageRef = useRef<HTMLDivElement>(null);
+  const phase5VocabRef = useRef<HTMLDivElement>(null);
   const stopAtRef = useRef<number>(Infinity); // for single-sentence mode
   const sentenceStopRafRef = useRef<number | null>(null);
   const isSeekingRef = useRef(false); // prevent highlight flickering during seek
@@ -220,7 +220,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     [articleData?.translated_passage],
   );
   const shouldTranslateArticle = Boolean(
-    articleData && [3, 4, 5, 6].includes(phase),
+    articleData && [4, 5, 6, 7].includes(phase),
   );
   const { translations: thaiSentences, loading: translatingArticle } =
     useThaiTranslations(sentenceTexts, {
@@ -249,10 +249,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   }, [isPrimaryContent, sentences]);
 
   useEffect(() => {
-    if (phase !== 4) return;
+    if (phase !== 5) return;
 
-    const passage = phase4PassageRef.current;
-    const vocab = phase4VocabRef.current;
+    const passage = phase5PassageRef.current;
+    const vocab = phase5VocabRef.current;
     if (!passage || !vocab) return;
 
     const syncPanelHeight = () => {
@@ -460,7 +460,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     const granularUrl = getManifestAudioUrl(rawUrl);
 
     setActiveIdx(sentenceIndex);
-    if (phase === 3 && granularUrl && audioRef.current) {
+    if (phase === 4 && granularUrl && audioRef.current) {
       playGranularArticleSentence(sentenceIndex, false);
       return;
     }
@@ -645,7 +645,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   // Exact Primary article-reader tracking model: requestAnimationFrame reads
   // the full-article MP3 timeline and drives sentence and word highlights.
   useEffect(() => {
-    if (!isPrimaryContent || hasGranularSentenceAudio || phase !== 3 || !isPlaying) return;
+    if (!isPrimaryContent || hasGranularSentenceAudio || phase !== 4 || !isPlaying) return;
 
     const track = () => {
       const audio = audioRef.current;
@@ -815,7 +815,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   // Auto-scroll active sentence into view in Step 3 (Read the Article)
   useEffect(() => {
-    if (phase !== 3 || activeIdx < 0) return;
+    if (phase !== 4 || activeIdx < 0) return;
     const el = document.getElementById(`read-sentence-${activeIdx}`);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [activeIdx, phase]);
@@ -823,7 +823,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   const lastReportedIdxRef = useRef(-2);
   useEffect(() => {
     if (
-      phase === 3 &&
+      phase === 4 &&
       onActiveIdxChange &&
       activeIdx !== lastReportedIdxRef.current
     ) {
@@ -834,7 +834,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   // Auto-translate vocab words and English definitions
   useEffect(() => {
-    if (phase !== 2 && phase !== 4) return;
+    if (phase !== 2 && phase !== 5) return;
 
     // 1. Find words missing a short Thai translation (definition.th)
     const missingTh: { index: number; text: string }[] = [];
@@ -1225,7 +1225,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   /* ─── Step 3 (Read the Article) is rendered by the audio reader block below ─── */
 
   /* ─── Phase 4: Vocabulary Focus ──────────────────────────── */
-  if (phase === 4) {
+  if (phase === 5) {
     const vocabWords: string[] = words.map((w: any) =>
       typeof w === "object"
         ? w.vocabulary || w.word || w.text || ""
@@ -1281,7 +1281,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         >
           {/* Passage with highlights */}
           <div
-            ref={phase4PassageRef}
+            ref={phase5PassageRef}
             className={`flex min-h-0 flex-col rounded-2xl border border-border border-t-2 border-t-amber-400 bg-card shadow-lg shadow-slate-900/5 ${
               isFullscreen ? "h-full overflow-hidden p-4" : "overflow-y-auto p-5 sm:p-6"
             }`}
@@ -1314,7 +1314,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
           {/* Vocab sidebar */}
           <div
-            ref={phase4VocabRef}
+            ref={phase5VocabRef}
             className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-purple-500/20 bg-purple-500/[0.06] p-4 shadow-lg shadow-purple-900/5 sm:p-5"
           >
             <h3 className={`flex items-center gap-3 text-sm font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 ${isFullscreen ? "mb-2" : "mb-4"}`}>
@@ -1415,7 +1415,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   }
 
   /* ─── Phase 5: Deep Reading ──────────────────────────────── */
-  if (phase === 5) {
+  if (phase === 6) {
     const comprehensionQuestions =
       articleData.shortAnswerQuestions?.slice(0, 3) || [];
     const getQuestionAudioUrl = (question: string, questionData: any) => {
@@ -1519,7 +1519,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   }
 
   /* ─── Phase 6: Key Sentences ─────────────────────────────── */
-  if (phase === 6) {
+  if (phase === 7) {
     const sentenceColors = [
       "border-green-500/40 bg-green-500/10",
       "border-emerald-500/40 bg-emerald-500/10",
@@ -1748,9 +1748,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   }
 
   /* ─── Step 3: Read the Article + Audio Player + Sentence Flag ───────────────── */
-  if (phase === 3) {
+  if (phase === 4) {
     const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
-    const phase3AudioUrl = hasGranularSentenceAudio
+    const phase4AudioUrl = hasGranularSentenceAudio
       ? granularSentenceUrls.find(Boolean) || null
       : readingAdvantageAudioUrl;
     const fmtTime = (s: number) =>
@@ -1920,10 +1920,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     return (
       <div className="flex-1 flex flex-col w-full bg-muted relative">
         {/* Hidden audio */}
-        {phase3AudioUrl && (
+        {phase4AudioUrl && (
           <audio
             ref={audioRef}
-            src={phase3AudioUrl}
+            src={phase4AudioUrl}
             preload="auto"
             onTimeUpdate={handleTimeUpdate}
             onSeeked={() => {
@@ -2082,7 +2082,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         </div>
 
         {/* Floating mini audio player - bottom-center */}
-        {phase3AudioUrl && (
+        {phase4AudioUrl && (
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2">
             {/* Translation tooltip above player */}
             {activeEnText && (

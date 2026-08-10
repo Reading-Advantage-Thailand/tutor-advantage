@@ -17,10 +17,11 @@ import { toast } from 'sonner';
 import { getGameById, getGamesByCategory, getGameTutorial } from '@/lib/liveLessonGames';
 import { preloadGameAssets } from '@/lib/games/gameAssetPreloader';
 import { Lock } from 'lucide-react';
+import { VocabularyFlashcardPhase } from '@/components/lesson/VocabularyFlashcardPhase';
 
-const VOCAB_GAME_PHASE = 10;
-const SENTENCE_GAME_PHASE = 14;
-const FINAL_LEADERBOARD_PHASE = 18;
+const VOCAB_GAME_PHASE = 11;
+const SENTENCE_GAME_PHASE = 15;
+const FINAL_LEADERBOARD_PHASE = 19;
 
 // ── Phase Config (Look at Screen) ────────────────────────────────────────────
 const PHASE_CONFIG: Record<number, {
@@ -89,7 +90,7 @@ function PlayLessonContent() {
   // Dev-only: preview the Step 14 pair view without a real session.
   // 0 = off, 1 = pair (1 partner), 2 = group of three (2 partners)
   const [devPairPreview, setDevPairPreview] = useState<0 | 1 | 2>(0);
-  const currentPhase = devPairPreview ? 17 : (sessionData?.currentPhase ?? 0);
+  const currentPhase = devPairPreview ? 18 : (sessionData?.currentPhase ?? 0);
   const gameState = sessionData?.gameState ?? null;
   const gameActorId = sessionData?.currentStudentId || studentId;
   const gameVoteForPreload = gameState?.votes?.[gameActorId] || gameState?.votes?.[studentId];
@@ -160,7 +161,7 @@ function PlayLessonContent() {
   }, [sessionData, classId, router]);
 
   useEffect(() => {
-    if (!classId || currentPhase !== 16 || reviewLoaded) return;
+    if (!classId || currentPhase !== 17 || reviewLoaded) return;
 
     studentApi.getClassReview(classId)
       .then((data) => {
@@ -342,25 +343,25 @@ function PlayLessonContent() {
     const currentPhase = sessionData?.currentPhase;
     let questionText = t("interactivePlay.defaultQuestion");
     let expected = "";
-    if (currentPhase === 7) {
-      const idx = sessionData?.phaseSelectedIndices?.[7] || 0;
+    if (currentPhase === 8) {
+      const idx = sessionData?.phaseSelectedIndices?.[8] || 0;
       const q = articleData?.multipleChoiceQuestions?.[idx];
       questionText = q?.question || questionText;
       expected = q?.answer || expected;
-    } else if (currentPhase === 9) {
-      const idx = sessionData?.phaseSelectedIndices?.[9] || 0;
+    } else if (currentPhase === 10) {
+      const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
       const w = articleData?.words?.[idx];
       questionText = `${t("interactivePlay.vocabMeaningPrefix")} "${w?.vocabulary || w?.word || w?.text}" ${t("interactivePlay.vocabMeaningSuffix")}`;
       expected = w?.definition?.th || w?.translation || "";
-    } else if (currentPhase === 11) {
-      const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
+    } else if (currentPhase === 12) {
+      const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
       const s = articleData?.sentences?.[idx];
       const targetStr = typeof s === 'object' ? s.sentences : s;
       const words = String(targetStr).split(' ');
       questionText = words.slice(0, words.length - 1).join(' ') + ' _____';
       expected = words[words.length - 1].replace(/[.,!?]/g, '');
-    } else if (currentPhase === 12) {
-      const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
+    } else if (currentPhase === 13) {
+      const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
       const s = articleData?.sentences?.[idx];
       const targetStr = typeof s === 'object' ? s.sentences : s;
       questionText = `${t("interactivePlay.orderSentencePrefix")} ${idx + 1}`;
@@ -401,7 +402,7 @@ function PlayLessonContent() {
     playSound('submit');
     setIsSubmitting(true);
     setSelectedChoice(writingDraft);
-    const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[14] || 0;
     const prompt = articleData?.shortAnswerQuestions?.[idx]?.question || t("interactivePlay.writingTitle");
     submitAnswer(writingDraft, prompt, '');
   };
@@ -435,7 +436,7 @@ function PlayLessonContent() {
   };
 
   // Step 3 (Read the Article) has its own tap-to-flag UI, so it is not a passive look-at-screen phase
-  const isLookAtScreenPhase = [1, 2, 4, 5, 6].includes(currentPhase);
+  const isLookAtScreenPhase = [1, 2, 5, 6, 7].includes(currentPhase);
   const articleId = articleData?.id;
   const articleTitle = articleData?.title;
   const articleImageUrl = articleId
@@ -573,12 +574,12 @@ function PlayLessonContent() {
             </div>
           </div>
         );
-      case 3:
-      case 5:
-        return renderPassage(false);
       case 4:
+      case 6:
+        return renderPassage(false);
+      case 5:
         return renderPassage(true);
-      case 6: {
+      case 7: {
         if (!sentences.length) return null;
         // Mirror the tutor's key-sentence selection (ArticleDisplay phase 6) so both screens show the same subset.
         const getText = (item: string | { sentences?: string }) => String(typeof item === 'object' ? item.sentences || '' : item || '');
@@ -1148,7 +1149,7 @@ function PlayLessonContent() {
 
         {/* ─── Phase 1–6, 9: Look at Screen ─── */}
         {isLookAtScreenPhase && (() => {
-          const cfg = PHASE_CONFIG[currentPhase];
+          const cfg = PHASE_CONFIG[currentPhase === 5 ? 4 : currentPhase === 6 ? 5 : currentPhase === 7 ? 6 : currentPhase];
           if (!cfg) return null;
           return (
             <div className="phase-enter w-full max-w-sm flex flex-col gap-4 overflow-y-auto max-h-[calc(100dvh-80px)] pb-4">
@@ -1190,6 +1191,20 @@ function PlayLessonContent() {
 
         {/* ─── Step 3: Read the Article + Sentence Flag ─── */}
         {currentPhase === 3 && (
+          <VocabularyFlashcardPhase
+            key={`flashcards-${sessionData?.sessionId || 'preview'}`}
+            words={articleData?.words}
+            hasAnswered={hasAnswered}
+            disabled={phaseReadOnly || hasAnswered || isSubmitting}
+            onComplete={(summary) => {
+              if (phaseReadOnly || hasAnswered || isSubmitting) return;
+              setIsSubmitting(true);
+              submitAnswer(summary, 'Vocabulary flashcards', 'FLASHCARD_COMPLETE');
+            }}
+          />
+        )}
+
+        {currentPhase === 4 && (
           <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
             <div className="bg-teal-500/10 border-2 border-teal-500/30 rounded-3xl p-5 text-center shrink-0">
               <div className="text-4xl mb-2">🎧</div>
@@ -1244,8 +1259,8 @@ function PlayLessonContent() {
         )}
 
         {/* ─── Step 11: Guided Writing (phase 12) ─── */}
-        {currentPhase === 13 && (() => {
-          const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
+        {currentPhase === 14 && (() => {
+          const idx = sessionData?.phaseSelectedIndices?.[14] || 0;
           const prompt = articleData?.shortAnswerQuestions?.[idx]?.question || t("interactivePlay.writingTitle");
           const frames = ['I think that…', 'One reason is…', 'For example,…', 'In conclusion,…'];
           return (
@@ -1324,7 +1339,7 @@ function PlayLessonContent() {
         })()}
 
         {/* ─── Step 12: Language Questions (phase 13) ─── */}
-        {currentPhase === 15 && (
+        {currentPhase === 16 && (
           <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
             {missedQuestion ? (
               renderMissedQuestionSummary()
@@ -1386,7 +1401,7 @@ function PlayLessonContent() {
         )}
 
         {/* ─── Step 13: Lesson Reflection (phase 14) ─── */}
-        {currentPhase === 16 && (
+        {currentPhase === 17 && (
           <LessonReflectionPhase
             hasAnswered={hasAnswered}
             reviewRating={reviewRating}
@@ -1404,7 +1419,7 @@ function PlayLessonContent() {
           />
         )}
 
-        {currentPhase === 17 && (
+        {currentPhase === 18 && (
           <LessonPairPhase
             devPairPreview={devPairPreview}
             sessionData={sessionData}
@@ -1421,7 +1436,7 @@ function PlayLessonContent() {
         )}
 
         {/* ─── MCQ-style Phases: Comprehension(7), Vocab(9), Sentence fill(10), Sentence order(11) ─── */}
-        {[7, 9, 11, 12].includes(currentPhase) && (
+        {[8, 10, 12, 13].includes(currentPhase) && (
           <div className="phase-enter w-full max-w-md flex-1 flex flex-col gap-3 min-h-0">
             {missedQuestion ? (
               renderMissedQuestionSummary()
@@ -1459,21 +1474,21 @@ function PlayLessonContent() {
                   </div>
                   <div className="px-4 py-4 text-center font-bold text-foreground text-sm leading-relaxed">
                     {(() => {
-                      if (currentPhase === 7) {
-                        const idx = sessionData?.phaseSelectedIndices?.[7] || 0;
+                      if (currentPhase === 8) {
+                        const idx = sessionData?.phaseSelectedIndices?.[8] || 0;
                         return articleData?.multipleChoiceQuestions?.[idx]?.question || t("interactivePlay.defaultQuestion");
-                      } else if (currentPhase === 9) {
-                        const idx = sessionData?.phaseSelectedIndices?.[9] || 0;
+                      } else if (currentPhase === 10) {
+                        const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
                         const w = articleData?.words?.[idx];
                         return `${t("interactivePlay.vocabMeaningPrefix")} "${w?.vocabulary || w?.word || w?.text}" ${t("interactivePlay.vocabMeaningSuffix")}`;
-                      } else if (currentPhase === 11) {
-                        const idx = sessionData?.phaseSelectedIndices?.[11] || 0;
+                      } else if (currentPhase === 12) {
+                        const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
                         const s = articleData?.sentences?.[idx];
                         const targetStr = typeof s === 'object' ? s.sentences : s;
                         const words = String(targetStr).split(' ');
                         return `${t("interactivePlay.fillBlankPrefix")} ${words.slice(0, words.length - 1).join(' ')} _____`;
-                      } else if (currentPhase === 12) {
-                        const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
+                      } else if (currentPhase === 13) {
+                        const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
                         return `${t("interactivePlay.orderSentencePrefix")} ${idx + 1}`;
                       }
                       return t("interactivePlay.defaultQuestion");
@@ -1499,7 +1514,7 @@ function PlayLessonContent() {
         )}
 
         {/* ─── Guided Response / Short Answer (Step 8) ─── */}
-        {currentPhase === 8 && (
+        {currentPhase === 9 && (
           <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
 
             {missedQuestion ? (
