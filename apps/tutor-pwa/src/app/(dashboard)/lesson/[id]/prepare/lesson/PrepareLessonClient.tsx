@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, GraduationCap, Sparkles } from "lucide-react";
@@ -35,6 +35,12 @@ type PreparationArticle = ArticleData & {
 };
 
 const TOTAL_PHASES = 19;
+const PREPARATION_MOCK_ANSWER_INTERVAL_MS = 1400;
+const PREPARATION_MOCK_ANSWER_COUNT = 4;
+const PREPARATION_MOCK_WAIT_BUFFER_MS = 800;
+const PREPARATION_MOCK_GAME_RESULT_INTERVAL_MS = 1400;
+const PREPARATION_MOCK_GAME_RESULT_COUNT = 4;
+const preparationStudentStatusPhases = new Set([3, 8, 9, 10, 12, 13, 14, 16, 17]);
 
 const phaseGuidance: Record<number, { title: string; description: string; tip: string }> = {
   1: { title: "เปิดบทเรียน", description: "ใช้หน้าจอจริงเพื่อแนะนำบทความ ตั้งเป้าหมาย และชวนให้นักเรียนคาดเดาเรื่อง", tip: "เริ่มด้วยคำถามสั้น ๆ ก่อนเฉลยเนื้อหา" },
@@ -111,6 +117,12 @@ export default function PrepareLessonClient({
   const [gameState, setGameState] = useState<GamePhaseState | null>(null);
   const [guideOpen, setGuideOpen] = useState(mode === "guided");
   const [guideIndex, setGuideIndex] = useState(0);
+  const [preparationAnswersCompletePhase, setPreparationAnswersCompletePhase] = useState<number | null>(null);
+  const [preparationGameVotesCompletePhase, setPreparationGameVotesCompletePhase] = useState<number | null>(null);
+  const [preparationGameResultsCompletePhase, setPreparationGameResultsCompletePhase] = useState<number | null>(null);
+  const [preparationGuideReadyPhase, setPreparationGuideReadyPhase] = useState<number | null>(null);
+  const [preparationGameResultsReadyFallbackPhase, setPreparationGameResultsReadyFallbackPhase] = useState<number | null>(null);
+  const guideResultTransitionPhaseRef = useRef<number | null>(null);
   const participants: Participant[] = [];
   const allAnsweredData: AnswerData[] = [];
   const phaseSelectedIndices = useMemo(buildInitialPhaseIndices, []);
@@ -141,6 +153,18 @@ export default function PrepareLessonClient({
 
   const syncActiveSentence = useCallback((index: number) => {
     setActiveSentenceIndex(index);
+  }, []);
+
+  const handlePreparationAnswersComplete = useCallback((phase: number) => {
+    setPreparationAnswersCompletePhase(phase);
+  }, []);
+
+  const handlePreparationGameVotesComplete = useCallback((phase: number) => {
+    setPreparationGameVotesCompletePhase(phase);
+  }, []);
+
+  const handlePreparationGameResultsComplete = useCallback((phase: number) => {
+    setPreparationGameResultsCompletePhase(phase);
   }, []);
 
   const startGameVote = useCallback((phase?: number) => {
@@ -267,7 +291,11 @@ export default function PrepareLessonClient({
         { target: "vocabulary-first-audio", title: "ฟังเสียงคำศัพท์ตัวอย่าง", description: "กดปุ่มลำโพงของคำแรกเพื่อฟังการออกเสียงจาก component จริงของ Lesson", tip: "ให้เด็กฟังก่อน แล้วชวนอ่านตาม 1–2 รอบ", action: "click", autoAdvance: true },
       ],
       3: [
-        { target: "phase-3-flashcards", title: "บัตรคำศัพท์", description: "ดูวิธีใช้บัตรคำจริง: เปิดคำศัพท์ อ่านออกเสียง และชวนให้นักเรียนเรียกคืนความหมาย", tip: "เน้นการให้เด็กลองตอบก่อนเปิดเฉลยหรือคำแปล" },
+        { target: "phase-3-flashcards", title: "รู้จักหน้าบัตรคำศัพท์", description: "นี่คือ Flashcard จริงของ Lesson ใช้สำหรับให้เด็กเห็นคำศัพท์ทีละใบและลองนึกความหมายด้วยตัวเอง", tip: "เริ่มจากให้เด็กอ่านคำศัพท์บนหน้าใบการ์ดก่อน" },
+        { target: "phase-3-flashcard-card", title: "กดที่การ์ดเพื่อพลิกดู", description: "คลิกที่ตัวการ์ดเพื่อสลับระหว่างหน้าคำศัพท์และหน้าความหมายได้ทันที", tip: "ให้เด็กลองตอบความหมายก่อน แล้วค่อยพลิกการ์ดดูเฉลย", action: "click", autoAdvance: true },
+        { target: "phase-3-flashcard-reveal", title: "เปิดเฉลยหรือกลับไปดูคำศัพท์", description: "ปุ่มนี้ทำงานเหมือนการพลิกการ์ด ใช้เปิดคำแปลหลังจากให้นักเรียนลองตอบแล้ว หรือกลับไปดูคำศัพท์อีกครั้ง", tip: "อย่าเปิดเฉลยทันที ให้เว้นเวลาคิดสั้น ๆ ก่อน", action: "click", autoAdvance: true },
+        { target: "phase-3-flashcard-progress", title: "ดูความคืบหน้าของ Flashcard", description: "แถบนี้บอกว่ากำลังอยู่การ์ดใบที่เท่าไร และทำไปแล้วกี่เปอร์เซ็นต์ของชุดคำศัพท์", tip: "ใช้บอกนักเรียนว่าตอนนี้อยู่ช่วงไหนของภารกิจ" },
+        { target: "phase-3-flashcard-next", title: "ไปการ์ดใบถัดไป", description: "กดปุ่ม ถัดไป เพื่อเปลี่ยนเป็นคำศัพท์ใบใหม่ ระบบจะกลับไปแสดงหน้าคำศัพท์ให้อัตโนมัติ", tip: "ให้เด็กอ่านคำใหม่ ออกเสียง และเดาความหมายก่อนเปิดเฉลยอีกครั้ง", action: "click", autoAdvance: true },
       ],
       4: [
         { target: "phase-4-reading-passage", title: "บทอ่านจริง", description: "นี่คือพื้นที่ที่นักเรียนอ่านตามและกดเลือกประโยคเพื่อโฟกัสระหว่างการอ่าน", tip: "สาธิตการอ่านหนึ่งย่อหน้า แล้วค่อยให้นักเรียนอ่านต่อ" },
@@ -371,9 +399,29 @@ export default function PrepareLessonClient({
     };
 
     const detailedPhaseSteps = phaseSteps.flatMap((step, stepIndex) => {
-      if (stepIndex % 2 === 1) return [step];
+      if (stepIndex % 2 === 1) {
+        const phase = Math.floor(stepIndex / 2) + 1;
+        const isGamePhase = phase === 11 || phase === 15;
+        const isLastPhase = phase === TOTAL_PHASES;
+        if (isGamePhase && !isLastPhase) {
+          return [
+            step,
+            {
+              target: `phase-${phase}-game`,
+              title: "ดูนักเรียนเล่นเกมจนจบ",
+              description: "หลังจากปิดโหวตแล้ว ให้สังเกตสถานะ LIVE MONITORING นักเรียนจะค่อย ๆ เล่นเสร็จทีละคน ก่อนที่ Lesson จะเปิดหน้าสรุปผล",
+              tip: "ในห้องจริง ใช้ช่วงนี้ดูว่าใครยังเล่นอยู่ และค่อยชวนสะท้อนวิธีคิดหลังผลสรุปแสดง",
+              phase: phase - 1,
+              action: "none" as const,
+              waitForGameResults: true,
+            } satisfies TutorGuideStep,
+          ];
+        }
+        return [step];
+      }
       const phase = Math.floor(stepIndex / 2) + 1;
       const guidance = phaseGuidance[phase];
+      const isGamePhase = phase === 11 || phase === 15;
       const progressStep: TutorGuideStep = {
         target: "phase-progress",
         title: "Phase " + phase + ": " + guidance.title,
@@ -389,9 +437,33 @@ export default function PrepareLessonClient({
           phase: phase - 1,
           action: focus.action || "none",
         }));
+      const studentStatusStep: TutorGuideStep[] = preparationStudentStatusPhases.has(phase)
+        ? [{
+            target: `phase-${phase}-student-status`,
+            title: "ดูสถานะการตอบของนักเรียน",
+            description: "หลังจากสอนหน้าคำถามแล้ว ให้ดูแผงนี้เพื่อเช็กว่านักเรียนกำลังตอบอยู่กี่คนและใครตอบแล้ว",
+            tip: "ในห้องเรียนจริง รอให้นักเรียนตอบครบก่อนค่อยเปิดหน้าสรุปผลและชวนวิเคราะห์คำตอบ",
+            phase: phase - 1,
+            action: "none",
+            waitForMockAnswers: true,
+          }]
+        : [];
+      const gameVoteStatusStep: TutorGuideStep[] = isGamePhase
+        ? [{
+            target: `phase-${phase}-game`,
+            title: "รอผลโหวตจากนักเรียน",
+            description: "ดูการ์ดเกมและจำนวนโหวตที่ทยอยเข้ามา เมื่อ Mock นักเรียนโหวตครบแล้วจึงค่อยปิดโหวตจากแผงควบคุม Lesson",
+            tip: "อย่ากดปิดโหวตระหว่างที่จำนวนโหวตยังไม่ครบ เพราะในห้องจริงควรรอให้นักเรียนเลือกเกมก่อน",
+            phase: phase - 1,
+            action: "none" as const,
+            waitForMockVotes: true,
+          }]
+        : [];
       return [
         progressStep,
         ...focusSteps,
+        ...gameVoteStatusStep,
+        ...studentStatusStep,
         {
           ...step,
           target: "phase-content",
@@ -410,18 +482,148 @@ export default function PrepareLessonClient({
     if (step) setCurrentPhase(step.phase + 1);
   }, [guideIndex, guideOpen, guideSteps]);
 
+  useEffect(() => {
+    setPreparationAnswersCompletePhase(null);
+    setPreparationGameVotesCompletePhase(null);
+    setPreparationGameResultsCompletePhase(null);
+    setPreparationGuideReadyPhase(null);
+    setPreparationGameResultsReadyFallbackPhase(null);
+    guideResultTransitionPhaseRef.current = null;
+  }, [currentPhase]);
+
   const openGuide = () => {
     setGuideIndex(0);
     setCurrentPhase(1);
     setGuideOpen(true);
   };
 
-  const moveGuide = (direction: -1 | 1) => {
+  const moveGuide = useCallback((direction: -1 | 1) => {
     const nextIndex = Math.max(0, Math.min(guideSteps.length - 1, guideIndex + direction));
     setGuideIndex(nextIndex);
-  };
+  }, [guideIndex, guideSteps.length]);
 
   const currentGuideStep = guideSteps[guideIndex];
+  const currentGuidePhase = currentGuideStep ? currentGuideStep.phase + 1 : null;
+  const preparationGuideMockReady = Boolean(
+    currentGuidePhase !== null &&
+    (currentGuideStep?.waitForMockAnswers
+      ? preparationAnswersCompletePhase === currentGuidePhase || preparationGuideReadyPhase === currentGuidePhase
+      : currentGuideStep?.waitForMockVotes
+        ? preparationGameVotesCompletePhase === currentGuidePhase
+        : currentGuideStep?.waitForGameResults
+          ? preparationGameResultsCompletePhase === currentGuidePhase || preparationGameResultsReadyFallbackPhase === currentGuidePhase
+          : false),
+  );
+  const waitingForMockAnswers = Boolean(
+    guideOpen &&
+    currentGuideStep?.waitForMockAnswers &&
+    !preparationGuideMockReady,
+  );
+  const waitingForMockVotes = Boolean(
+    guideOpen &&
+    currentGuideStep?.waitForMockVotes &&
+    !preparationGuideMockReady,
+  );
+  const waitingForGameResults = Boolean(
+    guideOpen &&
+    currentGuideStep?.waitForGameResults &&
+    !preparationGuideMockReady,
+  );
+  const waitingForPreparationMock = waitingForMockAnswers || waitingForMockVotes || waitingForGameResults;
+
+  // Keep a small buffer after each mock sequence so the Lesson surface has
+  // time to render its updated state before the Guide advances.
+  useEffect(() => {
+    if (!guideOpen || currentGuidePhase === null || !currentGuideStep) {
+      return;
+    }
+
+    const isWaitingForAnswers = Boolean(currentGuideStep.waitForMockAnswers);
+    const isWaitingForVotes = Boolean(currentGuideStep.waitForMockVotes);
+    const isWaitingForResults = Boolean(currentGuideStep.waitForGameResults);
+    if (!isWaitingForAnswers && !isWaitingForVotes && !isWaitingForResults) return;
+    // The Lesson owns the vote state. Do not release this step on a timer;
+    // otherwise the Guide can point at a disabled close-vote button while
+    // the last mock votes are still arriving.
+    if (isWaitingForVotes) return;
+
+    const interval = isWaitingForResults
+      ? PREPARATION_MOCK_GAME_RESULT_INTERVAL_MS
+      : PREPARATION_MOCK_ANSWER_INTERVAL_MS;
+    const count = isWaitingForResults
+      ? PREPARATION_MOCK_GAME_RESULT_COUNT
+      : PREPARATION_MOCK_ANSWER_COUNT;
+
+    const timer = window.setTimeout(() => {
+      if (isWaitingForAnswers) {
+        setPreparationGuideReadyPhase(currentGuidePhase);
+      } else {
+        setPreparationGameResultsReadyFallbackPhase(currentGuidePhase);
+      }
+    }, interval * count + PREPARATION_MOCK_WAIT_BUFFER_MS);
+    return () => window.clearTimeout(timer);
+  }, [currentGuidePhase, currentGuideStep, guideOpen]);
+
+  useEffect(() => {
+    const isWaitingStep = Boolean(
+      currentGuideStep?.waitForMockAnswers ||
+      currentGuideStep?.waitForMockVotes ||
+      currentGuideStep?.waitForGameResults,
+    );
+    if (
+      !guideOpen ||
+      !isWaitingStep ||
+      currentGuidePhase === null ||
+      !preparationGuideMockReady
+    ) {
+      return;
+    }
+
+    if (guideResultTransitionPhaseRef.current === guideIndex) return;
+    guideResultTransitionPhaseRef.current = guideIndex;
+
+    const timer = window.setTimeout(() => {
+      setGuideIndex((previousIndex) =>
+        Math.min(guideSteps.length - 1, previousIndex + 1),
+      );
+    }, 900);
+    return () => window.clearTimeout(timer);
+  }, [
+    currentGuidePhase,
+    currentGuideStep?.waitForGameResults,
+    currentGuideStep?.waitForMockAnswers,
+    currentGuideStep?.waitForMockVotes,
+    guideIndex,
+    guideOpen,
+    guideSteps.length,
+    preparationGuideMockReady,
+    waitingForPreparationMock,
+  ]);
+
+  const handleGuideNext = useCallback(() => {
+    if (
+      (currentGuideStep?.waitForMockAnswers || currentGuideStep?.waitForMockVotes || currentGuideStep?.waitForGameResults) &&
+      !preparationGuideMockReady
+    ) {
+      return;
+    }
+
+    if (guideIndex >= guideSteps.length - 1) {
+      setGuideOpen(false);
+      return;
+    }
+    moveGuide(1);
+  }, [
+    currentGuidePhase,
+    currentGuideStep?.waitForGameResults,
+    currentGuideStep?.waitForMockAnswers,
+    currentGuideStep?.waitForMockVotes,
+    guideIndex,
+    guideSteps.length,
+    moveGuide,
+    preparationGuideMockReady,
+    preparationAnswersCompletePhase,
+  ]);
 
   return (
     <div className="min-h-screen w-full bg-background pb-24">
@@ -482,6 +684,10 @@ export default function PrepareLessonClient({
             advanceGameIntro={advanceGameIntro}
             bypassEmptyStudentGuard
             preparationMode
+            onPreparationAnswersComplete={handlePreparationAnswersComplete}
+            onPreparationGameVotesComplete={handlePreparationGameVotesComplete}
+            onPreparationGameResultsComplete={handlePreparationGameResultsComplete}
+            preparationMockAnswersStarted={!guideOpen || Boolean(currentGuideStep?.waitForMockAnswers)}
             onFinishSession={closePreparation}
             guideOverlay={guideOpen && currentGuideStep ? (
               <TutorGuideOverlay
@@ -489,13 +695,8 @@ export default function PrepareLessonClient({
                 stepIndex={guideIndex}
                 totalSteps={guideSteps.length}
                 onPrevious={() => moveGuide(-1)}
-                onNext={() => {
-                  if (guideIndex >= guideSteps.length - 1) {
-                    setGuideOpen(false);
-                    return;
-                  }
-                  moveGuide(1);
-                }}
+                canAdvance={!waitingForPreparationMock}
+                onNext={handleGuideNext}
                 onClose={() => setGuideOpen(false)}
               />
             ) : null}

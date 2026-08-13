@@ -2131,7 +2131,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
         {/* Floating mini audio player - bottom-center */}
         {phase4AudioUrl && (
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2">
+          <div className={`absolute ${isFullscreen ? "bottom-28" : "bottom-6"} left-1/2 z-50 flex -translate-x-1/2 flex-col items-center gap-2`}>
             {/* Translation tooltip above player */}
             {activeEnText && (
               <div

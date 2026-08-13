@@ -12,6 +12,9 @@ export type TutorGuideStep = {
   phase: number;
   action?: "click" | "none";
   autoAdvance?: boolean;
+  waitForMockAnswers?: boolean;
+  waitForMockVotes?: boolean;
+  waitForGameResults?: boolean;
 };
 
 type Rect = { top: number; left: number; width: number; height: number };
@@ -23,6 +26,7 @@ export default function TutorGuideOverlay({
   onPrevious,
   onNext,
   onClose,
+  canAdvance = true,
 }: {
   step: TutorGuideStep;
   stepIndex: number;
@@ -30,6 +34,7 @@ export default function TutorGuideOverlay({
   onPrevious: () => void;
   onNext: () => void;
   onClose: () => void;
+  canAdvance?: boolean;
 }) {
   const [targetRect, setTargetRect] = useState<Rect | null>(null);
   const [actionComplete, setActionComplete] = useState(step.action !== "click");
@@ -152,7 +157,7 @@ export default function TutorGuideOverlay({
     };
   }, [coachmarkHeight, targetRect]);
 
-  const canNext = step.action !== "click" || actionComplete;
+  const canNext = (step.action !== "click" || actionComplete) && canAdvance;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[200]">
@@ -212,6 +217,17 @@ export default function TutorGuideOverlay({
             <div className={`mt-4 flex items-center gap-2 text-xs font-bold ${actionComplete ? "text-emerald-600 dark:text-emerald-400" : "text-violet-600 dark:text-violet-300"}`}>
               {actionComplete ? <Check className="size-4" /> : <MousePointer2 className="size-4 animate-pulse" />}
               {actionComplete ? "ทำขั้นตอนนี้แล้ว ไปต่อได้เลย" : "ลองกดจุดที่มีกรอบไฮไลต์ก่อน"}
+            </div>
+          )}
+
+          {(step.waitForMockAnswers || step.waitForMockVotes || step.waitForGameResults) && !canAdvance && (
+            <div className="mt-4 flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-300">
+              <span className="size-2 animate-pulse rounded-full bg-amber-400" />
+              {step.waitForMockVotes
+                ? "รอ Mock นักเรียนโหวตครบก่อนปิดโหวต..."
+                : step.waitForGameResults
+                  ? "รอ Mock นักเรียนเล่นจบทีละคนก่อนเปิดหน้าสรุปผล..."
+                  : "รอ Mock นักเรียนตอบครบก่อนเปิดหน้าสรุปผล..."}
             </div>
           )}
 
