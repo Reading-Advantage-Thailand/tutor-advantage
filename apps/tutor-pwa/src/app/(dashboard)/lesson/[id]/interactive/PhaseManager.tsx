@@ -119,6 +119,8 @@ interface PhaseManagerProps {
   onFinishSession?: () => void;
   flagCounts?: Record<number, number>;
   bypassEmptyStudentGuard?: boolean;
+  preparationMode?: boolean;
+  guideOverlay?: React.ReactNode;
 }
 
 // ── Live Leaderboard Sidebar (Desktop) ───────────────────────────────────────
@@ -353,6 +355,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   onFinishSession,
   flagCounts,
   bypassEmptyStudentGuard = false,
+  preparationMode = false,
+  guideOverlay,
 }) => {
   const [isChangingPhase, setIsChangingPhase] = React.useState(false);
   const phaseChangePendingRef = React.useRef(false);
@@ -1041,7 +1045,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         {/* Left: Question + Options */}
         <div className="flex-1 flex min-h-0 flex-col items-center justify-center gap-5 min-w-0 overflow-y-auto py-1">
           {/* Question card with indigo gradient header */}
-          <div className="w-full max-w-3xl rounded-3xl overflow-hidden shadow-xl border border-indigo-500/20">
+          <div data-tour-target={preparationMode ? `phase-${currentPhase}-question` : undefined} className="w-full max-w-3xl rounded-3xl overflow-hidden shadow-xl border border-indigo-500/20">
             <div className="bg-gradient-to-r from-indigo-500 to-violet-600 px-8 py-5 flex items-start justify-between gap-4">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 mb-2 opacity-80">
@@ -1058,6 +1062,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 <button
                   type="button"
                   onClick={() => playMcqAudio(audioOverrides?.questionAudioUrl || mcqQuestionObj?.questionAudioUrl || mcqQuestionObj?.audioUrl, audioOverrides?.questionAudioText || question, `mcq/question_${qIdx}.mp3`)}
+                  data-tour-target={preparationMode ? `phase-${currentPhase}-question-audio` : undefined}
                   title={t("lesson.interactive.speakTitle")}
                   className="size-10 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center shrink-0 transition-colors"
                 >
@@ -1068,7 +1073,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           </div>
 
           {/* 2×2 EduPop option tiles */}
-          <div className="grid grid-cols-2 gap-4 w-full max-w-3xl">
+          <div data-tour-target={preparationMode ? `phase-${currentPhase}-options` : undefined} className="grid grid-cols-2 gap-4 w-full max-w-3xl">
             {displayKeys.map((key) => {
               const style = optionStyles[key] || {
                 bg: "bg-slate-500",
@@ -1712,7 +1717,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         {/* Left: Question + Progress */}
         <div className="flex-1 flex flex-col items-center justify-center gap-5 min-w-0 overflow-hidden">
           {/* Question card with glow */}
-          <div className="relative w-full max-w-2xl text-center">
+              <div data-tour-target={preparationMode ? "phase-9-question" : undefined} className="relative w-full max-w-2xl text-center">
             <div className="absolute -inset-3 rounded-3xl bg-gradient-to-r from-violet-500/10 via-blue-500/10 to-violet-500/10 blur-2xl pointer-events-none" />
             <div className="relative bg-card/60 backdrop-blur border border-border/60 rounded-3xl px-8 py-7 shadow-lg">
               <div className="flex items-center justify-center gap-2 mb-3">
@@ -1730,6 +1735,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                   <button
                     type="button"
                     onClick={() => playMcqAudio(shortAnswerAudioUrl, shortAnswerQuestion.question, "")}
+                    data-tour-target={preparationMode ? "phase-9-question-audio" : undefined}
                     title={t("lesson.interactive.speakTitle")}
                     className="size-10 rounded-full bg-violet-500/15 hover:bg-violet-500/25 text-violet-600 dark:text-violet-300 flex items-center justify-center shrink-0 transition-colors"
                   >
@@ -1836,7 +1842,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       : null;
 
     return (
-      <div className="flex-1 flex flex-col items-center max-w-4xl mx-auto w-full relative overflow-y-auto pb-4">
+      <div data-tour-target={preparationMode ? "phase-19-summary" : undefined} className="flex-1 flex flex-col items-center max-w-4xl mx-auto w-full relative overflow-y-auto pb-4">
         {/* Subtle article image watermark */}
         {articleImageUrl && (
           <div
@@ -2046,7 +2052,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     return (
       <div className="flex-1 flex gap-5 overflow-hidden min-h-0">
         <div className="flex-1 flex flex-col items-center justify-center gap-5 min-w-0">
-          <div className="w-full max-w-3xl rounded-3xl overflow-hidden shadow-xl border border-sky-500/20">
+          <div data-tour-target={preparationMode ? "phase-14-writing" : undefined} className="w-full max-w-3xl rounded-3xl overflow-hidden shadow-xl border border-sky-500/20">
             <div className="bg-gradient-to-r from-sky-500 to-blue-600 px-8 py-5 flex flex-col gap-2">
               <div>
                 <span className="text-white/80 text-xs font-bold uppercase tracking-widest">
@@ -2060,6 +2066,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                     <button
                       type="button"
                       onClick={() => playMcqAudio(writingAudioUrl, writingQuestion.question, "")}
+                      data-tour-target={preparationMode ? "phase-14-question-audio" : undefined}
                       title={t("lesson.interactive.speakTitle")}
                       className="size-10 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center shrink-0 transition-colors"
                     >
@@ -2097,7 +2104,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               {t("lesson.interactive.languagePrompt")}
             </p>
           </div>
-          <div className="w-full max-w-2xl bg-card border border-border rounded-2xl p-5">
+          <div data-tour-target={preparationMode ? "phase-16-question-list" : undefined} className="w-full max-w-2xl bg-card border border-border rounded-2xl p-5">
             <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
               {t("lesson.interactive.languageQuestionsHeading")}
             </p>
@@ -2144,7 +2151,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       <span className="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-xs font-bold px-3 py-1 rounded-full border border-amber-500/20">
         {t("lesson.interactive.reflectionTitle")}
       </span>
-      <div className="bg-card border-t-4 border-amber-500 rounded-3xl shadow-xl p-12 max-w-2xl w-full text-center">
+      <div data-tour-target={preparationMode ? "phase-17-reflection" : undefined} className="bg-card border-t-4 border-amber-500 rounded-3xl shadow-xl p-12 max-w-2xl w-full text-center">
         <div className="text-5xl mb-4">📝</div>
         <p className="text-xl font-bold text-foreground leading-snug">
           {t("lesson.interactive.reflectionPrompt")}
@@ -2238,7 +2245,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         )}
 
         <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-5">
+          <div data-tour-target={preparationMode ? "phase-18-starters" : undefined} className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-5">
             <h4 className="text-xs font-black uppercase tracking-widest text-rose-500 mb-3">
               {t("lesson.interactive.pairStartersTitle")}
             </h4>
@@ -2269,12 +2276,14 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   };
 
   const renderFlashcards = () => (
-    <FlashcardTeachingGame
-      words={(articleData as any)?.words || []}
-      participants={participants}
-      answered={totalAnswered}
-      onSpeak={(text, audioUrl) => playMcqAudio(audioUrl || getWordAudioUrl(text), text, "")}
-    />
+    <div data-tour-target={preparationMode ? "phase-3-flashcards" : undefined} className="w-full min-w-0">
+      <FlashcardTeachingGame
+        words={(articleData as any)?.words || []}
+        participants={participants}
+        answered={totalAnswered}
+        onSpeak={(text, audioUrl) => playMcqAudio(audioUrl || getWordAudioUrl(text), text, "")}
+      />
+    </div>
   );
 
   const renderGamePhase = (category: "vocabulary" | "sentence") => {
@@ -2351,7 +2360,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const podiumResults = [rankedResults[1], rankedResults[0], rankedResults[2]].filter(Boolean);
 
     return (
-      <div className="flex-1 flex gap-5 overflow-hidden min-h-0">
+      <div data-tour-target={preparationMode ? `phase-${currentPhase}-game` : undefined} className="flex-1 flex gap-5 overflow-hidden min-h-0">
         <div className={`flex-1 flex min-w-0 flex-col ${isFullscreen ? "min-h-0 overflow-hidden" : "gap-5 overflow-y-auto pr-1"}`}>
           <div className={`rounded-3xl border border-border bg-card p-6 shadow-xl ${isFullscreen ? "hidden" : ""}`}>
             <div className="flex items-start justify-between gap-4">
@@ -3194,7 +3203,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       : "border-border bg-slate-950 text-white shadow-xl";
     const quietButtonClass =
       "inline-flex h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl bg-white/10 px-3 text-xs font-black text-white transition-colors hover:bg-white/20";
-    const isDevelopmentMode = process.env.NODE_ENV === "development";
+    const isDevelopmentMode = process.env.NODE_ENV === "development" && !preparationMode;
 
     if (isToolbarHidden) {
       return (
@@ -3219,6 +3228,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     return (
       <div className={toolbarShellClass}>
         <div
+          data-tour-target={preparationMode ? "lesson-control-panel" : undefined}
           className={`flex flex-col gap-3 rounded-2xl border px-4 py-3 ${toolbarClass}`}
         >
           <div className="grid items-center gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
@@ -3232,19 +3242,29 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 {currentPhase} / {TOTAL_PHASES}
               </p>
               </div>
-              <div className="hidden rounded-xl bg-white/10 px-3 py-2 sm:block">
+              {preparationMode ? (
+                <div className="hidden rounded-xl bg-violet-500/20 px-3 py-2 sm:block">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-violet-200/70">
+                    โหมด
+                  </p>
+                  <p className="text-sm font-black text-violet-100">
+                    เตรียมสอน
+                  </p>
+                </div>
+              ) : <div className="hidden rounded-xl bg-white/10 px-3 py-2 sm:block">
               <p className="text-[10px] font-black uppercase tracking-widest text-white/50">
                 {t("lesson.interactive.studentsLabel")}
               </p>
               <p className="text-sm font-black text-white">
                 {totalParticipants}
               </p>
-              </div>
+              </div>}
             </div>
 
             <div className="flex min-w-0 flex-wrap items-center justify-center gap-3">
             <button
               onClick={toggleFullscreen}
+              data-tour-target={preparationMode ? "fullscreen-button" : undefined}
               title={
                 isFullscreen
                   ? t("lesson.interactive.exitFullscreen")
@@ -3268,13 +3288,15 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               <span className="hidden sm:inline">{t("lesson.interactive.hideToolbar")}</span>
             </button>
 
-            <button
-              onClick={() => requestPhaseChange(0)}
-              disabled={isChangingPhase}
-              className="inline-flex h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl bg-rose-500/15 px-3 text-xs font-black text-rose-100 transition-colors hover:bg-rose-500/25"
-            >
-              {t("lesson.interactive.returnLobby")}
-            </button>
+            {!preparationMode && (
+              <button
+                onClick={() => requestPhaseChange(0)}
+                disabled={isChangingPhase}
+                className="inline-flex h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl bg-rose-500/15 px-3 text-xs font-black text-rose-100 transition-colors hover:bg-rose-500/25"
+              >
+                {t("lesson.interactive.returnLobby")}
+              </button>
+            )}
             </div>
 
           </div>
@@ -3301,6 +3323,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             <button
               onClick={useGamePrimaryAction ? handleGamePrimaryAction : handleNextPhase}
               disabled={useGamePrimaryAction ? isGamePrimaryDisabled : isNextDisabled}
+              data-tour-target={preparationMode ? (useGamePrimaryAction ? "game-primary-button" : "phase-next-button") : undefined}
               className={`inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl px-5 text-sm font-black transition-all ${
                 (useGamePrimaryAction ? isGamePrimaryDisabled : isNextDisabled)
                   ? "cursor-not-allowed bg-white/10 text-white/45"
@@ -3348,6 +3371,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               <button
                 onClick={onFinishSession}
                 disabled={!onFinishSession}
+                data-tour-target={preparationMode ? "preparation-exit-button" : undefined}
                 className="inline-flex h-11 shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-xl bg-white/10 px-3 text-xs font-black text-white transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-45"
               >
                 <Check size={14} />
@@ -3416,6 +3440,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               <button
                 onClick={onFinishSession}
                 disabled={!onFinishSession}
+                data-tour-target={preparationMode ? "preparation-exit-button" : undefined}
                 className="inline-flex h-11 shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-xl bg-white/10 px-3 text-xs font-black text-white transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-45"
               >
                 <Check size={14} />
@@ -3462,8 +3487,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       )}
 
       <div
+        data-tour-target={preparationMode ? "phase-progress" : undefined}
         className={
-          isFullscreen
+          isFullscreen && !preparationMode
             ? "hidden"
             : "shrink-0"
         }
@@ -3475,9 +3501,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           กำลังดู Phase ย้อนหลัง — กดถัดไปเพื่อกลับไปสอนต่อที่ Phase {sessionData?.resumePhase ?? currentPhase + 1}
         </div>
       )}
-      <FitToViewport enabled={isFullscreen}>
-        {renderPhaseContent()}
-      </FitToViewport>
+      <div data-tour-target={preparationMode ? "phase-content" : undefined} className="min-w-0">
+        <FitToViewport enabled={isFullscreen}>
+          {renderPhaseContent()}
+        </FitToViewport>
+      </div>
       {renderControlToolbar()}
       {audioToastText && (
         <div className="fixed bottom-6 right-6 z-[200] flex items-center gap-3 bg-amber-500 text-amber-950 font-bold px-4 py-3 rounded-2xl shadow-2xl border border-amber-300 animate-in fade-in slide-in-from-bottom-5 duration-300">
@@ -3488,6 +3516,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           </div>
         </div>
       )}
+      {guideOverlay}
     </div>
   );
 };

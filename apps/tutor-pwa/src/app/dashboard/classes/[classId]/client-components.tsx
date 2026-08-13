@@ -25,6 +25,7 @@ import {
   List,
   LayoutGrid,
   MoreVertical,
+  GraduationCap,
 } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
@@ -231,6 +232,11 @@ export function ArticleSelector({
     if (selectedCycleId) params.set("cycleId", selectedCycleId);
     if (selectedCycle?.bookId) params.set("bookId", selectedCycle.bookId);
     router.push(`/lesson/${classId}/interactive?${params.toString()}`);
+  };
+
+  const handlePrepareLesson = () => {
+    if (!selectedArticle) return;
+    router.push(`/lesson/${classId}/prepare?articleId=${encodeURIComponent(selectedArticle)}`);
   };
 
   const handleCreateCycle = async () => {
@@ -583,10 +589,19 @@ export function ArticleSelector({
           <p className="text-sm font-medium text-emerald-700">
             แสดงเพิ่มเติม (ทั้งหมด {articles.length} บทความ)
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center justify-end gap-3 sm:gap-4">
             <p className="text-sm font-medium text-emerald-700">
               เลือกแล้ว {selectedArticle ? 1 : 0} บทความ
             </p>
+            <Button
+              variant="outline"
+              className="gap-2 border-violet-500/40 font-bold text-violet-700 hover:bg-violet-500/10 hover:text-violet-800 dark:text-violet-300 dark:hover:text-violet-200"
+              disabled={!selectedArticle || loading || fetching}
+              onClick={handlePrepareLesson}
+            >
+              <GraduationCap className="h-4 w-4" />
+              เตรียมสอน
+            </Button>
             <Button
               className="gap-2 font-bold shadow-md transition-all duration-300 bg-emerald-600 hover:bg-emerald-700 text-white"
               disabled={!selectedArticle || loading || fetching}

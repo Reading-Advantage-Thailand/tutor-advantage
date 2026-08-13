@@ -81,16 +81,15 @@ export default async function ClassesPage() {
         {classesList.map((cls: any, index: number) => { // eslint-disable-line @typescript-eslint/no-explicit-any
           const status = statusLabel[cls.status] || statusLabel.closed;
           return (
-            <Link 
-              key={cls.id} 
-              href={`/dashboard/classes/${cls.id}`} 
+            <div
+              key={cls.id}
               className="group block focus:outline-none rounded-3xl animate-slide-up"
               style={{ animationDelay: `${index * 60}ms` }}
             >
               <Card className="hover-lift press-scale border border-border/40 hover:shadow-lg hover:border-brand-500/20 transition-all duration-300 cursor-pointer overflow-hidden bg-card bg-gradient-to-br from-card via-card to-brand-500/2 dark:to-brand-500/5 rounded-3xl shadow-sm">
                 <CardContent className="p-5 sm:p-6">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex items-start gap-4 min-w-0 flex-1">
+                    <Link href={`/dashboard/classes/${cls.id}`} className="flex items-start gap-4 min-w-0 flex-1">
                       <div className="w-12 h-12 rounded-2xl bg-brand-500/10 flex items-center justify-center shrink-0 border border-brand-500/10 group-hover:bg-brand-500 group-hover:text-white group-hover:border-brand-500 transition-all duration-300">
                         <BookOpen className="h-6 w-6 text-brand-600 dark:text-brand-400 group-hover:text-white transition-colors" />
                       </div>
@@ -117,7 +116,7 @@ export default async function ClassesPage() {
                           </span>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                     <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t border-border/40 sm:border-0 gap-2 shrink-0">
                       <div className="flex items-center gap-2">
                         <Badge variant={status.variant} className={`text-xs px-2.5 py-0.5 sm:hidden ${status.className || ""}`}>
@@ -127,15 +126,17 @@ export default async function ClassesPage() {
                           <DeleteClassButton classId={cls.id} className={cls.name} />
                         )}
                       </div>
-                      <div className="flex items-center gap-1 text-xs font-bold text-primary ml-auto sm:ml-0 group-hover:underline">
-                        {t("tutorClass.classes.manage")}
-                        <ChevronRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                      <div className="flex items-center gap-2 ml-auto sm:ml-0">
+                        <Link href={`/dashboard/classes/${cls.id}`} className="flex items-center gap-1 text-xs font-bold text-primary group-hover:underline">
+                          {t("tutorClass.classes.manage")}
+                          <ChevronRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                        </Link>
                       </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            </Link>
+            </div>
           );
         })}
       </div>

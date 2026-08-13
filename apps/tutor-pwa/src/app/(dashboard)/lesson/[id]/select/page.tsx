@@ -24,6 +24,7 @@ export default function SelectLessonPage() {
   const params = useParams();
   const router = useRouter();
   const classId = params.id as string;
+  const [preparationMode, setPreparationMode] = useState<"explore" | "guided" | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -31,6 +32,12 @@ export default function SelectLessonPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const queryMode = new URLSearchParams(window.location.search).get("mode");
+    const isPreparation = new URLSearchParams(window.location.search).get("prepare") === "1";
+    if (isPreparation) {
+      setPreparationMode(queryMode === "guided" ? "guided" : "explore");
+    }
+
     let isMounted = true;
     async function loadArticles() {
       setLoading(true);
@@ -65,7 +72,9 @@ export default function SelectLessonPage() {
 
     try {
       router.push(
-        `/lesson/${classId}/interactive?articleId=${selectedArticle}`,
+        preparationMode
+          ? `/lesson/${classId}/prepare/lesson?articleId=${encodeURIComponent(selectedArticle)}&mode=${preparationMode}`
+          : `/lesson/${classId}/interactive?articleId=${encodeURIComponent(selectedArticle)}`,
       );
     } catch (err) {
       setError(t("lesson.select.startFailed"));
@@ -86,9 +95,15 @@ export default function SelectLessonPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-xl font-bold text-foreground">{t("lesson.select.title")}</h1>
+          <h1 className="text-xl font-bold text-foreground">
+            {preparationMode ? "เลือกบทความเพื่อเตรียมสอน" : t("lesson.select.title")}
+          </h1>
           <p className="text-sm text-muted-foreground">
-            {t("lesson.select.subtitle")}
+            {preparationMode
+              ? preparationMode === "guided"
+                ? "เลือกบทความที่ต้องการให้ระบบพาเดินแบบมีไกด์"
+                : "เลือกบทความที่ต้องการสำรวจด้วยตัวเอง"
+              : t("lesson.select.subtitle")}
           </p>
         </div>
       </div>
@@ -171,7 +186,7 @@ export default function SelectLessonPage() {
       </div>
 
       <div className="flex gap-3">
-        <Link href={`/dashboard/classes/${classId}`} className="flex-1">
+        <Link href={preparationMode ? `/lesson/${classId}/prepare` : `/dashboard/classes/${classId}`} className="flex-1">
           <Button variant="outline" className="w-full">
             {t("lesson.select.cancel")}
           </Button>
@@ -182,7 +197,11 @@ export default function SelectLessonPage() {
           className="flex-1 gap-2"
         >
           <Play className="h-4 w-4" />
-          {loading ? t("lesson.select.starting") : t("lesson.select.start")}
+          {loading
+            ? t("lesson.select.starting")
+            : preparationMode
+              ? "เปิดการเตรียมสอน"
+              : t("lesson.select.start")}
         </Button>
       </div>
     </div>
