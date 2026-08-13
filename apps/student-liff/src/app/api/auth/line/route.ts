@@ -4,7 +4,7 @@ const IDENTITY_URL =
   process.env.IDENTITY_SERVICE_URL || "http://localhost:3001";
 
 export async function POST(req: NextRequest) {
-  const { idToken, phoneNumber } = await req.json();
+  const { idToken } = await req.json();
 
   if (!idToken || typeof idToken !== "string") {
     return NextResponse.json({ error: "Missing idToken" }, { status: 400 });
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     response = await fetch(`${IDENTITY_URL}/v1/auth/callback`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ provider: "line", code: idToken, phoneNumber }),
+      body: JSON.stringify({ provider: "line", code: idToken }),
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Failed to reach identity service";

@@ -40,7 +40,7 @@ export default function RolesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formEmail, setFormEmail] = useState("");
-  const [formRole, setFormRole] = useState<"ADMIN" | "FINANCE_CHECKER">("FINANCE_CHECKER");
+  const [formRole, setFormRole] = useState<"ADMIN" | "FINANCE_CHECKER" | "TUTOR">("FINANCE_CHECKER");
 
   const loadRoles = async () => {
     try {
@@ -205,13 +205,14 @@ export default function RolesPage() {
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 {t("roles.roleLabel")}
               </label>
-              <Select value={formRole} onValueChange={(v: "ADMIN" | "FINANCE_CHECKER") => setFormRole(v)}>
+              <Select value={formRole} onValueChange={(v: "ADMIN" | "FINANCE_CHECKER" | "TUTOR") => setFormRole(v)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ADMIN">ADMIN</SelectItem>
                   <SelectItem value="FINANCE_CHECKER">FINANCE_CHECKER</SelectItem>
+                  <SelectItem value="TUTOR">TUTOR</SelectItem>
                 </SelectContent>
               </Select>
             </div>

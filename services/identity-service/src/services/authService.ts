@@ -26,13 +26,62 @@ export async function processOAuthLogin(
   name: string,
   picture: string = "",
   sponsorTutorId?: string | null,
-  defaultRole?: string,
-  phoneNumber?: string,
+  verifiedPhoneNumber?: string,
+): Promise<AuthResult> {
+  return processLogin(
+    provider,
+    providerSubject,
+    email,
+    name,
+    picture,
+    sponsorTutorId,
+    verifiedPhoneNumber,
+    "STUDENT",
+  );
+}
+
+/**
+ * Development-only login entry point. Production OAuth never accepts a role;
+ * this separate function keeps the local tutor fixture available without
+ * exposing that capability through the public callback.
+ */
+export async function processDevLogin(
+  providerSubject: string,
+  email: string,
+  name: string,
+  role: "STUDENT" | "TUTOR",
+): Promise<AuthResult> {
+  return processLogin(
+    "dev",
+    providerSubject,
+    email,
+    name,
+    "",
+    null,
+    undefined,
+    role,
+  );
+}
+
+async function processLogin(
+  provider: string,
+  providerSubject: string,
+  email: string | undefined,
+  name: string,
+  picture: string,
+  sponsorTutorId: string | null | undefined,
+  verifiedPhoneNumber: string | undefined,
+  requestedRole: "STUDENT" | "TUTOR",
 ): Promise<AuthResult> {
   let user;
   let roleUpgraded = false;
   const normalizedEmail = (email && email.trim() !== "") ? email.trim() : null;
-  const normalizedPhone = (phoneNumber && phoneNumber.trim() !== "") ? phoneNumber.trim() : null;
+  // Only LINE's verified profile may supply a phone number. No other caller
+  // can use an arbitrary phone number to discover or attach to an account.
+  const normalizedPhone =
+    provider === "line" && verifiedPhoneNumber && verifiedPhoneNumber.trim() !== ""
+      ? verifiedPhoneNumber.trim()
+      : null;
   const invitedSponsorId =
     provider !== "line" && sponsorTutorId
       ? await resolveActiveTutorSponsorId(sponsorTutorId)
@@ -57,7 +106,7 @@ export async function processOAuthLogin(
     const updateData: Record<string, unknown> = {};
     if (picture && !user.profilePictureUrl) updateData.profilePictureUrl = picture;
     if (normalizedPhone && !user.phoneNumber) updateData.phoneNumber = normalizedPhone;
-    if (defaultRole === "TUTOR" && user.role !== "TUTOR") {
+    if (requestedRole === "TUTOR" && user.role !== "TUTOR") {
       updateData.role = "TUTOR";
       roleUpgraded = true;
     }
@@ -81,12 +130,10 @@ export async function processOAuthLogin(
 
     // 3. If still no user, create a new one.
     if (!user) {
-      const role = defaultRole === "TUTOR" ? "TUTOR" : "STUDENT";
-
       // Create user and link identity in one transaction
       user = await prisma.user.create({
         data: {
-          role,
+          role: requestedRole,
           displayName: name,
           email: normalizedEmail,
           phoneNumber: normalizedPhone,

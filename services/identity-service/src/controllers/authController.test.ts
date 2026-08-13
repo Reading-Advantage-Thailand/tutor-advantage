@@ -101,6 +101,8 @@ describe("handleOAuthCallback", () => {
         code: "code-1",
         redirectUri: "https://app.example.com/callback",
         sponsorTutorId: "tutor-1",
+        defaultRole: "TUTOR",
+        phoneNumber: "+66888888888",
       },
     };
     const res = createResponse();
@@ -115,7 +117,6 @@ describe("handleOAuthCallback", () => {
       "Ada",
       "avatar.png",
       "tutor-1",
-      undefined,
       undefined,
     );
     expect(res.status).toHaveBeenCalledWith(200);
@@ -157,6 +158,8 @@ describe("handleOAuthCallback", () => {
       body: {
         provider: "line",
         code: "line-code-token",
+        defaultRole: "TUTOR",
+        phoneNumber: "+66888888888",
       },
     };
     const res = createResponse();
@@ -171,7 +174,6 @@ describe("handleOAuthCallback", () => {
       "Line Student",
       "line-avatar.png",
       null,
-      undefined,
       "+66899999999",
     );
     expect(res.status).toHaveBeenCalledWith(200);

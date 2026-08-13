@@ -198,7 +198,6 @@ describe("processOAuthLogin", () => {
       "Phone Student",
       "avatar.png",
       null,
-      undefined,
       "+66899999999",
     );
 
@@ -248,7 +247,6 @@ describe("processOAuthLogin", () => {
       "Phone Student",
       "avatar.png",
       null,
-      undefined,
       "+66899999999",
     );
 
@@ -266,5 +264,37 @@ describe("processOAuthLogin", () => {
       where: { userId: "user-2" },
       data: { profilePictureUrl: "avatar.png" },
     });
+  });
+
+  it("always creates a student and ignores non-LINE phone input", async () => {
+    prisma.oAuthIdentity.findUnique.mockResolvedValue(null);
+    prisma.user.findUnique.mockResolvedValue(null);
+    prisma.user.create.mockResolvedValue({
+      userId: "student-3",
+      displayName: "New Student",
+      role: "STUDENT",
+      phoneNumber: null,
+      sponsorTutorId: null,
+      sponsorLockedAt: null,
+    });
+
+    const result = await processOAuthLogin(
+      "google",
+      "google-subject-3",
+      undefined,
+      "New Student",
+      "",
+      null,
+      "+66888888888",
+    );
+
+    expect(prisma.user.findFirst).not.toHaveBeenCalled();
+    expect(prisma.user.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        role: "STUDENT",
+        phoneNumber: null,
+      }),
+    });
+    expect(result.user.role).toBe("STUDENT");
   });
 });

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { processOAuthLogin } from "../services/authService";
+import { processDevLogin } from "../services/authService";
 
 const DEV_PROFILES = {
   TUTOR: {
@@ -32,13 +32,10 @@ export async function handleDevLogin(req: Request, res: Response) {
 
   try {
     const profile = DEV_PROFILES[role];
-    const result = await processOAuthLogin(
-      "dev",
+    const result = await processDevLogin(
       profile.subject,
       profile.email,
       profile.name,
-      "",
-      null,
       role,
     );
 

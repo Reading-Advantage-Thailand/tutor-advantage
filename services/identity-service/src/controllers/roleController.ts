@@ -11,7 +11,7 @@ export async function getSystemRoles(req: AuthenticatedRequest, res: Response) {
 
     const users = await prisma.user.findMany({
       where: {
-        role: { in: ["ADMIN", "FINANCE_CHECKER"] }
+        role: { in: ["ADMIN", "FINANCE_CHECKER", "TUTOR"] }
       },
       select: {
         userId: true,
@@ -41,7 +41,7 @@ export async function upsertSystemRole(req: AuthenticatedRequest, res: Response)
     if (!email || typeof email !== "string") {
       return res.status(400).json({ error: { message: "Email is required" } });
     }
-    if (!["ADMIN", "FINANCE_CHECKER"].includes(role)) {
+    if (!["ADMIN", "FINANCE_CHECKER", "TUTOR"].includes(role)) {
       return res.status(400).json({ error: { message: "Invalid role" } });
     }
 

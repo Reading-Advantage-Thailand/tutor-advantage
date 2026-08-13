@@ -42,10 +42,6 @@ paths:
                   type: string
                 codeVerifier:
                   type: string
-                defaultRole:
-                  type: string
-                phoneNumber:
-                  type: string
                 redirectUri:
                   type: string
                   format: uri
