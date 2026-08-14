@@ -516,6 +516,7 @@ model PaymentIntent {
   status          String
   idempotencyKey  String?  @unique @map("idempotency_key")
   providerRef     String?  @map("provider_ref")
+  paidAt          DateTime? @map("paid_at") @db.Timestamptz
   createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt       DateTime @default(now()) @map("updated_at") @db.Timestamptz
 
@@ -523,6 +524,7 @@ model PaymentIntent {
   receipt PaymentReceipt?
 
   @@index([enrollmentPackageId], map: "payment_intents_enrollment_package_id_idx")
+  @@index([status, paidAt], map: "payment_intents_status_paid_at_idx")
   @@map("payment_intents")
   @@schema("finance_mlm")
 }

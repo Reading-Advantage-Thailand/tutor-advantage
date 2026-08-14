@@ -266,6 +266,30 @@ describe("SettlementService", () => {
     });
   });
 
+  it("selects successful payment volume by paidAt instead of updatedAt", async () => {
+    prismaMock.paymentIntent.findMany.mockResolvedValue([]);
+    prismaMock.enrollment.findMany.mockResolvedValue([]);
+    prismaMock.adjustment.findMany.mockResolvedValue([]);
+    prismaMock.user.findMany.mockResolvedValue([]);
+    prismaMock.settlementRun.create.mockResolvedValue({
+      settlementRunId: "run-paid-at",
+      periodMonth: "2026-05",
+      status: "DRAFT",
+    });
+
+    await SettlementService.previewSettlement("2026-05", "admin-1");
+
+    const paymentQuery = prismaMock.paymentIntent.findMany.mock.calls[0][0];
+    expect(paymentQuery.where).toEqual({
+      status: "SUCCESS",
+      paidAt: {
+        gte: expect.any(Date),
+        lte: expect.any(Date),
+      },
+    });
+    expect(paymentQuery.where.updatedAt).toBeUndefined();
+  });
+
   it("replaces payout lines when refreshing an active run", async () => {
     prismaMock.paymentIntent.findMany.mockResolvedValue([]);
     prismaMock.enrollment.findMany.mockResolvedValue([]);

@@ -239,11 +239,30 @@ export async function createPaymentIntent(
         enrollmentId,
         enrollmentPackageId: enrollmentPackageId || null,
         studentUserId: userId,
-        method,
-        status: "PENDING",
+        status: { in: ["PENDING", "SUCCESS"] },
       },
       orderBy: { createdAt: "desc" },
     });
+
+    if (existingIntent?.status === "SUCCESS") {
+      return res.status(409).json({
+        error: {
+          code: "PAYMENT_ALREADY_COMPLETED",
+          message: "This enrollment already has a successful payment",
+          requestId: req.id,
+        },
+      });
+    }
+
+    if (existingIntent && existingIntent.method !== method) {
+      return res.status(409).json({
+        error: {
+          code: "PAYMENT_IN_PROGRESS",
+          message: "Another payment method is already in progress for this enrollment",
+          requestId: req.id,
+        },
+      });
+    }
 
     if (existingIntent?.providerRef) {
       const checkout = await buildCheckoutDetails(existingIntent.providerRef);
@@ -252,6 +271,57 @@ export async function createPaymentIntent(
         intent: serializePaymentIntent(existingIntent),
         checkout,
       });
+    }
+
+    // A pending provider charge may have been marked FAILED by an earlier
+    // webhook. Reconcile it before allowing another intent for this target.
+    const failedIntent = await prisma.paymentIntent.findFirst({
+      where: {
+        enrollmentId,
+        enrollmentPackageId: enrollmentPackageId || null,
+        studentUserId: userId,
+        status: "FAILED",
+        providerRef: { not: null },
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+
+    if (failedIntent?.providerRef) {
+      let charge;
+      try {
+        charge = await retrieveOmiseCharge(failedIntent.providerRef);
+      } catch (error) {
+        logger.warn("Could not reconcile failed payment intent before creating another charge:", error);
+        return res.status(409).json({
+          error: {
+            code: "PAYMENT_IN_PROGRESS",
+            message: "An existing payment is still being reconciled",
+            requestId: req.id,
+          },
+        });
+      }
+
+      if (charge.paid || charge.status === "successful") {
+        const recoveredIntent = await fulfillPaymentIntent(
+          failedIntent.paymentIntentId,
+          charge.id,
+        );
+        return res.status(200).json({
+          message: "Existing payment intent recovered",
+          intent: serializePaymentIntent(recoveredIntent),
+          checkout: buildCheckoutDetailsFromCharge(charge),
+        });
+      }
+
+      if (!isTerminalChargeStatus(charge.status)) {
+        return res.status(409).json({
+          error: {
+            code: "PAYMENT_IN_PROGRESS",
+            message: "An existing payment is still in progress for this enrollment",
+            requestId: req.id,
+          },
+        });
+      }
     }
 
     const intent =
@@ -300,7 +370,7 @@ export async function createPaymentIntent(
       },
     });
 
-    const finalIntent = charge.paid
+    const finalIntent = (charge.paid || charge.status === "successful")
       ? await fulfillPaymentIntent(intent.paymentIntentId, charge.id)
       : charge.status === "failed"
         ? await recordNegativePaymentOutcome(
@@ -318,6 +388,15 @@ export async function createPaymentIntent(
     });
   } catch (error_err) {
     const error = error_err as Error & { code?: string; details?: string; };
+    if (error.code === "P2002") {
+      return res.status(409).json({
+        error: {
+          code: "PAYMENT_IN_PROGRESS",
+          message: "Another payment intent already exists for this enrollment",
+          requestId: req.id,
+        },
+      });
+    }
     logger.error("Create Payment Intent Error:", error);
     return res.status(500).json({
       error: {
@@ -383,16 +462,15 @@ export async function getPaymentStatus(
     let currentIntent = intent;
     let checkout = await buildCheckoutDetails(intent.providerRef);
 
-    if (intent.providerRef && intent.status === "PENDING") {
+    if (intent.providerRef && ["PENDING", "FAILED"].includes(intent.status)) {
       const charge = await retrieveOmiseCharge(intent.providerRef);
       checkout = buildCheckoutDetailsFromCharge(charge);
 
       if (charge.paid || charge.status === "successful") {
         currentIntent = await fulfillPaymentIntent(intent.paymentIntentId, charge.id);
       } else if (
-        charge.status === "failed" ||
-        charge.status === "expired" ||
-        charge.status === "reversed"
+        intent.status === "PENDING" &&
+        ["failed", "expired", "reversed"].includes(charge.status)
       ) {
         currentIntent = await recordNegativePaymentOutcome(
           intent.paymentIntentId,
@@ -520,11 +598,36 @@ async function fulfillPaymentIntent(paymentIntentId: string, providerRef?: strin
       return existingIntent;
     }
 
+    const duplicateSuccess = await tx.paymentIntent.findFirst({
+      where: {
+        enrollmentId: existingIntent.enrollmentId,
+        enrollmentPackageId: existingIntent.enrollmentPackageId,
+        studentUserId: existingIntent.studentUserId,
+        status: "SUCCESS",
+        NOT: { paymentIntentId },
+      },
+    });
+
+    if (duplicateSuccess) {
+      return tx.paymentIntent.update({
+        where: { paymentIntentId },
+        data: { status: "FAILED", providerRef },
+      });
+    }
+
+    const cancelledEnrollment = !existingIntent.enrollmentPackageId
+      ? await tx.enrollment.findUnique({
+          where: { enrollmentId: existingIntent.enrollmentId },
+          select: { status: true, classId: true },
+        })
+      : null;
+
     const intent = await tx.paymentIntent.update({
       where: { paymentIntentId },
       data: {
         status: "SUCCESS",
         providerRef,
+        paidAt: new Date(),
       },
     });
 
@@ -544,6 +647,13 @@ async function fulfillPaymentIntent(paymentIntentId: string, providerRef?: strin
           paymentTransactionId: providerRef,
         },
       });
+
+      if (cancelledEnrollment?.status === "CANCELLED") {
+        await tx.class.update({
+          where: { classId: cancelledEnrollment.classId },
+          data: { enrolledCount: { increment: 1 } },
+        });
+      }
 
       await tx.enrollmentPackage.updateMany({
         where: {
@@ -689,7 +799,10 @@ export async function handleWebhook(req: Request, res: Response) {
     const providerEventId = payload.id || payload.event_id || payload.data?.id;
     const paymentIntentId = payload.data?.metadata?.paymentIntentId;
     const isSuccessful =
-      payload.data?.status === "successful" || payload.status === "successful";
+      payload.data?.status === "successful" ||
+      payload.status === "successful" ||
+      payload.data?.paid === true ||
+      payload.paid === true;
     const isNegativeOutcome =
       eventType.includes("refund") ||
       eventType.includes("chargeback") ||
@@ -707,36 +820,44 @@ export async function handleWebhook(req: Request, res: Response) {
       }
     }
 
-    // 1. Create a durable record of the event arriving
+    if (!paymentIntentId) {
+      // If we don't know what intent this belongs to, just ack it to prevent retries
+      await prisma.paymentEvent.create({
+        data: {
+          paymentIntentId: null,
+          providerEventId: providerEventId || null,
+          eventType,
+          rawPayload: payload,
+          occurredAt: new Date(),
+        },
+      });
+      return res.status(200).send("Event recorded without intent mapping");
+    }
+
+    // Omise webhook payloads are notifications, not the source of truth. A
+    // successful-looking event must be confirmed by retrieving the charge.
+    let verifiedCharge: Awaited<ReturnType<typeof retrieveOmiseCharge>> | null = null;
+    if (isSuccessful && !isNegativeOutcome && providerRef) {
+      verifiedCharge = await retrieveOmiseCharge(providerRef);
+    }
+
+    if (isNegativeOutcome) {
+      await recordNegativePaymentOutcome(paymentIntentId, providerRef, eventType);
+    } else if (verifiedCharge && (verifiedCharge.paid || verifiedCharge.status === "successful")) {
+      await fulfillPaymentIntent(paymentIntentId, verifiedCharge.id);
+    }
+
+    // Record the event after state reconciliation so a failed processing
+    // attempt can be retried safely by the provider.
     await prisma.paymentEvent.create({
       data: {
-        paymentIntentId: paymentIntentId || null,
+        paymentIntentId,
         providerEventId: providerEventId || null,
         eventType,
         rawPayload: payload,
         occurredAt: new Date(),
       },
     });
-
-    if (!paymentIntentId) {
-      // If we don't know what intent this belongs to, just ack it to prevent retries
-      return res.status(200).send("Event recorded without intent mapping");
-    }
-
-    // Wrap the fulfillment operations in a Transaction
-    if (isSuccessful) {
-      await fulfillPaymentIntent(paymentIntentId, providerRef);
-    } else if (isNegativeOutcome) {
-      await recordNegativePaymentOutcome(paymentIntentId, providerRef, eventType);
-    } else {
-      await prisma.paymentIntent.update({
-        where: { paymentIntentId },
-        data: {
-          status: "FAILED",
-          providerRef,
-        },
-      });
-    }
 
     return res.status(200).send("Webhook processed successfully");
   } catch (error_err) {
@@ -892,6 +1013,7 @@ function serializePaymentIntent(intent: {
   status: string;
   idempotencyKey: string | null;
   providerRef: string | null;
+  paidAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }) {
@@ -899,6 +1021,10 @@ function serializePaymentIntent(intent: {
     ...intent,
     amountMinor: Number(intent.amountMinor),
   };
+}
+
+function isTerminalChargeStatus(status: string) {
+  return ["failed", "expired", "reversed"].includes(status);
 }
 
 async function buildCheckoutDetails(providerRef?: string | null) {
@@ -1066,6 +1192,7 @@ export async function getPaymentHistory(req: AuthenticatedRequest, res: Response
         method: payment.method,
         status: payment.status,
         providerRef: payment.providerRef,
+        paidAt: payment.paidAt,
         createdAt: payment.createdAt,
         updatedAt: payment.updatedAt,
         receipt: payment.receipt

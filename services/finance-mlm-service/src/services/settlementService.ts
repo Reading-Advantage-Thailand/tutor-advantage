@@ -99,7 +99,7 @@ export class SettlementService {
     const payments = await prisma.paymentIntent.findMany({
       where: {
         status: "SUCCESS",
-        updatedAt: {
+        paidAt: {
           gte: startOfMonth,
           lte: endOfMonth,
         },
