@@ -3,9 +3,7 @@ import { Stage, Layer, Image as KonvaImage, Group, Rect, Text } from "react-konv
 import { usePotionRushStore, SentenceItem } from "@/store/usePotionRushStore";
 import { withBasePath } from "@/lib/games/basePath";
 import { AnimatePresence, motion, useAnimation } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { Beaker, Hand, MousePointer2, Trash2 } from "lucide-react";
-import { GameEndScreen } from "@/components/games/game/GameEndScreen";
+import { Beaker, Hand, MousePointer2, RotateCcw, Trash2, Trophy } from "lucide-react";
 import { GameStartScreen } from "@/components/games/game/GameStartScreen";
 import { useScopedI18n } from "@/locales/client";
 import { useGameFullscreen } from "@/hooks/useGameFullscreen";
@@ -46,7 +44,6 @@ export default function PotionRushGame({
   manageFullscreen = true,
 }: PotionRushGameProps) {
   const t = useScopedI18n("pages.student.gamesPage.potionRush");
-  const router = useRouter();
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const [hasStarted, setHasStarted] = useState(false);
@@ -103,6 +100,7 @@ export default function PotionRushGame({
 
   const controls = useAnimation();
   const prevReputation = useRef(reputation);
+  const completionReported = useRef(false);
 
   useEffect(() => {
     if (reputation < prevReputation.current) {
@@ -112,23 +110,27 @@ export default function PotionRushGame({
   }, [reputation, controls]);
 
   useEffect(() => {
-    if (gameState === "GAME_OVER") {
-      if (autoStart || tutorialMode) {
-        startGame(vocabList, difficulty);
-        return;
-      }
-      if (manageFullscreen) exitFullscreen();
-      onComplete({
-        xp: totalXpEarned,
-        accuracy: Math.max(0, Math.min(reputation, 100)) / 100,
-        difficulty: difficulty,
-        score: score,
-        correctAnswers: completedSentences,
-        totalAttempts: Math.min(10, vocabList.length || 10),
-        durationMs: Math.round(gameTime * 1000),
-      });
+    if (gameState === "PLAYING") {
+      completionReported.current = false;
+      return;
     }
-  }, [gameState, autoStart, tutorialMode, manageFullscreen, totalXpEarned, reputation, difficulty, score, completedSentences, vocabList, gameTime, onComplete, exitFullscreen, startGame]);
+
+    if (gameState !== "GAME_OVER" || completionReported.current) return;
+
+    // autoStart only controls the initial launch. Restarting here caused the
+    // teaching game to silently begin another 60-second round at time-out.
+    completionReported.current = true;
+    if (manageFullscreen) exitFullscreen();
+    onComplete({
+      xp: totalXpEarned,
+      accuracy: Math.max(0, Math.min(reputation, 100)) / 100,
+      difficulty,
+      score,
+      correctAnswers: completedSentences,
+      totalAttempts: Math.min(10, vocabList.length || 10),
+      durationMs: Math.round(gameTime * 1000),
+    });
+  }, [gameState, manageFullscreen, totalXpEarned, reputation, difficulty, score, completedSentences, vocabList.length, gameTime, onComplete, exitFullscreen]);
 
   // Keep the original portrait scene as the minimum layout, but let a wide
   // viewport grow horizontally instead of leaving most of the screen empty.
@@ -413,30 +415,35 @@ export default function PotionRushGame({
       />
 
       {gameState === "GAME_OVER" && (
-        <GameEndScreen
-          status={reputation <= 0 ? "defeat" : "victory"}
-          title={reputation <= 0 ? t("messages.defeat") : t("messages.victory")}
-          subtitle={
-            reputation <= 0
-              ? t("messages.defeatDesc")
-              : t("messages.victoryDesc")
-          }
-          score={score}
-          xp={totalXpEarned}
-          accuracy={Math.max(0, Math.min(reputation, 100)) / 100}
-          customStats={[
-            {
-              label: t("messages.customersServed"),
-              value: completedSentences,
-            },
-          ]}
-          restartButtonText={t("messages.openAgain")}
-          onRestart={() => {
-            if (manageFullscreen) enterFullscreen();
-            startGame(vocabList, difficulty);
-          }}
-          onExit={() => router.push("/")}
-        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="absolute inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-6 backdrop-blur-md"
+        >
+          <motion.div
+            initial={{ scale: 0.94, y: 12 }}
+            animate={{ scale: 1, y: 0 }}
+            className="w-full max-w-sm rounded-[28px] border border-white/15 bg-slate-950/95 p-8 text-center text-white shadow-2xl"
+          >
+            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-amber-300 text-slate-950 shadow-lg shadow-amber-300/20">
+              <Trophy className="size-8" aria-hidden="true" />
+            </div>
+            <h2 className="mt-6 text-3xl font-black tracking-tight">
+              ได้ {score} คะแนน
+            </h2>
+            <button
+              type="button"
+              onClick={() => {
+                if (manageFullscreen) enterFullscreen();
+                startGame(vocabList, difficulty);
+              }}
+              className="mt-8 flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-emerald-400 px-5 text-base font-black text-emerald-950 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-300 active:scale-[0.98]"
+            >
+              <RotateCcw className="size-5" aria-hidden="true" />
+              เริ่มเล่นใหม่
+            </button>
+          </motion.div>
+        </motion.div>
       )}
         {showControls && <PotionRushControlPanel variant="bottom" />}
       </div>

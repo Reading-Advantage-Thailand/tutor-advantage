@@ -73,6 +73,16 @@ const TUTORIAL_STEPS = [
 
 const wait = (duration: number) => new Promise<void>((resolve) => window.setTimeout(resolve, duration));
 
+const TUTORIAL_TIMING = {
+  readOrder: 3000,
+  dragIngredient: 2200,
+  inspectDroppedWord: 700,
+  inspectCompletedPotion: 2500,
+  dragPotion: 2200,
+  inspectServedPotion: 1200,
+  completionSummary: 4000,
+} as const;
+
 const getTutorialViewportWidth = () => {
   if (typeof window === "undefined") return 390;
   const sidebarWidth = window.innerWidth >= 1024
@@ -91,7 +101,6 @@ export function PotionRushTeachingGame({
     return usable.length >= 1 ? usable : FALLBACK_SENTENCES;
   }, [vocabulary]);
 
-  const [key, setKey] = useState(0);
   const [scriptStep, setScriptStep] = useState(0);
   const [scriptWordIndex, setScriptWordIndex] = useState(0);
   const [scriptMove, setScriptMove] = useState<TutorialMove | null>(null);
@@ -113,6 +122,8 @@ export function PotionRushTeachingGame({
     () => sentences.map((s, idx) => ({ id: `sent-${idx}`, term: s.term, translation: s.translation || "" })),
     [sentences],
   );
+  const formattedVocabRef = useRef(formattedVocab);
+  formattedVocabRef.current = formattedVocab;
 
   useEffect(() => {
     scenePrepared.current = false;
@@ -154,7 +165,7 @@ export function PotionRushTeachingGame({
 
     const run = async () => {
       setScriptStep(0);
-      await wait(1500);
+      await wait(TUTORIAL_TIMING.readOrder);
       if (cancelled) return;
 
       setScriptStep(1);
@@ -167,15 +178,15 @@ export function PotionRushTeachingGame({
           from: { left: `${16 + index * 12}%`, top: "88%" },
           to: { left: "16.7%", top: "49%" },
         });
-        await wait(1250);
+        await wait(TUTORIAL_TIMING.dragIngredient);
         if (cancelled) return;
         setScriptMove(null);
         handleDropIngredient(0, ingredient.id, { x: 64, y: 380 });
-        await wait(360);
+        await wait(TUTORIAL_TIMING.inspectDroppedWord);
       }
 
       setScriptStep(2);
-      await wait(1300);
+      await wait(TUTORIAL_TIMING.inspectCompletedPotion);
       if (cancelled) return;
 
       setScriptStep(3);
@@ -185,16 +196,16 @@ export function PotionRushTeachingGame({
         from: { left: "16.7%", top: "49%" },
         to: { left: "16.7%", top: "24%" },
       });
-      await wait(1400);
+      await wait(TUTORIAL_TIMING.dragPotion);
       if (cancelled) return;
       setScriptMove(null);
       handleServeCustomer(customer.id, 0, { x: 64, y: 250 });
-      await wait(600);
+      await wait(TUTORIAL_TIMING.inspectServedPotion);
       if (cancelled) return;
 
       setScriptDone(true);
       pauseGame();
-      await wait(1200);
+      await wait(TUTORIAL_TIMING.completionSummary);
       if (cancelled) return;
 
       // Loop the walkthrough so the teacher can keep explaining without
@@ -206,15 +217,19 @@ export function PotionRushTeachingGame({
       setScriptStep(0);
       setScriptWordIndex(0);
       setScriptMove(null);
-      prepareTutorialScene(formattedVocab, "normal", getTutorialViewportWidth());
+      prepareTutorialScene(formattedVocabRef.current, "normal", getTutorialViewportWidth());
       setTutorialRound((round) => round + 1);
     };
 
     void run();
     return () => {
       cancelled = true;
+      // Parent lesson renders create a fresh vocabulary array frequently. If
+      // this effect ever has to stop, release the guard so a later PAUSED
+      // scene can resume instead of remaining stuck midway through step 2.
+      scriptStarted.current = false;
     };
-  }, [formattedVocab, gameState, handleDropIngredient, handleServeCustomer, mode, pauseGame, prepareTutorialScene, tutorialRound]);
+  }, [gameState, handleDropIngredient, handleServeCustomer, mode, pauseGame, prepareTutorialScene, tutorialRound]);
 
   // Keep the brief completion card paused before the scripted loop prepares
   // the next deterministic scene.
@@ -224,9 +239,9 @@ export function PotionRushTeachingGame({
 
   const currentStep = TUTORIAL_STEPS[scriptStep];
   const StepIcon = currentStep.icon;
-  const handleComplete = React.useCallback(() => {
-    if (mode !== "tutorial") setKey((k) => k + 1);
-  }, [mode]);
+  // Keep the result screen visible after the teacher's demo instead of
+  // remounting PotionRushGame and starting its timer again.
+  const handleComplete = React.useCallback(() => undefined, []);
   const totalWords = conveyorItems.length + scriptWordIndex;
   const stepDetail = scriptStep === 1 && !scriptDone
     ? `กำลังสาธิตคำที่ ${Math.min(scriptWordIndex + 1, Math.max(totalWords, 1))} / ${Math.max(totalWords, 1)} ตามลำดับ`
@@ -234,7 +249,6 @@ export function PotionRushTeachingGame({
 
   return (
     <div
-      key={key}
       className={`relative isolate w-full overflow-hidden bg-slate-950 text-white ${
         fullscreen ? "h-full min-h-0 flex-1 rounded-none shadow-none" : "min-h-[520px] rounded-[32px] shadow-2xl"
       }`}
@@ -242,7 +256,7 @@ export function PotionRushTeachingGame({
     >
       <PotionRushGame
         vocabList={formattedVocab as any}
-        difficulty="normal"
+        difficulty={mode === "teacher" ? "easy" : "normal"}
         autoStart={true}
         tutorialMode={mode === "tutorial"}
         manageFullscreen={false}
@@ -276,7 +290,12 @@ export function PotionRushTeachingGame({
                 y: "-50%",
               }}
               animate={{ left: scriptMove.to.left, top: scriptMove.to.top }}
-              transition={{ duration: 1.2, ease: "easeInOut" }}
+              transition={{
+                duration: (scriptMove.label === "potion"
+                  ? TUTORIAL_TIMING.dragPotion
+                  : TUTORIAL_TIMING.dragIngredient) / 1000,
+                ease: "easeInOut",
+              }}
             >
               {scriptMove.label === "potion" ? <Beaker size={18} /> : <MousePointer2 size={18} />}
               <span>{scriptMove.word}</span>

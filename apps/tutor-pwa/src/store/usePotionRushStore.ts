@@ -125,6 +125,7 @@ interface PotionRushState {
 // --- Constants ---
 const BELT_Y = 500 // Placeholder
 const INGREDIENT_WIDTH = 80 // Placeholder
+const MIN_INGREDIENT_CENTER_SPACING = 100
 const LEAVE_DURATION = 1.5 // seconds to keep leaving customers on screen
 const EFFECT_DURATIONS: Record<PotionRushEffectType, number> = {
   SPLASH: 0.6,
@@ -165,10 +166,10 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
   
   startGame: (vocabList, difficulty = 'normal') => {
     const diffSettings = {
-      easy: { baseBeltSpeed: 70, spawnRate: 1500 },
-      normal: { baseBeltSpeed: 100, spawnRate: 1000 },
-      hard: { baseBeltSpeed: 130, spawnRate: 800 },
-      extreme: { baseBeltSpeed: 160, spawnRate: 600 },
+      easy: { baseBeltSpeed: 45, spawnRate: 650 },
+      normal: { baseBeltSpeed: 65, spawnRate: 550 },
+      hard: { baseBeltSpeed: 85, spawnRate: 475 },
+      extreme: { baseBeltSpeed: 105, spawnRate: 400 },
     }[difficulty]
 
     set({
@@ -227,10 +228,10 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
       isDragging: false,
     }))
     const diffSettings = {
-      easy: { baseBeltSpeed: 70, spawnRate: 1500 },
-      normal: { baseBeltSpeed: 100, spawnRate: 1000 },
-      hard: { baseBeltSpeed: 130, spawnRate: 800 },
-      extreme: { baseBeltSpeed: 160, spawnRate: 600 },
+      easy: { baseBeltSpeed: 45, spawnRate: 650 },
+      normal: { baseBeltSpeed: 65, spawnRate: 550 },
+      hard: { baseBeltSpeed: 85, spawnRate: 475 },
+      extreme: { baseBeltSpeed: 105, spawnRate: 400 },
     }[difficulty]
 
     set({
@@ -418,7 +419,7 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
       // The wide layout has more conveyor distance. Scale world speed so an
       // ingredient still crosses the visible belt in roughly the same time.
       const widthScale = Math.max(1, screenWidth / 390)
-      const targetSpeed = baseBeltSpeed * widthScale * Math.pow(1.1, completedSentences)
+      const targetSpeed = baseBeltSpeed * widthScale
 
       // Move Conveyor Items & Recycle Words
       const recycledWords: string[] = []
@@ -498,7 +499,12 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
               nextItems.push(newItem)
               nextActiveWordPool.splice(poolIndex, 1)
           }
-          nextIngredientTimer = spawnRate / 1000
+          // Keep consecutive ingredients close without letting their 80px
+          // sprites overlap, including on the responsive wide tutor layout.
+          nextIngredientTimer = Math.max(
+            spawnRate / 1000,
+            MIN_INGREDIENT_CENTER_SPACING / Math.max(targetSpeed, 1),
+          )
       }
 
       // Update activeWordPool with recycled/removed
@@ -628,7 +634,7 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
   },
 
   handleServeCustomer: (customerId, cauldronIndex, servePosition) => {
-     const { customers, cauldrons, activeWordPool, completedSentences, vocabList } = get()
+     const { customers, cauldrons, activeWordPool, completedSentences } = get()
      const cauldron = cauldrons[cauldronIndex]
      
      if (cauldron.state !== 'COMPLETED') return
@@ -661,21 +667,17 @@ export const usePotionRushStore = create<PotionRushState>((set, get) => ({
          shake: false
      }
 
-       // SCORING LOGIC
-       // Score = completed sentences, max 10. Game ends in victory when 10 sentences are completed.
+       // Every successfully served cauldron is worth exactly one point. The
+       // round ends only when its timer or reputation reaches the limit.
        const newCompletedSentences = completedSentences + 1
-       const newScore = Math.min(10, newCompletedSentences)
-       const maxSentencesTarget = Math.min(10, vocabList.length || 10)
-       const isWin = newCompletedSentences >= maxSentencesTarget
 
        // Update state
        set({ 
            customers: nextCustomers, 
            cauldrons: nextCauldrons, 
-           score: newScore,
+           score: newCompletedSentences,
            activeWordPool: nextActiveWordPool,
-           completedSentences: newCompletedSentences,
-           gameState: isWin ? 'GAME_OVER' : 'PLAYING'
+           completedSentences: newCompletedSentences
        })
        
        // Calculate XP based on updated state
