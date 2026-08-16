@@ -24,6 +24,8 @@ type PotionRushTeachingGameProps = {
   vocabulary: PotionRushTeachingSentence[];
   mode: TeachingMode;
   fullscreen?: boolean;
+  teacherDemoCompleted?: boolean;
+  onTeacherDemoComplete?: () => void;
 };
 
 type TutorialMove = {
@@ -95,6 +97,8 @@ export function PotionRushTeachingGame({
   vocabulary,
   mode,
   fullscreen = false,
+  teacherDemoCompleted = false,
+  onTeacherDemoComplete,
 }: PotionRushTeachingGameProps) {
   const sentences = React.useMemo(() => {
     const usable = vocabulary.filter((s) => s.term);
@@ -241,7 +245,9 @@ export function PotionRushTeachingGame({
   const StepIcon = currentStep.icon;
   // Keep the result screen visible after the teacher's demo instead of
   // remounting PotionRushGame and starting its timer again.
-  const handleComplete = React.useCallback(() => undefined, []);
+  const handleComplete = React.useCallback(() => {
+    if (mode === "teacher") onTeacherDemoComplete?.();
+  }, [mode, onTeacherDemoComplete]);
   const totalWords = conveyorItems.length + scriptWordIndex;
   const stepDetail = scriptStep === 1 && !scriptDone
     ? `กำลังสาธิตคำที่ ${Math.min(scriptWordIndex + 1, Math.max(totalWords, 1))} / ${Math.max(totalWords, 1)} ตามลำดับ`
@@ -257,7 +263,10 @@ export function PotionRushTeachingGame({
       <PotionRushGame
         vocabList={formattedVocab as any}
         difficulty={mode === "teacher" ? "easy" : "normal"}
-        autoStart={true}
+        // PhaseManager owns the completion latch. If this game subtree is
+        // mounted again while the teacher is still on the same demo, do not
+        // silently launch a second timed round.
+        autoStart={mode === "tutorial" || !teacherDemoCompleted}
         tutorialMode={mode === "tutorial"}
         manageFullscreen={false}
         onComplete={handleComplete}

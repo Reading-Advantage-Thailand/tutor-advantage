@@ -71,4 +71,19 @@ describe("Potion Rush tutor balancing", () => {
     expect(state.conveyorItems).toHaveLength(1);
     expect(state.timeToNextIngredientSpawn).toBeCloseTo(100 / 45, 5);
   });
+
+  it("keeps a finished round at game over when later animation frames arrive", () => {
+    usePotionRushStore.getState().startGame([sentence], "easy");
+    usePotionRushStore.setState({ gameTime: 59.9 });
+
+    usePotionRushStore.getState().tick(0.2, 390);
+    const finishedTime = usePotionRushStore.getState().gameTime;
+
+    expect(usePotionRushStore.getState().gameState).toBe("GAME_OVER");
+
+    usePotionRushStore.getState().tick(1, 390);
+
+    expect(usePotionRushStore.getState().gameState).toBe("GAME_OVER");
+    expect(usePotionRushStore.getState().gameTime).toBe(finishedTime);
+  });
 });

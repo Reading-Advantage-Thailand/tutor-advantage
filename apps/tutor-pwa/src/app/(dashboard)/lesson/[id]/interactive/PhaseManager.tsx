@@ -361,6 +361,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   const [tutorialEnabled, setTutorialEnabled] = React.useState(true);
   const [teacherDemoEnabled, setTeacherDemoEnabled] = React.useState(false);
   const [teacherDemoAnswer, setTeacherDemoAnswer] = React.useState<string | null>(null);
+  const [potionRushTeacherDemoCompleted, setPotionRushTeacherDemoCompleted] = React.useState(false);
   // Dev-only: mock participant list to preview the wrap-up leaderboard
   const [mockLeaderboard, setMockLeaderboard] = React.useState<any[] | null>(null);
   // Dev-only: mock pairs to preview the Step 14 pair-conversation layout
@@ -533,6 +534,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     setTutorialEnabled(true);
     setTeacherDemoEnabled(false);
     setTeacherDemoAnswer(null);
+    setPotionRushTeacherDemoCompleted(false);
   }, [currentPhase]);
 
   const isGamePhase = [VOCAB_GAME_PHASE, SENTENCE_GAME_PHASE].includes(currentPhase);
@@ -2401,7 +2403,13 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           )}
 
           {!showScoreRanking && gameState?.status === "teacher_demo" && selectedGame?.id === "potion-rush" && (
-            <PotionRushTeachingGame vocabulary={gameSentences} mode="teacher" fullscreen={isFullscreen} />
+            <PotionRushTeachingGame
+              vocabulary={gameSentences}
+              mode="teacher"
+              fullscreen={isFullscreen}
+              teacherDemoCompleted={potionRushTeacherDemoCompleted}
+              onTeacherDemoComplete={() => setPotionRushTeacherDemoCompleted(true)}
+            />
           )}
 
           {!showScoreRanking && gameState?.status === "teacher_demo" && !["dragon-flight", "wizard-vs-zombie", "enchanted-library", "rune-match", "castle-defense", "potion-rush"].includes(selectedGame?.id || "") && (
