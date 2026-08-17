@@ -233,6 +233,7 @@ model Enrollment {
   referralToken        String?  @map("referral_token")
   status               String
   paymentTransactionId String?  @map("payment_transaction_id")
+  paymentExpiresAt     DateTime? @map("payment_expires_at") @db.Timestamptz
   createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt            DateTime @default(now()) @map("updated_at") @db.Timestamptz
 
@@ -240,6 +241,7 @@ model Enrollment {
   packageAccess EnrollmentPackage[]
 
   @@index([studentUserId, status])
+  @@index([classId, status, paymentExpiresAt])
   @@map("enrollments")
   @@schema("learning")
 }

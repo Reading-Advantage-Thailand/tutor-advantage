@@ -9,7 +9,12 @@ import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import crypto from "crypto";
 import { buildReceiptNumber } from "../services/taxService";
-import { getIctMonthWindow } from "../services/commissionService";
+import {
+  calculateCommissionInfo,
+  calculatePayoutMinor,
+  formatIctPeriodMonth,
+  getIctMonthWindow,
+} from "../services/commissionService";
 import {
   createOmiseCharge,
   downloadOmiseDocumentAsDataUri,
@@ -908,6 +913,7 @@ async function recordNegativePaymentOutcome(
         },
         data: {
           status: "CANCELLED",
+          paymentExpiresAt: null,
         },
       });
 
@@ -938,35 +944,153 @@ async function recordNegativePaymentOutcome(
 
   if (!enrollment) throw new Error("ENROLLMENT_NOT_FOUND");
 
-  const nextPeriodMonth = getNextIctPeriodMonth();
-  let run = await prisma.settlementRun.findFirst({
-    where: { periodMonth: nextPeriodMonth, status: "DRAFT" },
+  const reason = `${eventType}:${paymentIntentId}`;
+  const existingAdjustment = await prisma.adjustment.findFirst({
+    where: { reason },
+    select: { adjustmentId: true },
+  });
+  if (existingAdjustment) return intent;
+
+  const paidPeriodMonth = formatIctPeriodMonth(intent.paidAt ?? intent.updatedAt);
+  const paidRun = await prisma.settlementRun.findFirst({
+    where: { periodMonth: paidPeriodMonth },
     orderBy: { createdAt: "desc" },
   });
 
+  // If the original period is still being prepared, keep the clawback there.
+  // Once it has been approved, put the reclaim in the next period instead.
+  const clawbackPeriodMonth =
+    paidRun?.status === "APPROVED"
+      ? getFollowingIctPeriodMonth(paidPeriodMonth)
+      : paidPeriodMonth;
+  let run =
+    paidRun && paidPeriodMonth === clawbackPeriodMonth &&
+    ["DRAFT", "SUBMITTED", "ADJUSTMENT_PENDING"].includes(paidRun.status)
+      ? paidRun
+      : await prisma.settlementRun.findFirst({
+          where: { periodMonth: clawbackPeriodMonth, status: "DRAFT" },
+          orderBy: { createdAt: "desc" },
+        });
+
   if (!run) {
+    run = await prisma.settlementRun.findFirst({
+      where: { periodMonth: clawbackPeriodMonth, status: "ADJUSTMENT_PENDING" },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  if (!run) {
+    // This holder is deliberately not DRAFT: it lets the monthly scheduler
+    // create the real preview instead of treating a webhook as a settlement.
     run = await prisma.settlementRun.create({
       data: {
-        periodMonth: nextPeriodMonth,
-        status: "DRAFT",
+        periodMonth: clawbackPeriodMonth,
+        status: "ADJUSTMENT_PENDING",
         createdBy: "payment-webhook",
         previewPayload: {},
       },
     });
   }
 
-  await prisma.adjustment.create({
-    data: {
-      settlementRunId: run.settlementRunId,
-      tutorUserId: enrollment.class.tutorUserId,
-      amountMinor: -intent.amountMinor,
-      reason: `${eventType}:${paymentIntentId}`,
-      status: "APPROVED",
-      createdBy: "payment-webhook",
-    },
+  const amountMinor = await estimatePaidCommissionMinor(
+    intent,
+    enrollment.class.tutorUserId,
+    paidPeriodMonth,
+  );
+
+  await prisma.$transaction(async (tx) => {
+    if (intent.enrollmentPackageId) {
+      await tx.enrollmentPackage.updateMany({
+        where: {
+          enrollmentPackageId: intent.enrollmentPackageId,
+          status: { in: ["PENDING_PAYMENT", "ACTIVE"] },
+        },
+        data: { status: "REVOKED" },
+      });
+    } else {
+      const revoked = await tx.enrollment.updateMany({
+        where: {
+          enrollmentId: intent.enrollmentId,
+          status: { in: ["PENDING_PAYMENT", "ACTIVE"] },
+        },
+        data: {
+          status: "REVOKED",
+          paymentExpiresAt: null,
+        },
+      });
+
+      await tx.enrollmentPackage.updateMany({
+        where: {
+          enrollmentId: intent.enrollmentId,
+          status: { in: ["PENDING_PAYMENT", "ACTIVE"] },
+        },
+        data: { status: "REVOKED" },
+      });
+
+      if (revoked.count > 0) {
+        const currentEnrollment = await tx.enrollment.findUnique({
+          where: { enrollmentId: intent.enrollmentId },
+          select: { classId: true, class: { select: { enrolledCount: true } } },
+        });
+        if (currentEnrollment) {
+          await tx.class.update({
+            where: { classId: currentEnrollment.classId },
+            data: {
+              enrolledCount: Math.max(
+                0,
+                currentEnrollment.class.enrolledCount - revoked.count,
+              ),
+            },
+          });
+        }
+      }
+    }
+
+    await tx.adjustment.create({
+      data: {
+        settlementRunId: run!.settlementRunId,
+        tutorUserId: enrollment.class.tutorUserId,
+        amountMinor: -amountMinor,
+        reason,
+        status: "PENDING",
+        createdBy: "payment-webhook",
+      },
+    });
   });
 
   return intent;
+}
+
+async function estimatePaidCommissionMinor(
+  intent: { amountMinor: bigint },
+  tutorUserId: string,
+  paidPeriodMonth: string,
+) {
+  const settledRun = await prisma.settlementRun.findFirst({
+    where: { periodMonth: paidPeriodMonth, status: "APPROVED" },
+    orderBy: { createdAt: "desc" },
+  });
+
+  if (settledRun) {
+    const payoutLine = await prisma.payoutLine.findFirst({
+      where: {
+        settlementRunId: settledRun.settlementRunId,
+        tutorUserId,
+      },
+      select: { payoutAmountMinor: true, grossVolumeMinor: true },
+    });
+
+    if (payoutLine && payoutLine.grossVolumeMinor > 0n) {
+      return (payoutLine.payoutAmountMinor * intent.amountMinor) /
+        payoutLine.grossVolumeMinor;
+    }
+  }
+
+  // Before the period is settled there is no paid payout line to reference.
+  // Use the standalone commission for this charge as a conservative estimate;
+  // importantly, never claw back the student's full class price.
+  const rate = calculateCommissionInfo(Number(intent.amountMinor) / 100).rate;
+  return calculatePayoutMinor(intent.amountMinor, rate);
 }
 
 function verifyWebhookSignature(req: Request, payload: unknown) {
@@ -1125,14 +1249,15 @@ export async function getPaymentGuardianGate(userId: string) {
   } as const;
 }
 
-function getNextIctPeriodMonth() {
-  const now = new Date();
-  const ictDate = new Date(now.getTime() + 7 * 60 * 60 * 1000);
-  const year = ictDate.getUTCFullYear();
-  const month = ictDate.getUTCMonth() + 1;
-  const next = month === 12 ? { year: year + 1, month: 1 } : { year, month: month + 1 };
-  getIctMonthWindow(`${next.year}-${String(next.month).padStart(2, "0")}`);
-  return `${next.year}-${String(next.month).padStart(2, "0")}`;
+function getFollowingIctPeriodMonth(periodMonth: string) {
+  const [yearText, monthText] = periodMonth.split("-");
+  const year = Number(yearText);
+  const month = Number(monthText);
+  const nextYear = month === 12 ? year + 1 : year;
+  const nextMonth = month === 12 ? 1 : month + 1;
+  const nextPeriod = `${nextYear}-${String(nextMonth).padStart(2, "0")}`;
+  getIctMonthWindow(nextPeriod);
+  return nextPeriod;
 }
 
 export async function getPaymentHistory(req: AuthenticatedRequest, res: Response) {

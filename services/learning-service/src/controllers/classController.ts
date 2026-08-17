@@ -10,6 +10,9 @@ import { redeemCoupon, validateCoupon, CouponError } from "../services/couponSer
 
 // Maximum live-teaching hours allowed per class schedule
 const MAX_CLASS_HOURS = 22;
+// Keep a server-side ceiling on tutor-controlled prices. This is a fraud
+// guard; the client must not be able to turn a class into an unbounded charge.
+const MAX_PACKAGE_PRICE_SATANG = 1_000_000;
 // Keep the legacy code until every deployed database has run the Reading rename migration.
 const AVAILABLE_BOOK_CODES = new Set(["Reading 3.1", "Origins 3.1"]);
 // Adventure 1 is being held back while Primary starts from Origins 2.
@@ -145,12 +148,14 @@ export async function createClass(req: AuthenticatedRequest, res: Response) {
 
     if (
       !isCouponClass && !isDemoClass &&
-      (!Number.isSafeInteger(packagePriceSatang) || packagePriceSatang <= 0)
+      (!Number.isSafeInteger(packagePriceSatang) ||
+        packagePriceSatang <= 0 ||
+        packagePriceSatang > MAX_PACKAGE_PRICE_SATANG)
     ) {
       return res.status(400).json({
         error: {
           code: "INVALID_PRICE",
-          message: "packagePriceSatang must be a positive safe integer",
+          message: `packagePriceSatang must be between 1 and ${MAX_PACKAGE_PRICE_SATANG}`,
           requestId: req.id,
         },
       });
@@ -1556,9 +1561,17 @@ export async function createClassBookCycle(req: AuthenticatedRequest, res: Respo
       });
     }
 
-    if (!bookId || !Number.isInteger(packagePriceSatang) || packagePriceSatang <= 0) {
+    if (
+      !bookId ||
+      !Number.isSafeInteger(packagePriceSatang) ||
+      packagePriceSatang <= 0 ||
+      packagePriceSatang > MAX_PACKAGE_PRICE_SATANG
+    ) {
       return res.status(400).json({
-        error: { code: "BAD_REQUEST", message: "bookId and positive packagePriceSatang are required" },
+        error: {
+          code: "INVALID_PRICE",
+          message: `packagePriceSatang must be between 1 and ${MAX_PACKAGE_PRICE_SATANG}`,
+        },
       });
     }
 

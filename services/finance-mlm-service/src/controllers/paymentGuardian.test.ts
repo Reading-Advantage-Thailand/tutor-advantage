@@ -22,6 +22,7 @@ const prisma = vi.hoisted(() => ({
   paymentReceipt: { upsert: vi.fn() },
   enrollment: {
     findUnique: vi.fn(),
+    updateMany: vi.fn(),
     update: vi.fn(),
   },
   enrollmentPackage: {
@@ -30,6 +31,15 @@ const prisma = vi.hoisted(() => ({
     updateMany: vi.fn(),
   },
   class: { update: vi.fn() },
+  adjustment: {
+    findFirst: vi.fn(),
+    create: vi.fn(),
+  },
+  settlementRun: {
+    findFirst: vi.fn(),
+    create: vi.fn(),
+  },
+  payoutLine: { findFirst: vi.fn() },
   $transaction: vi.fn(),
 }));
 
@@ -265,5 +275,64 @@ describe("payment intent reconciliation", () => {
       error: expect.objectContaining({ code: "PAYMENT_ALREADY_COMPLETED" }),
     });
     expect(omiseMock.createOmiseCharge).not.toHaveBeenCalled();
+  });
+
+  it("revokes access and creates a pending commission-only clawback for a refund", async () => {
+    prisma.paymentIntent.findUnique.mockResolvedValue(
+      paymentIntent({ status: "SUCCESS", paidAt: new Date("2026-08-13T00:00:00.000Z") }),
+    );
+    prisma.enrollment.findUnique.mockResolvedValue({
+      enrollmentId: "enrollment-1",
+      classId: "class-1",
+      class: { tutorUserId: "tutor-1", enrolledCount: 1 },
+    });
+    prisma.adjustment.findFirst.mockResolvedValue(null);
+    prisma.settlementRun.findFirst.mockResolvedValue(null);
+    prisma.settlementRun.create.mockResolvedValue({
+      settlementRunId: "run-adjustment-holder",
+      status: "ADJUSTMENT_PENDING",
+      periodMonth: "2026-08",
+    });
+    prisma.enrollment.updateMany.mockResolvedValue({ count: 1 });
+    prisma.enrollmentPackage.updateMany.mockResolvedValue({ count: 1 });
+    prisma.class.update.mockResolvedValue({});
+    prisma.adjustment.create.mockResolvedValue({ adjustmentId: "adj-1" });
+
+    const req = {
+      body: {
+        type: "charge.refunded",
+        id: "evt-refund-1",
+        data: {
+          id: "chrg_1",
+          status: "failed",
+          metadata: { paymentIntentId: "pi-1" },
+        },
+      },
+      headers: {},
+    };
+    const res = response();
+
+    await handleWebhook(req as never, res as never);
+
+    expect(prisma.enrollment.updateMany).toHaveBeenCalledWith({
+      where: {
+        enrollmentId: "enrollment-1",
+        status: { in: ["PENDING_PAYMENT", "ACTIVE"] },
+      },
+      data: { status: "REVOKED", paymentExpiresAt: null },
+    });
+    expect(prisma.adjustment.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        settlementRunId: "run-adjustment-holder",
+        tutorUserId: "tutor-1",
+        status: "PENDING",
+      }),
+    });
+    const adjustment = prisma.adjustment.create.mock.calls[0][0].data;
+    expect(typeof adjustment.amountMinor).toBe("bigint");
+    expect(adjustment.amountMinor).toBeLessThan(0n);
+    expect(adjustment.amountMinor).toBeGreaterThan(-250000n);
+    expect(prisma.paymentEvent.create).toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(200);
   });
 });

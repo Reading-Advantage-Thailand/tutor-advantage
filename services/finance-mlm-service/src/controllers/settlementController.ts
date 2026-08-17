@@ -40,9 +40,15 @@ export async function autoRunSettlement(req: Request, res: Response) {
   const periodMonth = getPreviousIctMonth();
 
   try {
-    // Idempotency: skip if a run already exists for this period
+    // A refund webhook may create an ADJUSTMENT_PENDING holder run. It must
+    // not prevent the scheduler from creating the actual monthly preview.
+    // Completed runs remain idempotent and active maker/checker runs remain
+    // protected from duplicate previews.
     const existing = await prisma.settlementRun.findFirst({
-      where: { periodMonth },
+      where: {
+        periodMonth,
+        status: { in: ["DRAFT", "SUBMITTED", "APPROVED"] },
+      },
       orderBy: { createdAt: "desc" },
     });
     if (existing) {

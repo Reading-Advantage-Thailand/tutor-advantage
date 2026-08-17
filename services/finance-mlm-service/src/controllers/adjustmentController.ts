@@ -19,6 +19,25 @@ function normalizeAmountSatang(value: unknown) {
   throw new Error("INVALID_AMOUNT");
 }
 
+async function refreshSettlementAfterAdjustment(settlementRunId: string) {
+  const sourceRun = await prisma.settlementRun.findUnique({
+    where: { settlementRunId },
+    select: { settlementRunId: true, periodMonth: true, status: true },
+  });
+
+  let targetRunId = settlementRunId;
+  if (sourceRun?.status === "ADJUSTMENT_PENDING") {
+    const activeRun = await prisma.settlementRun.findFirst({
+      where: { periodMonth: sourceRun.periodMonth, status: "DRAFT" },
+      orderBy: { createdAt: "desc" },
+      select: { settlementRunId: true },
+    });
+    targetRunId = activeRun?.settlementRunId ?? settlementRunId;
+  }
+
+  return SettlementService.refreshSettlementRun(targetRunId);
+}
+
 /**
  * GET /v1/adjustments?status=PENDING
  */
@@ -274,7 +293,7 @@ export async function approveAdjustment(
       where: { adjustmentId },
       data: { status: "APPROVED", approvedBy: userId, approvedAt: now },
     });
-    const settlementRefresh = await SettlementService.refreshSettlementRun(
+    const settlementRefresh = await refreshSettlementAfterAdjustment(
       adj.settlementRunId,
     );
 
@@ -357,7 +376,7 @@ export async function rejectAdjustment(
       where: { adjustmentId },
       data: { status: "REJECTED", approvedBy: userId, approvedAt: now },
     });
-    const settlementRefresh = await SettlementService.refreshSettlementRun(
+    const settlementRefresh = await refreshSettlementAfterAdjustment(
       adj.settlementRunId,
     );
 

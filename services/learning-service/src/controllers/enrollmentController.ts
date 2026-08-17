@@ -3,6 +3,89 @@ import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 
+const PAYMENT_HOLD_MINUTES = 30;
+
+async function lockClassForEnrollment(tx: any, classId: string, now = new Date()) {
+  // Capacity checks and the enrolledCount update must observe the same locked
+  // class row. Otherwise two concurrent enrollments can both pass the check.
+  await tx.$queryRaw`
+    SELECT "class_id"
+    FROM "learning"."classes"
+    WHERE "class_id" = CAST(${classId} AS uuid)
+    FOR UPDATE
+  `;
+
+  const cls = await tx.class.findUnique({ where: { classId } });
+  if (!cls) return null;
+
+  const expired = await tx.enrollment.findMany({
+    where: {
+      classId,
+      status: "PENDING_PAYMENT",
+      paymentExpiresAt: { lte: now },
+    },
+    select: { enrollmentId: true },
+  });
+
+  if (expired.length === 0) return cls;
+
+  const expiredIds = expired.map((enrollment: { enrollmentId: string }) => enrollment.enrollmentId);
+  const cancelled = await tx.enrollment.updateMany({
+    where: {
+      enrollmentId: { in: expiredIds },
+      status: "PENDING_PAYMENT",
+    },
+    data: { status: "CANCELLED", paymentExpiresAt: null },
+  });
+
+  await tx.enrollmentPackage.updateMany({
+    where: {
+      enrollmentId: { in: expiredIds },
+      status: "PENDING_PAYMENT",
+    },
+    data: { status: "CANCELLED" },
+  });
+
+  if (cancelled.count === 0) return cls;
+
+  const enrolledCount = Math.max(0, cls.enrolledCount - cancelled.count);
+  return tx.class.update({
+    where: { classId },
+    data: { enrolledCount },
+  });
+}
+
+async function findAvailableClass(
+  tx: any,
+  tutorUserId: string,
+  excludedClassId?: string,
+) {
+  const candidates = await tx.class.findMany({
+    where: {
+      tutorUserId,
+      status: "OPEN",
+      isDemo: false,
+      ...(excludedClassId ? { classId: { not: excludedClassId } } : {}),
+    },
+    orderBy: { createdAt: "asc" },
+  });
+
+  for (const candidate of candidates) {
+    const locked = await lockClassForEnrollment(tx, candidate.classId);
+    if (locked && locked.status === "OPEN" && locked.enrolledCount < locked.capacity) {
+      return locked;
+    }
+  }
+
+  return null;
+}
+
+function paymentExpiresAt(status: string) {
+  return status === "PENDING_PAYMENT"
+    ? new Date(Date.now() + PAYMENT_HOLD_MINUTES * 60 * 1000)
+    : null;
+}
+
 async function ensureEnrollmentPackageForClass(tx: any, enrollment: any) {
   const cls = await tx.class.findUnique({
     where: { classId: enrollment.classId },
@@ -137,6 +220,16 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
       });
     }
 
+    if (req.user?.role !== "STUDENT") {
+      return res.status(403).json({
+        error: {
+          code: "STUDENT_ROLE_REQUIRED",
+          message: "Only student accounts can enroll in classes",
+          requestId: req.id,
+        },
+      });
+    }
+
     if (!referralToken) {
       return res.status(400).json({
         error: {
@@ -162,7 +255,13 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
       }
 
       // 2. Check primary class capacity
-      const primaryClass = referral.class;
+      const primaryClass = await lockClassForEnrollment(tx, referral.class.classId);
+      if (!primaryClass) throw new Error("REFERRAL_INVALID");
+
+      if (primaryClass.tutorUserId === userId) {
+        throw new Error("TUTOR_CANNOT_ENROLL_OWN_CLASS");
+      }
+
       let targetClass = primaryClass;
       let targetClassId = primaryClass.classId;
 
@@ -187,17 +286,10 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
 
         // Fallback Logic: Primary class is full or closed. Look for another OPEN
         // class by the same tutor (excluding demo rooms).
-        const availableClasses = await tx.class.findMany({
-          where: {
-            tutorUserId: primaryClass.tutorUserId,
-            status: "OPEN",
-            isDemo: false,
-          },
-        });
-
-        // Find the first class that still has capacity
-        const fallbackClass = availableClasses.find(
-          (c) => c.enrolledCount < c.capacity,
+        const fallbackClass = await findAvailableClass(
+          tx,
+          primaryClass.tutorUserId,
+          primaryClass.classId,
         );
 
         if (!fallbackClass) {
@@ -249,6 +341,7 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
           studentUserId: userId,
           referralToken: referral.token,
           status: enrollmentStatus,
+          paymentExpiresAt: paymentExpiresAt(enrollmentStatus),
         },
       });
 
@@ -313,6 +406,16 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
       });
     }
 
+    if (error.message === "TUTOR_CANNOT_ENROLL_OWN_CLASS") {
+      return res.status(403).json({
+        error: {
+          code: "TUTOR_CANNOT_ENROLL_OWN_CLASS",
+          message: "Tutors cannot enroll in their own classes",
+          requestId: req.id,
+        },
+      });
+    }
+
     logger.error("Enrollment Error:", error);
     return res.status(500).json({
       error: {
@@ -339,6 +442,16 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
       });
     }
 
+    if (req.user?.role !== "STUDENT") {
+      return res.status(403).json({
+        error: {
+          code: "STUDENT_ROLE_REQUIRED",
+          message: "Only student accounts can enroll in classes",
+          requestId: req.id,
+        },
+      });
+    }
+
     if (!classId) {
       return res.status(400).json({
         error: { code: "BAD_REQUEST", message: "classId is required", requestId: req.id }
@@ -347,11 +460,13 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
 
     const result = await prisma.$transaction(async (tx) => {
       // 1. Check if class exists and has capacity
-      const targetClass = await tx.class.findUnique({
-        where: { classId }
-      });
+      const targetClass = await lockClassForEnrollment(tx, classId);
 
       if (!targetClass) throw new Error("CLASS_NOT_FOUND");
+
+      if (targetClass.tutorUserId === userId) {
+        throw new Error("TUTOR_CANNOT_ENROLL_OWN_CLASS");
+      }
 
       // Expired demo classes no longer accept enrollments.
       if (
@@ -378,15 +493,11 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
           );
         }
 
-        const fallbackClass = await tx.class.findFirst({
-          where: {
-            tutorUserId: targetClass.tutorUserId,
-            status: "OPEN",
-            isDemo: false,
-            enrolledCount: { lt: tx.class.fields.capacity },
-          },
-          orderBy: { createdAt: "asc" },
-        });
+        const fallbackClass = await findAvailableClass(
+          tx,
+          targetClass.tutorUserId,
+          targetClass.classId,
+        );
 
         if (!fallbackClass) {
           throw new Error(
@@ -434,6 +545,7 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
           studentUserId: userId,
           status: isFreeClass ? "ACTIVE" : "PENDING_PAYMENT",
           referralToken: referralToken ?? null,
+          paymentExpiresAt: paymentExpiresAt(isFreeClass ? "ACTIVE" : "PENDING_PAYMENT"),
         }
       });
 
@@ -467,6 +579,15 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
       error.message === "DEMO_EXPIRED"
         ? "BAD_REQUEST"
         : "INTERNAL_SERVER_ERROR";
+    if (error.message === "TUTOR_CANNOT_ENROLL_OWN_CLASS") {
+      return res.status(403).json({
+        error: {
+          code: "TUTOR_CANNOT_ENROLL_OWN_CLASS",
+          message: "Tutors cannot enroll in their own classes",
+          requestId: req.id,
+        },
+      });
+    }
     return res.status(code === "BAD_REQUEST" ? 400 : 500).json({
       error: {
         code,
