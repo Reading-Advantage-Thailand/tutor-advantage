@@ -3,6 +3,24 @@ import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { logger } from "@tutor-advantage/shared-config";
 
+const USER_SETTING_KEYS = new Set([
+  "lineNotification",
+  "locale",
+  "theme",
+  "soundEnabled",
+  "soundEffects",
+]);
+const NOTIFICATION_SETTING_KEYS = new Set([
+  "notifyClassReminders",
+  "notifyScoreUpdates",
+  "notifyLineMessages",
+  "notifyMarketing",
+]);
+
+function isSettingsObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 export async function getSettings(req: AuthenticatedRequest, res: Response) {
   try {
     const userId = req.user?.userId;
@@ -62,10 +80,61 @@ export async function updateSettings(req: AuthenticatedRequest, res: Response) {
     }
 
     const newSettings = req.body;
-    if (typeof newSettings !== "object" || Array.isArray(newSettings) || newSettings === null) {
+    if (!isSettingsObject(newSettings)) {
       return res.status(400).json({
         error: { code: "BAD_REQUEST", message: "Settings payload must be an object" },
       });
+    }
+
+    const unsupportedKeys = Object.keys(newSettings).filter(
+      (key) => key !== "notifications" && !USER_SETTING_KEYS.has(key),
+    );
+    if (unsupportedKeys.length > 0) {
+      return res.status(400).json({
+        error: {
+          code: "PROTECTED_SETTING",
+          message: "Only user preference settings can be updated",
+          fields: unsupportedKeys,
+        },
+      });
+    }
+
+    const newNotifications = newSettings.notifications;
+    if (newNotifications !== undefined) {
+      if (!isSettingsObject(newNotifications)) {
+        return res.status(400).json({
+          error: {
+            code: "BAD_REQUEST",
+            message: "notifications must be an object",
+          },
+        });
+      }
+
+      const unsupportedNotificationKeys = Object.keys(newNotifications).filter(
+        (key) => !NOTIFICATION_SETTING_KEYS.has(key),
+      );
+      if (unsupportedNotificationKeys.length > 0) {
+        return res.status(400).json({
+          error: {
+            code: "PROTECTED_SETTING",
+            message: "Unsupported notification setting",
+            fields: unsupportedNotificationKeys,
+          },
+        });
+      }
+
+      const invalidNotificationValues = Object.entries(newNotifications)
+        .filter(([, value]) => typeof value !== "boolean")
+        .map(([key]) => key);
+      if (invalidNotificationValues.length > 0) {
+        return res.status(400).json({
+          error: {
+            code: "BAD_REQUEST",
+            message: "Notification settings must be boolean",
+            fields: invalidNotificationValues,
+          },
+        });
+      }
     }
 
     // Find current user to get existing settings
@@ -80,7 +149,9 @@ export async function updateSettings(req: AuthenticatedRequest, res: Response) {
       });
     }
 
-    const currentSettings = (currentUser.settings as Record<string, any>) || {};
+    const currentSettings = isSettingsObject(currentUser.settings)
+      ? currentUser.settings
+      : {};
     
     // Merge notification preferences independently so a partial update does not
     // erase preferences written by another screen or an older client.
@@ -90,23 +161,20 @@ export async function updateSettings(req: AuthenticatedRequest, res: Response) {
       !Array.isArray(currentSettings.notifications)
         ? currentSettings.notifications as Record<string, unknown>
         : {};
-    const newNotifications =
-      newSettings.notifications &&
-      typeof newSettings.notifications === "object" &&
-      !Array.isArray(newSettings.notifications)
-        ? newSettings.notifications as Record<string, unknown>
-        : null;
+    const notificationUpdates = newNotifications as Record<string, unknown> | undefined;
     const mergedSettings = {
       ...currentSettings,
-      ...newSettings,
-      ...(newNotifications
-        ? { notifications: { ...currentNotifications, ...newNotifications } }
+      ...Object.fromEntries(
+        Object.entries(newSettings).filter(([key]) => key !== "notifications"),
+      ),
+      ...(notificationUpdates
+        ? { notifications: { ...currentNotifications, ...notificationUpdates } }
         : {}),
     };
 
     const updatedUser = await prisma.user.update({
       where: { userId },
-      data: { settings: mergedSettings },
+      data: { settings: mergedSettings as Record<string, any> },
       select: { settings: true },
     });
 

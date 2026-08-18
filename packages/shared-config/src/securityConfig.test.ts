@@ -27,6 +27,16 @@ describe("security configuration", () => {
         JWT_SECRET: "a-secure-production-secret-with-32-characters",
       }),
     ).toThrow("ALLOWED_ORIGINS");
+    expect(() =>
+      assertProductionSecurityConfig(
+        {
+          NODE_ENV: "production",
+          JWT_SECRET: "a-secure-production-secret-with-32-characters",
+          ALLOWED_ORIGINS: "https://app.example.com",
+        },
+        { requireOmiseWebhookSecret: true },
+      ),
+    ).toThrow("OMISE_WEBHOOK_SECRET");
   });
 
   it("enables dev routes only through an explicit non-production flag", () => {

@@ -745,6 +745,16 @@ export async function approveSettlement(
       });
     }
 
+    if (error.message === "SETTLEMENT_ALREADY_CLAIMED") {
+      return res.status(409).json({
+        error: {
+          code: "SETTLEMENT_ALREADY_CLAIMED",
+          message: "Another approval request is already processing this settlement",
+          requestId: req.id,
+        },
+      });
+    }
+
     if (error.message === "OMISE_PAYOUTS_NOT_CONFIGURED") {
       return res.status(502).json({
         error: {
@@ -877,6 +887,17 @@ export async function retryPayoutTransfer(
         error: {
           code: "OMISE_TRANSFER_FAILED",
           message: "Omise transfer failed",
+          details: error.message,
+          requestId: req.id,
+        },
+      });
+    }
+
+    if (error.message?.startsWith("TRANSFER_RECOVERY_FAILED:")) {
+      return res.status(502).json({
+        error: {
+          code: "TRANSFER_RECOVERY_FAILED",
+          message: "Could not reconcile the existing Omise transfer before retrying",
           details: error.message,
           requestId: req.id,
         },

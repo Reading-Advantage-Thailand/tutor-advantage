@@ -14,6 +14,7 @@ const prismaMock = vi.hoisted(() => ({
     create: vi.fn(),
     findUnique: vi.fn(),
     update: vi.fn(),
+    updateMany: vi.fn(),
   },
   auditEvent: {
     create: vi.fn(),
@@ -129,5 +130,51 @@ describe("adjustmentController", () => {
 
     expect(res.statusCode).toBe(403);
     expect(prismaMock.adjustment.update).not.toHaveBeenCalled();
+  });
+
+  it("does not approve a rejected adjustment", async () => {
+    prismaMock.adjustment.findUnique.mockResolvedValue({
+      adjustmentId: "adj-1",
+      createdBy: "maker-1",
+      status: "REJECTED",
+      amountMinor: 1000n,
+      settlementRunId: "run-1",
+    });
+    prismaMock.adjustment.updateMany.mockResolvedValue({ count: 0 });
+
+    const req = {
+      id: "req-1",
+      user: { userId: "checker-1", role: "FINANCE_CHECKER" },
+      params: { adjustmentId: "adj-1" },
+    } as any;
+    const res = createResponse() as any;
+
+    await approveAdjustment(req, res);
+
+    expect(res.statusCode).toBe(409);
+    expect(prismaMock.auditEvent.create).not.toHaveBeenCalled();
+  });
+
+  it("does not reject an approved adjustment", async () => {
+    prismaMock.adjustment.findUnique.mockResolvedValue({
+      adjustmentId: "adj-1",
+      createdBy: "maker-1",
+      status: "APPROVED",
+      amountMinor: 1000n,
+      settlementRunId: "run-1",
+    });
+    prismaMock.adjustment.updateMany.mockResolvedValue({ count: 0 });
+
+    const req = {
+      id: "req-1",
+      user: { userId: "checker-1", role: "FINANCE_CHECKER" },
+      params: { adjustmentId: "adj-1" },
+    } as any;
+    const res = createResponse() as any;
+
+    await rejectAdjustment(req, res);
+
+    expect(res.statusCode).toBe(409);
+    expect(prismaMock.auditEvent.create).not.toHaveBeenCalled();
   });
 });

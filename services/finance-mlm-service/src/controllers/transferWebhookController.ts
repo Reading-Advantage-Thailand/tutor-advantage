@@ -1,4 +1,4 @@
-import { logger } from "@tutor-advantage/shared-config";
+import { areDevRoutesEnabled, logger } from "@tutor-advantage/shared-config";
 import crypto from "crypto";
 import { Request, Response } from "express";
 import { prisma } from "@tutor-advantage/database";
@@ -23,8 +23,9 @@ const TRANSFER_KEY_MAP: Record<string, string> = {
 
 function verifySignature(req: Request, payload: unknown): boolean {
   const secret = process.env.OMISE_WEBHOOK_SECRET;
-  // In non-production, allow unsigned webhooks for local testing
-  if (!secret && process.env.NODE_ENV !== "production") return true;
+  // Unsigned webhooks are only allowed when development routes are explicitly
+  // enabled. Staging and tunnelled environments therefore fail closed.
+  if (!secret && areDevRoutesEnabled()) return true;
   if (!secret) {
     logger.error("[TransferWebhook] OMISE_WEBHOOK_SECRET not configured");
     return false;

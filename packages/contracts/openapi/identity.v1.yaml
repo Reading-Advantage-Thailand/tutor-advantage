@@ -194,8 +194,20 @@ components:
           type: boolean
     UserSettings:
       type: object
+      # The response includes protected finance/verification fields. The
+      # PATCH handler applies its own explicit writable-key allow-list.
       additionalProperties: true
       properties:
+        lineNotification:
+          type: boolean
+        locale:
+          type: string
+        theme:
+          type: string
+        soundEnabled:
+          type: boolean
+        soundEffects:
+          type: boolean
         notifications:
           $ref: "#/components/schemas/NotificationSettings"
     User:

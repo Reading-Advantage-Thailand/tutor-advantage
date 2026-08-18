@@ -7,8 +7,11 @@ type OmiseChargeStatus =
 
 export type OmiseCharge = {
   id: string;
+  amount: number;
+  currency: string;
   status: OmiseChargeStatus;
   paid: boolean;
+  metadata?: Record<string, string>;
   authorize_uri?: string | null;
   failure_code?: string | null;
   failure_message?: string | null;
@@ -33,6 +36,7 @@ export type OmiseTransfer = {
   failure_code?: string | null;
   failure_message?: string | null;
   recipient?: string | null;
+  metadata?: Record<string, string>;
 };
 
 type CreateChargeInput = {
@@ -53,6 +57,7 @@ type CreateTransferInput = {
   recipient: string;
   metadata?: Record<string, string>;
   failFast?: boolean;
+  idempotencyKey?: string;
 };
 
 const OMISE_API_BASE_URL = process.env.OMISE_API_BASE_URL || "https://api.omise.co";
@@ -152,7 +157,18 @@ export async function createOmiseTransfer(input: CreateTransferInput) {
   return omiseRequest<OmiseTransfer>("/transfers", {
     method: "POST",
     body: params,
+    headers: input.idempotencyKey
+      ? { "Idempotency-Key": input.idempotencyKey }
+      : undefined,
   });
+}
+
+export async function listOmiseTransfers() {
+  const payload = await omiseRequest<OmiseTransfer[] | { data?: OmiseTransfer[] }>(
+    "/transfers",
+    { method: "GET" },
+  );
+  return Array.isArray(payload) ? payload : payload.data ?? [];
 }
 
 export async function retrieveOmiseTransfer(transferId: string) {

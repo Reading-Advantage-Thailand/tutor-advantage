@@ -289,10 +289,19 @@ export async function approveAdjustment(
     }
 
     const now = new Date();
-    await prisma.adjustment.update({
-      where: { adjustmentId },
+    const decision = await prisma.adjustment.updateMany({
+      where: { adjustmentId, status: "PENDING" },
       data: { status: "APPROVED", approvedBy: userId, approvedAt: now },
     });
+    if (decision.count !== 1) {
+      return res.status(409).json({
+        error: {
+          code: "INVALID_STATUS",
+          message: "Only pending adjustments can be approved",
+          requestId: req.id,
+        },
+      });
+    }
     const settlementRefresh = await refreshSettlementAfterAdjustment(
       adj.settlementRunId,
     );
@@ -372,10 +381,19 @@ export async function rejectAdjustment(
     }
 
     const now = new Date();
-    await prisma.adjustment.update({
-      where: { adjustmentId },
+    const decision = await prisma.adjustment.updateMany({
+      where: { adjustmentId, status: "PENDING" },
       data: { status: "REJECTED", approvedBy: userId, approvedAt: now },
     });
+    if (decision.count !== 1) {
+      return res.status(409).json({
+        error: {
+          code: "INVALID_STATUS",
+          message: "Only pending adjustments can be rejected",
+          requestId: req.id,
+        },
+      });
+    }
     const settlementRefresh = await refreshSettlementAfterAdjustment(
       adj.settlementRunId,
     );

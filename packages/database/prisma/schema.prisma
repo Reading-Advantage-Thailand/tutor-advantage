@@ -615,7 +615,7 @@ model PayoutDocument {
   netAmountMinor   BigInt   @map("net_amount_minor")
   status           String   @default("ISSUED")
   provider         String?
-  providerTransferId String? @map("provider_transfer_id")
+  providerTransferId String? @unique @map("provider_transfer_id")
   transferStatus   String   @default("NOT_SENT") @map("transfer_status")
   transferFailureCode String? @map("transfer_failure_code")
   transferFailureMessage String? @map("transfer_failure_message")

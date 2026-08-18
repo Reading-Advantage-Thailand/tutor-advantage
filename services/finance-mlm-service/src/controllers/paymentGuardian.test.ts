@@ -135,6 +135,7 @@ describe("payment intent reconciliation", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubEnv("OMISE_WEBHOOK_SECRET", "");
+    vi.stubEnv("ENABLE_DEV_ROUTES", "true");
     omiseMock.isOmiseConfigured.mockReturnValue(true);
     prisma.paymentEvent.findUnique.mockResolvedValue(null);
     prisma.$transaction.mockImplementation(async (callback: (tx: typeof prisma) => unknown) => callback(prisma));
@@ -142,6 +143,24 @@ describe("payment intent reconciliation", () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+  });
+
+  it("fails closed when staging has no webhook secret and dev routes are disabled", async () => {
+    vi.stubEnv("NODE_ENV", "staging");
+    vi.stubEnv("ENABLE_DEV_ROUTES", "false");
+    const req = {
+      body: {
+        type: "charge.complete",
+        data: { id: "chrg_1", status: "successful", metadata: { paymentIntentId: "pi-1" } },
+      },
+      headers: {},
+    };
+    const res = response();
+
+    await handleWebhook(req as never, res as never);
+
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(prisma.paymentEvent.create).not.toHaveBeenCalled();
   });
 
   it("does not fail a payment intent for a non-terminal PromptPay webhook", async () => {
@@ -172,8 +191,12 @@ describe("payment intent reconciliation", () => {
   });
 
   it("does not fulfill a successful-looking webhook until Omise confirms the charge", async () => {
+    prisma.paymentIntent.findUnique.mockResolvedValue(paymentIntent({ status: "PENDING" }));
     omiseMock.retrieveOmiseCharge.mockResolvedValue({
       id: "chrg_1",
+      amount: 250000,
+      currency: "THB",
+      metadata: { paymentIntentId: "pi-1" },
       status: "pending",
       paid: false,
     });
@@ -297,6 +320,14 @@ describe("payment intent reconciliation", () => {
     prisma.enrollmentPackage.updateMany.mockResolvedValue({ count: 1 });
     prisma.class.update.mockResolvedValue({});
     prisma.adjustment.create.mockResolvedValue({ adjustmentId: "adj-1" });
+    omiseMock.retrieveOmiseCharge.mockResolvedValue({
+      id: "chrg_1",
+      amount: 250000,
+      currency: "THB",
+      metadata: { paymentIntentId: "pi-1" },
+      status: "failed",
+      paid: false,
+    });
 
     const req = {
       body: {
@@ -333,6 +364,35 @@ describe("payment intent reconciliation", () => {
     expect(adjustment.amountMinor).toBeLessThan(0n);
     expect(adjustment.amountMinor).toBeGreaterThan(-250000n);
     expect(prisma.paymentEvent.create).toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  it("does not fulfill a signed event when the retrieved charge does not match the intent", async () => {
+    prisma.paymentIntent.findUnique.mockResolvedValue(paymentIntent({ status: "PENDING" }));
+    omiseMock.retrieveOmiseCharge.mockResolvedValue({
+      id: "chrg_other",
+      amount: 250000,
+      currency: "THB",
+      metadata: { paymentIntentId: "pi-1" },
+      status: "successful",
+      paid: true,
+    });
+    const req = {
+      body: {
+        type: "charge.complete",
+        data: {
+          id: "chrg_1",
+          status: "successful",
+          metadata: { paymentIntentId: "pi-1" },
+        },
+      },
+      headers: {},
+    };
+    const res = response();
+
+    await handleWebhook(req as never, res as never);
+
+    expect(prisma.paymentIntent.update).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(200);
   });
 });

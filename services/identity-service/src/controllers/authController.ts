@@ -78,6 +78,15 @@ export async function handleOAuthCallback(req: Request, res: Response) {
   } catch (error) {
     const err = error as Error;
     logger.error("OAuth Callback Error:", err);
+    if (err.message === "SPONSOR_TREE_CYCLE") {
+      return res.status(409).json({
+        error: {
+          code: "SPONSOR_TREE_CYCLE",
+          message: "The sponsor relationship would create a cycle",
+          requestId: req.id,
+        },
+      });
+    }
     return res.status(401).json({
       error: {
         code: "UNAUTHORIZED",

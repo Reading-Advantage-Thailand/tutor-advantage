@@ -186,6 +186,10 @@ async function processLogin(
     !user.sponsorTutorId &&
     !user.sponsorLockedAt
   ) {
+    if (await wouldCreateSponsorCycle(user.userId, invitedSponsorId)) {
+      throw new Error("SPONSOR_TREE_CYCLE");
+    }
+
     user = await prisma.user.update({
       where: { userId: user.userId },
       data: {
@@ -228,6 +232,29 @@ async function processLogin(
       ),
     },
   };
+}
+
+async function wouldCreateSponsorCycle(userId: string, sponsorTutorId: string) {
+  const visited = new Set<string>();
+  let currentId: string | null = sponsorTutorId;
+
+  while (currentId) {
+    if (currentId === userId) return true;
+    if (visited.has(currentId)) {
+      // The existing graph is already corrupt. Do not attach another edge to
+      // that component and make the settlement failure larger.
+      return true;
+    }
+    visited.add(currentId);
+
+    const sponsor: { sponsorTutorId: string | null } | null = await prisma.user.findUnique({
+      where: { userId: currentId },
+      select: { sponsorTutorId: true },
+    });
+    currentId = sponsor?.sponsorTutorId ?? null;
+  }
+
+  return false;
 }
 
 async function resolveActiveTutorSponsorId(sponsorTutorId: string) {

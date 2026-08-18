@@ -95,4 +95,38 @@ describe("student notification settings", () => {
     }));
     expect(res.status).toHaveBeenCalledWith(200);
   });
+
+  it("rejects protected payout and verification settings", async () => {
+    prisma.user.findUnique.mockResolvedValue({
+      settings: {
+        omiseRecipientId: "recp_real",
+        verification: { bankBook: { status: "VERIFIED" } },
+      },
+    });
+    const res = response();
+
+    await updateSettings(
+      request({
+        omiseRecipientId: "recp_attacker",
+        verification: { bankBook: { status: "VERIFIED" } },
+      }) as never,
+      res as never,
+    );
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(prisma.user.update).not.toHaveBeenCalled();
+  });
+
+  it("rejects unknown nested notification settings", async () => {
+    prisma.user.findUnique.mockResolvedValue({ settings: {} });
+    const res = response();
+
+    await updateSettings(
+      request({ notifications: { verificationStatus: true } }) as never,
+      res as never,
+    );
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(prisma.user.update).not.toHaveBeenCalled();
+  });
 });

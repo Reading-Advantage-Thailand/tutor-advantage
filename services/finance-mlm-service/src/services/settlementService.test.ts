@@ -3,6 +3,7 @@ import { SettlementService } from "./settlementService";
 
 const omiseMock = vi.hoisted(() => ({
   createOmiseTransfer: vi.fn(),
+  listOmiseTransfers: vi.fn(),
   retrieveOmiseTransfer: vi.fn(),
   isOmiseConfigured: vi.fn(),
 }));
@@ -26,6 +27,7 @@ const prismaMock = vi.hoisted(() => ({
     findFirst: vi.fn(),
     findUnique: vi.fn(),
     update: vi.fn(),
+    updateMany: vi.fn(),
   },
   payoutLine: {
     create: vi.fn(),
@@ -36,6 +38,7 @@ const prismaMock = vi.hoisted(() => ({
   payoutDocument: {
     upsert: vi.fn(),
     deleteMany: vi.fn(),
+    updateMany: vi.fn(),
   },
   tutorBadge: {
     findMany: vi.fn().mockResolvedValue([]), // default: no badges → no bonus
@@ -65,8 +68,10 @@ describe("SettlementService", () => {
     vi.clearAllMocks();
     vi.stubEnv("COMMISSION_BASE_RATE", "0.5");
     omiseMock.isOmiseConfigured.mockReturnValue(false);
+    omiseMock.listOmiseTransfers.mockResolvedValue([]);
     prismaMock.settlementRun.findFirst.mockResolvedValue(null);
     prismaMock.tutorBadge.findMany.mockResolvedValue([]);
+    prismaMock.payoutDocument.updateMany.mockResolvedValue({ count: 1 });
   });
 
   afterEach(() => {
@@ -183,7 +188,7 @@ describe("SettlementService", () => {
     expect(prismaMock.paymentIntent.findMany).not.toHaveBeenCalled();
   });
 
-  it("rejects a closed sponsor cycle even when the graph has no root", async () => {
+  it("isolates a closed sponsor cycle instead of stopping the whole settlement", async () => {
     prismaMock.paymentIntent.findMany.mockResolvedValue([]);
     prismaMock.adjustment.findMany.mockResolvedValue([]);
     prismaMock.user.findMany.mockResolvedValue([
@@ -198,11 +203,47 @@ describe("SettlementService", () => {
         verificationStatus: "VERIFIED",
       },
     ]);
+    prismaMock.settlementRun.create.mockResolvedValue({
+      settlementRunId: "run-cycle",
+      periodMonth: "2026-05",
+      status: "DRAFT",
+    });
 
     await expect(
       SettlementService.previewSettlement("2026-05", "admin-1"),
-    ).rejects.toThrow("SPONSOR_TREE_CYCLE");
-    expect(prismaMock.settlementRun.create).not.toHaveBeenCalled();
+    ).resolves.toMatchObject({ snapshotId: "run-cycle" });
+    expect(prismaMock.payoutLine.create).not.toHaveBeenCalled();
+  });
+
+  it("still creates payouts for healthy sponsor components beside a cycle", async () => {
+    prismaMock.paymentIntent.findMany.mockResolvedValue([
+      { enrollmentId: "en-healthy", amountMinor: 100_000n },
+    ]);
+    prismaMock.enrollment.findMany.mockResolvedValue([
+      { enrollmentId: "en-healthy", class: { tutorUserId: "healthy-root" } },
+    ]);
+    prismaMock.adjustment.findMany.mockResolvedValue([]);
+    prismaMock.user.findMany.mockResolvedValue([
+      { userId: "cycle-a", sponsorTutorId: "cycle-b", verificationStatus: "VERIFIED" },
+      { userId: "cycle-b", sponsorTutorId: "cycle-a", verificationStatus: "VERIFIED" },
+      { userId: "healthy-root", sponsorTutorId: null, verificationStatus: "VERIFIED" },
+    ]);
+    prismaMock.settlementRun.create.mockResolvedValue({
+      settlementRunId: "run-mixed",
+      periodMonth: "2026-05",
+      status: "DRAFT",
+    });
+    prismaMock.payoutLine.create.mockResolvedValue({});
+
+    await expect(
+      SettlementService.previewSettlement("2026-05", "admin-1"),
+    ).resolves.toMatchObject({ snapshotId: "run-mixed", payoutLineCount: 1 });
+    expect(prismaMock.payoutLine.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        tutorUserId: "healthy-root",
+        eligibilityStatus: "ELIGIBLE",
+      }),
+    });
   });
 
   it("calculates a compressed tree and blocks unverified payouts", async () => {
@@ -367,11 +408,13 @@ describe("SettlementService", () => {
     prismaMock.$transaction.mockImplementation(async (callback) =>
       callback({
         settlementRun: {
-          update: vi.fn().mockResolvedValue({
+          updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+          findUnique: vi.fn().mockResolvedValue({
             settlementRunId: "run-1",
-            status: "APPROVED",
+            status: "APPROVING",
             payoutLines,
           }),
+          update: vi.fn(),
         },
         payoutDocument: {
           upsert: vi.fn().mockResolvedValue({
@@ -441,10 +484,12 @@ describe("SettlementService", () => {
     prismaMock.$transaction.mockImplementation(async (callback) =>
       callback({
         settlementRun: {
-          update: vi.fn().mockResolvedValue({
-            status: "APPROVED",
+          updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+          findUnique: vi.fn().mockResolvedValue({
+            status: "APPROVING",
             payoutLines: [line],
           }),
+          update: vi.fn(),
         },
         payoutDocument: {
           upsert: vi.fn().mockResolvedValue({
@@ -472,6 +517,72 @@ describe("SettlementService", () => {
       }),
     );
     expect(prismaMock.$executeRaw).toHaveBeenCalledTimes(2);
+    expect(omiseMock.createOmiseTransfer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        idempotencyKey: "omise:payout-line:line-1",
+      }),
+    );
+  });
+
+  it("claims a settlement once when approvals race", async () => {
+    omiseMock.isOmiseConfigured.mockReturnValue(true);
+    prismaMock.settlementRun.findUnique.mockResolvedValue({
+      settlementRunId: "run-race",
+      status: "SUBMITTED",
+    });
+    prismaMock.payoutLine.findMany.mockResolvedValue([
+      { payoutLineId: "line-race", tutorUserId: "tutor-1" },
+    ]);
+    prismaMock.user.findMany.mockResolvedValue([
+      { userId: "tutor-1", settings: { omiseRecipientId: "recp_1" } },
+    ]);
+
+    let transactionAttempt = 0;
+    prismaMock.$transaction.mockImplementation(async (callback) => {
+      transactionAttempt += 1;
+      const line = {
+        payoutLineId: "line-race",
+        tutorUserId: "tutor-1",
+        payoutAmountMinor: 10_000n,
+        withholdingTaxMinor: 300n,
+        netPayoutMinor: 9_700n,
+      };
+      return callback({
+        settlementRun: {
+          updateMany: vi.fn().mockResolvedValue({
+            count: transactionAttempt === 1 ? 1 : 0,
+          }),
+          findUnique: vi.fn().mockResolvedValue({
+            settlementRunId: "run-race",
+            status: "APPROVING",
+            payoutLines: [line],
+          }),
+        },
+        payoutDocument: {
+          upsert: vi.fn().mockResolvedValue({
+            payoutDocumentId: "doc-race",
+            documentNumber: "DOC-RACE",
+          }),
+        },
+      } as never);
+    });
+    omiseMock.createOmiseTransfer.mockResolvedValue({
+      id: "trsf-race",
+      paid: false,
+      sent: true,
+      sendable: true,
+    });
+
+    const results = await Promise.allSettled([
+      SettlementService.approveSettlement("run-race", "checker-1"),
+      SettlementService.approveSettlement("run-race", "checker-2"),
+    ]);
+
+    expect(results.filter((result) => result.status === "fulfilled")).toHaveLength(1);
+    expect(results.filter((result) => result.status === "rejected")).toHaveLength(1);
+    expect(String((results.find((result) => result.status === "rejected") as PromiseRejectedResult).reason))
+      .toContain("SETTLEMENT_ALREADY_CLAIMED");
+    expect(omiseMock.createOmiseTransfer).toHaveBeenCalledOnce();
   });
 
   it.each([
@@ -517,7 +628,12 @@ describe("SettlementService", () => {
       providerTransferId: "trsf_1",
       transferStatus: "PAID",
     });
-    expect(prismaMock.$executeRaw).toHaveBeenCalledTimes(2);
+    expect(prismaMock.$executeRaw).toHaveBeenCalledOnce();
+    expect(omiseMock.createOmiseTransfer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        idempotencyKey: "omise:payout-line:line-1",
+      }),
+    );
   });
 
   it("rejects retrying an active transfer", async () => {
@@ -584,6 +700,77 @@ describe("SettlementService", () => {
       transferredAt: "2026-05-01T00:00:00.000Z",
       synced: true,
     });
+    expect(prismaMock.$executeRaw).toHaveBeenCalledOnce();
+  });
+
+  it("allows only one concurrent retry to claim a payout line", async () => {
+    omiseMock.isOmiseConfigured.mockReturnValue(true);
+    prismaMock.payoutLine.findUnique.mockResolvedValue({
+      payoutLineId: "line-race",
+      settlementRunId: "run-1",
+      tutorUserId: "tutor-1",
+      netPayoutMinor: 9_700n,
+      settlementRun: { status: "APPROVED" },
+      payoutDocument: {
+        payoutDocumentId: "doc-1",
+        documentNumber: "DOC-1",
+        transferStatus: "TRANSFER_FAILED",
+      },
+    });
+    prismaMock.user.findUnique.mockResolvedValue({
+      settings: { omiseRecipientId: "recp_1" },
+    });
+    prismaMock.payoutDocument.updateMany
+      .mockResolvedValueOnce({ count: 1 })
+      .mockResolvedValueOnce({ count: 0 });
+    omiseMock.createOmiseTransfer.mockResolvedValue({
+      id: "trsf_race",
+      paid: false,
+      sent: true,
+      sendable: true,
+    });
+
+    const results = await Promise.allSettled([
+      SettlementService.retryPayoutTransfer("line-race"),
+      SettlementService.retryPayoutTransfer("line-race"),
+    ]);
+
+    expect(results.filter((result) => result.status === "fulfilled")).toHaveLength(1);
+    expect(results.filter((result) => result.status === "rejected")).toHaveLength(1);
+    expect(String((results.find((result) => result.status === "rejected") as PromiseRejectedResult).reason))
+      .toContain("TRANSFER_ALREADY_ACTIVE");
+    expect(omiseMock.createOmiseTransfer).toHaveBeenCalledOnce();
+  });
+
+  it("recovers an uncertain transfer from Omise before refusing a duplicate", async () => {
+    omiseMock.isOmiseConfigured.mockReturnValue(true);
+    prismaMock.payoutLine.findUnique.mockResolvedValue({
+      payoutLineId: "line-uncertain",
+      settlementRunId: "run-1",
+      tutorUserId: "tutor-1",
+      netPayoutMinor: 9_700n,
+      settlementRun: { status: "APPROVED" },
+      payoutDocument: {
+        payoutDocumentId: "doc-1",
+        documentNumber: "DOC-1",
+        providerTransferId: null,
+        transferStatus: "PENDING_TRANSFER",
+      },
+    });
+    omiseMock.listOmiseTransfers.mockResolvedValue([
+      {
+        id: "trsf_recovered",
+        paid: true,
+        sent: true,
+        sendable: true,
+        metadata: { payoutLineId: "line-uncertain" },
+      },
+    ]);
+
+    await expect(
+      SettlementService.retryPayoutTransfer("line-uncertain"),
+    ).rejects.toThrow("TRANSFER_ALREADY_ACTIVE");
+    expect(omiseMock.createOmiseTransfer).not.toHaveBeenCalled();
     expect(prismaMock.$executeRaw).toHaveBeenCalledOnce();
   });
 });

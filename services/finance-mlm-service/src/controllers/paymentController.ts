@@ -2,6 +2,7 @@ import {
   CONSENT_STATUS_GRANTED,
   GUARDIAN_CONSENT_TYPE,
   isUnderGuardianAge,
+  areDevRoutesEnabled,
   logger,
 } from "@tutor-advantage/shared-config";
 import { Request, Response } from "express";
@@ -839,15 +840,17 @@ export async function handleWebhook(req: Request, res: Response) {
       return res.status(200).send("Event recorded without intent mapping");
     }
 
-    // Omise webhook payloads are notifications, not the source of truth. A
-    // successful-looking event must be confirmed by retrieving the charge.
-    let verifiedCharge: Awaited<ReturnType<typeof retrieveOmiseCharge>> | null = null;
-    if (isSuccessful && !isNegativeOutcome && providerRef) {
-      verifiedCharge = await retrieveOmiseCharge(providerRef);
-    }
+    // Omise webhook payloads are notifications, not the source of truth. Any
+    // event that can change payment state must be tied to the stored intent and
+    // confirmed by retrieving the charge from Omise.
+    const requiresChargeVerification = isSuccessful || isNegativeOutcome;
+    const verifiedCharge =
+      requiresChargeVerification && providerRef
+        ? await retrieveAndVerifyOmiseCharge(paymentIntentId, providerRef)
+        : null;
 
-    if (isNegativeOutcome) {
-      await recordNegativePaymentOutcome(paymentIntentId, providerRef, eventType);
+    if (isNegativeOutcome && verifiedCharge) {
+      await recordNegativePaymentOutcome(paymentIntentId, verifiedCharge.id, eventType);
     } else if (verifiedCharge && (verifiedCharge.paid || verifiedCharge.status === "successful")) {
       await fulfillPaymentIntent(paymentIntentId, verifiedCharge.id);
     }
@@ -1095,7 +1098,7 @@ async function estimatePaidCommissionMinor(
 
 function verifyWebhookSignature(req: Request, payload: unknown) {
   const secret = process.env.OMISE_WEBHOOK_SECRET;
-  if (!secret && process.env.NODE_ENV !== "production") {
+  if (!secret && areDevRoutesEnabled()) {
     return true;
   }
 
@@ -1124,6 +1127,47 @@ function verifyWebhookSignature(req: Request, payload: unknown) {
       crypto.timingSafeEqual(signatureBuffer, expected)
     );
   });
+}
+
+async function retrieveAndVerifyOmiseCharge(
+  paymentIntentId: string,
+  providerRef: string,
+) {
+  const intent = await prisma.paymentIntent.findUnique({
+    where: { paymentIntentId },
+    select: {
+      paymentIntentId: true,
+      providerRef: true,
+      amountMinor: true,
+      currency: true,
+    },
+  });
+  if (!intent || !intent.providerRef || intent.providerRef !== providerRef) {
+    return null;
+  }
+
+  const charge = await retrieveOmiseCharge(providerRef);
+  let chargeAmount: bigint;
+  try {
+    chargeAmount = BigInt(charge.amount);
+  } catch {
+    return null;
+  }
+
+  if (
+    typeof charge.currency !== "string" ||
+    charge.id !== intent.providerRef ||
+    chargeAmount !== intent.amountMinor ||
+    charge.currency.toUpperCase() !== intent.currency.toUpperCase() ||
+    charge.metadata?.paymentIntentId !== intent.paymentIntentId
+  ) {
+    logger.warn(
+      `[PaymentWebhook] Omise charge ${providerRef} did not match payment intent ${paymentIntentId}`,
+    );
+    return null;
+  }
+
+  return charge;
 }
 
 function serializePaymentIntent(intent: {

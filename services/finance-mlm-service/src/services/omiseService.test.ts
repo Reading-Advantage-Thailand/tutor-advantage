@@ -100,6 +100,7 @@ describe("omiseService", () => {
       recipient: "recp_1",
       failFast: false,
       metadata: { payoutLineId: "line-1" },
+      idempotencyKey: "omise:payout-line:line-1",
     });
 
     const recipientBody = fetchMock.mock.calls[0][1].body as URLSearchParams;
@@ -107,6 +108,9 @@ describe("omiseService", () => {
     expect(recipientBody.get("bank_account[number]")).toBe("1234567890");
     expect(transferBody.get("fail_fast")).toBe("false");
     expect(transferBody.get("metadata[payoutLineId]")).toBe("line-1");
+    expect(fetchMock.mock.calls[1][1].headers).toMatchObject({
+      "Idempotency-Key": "omise:payout-line:line-1",
+    });
   });
 
   it("URL-encodes resource identifiers", async () => {

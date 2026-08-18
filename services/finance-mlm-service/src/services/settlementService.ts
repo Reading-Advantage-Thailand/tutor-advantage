@@ -11,6 +11,7 @@ import {
 } from "./taxService";
 import {
   createOmiseTransfer,
+  listOmiseTransfers,
   retrieveOmiseTransfer,
   isOmiseConfigured,
   type OmiseTransfer,
@@ -66,13 +67,63 @@ async function updatePayoutTransferTracking(
     UPDATE "finance_mlm"."payout_documents"
     SET
       "provider" = ${data.provider ?? null},
-      "provider_transfer_id" = ${data.providerTransferId ?? null},
+      "provider_transfer_id" = CASE
+        WHEN ${data.providerTransferId === undefined} THEN "provider_transfer_id"
+        ELSE ${data.providerTransferId ?? null}
+      END,
       "transfer_status" = ${data.transferStatus},
       "transfer_failure_code" = ${data.transferFailureCode ?? null},
       "transfer_failure_message" = ${data.transferFailureMessage ?? null},
       "transferred_at" = ${data.transferredAt ?? null}
     WHERE "payout_line_id" = ${payoutLineId}::uuid
   `;
+}
+
+function getTransferIdempotencyKey(payoutLineId: string) {
+  return `omise:payout-line:${payoutLineId}`;
+}
+
+async function claimPayoutTransfer(payoutLineId: string) {
+  const claimed = await prisma.payoutDocument.updateMany({
+    where: {
+      payoutLineId,
+      transferStatus: { in: ["NOT_SENT", "TRANSFER_FAILED"] },
+    },
+    data: {
+      provider: "omise",
+      transferStatus: "PENDING_TRANSFER",
+      transferFailureCode: null,
+      transferFailureMessage: null,
+      transferredAt: null,
+    },
+  });
+
+  if (claimed.count !== 1) {
+    throw new Error("TRANSFER_ALREADY_ACTIVE");
+  }
+}
+
+async function recoverPayoutTransfer(payoutLineId: string) {
+  const transfers = await listOmiseTransfers();
+  const transfer = transfers.find(
+    (candidate) => candidate.metadata?.payoutLineId === payoutLineId,
+  );
+  if (!transfer) return null;
+
+  const transferStatus = transferStatusFromOmise(transfer);
+  await updatePayoutTransferTracking(payoutLineId, {
+    provider: "omise",
+    providerTransferId: transfer.id,
+    transferStatus,
+    transferFailureCode: transfer.failure_code ?? null,
+    transferFailureMessage: transfer.failure_message ?? null,
+    transferredAt: transfer.paid_at
+      ? new Date(transfer.paid_at)
+      : transfer.sent_at
+        ? new Date(transfer.sent_at)
+        : null,
+  });
+  return transfer;
 }
 
 export class SettlementService {
@@ -196,9 +247,47 @@ export class SettlementService {
     }
 
     // 4. Graph traversal for accurate GV and Payout calculation.
+    // A malformed sponsor component must not cancel every other tutor's
+    // settlement. Since each node has at most one sponsor, walking the sponsor
+    // chain identifies both the cycle and any descendants that depend on it.
+    const invalidSponsorNodes = new Set<string>();
+    for (const startUserId of nodes.keys()) {
+      const path: string[] = [];
+      const pathIndex = new Map<string, number>();
+      let currentUserId: string | null = startUserId;
+      let cycleStart = -1;
+      let reachedInvalidNode = false;
+
+      while (currentUserId && nodes.has(currentUserId)) {
+        if (invalidSponsorNodes.has(currentUserId)) {
+          reachedInvalidNode = true;
+          break;
+        }
+
+        const existingIndex = pathIndex.get(currentUserId);
+        if (existingIndex !== undefined) {
+          cycleStart = existingIndex;
+          break;
+        }
+
+        pathIndex.set(currentUserId, path.length);
+        path.push(currentUserId);
+        currentUserId = nodes.get(currentUserId)!.sponsorId;
+      }
+
+      if (cycleStart >= 0 || reachedInvalidNode) {
+        for (const userId of path) invalidSponsorNodes.add(userId);
+      }
+    }
+
     const childMap = new Map<string, string[]>();
     for (const node of nodes.values()) {
-      if (node.sponsorId) {
+      if (
+        node.sponsorId &&
+        nodes.has(node.sponsorId) &&
+        !invalidSponsorNodes.has(node.userId) &&
+        !invalidSponsorNodes.has(node.sponsorId)
+      ) {
         if (!childMap.has(node.sponsorId)) {
           childMap.set(node.sponsorId, []);
         }
@@ -206,21 +295,13 @@ export class SettlementService {
       }
     }
 
-    // Validate every component before root-based traversal. A closed sponsor
-    // cycle has no root, so checking only while calculating payouts would skip it.
-    const graphState = new Map<string, "VISITING" | "VISITED">();
-    const validateSponsorTree = (userId: string) => {
-      const state = graphState.get(userId);
-      if (state === "VISITING") throw new Error("SPONSOR_TREE_CYCLE");
-      if (state === "VISITED") return;
-
-      graphState.set(userId, "VISITING");
-      for (const childId of childMap.get(userId) || []) {
-        if (nodes.has(childId)) validateSponsorTree(childId);
-      }
-      graphState.set(userId, "VISITED");
-    };
-    for (const userId of nodes.keys()) validateSponsorTree(userId);
+    for (const userId of invalidSponsorNodes) {
+      const node = nodes.get(userId)!;
+      node.groupVolumeMinor = node.personalVolumeMinor;
+      node.payoutRate = 0;
+      node.payoutAmountMinor = 0n;
+      node.eligibilityStatus = "INELIGIBLE_SPONSOR_CYCLE";
+    }
 
     // Recursive function to calculate GV bottom-up
     const calculateGV = (userId: string): bigint => {
@@ -236,7 +317,7 @@ export class SettlementService {
 
     // Find roots (users without sponsors) and calculate their trees
     for (const node of nodes.values()) {
-      if (!node.sponsorId) {
+      if (!node.sponsorId && !invalidSponsorNodes.has(node.userId)) {
         calculateGV(node.userId);
       }
     }
@@ -250,6 +331,7 @@ export class SettlementService {
       visiting.add(userId);
 
       const node = nodes.get(userId)!;
+      if (invalidSponsorNodes.has(userId)) return 0n;
       const myRate = calculateCommissionInfo(
         Number(node.groupVolumeMinor) / 100,
       ).rate;
@@ -280,7 +362,7 @@ export class SettlementService {
 
     // Find roots again and start the top-down payout calculation
     for (const node of nodes.values()) {
-      if (!node.sponsorId) {
+      if (!node.sponsorId && !invalidSponsorNodes.has(node.userId)) {
         calculatePayouts(node.userId);
       }
     }
@@ -518,15 +600,27 @@ export class SettlementService {
     }
 
     const updated = await prisma.$transaction(async (tx) => {
-      const approvedRun = await tx.settlementRun.update({
-        where: { settlementRunId: snapshotId },
+      const claimedRun = await tx.settlementRun.updateMany({
+        where: {
+          settlementRunId: snapshotId,
+          status: { in: options?.allowDirectFromDraft ? ["DRAFT", "SUBMITTED"] : ["SUBMITTED"] },
+        },
         data: {
-          status: "APPROVED",
+          status: "APPROVING",
           approvedBy,
           approvedAt: new Date(),
         },
+      });
+
+      if (claimedRun.count !== 1) {
+        throw new Error("SETTLEMENT_ALREADY_CLAIMED");
+      }
+
+      const approvedRun = await tx.settlementRun.findUnique({
+        where: { settlementRunId: snapshotId },
         include: { payoutLines: true },
       });
+      if (!approvedRun) throw new Error("NOT_FOUND");
 
       const payoutDocumentByLineId = new Map<string, Awaited<ReturnType<typeof tx.payoutDocument.upsert>>>();
       for (const line of approvedRun.payoutLines) {
@@ -548,8 +642,17 @@ export class SettlementService {
         payoutDocumentByLineId.set(line.payoutLineId, payoutDocument);
       }
 
+      const finalizedRun = await tx.settlementRun.updateMany({
+        where: { settlementRunId: snapshotId, status: "APPROVING" },
+        data: { status: "APPROVED" },
+      });
+      if (finalizedRun.count !== 1) {
+        throw new Error("SETTLEMENT_ALREADY_CLAIMED");
+      }
+
       return {
         ...approvedRun,
+        status: "APPROVED",
         payoutLines: approvedRun.payoutLines.map((line) => ({
           ...line,
           payoutDocument: payoutDocumentByLineId.get(line.payoutLineId) ?? null,
@@ -587,6 +690,7 @@ export class SettlementService {
               documentNumber: line.payoutDocument.documentNumber,
               tutorUserId: line.tutorUserId,
             },
+            idempotencyKey: getTransferIdempotencyKey(line.payoutLineId),
           });
 
           const transferStatus = transferStatusFromOmise(transfer);
@@ -639,6 +743,23 @@ export class SettlementService {
     if (!line.payoutDocument) {
       throw new Error("PAYOUT_DOCUMENT_NOT_FOUND");
     }
+    if (
+      hasActiveTransferStatus(line.payoutDocument.transferStatus) &&
+      !line.payoutDocument.providerTransferId
+    ) {
+      let recovered: Awaited<ReturnType<typeof recoverPayoutTransfer>>;
+      try {
+        recovered = await recoverPayoutTransfer(line.payoutLineId);
+      } catch (error_err) {
+        const error = error_err as Error;
+        throw new Error(`TRANSFER_RECOVERY_FAILED:${error.message}`);
+      }
+      if (!recovered || hasActiveTransferStatus(transferStatusFromOmise(recovered))) {
+        throw new Error("TRANSFER_ALREADY_ACTIVE");
+      }
+      line.payoutDocument.transferStatus = transferStatusFromOmise(recovered);
+    }
+
     if (hasActiveTransferStatus(line.payoutDocument.transferStatus)) {
       throw new Error("TRANSFER_ALREADY_ACTIVE");
     }
@@ -652,13 +773,7 @@ export class SettlementService {
       throw new Error(`MISSING_OMISE_RECIPIENT:${line.tutorUserId}`);
     }
 
-    await updatePayoutTransferTracking(line.payoutLineId, {
-      provider: "omise",
-      transferStatus: "PENDING_TRANSFER",
-      transferFailureCode: null,
-      transferFailureMessage: null,
-      transferredAt: null,
-    });
+    await claimPayoutTransfer(line.payoutLineId);
 
     try {
       const transfer = await createOmiseTransfer({
@@ -673,6 +788,7 @@ export class SettlementService {
           tutorUserId: line.tutorUserId,
           retry: "true",
         },
+        idempotencyKey: getTransferIdempotencyKey(line.payoutLineId),
       });
 
       const transferStatus = transferStatusFromOmise(transfer);

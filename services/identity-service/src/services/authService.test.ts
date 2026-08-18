@@ -297,4 +297,33 @@ describe("processOAuthLogin", () => {
     });
     expect(result.user.role).toBe("STUDENT");
   });
+
+  it("rejects a sponsor invitation that would close a cycle", async () => {
+    prisma.user.findFirst.mockResolvedValue({ userId: "tutor-2" });
+    prisma.oAuthIdentity.findUnique.mockResolvedValue(null);
+    prisma.user.findUnique
+      .mockResolvedValueOnce({
+        userId: "student-1",
+        displayName: "Existing Student",
+        email: "student@example.com",
+        role: "STUDENT",
+        profilePictureUrl: null,
+        sponsorTutorId: null,
+        sponsorLockedAt: null,
+      })
+      .mockResolvedValueOnce({ sponsorTutorId: "student-1" });
+
+    await expect(
+      processOAuthLogin(
+        "google",
+        "subject-cycle",
+        "student@example.com",
+        "Existing Student",
+        "",
+        "tutor-2",
+      ),
+    ).rejects.toThrow("SPONSOR_TREE_CYCLE");
+
+    expect(prisma.user.update).not.toHaveBeenCalled();
+  });
 });

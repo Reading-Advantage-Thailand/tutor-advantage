@@ -63,8 +63,12 @@ export function areDevRoutesEnabled(
 
 export function assertProductionSecurityConfig(
   env: SecurityEnvironment = process.env,
+  options: { requireOmiseWebhookSecret?: boolean } = {},
 ) {
   if (env.NODE_ENV !== "production") return;
   getJwtSecret(env);
   getAllowedOrigins(env);
+  if (options.requireOmiseWebhookSecret && !env.OMISE_WEBHOOK_SECRET?.trim()) {
+    throw new Error("OMISE_WEBHOOK_SECRET must be set in production");
+  }
 }

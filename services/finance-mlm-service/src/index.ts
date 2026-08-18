@@ -103,7 +103,7 @@ import { getTutorNetwork } from "./controllers/tutorNetworkController";
 
 const app = express();
 const port = process.env.PORT || 3003;
-assertProductionSecurityConfig();
+assertProductionSecurityConfig(process.env, { requireOmiseWebhookSecret: true });
 const adminOnly = requireRoles("ADMIN");
 const financeStaffOnly = requireRoles("ADMIN", "FINANCE_CHECKER");
 const adjustmentStaffOnly = requireRoles(

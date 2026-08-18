@@ -142,6 +142,36 @@ describe("handleOAuthCallback", () => {
     });
   });
 
+  it("returns a conflict when a sponsor edge would create a cycle", async () => {
+    verifyGoogleToken.mockResolvedValue({
+      id: "google-subject",
+      email: "student@example.com",
+      name: "Student",
+      picture: "",
+    });
+    processOAuthLogin.mockRejectedValue(new Error("SPONSOR_TREE_CYCLE"));
+    const req = {
+      id: "req-cycle",
+      body: {
+        provider: "google",
+        code: "code-1",
+        sponsorTutorId: "tutor-1",
+      },
+    };
+    const res = createResponse();
+
+    await handleOAuthCallback(req as never, res as never);
+
+    expect(res.status).toHaveBeenCalledWith(409);
+    expect(res.json).toHaveBeenCalledWith({
+      error: {
+        code: "SPONSOR_TREE_CYCLE",
+        message: "The sponsor relationship would create a cycle",
+        requestId: "req-cycle",
+      },
+    });
+  });
+
   it("verifies LINE profiles with phone number but no email and returns login result", async () => {
     verifyLineToken.mockResolvedValue({
       id: "line-subject",
