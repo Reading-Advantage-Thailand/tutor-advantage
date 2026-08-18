@@ -85,40 +85,22 @@ export async function getEarningsHistory(
       periodMonth,
     );
 
-    const [currentAdjustments, currentBadges] = await Promise.all([
-      prisma.adjustment.findMany({
-        where: {
-          tutorUserId: userId,
-          status: "APPROVED",
-          createdAt: { gte: monthStart, lte: monthEnd },
-        },
-      }),
-      prisma.tutorBadge.findMany({
-        where: { tutorUserId: userId },
-        select: { badgeCode: true },
-      }),
-    ]);
+    const currentAdjustments = await prisma.adjustment.findMany({
+      where: {
+        tutorUserId: userId,
+        status: "APPROVED",
+        createdAt: { gte: monthStart, lte: monthEnd },
+      },
+    });
 
     const currentClawbackTHB = currentAdjustments.reduce(
       (sum, adj) => sum + Number(adj.amountMinor) / 100,
       0,
     );
 
-    // Badge bonus amounts in satang — must match settlementService.BADGE_BONUS_SATANG
-    const BADGE_BONUS_SATANG: Record<string, number> = {
-      ELITE_EDUCATOR:  50000,
-      TOP_RATED:       30000,
-      CLASS_MASTER:    20000,
-      NETWORK_BUILDER: 10000,
-      RISING_STAR:      5000,
-      FAST_RESPONDER:   5000,
-      AI_PIONEER:       5000,
-    };
-    const badgeBonusSatang = currentBadges.reduce(
-      (sum, b) => sum + (BADGE_BONUS_SATANG[b.badgeCode] ?? 0),
-      0,
-    );
-    const badgeBonusTHB = badgeBonusSatang / 100;
+    // Lifetime badges are not an audited, period-scoped finance ledger.
+    // Keep them visible elsewhere, but never include them in cash projections.
+    const badgeBonusTHB = 0;
 
     const currentProjection = {
       directSales: projection.directSalesTHB,

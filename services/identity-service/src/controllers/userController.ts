@@ -258,6 +258,9 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
     }
 
     updatedData.settings = { ...currentSettings, verification: newVerification };
+    // Any user-submitted verification or payout identity change invalidates a
+    // settlement review that may already contain this tutor.
+    updatedData.payoutIdentityVersion = { increment: 1 };
 
     const verificationFields = ["idCard", "bankBook", "address", "taxInfo"];
     const allVerified = verificationFields.every(

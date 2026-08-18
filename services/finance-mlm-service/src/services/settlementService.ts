@@ -26,6 +26,17 @@ export interface PayoutNode {
   payoutAmountMinor: bigint;
   eligibilityStatus: string;
   verified: boolean;
+  payoutIdentityVersion: number;
+  recipientId: string | null;
+}
+
+// Badge records are currently lifetime achievements without a period-scoped,
+// audited award ledger. They must not create cash liabilities until Finance
+// can prove the qualifying activity for the current settlement period.
+const BADGE_CASH_BONUS_ENABLED = false;
+
+function isRefundAdjustment(reason: string) {
+  return /(refund|chargeback)/i.test(reason);
 }
 
 function getOmiseRecipientId(settings: unknown) {
@@ -126,6 +137,42 @@ async function recoverPayoutTransfer(payoutLineId: string) {
   return transfer;
 }
 
+type PayoutIdentitySnapshot = {
+  payoutLineId: string;
+  tutorUserId: string;
+  payoutIdentityVersion: number;
+  recipientSnapshot: string | null;
+};
+
+function validatePayoutIdentitySnapshots(
+  lines: PayoutIdentitySnapshot[],
+  tutors: Array<{
+    userId: string;
+    isActive: boolean;
+    verificationStatus: string;
+    payoutIdentityVersion: number;
+    settings: unknown;
+  }>,
+) {
+  const tutorById = new Map(tutors.map((tutor) => [tutor.userId, tutor]));
+
+  for (const line of lines) {
+    const tutor = tutorById.get(line.tutorUserId);
+    if (!tutor || !tutor.isActive || tutor.verificationStatus !== "VERIFIED") {
+      throw new Error(`PAYOUT_ELIGIBILITY_CHANGED:${line.tutorUserId}`);
+    }
+    if (!line.recipientSnapshot) {
+      throw new Error(`PAYOUT_IDENTITY_SNAPSHOT_MISSING:${line.tutorUserId}`);
+    }
+    if (tutor.payoutIdentityVersion !== line.payoutIdentityVersion) {
+      throw new Error(`PAYOUT_IDENTITY_CHANGED:${line.tutorUserId}`);
+    }
+    if (getOmiseRecipientId(tutor.settings) !== line.recipientSnapshot) {
+      throw new Error(`PAYOUT_IDENTITY_CHANGED:${line.tutorUserId}`);
+    }
+  }
+}
+
 export class SettlementService {
   /**
    * Generates a preview for a settlement period.
@@ -139,12 +186,22 @@ export class SettlementService {
     const { start: startOfMonth, end: endOfMonth } =
       getIctMonthWindow(periodMonth);
 
-    // Block if an active (DRAFT or SUBMITTED) run already exists for this period
-    if (!options?.refreshRunId) {
-      const existingActive = await prisma.settlementRun.findFirst({
-        where: { periodMonth, status: { in: ["DRAFT", "SUBMITTED"] } },
+    // There is one canonical run per period. Adjustment holders and rejected
+    // runs are refreshed in place; approved/submitted runs are immutable.
+    let effectiveRefreshRunId = options?.refreshRunId;
+    let resetExistingRunToDraft = false;
+    if (!effectiveRefreshRunId) {
+      const existingRun = await prisma.settlementRun.findFirst({
+        where: { periodMonth },
       });
-      if (existingActive) throw new Error("DRAFT_EXISTS");
+      if (existingRun) {
+        if (["ADJUSTMENT_PENDING", "REJECTED"].includes(existingRun.status)) {
+          effectiveRefreshRunId = existingRun.settlementRunId;
+          resetExistingRunToDraft = true;
+        } else {
+          throw new Error("DRAFT_EXISTS");
+        }
+      }
     }
 
     const payments = await prisma.paymentIntent.findMany({
@@ -196,17 +253,34 @@ export class SettlementService {
         adjustmentId: true,
         tutorUserId: true,
         amountMinor: true,
+        volumeMinor: true,
         reason: true,
       },
     });
 
     const adjustmentTotals = new Map<string, bigint>();
+    const volumeAdjustmentTotals = new Map<string, bigint>();
     for (const adjustment of approvedAdjustments) {
       adjustmentTotals.set(
         adjustment.tutorUserId,
         (adjustmentTotals.get(adjustment.tutorUserId) || 0n) +
           adjustment.amountMinor,
       );
+
+      if (isRefundAdjustment(adjustment.reason)) {
+        const volumeMinor = adjustment.volumeMinor ?? adjustment.amountMinor;
+        volumeAdjustmentTotals.set(
+          adjustment.tutorUserId,
+          (volumeAdjustmentTotals.get(adjustment.tutorUserId) || 0n) + volumeMinor,
+        );
+      }
+    }
+
+    for (const [tutorUserId, volumeDelta] of volumeAdjustmentTotals) {
+      const currentVolume = tutorVolumes.get(tutorUserId) || 0n;
+      tutorVolumes.set(tutorUserId, currentVolume + volumeDelta < 0n
+        ? 0n
+        : currentVolume + volumeDelta);
     }
 
     // 3. Build the organizational tree to calculate Group Volume (GV) and Payouts
@@ -214,7 +288,13 @@ export class SettlementService {
     // Load all active tutors for tree structure — verification checked per-node below
     const allUsers = await prisma.user.findMany({
       where: { role: "TUTOR", isActive: true },
-      select: { userId: true, sponsorTutorId: true, verificationStatus: true },
+      select: {
+        userId: true,
+        sponsorTutorId: true,
+        verificationStatus: true,
+        settings: true,
+        payoutIdentityVersion: true,
+      },
     });
 
     const nodes = new Map<string, PayoutNode>();
@@ -228,6 +308,8 @@ export class SettlementService {
         payoutAmountMinor: 0n,
         eligibilityStatus: "ELIGIBLE_BASE",
         verified: u.verificationStatus === "VERIFIED",
+        payoutIdentityVersion: u.payoutIdentityVersion ?? 0,
+        recipientId: getOmiseRecipientId(u.settings),
       });
     }
 
@@ -242,6 +324,8 @@ export class SettlementService {
           payoutAmountMinor: 0n,
           eligibilityStatus: "ADJUSTMENT_ONLY",
           verified: false, // no user record → treat as unverified
+          payoutIdentityVersion: 0,
+          recipientId: null,
         });
       }
     }
@@ -381,29 +465,42 @@ export class SettlementService {
       approvedAdjustmentTotalSatang: approvedAdjustments
         .reduce((sum, adjustment) => sum + adjustment.amountMinor, 0n)
         .toString(),
-      ...(options?.refreshRunId
+      ...(effectiveRefreshRunId
         ? { refreshedAt: new Date().toISOString() }
         : {}),
     };
 
     // 6. Persist Draft Settlement Run, or refresh an existing active run.
-    const run = options?.refreshRunId
-      ? await prisma.settlementRun.update({
-          where: { settlementRunId: options.refreshRunId },
-          data: { previewPayload },
-        })
-      : await prisma.settlementRun.create({
-          data: {
-            periodMonth,
-            status: "DRAFT",
-            createdBy,
-            previewPayload,
-          },
-        });
+    let run;
+    try {
+      run = effectiveRefreshRunId
+        ? await prisma.settlementRun.update({
+            where: { settlementRunId: effectiveRefreshRunId },
+            data: {
+              previewPayload,
+              ...(resetExistingRunToDraft ? { status: "DRAFT" } : {}),
+            },
+          })
+        : await prisma.settlementRun.create({
+            data: {
+              periodMonth,
+              status: "DRAFT",
+              createdBy,
+              previewPayload,
+            },
+          });
+    } catch (error) {
+      // The unique period constraint is the final guard for two previews that
+      // race after both have passed the read-side idempotency check.
+      if ((error as { code?: string }).code === "P2002") {
+        throw new Error("DRAFT_EXISTS");
+      }
+      throw error;
+    }
 
-    if (options?.refreshRunId) {
+    if (effectiveRefreshRunId) {
       const existingLines = await prisma.payoutLine.findMany({
-        where: { settlementRunId: options.refreshRunId },
+        where: { settlementRunId: effectiveRefreshRunId },
         select: { payoutLineId: true },
       });
       const existingLineIds = existingLines.map((line) => line.payoutLineId);
@@ -415,7 +512,7 @@ export class SettlementService {
       }
 
       await prisma.payoutLine.deleteMany({
-        where: { settlementRunId: options.refreshRunId },
+        where: { settlementRunId: effectiveRefreshRunId },
       });
     }
 
@@ -455,7 +552,7 @@ export class SettlementService {
       const effectiveAdjustment = node.verified
         ? (adjustmentTotals.get(node.userId) || 0n)
         : 0n;
-      const effectiveBadgeBonus = node.verified
+      const effectiveBadgeBonus = BADGE_CASH_BONUS_ENABLED && node.verified
         ? (badgeBonusMap.get(node.userId) ?? 0n)
         : 0n;
 
@@ -499,6 +596,8 @@ export class SettlementService {
           netPayoutMinor: tax.netPayoutMinor,
           badgeBonusMinor: effectiveBadgeBonus,
           eligibilityStatus,
+          payoutIdentityVersion: node.payoutIdentityVersion,
+          recipientSnapshot: node.recipientId,
         },
       });
       payoutLineCount++;
@@ -573,6 +672,8 @@ export class SettlementService {
       select: {
         payoutLineId: true,
         tutorUserId: true,
+        payoutIdentityVersion: true,
+        recipientSnapshot: true,
       },
     });
     // Auto-send transfers on approval whenever Omise is configured — no separate
@@ -581,21 +682,22 @@ export class SettlementService {
     const shouldSendPayouts = isOmiseConfigured() && positivePayoutLines.length > 0;
     const recipientByTutor = new Map<string, string>();
 
-    if (shouldSendPayouts) {
+    if (positivePayoutLines.length > 0) {
       const tutorIds = [...new Set(positivePayoutLines.map((line) => line.tutorUserId))];
       const tutors = await prisma.user.findMany({
         where: { userId: { in: tutorIds } },
-        select: { userId: true, settings: true },
+        select: {
+          userId: true,
+          isActive: true,
+          verificationStatus: true,
+          payoutIdentityVersion: true,
+          settings: true,
+        },
       });
 
-      for (const tutor of tutors) {
-        const recipientId = getOmiseRecipientId(tutor.settings);
-        if (recipientId) recipientByTutor.set(tutor.userId, recipientId);
-      }
-
-      const missingTutorIds = tutorIds.filter((id) => !recipientByTutor.has(id));
-      if (missingTutorIds.length > 0) {
-        throw new Error(`MISSING_OMISE_RECIPIENT:${missingTutorIds.join(",")}`);
+      validatePayoutIdentitySnapshots(positivePayoutLines, tutors);
+      for (const line of positivePayoutLines) {
+        recipientByTutor.set(line.tutorUserId, line.recipientSnapshot!);
       }
     }
 
@@ -621,6 +723,28 @@ export class SettlementService {
         include: { payoutLines: true },
       });
       if (!approvedRun) throw new Error("NOT_FOUND");
+
+      const approvedPositiveLines = approvedRun.payoutLines
+        .filter((line) => line.netPayoutMinor > 0n)
+        .map((line) => ({
+          payoutLineId: line.payoutLineId,
+          tutorUserId: line.tutorUserId,
+          payoutIdentityVersion: line.payoutIdentityVersion,
+          recipientSnapshot: line.recipientSnapshot,
+        }));
+      if (approvedPositiveLines.length > 0) {
+        const approvedTutors = await tx.user.findMany({
+          where: { userId: { in: [...new Set(approvedPositiveLines.map((line) => line.tutorUserId))] } },
+          select: {
+            userId: true,
+            isActive: true,
+            verificationStatus: true,
+            payoutIdentityVersion: true,
+            settings: true,
+          },
+        });
+        validatePayoutIdentitySnapshots(approvedPositiveLines, approvedTutors);
+      }
 
       const payoutDocumentByLineId = new Map<string, Awaited<ReturnType<typeof tx.payoutDocument.upsert>>>();
       for (const line of approvedRun.payoutLines) {
@@ -766,12 +890,23 @@ export class SettlementService {
 
     const tutor = await prisma.user.findUnique({
       where: { userId: line.tutorUserId },
-      select: { settings: true },
+      select: {
+        isActive: true,
+        verificationStatus: true,
+        payoutIdentityVersion: true,
+        settings: true,
+      },
     });
-    const recipient = getOmiseRecipientId(tutor?.settings);
-    if (!recipient) {
-      throw new Error(`MISSING_OMISE_RECIPIENT:${line.tutorUserId}`);
-    }
+    validatePayoutIdentitySnapshots(
+      [{
+        payoutLineId: line.payoutLineId,
+        tutorUserId: line.tutorUserId,
+        payoutIdentityVersion: line.payoutIdentityVersion,
+        recipientSnapshot: line.recipientSnapshot,
+      }],
+      tutor ? [{ userId: line.tutorUserId, ...tutor }] : [],
+    );
+    const recipient = line.recipientSnapshot!;
 
     await claimPayoutTransfer(line.payoutLineId);
 

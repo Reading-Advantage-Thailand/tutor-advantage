@@ -661,20 +661,41 @@ class LessonSessionService {
     }
     const participant = session.participants.get(studentId);
     if (!participant) return null;
-    const score = Math.max(0, Math.round(Number(result.score || 0)));
     const gameId = gameState.selectedGameId;
     if (!gameId || !isEnabledGameForCategory(gameState.category, gameId)) return null;
+    if (result.gameId && result.gameId !== gameId) return null;
+
+    const isBoundedInteger = (value: unknown, max: number) =>
+      value === undefined ||
+      (typeof value === "number" && Number.isInteger(value) && value >= 0 && value <= max);
+    if (
+      !isBoundedInteger(result.score, 100_000) ||
+      !isBoundedInteger(result.correct, 100) ||
+      !isBoundedInteger(result.total, 100) ||
+      !isBoundedInteger(result.durationMs, 30 * 60 * 1000) ||
+      (result.correct !== undefined && result.total !== undefined && result.correct > result.total)
+    ) {
+      return null;
+    }
+
+    // The browser result is not a verifiable proof of game performance. Keep
+    // the result for display/audit, but do not let client-controlled numbers
+    // affect participant scores or money-bearing metrics.
+    const score = 0;
+    const correct = result.correct;
+    const total = result.total;
+    const durationMs = result.durationMs;
     participant.score = (participant.score || 0) + score;
     participant.hasAnsweredCurrentPhase = true;
-    participant.latestAnswer = { gameId, score, correct: result.correct, total: result.total };
+    participant.latestAnswer = { gameId, score, correct, total };
     gameState.results[studentId] = {
       studentId,
       name: participant.name,
       gameId,
       score,
-      correct: result.correct,
-      total: result.total,
-      durationMs: result.durationMs,
+      correct,
+      total,
+      durationMs,
       submittedAt: Date.now(),
     };
     // Keep the game mounted for students who have not submitted yet. The
@@ -742,12 +763,16 @@ class LessonSessionService {
     return session || null;
   }
 
-  submitAnswer(sessionId: string, studentId: string, answer: any): { session: LessonSession, allAnswered: boolean } | undefined {
+  submitAnswer(sessionId: string, studentId: string, answer: any): { session: LessonSession, allAnswered: boolean, accepted: boolean } | undefined {
     const session = this.sessions.get(sessionId);
     if (!session || session.phaseRestored) return undefined;
 
     const participant = session.participants.get(studentId);
     if (!participant) return undefined;
+
+    if (participant.hasAnsweredCurrentPhase) {
+      return { session, allAnswered: false, accepted: false };
+    }
 
     // Normalize answer (trim whitespace, convert to string if MCQ)
     const normalizedAnswer = typeof answer === 'string' ? answer.trim() : answer;
@@ -767,7 +792,7 @@ class LessonSessionService {
       }
     }
 
-    return { session, allAnswered };
+    return { session, allAnswered, accepted: true };
   }
 
   endQuestion(sessionId: string): { session: LessonSession; answers: Array<{ studentId: string; answer: any }> } | undefined {

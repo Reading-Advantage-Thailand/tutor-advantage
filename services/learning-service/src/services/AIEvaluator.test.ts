@@ -19,15 +19,17 @@ describe("evaluateShortAnswer", () => {
     await expect(evaluateShortAnswer("Question?", "Expected", "Student")).resolves.toEqual({
       score: 4,
       feedback: "Good answer",
+      verified: true,
     });
   });
 
-  it("falls back to a full score when generation fails", async () => {
+  it("fails closed when generation fails", async () => {
     vi.spyOn(console, "error").mockImplementation(() => undefined);
     generateObject.mockRejectedValueOnce(new Error("model unavailable"));
     const result = await evaluateShortAnswer("Question?", "Expected", "Student");
 
-    expect(result.score).toBe(5);
-    expect(result.feedback).toContain("ระบบ");
+    expect(result.score).toBe(0);
+    expect(result.verified).toBe(false);
+    expect(result.feedback).toContain("ยืนยันคะแนนไม่ได้");
   });
 });

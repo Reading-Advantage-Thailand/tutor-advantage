@@ -123,6 +123,7 @@ describe("SettlementService", () => {
         adjustmentId: true,
         tutorUserId: true,
         amountMinor: true,
+        volumeMinor: true,
         reason: true,
       },
     });
@@ -133,6 +134,54 @@ describe("SettlementService", () => {
         withholdingTaxMinor: 0n,
         netPayoutMinor: 0n,
         eligibilityStatus: "ELIGIBLE_BASE_ADJUSTED",
+      }),
+    });
+  });
+
+  it("removes refunded payment volume before calculating MLM payouts", async () => {
+    prismaMock.paymentIntent.findMany.mockResolvedValue([
+      {
+        paymentIntentId: "pi-refunded",
+        enrollmentId: "en-refunded",
+        amountMinor: 100_000n,
+        status: "SUCCESS",
+        paidAt: new Date("2026-05-10T00:00:00.000Z"),
+        events: [],
+      },
+    ]);
+    prismaMock.enrollment.findMany.mockResolvedValue([
+      { enrollmentId: "en-refunded", class: { tutorUserId: "tutor-1" } },
+    ]);
+    prismaMock.adjustment.findMany.mockResolvedValue([
+      {
+        adjustmentId: "adj-refund",
+        tutorUserId: "tutor-1",
+        amountMinor: -2_500n,
+        volumeMinor: -100_000n,
+        reason: "refund:pi-refunded",
+      },
+    ]);
+    prismaMock.user.findMany.mockResolvedValue([{
+      userId: "tutor-1",
+      sponsorTutorId: null,
+      verificationStatus: "VERIFIED",
+      payoutIdentityVersion: 0,
+      settings: { omiseRecipientId: "recp_1" },
+    }]);
+    prismaMock.settlementRun.create.mockResolvedValue({
+      settlementRunId: "run-refund",
+      periodMonth: "2026-05",
+      status: "DRAFT",
+    });
+    prismaMock.payoutLine.create.mockResolvedValue({});
+
+    await SettlementService.previewSettlement("2026-05", "admin-1");
+
+    expect(prismaMock.payoutLine.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        tutorUserId: "tutor-1",
+        grossVolumeMinor: 0n,
+        payoutAmountMinor: -2_500n,
       }),
     });
   });
@@ -213,6 +262,17 @@ describe("SettlementService", () => {
       SettlementService.previewSettlement("2026-05", "admin-1"),
     ).resolves.toMatchObject({ snapshotId: "run-cycle" });
     expect(prismaMock.payoutLine.create).not.toHaveBeenCalled();
+  });
+
+  it("does not recreate an approved settlement period", async () => {
+    prismaMock.settlementRun.findFirst.mockResolvedValue({
+      settlementRunId: "run-approved",
+      status: "APPROVED",
+    });
+
+    await expect(
+      SettlementService.previewSettlement("2026-05", "admin-1"),
+    ).rejects.toThrow("DRAFT_EXISTS");
   });
 
   it("still creates payouts for healthy sponsor components beside a cycle", async () => {
@@ -301,8 +361,8 @@ describe("SettlementService", () => {
     expect(prismaMock.payoutLine.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
         tutorUserId: "child",
-        badgeBonusMinor: 5000n,
-        eligibilityStatus: "ELIGIBLE_ADJUSTED",
+        badgeBonusMinor: 0n,
+        eligibilityStatus: "ELIGIBLE",
       }),
     });
   });
@@ -388,6 +448,8 @@ describe("SettlementService", () => {
       {
         payoutLineId: "line-positive",
         tutorUserId: "tutor-1",
+        payoutIdentityVersion: 0,
+        recipientSnapshot: "recp_1",
         payoutAmountMinor: 10_000n,
         withholdingTaxMinor: 300n,
         netPayoutMinor: 9_700n,
@@ -405,6 +467,13 @@ describe("SettlementService", () => {
       status: "SUBMITTED",
     });
     prismaMock.payoutLine.findMany.mockResolvedValue([payoutLines[0]]);
+    prismaMock.user.findMany.mockResolvedValue([{
+      userId: "tutor-1",
+      isActive: true,
+      verificationStatus: "VERIFIED",
+      payoutIdentityVersion: 0,
+      settings: { omiseRecipientId: "recp_1" },
+    }]);
     prismaMock.$transaction.mockImplementation(async (callback) =>
       callback({
         settlementRun: {
@@ -421,6 +490,15 @@ describe("SettlementService", () => {
             payoutDocumentId: "doc-1",
             documentNumber: "DOC-1",
           }),
+        },
+        user: {
+          findMany: vi.fn().mockResolvedValue([{
+            userId: "tutor-1",
+            isActive: true,
+            verificationStatus: "VERIFIED",
+            payoutIdentityVersion: 0,
+            settings: { omiseRecipientId: "recp_1" },
+          }]),
         },
       }),
     );
@@ -450,14 +528,47 @@ describe("SettlementService", () => {
 
     omiseMock.isOmiseConfigured.mockReturnValue(true);
     prismaMock.payoutLine.findMany.mockResolvedValue([
-      { payoutLineId: "line-1", tutorUserId: "tutor-1" },
+      {
+        payoutLineId: "line-1",
+        tutorUserId: "tutor-1",
+        payoutIdentityVersion: 0,
+        recipientSnapshot: null,
+      },
     ]);
     prismaMock.user.findMany.mockResolvedValue([
-      { userId: "tutor-1", settings: {} },
+      {
+        userId: "tutor-1",
+        isActive: true,
+        verificationStatus: "VERIFIED",
+        payoutIdentityVersion: 0,
+        settings: {},
+      },
     ]);
     await expect(
       SettlementService.approveSettlement("run-1", "checker"),
-    ).rejects.toThrow("MISSING_OMISE_RECIPIENT:tutor-1");
+    ).rejects.toThrow("PAYOUT_IDENTITY_SNAPSHOT_MISSING:tutor-1");
+  });
+
+  it("rejects approval when the reviewed payout identity has changed", async () => {
+    prismaMock.settlementRun.findUnique.mockResolvedValue({ status: "SUBMITTED" });
+    prismaMock.payoutLine.findMany.mockResolvedValue([{
+      payoutLineId: "line-identity",
+      tutorUserId: "tutor-1",
+      payoutIdentityVersion: 0,
+      recipientSnapshot: "recp_1",
+    }]);
+    prismaMock.user.findMany.mockResolvedValue([{
+      userId: "tutor-1",
+      isActive: true,
+      verificationStatus: "VERIFIED",
+      payoutIdentityVersion: 1,
+      settings: { omiseRecipientId: "recp_1" },
+    }]);
+
+    await expect(
+      SettlementService.approveSettlement("run-identity", "checker"),
+    ).rejects.toThrow("PAYOUT_IDENTITY_CHANGED:tutor-1");
+    expect(prismaMock.$transaction).not.toHaveBeenCalled();
   });
 
   it("automatically sends configured transfers after approval", async () => {
@@ -466,17 +577,27 @@ describe("SettlementService", () => {
       status: "SUBMITTED",
     });
     prismaMock.payoutLine.findMany.mockResolvedValue([
-      { payoutLineId: "line-1", tutorUserId: "tutor-1" },
+      {
+        payoutLineId: "line-1",
+        tutorUserId: "tutor-1",
+        payoutIdentityVersion: 0,
+        recipientSnapshot: "recp_1",
+      },
     ]);
     prismaMock.user.findMany.mockResolvedValue([
       {
         userId: "tutor-1",
+        isActive: true,
+        verificationStatus: "VERIFIED",
+        payoutIdentityVersion: 0,
         settings: { omiseRecipientId: "recp_1" },
       },
     ]);
     const line = {
       payoutLineId: "line-1",
       tutorUserId: "tutor-1",
+      payoutIdentityVersion: 0,
+      recipientSnapshot: "recp_1",
       payoutAmountMinor: 10_000n,
       withholdingTaxMinor: 300n,
       netPayoutMinor: 9_700n,
@@ -496,6 +617,15 @@ describe("SettlementService", () => {
             payoutDocumentId: "doc-1",
             documentNumber: "DOC-1",
           }),
+        },
+        user: {
+          findMany: vi.fn().mockResolvedValue([{
+            userId: "tutor-1",
+            isActive: true,
+            verificationStatus: "VERIFIED",
+            payoutIdentityVersion: 0,
+            settings: { omiseRecipientId: "recp_1" },
+          }]),
         },
       }),
     );
@@ -531,10 +661,21 @@ describe("SettlementService", () => {
       status: "SUBMITTED",
     });
     prismaMock.payoutLine.findMany.mockResolvedValue([
-      { payoutLineId: "line-race", tutorUserId: "tutor-1" },
+      {
+        payoutLineId: "line-race",
+        tutorUserId: "tutor-1",
+        payoutIdentityVersion: 0,
+        recipientSnapshot: "recp_1",
+      },
     ]);
     prismaMock.user.findMany.mockResolvedValue([
-      { userId: "tutor-1", settings: { omiseRecipientId: "recp_1" } },
+      {
+        userId: "tutor-1",
+        isActive: true,
+        verificationStatus: "VERIFIED",
+        payoutIdentityVersion: 0,
+        settings: { omiseRecipientId: "recp_1" },
+      },
     ]);
 
     let transactionAttempt = 0;
@@ -543,6 +684,8 @@ describe("SettlementService", () => {
       const line = {
         payoutLineId: "line-race",
         tutorUserId: "tutor-1",
+        payoutIdentityVersion: 0,
+        recipientSnapshot: "recp_1",
         payoutAmountMinor: 10_000n,
         withholdingTaxMinor: 300n,
         netPayoutMinor: 9_700n,
@@ -563,6 +706,15 @@ describe("SettlementService", () => {
             payoutDocumentId: "doc-race",
             documentNumber: "DOC-RACE",
           }),
+        },
+        user: {
+          findMany: vi.fn().mockResolvedValue([{
+            userId: "tutor-1",
+            isActive: true,
+            verificationStatus: "VERIFIED",
+            payoutIdentityVersion: 0,
+            settings: { omiseRecipientId: "recp_1" },
+          }]),
         },
       } as never);
     });
@@ -603,6 +755,8 @@ describe("SettlementService", () => {
       payoutLineId: "line-1",
       settlementRunId: "run-1",
       tutorUserId: "tutor-1",
+      payoutIdentityVersion: 0,
+      recipientSnapshot: "recp_1",
       netPayoutMinor: 9_700n,
       settlementRun: { status: "APPROVED" },
       payoutDocument: {
@@ -612,6 +766,9 @@ describe("SettlementService", () => {
       },
     });
     prismaMock.user.findUnique.mockResolvedValue({
+      isActive: true,
+      verificationStatus: "VERIFIED",
+      payoutIdentityVersion: 0,
       settings: { omiseRecipientId: "recp_1" },
     });
     omiseMock.createOmiseTransfer.mockResolvedValue({
@@ -709,6 +866,8 @@ describe("SettlementService", () => {
       payoutLineId: "line-race",
       settlementRunId: "run-1",
       tutorUserId: "tutor-1",
+      payoutIdentityVersion: 0,
+      recipientSnapshot: "recp_1",
       netPayoutMinor: 9_700n,
       settlementRun: { status: "APPROVED" },
       payoutDocument: {
@@ -718,6 +877,9 @@ describe("SettlementService", () => {
       },
     });
     prismaMock.user.findUnique.mockResolvedValue({
+      isActive: true,
+      verificationStatus: "VERIFIED",
+      payoutIdentityVersion: 0,
       settings: { omiseRecipientId: "recp_1" },
     });
     prismaMock.payoutDocument.updateMany

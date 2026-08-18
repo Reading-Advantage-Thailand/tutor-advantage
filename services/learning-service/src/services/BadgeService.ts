@@ -18,6 +18,11 @@ export const BADGE_BONUS_SATANG: Record<string, bigint> = {
   AI_PIONEER:      5000n,  // +50 THB/month  — 10+ interactive sessions
 };
 
+// Badges are still useful for recognition, but lifetime unlocks are not a
+// period-scoped, finance-audited proof of eligibility. Keep cash issuance
+// disabled until a verified per-period bonus ledger exists.
+const BADGE_CASH_BONUS_ENABLED = false;
+
 interface TutorMetrics {
   totalHours: number;
   avgResponseMinutes: number | null;
@@ -197,6 +202,8 @@ export async function checkAndUnlockBadges(tutorUserId: string): Promise<string[
  * Used by SettlementService to add bonus to payout lines.
  */
 export async function getTutorBadgeBonusSatang(tutorUserId: string): Promise<bigint> {
+  if (!BADGE_CASH_BONUS_ENABLED) return 0n;
+
   const badges = await prisma.tutorBadge.findMany({
     where: { tutorUserId },
     select: { badgeCode: true },

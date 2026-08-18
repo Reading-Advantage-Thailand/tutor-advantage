@@ -363,6 +363,14 @@ describe("payment intent reconciliation", () => {
     expect(typeof adjustment.amountMinor).toBe("bigint");
     expect(adjustment.amountMinor).toBeLessThan(0n);
     expect(adjustment.amountMinor).toBeGreaterThan(-250000n);
+    expect(adjustment.volumeMinor).toBe(-250000n);
+    expect(prisma.paymentIntent.update).toHaveBeenCalledWith({
+      where: { paymentIntentId: "pi-1" },
+      data: {
+        status: "REFUNDED",
+        providerRef: "chrg_1",
+      },
+    });
     expect(prisma.paymentEvent.create).toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(200);
   });

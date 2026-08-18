@@ -158,22 +158,8 @@ export async function getTutorNetwork(
       }
     }
 
-    // Badge bonus for the current tutor — must match settlementService.BADGE_BONUS_SATANG
-    const BADGE_BONUS_SATANG: Record<string, number> = {
-      ELITE_EDUCATOR:  50000,
-      TOP_RATED:       30000,
-      CLASS_MASTER:    20000,
-      NETWORK_BUILDER: 10000,
-      RISING_STAR:      5000,
-      FAST_RESPONDER:   5000,
-      AI_PIONEER:       5000,
-    };
-    const myBadges = await prisma.tutorBadge.findMany({
-      where: { tutorUserId: userId },
-      select: { badgeCode: true },
-    });
-    const badgeBonusTHB =
-      myBadges.reduce((sum, b) => sum + (BADGE_BONUS_SATANG[b.badgeCode] ?? 0), 0) / 100;
+    // Lifetime badges are not an audited, period-scoped finance ledger.
+    const badgeBonusTHB = 0;
 
     const me = nodes.get(userId)!;
     const sponsor = me.sponsorTutorId ? nodes.get(me.sponsorTutorId) : null;

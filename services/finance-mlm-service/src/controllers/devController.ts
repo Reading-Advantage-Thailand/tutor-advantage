@@ -102,6 +102,17 @@ export const devUpdateUser = async (req: Request, res: Response) => {
   if (verificationComment !== undefined) data.verificationComment = verificationComment || null;
   if (sponsorTutorId !== undefined) data.sponsorTutorId = sponsorTutorId || null;
 
+  // Even dev/admin fixture changes must invalidate a reviewed payout line;
+  // otherwise the next approval could use a stale eligibility/tree snapshot.
+  if (
+    role !== undefined ||
+    isActive !== undefined ||
+    verificationStatus !== undefined ||
+    sponsorTutorId !== undefined
+  ) {
+    data.payoutIdentityVersion = { increment: 1 };
+  }
+
   if (Object.keys(data).length === 0) {
     return res.status(400).json({ error: "No fields to update" });
   }

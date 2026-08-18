@@ -26,6 +26,7 @@ model User {
   sponsorTutorId    String?                   @map("sponsor_tutor_id") @db.Uuid
   sponsorLockedAt   DateTime?                 @map("sponsor_locked_at") @db.Timestamptz
   settings          Json?                     @default("{}")
+  payoutIdentityVersion Int                   @default(0) @map("payout_identity_version")
   
   // Verification fields
   idCardImageUrl    String?                   @map("id_card_image_url")
@@ -352,6 +353,7 @@ model SessionAnswer {
   session InteractiveSession @relation(fields: [sessionId], references: [sessionId], onDelete: Cascade)
   student User               @relation(fields: [studentUserId], references: [userId])
 
+  @@unique([sessionId, studentUserId, phase], map: "session_answers_session_student_phase_key")
   @@map("session_answers")
   @@schema("learning")
 }
@@ -567,7 +569,7 @@ model PaymentReceipt {
 
 model SettlementRun {
   settlementRunId String    @id @default(dbgenerated("gen_random_uuid()")) @map("settlement_run_id") @db.Uuid
-  periodMonth     String    @map("period_month")
+  periodMonth     String    @unique @map("period_month")
   timezone        String    @default("Asia/Bangkok")
   status          String
   previewPayload  Json      @map("preview_payload")
@@ -595,6 +597,8 @@ model PayoutLine {
   netPayoutMinor      BigInt   @default(0) @map("net_payout_minor")
   badgeBonusMinor     BigInt   @default(0) @map("badge_bonus_minor")
   eligibilityStatus   String   @map("eligibility_status")
+  payoutIdentityVersion Int    @default(0) @map("payout_identity_version")
+  recipientSnapshot  String?   @map("recipient_snapshot")
   createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   settlementRun SettlementRun @relation(fields: [settlementRunId], references: [settlementRunId])
@@ -635,6 +639,7 @@ model Adjustment {
   settlementRunId String    @map("settlement_run_id") @db.Uuid
   tutorUserId     String    @map("tutor_user_id") @db.Uuid
   amountMinor     BigInt    @map("amount_minor")
+  volumeMinor     BigInt?   @map("volume_minor")
   reason          String
   status          String    @default("PENDING")
   createdBy       String    @map("created_by")

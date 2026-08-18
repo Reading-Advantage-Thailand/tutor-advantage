@@ -290,6 +290,7 @@ export const verifyUser = async (req: Request, res: Response) => {
 
     const data: Record<string, unknown> = {
       settings: { ...currentSettings, verification: newVerification },
+      payoutIdentityVersion: { increment: 1 },
       verificationComment:
         globalComment ||
         (status === "REJECTED" ? getCommentForField(normalizedField) : null),
@@ -338,6 +339,7 @@ export const verifyUser = async (req: Request, res: Response) => {
                 ...((data.settings as Record<string, unknown>) ?? currentSettings),
                 omiseRecipientId: recipient.id,
               },
+              payoutIdentityVersion: { increment: 1 },
             },
           });
 
@@ -375,7 +377,7 @@ export const suspendUser = async (req: AuthenticatedRequest, res: Response) => {
 
     const updated = await prisma.user.update({
       where: { userId: id },
-      data: { isActive: !user.isActive },
+      data: { isActive: !user.isActive, payoutIdentityVersion: { increment: 1 } },
       select: { userId: true, isActive: true },
     });
 
@@ -425,7 +427,10 @@ export const updateOmiseRecipient = async (req: AuthenticatedRequest, res: Respo
 
     await prisma.user.update({
       where: { userId: id },
-      data: { settings: updatedSettings },
+      data: {
+        settings: updatedSettings,
+        payoutIdentityVersion: { increment: 1 },
+      },
     });
 
     return res.status(200).json({

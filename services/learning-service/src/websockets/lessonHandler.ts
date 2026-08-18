@@ -614,8 +614,10 @@ export const setupLessonSocket = (io: Server) => {
           studentId: actor.userId,
           phase: submitted.session.currentPhase,
           answerText: JSON.stringify(result || {}),
-          isCorrect: true,
-          score: submitted.gameState.results[actor.userId]?.score || 0,
+          // Client-reported game scores are retained as an unverified result
+          // only; they must not feed success metrics or badge payouts.
+          isCorrect: null,
+          score: 0,
           questionText: submitted.gameState.selectedGameId || "Lesson game",
           correctAnswer: "",
         });
@@ -684,6 +686,13 @@ export const setupLessonSocket = (io: Server) => {
       }
 
       const studentId = actor.userId;
+      if (authorizedSession?.participants.get(studentId)?.hasAnsweredCurrentPhase) {
+        socket.emit("answer_received", {
+          success: false,
+          code: "ANSWER_ALREADY_SUBMITTED",
+        });
+        return;
+      }
       // AI-evaluated phases: 9=Guided Response (short answer), 14=Guided Writing
       let evaluatedAnswer = answer;
       const session = lessonSessionService.getSession(sessionId);
@@ -694,7 +703,8 @@ export const setupLessonSocket = (io: Server) => {
          evaluatedAnswer = {
            text: answer,
            aiScore: aiResult.score,
-           aiFeedback: aiResult.feedback
+           aiFeedback: aiResult.feedback,
+           aiVerified: aiResult.verified,
          };
          // send personal result immediately back to student
          socket.emit("ai_evaluation_result", evaluatedAnswer);
@@ -716,6 +726,13 @@ export const setupLessonSocket = (io: Server) => {
 
       const result = lessonSessionService.submitAnswer(sessionId, studentId, evaluatedAnswer);
       if (result) {
+        if (!result.accepted) {
+          socket.emit("answer_received", {
+            success: false,
+            code: "ANSWER_ALREADY_SUBMITTED",
+          });
+          return;
+        }
         // Update participant's total score
         const participant = result.session.participants.get(studentId);
         if (participant) {
@@ -729,7 +746,7 @@ export const setupLessonSocket = (io: Server) => {
               studentId,
               phase: result.session.currentPhase,
               answerText: String(answer),
-              isCorrect: true, // Considered valid submission
+              isCorrect: evaluatedAnswer.aiVerified === true && (evaluatedAnswer.aiScore || 0) > 0,
               score: evaluatedAnswer.aiScore || 0,
               aiFeedback: evaluatedAnswer.aiFeedback,
               questionText: question,

@@ -40,18 +40,16 @@ export async function autoRunSettlement(req: Request, res: Response) {
   const periodMonth = getPreviousIctMonth();
 
   try {
-    // A refund webhook may create an ADJUSTMENT_PENDING holder run. It must
-    // not prevent the scheduler from creating the actual monthly preview.
-    // Completed runs remain idempotent and active maker/checker runs remain
-    // protected from duplicate previews.
+    // A refund webhook may create an ADJUSTMENT_PENDING holder run. Reuse that
+    // canonical row when the monthly preview is generated; every other run
+    // status is already an idempotent result for this period.
     const existing = await prisma.settlementRun.findFirst({
       where: {
         periodMonth,
-        status: { in: ["DRAFT", "SUBMITTED", "APPROVED"] },
       },
       orderBy: { createdAt: "desc" },
     });
-    if (existing) {
+    if (existing && !["ADJUSTMENT_PENDING", "REJECTED"].includes(existing.status)) {
       logger.info(
         `[AutoSettlement] Run for ${periodMonth} already exists (${existing.settlementRunId}). Skipping.`,
       );
@@ -150,7 +148,7 @@ export async function previewSettlement(
       return res.status(409).json({
         error: {
           code: "DRAFT_EXISTS",
-          message: "A draft settlement already exists for this period",
+          message: "A settlement run already exists for this period",
           requestId: req.id,
         },
       });
@@ -755,6 +753,22 @@ export async function approveSettlement(
       });
     }
 
+    if (
+      error.message?.startsWith("PAYOUT_IDENTITY_CHANGED:") ||
+      error.message?.startsWith("PAYOUT_IDENTITY_SNAPSHOT_MISSING:") ||
+      error.message?.startsWith("PAYOUT_ELIGIBILITY_CHANGED:")
+    ) {
+      return res.status(409).json({
+        error: {
+          code: "PAYOUT_IDENTITY_CHANGED",
+          message:
+            "Payout eligibility or recipient changed after review. Refresh the settlement and submit it for review again.",
+          tutorUserIds: error.message.split(":").slice(1),
+          requestId: req.id,
+        },
+      });
+    }
+
     if (error.message === "OMISE_PAYOUTS_NOT_CONFIGURED") {
       return res.status(502).json({
         error: {
@@ -888,6 +902,22 @@ export async function retryPayoutTransfer(
           code: "OMISE_TRANSFER_FAILED",
           message: "Omise transfer failed",
           details: error.message,
+          requestId: req.id,
+        },
+      });
+    }
+
+    if (
+      error.message?.startsWith("PAYOUT_IDENTITY_CHANGED:") ||
+      error.message?.startsWith("PAYOUT_IDENTITY_SNAPSHOT_MISSING:") ||
+      error.message?.startsWith("PAYOUT_ELIGIBILITY_CHANGED:")
+    ) {
+      return res.status(409).json({
+        error: {
+          code: "PAYOUT_IDENTITY_CHANGED",
+          message:
+            "Payout eligibility or recipient changed after review. Refresh the settlement before retrying.",
+          tutorUserId: error.message.split(":").slice(1).join(":"),
           requestId: req.id,
         },
       });

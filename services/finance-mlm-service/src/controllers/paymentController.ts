@@ -889,6 +889,9 @@ async function recordNegativePaymentOutcome(
   if (!intent) throw new Error("PAYMENT_INTENT_NOT_FOUND");
 
   if (intent.status !== "SUCCESS") {
+    if (intent.status === "REFUNDED" || intent.status === "CHARGEBACKED") {
+      return intent;
+    }
     return prisma.$transaction(async (tx) => {
       const failedIntent = await tx.paymentIntent.update({
         where: { paymentIntentId },
@@ -985,14 +988,25 @@ async function recordNegativePaymentOutcome(
   if (!run) {
     // This holder is deliberately not DRAFT: it lets the monthly scheduler
     // create the real preview instead of treating a webhook as a settlement.
-    run = await prisma.settlementRun.create({
-      data: {
-        periodMonth: clawbackPeriodMonth,
-        status: "ADJUSTMENT_PENDING",
-        createdBy: "payment-webhook",
-        previewPayload: {},
-      },
-    });
+    try {
+      run = await prisma.settlementRun.create({
+        data: {
+          periodMonth: clawbackPeriodMonth,
+          status: "ADJUSTMENT_PENDING",
+          createdBy: "payment-webhook",
+          previewPayload: {},
+        },
+      });
+    } catch (error) {
+      // A second refund webhook may race the holder creation. The unique
+      // period constraint makes the winner canonical; reuse it here.
+      if ((error as { code?: string }).code !== "P2002") throw error;
+      run = await prisma.settlementRun.findFirst({
+        where: { periodMonth: clawbackPeriodMonth },
+        orderBy: { createdAt: "desc" },
+      });
+      if (!run) throw error;
+    }
   }
 
   const amountMinor = await estimatePaidCommissionMinor(
@@ -1000,8 +1014,16 @@ async function recordNegativePaymentOutcome(
     enrollment.class.tutorUserId,
     paidPeriodMonth,
   );
+  const negativeStatus = /chargeback/i.test(eventType)
+    ? "CHARGEBACKED"
+    : "REFUNDED";
 
   await prisma.$transaction(async (tx) => {
+    await tx.paymentIntent.update({
+      where: { paymentIntentId },
+      data: { status: negativeStatus, providerRef },
+    });
+
     if (intent.enrollmentPackageId) {
       await tx.enrollmentPackage.updateMany({
         where: {
@@ -1054,6 +1076,9 @@ async function recordNegativePaymentOutcome(
         settlementRunId: run!.settlementRunId,
         tutorUserId: enrollment.class.tutorUserId,
         amountMinor: -amountMinor,
+        // Volume must be reduced by the refunded charge, not only by the
+        // commission clawback used for the tutor's payout line.
+        volumeMinor: -intent.amountMinor,
         reason,
         status: "PENDING",
         createdBy: "payment-webhook",

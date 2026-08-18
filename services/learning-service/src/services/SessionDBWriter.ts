@@ -130,7 +130,7 @@ export const persistAnswer = async (params: {
   studentId: string;
   phase: number;
   answerText: string;
-  isCorrect: boolean;
+  isCorrect: boolean | null;
   score: number;
   aiFeedback?: string;
   questionText?: string;

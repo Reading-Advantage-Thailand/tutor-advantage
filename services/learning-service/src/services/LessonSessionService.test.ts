@@ -49,7 +49,12 @@ describe("lessonSessionService", () => {
     const second = service.submitAnswer(session.sessionId, "student-2", "no");
 
     expect(first?.allAnswered).toBe(false);
+    expect(first?.accepted).toBe(true);
     expect(second?.allAnswered).toBe(true);
+    expect(session.participants.get("student-1")?.latestAnswer).toBe("yes");
+
+    const replay = service.submitAnswer(session.sessionId, "student-1", "forged replay");
+    expect(replay?.accepted).toBe(false);
     expect(session.participants.get("student-1")?.latestAnswer).toBe("yes");
 
     service.setPhase(session.sessionId, 2);
@@ -148,7 +153,8 @@ describe("lessonSessionService", () => {
     expect(first?.allSubmitted).toBe(false);
     expect(first?.gameState.status).toBe("playing");
     expect(duplicate?.accepted).toBe(false);
-    expect(session.participants.get("student-1")?.score).toBe(8);
+    expect(first?.gameState.results["student-1"]?.score).toBe(0);
+    expect(session.participants.get("student-1")?.score).toBe(0);
 
     const second = service.submitGameResult(session.sessionId, "student-2", {
       gameId: "dragon-flight",
