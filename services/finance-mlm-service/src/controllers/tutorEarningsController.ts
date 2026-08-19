@@ -170,6 +170,7 @@ export async function getEarningsHistory(
         netPayout: Number(line.netPayoutMinor) / 100,
         payoutDocument: line.payoutDocument
           ? {
+              payoutDocumentId: line.payoutDocument.payoutDocumentId,
               documentNumber: line.payoutDocument.documentNumber,
               documentType: line.payoutDocument.documentType,
               status: line.payoutDocument.status,

@@ -22,6 +22,7 @@ type EarningsHistoryItem = {
   withholdingTax?: number;
   netPayout?: number;
   payoutDocument?: {
+    payoutDocumentId: string;
     documentNumber: string;
     documentType: string;
     status: string;
@@ -435,7 +436,7 @@ export default async function EarningsPage() {
                           </div>
                           {item.status === "approved" && (item.withholdingTax ?? 0) > 0 && (
                             <Tawi50DownloadButton
-                              href={`/api/documents/tawi50?documentNumber=${encodeURIComponent(item.payoutDocument.documentNumber)}&gross=${Math.round(item.direct + item.network + (item.badgeBonus ?? 0) + item.clawback)}&wht=${Math.round(item.withholdingTax ?? 0)}&net=${Math.round(item.netPayout ?? 0)}&period=${encodeURIComponent(item.date)}&issuedAt=${encodeURIComponent(item.payoutDocument.issuedAt ?? "")}&paidDate=${encodeURIComponent(item.payoutDocument.transferredAt ?? "")}`}
+                              href={`/api/documents/tawi50?payoutDocumentId=${encodeURIComponent(item.payoutDocument.payoutDocumentId)}`}
                               filename={`tawi50-${item.payoutDocument.documentNumber}.pdf`}
                               settings={user?.settings ?? null}
                               isVerified={user?.verificationStatus === "VERIFIED"}

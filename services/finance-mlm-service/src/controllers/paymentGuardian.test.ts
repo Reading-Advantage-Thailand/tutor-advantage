@@ -232,6 +232,7 @@ describe("payment intent reconciliation", () => {
     prisma.enrollment.findUnique.mockResolvedValue({
       status: "CANCELLED",
       classId: "class-1",
+      class: { tutorUserId: "tutor-original" },
     });
     prisma.enrollment.update.mockResolvedValue({});
     prisma.enrollmentPackage.updateMany.mockResolvedValue({ count: 0 });
@@ -258,6 +259,7 @@ describe("payment intent reconciliation", () => {
         status: "SUCCESS",
         providerRef: "chrg_1",
         paidAt: expect.any(Date),
+        earningTutorUserId: "tutor-original",
       },
     });
     expect(prisma.class.update).toHaveBeenCalledWith({
@@ -297,6 +299,46 @@ describe("payment intent reconciliation", () => {
     expect(res.json).toHaveBeenCalledWith({
       error: expect.objectContaining({ code: "PAYMENT_ALREADY_COMPLETED" }),
     });
+    expect(omiseMock.createOmiseCharge).not.toHaveBeenCalled();
+  });
+
+  it("does not disclose an idempotency-key payment to another student", async () => {
+    prisma.enrollment.findUnique.mockResolvedValue({
+      enrollmentId: "enrollment-2",
+      studentUserId: "student-2",
+      status: "PENDING_PAYMENT",
+      class: { packagePriceMinor: 250000n },
+    });
+    prisma.user.findUnique.mockResolvedValue({ dateOfBirth: new Date("2000-01-01T00:00:00.000Z") });
+    prisma.paymentIntent.findUnique.mockResolvedValue(paymentIntent({
+      enrollmentId: "enrollment-1",
+      studentUserId: "student-1",
+      idempotencyKey: "shared-key",
+      providerRef: "chrg_private",
+      status: "PENDING",
+    }));
+
+    const req = {
+      id: "req-idempotency",
+      user: { userId: "student-2" },
+      body: {
+        enrollmentId: "enrollment-2",
+        amountSatang: 250000,
+        method: "card",
+        omiseToken: "tok_test",
+        idempotencyKey: "shared-key",
+      },
+      headers: {},
+    };
+    const res = response();
+
+    await createPaymentIntent(req as never, res as never);
+
+    expect(res.status).toHaveBeenCalledWith(409);
+    expect(res.json).toHaveBeenCalledWith({
+      error: expect.objectContaining({ code: "IDEMPOTENCY_KEY_REUSED" }),
+    });
+    expect(omiseMock.retrieveOmiseCharge).not.toHaveBeenCalled();
     expect(omiseMock.createOmiseCharge).not.toHaveBeenCalled();
   });
 

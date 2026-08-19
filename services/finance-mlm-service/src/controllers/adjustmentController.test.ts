@@ -49,6 +49,7 @@ describe("adjustmentController", () => {
   it("allows finance makers to create integer-satang adjustments", async () => {
     prismaMock.settlementRun.findFirst.mockResolvedValue({
       settlementRunId: "run-1",
+      status: "DRAFT",
     });
     prismaMock.adjustment.create.mockResolvedValue({
       adjustmentId: "adj-1",
@@ -76,6 +77,33 @@ describe("adjustmentController", () => {
         createdBy: "maker-1",
       }),
     });
+  });
+
+  it("does not append adjustments to a submitted settlement", async () => {
+    prismaMock.settlementRun.findFirst.mockResolvedValue({
+      settlementRunId: "run-submitted",
+      status: "SUBMITTED",
+    });
+
+    const req = {
+      id: "req-2",
+      user: { userId: "maker-1", role: "FINANCE_MAKER" },
+      body: {
+        tutorUserId: "tutor-1",
+        periodMonth: "2026-05",
+        amountSatang: 1000,
+        reason: "manual correction",
+      },
+    } as any;
+    const res = createResponse() as any;
+
+    await createAdjustment(req, res);
+
+    expect(res.statusCode).toBe(409);
+    expect(res.body).toMatchObject({
+      error: { code: "SETTLEMENT_IMMUTABLE" },
+    });
+    expect(prismaMock.adjustment.create).not.toHaveBeenCalled();
   });
 
   it("rejects non-checkers approving adjustments", async () => {

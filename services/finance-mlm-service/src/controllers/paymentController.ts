@@ -230,6 +230,29 @@ export async function createPaymentIntent(
         where: { idempotencyKey },
       });
 
+      if (existingByKey) {
+        const requestMatches =
+          existingByKey.studentUserId === userId &&
+          existingByKey.enrollmentId === enrollmentId &&
+          (existingByKey.enrollmentPackageId ?? null) === (enrollmentPackageId ?? null) &&
+          existingByKey.amountMinor === BigInt(amountSatang) &&
+          existingByKey.currency === "THB" &&
+          existingByKey.method === method;
+
+        // Idempotency keys are not bearer tokens. A key reused by another
+        // student, or with different payment parameters, must not reveal the
+        // original intent, charge, checkout URL, or status.
+        if (!requestMatches) {
+          return res.status(409).json({
+            error: {
+              code: "IDEMPOTENCY_KEY_REUSED",
+              message: "Idempotency key is already bound to another payment request",
+              requestId: req.id,
+            },
+          });
+        }
+      }
+
       if (existingByKey?.providerRef) {
         const checkout = await buildCheckoutDetails(existingByKey.providerRef);
         return res.status(200).json({
@@ -621,11 +644,17 @@ async function fulfillPaymentIntent(paymentIntentId: string, providerRef?: strin
       });
     }
 
+    const fulfillmentEnrollment = await tx.enrollment.findUnique({
+      where: { enrollmentId: existingIntent.enrollmentId },
+      select: {
+        status: true,
+        classId: true,
+        class: { select: { tutorUserId: true } },
+      },
+    });
+    const earningTutorUserId = fulfillmentEnrollment?.class?.tutorUserId;
     const cancelledEnrollment = !existingIntent.enrollmentPackageId
-      ? await tx.enrollment.findUnique({
-          where: { enrollmentId: existingIntent.enrollmentId },
-          select: { status: true, classId: true },
-        })
+      ? fulfillmentEnrollment
       : null;
 
     const intent = await tx.paymentIntent.update({
@@ -634,6 +663,7 @@ async function fulfillPaymentIntent(paymentIntentId: string, providerRef?: strin
         status: "SUCCESS",
         providerRef,
         paidAt: new Date(),
+        ...(earningTutorUserId ? { earningTutorUserId } : {}),
       },
     });
 
@@ -964,28 +994,36 @@ async function recordNegativePaymentOutcome(
   });
 
   // If the original period is still being prepared, keep the clawback there.
-  // Once it has been approved, put the reclaim in the next period instead.
-  const clawbackPeriodMonth =
-    paidRun?.status === "APPROVED"
+  // Once it has been submitted for checking, put the reclaim in a later
+  // mutable period instead of changing the reviewed run.
+  let clawbackPeriodMonth =
+    ["SUBMITTED", "APPROVED"].includes(paidRun?.status ?? "")
       ? getFollowingIctPeriodMonth(paidPeriodMonth)
       : paidPeriodMonth;
   let run =
     paidRun && paidPeriodMonth === clawbackPeriodMonth &&
-    ["DRAFT", "SUBMITTED", "ADJUSTMENT_PENDING"].includes(paidRun.status)
+    ["DRAFT", "ADJUSTMENT_PENDING", "REJECTED"].includes(paidRun.status)
       ? paidRun
-      : await prisma.settlementRun.findFirst({
-          where: { periodMonth: clawbackPeriodMonth, status: "DRAFT" },
-          orderBy: { createdAt: "desc" },
-        });
+      : null;
 
-  if (!run) {
-    run = await prisma.settlementRun.findFirst({
-      where: { periodMonth: clawbackPeriodMonth, status: "ADJUSTMENT_PENDING" },
+  // Never attach a refund to a submitted/approved run. If the immediate
+  // following period is already final, keep moving forward until a mutable
+  // period or a new adjustment holder is available.
+  while (!run) {
+    const candidate = await prisma.settlementRun.findFirst({
+      where: { periodMonth: clawbackPeriodMonth },
       orderBy: { createdAt: "desc" },
     });
-  }
 
-  if (!run) {
+    if (candidate && ["DRAFT", "ADJUSTMENT_PENDING", "REJECTED"].includes(candidate.status)) {
+      run = candidate;
+      break;
+    }
+    if (candidate) {
+      clawbackPeriodMonth = getFollowingIctPeriodMonth(clawbackPeriodMonth);
+      continue;
+    }
+
     // This holder is deliberately not DRAFT: it lets the monthly scheduler
     // create the real preview instead of treating a webhook as a settlement.
     try {
@@ -999,19 +1037,24 @@ async function recordNegativePaymentOutcome(
       });
     } catch (error) {
       // A second refund webhook may race the holder creation. The unique
-      // period constraint makes the winner canonical; reuse it here.
+      // period constraint makes the winner canonical; reuse it only if it is
+      // still mutable. A final run is skipped and the loop advances.
       if ((error as { code?: string }).code !== "P2002") throw error;
-      run = await prisma.settlementRun.findFirst({
+      const racedRun = await prisma.settlementRun.findFirst({
         where: { periodMonth: clawbackPeriodMonth },
         orderBy: { createdAt: "desc" },
       });
-      if (!run) throw error;
+      if (racedRun && ["DRAFT", "ADJUSTMENT_PENDING", "REJECTED"].includes(racedRun.status)) {
+        run = racedRun;
+      } else {
+        clawbackPeriodMonth = getFollowingIctPeriodMonth(clawbackPeriodMonth);
+      }
     }
   }
 
   const amountMinor = await estimatePaidCommissionMinor(
     intent,
-    enrollment.class.tutorUserId,
+    intent.earningTutorUserId ?? enrollment.class.tutorUserId,
     paidPeriodMonth,
   );
   const negativeStatus = /chargeback/i.test(eventType)
@@ -1074,7 +1117,7 @@ async function recordNegativePaymentOutcome(
     await tx.adjustment.create({
       data: {
         settlementRunId: run!.settlementRunId,
-        tutorUserId: enrollment.class.tutorUserId,
+        tutorUserId: intent.earningTutorUserId ?? enrollment.class.tutorUserId,
         amountMinor: -amountMinor,
         // Volume must be reduced by the refunded charge, not only by the
         // commission clawback used for the tutor's payout line.

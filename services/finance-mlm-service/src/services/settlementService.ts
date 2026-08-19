@@ -190,6 +190,24 @@ export class SettlementService {
     // runs are refreshed in place; approved/submitted runs are immutable.
     let effectiveRefreshRunId = options?.refreshRunId;
     let resetExistingRunToDraft = false;
+    if (effectiveRefreshRunId) {
+      const refreshRun = await prisma.settlementRun.findUnique({
+        where: { settlementRunId: effectiveRefreshRunId },
+        select: { status: true, periodMonth: true },
+      });
+      if (!refreshRun) throw new Error("NOT_FOUND");
+      if (refreshRun.periodMonth !== periodMonth) {
+        throw new Error("SETTLEMENT_PERIOD_MISMATCH");
+      }
+      if (!["DRAFT", "ADJUSTMENT_PENDING", "REJECTED", "REFRESHING"].includes(refreshRun.status)) {
+        throw new Error("SETTLEMENT_IMMUTABLE");
+      }
+      resetExistingRunToDraft = [
+        "ADJUSTMENT_PENDING",
+        "REJECTED",
+        "REFRESHING",
+      ].includes(refreshRun.status);
+    }
     if (!effectiveRefreshRunId) {
       const existingRun = await prisma.settlementRun.findFirst({
         where: { periodMonth },
@@ -235,7 +253,9 @@ export class SettlementService {
     }
 
     for (const payment of payments) {
-      const tutorId = enrollmentTutorMap.get(payment.enrollmentId);
+      // Successful payments keep their earning owner. Fall back to the
+      // enrollment's current class owner only for pre-migration payments.
+      const tutorId = payment.earningTutorUserId ?? enrollmentTutorMap.get(payment.enrollmentId);
       if (!tutorId) continue;
 
       const currentVol = tutorVolumes.get(tutorId) || 0n;
@@ -285,23 +305,45 @@ export class SettlementService {
 
     // 3. Build the organizational tree to calculate Group Volume (GV) and Payouts
     // For a real MLM tree, we need the upline structure.
-    // Load all active tutors for tree structure — verification checked per-node below
+    // Load the complete sponsor graph. Active tutors whose sponsor is inactive
+    // must be compressed to the nearest active ancestor (or become a root),
+    // otherwise filtering inactive sponsors out makes the whole subtree
+    // unreachable and silently drops its payout.
     const allUsers = await prisma.user.findMany({
-      where: { role: "TUTOR", isActive: true },
+      where: { role: "TUTOR" },
       select: {
         userId: true,
         sponsorTutorId: true,
+        isActive: true,
         verificationStatus: true,
         settings: true,
         payoutIdentityVersion: true,
       },
     });
 
+    const userById = new Map(allUsers.map((user) => [user.userId, user]));
+
+    const resolveEffectiveSponsor = (userId: string) => {
+      const visited = new Set<string>([userId]);
+      let sponsorId = userById.get(userId)?.sponsorTutorId ?? null;
+
+      while (sponsorId) {
+        const sponsor = userById.get(sponsorId);
+        if (!sponsor) throw new Error(`SPONSOR_NOT_FOUND:${sponsorId}`);
+        if (visited.has(sponsorId)) throw new Error("SPONSOR_TREE_CYCLE");
+        visited.add(sponsorId);
+        if (sponsor.isActive !== false) return sponsorId;
+        sponsorId = sponsor.sponsorTutorId;
+      }
+
+      return null;
+    };
+
     const nodes = new Map<string, PayoutNode>();
-    for (const u of allUsers) {
+    for (const u of allUsers.filter((user) => user.isActive !== false)) {
       nodes.set(u.userId, {
         userId: u.userId,
-        sponsorId: u.sponsorTutorId,
+        sponsorId: resolveEffectiveSponsor(u.userId),
         personalVolumeMinor: tutorVolumes.get(u.userId) || 0n,
         groupVolumeMinor: tutorVolumes.get(u.userId) || 0n, // Initially GV = PV
         payoutRate: 0,
@@ -619,7 +661,7 @@ export class SettlementService {
     });
 
     if (!run) throw new Error("NOT_FOUND");
-    if (!["DRAFT", "SUBMITTED"].includes(run.status)) {
+    if (!["DRAFT", "ADJUSTMENT_PENDING", "REJECTED"].includes(run.status)) {
       return {
         refreshed: false,
         status: run.status,
@@ -629,19 +671,39 @@ export class SettlementService {
       };
     }
 
-    const preview = await SettlementService.previewSettlement(
-      run.periodMonth,
-      run.createdBy ?? "SYSTEM",
-      { refreshRunId: snapshotId },
-    );
+    // Claim the run before deleting/rebuilding lines. Submit/approve only
+    // accept DRAFT/SUBMITTED, so REFRESHING closes the race window where a
+    // checker could approve or a maker could submit half-refreshed lines.
+    const claimed = await prisma.settlementRun.updateMany({
+      where: {
+        settlementRunId: snapshotId,
+        status: run.status,
+      },
+      data: { status: "REFRESHING" },
+    });
+    if (claimed.count !== 1) throw new Error("SETTLEMENT_ALREADY_CLAIMED");
 
-    return {
-      refreshed: true,
-      status: run.status,
-      totalPayoutSatang: preview.totalPayoutSatang,
-      totalNetPayoutSatang: preview.totalNetPayoutSatang,
-      payoutLineCount: preview.payoutLineCount,
-    };
+    try {
+      const preview = await SettlementService.previewSettlement(
+        run.periodMonth,
+        run.createdBy ?? "SYSTEM",
+        { refreshRunId: snapshotId },
+      );
+
+      return {
+        refreshed: true,
+        status: preview.status,
+        totalPayoutSatang: preview.totalPayoutSatang,
+        totalNetPayoutSatang: preview.totalNetPayoutSatang,
+        payoutLineCount: preview.payoutLineCount,
+      };
+    } catch (error) {
+      await prisma.settlementRun.updateMany({
+        where: { settlementRunId: snapshotId, status: "REFRESHING" },
+        data: { status: run.status },
+      });
+      throw error;
+    }
   }
 
   /**

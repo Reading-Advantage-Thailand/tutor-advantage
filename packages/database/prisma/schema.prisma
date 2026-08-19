@@ -514,6 +514,9 @@ model PaymentIntent {
   enrollmentId    String   @map("enrollment_id") @db.Uuid
   enrollmentPackageId String? @map("enrollment_package_id") @db.Uuid
   studentUserId   String   @map("student_user_id") @db.Uuid
+  // Tutor who owned the class when the payment became successful. This is
+  // immutable earning attribution; current class ownership may change later.
+  earningTutorUserId String? @map("earning_tutor_user_id") @db.Uuid
   amountMinor     BigInt   @map("amount_minor")
   currency        String
   method          String

@@ -10,6 +10,7 @@
     "test": "vitest run --root ../.. apps/tutor-pwa/src"
   },
   "dependencies": {
+    "@tutor-advantage/database": "1.0.0",
     "@base-ui/react": "^1.2.0",
     "@dagrejs/dagre": "^3.0.0",
     "@radix-ui/react-label": "^2.1.8",

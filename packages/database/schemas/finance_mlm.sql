@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS finance_mlm.payment_intents (
   payment_intent_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   enrollment_id UUID NOT NULL,
   student_user_id UUID NOT NULL,
+  earning_tutor_user_id UUID,
   amount_minor BIGINT NOT NULL CHECK (amount_minor > 0),
   currency TEXT NOT NULL CHECK (currency = 'THB'),
   method TEXT NOT NULL CHECK (method IN ('promptpay', 'card')),

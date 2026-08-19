@@ -206,6 +206,16 @@ export async function createAdjustment(
       });
     }
 
+    if (!["DRAFT", "ADJUSTMENT_PENDING", "REJECTED"].includes(run.status)) {
+      return res.status(409).json({
+        error: {
+          code: "SETTLEMENT_IMMUTABLE",
+          message: "Cannot add an adjustment to a submitted or approved settlement",
+          requestId: req.id,
+        },
+      });
+    }
+
     const adj = await prisma.adjustment.create({
       data: {
         settlementRunId: run.settlementRunId,

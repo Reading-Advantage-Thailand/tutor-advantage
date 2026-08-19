@@ -200,6 +200,15 @@ export async function refreshSettlement(
         },
       });
     }
+    if (["SETTLEMENT_ALREADY_CLAIMED", "SETTLEMENT_IMMUTABLE"].includes(error.message)) {
+      return res.status(409).json({
+        error: {
+          code: error.message,
+          message: "Settlement is already being processed or is immutable",
+          requestId: req.id,
+        },
+      });
+    }
 
     return res.status(500).json({
       error: {
@@ -252,10 +261,19 @@ export async function submitSettlement(
       });
     }
 
-    await prisma.settlementRun.update({
-      where: { settlementRunId: snapshotId },
+    const submitted = await prisma.settlementRun.updateMany({
+      where: { settlementRunId: snapshotId, status: "DRAFT" },
       data: { status: "SUBMITTED" },
     });
+    if (submitted.count !== 1) {
+      return res.status(409).json({
+        error: {
+          code: "INVALID_STATUS",
+          message: "Settlement changed before it could be submitted",
+          requestId: req.id,
+        },
+      });
+    }
 
     await prisma.auditEvent.create({
       data: {
@@ -320,10 +338,19 @@ export async function rejectSettlement(
       });
     }
 
-    await prisma.settlementRun.update({
-      where: { settlementRunId: snapshotId },
+    const rejected = await prisma.settlementRun.updateMany({
+      where: { settlementRunId: snapshotId, status: allowedStatus },
       data: { status: "REJECTED" },
     });
+    if (rejected.count !== 1) {
+      return res.status(409).json({
+        error: {
+          code: "INVALID_STATUS",
+          message: "Settlement changed before it could be rejected",
+          requestId: req.id,
+        },
+      });
+    }
 
     await prisma.auditEvent.create({
       data: {

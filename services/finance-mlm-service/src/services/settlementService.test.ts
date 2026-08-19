@@ -306,6 +306,76 @@ describe("SettlementService", () => {
     });
   });
 
+  it("compresses an active tutor around an inactive sponsor instead of dropping the subtree", async () => {
+    prismaMock.paymentIntent.findMany.mockResolvedValue([
+      { enrollmentId: "en-child", amountMinor: 100_000n },
+    ]);
+    prismaMock.enrollment.findMany.mockResolvedValue([
+      { enrollmentId: "en-child", class: { tutorUserId: "child" } },
+    ]);
+    prismaMock.adjustment.findMany.mockResolvedValue([]);
+    prismaMock.user.findMany.mockResolvedValue([
+      {
+        userId: "inactive-sponsor",
+        sponsorTutorId: null,
+        isActive: false,
+        verificationStatus: "VERIFIED",
+      },
+      {
+        userId: "child",
+        sponsorTutorId: "inactive-sponsor",
+        isActive: true,
+        verificationStatus: "VERIFIED",
+      },
+    ]);
+    prismaMock.settlementRun.create.mockResolvedValue({
+      settlementRunId: "run-compressed",
+      periodMonth: "2026-05",
+      status: "DRAFT",
+    });
+    prismaMock.payoutLine.create.mockResolvedValue({});
+
+    await expect(
+      SettlementService.previewSettlement("2026-05", "admin-1"),
+    ).resolves.toMatchObject({ snapshotId: "run-compressed", payoutLineCount: 1 });
+    expect(prismaMock.payoutLine.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ tutorUserId: "child", grossVolumeMinor: 100_000n }),
+    });
+  });
+
+  it("keeps historical payment volume with the tutor who owned the class at payment time", async () => {
+    prismaMock.paymentIntent.findMany.mockResolvedValue([
+      {
+        enrollmentId: "en-transfer",
+        earningTutorUserId: "original-tutor",
+        amountMinor: 100_000n,
+      },
+    ]);
+    prismaMock.enrollment.findMany.mockResolvedValue([
+      { enrollmentId: "en-transfer", class: { tutorUserId: "new-tutor" } },
+    ]);
+    prismaMock.adjustment.findMany.mockResolvedValue([]);
+    prismaMock.user.findMany.mockResolvedValue([
+      { userId: "original-tutor", sponsorTutorId: null, verificationStatus: "VERIFIED" },
+      { userId: "new-tutor", sponsorTutorId: null, verificationStatus: "VERIFIED" },
+    ]);
+    prismaMock.settlementRun.create.mockResolvedValue({
+      settlementRunId: "run-transfer",
+      periodMonth: "2026-05",
+      status: "DRAFT",
+    });
+    prismaMock.payoutLine.create.mockResolvedValue({});
+
+    await SettlementService.previewSettlement("2026-05", "admin-1");
+
+    expect(prismaMock.payoutLine.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ tutorUserId: "original-tutor", grossVolumeMinor: 100_000n }),
+    });
+    expect(prismaMock.payoutLine.create).not.toHaveBeenCalledWith({
+      data: expect.objectContaining({ tutorUserId: "new-tutor", grossVolumeMinor: 100_000n }),
+    });
+  });
+
   it("calculates a compressed tree and blocks unverified payouts", async () => {
     prismaMock.paymentIntent.findMany.mockResolvedValue([
       { enrollmentId: "en-child", amountMinor: 2_000_000n },
@@ -396,10 +466,15 @@ describe("SettlementService", () => {
     prismaMock.enrollment.findMany.mockResolvedValue([]);
     prismaMock.adjustment.findMany.mockResolvedValue([]);
     prismaMock.user.findMany.mockResolvedValue([]);
+    prismaMock.settlementRun.findUnique.mockResolvedValue({
+      settlementRunId: "run-refresh",
+      periodMonth: "2026-05",
+      status: "DRAFT",
+    });
     prismaMock.settlementRun.update.mockResolvedValue({
       settlementRunId: "run-refresh",
       periodMonth: "2026-05",
-      status: "SUBMITTED",
+      status: "DRAFT",
     });
     prismaMock.payoutLine.findMany.mockResolvedValue([
       { payoutLineId: "line-old" },
@@ -441,6 +516,20 @@ describe("SettlementService", () => {
     await expect(
       SettlementService.refreshSettlementRun("missing"),
     ).rejects.toThrow("NOT_FOUND");
+  });
+
+  it("does not refresh a submitted run", async () => {
+    prismaMock.settlementRun.findUnique.mockResolvedValue({
+      settlementRunId: "run-submitted",
+      periodMonth: "2026-05",
+      status: "SUBMITTED",
+    });
+
+    await expect(
+      SettlementService.refreshSettlementRun("run-submitted"),
+    ).resolves.toMatchObject({ refreshed: false, status: "SUBMITTED" });
+    expect(prismaMock.settlementRun.updateMany).not.toHaveBeenCalled();
+    expect(prismaMock.payoutLine.deleteMany).not.toHaveBeenCalled();
   });
 
   it("approves a submitted run, creates documents, and marks transfers unsent", async () => {
