@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useLessonSocket } from '@/hooks/useLessonSocket';
 import { useLiff } from '@/components/providers/LiffProvider';
@@ -16,8 +16,9 @@ import { AdvantageArcadeRuntime } from '@/components/lesson/AdvantageArcadeRunti
 import { toast } from 'sonner';
 import { getGameById, getGamesByCategory, getGameTutorial } from '@/lib/liveLessonGames';
 import { preloadGameAssets } from '@/lib/games/gameAssetPreloader';
-import { Lock } from 'lucide-react';
+import { Lock, Volume2 } from 'lucide-react';
 import { VocabularyFlashcardPhase } from '@/components/lesson/VocabularyFlashcardPhase';
+import { useTtsPlayer } from '@/hooks/useTtsPlayer';
 
 const VOCAB_GAME_PHASE = 11;
 const SENTENCE_GAME_PHASE = 15;
@@ -91,7 +92,13 @@ function PlayLessonContent() {
   // 0 = off, 1 = pair (1 partner), 2 = group of three (2 partners)
   const [devPairPreview, setDevPairPreview] = useState<0 | 1 | 2>(0);
   const currentPhase = devPairPreview ? 18 : (sessionData?.currentPhase ?? 0);
+  const { isSpeaking: isWordSpeaking, speak: speakWord } = useTtsPlayer();
+  const submittedGameKeyRef = useRef<string | null>(null);
+  const [pendingGameResult, setPendingGameResult] = useState<{ key: string; score: number } | null>(null);
   const gameState = sessionData?.gameState ?? null;
+  const gamePhaseKey = gameState
+    ? `${gameState.phase}:${gameState.selectedGameId || ""}`
+    : "";
   const gameActorId = sessionData?.currentStudentId || studentId;
   const gameVoteForPreload = gameState?.votes?.[gameActorId] || gameState?.votes?.[studentId];
   const gameIdForPreload = gameState?.selectedGameId || gameVoteForPreload;
@@ -143,6 +150,12 @@ function PlayLessonContent() {
     if (!["voting", "ready", "teacher_demo", "tutorial", "countdown", "playing", "results"].includes(gameStatusForPreload)) return;
     void preloadGameAssets(gameIdForPreload);
   }, [gameIdForPreload, gameStatusForPreload]);
+
+  useEffect(() => {
+    if (!gamePhaseKey || submittedGameKeyRef.current === gamePhaseKey) return;
+    submittedGameKeyRef.current = null;
+    setPendingGameResult(null);
+  }, [gamePhaseKey]);
 
   useEffect(() => {
     if (gameState?.status === "playing" && !gameStartedAt) {
@@ -564,9 +577,22 @@ function PlayLessonContent() {
               {words.map((item, i) => {
                 const wt = typeof item === 'object' ? (item.vocabulary || item.word || item.text) : item;
                 const th = typeof item === 'object' ? (item.definition?.th || item.translation) : undefined;
+                const wordText = String(wt || `Word ${i + 1}`);
+                const audioUrl = typeof item === 'object' ? item.audioUrl || item.audio_url : undefined;
                 return (
-                  <div key={i} className="flex items-baseline justify-between gap-3 border-b border-border/50 last:border-0 pb-1.5 last:pb-0">
-                    <span className="font-bold text-foreground text-sm">{wt}</span>
+                  <div key={i} className="flex items-center justify-between gap-3 border-b border-border/50 last:border-0 pb-1.5 last:pb-0">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => speakWord(wordText, audioUrl)}
+                        className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-violet-500/10 text-violet-600 transition hover:bg-violet-500/20 active:scale-90 dark:text-violet-300"
+                        aria-label={`ฟังการออกเสียง ${wordText}`}
+                        title="ฟังการออกเสียง"
+                      >
+                        <Volume2 size={15} className={isWordSpeaking ? "animate-pulse" : ""} />
+                      </button>
+                      <span className="truncate font-bold text-foreground text-sm">{wordText}</span>
+                    </div>
                     {th && <span className="text-muted-foreground text-xs text-right">{th}</span>}
                   </div>
                 );
@@ -657,12 +683,22 @@ function PlayLessonContent() {
     });
   };
 
+  const submitCurrentGameResult = (result: { gameId: string; score: number; correct?: number; total?: number; durationMs?: number }) => {
+    if (phaseReadOnly || !gameState) return;
+    const key = `${gameState.phase}:${gameState.selectedGameId || result.gameId}`;
+    if (submittedGameKeyRef.current === key) return;
+
+    submittedGameKeyRef.current = key;
+    setPendingGameResult({ key, score: result.score });
+    submitGameResult(result);
+  };
+
   const handleQuickGameComplete = () => {
     if (phaseReadOnly) return;
     const questions = buildGameQuestions();
     const total = Math.max(questions.length, 1);
     const correct = questions.filter((question, index) => gameSelections[index] === question.answer).length;
-    submitGameResult({
+    submitCurrentGameResult({
       gameId: gameState?.selectedGameId || "",
       score: correct * 2,
       correct,
@@ -705,14 +741,17 @@ function PlayLessonContent() {
     const selected = getGameById(gameState.selectedGameId);
     const myVote = gameState.votes?.[gameActorId] || gameState.votes?.[studentId];
     const myResult = gameState.results?.[gameActorId] || gameState.results?.[studentId];
+    const currentResultKey = `${gameState.phase}:${gameState.selectedGameId || ""}`;
+    const pendingResult = pendingGameResult?.key === currentResultKey ? pendingGameResult : null;
     const countdownLeft = gameState.countdownEndsAt ? Math.max(0, Math.ceil((gameState.countdownEndsAt - Date.now()) / 1000)) : 0;
 
-    if (myResult) {
+    if (myResult || pendingResult) {
+      const displayedScore = myResult?.score ?? pendingResult?.score ?? 0;
       return (
         <div className="phase-enter flex w-full max-w-sm flex-1 min-h-0 flex-col gap-4 overflow-hidden">
           <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center shadow-xl">
             <p className="text-xs font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">{t("interactivePlay.gameComplete")}</p>
-            <p className="mt-3 text-6xl font-black text-emerald-600 dark:text-emerald-400">{myResult.score}</p>
+            <p className="mt-3 text-6xl font-black text-emerald-600 dark:text-emerald-400">{displayedScore}</p>
             <p className="mt-2 text-sm font-bold text-muted-foreground">{t("interactivePlay.gameWaitTeacher")}</p>
           </div>
           <MobileLeaderboard participants={participants} studentId={studentId} />
@@ -928,9 +967,10 @@ function PlayLessonContent() {
             gameId={gameState.selectedGameId || ""}
             category={gameState.category}
             articleData={articleData}
+            restartOnComplete={false}
             onComplete={(result) => {
               if (phaseReadOnly) return;
-              submitGameResult({
+              submitCurrentGameResult({
                 gameId: gameState.selectedGameId || "",
                 score: result.score,
                 correct: result.correct,

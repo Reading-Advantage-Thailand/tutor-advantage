@@ -2243,6 +2243,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       words={(articleData as any)?.words || []}
       participants={participants}
       answered={totalAnswered}
+      onSpeak={(text, audioUrl) => playMcqAudio(audioUrl || getWordAudioUrl(text), text, "")}
     />
   );
 

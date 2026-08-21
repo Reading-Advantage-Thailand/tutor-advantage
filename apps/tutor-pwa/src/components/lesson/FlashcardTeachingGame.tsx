@@ -1,12 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { BookOpen, ChevronLeft, ChevronRight, RotateCcw, Sparkles, Trophy } from "lucide-react";
+import { BookOpen, ChevronLeft, ChevronRight, RotateCcw, Sparkles, Trophy, Volume2 } from "lucide-react";
 
 type FlashcardWord = {
   vocabulary?: string;
   word?: string;
   text?: string;
+  audioUrl?: string;
+  audio_url?: string;
   translation?: string;
   meaning?: string;
   definition?: { th?: string; en?: string };
@@ -16,6 +18,7 @@ type FlashcardTeachingGameProps = {
   words?: FlashcardWord[];
   participants: Array<{ studentId: string; name: string; pictureUrl?: string; score?: number }>;
   answered: number;
+  onSpeak?: (text: string, audioUrl?: string) => void;
 };
 
 const wordText = (word: FlashcardWord, index: number) =>
@@ -24,7 +27,7 @@ const wordText = (word: FlashcardWord, index: number) =>
 const meaningText = (word: FlashcardWord) =>
   word.definition?.th || word.translation || word.meaning || word.definition?.en || "ยังไม่มีคำแปล";
 
-export function FlashcardTeachingGame({ words = [], participants, answered }: FlashcardTeachingGameProps) {
+export function FlashcardTeachingGame({ words = [], participants, answered, onSpeak }: FlashcardTeachingGameProps) {
   const cards = useMemo(() => words.slice(0, 12), [words]);
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -43,6 +46,10 @@ export function FlashcardTeachingGame({ words = [], participants, answered }: Fl
   }
 
   const progress = ((index + 1) / cards.length) * 100;
+  const speakCurrent = () => {
+    if (!onSpeak) return;
+    onSpeak(wordText(current, index), current.audioUrl || current.audio_url);
+  };
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-950 p-5 text-white shadow-2xl lg:flex-row lg:p-7">
@@ -58,25 +65,38 @@ export function FlashcardTeachingGame({ words = [], participants, answered }: Fl
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setFlipped((value) => !value)}
-          className="group relative min-h-[320px] w-full max-w-2xl overflow-hidden rounded-[32px] border border-amber-300/30 bg-gradient-to-br from-amber-300 via-orange-400 to-rose-500 p-1 text-left shadow-[0_22px_70px_rgba(245,158,11,0.25)] transition-transform hover:scale-[1.01]"
-          aria-label="พลิกการ์ดคำศัพท์"
-        >
-          <div className="flex h-full min-h-[312px] flex-col items-center justify-center rounded-[28px] bg-slate-950/85 px-8 text-center backdrop-blur-xl">
-            <div className="mb-6 flex size-16 items-center justify-center rounded-3xl bg-amber-300/15 text-amber-300 shadow-inner">
-              {flipped ? <Sparkles size={30} /> : <BookOpen size={30} />}
+        <div className="relative w-full max-w-2xl">
+          <button
+            type="button"
+            onClick={() => setFlipped((value) => !value)}
+            className="group relative min-h-[320px] w-full overflow-hidden rounded-[32px] border border-amber-300/30 bg-gradient-to-br from-amber-300 via-orange-400 to-rose-500 p-1 text-left shadow-[0_22px_70px_rgba(245,158,11,0.25)] transition-transform hover:scale-[1.01]"
+            aria-label="พลิกการ์ดคำศัพท์"
+          >
+            <div className="flex h-full min-h-[312px] flex-col items-center justify-center rounded-[28px] bg-slate-950/85 px-8 text-center backdrop-blur-xl">
+              <div className="mb-6 flex size-16 items-center justify-center rounded-3xl bg-amber-300/15 text-amber-300 shadow-inner">
+                {flipped ? <Sparkles size={30} /> : <BookOpen size={30} />}
+              </div>
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/45">
+                {flipped ? "Meaning" : "Vocabulary"}
+              </p>
+              <p className={`mt-4 font-black leading-tight ${flipped ? "text-3xl text-amber-200 sm:text-4xl" : "text-5xl text-white sm:text-6xl"}`}>
+                {flipped ? meaningText(current) : wordText(current, index)}
+              </p>
+              <p className="mt-7 text-xs font-bold text-white/45">คลิกเพื่อ {flipped ? "กลับไปดูคำศัพท์" : "เปิดดูความหมาย"}</p>
             </div>
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/45">
-              {flipped ? "Meaning" : "Vocabulary"}
-            </p>
-            <p className={`mt-4 font-black leading-tight ${flipped ? "text-3xl text-amber-200 sm:text-4xl" : "text-5xl text-white sm:text-6xl"}`}>
-              {flipped ? meaningText(current) : wordText(current, index)}
-            </p>
-            <p className="mt-7 text-xs font-bold text-white/45">คลิกเพื่อ {flipped ? "กลับไปดูคำศัพท์" : "เปิดดูความหมาย"}</p>
-          </div>
-        </button>
+          </button>
+          {onSpeak && (
+            <button
+              type="button"
+              onClick={speakCurrent}
+              className="absolute right-5 top-5 inline-flex size-11 items-center justify-center rounded-2xl bg-white/15 text-white shadow-lg backdrop-blur transition hover:bg-white/25 active:scale-90"
+              aria-label={`ฟังการออกเสียง ${wordText(current, index)}`}
+              title="ฟังการออกเสียง"
+            >
+              <Volume2 size={20} />
+            </button>
+          )}
+        </div>
 
         <div className="mt-5 w-full max-w-2xl">
           <div className="mb-2 flex justify-between text-[10px] font-black uppercase tracking-widest text-white/50">

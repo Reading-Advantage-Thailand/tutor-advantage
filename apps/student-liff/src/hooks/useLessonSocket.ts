@@ -86,6 +86,8 @@ interface LessonWord {
   vocabulary?: string;
   word?: string;
   text?: string;
+  audioUrl?: string;
+  audio_url?: string;
   definition?: {
     th?: string;
   };

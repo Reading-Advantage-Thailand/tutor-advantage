@@ -153,8 +153,8 @@ describe("lessonSessionService", () => {
     expect(first?.allSubmitted).toBe(false);
     expect(first?.gameState.status).toBe("playing");
     expect(duplicate?.accepted).toBe(false);
-    expect(first?.gameState.results["student-1"]?.score).toBe(0);
-    expect(session.participants.get("student-1")?.score).toBe(0);
+    expect(first?.gameState.results["student-1"]?.score).toBe(8);
+    expect(session.participants.get("student-1")?.score).toBe(8);
 
     const second = service.submitGameResult(session.sessionId, "student-2", {
       gameId: "dragon-flight",
@@ -165,6 +165,8 @@ describe("lessonSessionService", () => {
     expect(second?.accepted).toBe(true);
     expect(second?.allSubmitted).toBe(true);
     expect(second?.gameState.status).toBe("results");
+    expect(session.participants.get("student-1")?.score).toBe(8);
+    expect(session.participants.get("student-2")?.score).toBe(10);
 
     service.setPhase(session.sessionId, 15);
     expect(session.gameState).toMatchObject({ phase: 15, category: "sentence", status: "voting" });

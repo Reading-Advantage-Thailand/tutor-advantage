@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useRef } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 
 import { AbyssalWellGame } from "@/components/games/sentence/abyssal-well/AbyssalWellGame"
 import { CastleDefenseGame } from "@/components/games/sentence/castle-defense/CastleDefenseGame"
@@ -67,6 +67,8 @@ type AdvantageArcadeRuntimeProps = {
   category: LiveLessonGameCategory
   articleData?: ArticleData | null
   autoStart?: boolean
+  /** Allow a game child to start a fresh round after completion. */
+  restartOnComplete?: boolean
   tutorialMode?: boolean
   onComplete: (result: {
     score: number
@@ -156,14 +158,18 @@ export function AdvantageArcadeRuntime({
   category,
   articleData,
   autoStart = true,
+  restartOnComplete = true,
   tutorialMode = false,
   onComplete,
 }: AdvantageArcadeRuntimeProps) {
   const startedAt = useRef(Date.now())
+  const completedRef = useRef(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const resolvedGameId = resolveGameId(gameId, category)
+  const childAutoStart = autoStart
   const vocabulary = useMemo(() => buildVocabulary(articleData), [articleData])
   const sentences = useMemo(() => buildSentences(articleData), [articleData])
+  const [hasCompleted, setHasCompleted] = useState(false)
 
   useEffect(() => {
     if (!autoStart) return
@@ -210,6 +216,10 @@ export function AdvantageArcadeRuntime({
   }, [autoStart, resolvedGameId])
 
   const handleComplete = (result: ArcadeResult) => {
+    if (completedRef.current) return
+    completedRef.current = true
+    setHasCompleted(true)
+
     const total = Math.max(result.totalAttempts ?? result.total ?? 1, 1)
     const accuracy = typeof result.accuracy === "number" ? result.accuracy : undefined
     const correct = Math.round(
@@ -227,13 +237,25 @@ export function AdvantageArcadeRuntime({
 
   const commonClass = "h-dvh min-h-0 w-full overflow-hidden bg-background"
 
+  if (hasCompleted) {
+    return (
+      <div className={`${commonClass} flex items-center justify-center bg-slate-950 text-center text-white`}>
+        <div>
+          <div className="mx-auto flex size-16 items-center justify-center rounded-3xl bg-emerald-400/15 text-3xl">✓</div>
+          <p className="mt-4 text-lg font-black">ส่งผลคะแนนแล้ว</p>
+          <p className="mt-1 text-sm font-semibold text-white/60">กำลังรอระบบอัปเดตคะแนนของทุกคน...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div ref={rootRef} className={commonClass}>
       {resolvedGameId === "dragon-flight" && (
-        <DragonFlightGame vocabulary={vocabulary} autoStart={autoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
+        <DragonFlightGame vocabulary={vocabulary} autoStart={childAutoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
       )}
       {resolvedGameId === "wizard-vs-zombie" && (
-        <WizardZombieGame vocabulary={vocabulary} autoStart={autoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
+        <WizardZombieGame vocabulary={vocabulary} autoStart={childAutoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
       )}
       {resolvedGameId === "enchanted-library" && (
         <EnchantedLibraryGame
@@ -241,7 +263,8 @@ export function AdvantageArcadeRuntime({
           difficulty="normal"
           onDifficultyChange={() => undefined}
           rankings={{ easy: [], normal: [], hard: [], extreme: [] }}
-          autoStart={autoStart}
+          autoStart={childAutoStart}
+          restartOnComplete={restartOnComplete}
           tutorialMode={tutorialMode}
           onComplete={handleComplete}
         />
@@ -259,10 +282,23 @@ export function AdvantageArcadeRuntime({
         <PaladinsTwinSoulGame vocabulary={vocabulary} onComplete={handleComplete} />
       )}
       {resolvedGameId === "castle-defense" && (
-        <CastleDefenseGame vocabulary={sentences} autoStart={autoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
+        <CastleDefenseGame
+          vocabulary={sentences}
+          autoStart={childAutoStart}
+          restartOnComplete={restartOnComplete}
+          tutorialMode={tutorialMode}
+          onComplete={handleComplete}
+        />
       )}
       {resolvedGameId === "potion-rush" && (
-        <PotionRushGame vocabList={sentences} difficulty="normal" autoStart={autoStart} tutorialMode={tutorialMode} onComplete={handleComplete} />
+        <PotionRushGame
+          vocabList={sentences}
+          difficulty="normal"
+          autoStart={childAutoStart}
+          restartOnComplete={restartOnComplete}
+          tutorialMode={tutorialMode}
+          onComplete={handleComplete}
+        />
       )}
       {resolvedGameId === "dungeon-liberator" && (
         <DungeonLiberatorGame vocabulary={sentences} onComplete={handleComplete} />

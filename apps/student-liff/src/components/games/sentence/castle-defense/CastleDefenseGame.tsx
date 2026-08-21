@@ -83,6 +83,7 @@ type Props = {
     durationMs?: number;
   }) => void;
   autoStart?: boolean;
+  restartOnComplete?: boolean;
   tutorialMode?: boolean;
 };
 
@@ -114,7 +115,7 @@ const getCachedCastleAssets = (): GameAssets | null => {
     : null;
 };
 
-export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, tutorialMode = false }: Props) {
+export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, restartOnComplete = true, tutorialMode = false }: Props) {
   const t = useScopedI18n("pages.student.gamesPage.castleDefense");
   const gameVocabulary = useMemo(() => buildRoundSentences(vocabulary), [vocabulary]);
 
@@ -382,7 +383,7 @@ export function CastleDefenseGame({ vocabulary, onComplete, autoStart = false, t
             difficulty: nextState.difficulty,
             durationMs: Math.min(GAME_DURATION_MS, Math.max(0, nextState.gameTime)),
           });
-          if (autoStart || tutorialMode) {
+          if (restartOnComplete && (autoStart || tutorialMode)) {
             completedRef.current = false;
             return createCastleDefenseState(gameVocabulary, {
               difficulty,

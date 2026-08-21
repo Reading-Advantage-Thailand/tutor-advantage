@@ -678,10 +678,10 @@ class LessonSessionService {
       return null;
     }
 
-    // The browser result is not a verifiable proof of game performance. Keep
-    // the result for display/audit, but do not let client-controlled numbers
-    // affect participant scores or money-bearing metrics.
-    const score = 0;
+    // Game results are client-reported, so validate and bound them above before
+    // using the score for the live lesson leaderboard. Game points are only
+    // lesson points; they are not used for money-bearing metrics.
+    const score = result.score ?? 0;
     const correct = result.correct;
     const total = result.total;
     const durationMs = result.durationMs;

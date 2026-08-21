@@ -614,10 +614,11 @@ export const setupLessonSocket = (io: Server) => {
           studentId: actor.userId,
           phase: submitted.session.currentPhase,
           answerText: JSON.stringify(result || {}),
-          // Client-reported game scores are retained as an unverified result
-          // only; they must not feed success metrics or badge payouts.
+          // The score has already been bounded by LessonSessionService. Keep
+          // the answer unverified, but persist the lesson points so the
+          // student's history and final score match the live leaderboard.
           isCorrect: null,
-          score: 0,
+          score: submitted.gameState.results[actor.userId]?.score || 0,
           questionText: submitted.gameState.selectedGameId || "Lesson game",
           correctAnswer: "",
         });

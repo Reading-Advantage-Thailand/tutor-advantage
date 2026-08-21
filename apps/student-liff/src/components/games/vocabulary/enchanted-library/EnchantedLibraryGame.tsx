@@ -71,6 +71,7 @@ interface EnchantedLibraryGameProps {
     RankingEntry[]
   >;
   autoStart?: boolean;
+  restartOnComplete?: boolean;
   tutorialMode?: boolean;
   tutorialStep?: number;
   fullscreen?: boolean;
@@ -122,6 +123,7 @@ export function EnchantedLibraryGame({
   difficulty,
   rankings,
   autoStart = false,
+  restartOnComplete = true,
   tutorialMode = false,
   tutorialStep = 0,
   fullscreen = false,
@@ -490,7 +492,7 @@ export function EnchantedLibraryGame({
         onComplete(nextResults);
         hasReportedRef.current = true;
       }
-      if (autoStart || tutorialMode) {
+      if (restartOnComplete && (autoStart || tutorialMode)) {
         resetGame();
         setGamePhase("playing");
       } else {
@@ -524,14 +526,14 @@ export function EnchantedLibraryGame({
         onComplete(nextResults);
         hasReportedRef.current = true;
       }
-      if (autoStart || tutorialMode) {
+      if (restartOnComplete && (autoStart || tutorialMode)) {
         resetGame();
         setGamePhase("playing");
       } else {
         setGamePhase("ended");
       }
     }
-  }, [autoStart, tutorialMode, gameState, correctAnswers, gameVocabulary.length, totalAttempts, onComplete, resetGame]);
+  }, [autoStart, restartOnComplete, tutorialMode, gameState, correctAnswers, gameVocabulary.length, totalAttempts, onComplete, resetGame]);
 
   useEffect(() => {
     if (!containerRef.current) return;

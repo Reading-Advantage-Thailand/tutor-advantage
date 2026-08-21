@@ -33,6 +33,7 @@ interface PotionRushGameProps {
   difficulty: "easy" | "normal" | "hard" | "extreme";
   onComplete: (results: PotionRushGameResult) => void;
   autoStart?: boolean;
+  restartOnComplete?: boolean;
   tutorialMode?: boolean;
 }
 
@@ -41,6 +42,7 @@ export default function PotionRushGame({
   difficulty,
   onComplete,
   autoStart = false,
+  restartOnComplete = true,
   tutorialMode = false,
 }: PotionRushGameProps) {
   const t = useScopedI18n("pages.student.gamesPage.potionRush");
@@ -110,7 +112,7 @@ export default function PotionRushGame({
 
   useEffect(() => {
     if (gameState === "GAME_OVER") {
-      if (autoStart || tutorialMode) {
+      if (restartOnComplete && (autoStart || tutorialMode)) {
         startGame(vocabList, difficulty);
         return;
       }
@@ -125,7 +127,7 @@ export default function PotionRushGame({
         durationMs: Math.round(gameTime * 1000),
       });
     }
-  }, [gameState, autoStart, tutorialMode, totalXpEarned, reputation, difficulty, score, completedSentences, vocabList, gameTime, onComplete, exitFullscreen, startGame]);
+  }, [gameState, autoStart, restartOnComplete, tutorialMode, totalXpEarned, reputation, difficulty, score, completedSentences, vocabList, gameTime, onComplete, exitFullscreen, startGame]);
 
   // Mobile-first portrait reference: 390x844
   const VIRTUAL_WIDTH = 390;
