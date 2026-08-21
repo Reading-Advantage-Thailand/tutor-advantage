@@ -337,6 +337,7 @@ export async function seedSuccessfulPayment(opts: {
         method: "promptpay",
         status: "SUCCESS",
         providerRef: `mock_${paymentIntentId}`,
+        paidAt: new Date(),
       },
     });
 

@@ -7,6 +7,7 @@
  * Run:
  *   npm run test:integration
  */
+import crypto from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
   createIdTracker,
@@ -169,7 +170,7 @@ describe.skipIf(SKIP)("Full referral → payment → settlement flow", () => {
     const paymentDate = new Date(Date.UTC(2099, 0, 1, 0, 0, 0)); // 2099-01-01 UTC → 07:00 ICT
     await prisma.paymentIntent.update({
       where: { paymentIntentId },
-      data: { updatedAt: paymentDate },
+      data: { paidAt: paymentDate, updatedAt: paymentDate },
     });
 
     // Also ensure the enrollment record links correctly (settlement queries
@@ -283,20 +284,32 @@ describe.skipIf(SKIP)("Full referral → payment → settlement flow", () => {
     const before = await prisma.paymentEvent.count({ where: { providerEventId } });
     const { response, result } = responseRecorder();
     const webhookSecret = process.env.OMISE_WEBHOOK_SECRET;
-    delete process.env.OMISE_WEBHOOK_SECRET;
+    const testWebhookSecret = "c2VjcmV0";
+    process.env.OMISE_WEBHOOK_SECRET = testWebhookSecret;
+    const payload = {
+      id: providerEventId,
+      key: "charge.complete",
+      data: {
+        id: "charge-replay",
+        status: "successful",
+        metadata: { paymentIntentId },
+      },
+    };
+    const rawBody = JSON.stringify(payload);
+    const timestamp = "1723950000";
+    const signature = crypto
+      .createHmac("sha256", Buffer.from(testWebhookSecret, "base64"))
+      .update(`${timestamp}.${rawBody}`)
+      .digest("hex");
     try {
       await handleWebhook(
         {
-          body: {
-            id: providerEventId,
-            key: "charge.complete",
-            data: {
-              id: "charge-replay",
-              status: "successful",
-              metadata: { paymentIntentId },
-            },
+          body: payload,
+          rawBody,
+          headers: {
+            "omise-signature": `sha256=${signature}`,
+            "omise-signature-timestamp": timestamp,
           },
-          headers: {},
         } as never,
         response as never,
       );
