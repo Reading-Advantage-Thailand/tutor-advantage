@@ -166,6 +166,7 @@ export function AdvantageArcadeRuntime({
   const completedRef = useRef(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const resolvedGameId = resolveGameId(gameId, category)
+  // Live lessons auto-start once; finishing a round must not start another one.
   const childAutoStart = autoStart
   const vocabulary = useMemo(() => buildVocabulary(articleData), [articleData])
   const sentences = useMemo(() => buildSentences(articleData), [articleData])

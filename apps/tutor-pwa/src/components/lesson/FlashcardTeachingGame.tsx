@@ -125,13 +125,14 @@ export function FlashcardTeachingGame({ words = [], participants, answered, onSp
           <div className="flex items-center gap-2"><Trophy className="size-5 text-amber-300" /><h3 className="font-black">Live mission</h3></div>
           <span className="rounded-full bg-emerald-400/15 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-emerald-300">Live</span>
         </div>
-        <p className="mt-2 text-xs leading-relaxed text-white/55">นักเรียนเปิดการ์ดและกดระดับความมั่นใจบนมือถือ เมื่อทำครบจะขึ้นสถานะที่นี่</p>
-        <div className="my-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
+          <p className="mt-2 text-xs leading-relaxed text-white/55">นักเรียนเปิดการ์ดและกดระดับความมั่นใจบนมือถือ เมื่อทำครบจะขึ้นสถานะที่นี่</p>
+          <div className="my-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
           <p className="text-3xl font-black text-amber-200">{answered}<span className="text-base text-white/45">/{participants.length}</span></p>
           <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-white/45">students completed</p>
         </div>
         <div className="min-h-0 flex-1 space-y-2 overflow-y-auto">
           {participants.length === 0 ? <p className="py-8 text-center text-xs font-bold text-white/40">รอนักเรียนเข้าห้อง...</p> : participants.map((participant) => {
+            // Participant scores are synchronized from the live lesson session.
             const done = answered > 0 && (participant.score || 0) > 0;
             return <div key={participant.studentId} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5"><div className={`flex size-8 items-center justify-center rounded-xl text-sm ${done ? "bg-emerald-400/20" : "bg-white/10"}`}>{done ? "✓" : "…"}</div><span className="min-w-0 flex-1 truncate text-xs font-bold text-white/80">{participant.name}</span><span className={`text-[10px] font-black ${done ? "text-emerald-300" : "text-white/35"}`}>{done ? "DONE" : "PLAYING"}</span></div>;
           })}

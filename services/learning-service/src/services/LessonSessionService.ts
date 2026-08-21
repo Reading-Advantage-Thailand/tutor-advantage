@@ -681,6 +681,7 @@ class LessonSessionService {
     // Game results are client-reported, so validate and bound them above before
     // using the score for the live lesson leaderboard. Game points are only
     // lesson points; they are not used for money-bearing metrics.
+    // Keep this value in the participant tally so student and tutor views agree.
     const score = result.score ?? 0;
     const correct = result.correct;
     const total = result.total;
