@@ -532,6 +532,7 @@ model PaymentIntent {
 
   @@index([enrollmentPackageId], map: "payment_intents_enrollment_package_id_idx")
   @@index([status, paidAt], map: "payment_intents_status_paid_at_idx")
+  @@index([earningTutorUserId], map: "payment_intents_earning_tutor_user_id_idx")
   @@map("payment_intents")
   @@schema("finance_mlm")
 }
