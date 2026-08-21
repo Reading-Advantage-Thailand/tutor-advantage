@@ -4,16 +4,21 @@ FROM node:20-slim AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+COPY packages/database/package.json ./packages/database/
+COPY packages/database/prisma ./packages/database/prisma
 COPY apps/tutor-pwa/package.json ./apps/tutor-pwa/
 
 RUN npm ci
 
+COPY packages/database/ ./packages/database/
 COPY apps/tutor-pwa/ ./apps/tutor-pwa/
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Keep the tutor runtime image tied to the lesson-flow build.
+RUN npx prisma generate --schema=packages/database/prisma/schema.prisma
+RUN npm run build -w @tutor-advantage/database
 RUN npm run build -w tutor-pwa
 
 FROM node:20-slim AS runner
@@ -28,6 +33,10 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=builder /app/apps/tutor-pwa/public ./apps/tutor-pwa/public
 COPY --from=builder --chown=nextjs:nodejs /app/apps/tutor-pwa/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/tutor-pwa/.next/static ./apps/tutor-pwa/.next/static
+COPY --from=builder /app/packages/database/package.json ./node_modules/@tutor-advantage/database/package.json
+COPY --from=builder /app/packages/database/dist ./node_modules/@tutor-advantage/database/dist
+COPY --from=builder /app/node_modules/@prisma/client ./node_modules/@prisma/client
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 USER nextjs
 
