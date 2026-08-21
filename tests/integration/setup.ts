@@ -167,6 +167,7 @@ export async function seedTutor(overrides: Partial<{
       isActive: true,
       sponsorTutorId: overrides.sponsorTutorId ?? null,
       verificationStatus: "VERIFIED",
+      settings: { omiseRecipientId: `recp_${uuidv4().slice(0, 12)}` },
     },
   });
   return user.userId;
