@@ -13,6 +13,7 @@ COPY apps/tutor-pwa/ ./apps/tutor-pwa/
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Keep the tutor runtime image tied to the lesson-flow build.
 RUN npm run build -w tutor-pwa
 
 FROM node:20-slim AS runner
