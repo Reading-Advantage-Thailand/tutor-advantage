@@ -1009,18 +1009,18 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     return (
       <div className="flex-1 flex gap-5 overflow-hidden min-h-0">
         {/* Left: Question + Options */}
-        <div className="flex-1 flex flex-col items-center justify-center gap-5 min-w-0 overflow-hidden">
+        <div className="flex-1 flex min-h-0 flex-col items-center justify-center gap-5 min-w-0 overflow-y-auto py-1">
           {/* Question card with indigo gradient header */}
           <div className="w-full max-w-3xl rounded-3xl overflow-hidden shadow-xl border border-indigo-500/20">
             <div className="bg-gradient-to-r from-indigo-500 to-violet-600 px-8 py-5 flex items-start justify-between gap-4">
-              <div>
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 mb-2 opacity-80">
                   <span className="size-2 rounded-full bg-white animate-pulse" />
                   <span className="text-white/80 text-xs font-bold uppercase tracking-widest">
                     Multiple Choice
                   </span>
                 </div>
-                <h2 className="text-2xl font-black text-white leading-snug">
+                <h2 className="text-2xl font-black text-white leading-snug break-words">
                   {question}
                 </h2>
               </div>
@@ -1049,15 +1049,15 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               return (
                 <div
                   key={key}
-                  className={`${style.bg} ${style.shadow} text-white p-5 rounded-2xl font-bold flex items-center justify-between gap-3 transition-transform active:translate-y-1 active:shadow-none`}
+                  className={`${style.bg} ${style.shadow} text-white min-w-0 p-5 rounded-2xl font-bold flex items-start justify-between gap-3 transition-transform active:translate-y-1 active:shadow-none`}
                 >
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex min-w-0 flex-1 items-start gap-3">
                     <span
                       className={`${style.badge} text-white text-lg font-black w-10 h-10 rounded-xl flex items-center justify-center shrink-0`}
                     >
                       {key}
                     </span>
-                    <span className="text-base leading-snug truncate">
+                    <span className="min-w-0 flex-1 whitespace-normal break-words text-base leading-snug">
                       {optionText}
                     </span>
                   </div>
@@ -1069,7 +1069,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                         playMcqOptionAudio(optionText, key);
                       }}
                       title={t("lesson.interactive.speakTitle")}
-                      className="size-8 rounded-full bg-white/20 hover:bg-white/35 text-white flex items-center justify-center shrink-0 transition-colors"
+                      className="size-8 rounded-full bg-white/20 hover:bg-white/35 text-white flex items-center justify-center shrink-0 mt-1 transition-colors"
                     >
                       <Volume2 size={16} />
                     </button>
