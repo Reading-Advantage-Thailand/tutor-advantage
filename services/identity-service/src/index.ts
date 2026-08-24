@@ -27,7 +27,7 @@ logger.info(`[Identity] Loaded DATABASE_URL starting with: ${process.env.DATABAS
 
 import { handleOAuthCallback } from "./controllers/authController";
 import { handleDevLogin } from "./controllers/devAuthController";
-import { getSession } from "./controllers/sessionController";
+import { getSession, issueSocketToken } from "./controllers/sessionController";
 import { getGuardianConsentStatus, submitGuardianConsent, submitUserConsent } from "./controllers/consentController";
 import { getCurrentUser, submitVerification, updateCurrentUserProfile } from "./controllers/userController";
 import { getSettings, updateSettings } from "./controllers/settingController";
@@ -114,6 +114,7 @@ import { getSystemRoles, upsertSystemRole } from "./controllers/roleController";
 
 // Protected Auth Routes
 app.get("/v1/session", authMiddleware, getSession);
+app.get("/v1/auth/socket-token", authMiddleware, issueSocketToken);
 app.get("/v1/users/me", authMiddleware, getCurrentUser);
 app.patch("/v1/users/me/profile", authMiddleware, updateCurrentUserProfile);
 app.get("/v1/users/me/settings", authMiddleware, getSettings);

@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { studentApi } from "@/lib/api";
+import { waitForSession } from "@/lib/cookieUtils";
 import {
   AlertCircle,
   BookOpen,
@@ -352,13 +353,8 @@ export default function ArticleReaderPage() {
     async function load() {
       try {
         setLoading(true);
-        let token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
-        let retries = 0;
-        while (!token && retries < 10) {
-          await new Promise(r => setTimeout(r, 400));
-          token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
-          retries++;
-        }
+        const hasSession = await waitForSession();
+        if (!hasSession) throw new Error("Session unavailable");
         const result = await studentApi.getStudentArticle(articleId) as PageData;
         if (mounted) setData(result);
       } catch {

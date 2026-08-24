@@ -12,11 +12,15 @@ type LessonSessionAuthorization = {
 };
 
 export function verifySocketActor(token: string, secret: string): SocketActor {
-  const decoded = jwt.verify(token, secret);
+  const decoded = jwt.verify(token, secret, {
+    audience: "lesson-socket",
+    issuer: "identity-service",
+  });
   if (
     typeof decoded === "string" ||
     typeof decoded.userId !== "string" ||
-    typeof decoded.role !== "string"
+    typeof decoded.role !== "string" ||
+    decoded.tokenType !== "lesson-socket"
   ) {
     throw new Error("Invalid token claims");
   }

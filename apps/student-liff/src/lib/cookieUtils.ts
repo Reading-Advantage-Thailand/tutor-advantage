@@ -51,17 +51,27 @@ export const Cookies = {
 };
 
 /**
- * Wait for the student-session cookie to appear (e.g. after LIFF auth).
- * Returns the token string, or null if it doesn't appear within maxRetries * intervalMs.
+ * Wait for the server-side session to become available without reading the
+ * HttpOnly cookie in browser JavaScript.
  */
-export async function waitForSessionCookie(
+export async function waitForSession(
   maxRetries = 10,
   intervalMs = 500,
-): Promise<string | null> {
+): Promise<boolean> {
   for (let i = 0; i < maxRetries; i++) {
-    const token = Cookies.get("student-session");
-    if (token) return token;
+    try {
+      const response = await fetch("/api/auth/session", {
+        cache: "no-store",
+        credentials: "same-origin",
+      });
+      if (response.ok) {
+        const data = await response.json().catch(() => ({})) as { authenticated?: boolean };
+        if (data.authenticated) return true;
+      }
+    } catch {
+      // The auth exchange may still be completing; retry below.
+    }
     await new Promise((r) => setTimeout(r, intervalMs));
   }
-  return null;
+  return false;
 }

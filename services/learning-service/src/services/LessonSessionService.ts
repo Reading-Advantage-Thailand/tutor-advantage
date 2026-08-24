@@ -93,6 +93,14 @@ export interface LessonSession {
   phaseSnapshots: Map<number, PhaseSnapshot>;
 }
 
+export interface RestoredLiveSessionState {
+  currentPhase?: number;
+  activeSentenceIndex?: number | null;
+  phaseSelectedIndices?: Record<number, number> | null;
+  currentDbSessionId?: string | null;
+  status?: LessonSession["status"];
+}
+
 export interface PairMember {
   studentId: string;
   name: string;
@@ -188,6 +196,8 @@ class LessonSessionService {
     classBookCycleId?: string,
     bookId?: string,
     isDemo?: boolean,
+    sessionIdOverride?: string,
+    restoredState?: RestoredLiveSessionState,
   ): LessonSession {
     // ATTEMPT RECOVERY: If an active session already exists for this class, REUSE it!
     if (classId) {
@@ -266,7 +276,7 @@ class LessonSessionService {
     logger.info(`[Service] Available Short Answer questions (Phase 9):`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
 
     // Force fresh UUID session instantiation every time to ensure unique, separated histories
-    const sessionId = uuidv4();
+    const sessionId = sessionIdOverride || uuidv4();
     const session: LessonSession = {
       sessionId,
       classId,
@@ -276,13 +286,14 @@ class LessonSessionService {
       tutorSocketId,
       articleId,
       articleData,
-      currentPhase: 0,
+      currentPhase: restoredState?.currentPhase ?? 0,
       phaseRestored: false,
       resumePhase: undefined,
       participants: new Map(),
-      status: 'LOBBY',
-      activeSentenceIndex: -1,
-      phaseSelectedIndices,
+      status: restoredState?.status ?? 'LOBBY',
+      activeSentenceIndex: restoredState?.activeSentenceIndex ?? -1,
+      phaseSelectedIndices: restoredState?.phaseSelectedIndices || phaseSelectedIndices,
+      currentDbSessionId: restoredState?.currentDbSessionId ?? undefined,
       sentenceFlags: new Map(),
       isDemo: isDemo ?? false,
       phaseSnapshots: new Map(),
@@ -765,6 +776,16 @@ class LessonSessionService {
   }
 
   submitAnswer(sessionId: string, studentId: string, answer: any): { session: LessonSession, allAnswered: boolean, accepted: boolean } | undefined {
+    const reservation = this.reserveAnswer(sessionId, studentId);
+    if (!reservation || !reservation.accepted) return reservation;
+    return this.completeReservedAnswer(sessionId, studentId, answer);
+  }
+
+  /**
+   * Atomically reserve the student's one submission for the current phase.
+   * Call this before starting any external/slow work such as an AI request.
+   */
+  reserveAnswer(sessionId: string, studentId: string): { session: LessonSession, allAnswered: boolean, accepted: boolean } | undefined {
     const session = this.sessions.get(sessionId);
     if (!session || session.phaseRestored) return undefined;
 
@@ -775,11 +796,19 @@ class LessonSessionService {
       return { session, allAnswered: false, accepted: false };
     }
 
-    // Normalize answer (trim whitespace, convert to string if MCQ)
-    const normalizedAnswer = typeof answer === 'string' ? answer.trim() : answer;
-    
     participant.hasAnsweredCurrentPhase = true;
-    participant.latestAnswer = normalizedAnswer;
+    return { session, allAnswered: false, accepted: true };
+  }
+
+  /** Complete an earlier reservation after the provider result is available. */
+  completeReservedAnswer(sessionId: string, studentId: string, answer: any): { session: LessonSession, allAnswered: boolean, accepted: boolean } | undefined {
+    const session = this.sessions.get(sessionId);
+    if (!session || session.phaseRestored) return undefined;
+    const participant = session.participants.get(studentId);
+    if (!participant || !participant.hasAnsweredCurrentPhase) return undefined;
+
+    // Normalize answer (trim whitespace, convert to string if MCQ).
+    participant.latestAnswer = typeof answer === 'string' ? answer.trim() : answer;
 
     let allAnswered = true;
     if (session.participants.size === 0) {

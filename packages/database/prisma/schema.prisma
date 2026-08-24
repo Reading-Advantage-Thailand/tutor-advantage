@@ -304,6 +304,10 @@ model InteractiveSession {
   bookId      String?  @map("book_id") @db.Uuid
   tutorUserId String   @map("tutor_user_id") @db.Uuid
   articleId   String   @map("article_id")
+  currentPhase Int     @default(0) @map("current_phase")
+  activeSentenceIndex Int? @map("active_sentence_index")
+  phaseSelectedIndices Json? @map("phase_selected_indices")
+  currentDbSessionId String? @map("current_db_session_id") @db.Uuid
   status      String   
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt   DateTime @default(now()) @map("updated_at") @db.Timestamptz
@@ -316,6 +320,21 @@ model InteractiveSession {
   @@index([classBookCycleId], map: "interactive_sessions_class_book_cycle_id_idx")
   @@index([bookId], map: "interactive_sessions_book_id_idx")
   @@map("interactive_sessions")
+  @@schema("learning")
+}
+
+// Database-backed lease preventing two service instances from opening a
+// second live lesson for the same class. The live Socket.IO payload remains
+// in memory, but ownership and liveness survive process restarts/scale-out.
+model ActiveLessonSessionLock {
+  classId          String   @id @map("class_id") @db.Uuid
+  sessionId        String   @unique @map("session_id") @db.Uuid
+  tutorUserId      String   @map("tutor_user_id") @db.Uuid
+  lastHeartbeatAt  DateTime @default(now()) @map("last_heartbeat_at") @db.Timestamptz
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([tutorUserId])
+  @@map("active_lesson_session_locks")
   @@schema("learning")
 }
 

@@ -146,17 +146,30 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   useEffect(() => {
     if (!classId || !studentId) return;
 
-    const token = typeof window !== "undefined"
-      ? (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null
-      : null;
-    const newSocket = io(getSocketUrl(), {
-      auth: token ? { token } : undefined,
-      path: '/socket.io',
-      addTrailingSlash: false,
-      timeout: 8000,
-    });
-    socketRef.current = newSocket;
-    setSocket(newSocket);
+    let activeSocket: Socket | null = null;
+    let cancelled = false;
+    const init = async () => {
+      try {
+        const tokenResponse = await fetch("/api/auth/socket-token", {
+          cache: "no-store",
+          credentials: "same-origin",
+        });
+        const tokenData = await tokenResponse.json().catch(() => ({})) as { socketToken?: string };
+        if (!tokenResponse.ok || !tokenData.socketToken) {
+          setError("Your session is not ready. Please sign in again.");
+          return;
+        }
+        if (cancelled) return;
+
+        const newSocket = io(getSocketUrl(), {
+          auth: { token: tokenData.socketToken },
+          path: '/socket.io',
+          addTrailingSlash: false,
+          timeout: 8000,
+        });
+        activeSocket = newSocket;
+        socketRef.current = newSocket;
+        setSocket(newSocket);
 
     newSocket.on('connect', () => {
       setError(null);
@@ -261,8 +274,15 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     newSocket.on('game_votes_updated', handleGameState);
     newSocket.on('game_results_updated', handleGameState);
 
+      } catch {
+        if (!cancelled) setError("Could not prepare the lesson session.");
+      }
+    };
+
+    void init();
     return () => {
-      newSocket.disconnect();
+      cancelled = true;
+      activeSocket?.disconnect();
     };
   }, [classId, studentId, name, pictureUrl]);
 

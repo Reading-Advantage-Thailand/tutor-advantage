@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
 
   const redirect = NextResponse.redirect(new URL(safeRedirect(request.nextUrl.searchParams.get("redirect")), request.url));
   redirect.cookies.set("student-session", data.sessionToken, {
-    httpOnly: false,
+    httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     maxAge: 7 * 24 * 60 * 60,

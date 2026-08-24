@@ -43,4 +43,19 @@ describe("identity authMiddleware", () => {
     expect(req.user).toMatchObject({ userId: "user-1", role: "STUDENT" });
     expect(next).toHaveBeenCalledOnce();
   });
+
+  it("accepts the HttpOnly session cookie used by same-origin proxies", () => {
+    const token = jwt.sign({ userId: "user-2", role: "STUDENT" }, getJwtSecret());
+    const req = {
+      id: "req-2",
+      headers: { cookie: `student-session=${token}` },
+    } as AuthenticatedRequest;
+    const res = createResponse();
+    const next = vi.fn();
+
+    authMiddleware(req, res as never, next);
+
+    expect(req.user).toMatchObject({ userId: "user-2", role: "STUDENT" });
+    expect(next).toHaveBeenCalledOnce();
+  });
 });

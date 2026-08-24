@@ -21,6 +21,120 @@ function getValidDateQuery(value: unknown) {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
+type ArticleAccess = {
+  bookId: string;
+  classIds: Set<string>;
+};
+
+/**
+ * Resolve the book(s) a user is currently allowed to study before reading
+ * any article content.  Article IDs are not globally sufficient because the
+ * same catalog ID can exist in more than one book.
+ */
+export async function resolveArticleAccess(
+  userId: string,
+  role: string | undefined,
+  articleId: string,
+): Promise<ArticleAccess[]> {
+  const articles = await prisma.article.findMany({
+    where: { articleId },
+    select: { articleId: true, bookId: true },
+  });
+
+  if (role === "ADMIN") {
+    return articles.map((article) => ({ bookId: article.bookId, classIds: new Set<string>() }));
+  }
+
+  if (role === "STUDENT") {
+    const enrollments = await prisma.enrollment.findMany({
+      where: { studentUserId: userId, status: "ACTIVE" },
+      select: {
+        classId: true,
+        class: {
+          select: {
+            bookId: true,
+            bookCycles: { select: { bookId: true, classBookCycleId: true } },
+          },
+        },
+        packageAccess: {
+          where: { status: "ACTIVE" },
+          select: { classBookCycleId: true },
+        },
+      },
+    });
+
+    const allowedBooks = new Map<string, Set<string>>();
+    for (const enrollment of enrollments) {
+      const classIds = allowedBooks.get(enrollment.class.bookId) || new Set<string>();
+      classIds.add(enrollment.classId);
+      allowedBooks.set(enrollment.class.bookId, classIds);
+
+      // Sequence 1 is the class's included/base book.  Paid package access
+      // grants the corresponding cycle book below.
+      for (const access of enrollment.packageAccess) {
+        const cycle = enrollment.class.bookCycles.find(
+          (item) => item.classBookCycleId === access.classBookCycleId,
+        );
+        if (!cycle) continue;
+        const cycleClassIds = allowedBooks.get(cycle.bookId) || new Set<string>();
+        cycleClassIds.add(enrollment.classId);
+        allowedBooks.set(cycle.bookId, cycleClassIds);
+      }
+    }
+
+    return articles
+      .filter((article) => allowedBooks.has(article.bookId))
+      .map((article) => ({ bookId: article.bookId, classIds: allowedBooks.get(article.bookId)! }));
+  }
+
+  if (role === "TUTOR") {
+    const classes = await prisma.class.findMany({
+      where: { tutorUserId: userId },
+      select: {
+        classId: true,
+        bookId: true,
+        bookCycles: { select: { bookId: true } },
+      },
+    });
+    const allowedBooks = new Map<string, Set<string>>();
+    for (const cls of classes) {
+      const primaryClassIds = allowedBooks.get(cls.bookId) || new Set<string>();
+      primaryClassIds.add(cls.classId);
+      allowedBooks.set(cls.bookId, primaryClassIds);
+      for (const cycle of cls.bookCycles) {
+        const cycleClassIds = allowedBooks.get(cycle.bookId) || new Set<string>();
+        cycleClassIds.add(cls.classId);
+        allowedBooks.set(cycle.bookId, cycleClassIds);
+      }
+    }
+
+    return articles
+      .filter((article) => allowedBooks.has(article.bookId))
+      .map((article) => ({ bookId: article.bookId, classIds: allowedBooks.get(article.bookId)! }));
+  }
+
+  return [];
+}
+
+/** Never expose answer keys while a student is in pre-class mode. */
+export function redactArticleAnswers<T>(articleData: T): T {
+  if (!articleData || typeof articleData !== "object") return articleData;
+  const article = JSON.parse(JSON.stringify(articleData)) as Record<string, unknown>;
+  for (const key of ["multipleChoiceQuestions", "shortAnswerQuestions"]) {
+    const questions = article[key];
+    if (!Array.isArray(questions)) continue;
+    article[key] = questions.map((question) => {
+      if (!question || typeof question !== "object") return question;
+      const safeQuestion = { ...(question as Record<string, unknown>) };
+      delete safeQuestion.answer;
+      delete safeQuestion.correctAnswer;
+      delete safeQuestion.correct_answer;
+      return safeQuestion;
+    });
+  }
+  return articleData && typeof articleData === "object" ? article as T : articleData;
+}
+
 async function getUnreadMessageCount(userId: string) {
   const rows = await prisma.$queryRaw<{ count: bigint }[]>`
     SELECT COUNT(*)::bigint AS count
@@ -597,8 +711,27 @@ export async function getStudentArticle(
 
     const { articleId } = req.params;
 
-    // Fetch article content from ReadingAdvantage DB
-    const articleData = await getArticleDetails(articleId).catch(() => null);
+    // Resolve the article to a book the caller is entitled to before reading
+    // the external article store.  The old code fetched the complete article
+    // first, which made the authorization check ineffective.
+    const access = await resolveArticleAccess(userId, req.user?.role, articleId);
+    if (access.length === 0) {
+      const knownArticle = await prisma.article.findFirst({
+        where: { articleId },
+        select: { articleId: true },
+      });
+      if (!knownArticle) {
+        return res.status(404).json({ error: "Article not found" });
+      }
+      return res.status(403).json({ error: "You do not have access to this article" });
+    }
+
+    const authorizedBookIds = new Set(access.map((item) => item.bookId));
+    const authorizedClassIds = new Set(
+      access.flatMap((item) => Array.from(item.classIds)),
+    );
+    const authorizedBookId = access[0].bookId;
+    const articleData = await getArticleDetails(articleId, authorizedBookId).catch(() => null);
     if (!articleData) {
       return res.status(404).json({ error: "Article not found" });
     }
@@ -607,7 +740,14 @@ export async function getStudentArticle(
     const participant = await (prisma.sessionParticipant as any).findFirst({
       where: {
         studentUserId: userId,
-        session: { articleId, status: "FINISHED" },
+        session: {
+          articleId,
+          status: "FINISHED",
+          bookId: { in: Array.from(authorizedBookIds) },
+          ...(authorizedClassIds.size > 0
+            ? { classId: { in: Array.from(authorizedClassIds) } }
+            : {}),
+        },
       },
       include: { session: true },
       orderBy: { joinedAt: "desc" },
@@ -615,7 +755,7 @@ export async function getStudentArticle(
 
     if (!participant) {
       return res.status(200).json({
-        article: articleData,
+        article: redactArticleAnswers(articleData),
         mode: "pre-class",
         session: null,
       });

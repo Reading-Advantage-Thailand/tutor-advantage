@@ -58,8 +58,6 @@ interface DevState {
   dashboard: DevDashboard | null;
   recentPayments: DevPayment[];
   notifications: DevNotifications | null;
-  tokenMasked: string | null;
-  tokenRaw: string | null;
   tokenExp: number | null;
   tokenExpiresInSec: number | null;
   tokenRole: string | null;
@@ -336,21 +334,6 @@ export function DevToolbar() {
                       </span>
                     )}
                   </div>
-                </div>
-              </div>
-            )}
-
-            {/* ── Session token ──────────────────────────────────────── */}
-            {state?.tokenMasked && (
-              <div className="px-4 py-2.5 border-b border-border/50 bg-muted/10">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
-                  JWT Session
-                </p>
-                <div className="flex items-center gap-1.5">
-                  <span className="font-mono text-[10px] text-muted-foreground break-all flex-1">
-                    {state.tokenMasked}
-                  </span>
-                  {state.tokenRaw && <CopyBtn text={state.tokenRaw} />}
                 </div>
               </div>
             )}

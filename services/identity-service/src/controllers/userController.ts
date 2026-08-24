@@ -1,7 +1,11 @@
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
-import { deleteFromGCS } from "../lib/storage";
+import {
+  deleteFromGCS,
+  getSignedVerificationUrl,
+  isOwnedVerificationObjectKey,
+} from "../lib/storage";
 import {
   CONSENT_STATUS_GRANTED,
   GUARDIAN_CONSENT_TYPE,
@@ -49,6 +53,18 @@ export async function getCurrentUser(req: AuthenticatedRequest, res: Response) {
       });
     }
 
+    // Database values are owner-bound object keys.  Only expose a short-lived
+    // read URL to the authenticated owner; never return the raw key or an old
+    // arbitrary URL stored by a legacy client.
+    const [idCardImageUrl, bankBookImageUrl] = await Promise.all([
+      user.idCardImageUrl
+        ? getSignedVerificationUrl(user.idCardImageUrl, user.userId)
+        : Promise.resolve(null),
+      user.bankBookImageUrl
+        ? getSignedVerificationUrl(user.bankBookImageUrl, user.userId)
+        : Promise.resolve(null),
+    ]);
+
     const guardianConsent =
       user.role === "STUDENT" && user.dateOfBirth
         ? await prisma.userConsent.findFirst({
@@ -64,6 +80,8 @@ export async function getCurrentUser(req: AuthenticatedRequest, res: Response) {
     return res.status(200).json({
       user: {
         ...user,
+        idCardImageUrl,
+        bankBookImageUrl,
         dateOfBirth: user.dateOfBirth?.toISOString().slice(0, 10) ?? null,
         requiresGuardian: requiresGuardianConsent(
           user.role,
@@ -180,6 +198,21 @@ export async function submitVerification(req: AuthenticatedRequest, res: Respons
     const normalizedTaxName = typeof taxName === "string" ? taxName.trim() : "";
     const normalizedNationalId =
       typeof nationalId === "string" ? nationalId.replace(/\D/g, "") : "";
+
+    if (
+      (idCardImageUrl !== undefined && idCardImageUrl !== null &&
+        (!isOwnedVerificationObjectKey(idCardImageUrl, userId))) ||
+      (bankBookImageUrl !== undefined && bankBookImageUrl !== null &&
+        (!isOwnedVerificationObjectKey(bankBookImageUrl, userId)))
+    ) {
+      return res.status(400).json({
+        error: {
+          code: "INVALID_VERIFICATION_DOCUMENT",
+          message: "Verification documents must come from your own upload",
+          requestId: req.id,
+        },
+      });
+    }
 
     const VALID_BANK_BRANDS = [
       "kbank", "scb", "bbl", "bay", "tmb", "ttb",

@@ -312,6 +312,26 @@ export const initiateChat = async (req: AuthenticatedRequest, res: Response): Pr
         return;
       }
 
+      const isActiveStudent = req.user?.role === "STUDENT"
+        ? await prisma.enrollment.findFirst({
+            where: { classId, studentUserId: userId, status: "ACTIVE" },
+            select: { enrollmentId: true },
+          })
+        : null;
+      const isClassTutor = req.user?.role === "TUTOR"
+        ? await prisma.class.findFirst({
+            where: { classId, tutorUserId: userId },
+            select: { classId: true },
+          })
+        : null;
+
+      // Students must be actively enrolled.  A tutor may open the group for
+      // their own class so the legitimate class owner can participate too.
+      if (!isActiveStudent && !isClassTutor) {
+        res.status(403).json({ error: "Active enrollment or class ownership is required" });
+        return;
+      }
+
       let conversation = await prisma.conversation.findFirst({
         where: { classId, type: 'GROUP' }
       });
@@ -348,6 +368,43 @@ export const initiateChat = async (req: AuthenticatedRequest, res: Response): Pr
     if (type === 'DIRECT') {
       if (!targetUserId) {
         res.status(400).json({ error: "targetUserId is required for direct chats" });
+        return;
+      }
+      if (targetUserId === userId) {
+        res.status(400).json({ error: "You cannot start a direct chat with yourself" });
+        return;
+      }
+
+      const targetUser = await prisma.user.findUnique({
+        where: { userId: targetUserId },
+        select: { userId: true, role: true },
+      });
+      if (!targetUser) {
+        res.status(404).json({ error: "Target user not found" });
+        return;
+      }
+
+      const isTutorStudentPair =
+        (req.user?.role === "TUTOR" && targetUser.role === "STUDENT") ||
+        (req.user?.role === "STUDENT" && targetUser.role === "TUTOR");
+      if (!isTutorStudentPair) {
+        res.status(403).json({ error: "Direct chats are limited to tutor-student relationships" });
+        return;
+      }
+
+      const tutorUserId = req.user?.role === "TUTOR" ? userId : targetUserId;
+      const studentUserId = req.user?.role === "STUDENT" ? userId : targetUserId;
+      const relationship = await prisma.enrollment.findFirst({
+        where: {
+          studentUserId,
+          status: "ACTIVE",
+          ...(classId ? { classId } : {}),
+          class: { tutorUserId },
+        },
+        select: { enrollmentId: true },
+      });
+      if (!relationship) {
+        res.status(403).json({ error: "An active tutor-student enrollment is required" });
         return;
       }
 

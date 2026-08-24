@@ -65,6 +65,24 @@ describe("lessonSessionService", () => {
     expect(session.status).toBe("ACTIVE");
   });
 
+  it("reserves an answer before a slow evaluator and rejects concurrent duplicates", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+    service.setPhase(session.sessionId, 9);
+
+    const reservation = service.reserveAnswer(session.sessionId, "student-1");
+    expect(reservation?.accepted).toBe(true);
+    expect(session.participants.get("student-1")?.hasAnsweredCurrentPhase).toBe(true);
+    expect(session.participants.get("student-1")?.latestAnswer).toBeUndefined();
+
+    const duplicate = service.reserveAnswer(session.sessionId, "student-1");
+    expect(duplicate?.accepted).toBe(false);
+
+    const completed = service.completeReservedAnswer(session.sessionId, "student-1", "evaluated");
+    expect(completed?.accepted).toBe(true);
+    expect(session.participants.get("student-1")?.latestAnswer).toBe("evaluated");
+  });
+
   it("rewinds to the last saved phase state without losing score or answers", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
     service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");

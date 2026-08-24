@@ -48,7 +48,7 @@ function getIdTokenExpiresAt(idToken: string): number | null {
 }
 
 function clearStudentSessionCookie() {
-  document.cookie = "student-session=; path=/; max-age=0; SameSite=Lax";
+  fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
 }
 
 export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
@@ -138,11 +138,7 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
         });
 
         let devSessionProfileLoaded = false;
-        const hasDevSession = useMock && document.cookie
-          .split("; ")
-          .some((cookie) => cookie.startsWith("student-session="));
-
-        if (hasDevSession) {
+        if (useMock) {
           try {
             const devStateRes = await fetch("/api/dev/state", { cache: "no-store" });
             if (devStateRes.ok) {
@@ -207,15 +203,6 @@ export const LiffProvider = ({ children }: { children: React.ReactNode }) => {
                   }
                   setError(message);
                 } else {
-                  // Parse response to get sessionToken for manual cookie fallback.
-                  // LINE WebView (WKWebView on iOS) may not apply Set-Cookie from fetch()
-                  // responses — setting document.cookie explicitly ensures the cookie lands.
-                  const authData = await authRes.json().catch(() => null) as { sessionToken?: string } | null;
-                  if (authData?.sessionToken) {
-                    const maxAge = 7 * 24 * 60 * 60;
-                    const secure = window.location.protocol === "https:" ? "; Secure" : "";
-                    document.cookie = `student-session=${authData.sessionToken}; path=/; max-age=${maxAge}; SameSite=Lax${secure}`;
-                  }
                   reportError("auth_exchange_success", "ok");
                 }
               } catch (authErr) {

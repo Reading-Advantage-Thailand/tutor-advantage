@@ -26,12 +26,6 @@ export class StudentApiError extends Error {
   }
 }
 
-function getSessionToken(): string | null {
-  if (typeof document === "undefined") return null;
-  const match = document.cookie.match(/(?:^|; )student-session=([^;]*)/);
-  return match ? decodeURIComponent(match[1]) : null;
-}
-
 export async function fetchWithAuth(endpoint: string, options: RequestInit = {}, apiBase: string = LEARNING_API_BASE) {
   const isServer = typeof window === 'undefined';
 
@@ -41,9 +35,6 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {},
 
   const baseUrl = isServer ? defaultBaseUrl : apiBase;
   const url = `${baseUrl}${endpoint}`;
-
-  // Read session token from cookie instead of localStorage
-  const token = !isServer ? getSessionToken() : null;
 
   try {
     if (!isServer) {
@@ -58,9 +49,9 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {},
       ...options,
       headers: {
         'Content-Type': 'application/json',
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         ...options.headers,
       },
+      credentials: isServer ? undefined : 'same-origin',
     });
 
     if (!response.ok) {
@@ -91,7 +82,7 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {},
             origin: window.location.origin,
             userAgent: navigator.userAgent,
             isInLine: navigator.userAgent.toLowerCase().includes(" line/"),
-            hasToken: !!token,
+            authTransport: "same-origin-http-only-cookie",
             timestamp: new Date().toISOString(),
           }),
         })?.catch(() => {});

@@ -9,7 +9,7 @@ import { useLiff } from "@/components/providers/LiffProvider";
 import { studentApi } from "@/lib/api";
 import { t } from "@/lib/i18n";
 import { toast } from "sonner";
-import { waitForSessionCookie } from "@/lib/cookieUtils";
+import { waitForSession } from "@/lib/cookieUtils";
 
 const ChatAvatar = ({ src, title, size = 48 }: { src?: string | null, title: string, size?: number }) => {
   const [hasError, setHasError] = useState(false);
@@ -117,8 +117,8 @@ export default function ChatListPage() {
         try {
           if (showLoading) setLoading(true);
 
-          const token = await waitForSessionCookie();
-          if (!token && isMounted) throw new Error(t("chat.sessionUnavailable"));
+          const hasSession = await waitForSession();
+          if (!hasSession && isMounted) throw new Error(t("chat.sessionUnavailable"));
 
           if (!isMounted) return;
 

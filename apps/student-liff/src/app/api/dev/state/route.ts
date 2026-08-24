@@ -17,24 +17,6 @@ export async function GET() {
 
   const headers: HeadersInit = { Authorization: `Bearer ${token}` };
 
-  // Decode JWT payload (no verification — dev only)
-  let tokenInfo: {
-    userId?: string;
-    sub?: string;
-    exp?: number;
-    iat?: number;
-    role?: string;
-    lineUserId?: string;
-  } = {};
-  try {
-    const b64 = token.split(".")[1];
-    tokenInfo = JSON.parse(Buffer.from(b64, "base64url").toString("utf8"));
-  } catch {
-    // ignore malformed token
-  }
-
-  const studentUserId = tokenInfo.userId ?? tokenInfo.sub ?? null;
-
   const [userRes, dashboardRes, paymentsRes, notifRes] = await Promise.allSettled([
     fetch(`${IDENTITY_URL}/v1/users/me`, { headers, cache: "no-store" }),
     fetch(`${LEARNING_URL}/v1/dashboard/summary`, { headers, cache: "no-store" }),
@@ -45,6 +27,11 @@ export async function GET() {
   const user =
     userRes.status === "fulfilled" && userRes.value.ok
       ? await userRes.value.json().then((d: { user?: unknown }) => d.user ?? d)
+      : null;
+
+  const studentUserId =
+    user && typeof user === "object" && "userId" in user
+      ? String((user as { userId: string }).userId)
       : null;
 
   const dashboard =
@@ -76,21 +63,18 @@ export async function GET() {
           .then((d: { notifications?: unknown }) => d.notifications ?? d)
       : null;
 
-  const nowSec = Math.floor(Date.now() / 1000);
-  const expiresIn = tokenInfo.exp ? tokenInfo.exp - nowSec : null;
-
   return NextResponse.json({
     user,
     studentUserId,
     dashboard,
     recentPayments,
     notifications,
-    tokenMasked: `${token.slice(0, 10)}…${token.slice(-8)}`,
-    tokenRaw: token,
-    tokenExp: tokenInfo.exp ?? null,
-    tokenExpiresInSec: expiresIn,
-    tokenRole: tokenInfo.role ?? null,
+    tokenExp: null,
+    tokenExpiresInSec: null,
+    tokenRole: user && typeof user === "object" && "role" in user
+      ? String((user as { role: string }).role)
+      : null,
     tokenSub: studentUserId,
-    lineUserId: tokenInfo.lineUserId ?? null,
+    lineUserId: null,
   });
 }

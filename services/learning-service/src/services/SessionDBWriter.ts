@@ -1,6 +1,108 @@
 import { logger } from "@tutor-advantage/shared-config";
 import { prisma } from "@tutor-advantage/database";
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const ACTIVE_SESSION_LOCK_STALE_MS = 45_000;
+
+export type ActiveSessionLockResult =
+  | { acquired: true }
+  | { acquired: false; existingSessionId: string };
+
+/** Atomically claim the one live lesson slot for a class. */
+export const claimActiveSession = async (
+  classId: string | undefined,
+  sessionId: string,
+  tutorUserId: string,
+): Promise<ActiveSessionLockResult> => {
+  if (!classId || !UUID_RE.test(classId) || !UUID_RE.test(sessionId) || !UUID_RE.test(tutorUserId)) {
+    // Demo/legacy identifiers are not persisted, so retain their in-memory
+    // behavior while real classes always use the database lease below.
+    return { acquired: true };
+  }
+
+  const tryCreate = async (): Promise<ActiveSessionLockResult> => {
+    try {
+      await prisma.activeLessonSessionLock.create({
+        data: { classId, sessionId, tutorUserId },
+      });
+      return { acquired: true };
+    } catch {
+      const existing = await prisma.activeLessonSessionLock.findUnique({ where: { classId } });
+      if (!existing) return { acquired: false, existingSessionId: "" };
+
+      const stale = Date.now() - existing.lastHeartbeatAt.getTime() > ACTIVE_SESSION_LOCK_STALE_MS;
+      if (stale) {
+        const removed = await prisma.activeLessonSessionLock.deleteMany({
+          where: {
+            classId,
+            sessionId: existing.sessionId,
+            lastHeartbeatAt: existing.lastHeartbeatAt,
+          },
+        });
+        if (removed.count === 1) return tryCreate();
+      }
+      return { acquired: false, existingSessionId: existing.sessionId };
+    }
+  };
+
+  return tryCreate();
+};
+
+export const heartbeatActiveSession = async (classId: string | undefined, sessionId: string) => {
+  if (!classId || !UUID_RE.test(classId) || !UUID_RE.test(sessionId)) return;
+  try {
+    await prisma.activeLessonSessionLock.updateMany({
+      where: { classId, sessionId },
+      data: { lastHeartbeatAt: new Date() },
+    });
+  } catch (error) {
+    logger.warn(`[SessionDB] Failed to heartbeat active lesson ${sessionId}:`, error);
+  }
+};
+
+export const releaseActiveSession = async (classId: string | undefined, sessionId: string) => {
+  if (!classId || !UUID_RE.test(classId) || !UUID_RE.test(sessionId)) return;
+  try {
+    await prisma.activeLessonSessionLock.deleteMany({ where: { classId, sessionId } });
+  } catch (error) {
+    logger.warn(`[SessionDB] Failed to release active lesson lock ${sessionId}:`, error);
+  }
+};
+
+export const persistLiveSessionState = async (
+  sessionId: string,
+  state: {
+    currentPhase: number;
+    activeSentenceIndex?: number;
+    phaseSelectedIndices?: Record<number, number>;
+    currentDbSessionId?: string;
+  },
+) => {
+  try {
+    await prisma.interactiveSession.updateMany({
+      where: { sessionId },
+      data: {
+        currentPhase: state.currentPhase,
+        activeSentenceIndex: state.activeSentenceIndex ?? null,
+        phaseSelectedIndices: state.phaseSelectedIndices ?? undefined,
+        currentDbSessionId: state.currentDbSessionId ?? null,
+      },
+    });
+  } catch (error) {
+    logger.warn(`[SessionDB] Failed to persist live lesson state ${sessionId}:`, error);
+  }
+};
+
+export const getActiveSessionLock = async (classId: string) => {
+  if (!UUID_RE.test(classId)) return null;
+  try {
+    return await prisma.activeLessonSessionLock.findUnique({ where: { classId } });
+  } catch (error) {
+    logger.warn(`[SessionDB] Failed to read active lesson lock for ${classId}:`, error);
+    return null;
+  }
+};
+
 export const resolveUserId = async (inputId: string): Promise<string | null> => {
   if (!inputId || inputId === "anonymous") return null;
 

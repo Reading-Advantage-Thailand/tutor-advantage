@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { studentApi } from "@/lib/api";
-import { waitForSessionCookie } from "@/lib/cookieUtils";
+import { waitForSession } from "@/lib/cookieUtils";
 import {
   AlertCircle,
   BookOpen,
@@ -482,8 +482,8 @@ export default function ProgressPage() {
         if (!selectedClassId) setLoading(true);
         else setSwitching(true);
 
-        const token = await waitForSessionCookie();
-        if (!token) {
+        const hasSession = await waitForSession();
+        if (!hasSession) {
           throw new Error("Session unavailable");
         }
 

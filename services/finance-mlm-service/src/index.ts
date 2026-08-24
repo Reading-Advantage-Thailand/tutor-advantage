@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
-import { rateLimit } from "express-rate-limit";
+import { ipKeyGenerator, rateLimit } from "express-rate-limit";
 import dotenv from "dotenv";
 import path from "path";
 import { prisma } from "@tutor-advantage/database";
@@ -23,7 +23,7 @@ import {
 dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 logger.info(`[Finance] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
 
-import { authMiddleware, requireRoles } from "./middlewares/authMiddleware";
+import { authMiddleware, requireRoles, AuthenticatedRequest } from "./middlewares/authMiddleware";
 import {
   createPaymentIntent,
   confirmMockPayment,
@@ -104,6 +104,23 @@ import { getTutorNetwork } from "./controllers/tutorNetworkController";
 const app = express();
 const port = process.env.PORT || 3003;
 assertProductionSecurityConfig(process.env, { requireOmiseWebhookSecret: true });
+// Cloud Run places the service behind one or more trusted proxies.  Without
+// this setting express-rate-limit sees the load balancer address for every
+// user and a single account can exhaust the shared bucket for everyone.
+const configuredTrustProxy = process.env.TRUST_PROXY;
+const trustProxyValue = configuredTrustProxy && /^\d+$/.test(configuredTrustProxy)
+  ? Number(configuredTrustProxy)
+  : configuredTrustProxy;
+app.set(
+  "trust proxy",
+  configuredTrustProxy === undefined
+    ? 1
+    : configuredTrustProxy === "true"
+      ? 1
+      : configuredTrustProxy === "false"
+        ? false
+        : trustProxyValue,
+);
 const adminOnly = requireRoles("ADMIN");
 const financeStaffOnly = requireRoles("ADMIN", "FINANCE_CHECKER");
 const adjustmentStaffOnly = requireRoles(
@@ -118,6 +135,10 @@ const paymentLimiter = rateLimit({
   limit: 30,
   standardHeaders: "draft-8",
   legacyHeaders: false,
+  keyGenerator: (req) => {
+    const userId = (req as AuthenticatedRequest).user?.userId;
+    return userId ? `user:${userId}` : `ip:${ipKeyGenerator(req.ip || "unknown")}`;
+  },
 });
 const webhookLimiter = rateLimit({
   windowMs: 60 * 1000,
@@ -178,7 +199,7 @@ app.get("/v1/coupons", authMiddleware, adminOnly, getCoupons);
 app.post("/v1/coupons/:couponId/void", authMiddleware, adminOnly, voidCoupon);
 
 // ── Payment Routes ─────────────────────────────────────────────────────────
-app.post("/v1/payments/intent", paymentLimiter, authMiddleware, createPaymentIntent);
+app.post("/v1/payments/intent", authMiddleware, paymentLimiter, createPaymentIntent);
 app.get("/v1/payments/config", authMiddleware, getPaymentConfig);
 app.get("/v1/payments/:paymentIntentId/qr-code", authMiddleware, getPromptPayQrCode);
 app.get("/v1/payments/:paymentIntentId/status", authMiddleware, getPaymentStatus);
@@ -328,7 +349,7 @@ app.post("/v1/fraud-flags/:id/action", authMiddleware, financeStaffOnly, trigger
 
 // ── Dev-only Routes (blocked in production) ────────────────────────────────
 if (areDevRoutesEnabled()) {
-  app.post("/v1/payments/confirm-mock", paymentLimiter, authMiddleware, adminOnly, confirmMockPayment);
+  app.post("/v1/payments/confirm-mock", authMiddleware, paymentLimiter, adminOnly, confirmMockPayment);
   app.get("/v1/dev/users", authMiddleware, adminOnly, devListUsers);
   app.post("/v1/dev/users", authMiddleware, adminOnly, devCreateUser);
   app.patch("/v1/dev/users/:id", authMiddleware, adminOnly, devUpdateUser);

@@ -13,6 +13,7 @@ import * as dbWriter from "../services/SessionDBWriter";
 import { LineNotificationService } from "../services/LineNotificationService";
 import { checkAndUnlockBadges } from "../services/BadgeService";
 import { prisma } from "@tutor-advantage/database";
+import { publishLessonEvent, startLessonSocketBus } from "./LessonSocketBus";
 import {
   isStudentSessionParticipant,
   isTutorSessionOwner,
@@ -45,9 +46,148 @@ function seededShuffle<T>(array: T[], seedInput: string): T[] {
 }
 
 export const setupLessonSocket = (io: Server) => {
+  const instanceId = uuidv4();
+  void startLessonSocketBus(io, instanceId);
+  const broadcastSession = (sessionId: string, event: string, payload: unknown) => {
+    io.to(sessionId).emit(event, payload);
+    publishLessonEvent(sessionId, event, payload);
+  };
+  const broadcastToTutor = (
+    session: { sessionId: string; tutorSocketId: string; tutorId: string },
+    event: string,
+    payload: unknown,
+  ) => {
+    io.to(session.tutorSocketId).emit(event, payload);
+    publishLessonEvent(session.sessionId, event, payload, session.tutorId);
+  };
+  const persistLiveState = async (session: { sessionId: string; currentDbSessionId?: string; currentPhase: number; activeSentenceIndex?: number; phaseSelectedIndices?: Record<number, number> }) => {
+    await dbWriter.persistLiveSessionState(session.sessionId, session);
+    if (session.currentDbSessionId && session.currentDbSessionId !== session.sessionId) {
+      await dbWriter.persistLiveSessionState(session.currentDbSessionId, session);
+    }
+  };
+
+  const AI_RATE_WINDOW_MS = 60_000;
+  const AI_MAX_REQUESTS_PER_WINDOW = 20;
+  const AI_MAX_CONCURRENT_PER_USER = 2;
+  const aiRateByUser = new Map<string, { windowStartedAt: number; count: number }>();
+  const aiInFlightByUser = new Map<string, number>();
+  const aiReservations = new Set<string>();
+  const sessionHeartbeats = new Map<string, NodeJS.Timeout>();
+
+  const startSessionHeartbeat = (classId: string | undefined, sessionId: string) => {
+    if (!classId || sessionHeartbeats.has(sessionId)) return;
+    const timer = setInterval(() => {
+      void dbWriter.heartbeatActiveSession(classId, sessionId);
+    }, 15_000);
+    if (typeof timer.unref === "function") timer.unref();
+    sessionHeartbeats.set(sessionId, timer);
+  };
+
+  const stopSessionHeartbeat = (sessionId: string) => {
+    const timer = sessionHeartbeats.get(sessionId);
+    if (!timer) return;
+    clearInterval(timer);
+    sessionHeartbeats.delete(sessionId);
+  };
+
+  const acquireAiSlot = (userId: string, requestKey: string) => {
+    if (aiReservations.has(requestKey)) {
+      return { ok: false, code: "AI_REQUEST_ALREADY_IN_PROGRESS" } as const;
+    }
+
+    const now = Date.now();
+    const current = aiRateByUser.get(userId);
+    const rate = !current || now - current.windowStartedAt >= AI_RATE_WINDOW_MS
+      ? { windowStartedAt: now, count: 0 }
+      : current;
+    if (rate.count >= AI_MAX_REQUESTS_PER_WINDOW) {
+      aiRateByUser.set(userId, rate);
+      return { ok: false, code: "AI_QUOTA_EXCEEDED" } as const;
+    }
+
+    const inFlight = aiInFlightByUser.get(userId) || 0;
+    if (inFlight >= AI_MAX_CONCURRENT_PER_USER) {
+      return { ok: false, code: "AI_CONCURRENCY_LIMIT" } as const;
+    }
+
+    rate.count += 1;
+    aiRateByUser.set(userId, rate);
+    aiInFlightByUser.set(userId, inFlight + 1);
+    aiReservations.add(requestKey);
+    return { ok: true } as const;
+  };
+
+  const releaseAiSlot = (userId: string, requestKey: string) => {
+    aiReservations.delete(requestKey);
+    const inFlight = aiInFlightByUser.get(userId) || 0;
+    if (inFlight <= 1) aiInFlightByUser.delete(userId);
+    else aiInFlightByUser.set(userId, inFlight - 1);
+  };
+
+  const restoreSharedSession = async (classId: string, tutorSocketId: string) => {
+    const lock = await dbWriter.getActiveSessionLock(classId);
+    if (!lock) return undefined;
+
+    const sharedSession = await prisma.interactiveSession.findUnique({
+      where: { sessionId: lock.sessionId },
+    });
+    if (
+      !sharedSession ||
+      sharedSession.classId !== classId ||
+      (sharedSession.status !== "ACTIVE" && sharedSession.status !== "FINISHED")
+    ) {
+      return undefined;
+    }
+
+    const articleData = await getArticleDetails(sharedSession.articleId, sharedSession.bookId || undefined);
+    if (!articleData) return undefined;
+
+    const restoredSession = lessonSessionService.createSession(
+      sharedSession.tutorUserId,
+      tutorSocketId,
+      sharedSession.articleId,
+      articleData,
+      classId,
+      sharedSession.classBookCycleId || undefined,
+      sharedSession.bookId || undefined,
+      false,
+      sharedSession.sessionId,
+      {
+        currentPhase: sharedSession.currentPhase,
+                activeSentenceIndex: sharedSession.activeSentenceIndex,
+                phaseSelectedIndices: (sharedSession.phaseSelectedIndices as Record<number, number> | null) || null,
+                currentDbSessionId: sharedSession.currentDbSessionId,
+                status: sharedSession.currentPhase > 0 ? "ACTIVE" : "LOBBY",
+      },
+    );
+
+    const participants = await prisma.sessionParticipant.findMany({
+      where: { sessionId: sharedSession.sessionId },
+      include: { student: { select: { displayName: true, profilePictureUrl: true } } },
+    });
+    for (const participant of participants) {
+      lessonSessionService.joinSessionByClassId(
+        classId,
+        participant.studentUserId,
+        participant.student.displayName || "Student",
+        `restored:${participant.studentUserId}`,
+        participant.student.profilePictureUrl || undefined,
+        participant.studentUserId,
+      );
+      const localParticipant = restoredSession.participants.get(participant.studentUserId);
+      if (localParticipant) localParticipant.score = participant.score;
+    }
+    startSessionHeartbeat(classId, restoredSession.sessionId);
+    return restoredSession;
+  };
+
   // Authentication Middleware
   io.use((socket, next) => {
-    const token = socket.handshake.auth?.token || socket.handshake.query?.token;
+    // Never accept credentials in the Socket.IO URL query string: URLs are
+    // routinely logged by proxies and browser tooling.  Clients must use the
+    // short-lived audience-bound auth token in the handshake body.
+    const token = socket.handshake.auth?.token;
     if (!token) {
       return next(new Error("Authentication error: No token provided"));
     }
@@ -81,12 +221,14 @@ export const setupLessonSocket = (io: Server) => {
       const tutorId = actor.userId;
       const isDemo = demo === true;
       logger.info(`[Socket] Tutor ${tutorId} creating ${isDemo ? "DEMO " : ""}session for class: ${classId}`);
+      let claimedLock: { classId: string; sessionId: string } | undefined;
       try {
         const ownedClass = classId
           ? await prisma.class.findFirst({
               where: { classId, tutorUserId: tutorId },
               select: {
                 classId: true,
+                tutorUserId: true,
                 isDemo: true,
                 expiresAt: true,
                 bookId: true,
@@ -166,7 +308,10 @@ export const setupLessonSocket = (io: Server) => {
           return;
         }
 
-        if (classId && (!resolvedCycleId || !resolvedBookId)) {
+        if (classId) {
+          // A caller may send all three IDs, so validate them all.  Previously
+          // supplying both cycleId and bookId skipped this block entirely and
+          // allowed an article from an unrelated book to enter the session.
           const cycle = resolvedCycleId
             ? await prisma.classBookCycle.findFirst({
                 where: { classBookCycleId: resolvedCycleId, classId },
@@ -176,11 +321,130 @@ export const setupLessonSocket = (io: Server) => {
                 orderBy: { sequence: "desc" },
               });
 
-          resolvedCycleId = cycle?.classBookCycleId || resolvedCycleId;
-          resolvedBookId = cycle?.bookId || resolvedBookId;
+          if (resolvedCycleId && !cycle) {
+            socket.emit("error", { message: "วงรอบหนังสือไม่ตรงกับห้องเรียนนี้" });
+            return;
+          }
+
+          const classBookId = ownedClass?.bookId;
+          const derivedBookId = cycle?.bookId || classBookId;
+          if (resolvedBookId && derivedBookId && resolvedBookId !== derivedBookId) {
+            socket.emit("error", { message: "หนังสือไม่ตรงกับวงรอบหรือห้องเรียนนี้" });
+            return;
+          }
+
+          resolvedCycleId = cycle?.classBookCycleId;
+          resolvedBookId = derivedBookId;
+
+          if (resolvedBookId) {
+            const articleBinding = await prisma.article.findFirst({
+              where: { articleId: resolvedArticleId, bookId: resolvedBookId },
+              select: { articleId: true },
+            });
+            if (!articleBinding) {
+              socket.emit("error", { message: "บทเรียนไม่อยู่ในหนังสือของห้องเรียนนี้" });
+              return;
+            }
+          }
+        } else if (resolvedBookId) {
+          const articleBinding = await prisma.article.findFirst({
+            where: { articleId: resolvedArticleId, bookId: resolvedBookId },
+            select: { articleId: true },
+          });
+          if (!articleBinding) {
+            socket.emit("error", { message: "บทเรียนไม่อยู่ในหนังสือที่เลือก" });
+            return;
+          }
         }
 
         const articleData = await getArticleDetails(resolvedArticleId, resolvedBookId);
+        if (!articleData) {
+          socket.emit("error", { message: "ไม่พบบทเรียนที่เลือก" });
+          return;
+        }
+
+        const localSession = classId ? lessonSessionService.getSessionByClassId(classId) : undefined;
+        const proposedSessionId = localSession?.sessionId || uuidv4();
+        if (classId && ownedClass && !localSession) {
+          const lock = await dbWriter.claimActiveSession(classId, proposedSessionId, ownedClass.tutorUserId);
+          if (!lock.acquired) {
+            // Another instance may own the socket room.  Rehydrate the
+            // persisted session header/state locally instead of creating a
+            // second room or dropping a reconnecting tutor on the floor.
+            const sharedSession = lock.existingSessionId
+              ? await prisma.interactiveSession.findUnique({
+                  where: { sessionId: lock.existingSessionId },
+                })
+              : null;
+            if (
+              sharedSession &&
+              sharedSession.classId === classId &&
+              sharedSession.tutorUserId === ownedClass.tutorUserId &&
+              (sharedSession.status === "ACTIVE" || sharedSession.status === "FINISHED")
+            ) {
+              const restoredSession = lessonSessionService.createSession(
+                tutorId,
+                socket.id,
+                sharedSession.articleId,
+                articleData,
+                classId,
+                sharedSession.classBookCycleId || resolvedCycleId,
+                sharedSession.bookId || resolvedBookId,
+                false,
+                sharedSession.sessionId,
+                {
+                  currentPhase: sharedSession.currentPhase,
+                  activeSentenceIndex: sharedSession.activeSentenceIndex,
+                  phaseSelectedIndices: (sharedSession.phaseSelectedIndices as Record<number, number> | null) || null,
+                  currentDbSessionId: sharedSession.currentDbSessionId,
+                  status: sharedSession.currentPhase > 0 ? "ACTIVE" : "LOBBY",
+                },
+              );
+              const restoredParticipants = await prisma.sessionParticipant.findMany({
+                where: { sessionId: sharedSession.sessionId },
+                include: { student: { select: { displayName: true, profilePictureUrl: true } } },
+              });
+              for (const participant of restoredParticipants) {
+                lessonSessionService.joinSessionByClassId(
+                  classId,
+                  participant.studentUserId,
+                  participant.student.displayName || "Student",
+                  `restored:${participant.studentUserId}`,
+                  participant.student.profilePictureUrl || undefined,
+                  participant.studentUserId,
+                );
+                const localParticipant = restoredSession.participants.get(participant.studentUserId);
+                if (localParticipant) localParticipant.score = participant.score;
+              }
+              socket.join(restoredSession.sessionId);
+              startSessionHeartbeat(classId, restoredSession.sessionId);
+              socket.emit("session_created", {
+                sessionId: restoredSession.sessionId,
+                currentPhase: restoredSession.currentPhase,
+                phaseRestored: restoredSession.phaseRestored ?? false,
+                resumePhase: restoredSession.resumePhase,
+                articleData: restoredSession.articleData,
+                phaseSelectedIndices: restoredSession.phaseSelectedIndices,
+                activeSentenceIndex: restoredSession.activeSentenceIndex,
+                flagCounts: lessonSessionService.getFlagCounts(restoredSession),
+                pairs: restoredSession.currentPhase === PAIR_CONVERSATION_PHASE
+                  ? lessonSessionService.getPairsPayload(restoredSession)
+                  : null,
+                gameState: lessonSessionService.getGameStatePayload(restoredSession),
+              });
+              logger.info(`[Socket] Rehydrated shared session ${restoredSession.sessionId} for class ${classId}`);
+              return;
+            }
+            socket.emit("error", {
+              message: "ห้องเรียนนี้มีเซสชันกำลังสอนอยู่แล้ว กรุณาเชื่อมต่อเซสชันเดิม",
+              code: "ACTIVE_SESSION_EXISTS",
+              sessionId: lock.existingSessionId,
+            });
+            return;
+          }
+          claimedLock = { classId, sessionId: proposedSessionId };
+        }
+
         logger.info(`================= QUESTIONS LIST =================`);
         logger.info(`Available MCQ questions:`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
         logger.info(`Available SAQ questions:`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
@@ -193,12 +457,20 @@ export const setupLessonSocket = (io: Server) => {
           classId,
           resolvedCycleId,
           resolvedBookId,
+          false,
+          proposedSessionId,
         );
+        if (claimedLock && session.sessionId !== claimedLock.sessionId) {
+          await dbWriter.releaseActiveSession(claimedLock.classId, claimedLock.sessionId);
+          claimedLock = undefined;
+        }
+        startSessionHeartbeat(classId, session.sessionId);
         // Keep currentDbSessionId undefined initially, so the first cycle defaults to the standard sessionId!
         socket.join(session.sessionId);
 
         // PERSIST START OF SESSION TO DB (This creates initial Cycle 1 record)
-        dbWriter.persistSessionStart(session.sessionId, tutorId, resolvedArticleId, classId, resolvedCycleId, resolvedBookId);
+        await dbWriter.persistSessionStart(session.sessionId, tutorId, resolvedArticleId, classId, resolvedCycleId, resolvedBookId);
+        await persistLiveState(session);
 
         socket.emit("session_created", {
           sessionId: session.sessionId,
@@ -214,7 +486,10 @@ export const setupLessonSocket = (io: Server) => {
         });
         logger.info(`[Socket] Session created: ${session.sessionId} for class ${classId}`);
       } catch (error_err) {
-    const error = error_err as Error & { code?: string; details?: string; };
+        if (claimedLock) {
+          await dbWriter.releaseActiveSession(claimedLock.classId, claimedLock.sessionId);
+        }
+        const error = error_err as Error & { code?: string; details?: string; };
         logger.error("[Socket] Error creating session:", error);
         socket.emit("error", { message: "Failed to create session. Please check database connection." });
       }
@@ -247,7 +522,14 @@ export const setupLessonSocket = (io: Server) => {
         return;
       }
 
-      const activeSession = lessonSessionService.getSessionByClassId(classId);
+      let activeSession = lessonSessionService.getSessionByClassId(classId);
+      if (!activeSession) {
+        try {
+          activeSession = await restoreSharedSession(classId, `shared-tutor:${classId}`);
+        } catch (error) {
+          logger.warn(`[Socket] Could not restore shared session for class ${classId}:`, error);
+        }
+      }
       if (activeSession?.classBookCycleId) {
         let activeAccess = await prisma.enrollmentPackage.findFirst({
           where: {
@@ -329,7 +611,7 @@ export const setupLessonSocket = (io: Server) => {
           gameState: lessonSessionService.getGameStatePayload(session),
         });
         
-        io.to(session.sessionId).emit("participants_updated", {
+        broadcastSession(session.sessionId, "participants_updated", {
           participants: Array.from(session.participants.values())
         });
         logger.info(`[Socket] Student ${name} joined class ${classId} successfully (Pic: ${!!pictureUrl})`);
@@ -354,7 +636,7 @@ export const setupLessonSocket = (io: Server) => {
       logger.info(`[Socket] Student ${studentId} toggled ready for session ${sessionId}`);
       const session = lessonSessionService.toggleReady(sessionId, studentId);
       if (session) {
-        io.to(session.sessionId).emit("participants_updated", {
+        broadcastSession(session.sessionId, "participants_updated", {
           participants: Array.from(session.participants.values())
         });
       }
@@ -391,7 +673,7 @@ export const setupLessonSocket = (io: Server) => {
             logger.info(`[Socket] RECYCLE: Starting fresh learning loop for room ${sessionId}. New DB Session: ${newDbId}`);
             
             // 1. Create NEW DB header record
-            dbWriter.persistSessionStart(
+            await dbWriter.persistSessionStart(
               newDbId,
               session.tutorId,
               session.articleId,
@@ -403,14 +685,14 @@ export const setupLessonSocket = (io: Server) => {
             // 2. Automatically enroll all existing students in the NEW round immediately
             const activePeers = Array.from(session.participants.keys());
             for (const pId of activePeers) {
-               dbWriter.persistSessionParticipant(newDbId, pId);
+               await dbWriter.persistSessionParticipant(newDbId, pId);
             }
           }
         }
 
         // Broadcast new phase to everyone in the room.
         // Pair Conversation carries the freshly generated pairs.
-        io.to(sessionId).emit("phase_changed", {
+        broadcastSession(sessionId, "phase_changed", {
           phase,
           phaseSelectedIndices: session.phaseSelectedIndices,
           pairs: phase === PAIR_CONVERSATION_PHASE ? lessonSessionService.getPairsPayload(session) : null,
@@ -420,7 +702,7 @@ export const setupLessonSocket = (io: Server) => {
           activeSentenceIndex: session.activeSentenceIndex,
           flagCounts: lessonSessionService.getFlagCounts(session),
         });
-        io.to(sessionId).emit("participants_updated", {
+        broadcastSession(sessionId, "participants_updated", {
           participants: Array.from(session.participants.values())
         });
         logger.info(`Session ${sessionId} changed to phase ${phase}`);
@@ -436,6 +718,7 @@ export const setupLessonSocket = (io: Server) => {
         // Demo sessions have no DB round, no badges to unlock, and no students to notify.
         if (phase === FINAL_LEADERBOARD_PHASE && !session.isDemo && !session.phaseRestored) {
           dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
+          void persistLiveState(session);
 
           if (session.finalNotificationSent) {
             // The round may have been rewound from the final leaderboard.
@@ -479,6 +762,9 @@ export const setupLessonSocket = (io: Server) => {
           // the lesson after reviewing the restored phase.
           dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "ACTIVE");
         }
+        if (!session.isDemo) {
+          void persistLiveState(session);
+        }
       } else if (shouldRewind) {
         socket.emit("error", {
           message: "This phase cannot be rewound because its saved state is no longer available.",
@@ -497,7 +783,7 @@ export const setupLessonSocket = (io: Server) => {
         Number(phase || activeSession?.currentPhase),
       );
       if (gameState) {
-        io.to(sessionId).emit("game_state_changed", { gameState });
+        broadcastSession(sessionId, "game_state_changed", { gameState });
       }
     });
 
@@ -513,7 +799,7 @@ export const setupLessonSocket = (io: Server) => {
         String(gameId || ""),
       );
       if (gameState) {
-        io.to(sessionId).emit("game_votes_updated", { gameState });
+        broadcastSession(sessionId, "game_votes_updated", { gameState });
       }
     });
 
@@ -525,7 +811,7 @@ export const setupLessonSocket = (io: Server) => {
       }
       const gameState = lessonSessionService.lockGameVote(sessionId);
       if (gameState) {
-        io.to(sessionId).emit("game_state_changed", { gameState });
+        broadcastSession(sessionId, "game_state_changed", { gameState });
       }
     });
 
@@ -538,7 +824,7 @@ export const setupLessonSocket = (io: Server) => {
           expectedCountdownEndsAt,
         );
         if (playingState) {
-          io.to(sessionId).emit("game_state_changed", { gameState: playingState });
+          broadcastSession(sessionId, "game_state_changed", { gameState: playingState });
         }
       }, delay);
     };
@@ -554,7 +840,7 @@ export const setupLessonSocket = (io: Server) => {
         teacherDemoEnabled: teacherDemoEnabled === true,
       });
       if (gameState) {
-        io.to(sessionId).emit("game_state_changed", { gameState });
+        broadcastSession(sessionId, "game_state_changed", { gameState });
         if (gameState.status === "countdown") {
           scheduleGameStart(sessionId, gameState.countdownEndsAt);
         }
@@ -572,7 +858,7 @@ export const setupLessonSocket = (io: Server) => {
         Number(durationMs || 5000),
       );
       if (gameState) {
-        io.to(sessionId).emit("game_state_changed", { gameState });
+        broadcastSession(sessionId, "game_state_changed", { gameState });
         if (gameState.status === "countdown") {
           scheduleGameStart(sessionId, gameState.countdownEndsAt);
         }
@@ -590,7 +876,7 @@ export const setupLessonSocket = (io: Server) => {
         Number(durationMs || 5000),
       );
       if (gameState) {
-        io.to(sessionId).emit("game_state_changed", { gameState });
+        broadcastSession(sessionId, "game_state_changed", { gameState });
         scheduleGameStart(sessionId, gameState.countdownEndsAt);
       }
     });
@@ -624,17 +910,17 @@ export const setupLessonSocket = (io: Server) => {
         });
       }
 
-      io.to(sessionId).emit("game_results_updated", { gameState: submitted.gameState });
-      io.to(sessionId).emit("participants_updated", {
+      broadcastSession(sessionId, "game_results_updated", { gameState: submitted.gameState });
+      broadcastSession(sessionId, "participants_updated", {
         participants: Array.from(submitted.session.participants.values()),
       });
-      io.to(submitted.session.tutorSocketId).emit("participant_answered", {
+      broadcastToTutor(submitted.session, "participant_answered", {
         studentId: actor.userId,
         totalAnswered: Object.keys(submitted.gameState.results).length,
         totalParticipants: submitted.session.participants.size,
       });
       if (submitted.allSubmitted) {
-        io.to(sessionId).emit("all_answered_broadcast", {
+        broadcastSession(sessionId, "all_answered_broadcast", {
           totalParticipants: submitted.session.participants.size,
         });
       }
@@ -649,7 +935,7 @@ export const setupLessonSocket = (io: Server) => {
 
       const session = lessonSessionService.syncActiveSentence(sessionId, index);
       if (session) {
-        io.to(sessionId).emit("active_sentence_synced", {
+        broadcastSession(sessionId, "active_sentence_synced", {
           activeSentenceIndex: index,
         });
       }
@@ -664,12 +950,12 @@ export const setupLessonSocket = (io: Server) => {
 
       const result = lessonSessionService.endQuestion(sessionId);
       if (result) {
-        io.to(result.session.tutorSocketId).emit("question_ended", {
+        broadcastToTutor(result.session, "question_ended", {
           answers: result.answers,
           totalAnswered: result.answers.length,
           totalParticipants: result.session.participants.size,
         });
-        io.to(sessionId).emit("all_answered_broadcast", {
+        broadcastSession(sessionId, "all_answered_broadcast", {
           totalParticipants: result.session.participants.size,
         });
         logger.info(
@@ -694,38 +980,100 @@ export const setupLessonSocket = (io: Server) => {
         });
         return;
       }
-      // AI-evaluated phases: 9=Guided Response (short answer), 14=Guided Writing
-      let evaluatedAnswer = answer;
       const session = lessonSessionService.getSession(sessionId);
-      if (session && (session.currentPhase === 9 || session.currentPhase === 14)) {
-         const aiResult = session.currentPhase === 14
-           ? await evaluateWriting(question, answer)
-           : await evaluateShortAnswer(question, expectedAnswer, answer);
-         evaluatedAnswer = {
-           text: answer,
-           aiScore: aiResult.score,
-           aiFeedback: aiResult.feedback,
-           aiVerified: aiResult.verified,
-         };
-         // send personal result immediately back to student
-         socket.emit("ai_evaluation_result", evaluatedAnswer);
-      } else if (session && session.currentPhase === 16) {
-         // Language Questions (Step 12): teacher-mediated AI answer.
-         // Empty answer = student skipped (no question) — count as answered, no AI call.
-         const text = typeof answer === 'string' ? answer.trim() : '';
-         if (!text) {
-           evaluatedAnswer = { text: '', languageAnswer: '' };
-         } else {
-           const articleContext = [session.articleData?.title, session.articleData?.passage]
-             .filter(Boolean)
-             .join("\n\n");
-           const ai = await answerLanguageQuestion(text, articleContext);
-           evaluatedAnswer = { text: answer, languageAnswer: ai.answer };
-           socket.emit("language_answer_result", { question: answer, answer: ai.answer });
-         }
+      if (!session) return;
+
+      // AI-evaluated phases: 9=Guided Response, 14=Guided Writing,
+      // 16=teacher-mediated language questions.  Validate and reserve the
+      // answer before any provider call so duplicate socket events cannot fan
+      // out into duplicate Gemini requests.
+      const isAiPhase = session.currentPhase === 9 || session.currentPhase === 14 || session.currentPhase === 16;
+      let evaluatedAnswer = answer;
+      let result: ReturnType<typeof lessonSessionService.submitAnswer>;
+      let aiRequestKey: string | undefined;
+
+      if (isAiPhase) {
+        if (typeof answer !== "string") {
+          socket.emit("answer_received", { success: false, code: "INVALID_ANSWER" });
+          return;
+        }
+
+        const maxAnswerLength = session.currentPhase === 14 ? 8000 : 4000;
+        const questionText = typeof question === "string" ? question : "";
+        const expectedText = typeof expectedAnswer === "string" ? expectedAnswer : "";
+        if (
+          answer.length > maxAnswerLength ||
+          questionText.length > 4000 ||
+          expectedText.length > 4000
+        ) {
+          socket.emit("answer_received", { success: false, code: "ANSWER_TOO_LONG" });
+          return;
+        }
+
+        const shouldCallProvider = session.currentPhase !== 16 || answer.trim().length > 0;
+        aiRequestKey = `${studentId}:${sessionId}:${session.currentPhase}`;
+        if (shouldCallProvider) {
+          const slot = acquireAiSlot(studentId, aiRequestKey);
+          if (!slot.ok) {
+            socket.emit("answer_received", { success: false, code: slot.code });
+            return;
+          }
+        }
+
+        const reservation = lessonSessionService.reserveAnswer(sessionId, studentId);
+        if (!reservation || !reservation.accepted) {
+          if (shouldCallProvider && aiRequestKey) releaseAiSlot(studentId, aiRequestKey);
+          socket.emit("answer_received", {
+            success: false,
+            code: "ANSWER_ALREADY_SUBMITTED",
+          });
+          return;
+        }
+
+        try {
+          if (session.currentPhase === 9 || session.currentPhase === 14) {
+            const aiResult = session.currentPhase === 14
+              ? await evaluateWriting(questionText, answer)
+              : await evaluateShortAnswer(questionText, expectedText, answer);
+            evaluatedAnswer = {
+              text: answer,
+              aiScore: aiResult.score,
+              aiFeedback: aiResult.feedback,
+              aiVerified: aiResult.verified,
+            };
+            socket.emit("ai_evaluation_result", evaluatedAnswer);
+          } else {
+            const text = answer.trim();
+            if (!text) {
+              evaluatedAnswer = { text: "", languageAnswer: "" };
+            } else {
+              const articleContext = [session.articleData?.title, session.articleData?.passage]
+                .filter(Boolean)
+                .join("\n\n");
+              const ai = await answerLanguageQuestion(text, articleContext);
+              evaluatedAnswer = { text: answer, languageAnswer: ai.answer };
+              socket.emit("language_answer_result", { question: answer, answer: ai.answer });
+            }
+          }
+        } catch (error) {
+          // Provider wrappers normally fail closed themselves, but the socket
+          // path must also preserve the reservation if a wrapper throws.
+          logger.error("[Socket] AI answer evaluation failed:", error);
+          evaluatedAnswer = {
+            text: answer,
+            aiScore: 0,
+            aiFeedback: "ยังยืนยันคะแนนไม่ได้ เนื่องจากระบบตรวจอัตโนมัติขัดข้องชั่วคราว",
+            aiVerified: false,
+          };
+        } finally {
+          if (shouldCallProvider && aiRequestKey) releaseAiSlot(studentId, aiRequestKey);
+        }
+
+        result = lessonSessionService.completeReservedAnswer(sessionId, studentId, evaluatedAnswer);
+      } else {
+        result = lessonSessionService.submitAnswer(sessionId, studentId, evaluatedAnswer);
       }
 
-      const result = lessonSessionService.submitAnswer(sessionId, studentId, evaluatedAnswer);
       if (result) {
         if (!result.accepted) {
           socket.emit("answer_received", {
@@ -960,13 +1308,12 @@ export const setupLessonSocket = (io: Server) => {
         socket.emit("answer_received", { success: true });
 
         // Broadcast the participants' updated scores to everyone instantly
-        io.to(result.session.sessionId).emit("participants_updated", {
+        broadcastSession(result.session.sessionId, "participants_updated", {
           participants: Array.from(result.session.participants.values())
         });
 
         // Update Tutor with the answer
-        const tutorSocketId = result.session.tutorSocketId;
-        io.to(tutorSocketId).emit("participant_answered", {
+        broadcastToTutor(result.session, "participant_answered", {
           studentId,
           totalAnswered: Array.from(result.session.participants.values()).filter(p => p.hasAnsweredCurrentPhase).length,
           totalParticipants: result.session.participants.size
@@ -980,10 +1327,10 @@ export const setupLessonSocket = (io: Server) => {
           }));
 
           // Notify Tutor with details
-          io.to(tutorSocketId).emit("all_answered", { answers });
+          broadcastToTutor(result.session, "all_answered", { answers });
 
           // Notify Everyone that "All Answered"
-          io.to(sessionId).emit("all_answered_broadcast", { 
+          broadcastSession(sessionId, "all_answered_broadcast", {
             totalParticipants: result.session.participants.size 
           });
 
@@ -1005,7 +1352,7 @@ export const setupLessonSocket = (io: Server) => {
       if (result) {
         const flagCounts = lessonSessionService.getFlagCounts(result.session);
         // Broadcast updated counts to the whole room (tutor highlights, students sync their own state)
-        io.to(result.session.sessionId).emit("flags_updated", { flagCounts });
+        broadcastSession(result.session.sessionId, "flags_updated", { flagCounts });
       }
     });
 
@@ -1039,7 +1386,7 @@ export const setupLessonSocket = (io: Server) => {
         if (participant) {
           io.to(participant.socketId).emit("kicked", { message: "คุณถูกเชิญออกจากห้องเรียนโดยติวเตอร์" });
           session.participants.delete(studentId);
-          io.to(sessionId).emit("participants_updated", {
+          broadcastSession(sessionId, "participants_updated", {
             participants: Array.from(session.participants.values())
           });
           logger.info(`Tutor kicked student ${studentId}`);
@@ -1048,7 +1395,7 @@ export const setupLessonSocket = (io: Server) => {
     });
 
     // Tutor deletes session
-    socket.on("delete_session", ({ sessionId }) => {
+    socket.on("delete_session", async ({ sessionId }) => {
       const session = lessonSessionService.getSession(sessionId);
       if (!isTutorSessionOwner(actor, socket.id, session)) {
         rejectForbidden("delete_session");
@@ -1056,7 +1403,12 @@ export const setupLessonSocket = (io: Server) => {
       }
 
       if (session) {
-        io.to(sessionId).emit("session_deleted", { message: "เซสชันถูกยกเลิกโดยคุณครู" });
+        broadcastSession(sessionId, "session_deleted", { message: "เซสชันถูกยกเลิกโดยคุณครู" });
+        stopSessionHeartbeat(sessionId);
+        await dbWriter.releaseActiveSession(session.classId, sessionId);
+        if (!session.isDemo) {
+          await dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "CANCELLED");
+        }
         lessonSessionService.deleteSession(sessionId);
         logger.info(`[Socket] Session ${sessionId} deleted by tutor`);
       }
@@ -1084,7 +1436,9 @@ export const setupLessonSocket = (io: Server) => {
         await dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
       }
 
-      io.to(sessionId).emit("session_deleted", { message: "บทเรียนจบแล้ว ขอบคุณที่เข้าร่วมเรียนครับ" });
+      broadcastSession(sessionId, "session_deleted", { message: "บทเรียนจบแล้ว ขอบคุณที่เข้าร่วมเรียนครับ" });
+      stopSessionHeartbeat(sessionId);
+      await dbWriter.releaseActiveSession(session.classId, sessionId);
       lessonSessionService.deleteSession(sessionId);
       acknowledge?.({ ok: true });
       logger.info(`[Socket] Session ${sessionId} finished by tutor`);
@@ -1097,13 +1451,18 @@ export const setupLessonSocket = (io: Server) => {
         const { sessionId } = tutorSession;
         logger.info(`[Socket] Tutor disconnect detected for: ${socket.id}. Session ${sessionId} will close if tutor does not reconnect.`);
 
-        setTimeout(() => {
+        setTimeout(async () => {
           const latestSession = lessonSessionService.getSession(sessionId);
           if (latestSession?.tutorSocketId !== socket.id) {
             return;
           }
 
-          io.to(sessionId).emit("session_deleted", { message: "à¹€à¸‹à¸ªà¸Šà¸±à¸™à¸–à¸¹à¸à¸¢à¸à¹€à¸¥à¸´à¸à¹‚à¸”à¸¢à¸„à¸¸à¸“à¸„à¸£à¸¹" });
+          broadcastSession(sessionId, "session_deleted", { message: "à¹€à¸‹à¸ªà¸Šà¸±à¸™à¸–à¸¹à¸à¸¢à¸à¹€à¸¥à¸´à¸à¹‚à¸”à¸¢à¸„à¸¸à¸“à¸„à¸£à¸¹" });
+          stopSessionHeartbeat(sessionId);
+          await dbWriter.releaseActiveSession(latestSession.classId, sessionId);
+          if (!latestSession.isDemo) {
+            await dbWriter.updateSessionStatus(latestSession.currentDbSessionId || sessionId, "CANCELLED");
+          }
           lessonSessionService.deleteSession(sessionId);
           logger.info(`[Socket] Session ${sessionId} deleted after tutor disconnect grace period`);
         }, 15000);

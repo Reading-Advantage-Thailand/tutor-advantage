@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
-import { uploadToGCS } from "../lib/storage";
+import { InvalidVerificationFileError, uploadToGCS } from "../lib/storage";
 import { logger } from "@tutor-advantage/shared-config";
 
 export async function uploadFile(req: AuthenticatedRequest, res: Response) {
@@ -12,12 +12,24 @@ export async function uploadFile(req: AuthenticatedRequest, res: Response) {
       });
     }
 
-    const publicUrl = await uploadToGCS(file);
+    const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({
+        error: { code: "UNAUTHORIZED", message: "User not identified" },
+      });
+    }
 
-    return res.status(200).json({ url: publicUrl });
+    const objectKey = await uploadToGCS(file, userId);
+
+    return res.status(200).json({ objectKey });
   } catch (error) {
     const err = error as Error;
     logger.error("Upload File Error:", err);
+    if (error instanceof InvalidVerificationFileError) {
+      return res.status(400).json({
+        error: { code: error.code, message: error.message, requestId: req.id },
+      });
+    }
     return res.status(500).json({
       error: {
         code: "INTERNAL_SERVER_ERROR",

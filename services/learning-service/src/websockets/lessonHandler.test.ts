@@ -22,8 +22,9 @@ describe("lesson socket authorization", () => {
   it("derives the actor exclusively from verified JWT claims", () => {
     const secret = "test-secret";
     const token = jwt.sign(
-      { userId: "student-from-token", role: "STUDENT" },
+      { userId: "student-from-token", role: "STUDENT", tokenType: "lesson-socket" },
       secret,
+      { audience: "lesson-socket", issuer: "identity-service" },
     );
 
     expect(verifySocketActor(token, secret)).toEqual({
@@ -35,8 +36,9 @@ describe("lesson socket authorization", () => {
 
   it("rejects tokens without the required identity claims", () => {
     const secret = "test-secret";
-    const missingRole = jwt.sign({ userId: "student-1" }, secret);
-    const stringPayload = jwt.sign("student-1", secret);
+    const signingOptions = { audience: "lesson-socket", issuer: "identity-service" };
+    const missingRole = jwt.sign({ userId: "student-1" }, secret, signingOptions);
+    const stringPayload = jwt.sign({ value: "student-1" }, secret, signingOptions);
 
     expect(() => verifySocketActor(missingRole, secret)).toThrow(
       "Invalid token claims",

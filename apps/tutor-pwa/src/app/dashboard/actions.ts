@@ -111,7 +111,7 @@ export async function uploadFileAction(formData: FormData) {
     }
 
     const data = await res.json();
-    return { success: true, url: data.url };
+    return { success: true, objectKey: data.objectKey as string };
   } catch (error) {
     return { success: false, error: error instanceof Error ? error.message : "Unknown error occurred" };
   }
@@ -168,5 +168,18 @@ export async function getCurrentUserAction() {
 
 export async function getTutorSessionToken() {
   const cookieStore = await cookies();
-  return cookieStore.get("tutor_session")?.value || null;
+  const token = cookieStore.get("tutor_session")?.value;
+  if (!token) return null;
+
+  try {
+    const response = await fetch(`${IDENTITY_URL}/v1/auth/socket-token`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (!response.ok) return null;
+    const data = await response.json() as { socketToken?: string };
+    return data.socketToken || null;
+  } catch {
+    return null;
+  }
 }

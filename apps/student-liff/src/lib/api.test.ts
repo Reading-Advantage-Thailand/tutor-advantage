@@ -17,7 +17,7 @@ describe("student API helpers", () => {
     document.cookie = "student-session=; max-age=0; path=/";
   });
 
-  it("uses browser proxy URLs and attaches the session token from cookie", async () => {
+  it("uses browser proxy URLs and relies on the HttpOnly same-origin cookie", async () => {
     document.cookie = "student-session=token-1; path=/";
     vi.mocked(fetch).mockResolvedValueOnce(
       new Response(JSON.stringify({ ok: true }), {
@@ -30,11 +30,12 @@ describe("student API helpers", () => {
     await expect(fetchWithAuth("/dashboard/summary")).resolves.toEqual({ ok: true });
 
     expect(fetch).toHaveBeenCalledWith("/api/learning/dashboard/summary", expect.objectContaining({
+      credentials: "same-origin",
       headers: expect.objectContaining({
-        Authorization: "Bearer token-1",
         "Content-Type": "application/json",
       }),
     }));
+    expect(vi.mocked(fetch).mock.calls[0]?.[1]?.headers).not.toHaveProperty("Authorization");
   });
 
   it("throws API error messages from error envelopes", async () => {

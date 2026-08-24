@@ -563,13 +563,13 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
           idCardFormData.append("file", idCardFile);
           const uploadResult = await uploadFileAction(idCardFormData);
           if (!uploadResult.success) throw new Error(uploadResult.error);
-          idCardUrl = uploadResult.url;
+          idCardUrl = uploadResult.objectKey;
         } else if (field === 'bankBook' && bankBookFile) {
           const bankBookFormData = new FormData();
           bankBookFormData.append("file", bankBookFile);
           const uploadResult = await uploadFileAction(bankBookFormData);
           if (!uploadResult.success) throw new Error(uploadResult.error);
-          bankBookUrl = uploadResult.url;
+          bankBookUrl = uploadResult.objectKey;
         } else if (field === 'address') {
           addr = address.trim();
         }
@@ -584,12 +584,12 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
 
         // Success cleanup
         if (field === 'idCard') {
-          if (idCardUrl) setSubmittedIdCardUrl(idCardUrl);
+          if (idCardPreview) setSubmittedIdCardUrl(idCardPreview);
           setIdCardFile(null);
           setIdCardPreview(null);
         }
         if (field === 'bankBook') {
-          if (bankBookUrl) setSubmittedBankBookUrl(bankBookUrl);
+          if (bankBookPreview) setSubmittedBankBookUrl(bankBookPreview);
           setBankBookFile(null);
           setBankBookPreview(null);
         }
@@ -826,7 +826,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
                 id="id-card-input"
                 type="file"
                 className="hidden"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp,application/pdf"
                 onChange={(e) => handleFileChange(e, 'idCard')}
                 disabled={isPending}
               />
@@ -926,7 +926,7 @@ function VerificationModal({ open, onOpenChange, user }: { open: boolean; onOpen
                 id="bank-book-input"
                 type="file"
                 className="hidden"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp,application/pdf"
                 onChange={(e) => handleFileChange(e, 'bankBook')}
                 disabled={isPending}
               />

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Shield, Users } from "lucide-react";
 import { t } from "@/lib/i18n";
+import { waitForSession } from "@/lib/cookieUtils";
 
 export default function LoginPage() {
   const { liff, isReady, error } = useLiff();
@@ -21,26 +22,14 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isReady && liff?.isLoggedIn() && !error) {
-      let attempts = 0;
-      const timer = setInterval(() => {
-        const hasSession = document.cookie
-          .split("; ")
-          .some((cookie) => cookie.startsWith("student-session="));
+      let cancelled = false;
+      void waitForSession(20, 250).then((hasSession) => {
+        if (cancelled) return;
+        if (hasSession) router.replace(redirectPath);
+        else setSessionError(t("app.sessionCreationFailed"));
+      });
 
-        if (hasSession) {
-          clearInterval(timer);
-          router.replace(redirectPath);
-          return;
-        }
-
-        attempts += 1;
-        if (attempts >= 20) {
-          clearInterval(timer);
-          setSessionError(t("app.sessionCreationFailed"));
-        }
-      }, 250);
-
-      return () => clearInterval(timer);
+      return () => { cancelled = true; };
     }
   }, [isReady, liff, error, router, redirectPath]);
 

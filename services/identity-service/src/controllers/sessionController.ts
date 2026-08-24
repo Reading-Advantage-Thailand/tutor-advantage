@@ -1,6 +1,8 @@
 import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
+import jwt from "jsonwebtoken";
+import { getJwtSecret } from "@tutor-advantage/shared-config";
 import {
   CONSENT_STATUS_GRANTED,
   GUARDIAN_CONSENT_TYPE,
@@ -71,4 +73,27 @@ export async function getSession(req: AuthenticatedRequest, res: Response) {
       },
     });
   }
+}
+
+/** Issue a short-lived, audience-bound token for the lesson Socket.IO server. */
+export function issueSocketToken(req: AuthenticatedRequest, res: Response) {
+  const userId = req.user?.userId;
+  const role = req.user?.role;
+  if (!userId || !role) {
+    return res.status(401).json({
+      error: { code: "UNAUTHORIZED", message: "User ID missing from token", requestId: req.id },
+    });
+  }
+
+  const socketToken = jwt.sign(
+    { userId, role, tokenType: "lesson-socket" },
+    getJwtSecret(),
+    {
+      expiresIn: "5m",
+      audience: "lesson-socket",
+      issuer: "identity-service",
+    },
+  );
+
+  return res.status(200).json({ socketToken, expiresIn: 300 });
 }

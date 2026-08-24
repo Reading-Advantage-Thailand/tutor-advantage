@@ -28,7 +28,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { studentApi } from "@/lib/api";
 import { t } from "@/lib/i18n";
 import { playSound } from "@/lib/sounds";
-import { waitForSessionCookie } from "@/lib/cookieUtils";
+import { waitForSession } from "@/lib/cookieUtils";
 
 /* ─── Sound helper ─── */
 const playNotificationSound = () => {
@@ -309,8 +309,8 @@ export default function DashboardPage() {
         try {
           if (showLoading) setLoading(true);
 
-          const token = await waitForSessionCookie();
-          if (!token && isMounted) throw new Error(t("dashboard.sessionCreateFailed"));
+          const hasSession = await waitForSession();
+          if (!hasSession && isMounted) throw new Error(t("dashboard.sessionCreateFailed"));
           if (!isMounted) return;
 
           const now = new Date();

@@ -15,6 +15,7 @@ import {
 import { useLiff } from "@/components/providers/LiffProvider";
 import { studentApi } from "@/lib/api";
 import { t } from "@/lib/i18n";
+import { waitForSession } from "@/lib/cookieUtils";
 
 interface PaymentRecord {
   paymentIntentId: string;
@@ -51,16 +52,8 @@ export default function PaymentHistoryPage() {
         try {
           setLoading(true);
 
-          // Wait for session token to appear (consistent pattern from dashboard)
-          let token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
-          let retries = 0;
-          while (!token && retries < 10 && isMounted) {
-            await new Promise((resolve) => setTimeout(resolve, 500));
-            token = (document.cookie.match(/(?:^|; )student-session=([^;]*)/) ?? [])[1] ?? null;
-            retries++;
-          }
-
-          if (!token && isMounted) {
+          const hasSession = await waitForSession();
+          if (!hasSession && isMounted) {
             throw new Error(t("payment.history.sessionUnavailable"));
           }
 

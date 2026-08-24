@@ -254,6 +254,7 @@ const io = new Server(httpServer, {
 
 // We will create this file in the next step
 import { setupLessonSocket } from "./websockets/lessonHandler";
+import { stopLessonSocketBus } from "./websockets/LessonSocketBus";
 setupLessonSocket(io);
 
 httpServer.listen(port, () => {
@@ -265,6 +266,7 @@ const shutdown = (signal: string) => async () => {
   logger.info(`[Learning] ${signal} received — shutting down gracefully`);
   io.close(() => {
     httpServer.close(async () => {
+      await stopLessonSocketBus();
       await prisma.$disconnect();
       logger.info("[Learning] Shutdown complete");
       process.exit(0);

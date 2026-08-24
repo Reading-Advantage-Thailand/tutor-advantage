@@ -16,8 +16,27 @@ export function authMiddleware(
   next: NextFunction,
 ) {
   const authHeader = req.headers.authorization;
+  let token: string | undefined;
+  if (authHeader !== undefined) {
+    if (!authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({
+        error: {
+          code: "UNAUTHORIZED",
+          message: "Missing or invalid Authorization header",
+          requestId: req.id,
+        },
+      });
+    }
+    token = authHeader.slice("Bearer ".length).trim();
+  } else {
+    const cookies = req.headers.cookie?.split(";").map((part) => part.trim()) || [];
+    const sessionCookie = cookies.find((part) =>
+      part.startsWith("student-session=") || part.startsWith("tutor_session="),
+    );
+    token = sessionCookie?.slice(sessionCookie.indexOf("=") + 1);
+  }
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!token) {
     return res.status(401).json({
       error: {
         code: "UNAUTHORIZED",
@@ -26,8 +45,6 @@ export function authMiddleware(
       },
     });
   }
-
-  const token = authHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, getJwtSecret()) as {
