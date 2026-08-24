@@ -1108,6 +1108,9 @@ export function DragonFlightGame({
       ? activePair.y + layout!.leftGate.height + 8
       : layout!.leftGate.top + layout!.leftGate.height + 8
     : 0;
+  // Keep the label out of the viewport while the gate is still entering from
+  // above. This prevents iOS Safari from showing the answer before its gate.
+  const gateLabelVisible = Boolean(activePair && activePair.y >= 0);
 
   return (
     <div
@@ -1234,22 +1237,26 @@ export function DragonFlightGame({
           )}
 
           {/* Gate Labels (Absolute positioning based on canvas) */}
-          {gateLabels && layout && state.status !== "boss" && (
+          {gateLabels && layout && activePair && state.status !== "boss" && (
             <>
               <div
-                className={`absolute -translate-x-1/2 rounded-xl border bg-black/80 px-3 py-2 sm:px-6 sm:py-3 text-sm sm:text-2xl font-bold text-white shadow-xl backdrop-blur-md transition-all ${tutorialMode && (tutorialStep === 1 || (tutorialStep === 2 && activePair?.round.correctSide === "left")) ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/10"}`}
+                className={`absolute rounded-xl border bg-black/80 px-3 py-2 text-sm font-bold text-white shadow-xl backdrop-blur-md transition-[border-color,box-shadow] sm:px-6 sm:py-3 sm:text-2xl ${gateLabelVisible ? "opacity-100" : "opacity-0"} ${tutorialMode && (tutorialStep === 1 || (tutorialStep === 2 && activePair.round.correctSide === "left")) ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/10"}`}
                 style={{
                   left: layout.leftGate.left + layout.leftGate.width / 2,
-                  top: gateLabelTop,
+                  top: 0,
+                  transform: `translate3d(-50%, ${gateLabelTop}px, 0)`,
+                  willChange: "transform",
                 }}
               >
                 {gateLabels?.left}
               </div>
               <div
-                className={`absolute -translate-x-1/2 rounded-xl border bg-black/80 px-3 py-2 sm:px-6 sm:py-3 text-sm sm:text-2xl font-bold text-white shadow-xl backdrop-blur-md transition-all ${tutorialMode && (tutorialStep === 1 || (tutorialStep === 2 && activePair?.round.correctSide === "right")) ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/10"}`}
+                className={`absolute rounded-xl border bg-black/80 px-3 py-2 text-sm font-bold text-white shadow-xl backdrop-blur-md transition-[border-color,box-shadow] sm:px-6 sm:py-3 sm:text-2xl ${gateLabelVisible ? "opacity-100" : "opacity-0"} ${tutorialMode && (tutorialStep === 1 || (tutorialStep === 2 && activePair.round.correctSide === "right")) ? "border-amber-300 ring-8 ring-amber-300/25" : "border-white/10"}`}
                 style={{
                   left: layout.rightGate.left + layout.rightGate.width / 2,
-                  top: gateLabelTop,
+                  top: 0,
+                  transform: `translate3d(-50%, ${gateLabelTop}px, 0)`,
+                  willChange: "transform",
                 }}
               >
                 {gateLabels?.right}
