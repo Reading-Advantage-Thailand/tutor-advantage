@@ -1,4 +1,4 @@
-import { logger } from "@tutor-advantage/shared-config";
+import { hashIdentifier, logger } from "@tutor-advantage/shared-config";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -73,7 +73,9 @@ export class LineNotificationService {
       });
 
       if (!user) {
-        logger.warn(`[LineNotificationService] User ${userId} not found.`);
+        logger.warn("[LineNotificationService] User not found.", {
+          userId: hashIdentifier(userId),
+        });
         return { sent: false, reason: "USER_NOT_FOUND" };
       }
 
@@ -85,7 +87,10 @@ export class LineNotificationService {
         const isEnabled = settings[options.type] !== undefined ? settings[options.type] : defaultValue;
 
         if (!isEnabled) {
-          logger.info(`[LineNotificationService] User ${userId} has disabled ${options.type}. Notification suppressed.`);
+          logger.info("[LineNotificationService] Notification suppressed by user preference.", {
+            userId: hashIdentifier(userId),
+            preference: options.type,
+          });
           return { sent: false, reason: "PREFERENCE_DISABLED" };
         }
       }
@@ -99,7 +104,9 @@ export class LineNotificationService {
       });
 
       if (!lineIdentity || !lineIdentity.providerSubject) {
-        logger.info(`[LineNotificationService] No linked LINE identity found for user ${userId}. Cannot push.`);
+        logger.info("[LineNotificationService] No linked LINE identity found.", {
+          userId: hashIdentifier(userId),
+        });
         return { sent: false, reason: "LINE_NOT_LINKED" };
       }
 
@@ -119,16 +126,24 @@ export class LineNotificationService {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        logger.error(`[LineNotificationService] LINE API error: ${response.status}`, errorText);
+        logger.error("[LineNotificationService] LINE API error.", {
+          status: response.status,
+          userId: hashIdentifier(userId),
+        });
         return { sent: false, reason: "LINE_API_ERROR", lineStatus: response.status };
       }
 
-      logger.info(`[LineNotificationService] Notification sent successfully to user ${userId} (LINE: ${lineUserId})`);
+      logger.info("[LineNotificationService] Notification sent successfully.", {
+        userId: hashIdentifier(userId),
+        lineUserId: hashIdentifier(lineUserId),
+      });
       return { sent: true };
 
     } catch (error) {
-      logger.error(`[LineNotificationService] Critical error sending notification to ${userId}:`, error);
+      logger.error("[LineNotificationService] Critical error sending notification.", {
+        userId: hashIdentifier(userId),
+        error,
+      });
       return { sent: false, reason: "UNEXPECTED_ERROR" };
     }
   }

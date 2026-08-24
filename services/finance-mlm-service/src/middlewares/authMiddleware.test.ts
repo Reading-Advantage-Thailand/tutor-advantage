@@ -1,11 +1,17 @@
 import jwt from "jsonwebtoken";
 import { getJwtSecret } from "@tutor-advantage/shared-config";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   authMiddleware,
   requireRoles,
   type AuthenticatedRequest,
 } from "./authMiddleware";
+
+const prisma = vi.hoisted(() => ({
+  user: { findUnique: vi.fn() },
+}));
+
+vi.mock("@tutor-advantage/database", () => ({ prisma }));
 
 function createResponse() {
   return {
@@ -15,12 +21,21 @@ function createResponse() {
 }
 
 describe("finance authMiddleware", () => {
-  it("rejects requests without a bearer token", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    prisma.user.findUnique.mockImplementation(async ({ where }: { where: { userId: string } }) => ({
+      userId: where.userId,
+      role: "ADMIN",
+      isActive: true,
+    }));
+  });
+
+  it("rejects requests without a bearer token", async () => {
     const req = { id: "req-1", headers: {} } as AuthenticatedRequest;
     const res = createResponse();
     const next = vi.fn();
 
-    authMiddleware(req, res as never, next);
+    await authMiddleware(req, res as never, next);
 
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({
@@ -33,7 +48,7 @@ describe("finance authMiddleware", () => {
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("attaches the decoded JWT payload and continues", () => {
+  it("attaches the current database role and continues", async () => {
     const token = jwt.sign({ userId: "user-1", role: "ADMIN" }, getJwtSecret());
     const req = {
       id: "req-1",
@@ -42,10 +57,33 @@ describe("finance authMiddleware", () => {
     const res = createResponse();
     const next = vi.fn();
 
-    authMiddleware(req, res as never, next);
+    await authMiddleware(req, res as never, next);
 
     expect(req.user).toMatchObject({ userId: "user-1", role: "ADMIN" });
     expect(next).toHaveBeenCalledOnce();
+  });
+
+  it("blocks suspended accounts before finance authorization runs", async () => {
+    const token = jwt.sign({ userId: "user-2", role: "ADMIN" }, getJwtSecret());
+    const req = {
+      id: "req-2",
+      headers: { authorization: `Bearer ${token}` },
+    } as AuthenticatedRequest;
+    const res = createResponse();
+    const next = vi.fn();
+
+    prisma.user.findUnique.mockResolvedValue({
+      userId: "user-2",
+      role: "ADMIN",
+      isActive: false,
+    });
+    await authMiddleware(req, res as never, next);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({
+      error: expect.objectContaining({ code: "ACCOUNT_SUSPENDED" }),
+    });
+    expect(next).not.toHaveBeenCalled();
   });
 });
 

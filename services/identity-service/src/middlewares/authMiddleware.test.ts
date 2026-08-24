@@ -1,7 +1,13 @@
 import jwt from "jsonwebtoken";
 import { getJwtSecret } from "@tutor-advantage/shared-config";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { authMiddleware, type AuthenticatedRequest } from "./authMiddleware";
+
+const prisma = vi.hoisted(() => ({
+  user: { findUnique: vi.fn() },
+}));
+
+vi.mock("@tutor-advantage/database", () => ({ prisma }));
 
 function createResponse() {
   return {
@@ -11,12 +17,21 @@ function createResponse() {
 }
 
 describe("identity authMiddleware", () => {
-  it("rejects missing bearer tokens", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    prisma.user.findUnique.mockImplementation(async ({ where }: { where: { userId: string } }) => ({
+      userId: where.userId,
+      role: "STUDENT",
+      isActive: true,
+    }));
+  });
+
+  it("rejects missing bearer tokens", async () => {
     const req = { id: "req-1", headers: {} } as AuthenticatedRequest;
     const res = createResponse();
     const next = vi.fn();
 
-    authMiddleware(req, res as never, next);
+    await authMiddleware(req, res as never, next);
 
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({
@@ -29,7 +44,7 @@ describe("identity authMiddleware", () => {
     expect(next).not.toHaveBeenCalled();
   });
 
-  it("attaches decoded JWT user details", () => {
+  it("loads the active user and ignores stale JWT role claims", async () => {
     const token = jwt.sign({ userId: "user-1", role: "STUDENT" }, getJwtSecret());
     const req = {
       id: "req-1",
@@ -38,13 +53,41 @@ describe("identity authMiddleware", () => {
     const res = createResponse();
     const next = vi.fn();
 
-    authMiddleware(req, res as never, next);
+    prisma.user.findUnique.mockResolvedValue({
+      userId: "user-1",
+      role: "ADMIN",
+      isActive: true,
+    });
+    await authMiddleware(req, res as never, next);
 
-    expect(req.user).toMatchObject({ userId: "user-1", role: "STUDENT" });
+    expect(req.user).toMatchObject({ userId: "user-1", role: "ADMIN" });
     expect(next).toHaveBeenCalledOnce();
   });
 
-  it("accepts the HttpOnly session cookie used by same-origin proxies", () => {
+  it("rejects a suspended user even when the JWT is still valid", async () => {
+    const token = jwt.sign({ userId: "user-2", role: "STUDENT" }, getJwtSecret());
+    const req = {
+      id: "req-2",
+      headers: { authorization: `Bearer ${token}` },
+    } as AuthenticatedRequest;
+    const res = createResponse();
+    const next = vi.fn();
+
+    prisma.user.findUnique.mockResolvedValue({
+      userId: "user-2",
+      role: "STUDENT",
+      isActive: false,
+    });
+    await authMiddleware(req, res as never, next);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({
+      error: expect.objectContaining({ code: "ACCOUNT_SUSPENDED" }),
+    });
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it("accepts the HttpOnly session cookie used by same-origin proxies", async () => {
     const token = jwt.sign({ userId: "user-2", role: "STUDENT" }, getJwtSecret());
     const req = {
       id: "req-2",
@@ -53,7 +96,7 @@ describe("identity authMiddleware", () => {
     const res = createResponse();
     const next = vi.fn();
 
-    authMiddleware(req, res as never, next);
+    await authMiddleware(req, res as never, next);
 
     expect(req.user).toMatchObject({ userId: "user-2", role: "STUDENT" });
     expect(next).toHaveBeenCalledOnce();

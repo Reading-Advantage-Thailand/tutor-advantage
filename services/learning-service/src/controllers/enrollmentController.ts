@@ -86,6 +86,13 @@ function paymentExpiresAt(status: string) {
     : null;
 }
 
+function isReferralUsable(referral: { status: string; expiresAt: Date | null }) {
+  return (
+    referral.status === "ACTIVE" &&
+    (!referral.expiresAt || referral.expiresAt.getTime() > Date.now())
+  );
+}
+
 async function ensureEnrollmentPackageForClass(tx: any, enrollment: any) {
   const cls = await tx.class.findUnique({
     where: { classId: enrollment.classId },
@@ -154,7 +161,7 @@ export async function getReferralDetails(req: AuthenticatedRequest, res: Respons
       },
     });
 
-    if (!referral || referral.status !== "ACTIVE") {
+    if (!referral || !isReferralUsable(referral)) {
       return res.status(404).json({
         error: {
           code: "REFERRAL_INVALID",
@@ -250,7 +257,7 @@ export async function enrollStudent(req: AuthenticatedRequest, res: Response) {
         },
       });
 
-      if (!referral || referral.status !== "ACTIVE") {
+      if (!referral || !isReferralUsable(referral)) {
         throw new Error("REFERRAL_INVALID");
       }
 
@@ -458,7 +465,47 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
       });
     }
 
+    if (referralToken !== undefined && referralToken !== null && typeof referralToken !== "string") {
+      return res.status(400).json({
+        error: {
+          code: "REFERRAL_INVALID",
+          message: "The referral token is invalid or expired",
+          requestId: req.id,
+        },
+      });
+    }
+
+    const normalizedReferralToken =
+      typeof referralToken === "string" ? referralToken.trim() : undefined;
+    if (referralToken !== undefined && referralToken !== null && !normalizedReferralToken) {
+      return res.status(400).json({
+        error: {
+          code: "REFERRAL_INVALID",
+          message: "The referral token is invalid or expired",
+          requestId: req.id,
+        },
+      });
+    }
+
     const result = await prisma.$transaction(async (tx) => {
+      let validatedReferralToken: string | null = null;
+      if (normalizedReferralToken) {
+        const referral = await tx.referral.findUnique({
+          where: { token: normalizedReferralToken },
+          select: { token: true, classId: true, status: true, expiresAt: true },
+        });
+
+        if (
+          !referral ||
+          referral.classId !== classId ||
+          !isReferralUsable(referral)
+        ) {
+          throw new Error("REFERRAL_INVALID");
+        }
+
+        validatedReferralToken = referral.token;
+      }
+
       // 1. Check if class exists and has capacity
       const targetClass = await lockClassForEnrollment(tx, classId);
 
@@ -510,6 +557,12 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
         placedByFallback = true;
       }
 
+      // A direct referral is bound to the requested class. Never carry it to a
+      // different fallback class where it could credit the wrong tutor.
+      if (validatedReferralToken && targetClassId !== classId) {
+        throw new Error("REFERRAL_INVALID");
+      }
+
       // 2. Check if already enrolled or has an open payment attempt.
       const existing = await tx.enrollment.findFirst({
         where: {
@@ -522,12 +575,12 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
       if (existing) {
         // Backfill referral token if this enroll carried one and the existing
         // record has none, so the referral is credited.
-        if (referralToken && !existing.referralToken) {
+        if (validatedReferralToken && !existing.referralToken) {
           await tx.enrollment.update({
             where: { enrollmentId: existing.enrollmentId },
-            data: { referralToken },
+            data: { referralToken: validatedReferralToken },
           });
-          existing.referralToken = referralToken;
+          existing.referralToken = validatedReferralToken;
         }
         await ensureEnrollmentPackageForClass(tx, existing);
         return { ...existing, placedByFallback };
@@ -544,7 +597,7 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
           classId: targetClassId,
           studentUserId: userId,
           status: isFreeClass ? "ACTIVE" : "PENDING_PAYMENT",
-          referralToken: referralToken ?? null,
+          referralToken: validatedReferralToken,
           paymentExpiresAt: paymentExpiresAt(isFreeClass ? "ACTIVE" : "PENDING_PAYMENT"),
         }
       });
@@ -572,6 +625,15 @@ export async function directEnroll(req: AuthenticatedRequest, res: Response) {
     });
   } catch (error_err) {
     const error = error_err as Error & { code?: string; details?: string; };
+    if (error.message === "REFERRAL_INVALID") {
+      return res.status(400).json({
+        error: {
+          code: "REFERRAL_INVALID",
+          message: "The referral token is invalid or expired",
+          requestId: req.id,
+        },
+      });
+    }
     logger.error("Direct Enrollment Error:", error);
     const code =
       error.message.includes("CLASS") ||

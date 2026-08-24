@@ -381,10 +381,24 @@ export const suspendUser = async (req: AuthenticatedRequest, res: Response) => {
       select: { userId: true, isActive: true },
     });
 
+    // The auth middleware reads isActive on every request, so this takes
+    // effect immediately even when the existing 7-day JWT is still valid.
+    await prisma.auditEvent.create({
+      data: {
+        actorId: req.user?.userId || "SYSTEM",
+        action: updated.isActive ? "USER_UNSUSPEND" : "USER_SUSPEND",
+        entityType: "User",
+        entityId: updated.userId,
+        payload: { isActive: updated.isActive },
+      },
+    }).catch((auditError) => {
+      logger.error("Failed to write user status audit event", { error: auditError });
+    });
+
     return res.status(200).json({
       success: true,
       isActive: updated.isActive,
-      message: `User ${id} has been ${updated.isActive ? "unsuspended" : "suspended"}`,
+      message: `User has been ${updated.isActive ? "unsuspended" : "suspended"}`,
     });
   } catch (error) {
     logger.error("Suspend User Error:", error);

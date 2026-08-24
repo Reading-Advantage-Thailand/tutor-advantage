@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { prisma } from "@tutor-advantage/database";
 import { getJwtSecret } from "@tutor-advantage/shared-config";
 
 export interface AuthenticatedRequest extends Request {
@@ -10,7 +11,7 @@ export interface AuthenticatedRequest extends Request {
   };
 }
 
-export function authMiddleware(
+export async function authMiddleware(
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
@@ -46,14 +47,12 @@ export function authMiddleware(
     });
   }
 
+  let decoded: { userId: string };
   try {
-    const decoded = jwt.verify(token, getJwtSecret()) as {
-      userId: string;
-      role: string;
-    };
-    req.user = decoded;
-    next();
-  } catch (err) {
+    const verified = jwt.verify(token, getJwtSecret()) as { userId?: unknown };
+    if (typeof verified.userId !== "string" || !verified.userId) throw new Error("INVALID_SUBJECT");
+    decoded = { userId: verified.userId };
+  } catch {
     return res.status(401).json({
       error: {
         code: "UNAUTHORIZED",
@@ -62,6 +61,47 @@ export function authMiddleware(
       },
     });
   }
+
+  let currentUser: { userId: string; role: string; isActive: boolean } | null;
+  try {
+    currentUser = await prisma.user.findUnique({
+      where: { userId: decoded.userId },
+      select: { userId: true, role: true, isActive: true },
+    });
+  } catch {
+    return res.status(503).json({
+      error: {
+        code: "AUTHENTICATION_UNAVAILABLE",
+        message: "Authentication service is temporarily unavailable",
+        requestId: req.id,
+      },
+    });
+  }
+
+  if (!currentUser) {
+    return res.status(401).json({
+      error: {
+        code: "UNAUTHORIZED",
+        message: "Token expired or invalid",
+        requestId: req.id,
+      },
+    });
+  }
+
+  if (!currentUser.isActive) {
+    return res.status(403).json({
+      error: {
+        code: "ACCOUNT_SUSPENDED",
+        message: "This account is suspended",
+        requestId: req.id,
+      },
+    });
+  }
+
+  // JWT role claims are stale after an admin changes a user's role. Always use
+  // the current database role for authorization decisions.
+  req.user = { userId: currentUser.userId, role: currentUser.role };
+  return next();
 }
 
 export function requireRoles(...allowedRoles: string[]) {

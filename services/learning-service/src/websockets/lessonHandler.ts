@@ -192,12 +192,29 @@ export const setupLessonSocket = (io: Server) => {
       return next(new Error("Authentication error: No token provided"));
     }
     
-    try {
-      socket.data.actor = verifySocketActor(String(token), getJwtSecret());
-      next();
-    } catch (err) {
-      return next(new Error("Authentication error: Invalid or expired token"));
-    }
+    void (async () => {
+      try {
+        const tokenActor = verifySocketActor(String(token), getJwtSecret());
+        const currentUser = await prisma.user.findUnique({
+          where: { userId: tokenActor.userId },
+          select: { userId: true, role: true, isActive: true },
+        });
+
+        if (!currentUser || !currentUser.isActive) {
+          return next(new Error("Authentication error: Invalid or suspended account"));
+        }
+
+        // Use current database state so role changes and suspensions take
+        // effect even while the original session token remains unexpired.
+        socket.data.actor = {
+          userId: currentUser.userId,
+          role: currentUser.role,
+        } satisfies SocketActor;
+        return next();
+      } catch {
+        return next(new Error("Authentication error: Invalid or expired token"));
+      }
+    })();
   });
 
   io.on("connection", (socket: Socket) => {

@@ -23,6 +23,9 @@ const prisma = vi.hoisted(() => ({
     findFirst: vi.fn(),
     create: vi.fn(),
   },
+  referral: {
+    findUnique: vi.fn(),
+  },
 }));
 
 vi.mock("@tutor-advantage/database", () => ({ prisma }));
@@ -34,11 +37,11 @@ function response() {
   };
 }
 
-function request(userId: string, role: string) {
+function request(userId: string, role: string, referralToken?: string) {
   return {
     id: "req-1",
     user: { userId, role },
-    body: { classId: "class-1" },
+    body: { classId: "class-1", ...(referralToken ? { referralToken } : {}) },
   };
 }
 
@@ -86,6 +89,7 @@ describe("direct enrollment safety", () => {
     });
     prisma.classBookCycle.findFirst.mockResolvedValue({ classBookCycleId: "cycle-1" });
     prisma.enrollmentPackage.upsert.mockResolvedValue({});
+    prisma.referral.findUnique.mockResolvedValue(null);
   });
 
   it("rejects non-student accounts before reserving a seat", async () => {
@@ -153,5 +157,61 @@ describe("direct enrollment safety", () => {
       data: { status: "CANCELLED" },
     });
     expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  it("rejects a direct enrollment with an unknown referral token", async () => {
+    const res = response();
+
+    await directEnroll(
+      request("student-1", "STUDENT", "unknown-referral") as never,
+      res as never,
+    );
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      error: expect.objectContaining({ code: "REFERRAL_INVALID" }),
+    });
+    expect(prisma.class.findUnique).not.toHaveBeenCalled();
+  });
+
+  it("rejects an expired referral token", async () => {
+    prisma.referral.findUnique.mockResolvedValue({
+      token: "expired-referral",
+      classId: "class-1",
+      status: "ACTIVE",
+      expiresAt: new Date(Date.now() - 60_000),
+    });
+    const res = response();
+
+    await directEnroll(
+      request("student-1", "STUDENT", "expired-referral") as never,
+      res as never,
+    );
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({
+      error: expect.objectContaining({ code: "REFERRAL_INVALID" }),
+    });
+    expect(prisma.class.findUnique).not.toHaveBeenCalled();
+  });
+
+  it("stores only an active referral belonging to the requested class", async () => {
+    prisma.referral.findUnique.mockResolvedValue({
+      token: "valid-referral",
+      classId: "class-1",
+      status: "ACTIVE",
+      expiresAt: new Date(Date.now() + 60_000),
+    });
+    const res = response();
+
+    await directEnroll(
+      request("student-1", "STUDENT", "valid-referral") as never,
+      res as never,
+    );
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(prisma.enrollment.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ referralToken: "valid-referral" }),
+    });
   });
 });

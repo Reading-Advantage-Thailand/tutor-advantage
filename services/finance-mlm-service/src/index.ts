@@ -21,8 +21,6 @@ import {
 
 // Load root .env file
 dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
-logger.info(`[Finance] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
-
 import { authMiddleware, requireRoles, AuthenticatedRequest } from "./middlewares/authMiddleware";
 import {
   createPaymentIntent,

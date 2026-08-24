@@ -22,8 +22,6 @@ dotenv.config({
   path: path.resolve(__dirname, "../../../.env"),
   override: true,
 });
-logger.info(`[Learning] Loaded DATABASE_URL starting with: ${process.env.DATABASE_URL?.substring(0, 20)}...`);
-
 const { prisma } = require("@tutor-advantage/database") as typeof import("@tutor-advantage/database");
 
 import { createServer } from "http";
