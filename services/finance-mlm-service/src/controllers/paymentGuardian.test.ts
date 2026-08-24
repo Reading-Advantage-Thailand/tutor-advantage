@@ -14,6 +14,7 @@ const prisma = vi.hoisted(() => ({
     findFirst: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
+    updateMany: vi.fn(),
   },
   paymentEvent: {
     findUnique: vi.fn(),
@@ -138,6 +139,7 @@ describe("payment intent reconciliation", () => {
     vi.stubEnv("ENABLE_DEV_ROUTES", "true");
     omiseMock.isOmiseConfigured.mockReturnValue(true);
     prisma.paymentEvent.findUnique.mockResolvedValue(null);
+    prisma.paymentIntent.updateMany.mockResolvedValue({ count: 1 });
     prisma.$transaction.mockImplementation(async (callback: (tx: typeof prisma) => unknown) => callback(prisma));
   });
 
@@ -187,6 +189,105 @@ describe("payment intent reconciliation", () => {
         eventType: "charge.update",
       }),
     });
+    expect(res.status).toHaveBeenCalledWith(200);
+  });
+
+  it("does not deduplicate a later paid notification as the earlier pending event", async () => {
+    const pendingRequest = {
+      body: {
+        type: "charge.update",
+        data: {
+          id: "chrg_1",
+          status: "pending",
+          metadata: { paymentIntentId: "pi-1" },
+        },
+      },
+      headers: {},
+    };
+    const pendingResponse = response();
+
+    await handleWebhook(pendingRequest as never, pendingResponse as never);
+    const pendingEventId =
+      prisma.paymentEvent.create.mock.calls[0][0].data.providerEventId;
+
+    prisma.paymentIntent.findUnique.mockResolvedValue(paymentIntent({ status: "PENDING" }));
+    prisma.paymentIntent.findFirst.mockResolvedValue(null);
+    prisma.paymentIntent.update.mockResolvedValue(paymentIntent({ status: "SUCCESS" }));
+    prisma.enrollment.findUnique.mockResolvedValue({
+      status: "PENDING_PAYMENT",
+      classId: "class-1",
+      class: { tutorUserId: "tutor-1" },
+    });
+    prisma.enrollment.update.mockResolvedValue({});
+    prisma.enrollmentPackage.updateMany.mockResolvedValue({ count: 0 });
+    prisma.paymentReceipt.upsert.mockResolvedValue({});
+    omiseMock.retrieveOmiseCharge.mockResolvedValue({
+      id: "chrg_1",
+      amount: 250000,
+      currency: "THB",
+      metadata: { paymentIntentId: "pi-1" },
+      status: "successful",
+      paid: true,
+    });
+
+    const successfulRequest = {
+      body: {
+        type: "charge.complete",
+        data: {
+          id: "chrg_1",
+          status: "successful",
+          metadata: { paymentIntentId: "pi-1" },
+        },
+      },
+      headers: {},
+    };
+    const successfulResponse = response();
+
+    await handleWebhook(successfulRequest as never, successfulResponse as never);
+
+    const eventCalls = prisma.paymentEvent.create.mock.calls;
+    expect(eventCalls).toHaveLength(2);
+    expect(eventCalls[1][0].data.providerEventId).not.toBe(pendingEventId);
+    expect(prisma.paymentIntent.update).toHaveBeenCalledWith({
+      where: { paymentIntentId: "pi-1" },
+      data: {
+        status: "SUCCESS",
+        providerRef: "chrg_1",
+        paidAt: expect.any(Date),
+        earningTutorUserId: "tutor-1",
+      },
+    });
+  });
+
+  it("does not let a stale failure notification move a paid intent backwards", async () => {
+    prisma.paymentIntent.findUnique.mockResolvedValue(
+      paymentIntent({ status: "SUCCESS", paidAt: new Date("2026-08-14T01:00:00.000Z") }),
+    );
+    omiseMock.retrieveOmiseCharge.mockResolvedValue({
+      id: "chrg_1",
+      amount: 250000,
+      currency: "THB",
+      metadata: { paymentIntentId: "pi-1" },
+      status: "failed",
+      paid: false,
+    });
+    const req = {
+      body: {
+        type: "charge.update",
+        data: {
+          id: "chrg_1",
+          status: "failed",
+          metadata: { paymentIntentId: "pi-1" },
+        },
+      },
+      headers: {},
+    };
+    const res = response();
+
+    await handleWebhook(req as never, res as never);
+
+    expect(prisma.paymentIntent.update).not.toHaveBeenCalled();
+    expect(prisma.paymentEvent.create).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(200);
   });
 

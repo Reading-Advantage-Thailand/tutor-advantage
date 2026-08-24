@@ -89,9 +89,29 @@ export const claimAuctionClass = async (req: AuthenticatedRequest, res: Response
         throw new Error("Cannot claim your own class");
       }
 
-      // Update the transfer request
-      const updatedTransfer = await tx.classTransferRequest.update({
-        where: { transferId },
+      const claimant = await tx.user.findUnique({
+        where: { userId },
+        select: {
+          role: true,
+          verificationStatus: true,
+          isActive: true,
+        },
+      });
+
+      if (
+        !claimant ||
+        claimant.role !== "TUTOR" ||
+        claimant.verificationStatus !== "VERIFIED" ||
+        !claimant.isActive
+      ) {
+        throw new Error("Tutor verification is required to claim a class");
+      }
+
+      // Claim only while the request is still open. The conditional update is
+      // the concurrency guard; two transactions may both read OPEN, but only
+      // one can change it to TRANSFERRED.
+      const claimed = await tx.classTransferRequest.updateMany({
+        where: { transferId, status: "OPEN" },
         data: {
           status: "TRANSFERRED",
           newTutorId: userId,
@@ -99,14 +119,25 @@ export const claimAuctionClass = async (req: AuthenticatedRequest, res: Response
         }
       });
 
+      if (claimed.count !== 1) {
+        throw new Error("Class is no longer available");
+      }
+
       // Transfer the class to the new tutor
-      await tx.class.update({
-        where: { classId: transferRequest.classId },
+      const transferred = await tx.class.updateMany({
+        where: {
+          classId: transferRequest.classId,
+          tutorUserId: transferRequest.originalTutorId,
+        },
         data: {
           tutorUserId: userId,
           updatedAt: new Date(),
         }
       });
+
+      if (transferred.count !== 1) {
+        throw new Error("Class is no longer owned by the releasing tutor");
+      }
 
       // Record in audit log (using untyped query as it's in a different schema, but typically we'd structure this better)
       try {
@@ -123,7 +154,10 @@ export const claimAuctionClass = async (req: AuthenticatedRequest, res: Response
          logger.error("Audit log failed", e);
       }
 
-      return updatedTransfer;
+      return {
+        transferId: transferRequest.transferId,
+        classId: transferRequest.classId,
+      };
     });
 
     res.status(200).json({ 
@@ -143,6 +177,14 @@ export const claimAuctionClass = async (req: AuthenticatedRequest, res: Response
         error.message === "Transfer request has expired" ||
         error.message === "Cannot claim your own class") {
       res.status(400).json({ error: error.message });
+      return;
+    }
+
+    if (
+      error.message === "Tutor verification is required to claim a class" ||
+      error.message === "Class is no longer owned by the releasing tutor"
+    ) {
+      res.status(403).json({ error: error.message });
       return;
     }
     

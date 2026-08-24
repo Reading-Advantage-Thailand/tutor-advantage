@@ -402,10 +402,9 @@ export async function createPaymentIntent(
     const finalIntent = (charge.paid || charge.status === "successful")
       ? await fulfillPaymentIntent(intent.paymentIntentId, charge.id)
       : charge.status === "failed"
-        ? await recordNegativePaymentOutcome(
+        ? await markPaymentIntentFailed(
             intent.paymentIntentId,
             charge.id,
-            "omise.charge.failed",
           )
         : updatedIntent;
 
@@ -501,10 +500,9 @@ export async function getPaymentStatus(
         intent.status === "PENDING" &&
         ["failed", "expired", "reversed"].includes(charge.status)
       ) {
-        currentIntent = await recordNegativePaymentOutcome(
+        currentIntent = await markPaymentIntentFailed(
           intent.paymentIntentId,
           charge.id,
-          `omise.charge.${charge.status}`,
         );
       }
     }
@@ -832,20 +830,19 @@ export async function handleWebhook(req: Request, res: Response) {
     // Mocking an Omise-like structured event payload
     const eventType = payload.key || payload.type || "charge.complete";
     const providerRef = payload.data?.id || payload.id;
-    const providerEventId = payload.id || payload.event_id || payload.data?.id;
+    const providerEventId = getWebhookEventId(payload, providerRef);
     const paymentIntentId = payload.data?.metadata?.paymentIntentId;
+    const payloadStatus = payload.data?.status || payload.status;
     const isSuccessful =
       payload.data?.status === "successful" ||
       payload.status === "successful" ||
       payload.data?.paid === true ||
       payload.paid === true;
+    const isRefundOrChargeback =
+      eventType.includes("refund") || eventType.includes("chargeback");
     const isNegativeOutcome =
-      eventType.includes("refund") ||
-      eventType.includes("chargeback") ||
-      payload.data?.status === "reversed" ||
-      payload.data?.status === "failed" ||
-      payload.status === "reversed" ||
-      payload.status === "failed";
+      isRefundOrChargeback ||
+      ["failed", "expired", "reversed"].includes(payloadStatus);
 
     if (providerEventId) {
       const existingEvent = await prisma.paymentEvent.findUnique({
@@ -879,10 +876,18 @@ export async function handleWebhook(req: Request, res: Response) {
         ? await retrieveAndVerifyOmiseCharge(paymentIntentId, providerRef)
         : null;
 
-    if (isNegativeOutcome && verifiedCharge) {
+    if (isRefundOrChargeback && verifiedCharge) {
       await recordNegativePaymentOutcome(paymentIntentId, verifiedCharge.id, eventType);
     } else if (verifiedCharge && (verifiedCharge.paid || verifiedCharge.status === "successful")) {
       await fulfillPaymentIntent(paymentIntentId, verifiedCharge.id);
+    } else if (
+      isNegativeOutcome &&
+      verifiedCharge &&
+      isTerminalChargeStatus(verifiedCharge.status)
+    ) {
+      // A terminal failure event is not a refund. In particular, do not let a
+      // stale failure notification claw back an already-successful payment.
+      await markPaymentIntentFailed(paymentIntentId, verifiedCharge.id);
     }
 
     // Record the event after state reconciliation so a failed processing
@@ -907,6 +912,90 @@ export async function handleWebhook(req: Request, res: Response) {
   }
 }
 
+async function markPaymentIntentFailed(
+  paymentIntentId: string,
+  providerRef: string | null | undefined,
+) {
+  const intent = await prisma.paymentIntent.findUnique({
+    where: { paymentIntentId },
+  });
+
+  if (!intent) throw new Error("PAYMENT_INTENT_NOT_FOUND");
+
+  // A late failure notification must never move a paid intent backwards.
+  if (
+    intent.status === "SUCCESS" ||
+    intent.status === "REFUNDED" ||
+    intent.status === "CHARGEBACKED"
+  ) {
+    return intent;
+  }
+
+  return prisma.$transaction(async (tx) => {
+    const claimed = await tx.paymentIntent.updateMany({
+      where: {
+        paymentIntentId,
+        status: { notIn: ["SUCCESS", "REFUNDED", "CHARGEBACKED"] },
+      },
+      data: { status: "FAILED", providerRef },
+    });
+
+    if (claimed.count !== 1) {
+      return (await tx.paymentIntent.findUnique({
+        where: { paymentIntentId },
+      })) ?? intent;
+    }
+
+    const failedIntent = await tx.paymentIntent.findUnique({
+      where: { paymentIntentId },
+    });
+    if (!failedIntent) throw new Error("PAYMENT_INTENT_NOT_FOUND");
+
+    if (intent.enrollmentPackageId) {
+      await tx.enrollmentPackage.updateMany({
+        where: {
+          enrollmentPackageId: intent.enrollmentPackageId,
+          status: "PENDING_PAYMENT",
+        },
+        data: {
+          status: "CANCELLED",
+        },
+      });
+
+      return failedIntent;
+    }
+
+    const cancelled = await tx.enrollment.updateMany({
+      where: {
+        enrollmentId: intent.enrollmentId,
+        status: "PENDING_PAYMENT",
+      },
+      data: {
+        status: "CANCELLED",
+        paymentExpiresAt: null,
+      },
+    });
+
+    if (cancelled.count > 0) {
+      const enrollment = await tx.enrollment.findUnique({
+        where: { enrollmentId: intent.enrollmentId },
+        select: { classId: true, class: { select: { enrolledCount: true } } },
+      });
+
+      if (enrollment) {
+        await tx.class.update({
+          where: { classId: enrollment.classId },
+          data: {
+            enrolledCount: Math.max(0, enrollment.class.enrolledCount - 1),
+          },
+        });
+      }
+    }
+
+    return failedIntent;
+  });
+}
+
 async function recordNegativePaymentOutcome(
   paymentIntentId: string,
   providerRef: string | null | undefined,
@@ -918,60 +1007,7 @@ async function recordNegativePaymentOutcome(
 
   if (!intent) throw new Error("PAYMENT_INTENT_NOT_FOUND");
 
-  if (intent.status !== "SUCCESS") {
-    if (intent.status === "REFUNDED" || intent.status === "CHARGEBACKED") {
-      return intent;
-    }
-    return prisma.$transaction(async (tx) => {
-      const failedIntent = await tx.paymentIntent.update({
-        where: { paymentIntentId },
-        data: { status: "FAILED", providerRef },
-      });
-
-      if (intent.enrollmentPackageId) {
-        await tx.enrollmentPackage.updateMany({
-          where: {
-            enrollmentPackageId: intent.enrollmentPackageId,
-            status: "PENDING_PAYMENT",
-          },
-          data: {
-            status: "CANCELLED",
-          },
-        });
-
-        return failedIntent;
-      }
-
-      const cancelled = await tx.enrollment.updateMany({
-        where: {
-          enrollmentId: intent.enrollmentId,
-          status: "PENDING_PAYMENT",
-        },
-        data: {
-          status: "CANCELLED",
-          paymentExpiresAt: null,
-        },
-      });
-
-      if (cancelled.count > 0) {
-        const enrollment = await tx.enrollment.findUnique({
-          where: { enrollmentId: intent.enrollmentId },
-          select: { classId: true, class: { select: { enrolledCount: true } } },
-        });
-
-        if (enrollment) {
-          await tx.class.update({
-            where: { classId: enrollment.classId },
-            data: {
-              enrolledCount: Math.max(0, enrollment.class.enrolledCount - 1),
-            },
-          });
-        }
-      }
-
-      return failedIntent;
-    });
-  }
+  if (intent.status !== "SUCCESS") return markPaymentIntentFailed(paymentIntentId, providerRef);
 
   const enrollment = await prisma.enrollment.findUnique({
     where: { enrollmentId: intent.enrollmentId },
@@ -1195,6 +1231,41 @@ function verifyWebhookSignature(req: Request, payload: unknown) {
       crypto.timingSafeEqual(signatureBuffer, expected)
     );
   });
+}
+
+function getWebhookEventId(payload: unknown, providerRef: unknown) {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return null;
+  }
+
+  const candidate = payload as {
+    event_id?: unknown;
+    id?: unknown;
+  };
+  if (typeof candidate.event_id === "string" && candidate.event_id.trim()) {
+    return candidate.event_id.trim();
+  }
+
+  // Omise event payloads normally put the event id at the top level and the
+  // charge id under data.id. If a simplified/provider-compatible payload has
+  // only the charge id, do not use it as the event id: every status update for
+  // that charge must remain processable.
+  if (
+    typeof candidate.id === "string" &&
+    candidate.id.trim() &&
+    candidate.id !== providerRef
+  ) {
+    return candidate.id.trim();
+  }
+
+  // Some webhook-compatible gateways omit an event id. A payload fingerprint
+  // gives retries of the same notification idempotent handling while keeping
+  // pending, failed, and successful notifications for one charge distinct.
+  const serialized = JSON.stringify(payload);
+  return `synthetic:${crypto
+    .createHash("sha256")
+    .update(serialized ?? "")
+    .digest("hex")}`;
 }
 
 async function retrieveAndVerifyOmiseCharge(
