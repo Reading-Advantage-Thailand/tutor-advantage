@@ -15,6 +15,7 @@ import {
   TutorSessionData,
 } from "@/lib/lesson-types";
 import TutorGuideOverlay, { TutorGuideStep } from "./TutorGuideOverlay";
+import { buildTutorGuideSteps } from "./TutorGuidePlan";
 
 type PreparationMode = "explore" | "guided";
 
@@ -120,6 +121,7 @@ export default function PrepareLessonClient({
   const [preparationAnswersCompletePhase, setPreparationAnswersCompletePhase] = useState<number | null>(null);
   const [preparationGameVotesCompletePhase, setPreparationGameVotesCompletePhase] = useState<number | null>(null);
   const [preparationGameResultsCompletePhase, setPreparationGameResultsCompletePhase] = useState<number | null>(null);
+  const [preparationAnswersReadyToEndPhase, setPreparationAnswersReadyToEndPhase] = useState<number | null>(null);
   const [preparationGuideReadyPhase, setPreparationGuideReadyPhase] = useState<number | null>(null);
   const [preparationGameResultsReadyFallbackPhase, setPreparationGameResultsReadyFallbackPhase] = useState<number | null>(null);
   const guideResultTransitionPhaseRef = useRef<number | null>(null);
@@ -157,6 +159,10 @@ export default function PrepareLessonClient({
 
   const handlePreparationAnswersComplete = useCallback((phase: number) => {
     setPreparationAnswersCompletePhase(phase);
+  }, []);
+
+  const handlePreparationAnswersReadyToEnd = useCallback((phase: number) => {
+    setPreparationAnswersReadyToEndPhase(phase);
   }, []);
 
   const handlePreparationGameVotesComplete = useCallback((phase: number) => {
@@ -328,7 +334,6 @@ export default function PrepareLessonClient({
       ],
       10: [
         { target: "phase-10-question", title: "โจทย์คำศัพท์", description: "ดูรูปแบบคำถามที่ให้นักเรียนเลือกความหมายของคำศัพท์จากบทเรียน", tip: "ให้เด็กลองนึกความหมายเองก่อนอ่านข้อความตัวเลือก" },
-        { target: "phase-10-question", title: "อ่านโจทย์และคำศัพท์เป้าหมาย", description: "อ่านโจทย์และคำศัพท์เป้าหมายจาก Lesson จริงเพื่อเตรียมให้นักเรียนคิดความหมายก่อนเลือกคำตอบ", tip: "Phase นี้ไม่มีปุ่มลำโพง ให้ติวเตอร์อ่านโจทย์หรือใช้การออกเสียงของตัวเองแทน" },
         { target: "phase-10-options", title: "ตัวเลือกความหมาย", description: "เปรียบเทียบความหมายของตัวเลือกและเตรียมอธิบายคำตอบหลังเด็กเลือก", tip: "ยกตัวอย่างประโยคเพิ่มเมื่อคำศัพท์มีหลายความหมาย" },
       ],
       11: [
@@ -473,7 +478,8 @@ export default function PrepareLessonClient({
       ];
     });
 
-    return [...introductionSteps, ...detailedPhaseSteps];
+    const builtGuideSteps = buildTutorGuideSteps(articleData);
+    return builtGuideSteps.length > 0 ? builtGuideSteps : detailedPhaseSteps;
   }, [articleData]);
 
   useEffect(() => {
@@ -484,6 +490,7 @@ export default function PrepareLessonClient({
 
   useEffect(() => {
     setPreparationAnswersCompletePhase(null);
+    setPreparationAnswersReadyToEndPhase(null);
     setPreparationGameVotesCompletePhase(null);
     setPreparationGameResultsCompletePhase(null);
     setPreparationGuideReadyPhase(null);
@@ -507,7 +514,7 @@ export default function PrepareLessonClient({
   const preparationGuideMockReady = Boolean(
     currentGuidePhase !== null &&
     (currentGuideStep?.waitForMockAnswers
-      ? preparationAnswersCompletePhase === currentGuidePhase || preparationGuideReadyPhase === currentGuidePhase
+      ? preparationAnswersCompletePhase === currentGuidePhase || preparationAnswersReadyToEndPhase === currentGuidePhase || preparationGuideReadyPhase === currentGuidePhase
       : currentGuideStep?.waitForMockVotes
         ? preparationGameVotesCompletePhase === currentGuidePhase
         : currentGuideStep?.waitForGameResults
@@ -623,6 +630,7 @@ export default function PrepareLessonClient({
     moveGuide,
     preparationGuideMockReady,
     preparationAnswersCompletePhase,
+    preparationAnswersReadyToEndPhase,
   ]);
 
   return (
@@ -684,6 +692,8 @@ export default function PrepareLessonClient({
             advanceGameIntro={advanceGameIntro}
             bypassEmptyStudentGuard
             preparationMode
+            preparationGuideMode={guideOpen}
+            onPreparationAnswersReadyToEnd={handlePreparationAnswersReadyToEnd}
             onPreparationAnswersComplete={handlePreparationAnswersComplete}
             onPreparationGameVotesComplete={handlePreparationGameVotesComplete}
             onPreparationGameResultsComplete={handlePreparationGameResultsComplete}

@@ -36,7 +36,7 @@ export function FlashcardTeachingGame({ words = [], participants, answered, onSp
 
   if (!current) {
     return (
-      <div className="flex flex-1 items-center justify-center rounded-3xl border border-amber-400/30 bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-950 p-10 text-center text-white shadow-2xl">
+      <div data-tour-target={preparationMode ? "phase-3-student-status" : undefined} className="flex flex-1 items-center justify-center rounded-3xl border border-amber-400/30 bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-950 p-10 text-center text-white shadow-2xl">
         <div>
           <BookOpen className="mx-auto mb-4 size-14 text-amber-300" />
           <h2 className="text-2xl font-black">ยังไม่มีคำศัพท์สำหรับ Flashcard</h2>
@@ -91,6 +91,7 @@ export function FlashcardTeachingGame({ words = [], participants, answered, onSp
             <button
               type="button"
               onClick={speakCurrent}
+              data-tour-target={preparationMode ? "phase-3-flashcard-audio" : undefined}
               className="absolute right-5 top-5 inline-flex size-11 items-center justify-center rounded-2xl bg-white/15 text-white shadow-lg backdrop-blur transition hover:bg-white/25 active:scale-90"
               aria-label={`ฟังการออกเสียง ${wordText(current, index)}`}
               title="ฟังการออกเสียง"

@@ -12,6 +12,7 @@ export type TutorGuideStep = {
   phase: number;
   action?: "click" | "none";
   autoAdvance?: boolean;
+  targetOptional?: boolean;
   waitForMockAnswers?: boolean;
   waitForMockVotes?: boolean;
   waitForGameResults?: boolean;
@@ -37,6 +38,7 @@ export default function TutorGuideOverlay({
   canAdvance?: boolean;
 }) {
   const [targetRect, setTargetRect] = useState<Rect | null>(null);
+  const [targetUnavailable, setTargetUnavailable] = useState(false);
   const [actionComplete, setActionComplete] = useState(step.action !== "click");
   const coachmarkRef = useRef<HTMLElement>(null);
   const onNextRef = useRef(onNext);
@@ -69,12 +71,20 @@ export default function TutorGuideOverlay({
 
   useEffect(() => {
     setActionComplete(step.action !== "click");
+    setTargetUnavailable(false);
     let target: HTMLElement | null = null;
     let retryTimer: ReturnType<typeof setTimeout> | undefined;
+    let attempts = 0;
 
     const attach = () => {
       target = findTarget();
       if (!target) {
+        attempts += 1;
+        if (attempts >= 15) {
+          setTargetUnavailable(true);
+          setActionComplete(true);
+          return;
+        }
         retryTimer = setTimeout(attach, 120);
         return;
       }
@@ -157,7 +167,7 @@ export default function TutorGuideOverlay({
     };
   }, [coachmarkHeight, targetRect]);
 
-  const canNext = (step.action !== "click" || actionComplete) && canAdvance;
+  const canNext = (step.action !== "click" || actionComplete || targetUnavailable) && canAdvance;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[200]">
@@ -216,7 +226,17 @@ export default function TutorGuideOverlay({
           {step.action === "click" && (
             <div className={`mt-4 flex items-center gap-2 text-xs font-bold ${actionComplete ? "text-emerald-600 dark:text-emerald-400" : "text-violet-600 dark:text-violet-300"}`}>
               {actionComplete ? <Check className="size-4" /> : <MousePointer2 className="size-4 animate-pulse" />}
-              {actionComplete ? "ทำขั้นตอนนี้แล้ว ไปต่อได้เลย" : "ลองกดจุดที่มีกรอบไฮไลต์ก่อน"}
+              {targetUnavailable
+                ? "จุดควบคุมนี้ไม่มีในข้อมูลบทเรียน จึงข้ามขั้นตอนนี้ได้"
+                : actionComplete
+                  ? "ทำขั้นตอนนี้แล้ว ไปต่อได้เลย"
+                  : "ลองกดจุดที่มีกรอบไฮไลต์ก่อน"}
+            </div>
+          )}
+
+          {targetUnavailable && step.action !== "click" && (
+            <div className="mt-4 rounded-2xl border border-amber-400/25 bg-amber-400/10 px-3.5 py-3 text-xs leading-relaxed text-amber-800 dark:text-amber-200">
+              จุดนี้ไม่มีในข้อมูลบทเรียน จะแสดงคำอธิบายแทนและไปต่อได้
             </div>
           )}
 

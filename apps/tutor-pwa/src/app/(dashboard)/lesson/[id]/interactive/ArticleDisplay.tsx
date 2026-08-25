@@ -127,6 +127,7 @@ function GuideQuestionCard({
           <button
             type="button"
             onClick={onSpeak}
+            data-tour-target={dataTourTarget ? `${dataTourTarget}-audio` : undefined}
             title={t("lesson.interactive.speakTitle")}
             className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-teal-500/10 text-teal-700 transition-colors hover:bg-teal-500/20 dark:text-teal-300"
           >
@@ -1028,9 +1029,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             </div>
             <div className="bg-black/40 backdrop-blur rounded-xl px-3 py-2 text-center">
               <p className="text-white/60 text-[10px] uppercase tracking-wider">
-                Step
+                Phase
               </p>
-              <p className="text-white font-black text-xl">1 / 13</p>
+              <p className="text-white font-black text-xl">Phase 1 / 19</p>
             </div>
           </div>
         </div>
@@ -1040,7 +1041,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           {/* Badge row */}
           <div className="flex items-center gap-2 flex-wrap">
             <span className="bg-indigo-500 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
-              {t("lesson.interactive.step1")}
+              Phase 1
             </span>
             <span className="bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-xs font-bold px-3 py-1 rounded-full border border-indigo-500/20">
               {t("lesson.interactive.period1")}
@@ -1147,6 +1148,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     return (
       <div className="flex-1 flex flex-col items-center py-8 px-6 w-full animate-in fade-in duration-500">
         <div className="flex items-center gap-4 mb-8 w-full max-w-5xl">
+          <span className="rounded-full bg-purple-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
+            Phase 2
+          </span>
           <div className="flex-1">
             <h2 className="text-3xl font-black text-purple-900 dark:text-purple-100">
               Vocabulary Preview
@@ -1291,7 +1295,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       >
         <div className={`flex w-full flex-wrap items-center gap-3 ${isFullscreen ? "mb-2" : "mb-4"}`}>
           <span className="rounded-full bg-amber-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
-            Phase 4
+            Phase 5
           </span>
           <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-4 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-400">
             Vocabulary Focus
@@ -1470,7 +1474,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       >
         <div className={`flex w-full flex-wrap items-center gap-3 ${isFullscreen ? "mb-2" : "mb-4"}`}>
           <span className="rounded-full bg-teal-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
-            Phase 5
+            Phase 6
           </span>
           <span className="rounded-full border border-teal-500/20 bg-teal-500/10 px-4 py-1.5 text-xs font-bold text-teal-700 dark:text-teal-400">
             Deep Reading
@@ -1629,12 +1633,18 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       };
     });
 
-    const keySentences = scoredKeySentences
+    const selectedKeySentences = scoredKeySentences
       .filter(({ score }) => score > 0)
       .sort((a, b) => b.score - a.score || a.index - b.index)
       .slice(0, keySentenceLimit)
       .sort((a, b) => a.index - b.index)
       .map(({ item, index }) => ({ item, index }));
+    const keySentences = selectedKeySentences.length > 0
+      ? selectedKeySentences
+      : scoredKeySentences
+          .filter(({ item }) => Boolean(getSentenceText(item).trim()))
+          .slice(0, keySentenceLimit)
+          .map(({ item, index }) => ({ item, index }));
 
     // Helper: highlight vocab words inside a sentence
     const highlightVocab = (text: string) => {
@@ -1671,7 +1681,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         )}
         <div className={`flex w-full flex-wrap items-center gap-3 ${isFullscreen ? "mb-2" : "mb-4"}`}>
           <span className="rounded-full bg-green-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
-            Phase 6
+            Phase 7
           </span>
           <span className="rounded-full border border-green-500/20 bg-green-500/10 px-4 py-1.5 text-xs font-bold text-green-700 dark:text-green-400">
             Key Sentences
@@ -1887,6 +1897,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         <span
           id={`read-sentence-${idx}`}
           key={idx}
+          data-tour-target={idx === 0 ? "phase-4-first-sentence" : undefined}
           onClick={canSelectSentence ? () => seekToSentence(idx) : undefined}
           className={`${canSelectSentence ? "cursor-pointer" : "cursor-default"} rounded-lg px-0.5 transition-all duration-200 ${
             isActive
@@ -2019,7 +2030,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           <div className="mx-auto mb-5 w-full max-w-[1500px]">
             <div className="flex items-center gap-3 mb-4">
               <span className="bg-orange-500 text-white text-sm font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow">
-                {t("lesson.interactive.step3")}
+                Phase 4
               </span>
               <span className="bg-card text-orange-600 dark:text-orange-400 text-sm font-bold px-4 py-1.5 rounded-full border-2 border-orange-500/30">
                 {t("lesson.interactive.period1")}
@@ -2054,6 +2065,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     type="button"
                     onClick={() => goToPrimaryPart(-1)}
                     disabled={primaryReadingPageIndex <= 0}
+                    data-tour-target="phase-4-previous-part"
                     className="rounded-full border border-orange-500/30 px-3 py-1.5 transition-colors hover:bg-orange-500/10 disabled:cursor-not-allowed disabled:opacity-30"
                   >
                     ← Previous Part
@@ -2065,6 +2077,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     type="button"
                     onClick={() => goToPrimaryPart(1)}
                     disabled={primaryReadingPageIndex >= primaryReadingGroups.length - 1}
+                    data-tour-target="phase-4-next-part"
                     className="rounded-full border border-orange-500/30 px-3 py-1.5 transition-colors hover:bg-orange-500/10 disabled:cursor-not-allowed disabled:opacity-30"
                   >
                     Next Part →
@@ -2097,6 +2110,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                       <span
                         id={`read-sentence-${idx}`}
                         key={idx}
+                        data-tour-target={idx === 0 ? "phase-4-first-sentence" : undefined}
                         onClick={canSelectSentence ? () => seekToSentence(idx) : undefined}
                         className={`${canSelectSentence ? "cursor-pointer" : "cursor-default"} rounded-lg px-0.5 transition-all duration-200 ${
                           isActive
@@ -2161,6 +2175,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                   if (activeIdx > 0) seekToSentence(activeIdx - 1);
                 }}
                 disabled={activeIdx <= 0}
+                data-tour-target="phase-4-previous-sentence"
                 className="w-11 h-11 rounded-full bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center hover:bg-orange-500/30 transition-all disabled:opacity-30 text-xl shrink-0"
               >
                 ⏮
@@ -2179,6 +2194,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               <button
                 onClick={cycleSpeechRate}
                 title="Reading speed"
+                data-tour-target="phase-4-speed"
                 className="w-14 h-11 rounded-full bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center hover:bg-orange-500/30 transition-all active:scale-95 text-sm font-black shrink-0"
               >
                 {speechRate}x
@@ -2191,6 +2207,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     seekToSentence(activeIdx + 1);
                 }}
                 disabled={activeIdx >= sentences.length - 1}
+                data-tour-target="phase-4-next-sentence"
                 className="w-11 h-11 rounded-full bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center hover:bg-orange-500/30 transition-all disabled:opacity-30 text-xl shrink-0"
               >
                 ⏭
