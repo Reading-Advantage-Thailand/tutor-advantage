@@ -1,7 +1,11 @@
 import jwt from "jsonwebtoken";
 import { getJwtSecret } from "@tutor-advantage/shared-config";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { authMiddleware, type AuthenticatedRequest } from "./authMiddleware";
+import {
+  authMiddleware,
+  requireRoles,
+  type AuthenticatedRequest,
+} from "./authMiddleware";
 
 const prisma = vi.hoisted(() => ({
   user: { findUnique: vi.fn() },
@@ -100,5 +104,44 @@ describe("identity authMiddleware", () => {
 
     expect(req.user).toMatchObject({ userId: "user-2", role: "STUDENT" });
     expect(next).toHaveBeenCalledOnce();
+  });
+});
+
+describe("requireRoles", () => {
+  const tutorOrAdmin = requireRoles("TUTOR", "ADMIN");
+
+  it("allows a request whose current role is permitted", () => {
+    const req = {
+      id: "req-3",
+      user: { userId: "user-3", role: "TUTOR" },
+    } as AuthenticatedRequest;
+    const res = createResponse();
+    const next = vi.fn();
+
+    tutorOrAdmin(req, res as never, next);
+
+    expect(next).toHaveBeenCalledOnce();
+    expect(res.status).not.toHaveBeenCalled();
+  });
+
+  it("rejects an authenticated request with a different role", () => {
+    const req = {
+      id: "req-4",
+      user: { userId: "user-4", role: "STUDENT" },
+    } as AuthenticatedRequest;
+    const res = createResponse();
+    const next = vi.fn();
+
+    tutorOrAdmin(req, res as never, next);
+
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({
+      error: {
+        code: "FORBIDDEN",
+        message: "You do not have permission to access this resource",
+        requestId: "req-4",
+      },
+    });
+    expect(next).not.toHaveBeenCalled();
   });
 });

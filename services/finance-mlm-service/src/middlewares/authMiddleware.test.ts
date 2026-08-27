@@ -63,6 +63,21 @@ describe("finance authMiddleware", () => {
     expect(next).toHaveBeenCalledOnce();
   });
 
+  it("accepts the HttpOnly session cookie used by same-origin proxies", async () => {
+    const token = jwt.sign({ userId: "user-cookie", role: "ADMIN" }, getJwtSecret());
+    const req = {
+      id: "req-cookie",
+      headers: { cookie: `tutor_session=${token}` },
+    } as AuthenticatedRequest;
+    const res = createResponse();
+    const next = vi.fn();
+
+    await authMiddleware(req, res as never, next);
+
+    expect(req.user).toMatchObject({ userId: "user-cookie", role: "ADMIN" });
+    expect(next).toHaveBeenCalledOnce();
+  });
+
   it("blocks suspended accounts before finance authorization runs", async () => {
     const token = jwt.sign({ userId: "user-2", role: "ADMIN" }, getJwtSecret());
     const req = {

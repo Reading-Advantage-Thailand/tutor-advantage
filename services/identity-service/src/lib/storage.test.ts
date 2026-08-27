@@ -21,6 +21,21 @@ describe("verification storage validation", () => {
     expect(() => validateVerificationFile(file("application/octet-stream", Buffer.from("MZ")))).toThrow(InvalidVerificationFileError);
   });
 
+  it("accepts the magic bytes for every supported document type", () => {
+    expect(validateVerificationFile(file("image/jpeg", Buffer.from([0xff, 0xd8, 0xff, 0xe0])))).toEqual({
+      mimeType: "image/jpeg",
+      extension: "jpg",
+    });
+    expect(validateVerificationFile(file("image/webp", Buffer.from("RIFFxxxxWEBP")))).toEqual({
+      mimeType: "image/webp",
+      extension: "webp",
+    });
+    expect(validateVerificationFile(file("application/pdf", Buffer.from("%PDF-1.7")))).toEqual({
+      mimeType: "application/pdf",
+      extension: "pdf",
+    });
+  });
+
   it("only accepts object keys owned by the authenticated user", () => {
     const key = "verification/user-1/123e4567-e89b-42d3-a456-426614174000.jpg";
     expect(isOwnedVerificationObjectKey(key, "user-1")).toBe(true);

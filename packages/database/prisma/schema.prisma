@@ -47,6 +47,7 @@ model User {
   studentReviews    TutorReview[]             @relation("StudentReviews")
   badges            TutorBadge[]
   interactiveSessions InteractiveSession[]
+  activeLessonSessionLocks ActiveLessonSessionLock[]
   sessionParticipants SessionParticipant[]
   sessionAnswers      SessionAnswer[]
 
@@ -182,6 +183,7 @@ model Class {
   transfers     ClassTransferRequest[]
   reviews       TutorReview[]
   interactiveSessions InteractiveSession[]
+  activeLessonSessionLock ActiveLessonSessionLock?
 
   @@index([tutorUserId, status])
   @@map("classes")
@@ -332,6 +334,9 @@ model ActiveLessonSessionLock {
   tutorUserId      String   @map("tutor_user_id") @db.Uuid
   lastHeartbeatAt  DateTime @default(now()) @map("last_heartbeat_at") @db.Timestamptz
   createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  class Class @relation(fields: [classId], references: [classId], onDelete: Cascade)
+  tutor User  @relation(fields: [tutorUserId], references: [userId], onDelete: Cascade)
 
   @@index([tutorUserId])
   @@map("active_lesson_session_locks")

@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { processOAuthLogin } from "./authService";
+import { processDevLogin, processOAuthLogin } from "./authService";
 
 const prisma = vi.hoisted(() => ({
   oAuthIdentity: {
@@ -325,5 +325,45 @@ describe("processOAuthLogin", () => {
     ).rejects.toThrow("SPONSOR_TREE_CYCLE");
 
     expect(prisma.user.update).not.toHaveBeenCalled();
+  });
+});
+
+describe("processDevLogin", () => {
+  beforeEach(() => {
+    prisma.oAuthIdentity.findUnique.mockResolvedValue(null);
+    prisma.user.findUnique.mockResolvedValue(null);
+    prisma.user.create.mockResolvedValue({
+      userId: "dev-tutor-1",
+      displayName: "Dev Tutor",
+      role: "TUTOR",
+      sponsorTutorId: null,
+      sponsorLockedAt: null,
+    });
+  });
+
+  it("creates a tutor only through the explicit development login path", async () => {
+    const result = await processDevLogin(
+      "dev-tutor-subject",
+      "dev-tutor@example.com",
+      "Dev Tutor",
+      "TUTOR",
+    );
+
+    expect(prisma.user.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        role: "TUTOR",
+        email: "dev-tutor@example.com",
+        oauthIdentities: {
+          create: {
+            provider: "dev",
+            providerSubject: "dev-tutor-subject",
+          },
+        },
+      }),
+    });
+    expect(result.user).toMatchObject({
+      id: "dev-tutor-1",
+      role: "TUTOR",
+    });
   });
 });
