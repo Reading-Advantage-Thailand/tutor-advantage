@@ -261,6 +261,12 @@ jobs:
             )
           fi
 
+          if [[ "${{ matrix.service }}" == "finance-mlm-service" ]]; then
+            DEPLOY_FLAGS+=(
+              "--update-secrets=OMISE_WEBHOOK_SECRET=ta-omise_webhook_secret:latest"
+            )
+          fi
+
           gcloud run deploy ${{ matrix.service }} \
             --image=${{ env.REGISTRY }}/${{ matrix.service }}:${DEPLOY_SHA} \
             --region=${{ env.REGION }} \
