@@ -23,6 +23,31 @@ describe("lessonSessionService", () => {
     expect(recovered.tutorSocketId).toBe("socket-2");
   });
 
+  it("deduplicates phase events and keeps an older tutor owner from taking over", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+
+    service.setPhase(session.sessionId, 3);
+    const phaseChangeId = session.phaseChangeId;
+
+    service.applyRemoteEvent(session.sessionId, "phase_changed", {
+      phase: 2,
+      phaseChangeId,
+    });
+    expect(session.currentPhase).toBe(3);
+
+    const currentOwnerVersion = session.tutorOwnerVersion;
+    service.applyRemoteEvent(session.sessionId, "tutor_owner_changed", {
+      tutorSocketId: "socket-new",
+      tutorOwnerVersion: currentOwnerVersion + 1,
+    });
+    service.applyRemoteEvent(session.sessionId, "tutor_owner_changed", {
+      tutorSocketId: "socket-old",
+      tutorOwnerVersion: currentOwnerVersion,
+    });
+
+    expect(session.tutorSocketId).toBe("socket-new");
+  });
+
   it("keeps participant score and readiness when a student reconnects", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
 

@@ -78,6 +78,7 @@ export interface GamePhaseState {
 export interface TutorSessionData {
   sessionId: string;
   currentPhase: number;
+  phaseChangeId?: string;
   phaseRestored?: boolean;
   resumePhase?: number;
   activeSentenceIndex?: number;

@@ -79,6 +79,7 @@ export interface LessonSessionData {
   sessionId: string;
   currentStudentId?: string;
   currentPhase: number;
+  phaseChangeId?: string;
   hasAnswered?: boolean;
   articleData?: LessonArticleData;
   activeSentenceIndex?: number;
@@ -161,6 +162,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   const socketRef = useRef<Socket | null>(null);
   const hasAnsweredRef = useRef(false);
   const submissionPendingRef = useRef(false);
+  const phaseChangeIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     hasAnsweredRef.current = hasAnswered;
@@ -228,6 +230,9 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
 
     newSocket.on('join_success', (data: LessonSessionData) => {
       setPaymentRequired(null);
+      phaseChangeIdRef.current = typeof data.phaseChangeId === 'string'
+        ? data.phaseChangeId
+        : null;
       const answered = Boolean(data.hasAnswered);
       setSessionData(data);
       setArticleData(data.articleData ?? null);
@@ -274,8 +279,12 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
       setPaymentRequired(data);
     });
 
-    newSocket.on('phase_changed', (data: { phase: number; phaseSelectedIndices?: Record<number, number>; pairs?: LessonPair[] | null; gameState?: GamePhaseState | null; phaseRestored?: boolean; resumePhase?: number; activeSentenceIndex?: number; flagCounts?: Record<number, number> }) => {
-      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, hasAnswered: false, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null, phaseRestored: data.phaseRestored ?? false, resumePhase: data.resumePhase, activeSentenceIndex: data.activeSentenceIndex, flagCounts: data.flagCounts ?? {} } : null);
+    newSocket.on('phase_changed', (data: { phase: number; phaseChangeId?: string; phaseSelectedIndices?: Record<number, number>; pairs?: LessonPair[] | null; gameState?: GamePhaseState | null; phaseRestored?: boolean; resumePhase?: number; activeSentenceIndex?: number; flagCounts?: Record<number, number> }) => {
+      if (data.phaseChangeId && data.phaseChangeId === phaseChangeIdRef.current) {
+        return;
+      }
+      if (data.phaseChangeId) phaseChangeIdRef.current = data.phaseChangeId;
+      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, phaseChangeId: data.phaseChangeId ?? prev.phaseChangeId, hasAnswered: false, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null, phaseRestored: data.phaseRestored ?? false, resumePhase: data.resumePhase, activeSentenceIndex: data.activeSentenceIndex, flagCounts: data.flagCounts ?? {} } : null);
       setPhaseReadOnly(Boolean(data.phaseRestored));
       setFlagCounts(data.flagCounts || {});
       setHasAnswered(false);
@@ -347,6 +356,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
         socketRef.current = null;
         setSocket(null);
       }
+      phaseChangeIdRef.current = null;
     };
   }, [classId, studentId, name, pictureUrl]);
 

@@ -314,7 +314,7 @@ function FitToViewport({
       observer.disconnect();
       window.removeEventListener("resize", measure);
     };
-  }, [enabled, children]);
+  }, [enabled]);
 
   return (
     <div
@@ -355,6 +355,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   bypassEmptyStudentGuard = false,
 }) => {
   const [isChangingPhase, setIsChangingPhase] = React.useState(false);
+  const phaseChangePendingRef = React.useRef(false);
+  const phaseChangeRequestIdRef = React.useRef(0);
   const [canProceedDelayed, setCanProceedDelayed] = React.useState(false);
   const [isFullscreen, setIsFullscreen] = React.useState(false);
   const [isToolbarHidden, setIsToolbarHidden] = React.useState(false);
@@ -426,6 +428,17 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   const audioManifest = remoteAudioManifest || (inlineManifestIsComplete
     ? inlineAudioManifest
     : inlineAudioManifest);
+  const presentationArticleData = React.useMemo(
+    () => audioManifest && articleData
+      ? { ...articleData, audio_manifest: audioManifest }
+      : articleData,
+    [articleData, audioManifest],
+  );
+  const handleActiveIdxChange = React.useCallback((idx: number) => {
+    if (sessionData?.activeSentenceIndex !== idx) {
+      syncActiveSentence(idx);
+    }
+  }, [sessionData?.activeSentenceIndex, syncActiveSentence]);
   const manifestQuestions = Array.isArray(audioManifest?.questions)
     ? audioManifest.questions
     : [];
@@ -522,15 +535,17 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     };
     clip.src = clipUrl;
     clip.play().catch((err) => {
-      if (err?.name !== "AbortError") {
-        playFallback();
-      }
+      if (standaloneAudioRef.current !== clip) return;
+      standaloneAudioRef.current = null;
+      if (err?.name !== "AbortError") playFallback();
     });
   };
 
-  // Reset loading state when phase actually changes
+  // Reset phase-local teaching controls when the server confirms a new phase.
+  // The phase-change spinner is released by the request promise instead; if
+  // this effect cleared it immediately, a second click could race the first
+  // request while the server was still broadcasting the transition.
   React.useEffect(() => {
-    setIsChangingPhase(false);
     setTutorialEnabled(true);
     setTeacherDemoEnabled(false);
     setTeacherDemoAnswer(null);
@@ -538,14 +553,26 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   }, [currentPhase]);
 
   const requestPhaseChange = React.useCallback((phase: number) => {
+    if (phaseChangePendingRef.current) return;
+
+    phaseChangePendingRef.current = true;
+    const requestId = ++phaseChangeRequestIdRef.current;
     setIsChangingPhase(true);
     playSound("phaseChange");
     // The socket hook waits for the server acknowledgement and has a bounded
     // timeout. Always release the local loading state so a lost socket packet
     // cannot leave the tutor stuck on "processing" forever.
     void changePhase(phase).then(
-      () => setIsChangingPhase(false),
-      () => setIsChangingPhase(false),
+      () => {
+        if (phaseChangeRequestIdRef.current !== requestId) return;
+        phaseChangePendingRef.current = false;
+        setIsChangingPhase(false);
+      },
+      () => {
+        if (phaseChangeRequestIdRef.current !== requestId) return;
+        phaseChangePendingRef.current = false;
+        setIsChangingPhase(false);
+      },
     );
   }, [changePhase]);
 
@@ -634,8 +661,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       score: Math.floor(Math.random() * 60),
     }));
     setMockLeaderboard(mock);
-    changePhase(FINAL_LEADERBOARD_PHASE);
-  }, [changePhase, mockLeaderboard]);
+    requestPhaseChange(FINAL_LEADERBOARD_PHASE);
+  }, [mockLeaderboard, requestPhaseChange]);
 
   const toggleMockPairs = React.useCallback(() => {
     if (mockPairs) {
@@ -658,8 +685,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       mock[mock.length - 1].members.push(students[students.length - 1]);
     }
     setMockPairs(mock);
-    changePhase(17);
-  }, [changePhase, mockPairs]);
+    requestPhaseChange(17);
+  }, [mockPairs, requestPhaseChange]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -763,17 +790,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   const renderPresentation = () => (
     <ArticleDisplay
-      articleData={audioManifest && articleData
-        ? { ...articleData, audio_manifest: audioManifest }
-        : articleData}
+      articleData={presentationArticleData}
       phase={currentPhase}
       isFullscreen={isFullscreen}
       flagCounts={flagCounts}
-      onActiveIdxChange={(idx) => {
-        if (sessionData?.activeSentenceIndex !== idx) {
-          syncActiveSentence(idx);
-        }
-      }}
+      onActiveIdxChange={handleActiveIdxChange}
     />
   );
 
@@ -856,8 +877,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         };
         clip.src = candidates[candidateIndex];
         clip.play().catch((err) => {
+          if (standaloneAudioRef.current !== clip) return;
           if (err?.name !== "AbortError") {
-            if (standaloneAudioRef.current === clip) standaloneAudioRef.current = null;
+            standaloneAudioRef.current = null;
             candidateIndex++;
             tryNext();
           }
@@ -3247,7 +3269,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             </button>
 
             <button
-              onClick={() => changePhase(0)}
+              onClick={() => requestPhaseChange(0)}
+              disabled={isChangingPhase}
               className="inline-flex h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl bg-rose-500/15 px-3 text-xs font-black text-rose-100 transition-colors hover:bg-rose-500/25"
             >
               {t("lesson.interactive.returnLobby")}
@@ -3342,23 +3365,25 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                     DEV
                   </span>
                   <button
-                    onClick={() => changePhase(Math.max(1, currentPhase - 1))}
+                    onClick={() => requestPhaseChange(Math.max(1, currentPhase - 1))}
+                    disabled={isChangingPhase}
                     className={quietButtonClass}
                   >
                     Prev
                   </button>
                   <button
-                    onClick={() => changePhase(Math.min(TOTAL_PHASES, currentPhase + 1))}
+                    onClick={() => requestPhaseChange(Math.min(TOTAL_PHASES, currentPhase + 1))}
+                    disabled={isChangingPhase}
                     className={quietButtonClass}
                   >
                     Skip
                   </button>
                   {isGamePhase && (
                     <button
-                      onClick={() => {
-                        changePhase(currentPhase);
-                        playSound("phaseChange");
+                    onClick={() => {
+                        requestPhaseChange(currentPhase);
                       }}
+                      disabled={isChangingPhase}
                       className="inline-flex h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl bg-amber-400/20 px-3 text-xs font-black text-amber-100 transition-colors hover:bg-amber-400/30"
                       title="Reset the current game phase as a fresh live phase"
                     >
@@ -3426,7 +3451,8 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               {t("lesson.interactive.studentsLeftDescription")}
             </p>
             <button
-              onClick={() => changePhase(0)}
+              onClick={() => requestPhaseChange(0)}
+              disabled={isChangingPhase}
               className="bg-destructive hover:bg-destructive/90 text-destructive-foreground font-bold py-3 px-8 rounded-xl shadow-lg transition-all active:scale-95 w-full"
             >
               {t("lesson.interactive.returnLobbyNow")}

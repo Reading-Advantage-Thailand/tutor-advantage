@@ -128,6 +128,20 @@ export default function TutorLobbyClient({
   const [isSendingLobbyNotification, setIsSendingLobbyNotification] = React.useState(false);
   const [lobbyNotificationStatus, setLobbyNotificationStatus] = React.useState<string | null>(null);
   const [isFinishingSession, setIsFinishingSession] = React.useState(false);
+  const startPhasePendingRef = React.useRef(false);
+  const [isStartingPhase, setIsStartingPhase] = React.useState(false);
+
+  const startPhase = React.useCallback((bypassStudentGuard = false) => {
+    if (startPhasePendingRef.current) return;
+    startPhasePendingRef.current = true;
+    setIsStartingPhase(true);
+    if (bypassStudentGuard) setBypassEmptyStudentGuard(true);
+    playSound("phaseChange");
+    void changePhase(1).finally(() => {
+      startPhasePendingRef.current = false;
+      setIsStartingPhase(false);
+    });
+  }, [changePhase]);
 
   const handleFinishAndNavigate = React.useCallback(async () => {
     if (isFinishingSession) return;
@@ -511,8 +525,8 @@ export default function TutorLobbyClient({
                   ? "bg-gradient-to-r from-indigo-500 to-violet-500 hover:from-indigo-600 hover:to-violet-600 text-white shadow-indigo-500/30 active:scale-[0.98] shimmer-cta"
                   : "bg-muted text-muted-foreground cursor-not-allowed"
               }`}
-              disabled={!canStart}
-              onClick={() => { changePhase(1); playSound("phaseChange"); }}
+              disabled={!canStart || isStartingPhase}
+              onClick={() => startPhase()}
             >
               <Play fill="currentColor" className="h-6 w-6" />
               {demo
@@ -531,11 +545,7 @@ export default function TutorLobbyClient({
                 type="button"
                 variant="outline"
                 className="w-full mt-3 border-amber-400/70 text-amber-700 hover:bg-amber-50 dark:text-amber-300 dark:hover:bg-amber-950/30"
-                onClick={() => {
-                  setBypassEmptyStudentGuard(true);
-                  changePhase(1);
-                  playSound("phaseChange");
-                }}
+                onClick={() => startPhase(true)}
               >
                 DEV: เข้าเรียนทันที (ไม่ต้องรอนักเรียน)
               </Button>

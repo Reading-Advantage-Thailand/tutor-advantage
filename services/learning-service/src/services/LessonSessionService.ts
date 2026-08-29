@@ -66,9 +66,15 @@ export interface LessonSession {
   bookId?: string;
   tutorId: string;
   tutorSocketId: string;
+  // Changes on every tutor reconnect so a stale socket can be revoked across
+  // learning-service instances through the lesson event bus.
+  tutorOwnerVersion: number;
   articleId: string;
   articleData: any;
   currentPhase: number;
+  // Unique identity for each phase transition, including reopening the same
+  // phase. Clients use it to ignore duplicate bus/socket deliveries.
+  phaseChangeId: string;
   // True when the tutor navigated back to a previously completed phase.
   // The client uses this to render the phase as review-only.
   phaseRestored?: boolean;
@@ -98,6 +104,7 @@ export interface RestoredLiveSessionState {
   activeSentenceIndex?: number | null;
   phaseSelectedIndices?: Record<number, number> | null;
   currentDbSessionId?: string | null;
+  phaseChangeId?: string | null;
   status?: LessonSession["status"];
 }
 
@@ -211,6 +218,10 @@ class LessonSessionService {
         if (existing && existing.status !== 'FINISHED') {
           logger.info(`[Service] Recovered existing session ${existingSessionId} for class ${classId}`);
           existing.tutorSocketId = tutorSocketId;
+          existing.tutorOwnerVersion = Math.max(
+            Date.now(),
+            existing.tutorOwnerVersion + 1,
+          );
           return existing;
         }
       }
@@ -288,9 +299,11 @@ class LessonSessionService {
       bookId,
       tutorId,
       tutorSocketId,
+      tutorOwnerVersion: Date.now(),
       articleId,
       articleData,
       currentPhase: restoredState?.currentPhase ?? 0,
+      phaseChangeId: restoredState?.phaseChangeId || uuidv4(),
       phaseRestored: false,
       resumePhase: undefined,
       participants: new Map(),
@@ -390,6 +403,7 @@ class LessonSessionService {
     }
 
     session.currentPhase = phase;
+    session.phaseChangeId = uuidv4();
     session.phaseRestored = false;
     session.resumePhase = undefined;
     for (const participant of session.participants.values()) {
@@ -491,6 +505,7 @@ class LessonSessionService {
       : session.currentPhase;
 
     session.currentPhase = snapshot.currentPhase;
+    session.phaseChangeId = uuidv4();
     session.phaseRestored = true;
     session.resumePhase = resumePhase;
     session.status = snapshot.status === "LOBBY" ? "ACTIVE" : snapshot.status;
@@ -787,6 +802,22 @@ class LessonSessionService {
       return;
     }
 
+    if (event === "tutor_owner_changed") {
+      if (!isRecord(payload) || typeof payload.tutorSocketId !== "string") return;
+      const ownerVersion = Number(payload.tutorOwnerVersion);
+      if (
+        Number.isFinite(ownerVersion) &&
+        ownerVersion < session.tutorOwnerVersion
+      ) {
+        return;
+      }
+      session.tutorSocketId = payload.tutorSocketId;
+      if (Number.isFinite(ownerVersion)) {
+        session.tutorOwnerVersion = ownerVersion;
+      }
+      return;
+    }
+
     if (event === "phase_changed") {
       this.applyRemotePhase(session, payload);
       return;
@@ -844,7 +875,13 @@ class LessonSessionService {
     const phase = Number(payload.phase);
     if (!Number.isInteger(phase) || phase < 0 || phase > FINAL_LEADERBOARD_PHASE) return;
 
+    const phaseChangeId = typeof payload.phaseChangeId === "string"
+      ? payload.phaseChangeId
+      : undefined;
+    if (phaseChangeId && phaseChangeId === session.phaseChangeId) return;
+
     session.currentPhase = phase;
+    if (phaseChangeId) session.phaseChangeId = phaseChangeId;
     session.phaseRestored = payload.phaseRestored === true;
     session.resumePhase = typeof payload.resumePhase === "number"
       ? payload.resumePhase

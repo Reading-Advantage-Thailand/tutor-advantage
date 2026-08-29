@@ -47,7 +47,11 @@ function PlayLessonContent() {
   const classId = searchParams.get('classId');
   const { profile, isReady: liffReady } = useLiff();
 
-  const studentId = profile?.userId || "anonymous";
+  // Do not open a lesson socket with the placeholder identity while LIFF is
+  // still resolving the real student profile. That creates a second join on
+  // profile hydration and can make the tutor see the participant/session
+  // state bounce during a phase.
+  const studentId = liffReady ? (profile?.userId || "") : "";
   const name = profile?.displayName || "Student";
 
   const {

@@ -69,6 +69,18 @@ export const setupLessonSocket = (io: Server) => {
     }
   };
 
+  const announceTutorOwner = (session: { sessionId: string; tutorSocketId: string; tutorId: string; tutorOwnerVersion: number }) => {
+    publishLessonEvent(
+      session.sessionId,
+      "tutor_owner_changed",
+      {
+        tutorSocketId: session.tutorSocketId,
+        tutorOwnerVersion: session.tutorOwnerVersion,
+      },
+      session.tutorId,
+    );
+  };
+
   const restorePersistedAnswerState = async (
     session: ReturnType<typeof lessonSessionService.createSession>,
   ) => {
@@ -102,6 +114,7 @@ export const setupLessonSocket = (io: Server) => {
   const aiInFlightByUser = new Map<string, number>();
   const aiReservations = new Set<string>();
   const sessionHeartbeats = new Map<string, NodeJS.Timeout>();
+  const phaseChangesInFlight = new Set<string>();
 
   const startSessionHeartbeat = (classId: string | undefined, sessionId: string) => {
     if (!classId || sessionHeartbeats.has(sessionId)) return;
@@ -268,6 +281,11 @@ export const setupLessonSocket = (io: Server) => {
         return;
       }
 
+      // A reconnect can finish its async create_session handler after the
+      // browser has already disconnected. Never let that stale socket claim
+      // the room back from the newly connected tutor socket.
+      if (!socket.connected) return;
+
       const tutorId = actor.userId;
       const isDemo = demo === true;
       logger.info(`[Socket] Tutor ${tutorId} creating ${isDemo ? "DEMO " : ""}session for class: ${classId}`);
@@ -299,6 +317,7 @@ export const setupLessonSocket = (io: Server) => {
             socket.emit("error", { message: "Demo lesson not found." });
             return;
           }
+          if (!socket.connected) return;
           const demoSession = lessonSessionService.createSession(
             tutorId,
             socket.id,
@@ -313,6 +332,8 @@ export const setupLessonSocket = (io: Server) => {
           socket.emit("session_created", {
           sessionId: demoSession.sessionId,
           currentPhase: demoSession.currentPhase,
+          phaseChangeId: demoSession.phaseChangeId,
+          participants: Array.from(demoSession.participants.values()),
           phaseRestored: demoSession.phaseRestored ?? false,
           resumePhase: demoSession.resumePhase,
           articleData: demoSession.articleData,
@@ -413,6 +434,8 @@ export const setupLessonSocket = (io: Server) => {
           return;
         }
 
+        if (!socket.connected) return;
+
         const localSession = classId ? lessonSessionService.getSessionByClassId(classId) : undefined;
         const proposedSessionId = localSession?.sessionId || uuidv4();
         if (classId && ownedClass && !localSession) {
@@ -432,6 +455,7 @@ export const setupLessonSocket = (io: Server) => {
               sharedSession.tutorUserId === ownedClass.tutorUserId &&
               (sharedSession.status === "ACTIVE" || sharedSession.status === "FINISHED")
             ) {
+              if (!socket.connected) return;
               const restoredSession = lessonSessionService.createSession(
                 tutorId,
                 socket.id,
@@ -469,9 +493,12 @@ export const setupLessonSocket = (io: Server) => {
               await restorePersistedAnswerState(restoredSession);
               socket.join(restoredSession.sessionId);
               startSessionHeartbeat(classId, restoredSession.sessionId);
+              announceTutorOwner(restoredSession);
               socket.emit("session_created", {
                 sessionId: restoredSession.sessionId,
                 currentPhase: restoredSession.currentPhase,
+                phaseChangeId: restoredSession.phaseChangeId,
+                participants: Array.from(restoredSession.participants.values()),
                 phaseRestored: restoredSession.phaseRestored ?? false,
                 resumePhase: restoredSession.resumePhase,
                 articleData: restoredSession.articleData,
@@ -494,12 +521,24 @@ export const setupLessonSocket = (io: Server) => {
             return;
           }
           claimedLock = { classId, sessionId: proposedSessionId };
+          if (!socket.connected) {
+            await dbWriter.releaseActiveSession(claimedLock.classId, claimedLock.sessionId);
+            claimedLock = undefined;
+            return;
+          }
         }
 
         logger.info(`================= QUESTIONS LIST =================`);
         logger.info(`Available MCQ questions:`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
         logger.info(`Available SAQ questions:`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
         logger.info(`==================================================`);
+        if (!socket.connected) {
+          if (claimedLock) {
+            await dbWriter.releaseActiveSession(claimedLock.classId, claimedLock.sessionId);
+            claimedLock = undefined;
+          }
+          return;
+        }
         const session = lessonSessionService.createSession(
           tutorId,
           socket.id,
@@ -522,10 +561,13 @@ export const setupLessonSocket = (io: Server) => {
         // PERSIST START OF SESSION TO DB (This creates initial Cycle 1 record)
         await dbWriter.persistSessionStart(session.sessionId, tutorId, resolvedArticleId, classId, resolvedCycleId, resolvedBookId);
         await persistLiveState(session);
+        announceTutorOwner(session);
 
         socket.emit("session_created", {
           sessionId: session.sessionId,
           currentPhase: session.currentPhase,
+          phaseChangeId: session.phaseChangeId,
+          participants: Array.from(session.participants.values()),
           phaseRestored: session.phaseRestored ?? false,
           resumePhase: session.resumePhase,
           articleData: session.articleData,
@@ -651,6 +693,7 @@ export const setupLessonSocket = (io: Server) => {
           sessionId: session.sessionId,
           currentStudentId: studentId,
           currentPhase: session.currentPhase,
+          phaseChangeId: session.phaseChangeId,
           hasAnswered: Boolean(session.participants.get(studentId)?.hasAnsweredCurrentPhase),
           articleData: session.articleData,
           phaseSelectedIndices: session.phaseSelectedIndices,
@@ -716,6 +759,13 @@ export const setupLessonSocket = (io: Server) => {
         return;
       }
 
+      if (phaseChangesInFlight.has(sessionId)) {
+        const message = "A phase change is already being processed.";
+        acknowledge?.({ ok: false, code: "PHASE_CHANGE_IN_PROGRESS", message });
+        return;
+      }
+
+      phaseChangesInFlight.add(sessionId);
       try {
       const previousPhase = authorizedSession?.currentPhase ?? 0;
       const shouldRewind = targetPhase > 0 && targetPhase < previousPhase;
@@ -757,10 +807,17 @@ export const setupLessonSocket = (io: Server) => {
           }
         }
 
+        // Persist before broadcasting so a tutor reconnecting to another
+        // Cloud Run instance cannot rehydrate an older phase from the DB.
+        if (!session.isDemo) {
+          await persistLiveState(session);
+        }
+
         // Broadcast new phase to everyone in the room.
         // Pair Conversation carries the freshly generated pairs.
         broadcastSession(sessionId, "phase_changed", {
           phase: targetPhase,
+          phaseChangeId: session.phaseChangeId,
           phaseSelectedIndices: session.phaseSelectedIndices,
           pairs: targetPhase === PAIR_CONVERSATION_PHASE ? lessonSessionService.getPairsPayload(session) : null,
           gameState: lessonSessionService.getGameStatePayload(session),
@@ -786,7 +843,6 @@ export const setupLessonSocket = (io: Server) => {
         // Demo sessions have no DB round, no badges to unlock, and no students to notify.
         if (targetPhase === FINAL_LEADERBOARD_PHASE && !session.isDemo && !session.phaseRestored) {
           dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
-          void persistLiveState(session);
 
           if (!session.finalNotificationSent) {
             session.finalNotificationSent = true;
@@ -827,9 +883,6 @@ export const setupLessonSocket = (io: Server) => {
           // the lesson after reviewing the restored phase.
           dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "ACTIVE");
         }
-        if (!session.isDemo) {
-          void persistLiveState(session);
-        }
         acknowledge?.({ ok: true, phase: targetPhase });
       } else if (shouldRewind) {
         const message = "This phase cannot be rewound because its saved state is no longer available.";
@@ -843,6 +896,8 @@ export const setupLessonSocket = (io: Server) => {
         const message = "Could not change the lesson phase. Please try again.";
         socket.emit("error", { message });
         acknowledge?.({ ok: false, code: "PHASE_CHANGE_FAILED", message });
+      } finally {
+        phaseChangesInFlight.delete(sessionId);
       }
       },
     );

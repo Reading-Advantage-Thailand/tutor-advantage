@@ -314,6 +314,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   };
 
   const playClipUrl = (url?: string | null, fallbackText?: string) => {
+    const requestId = ++audioRequestRef.current;
+    primarySentencePlaybackTokenRef.current++;
+    clearSentenceStopMonitor();
     stopSpeechFallback();
     clipAudioRef.current?.pause();
     clipAudioRef.current = null;
@@ -339,7 +342,6 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       return;
     }
 
-    audioRequestRef.current++;
     clearClipStopMonitor();
     if (audioRef.current) audioRef.current.pause();
     const clip = new Audio();
@@ -347,17 +349,16 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     setIsPlaying(true);
 
     clip.onended = () => {
-      if (clipAudioRef.current === clip) {
+      if (clipAudioRef.current === clip && audioRequestRef.current === requestId) {
         clipAudioRef.current = null;
         setIsPlaying(false);
       }
     };
     clip.onerror = () => {
-      if (clipAudioRef.current === clip) {
-        clipAudioRef.current = null;
-        setIsPlaying(false);
-        playFallback();
-      }
+      if (clipAudioRef.current !== clip || audioRequestRef.current !== requestId) return;
+      clipAudioRef.current = null;
+      setIsPlaying(false);
+      playFallback();
     };
 
     clip.oncanplay = () => {
@@ -370,10 +371,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
     clip.src = url;
     clip.play().catch((err) => {
+      if (clipAudioRef.current !== clip || audioRequestRef.current !== requestId) return;
+      clipAudioRef.current = null;
       setIsPlaying(false);
-      if (err?.name !== "AbortError") {
-        playFallback();
-      }
+      if (err?.name !== "AbortError") playFallback();
     });
   };
 
@@ -487,7 +488,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     const url = granularSentenceUrls[playableIndex];
     if (!audio || !url) return false;
 
-    audioRequestRef.current++;
+    const requestId = ++audioRequestRef.current;
     primarySentencePlaybackTokenRef.current++;
     clearSentenceStopMonitor();
     clipAudioRef.current?.pause();
@@ -504,7 +505,19 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     setCurrentTime(0);
     setDuration(0);
     const start = () => {
-      audio.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+      if (audioRequestRef.current !== requestId || audioRef.current !== audio) return;
+      audio
+        .play()
+        .then(() => {
+          if (audioRequestRef.current === requestId && audioRef.current === audio) {
+            setIsPlaying(true);
+          }
+        })
+        .catch(() => {
+          if (audioRequestRef.current === requestId && audioRef.current === audio) {
+            setIsPlaying(false);
+          }
+        });
     };
     if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) start();
     else audio.addEventListener("loadedmetadata", start, { once: true });
@@ -697,6 +710,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       return;
     }
 
+    const requestId = ++audioRequestRef.current;
     const start = Math.max(0, getSentenceTime(item));
     if (isPrimaryContent) {
       // In the Interactive reader, selecting a sentence is intentionally a
@@ -719,12 +733,18 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       audio
         .play()
         .then(() => {
-          if (playbackToken !== primarySentencePlaybackTokenRef.current) return;
+          if (
+            playbackToken !== primarySentencePlaybackTokenRef.current ||
+            requestId !== audioRequestRef.current
+          ) return;
           setIsPlaying(true);
           startPrimarySentenceStopMonitor(playbackToken, end);
         })
         .catch(() => {
-          if (playbackToken !== primarySentencePlaybackTokenRef.current) return;
+          if (
+            playbackToken !== primarySentencePlaybackTokenRef.current ||
+            requestId !== audioRequestRef.current
+          ) return;
           stopAtRef.current = Infinity;
           setIsPlaying(false);
         });
@@ -748,8 +768,12 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     setIsPlaying(true);
     audio
       .play()
-      .then(startSentenceStopMonitor)
+      .then(() => {
+        if (requestId !== audioRequestRef.current || audioRef.current !== audio) return;
+        startSentenceStopMonitor();
+      })
       .catch(() => {
+        if (requestId !== audioRequestRef.current || audioRef.current !== audio) return;
         stopAtRef.current = Infinity;
         clearSentenceStopMonitor();
         setIsPlaying(false);
@@ -800,7 +824,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         }
         return;
       }
-      audioRequestRef.current++;
+      const requestId = ++audioRequestRef.current;
       primarySentencePlaybackTokenRef.current++;
       clipAudioRef.current?.pause();
       stopAtRef.current = Infinity; // always continuous when pressing Play
@@ -808,8 +832,12 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       audioRef.current.playbackRate = speechRate;
       audioRef.current
         .play()
-        .then(() => setIsPlaying(true))
-        .catch(() => setIsPlaying(false));
+        .then(() => {
+          if (requestId === audioRequestRef.current) setIsPlaying(true);
+        })
+        .catch(() => {
+          if (requestId === audioRequestRef.current) setIsPlaying(false);
+        });
     }
   };
 
@@ -1906,6 +1934,14 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         Math.min(primaryReadingGroups.length - 1, primaryReadingPageIndex + direction),
       );
       const firstSentence = primaryReadingGroups[nextPart]?.[0]?.idx;
+      // Invalidate any pending play() promise before changing the visible
+      // article part. A browser may resolve the old promise after pause(),
+      // which would otherwise turn the new part's Play button back on.
+      audioRequestRef.current++;
+      primarySentencePlaybackTokenRef.current++;
+      clearSentenceStopMonitor();
+      clearClipStopMonitor();
+      clipAudioRef.current?.pause();
       audioRef.current?.pause();
       granularAutoAdvanceRef.current = false;
       setIsPlaying(false);
@@ -1933,6 +1969,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               setDuration(audioRef.current?.duration || 0)
             }
             onEnded={() => {
+              // The ended event invalidates any promise belonging to the
+              // previous source before auto-advance starts another one.
+              audioRequestRef.current++;
+              primarySentencePlaybackTokenRef.current++;
               const completedSentenceIndex = activeSentenceRef.current;
               const nextPlayableSentenceIndex = findNextPlayableSentence(
                 completedSentenceIndex + 1,
@@ -2155,7 +2195,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     const rect = e.currentTarget.getBoundingClientRect();
                     const ratio = (e.clientX - rect.left) / rect.width;
                     if (audioRef.current) {
-                      audioRequestRef.current++;
+                      const requestId = ++audioRequestRef.current;
                       primarySentencePlaybackTokenRef.current++;
                       clearSentenceStopMonitor();
                       stopAtRef.current = Infinity;
@@ -2164,8 +2204,12 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                       audioRef.current.currentTime = ratio * duration;
                       audioRef.current
                         .play()
-                        .then(() => setIsPlaying(true))
-                        .catch(() => setIsPlaying(false));
+                        .then(() => {
+                          if (requestId === audioRequestRef.current) setIsPlaying(true);
+                        })
+                        .catch(() => {
+                          if (requestId === audioRequestRef.current) setIsPlaying(false);
+                        });
                     }
                   }}
                 >

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { getTutorSessionToken } from '../app/dashboard/actions';
 import { t } from '@/lib/i18n';
@@ -63,6 +63,17 @@ export const useLessonSocket = (
   const socketRef = useRef<Socket | null>(null);
   const sessionDataRef = useRef<TutorSessionData | null>(null);
   const finishRequestRef = useRef<Promise<boolean> | null>(null);
+  const sessionReadyRef = useRef(false);
+  const phaseChangeIdRef = useRef<string | null>(null);
+  const phaseChangeInFlightRef = useRef<Promise<boolean> | null>(null);
+  const phaseChangeRequestIdRef = useRef(0);
+  const phaseChangeCancelRef = useRef<(() => void) | null>(null);
+  const invalidatePhaseChange = useCallback(() => {
+    phaseChangeCancelRef.current?.();
+    phaseChangeCancelRef.current = null;
+    phaseChangeRequestIdRef.current += 1;
+    phaseChangeInFlightRef.current = null;
+  }, []);
 
   useEffect(() => {
     sessionDataRef.current = sessionData;
@@ -115,6 +126,11 @@ export const useLessonSocket = (
 
         socketInstance.on('connect', () => {
           if (cancelled) return;
+          // The socket can reconnect before the async create_session handler
+          // finishes. Do not allow stale UI state to issue phase commands in
+          // that gap.
+          sessionReadyRef.current = false;
+          invalidatePhaseChange();
           setError(null);
           // Auto create session on connect for Tutor with the selected article and classId.
           // Demo mode runs a free, fixed preview with no class/DB/AI on the backend.
@@ -125,10 +141,21 @@ export const useLessonSocket = (
           setError(err.message || 'Could not connect to the learning service.');
         });
 
+        socketInstance.on('disconnect', () => {
+          sessionReadyRef.current = false;
+          invalidatePhaseChange();
+        });
+
         socketInstance.on('session_created', (data) => {
+          if (cancelled || !socketInstance.connected) return;
+          sessionReadyRef.current = true;
+          phaseChangeIdRef.current = typeof data.phaseChangeId === 'string'
+            ? data.phaseChangeId
+            : null;
           sessionDataRef.current = data;
           setSessionData(data);
           setArticleData(data.articleData);
+          if (Array.isArray(data.participants)) setParticipants(data.participants);
           setFlagCounts(data.flagCounts || {});
         });
 
@@ -146,9 +173,13 @@ export const useLessonSocket = (
           setParticipants(data.participants);
         });
 
-        socketInstance.on('phase_changed', (data: { phase: number; phaseSelectedIndices?: Record<number, number>; pairs?: TutorSessionData['pairs']; gameState?: GamePhaseState | null; phaseRestored?: boolean; resumePhase?: number; activeSentenceIndex?: number; flagCounts?: Record<number, number> }) => {
+        socketInstance.on('phase_changed', (data: { phase: number; phaseChangeId?: string; phaseSelectedIndices?: Record<number, number>; pairs?: TutorSessionData['pairs']; gameState?: GamePhaseState | null; phaseRestored?: boolean; resumePhase?: number; activeSentenceIndex?: number; flagCounts?: Record<number, number> }) => {
+          if (data.phaseChangeId && data.phaseChangeId === phaseChangeIdRef.current) {
+            return;
+          }
+          if (data.phaseChangeId) phaseChangeIdRef.current = data.phaseChangeId;
           setSessionData(prev => {
-            const next = prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null, phaseRestored: data.phaseRestored ?? false, resumePhase: data.resumePhase, activeSentenceIndex: data.activeSentenceIndex, flagCounts: data.flagCounts ?? {} } : null;
+            const next = prev ? { ...prev, currentPhase: data.phase, phaseChangeId: data.phaseChangeId ?? prev.phaseChangeId, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null, phaseRestored: data.phaseRestored ?? false, resumePhase: data.resumePhase, activeSentenceIndex: data.activeSentenceIndex, flagCounts: data.flagCounts ?? {} } : null;
             sessionDataRef.current = next;
             return next;
           });
@@ -209,6 +240,9 @@ export const useLessonSocket = (
 
     return () => {
       cancelled = true;
+      sessionReadyRef.current = false;
+      invalidatePhaseChange();
+      phaseChangeIdRef.current = null;
       if (newSocket) {
         // Disconnecting is not the same as explicitly cancelling a lesson.
         // React can run this cleanup during Strict Mode, route transitions,
@@ -229,48 +263,70 @@ export const useLessonSocket = (
     };
   }, [tutorId, articleId, classId, classBookCycleId, bookId, demo, lessonSocketUrl]);
 
-  const changePhase = (phase: number): Promise<boolean> => {
+  const changePhase = useCallback((phase: number): Promise<boolean> => {
+    const pendingRequest = phaseChangeInFlightRef.current;
+    if (pendingRequest) return pendingRequest;
+
     const activeSocket = socketRef.current;
     const activeSession = sessionDataRef.current;
 
-    if (!activeSocket || !activeSession || !activeSocket.connected) {
+    if (
+      !activeSocket ||
+      !activeSession ||
+      !activeSocket.connected ||
+      !sessionReadyRef.current
+    ) {
       setError('The lesson connection is unavailable. Please wait for it to reconnect and try again.');
       return Promise.resolve(false);
     }
 
-    return new Promise<boolean>((resolve) => {
-      let settled = false;
-      const settle = (ok: boolean) => {
-        if (settled) return;
-        settled = true;
-        clearTimeout(timeout);
-        resolve(ok);
-      };
-
-      const timeout = setTimeout(() => {
-        setError('The lesson server did not confirm the phase change. Please check the connection and try again.');
-        settle(false);
-      }, PHASE_CHANGE_TIMEOUT_MS);
-
-      try {
-        activeSocket.emit(
-          'change_phase',
-          { sessionId: activeSession.sessionId, phase },
-          (result?: PhaseChangeResult) => {
-            if (!result?.ok) {
-              setError(result?.message || 'Could not change the lesson phase. Please try again.');
-              settle(false);
-              return;
-            }
-            settle(true);
-          },
-        );
-      } catch {
-        setError('Could not send the phase change. Please check the connection and try again.');
-        settle(false);
-      }
+    const requestId = ++phaseChangeRequestIdRef.current;
+    let resolveRequest!: (ok: boolean) => void;
+    const request = new Promise<boolean>((resolve) => {
+      resolveRequest = resolve;
     });
-  };
+    phaseChangeInFlightRef.current = request;
+
+    let settled = false;
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    const settle = (ok: boolean) => {
+      if (settled) return;
+      settled = true;
+      if (timeout) clearTimeout(timeout);
+      if (phaseChangeRequestIdRef.current === requestId) {
+        phaseChangeInFlightRef.current = null;
+        phaseChangeCancelRef.current = null;
+      }
+      resolveRequest(ok);
+    };
+
+    phaseChangeCancelRef.current = () => settle(false);
+
+    timeout = setTimeout(() => {
+      setError('The lesson server did not confirm the phase change. Please check the connection and try again.');
+      settle(false);
+    }, PHASE_CHANGE_TIMEOUT_MS);
+
+    try {
+      activeSocket.emit(
+        'change_phase',
+        { sessionId: activeSession.sessionId, phase },
+        (result?: PhaseChangeResult) => {
+          if (!result?.ok) {
+            setError(result?.message || 'Could not change the lesson phase. Please try again.');
+            settle(false);
+            return;
+          }
+          settle(true);
+        },
+      );
+    } catch {
+      setError('Could not send the phase change. Please check the connection and try again.');
+      settle(false);
+    }
+
+    return request;
+  }, []);
 
   const syncActiveSentence = (index: number) => {
     if (socketRef.current && sessionData) {
