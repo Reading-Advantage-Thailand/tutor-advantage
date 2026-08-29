@@ -60,6 +60,7 @@ function PlayLessonContent() {
     isEveryoneReady,
     aiFeedback,
     languageAnswer,
+    submissionError,
     missedQuestion,
     submitAnswer,
     kicked,
@@ -134,6 +135,12 @@ function PlayLessonContent() {
   }, [sessionData, prevPhase]);
 
   useEffect(() => { if (hasAnswered) setIsSubmitting(false); }, [hasAnswered]);
+
+  useEffect(() => {
+    if (!submissionError) return;
+    setIsSubmitting(false);
+    toast.error(submissionError);
+  }, [submissionError]);
 
   // Reset my sentence flags at the start of a fresh instructional cycle
   useEffect(() => { if (currentPhase === 1) setMyFlags(new Set()); }, [currentPhase]);

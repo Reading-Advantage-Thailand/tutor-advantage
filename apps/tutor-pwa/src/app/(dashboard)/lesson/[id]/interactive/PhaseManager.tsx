@@ -108,7 +108,7 @@ interface PhaseManagerProps {
   allAnsweredData: AnswerData[];
   questionEnded?: boolean;
   articleData?: ArticleData;
-  changePhase: (phase: number) => void;
+  changePhase: (phase: number) => Promise<boolean>;
   syncActiveSentence: (index: number) => void;
   endQuestion?: () => void;
   startGameVote: (phase?: number) => void;
@@ -537,6 +537,18 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     setPotionRushTeacherDemoCompleted(false);
   }, [currentPhase]);
 
+  const requestPhaseChange = React.useCallback((phase: number) => {
+    setIsChangingPhase(true);
+    playSound("phaseChange");
+    // The socket hook waits for the server acknowledgement and has a bounded
+    // timeout. Always release the local loading state so a lost socket packet
+    // cannot leave the tutor stuck on "processing" forever.
+    void changePhase(phase).then(
+      () => setIsChangingPhase(false),
+      () => setIsChangingPhase(false),
+    );
+  }, [changePhase]);
+
   const isGamePhase = [VOCAB_GAME_PHASE, SENTENCE_GAME_PHASE].includes(currentPhase);
   const isRewoundPhase = Boolean(sessionData?.phaseRestored);
   const gameState = sessionData?.gameState ?? null;
@@ -581,32 +593,28 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   const handleNextPhase = React.useCallback(() => {
     if (!isChangingPhase && canProceedDelayed) {
-      setIsChangingPhase(true);
-      playSound("phaseChange");
       const nextPhase = isRewoundPhase && sessionData?.resumePhase && sessionData.resumePhase > currentPhase
         ? sessionData.resumePhase
         : currentPhase < TOTAL_PHASES
           ? currentPhase + 1
           : 0;
       if (nextPhase > 0) {
-        changePhase(nextPhase);
+        requestPhaseChange(nextPhase);
       } else {
         // Safely loop back to lobby (Phase 0).
         // The Backend is now smart enough to automatically cycle a fresh DB session
         // the moment instruction begins again, providing unbroken continuity!
-        changePhase(0);
+        requestPhaseChange(0);
       }
     }
-  }, [currentPhase, isChangingPhase, canProceedDelayed, changePhase, isRewoundPhase, sessionData?.resumePhase]);
+  }, [currentPhase, isChangingPhase, canProceedDelayed, requestPhaseChange, isRewoundPhase, sessionData?.resumePhase]);
 
   const handlePreviousPhase = React.useCallback(() => {
     if (currentPhase <= 1 || isChangingPhase) return;
 
     const targetPhase = currentPhase - 1;
-    setIsChangingPhase(true);
-    playSound("phaseChange");
-    changePhase(targetPhase);
-  }, [currentPhase, isChangingPhase, changePhase]);
+    requestPhaseChange(targetPhase);
+  }, [currentPhase, isChangingPhase, requestPhaseChange]);
 
   const handleEndQuestion = React.useCallback(() => {
     if (!endQuestion || isRewoundPhase || questionEnded || totalParticipants === 0) return;

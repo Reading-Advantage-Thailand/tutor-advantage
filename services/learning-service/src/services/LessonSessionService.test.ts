@@ -83,6 +83,54 @@ describe("lessonSessionService", () => {
     expect(session.participants.get("student-1")?.latestAnswer).toBe("evaluated");
   });
 
+  it("rolls back an answer reservation when processing fails before commit", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+    service.setPhase(session.sessionId, 9);
+
+    expect(service.reserveAnswer(session.sessionId, "student-1")?.accepted).toBe(true);
+    expect(service.releaseReservedAnswer(session.sessionId, "student-1")).toBe(true);
+    expect(session.participants.get("student-1")).toMatchObject({
+      hasAnsweredCurrentPhase: false,
+      latestAnswer: undefined,
+    });
+    expect(service.reserveAnswer(session.sessionId, "student-1")?.accepted).toBe(true);
+  });
+
+  it("applies remote phase and participant events to a recovered instance", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+    service.applyRemoteEvent(session.sessionId, "phase_changed", {
+      phase: 9,
+      phaseSelectedIndices: { 9: 2 },
+      currentDbSessionId: "cycle-1",
+      phaseRestored: false,
+    });
+    service.applyRemoteEvent(session.sessionId, "participants_updated", {
+      participants: [{
+        studentId: "student-1",
+        name: "Ada Updated",
+        score: 7,
+        hasAnsweredCurrentPhase: true,
+        latestAnswer: "answer",
+        isReady: true,
+      }],
+    });
+
+    expect(session).toMatchObject({
+      currentPhase: 9,
+      currentDbSessionId: "cycle-1",
+      phaseSelectedIndices: { 9: 2 },
+    });
+    expect(session.participants.get("student-1")).toMatchObject({
+      name: "Ada Updated",
+      score: 7,
+      hasAnsweredCurrentPhase: true,
+      latestAnswer: "answer",
+      socketId: "socket-a",
+    });
+  });
+
   it("rewinds to the last saved phase state without losing score or answers", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
     service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");

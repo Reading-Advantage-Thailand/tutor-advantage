@@ -12,6 +12,15 @@ import {
   GamePhaseState,
 } from '@/lib/lesson-types';
 
+type PhaseChangeResult = {
+  ok?: boolean;
+  phase?: number;
+  code?: string;
+  message?: string;
+};
+
+const PHASE_CHANGE_TIMEOUT_MS = 8_000;
+
 export const useLessonSocket = (
   tutorId: string,
   articleId: string,
@@ -68,27 +77,45 @@ export const useLessonSocket = (
     }
 
     let newSocket: Socket | null = null;
+    let cancelled = false;
 
     const initSocket = async () => {
       try {
         setError(null);
         const token = await getTutorSessionToken();
 
+        if (cancelled) return;
+
         if (!token) {
           setError("Please sign in as a tutor before opening the live lesson lobby.");
           return;
         }
         const socketInstance = io(lessonSocketUrl, {
-          auth: { token },
+          // The lesson token is intentionally short-lived. Refresh it for
+          // every handshake so a long lesson can recover after a transient
+          // network drop instead of losing the tutor's room.
+          auth: (callback) => {
+            void getTutorSessionToken()
+              .then((freshToken) => callback({ token: freshToken || token }))
+              .catch(() => callback({ token }));
+          },
           path: '/socket.io',
           addTrailingSlash: false,
         });
+
+        if (cancelled) {
+          socketInstance.disconnect();
+          return;
+        }
+
         newSocket = socketInstance;
         
         socketRef.current = socketInstance;
         setSocket(socketInstance);
 
         socketInstance.on('connect', () => {
+          if (cancelled) return;
+          setError(null);
           // Auto create session on connect for Tutor with the selected article and classId.
           // Demo mode runs a free, fixed preview with no class/DB/AI on the backend.
           socketInstance.emit('create_session', { tutorId, articleId, classId, classBookCycleId, bookId, demo });
@@ -178,27 +205,71 @@ export const useLessonSocket = (
       }
     };
 
-    initSocket();
+    void initSocket();
 
     return () => {
-      const activeSession = sessionDataRef.current;
+      cancelled = true;
       if (newSocket) {
-        if (activeSession) {
-          newSocket.emit('delete_session', { sessionId: activeSession.sessionId });
-          sessionDataRef.current = null;
-        }
+        // Disconnecting is not the same as explicitly cancelling a lesson.
+        // React can run this cleanup during Strict Mode, route transitions,
+        // or a socket reinitialisation. The server owns the disconnect grace
+        // period; delete_session is reserved for the explicit close action.
         newSocket.disconnect();
       }
       if (socketRef.current === newSocket) {
         socketRef.current = null;
+        setSocket(null);
       }
+      sessionDataRef.current = null;
+      setSessionData(null);
+      setParticipants([]);
+      setTotalAnswered(0);
+      setAllAnsweredData([]);
+      setQuestionEnded(false);
     };
   }, [tutorId, articleId, classId, classBookCycleId, bookId, demo, lessonSocketUrl]);
 
-  const changePhase = (phase: number) => {
-    if (socketRef.current && sessionData) {
-      socketRef.current.emit('change_phase', { sessionId: sessionData.sessionId, phase });
+  const changePhase = (phase: number): Promise<boolean> => {
+    const activeSocket = socketRef.current;
+    const activeSession = sessionDataRef.current;
+
+    if (!activeSocket || !activeSession || !activeSocket.connected) {
+      setError('The lesson connection is unavailable. Please wait for it to reconnect and try again.');
+      return Promise.resolve(false);
     }
+
+    return new Promise<boolean>((resolve) => {
+      let settled = false;
+      const settle = (ok: boolean) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeout);
+        resolve(ok);
+      };
+
+      const timeout = setTimeout(() => {
+        setError('The lesson server did not confirm the phase change. Please check the connection and try again.');
+        settle(false);
+      }, PHASE_CHANGE_TIMEOUT_MS);
+
+      try {
+        activeSocket.emit(
+          'change_phase',
+          { sessionId: activeSession.sessionId, phase },
+          (result?: PhaseChangeResult) => {
+            if (!result?.ok) {
+              setError(result?.message || 'Could not change the lesson phase. Please try again.');
+              settle(false);
+              return;
+            }
+            settle(true);
+          },
+        );
+      } catch {
+        setError('Could not send the phase change. Please check the connection and try again.');
+        settle(false);
+      }
+    });
   };
 
   const syncActiveSentence = (index: number) => {
@@ -301,8 +372,8 @@ export const useLessonSocket = (
             return;
           }
 
-          // Prevent the hook cleanup from sending delete_session after the
-          // Tutor navigates away. The server has already persisted FINISHED.
+          // Clear local state before navigation. The server has already
+          // persisted FINISHED and removed the live room.
           sessionDataRef.current = null;
           setSessionData(null);
           resolve(true);

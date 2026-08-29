@@ -47,7 +47,9 @@ function seededShuffle<T>(array: T[], seedInput: string): T[] {
 
 export const setupLessonSocket = (io: Server) => {
   const instanceId = uuidv4();
-  void startLessonSocketBus(io, instanceId);
+  void startLessonSocketBus(io, instanceId, (event) => {
+    lessonSessionService.applyRemoteEvent(event.sessionId, event.event, event.payload);
+  });
   const broadcastSession = (sessionId: string, event: string, payload: unknown) => {
     io.to(sessionId).emit(event, payload);
     publishLessonEvent(sessionId, event, payload);
@@ -67,6 +69,32 @@ export const setupLessonSocket = (io: Server) => {
     }
   };
 
+  const restorePersistedAnswerState = async (
+    session: ReturnType<typeof lessonSessionService.createSession>,
+  ) => {
+    if (session.currentPhase <= 0) return;
+    try {
+      const answers = await prisma.sessionAnswer.findMany({
+        where: {
+          sessionId: session.currentDbSessionId || session.sessionId,
+          phase: session.currentPhase,
+        },
+        select: {
+          studentUserId: true,
+          answerText: true,
+        },
+      });
+      for (const answer of answers) {
+        const participant = session.participants.get(answer.studentUserId);
+        if (!participant) continue;
+        participant.hasAnsweredCurrentPhase = true;
+        participant.latestAnswer = answer.answerText ?? undefined;
+      }
+    } catch (error) {
+      logger.warn("[Socket] Could not restore answers for session " + session.sessionId + ":", error);
+    }
+  };
+
   const AI_RATE_WINDOW_MS = 60_000;
   const AI_MAX_REQUESTS_PER_WINDOW = 20;
   const AI_MAX_CONCURRENT_PER_USER = 2;
@@ -77,6 +105,10 @@ export const setupLessonSocket = (io: Server) => {
 
   const startSessionHeartbeat = (classId: string | undefined, sessionId: string) => {
     if (!classId || sessionHeartbeats.has(sessionId)) return;
+    // Mark a newly recovered owner immediately. This is also used by the
+    // disconnect grace-period check to distinguish a real reconnect on another
+    // service instance from a stale socket.
+    void dbWriter.heartbeatActiveSession(classId, sessionId);
     const timer = setInterval(() => {
       void dbWriter.heartbeatActiveSession(classId, sessionId);
     }, 15_000);
@@ -178,6 +210,7 @@ export const setupLessonSocket = (io: Server) => {
       const localParticipant = restoredSession.participants.get(participant.studentUserId);
       if (localParticipant) localParticipant.score = participant.score;
     }
+    await restorePersistedAnswerState(restoredSession);
     startSessionHeartbeat(classId, restoredSession.sessionId);
     return restoredSession;
   };
@@ -433,6 +466,7 @@ export const setupLessonSocket = (io: Server) => {
                 const localParticipant = restoredSession.participants.get(participant.studentUserId);
                 if (localParticipant) localParticipant.score = participant.score;
               }
+              await restorePersistedAnswerState(restoredSession);
               socket.join(restoredSession.sessionId);
               startSessionHeartbeat(classId, restoredSession.sessionId);
               socket.emit("session_created", {
@@ -617,6 +651,7 @@ export const setupLessonSocket = (io: Server) => {
           sessionId: session.sessionId,
           currentStudentId: studentId,
           currentPhase: session.currentPhase,
+          hasAnswered: Boolean(session.participants.get(studentId)?.hasAnsweredCurrentPhase),
           articleData: session.articleData,
           phaseSelectedIndices: session.phaseSelectedIndices,
           phaseRestored: session.phaseRestored ?? false,
@@ -660,23 +695,38 @@ export const setupLessonSocket = (io: Server) => {
     });
 
     // Tutor changes phase
-    socket.on("change_phase", async ({ sessionId, phase }) => {
+    socket.on(
+      "change_phase",
+      async (
+        { sessionId, phase },
+        acknowledge?: (result: { ok: boolean; phase?: number; code?: string; message?: string }) => void,
+      ) => {
       const authorizedSession = lessonSessionService.getSession(sessionId);
       if (!isTutorSessionOwner(actor, socket.id, authorizedSession)) {
         rejectForbidden("change_phase");
+        acknowledge?.({ ok: false, code: "FORBIDDEN", message: "You are not allowed to change this lesson phase." });
         return;
       }
 
+      const targetPhase = Number(phase);
+      if (!Number.isInteger(targetPhase) || targetPhase < 0 || targetPhase > FINAL_LEADERBOARD_PHASE) {
+        const message = "Invalid lesson phase.";
+        socket.emit("error", { message });
+        acknowledge?.({ ok: false, code: "INVALID_PHASE", message });
+        return;
+      }
+
+      try {
       const previousPhase = authorizedSession?.currentPhase ?? 0;
-      const shouldRewind = phase > 0 && phase < previousPhase;
+      const shouldRewind = targetPhase > 0 && targetPhase < previousPhase;
       const session = shouldRewind
-        ? lessonSessionService.rewindPhase(sessionId, phase)
-        : lessonSessionService.setPhase(sessionId, phase);
+        ? lessonSessionService.rewindPhase(sessionId, targetPhase)
+        : lessonSessionService.setPhase(sessionId, targetPhase);
       if (session) {
         // --- CRITICAL: DYNAMIC RESTART RECORDING ---
         // If starting a new instructional cycle (Phase 0 -> Phase 1), determine if we need a FRESH DB identity.
         // Demo sessions skip all persistence — they only loop the in-memory phase state.
-        if (phase === 1 && !session.isDemo && !session.phaseRestored) {
+        if (targetPhase === 1 && !session.isDemo && !session.phaseRestored) {
           if (!session.currentDbSessionId) {
             // --- FIRST CYCLE ---
             // Set explicit key to lock current cycle, but reuse original initialized DB record to avoid double logging!
@@ -710,68 +760,66 @@ export const setupLessonSocket = (io: Server) => {
         // Broadcast new phase to everyone in the room.
         // Pair Conversation carries the freshly generated pairs.
         broadcastSession(sessionId, "phase_changed", {
-          phase,
+          phase: targetPhase,
           phaseSelectedIndices: session.phaseSelectedIndices,
-          pairs: phase === PAIR_CONVERSATION_PHASE ? lessonSessionService.getPairsPayload(session) : null,
+          pairs: targetPhase === PAIR_CONVERSATION_PHASE ? lessonSessionService.getPairsPayload(session) : null,
           gameState: lessonSessionService.getGameStatePayload(session),
           phaseRestored: session.phaseRestored ?? false,
           resumePhase: session.resumePhase,
           activeSentenceIndex: session.activeSentenceIndex,
           flagCounts: lessonSessionService.getFlagCounts(session),
+          currentDbSessionId: session.currentDbSessionId,
         });
         broadcastSession(sessionId, "participants_updated", {
           participants: Array.from(session.participants.values())
         });
-        logger.info(`Session ${sessionId} changed to phase ${phase}`);
+        logger.info(`Session ${sessionId} changed to phase ${targetPhase}`);
 
         // Returning to the lobby closes the current DB round while keeping the
         // in-memory room available for a fresh cycle. Phase 1 will create a
         // new DB identity when the tutor starts again.
-        if (phase === 0 && previousPhase > 0 && !session.isDemo) {
+        if (targetPhase === 0 && previousPhase > 0 && !session.isDemo) {
           await dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
         }
 
         // If changing to final leaderboard, mark ACTIVE DB ROUND as FINISHED
         // Demo sessions have no DB round, no badges to unlock, and no students to notify.
-        if (phase === FINAL_LEADERBOARD_PHASE && !session.isDemo && !session.phaseRestored) {
+        if (targetPhase === FINAL_LEADERBOARD_PHASE && !session.isDemo && !session.phaseRestored) {
           dbWriter.updateSessionStatus(session.currentDbSessionId || sessionId, "FINISHED");
           void persistLiveState(session);
 
-          if (session.finalNotificationSent) {
-            // The round may have been rewound from the final leaderboard.
-            // Re-open the DB status above, but do not notify students twice.
-            return;
-          }
-          session.finalNotificationSent = true;
+          if (!session.finalNotificationSent) {
+            session.finalNotificationSent = true;
 
-          // Non-blocking badge unlock check for the tutor
-          if (session.tutorId) {
-            checkAndUnlockBadges(session.tutorId).catch((e) =>
-              logger.error("[Socket] Badge check failed:", e),
-            );
-          }
-
-          // Trigger LINE Notifications for final score
-          (async () => {
-            try {
-              const articleTitle = session.articleData?.title || "บทเรียน";
-              const studentList = Array.from(session.participants.values());
-              
-              for (const p of studentList) {
-                 // Get final score in current context
-                 const finalScore = p.score || 0;
-                 const historyDeepLink = LineNotificationService.buildLiffDeepLink("/lesson/history");
-                 const deepLinkSuffix = historyDeepLink ? `\n\n${historyDeepLink}` : "\n\nเข้าเช็คประวัติการเรียนและเฉลยคำตอบได้ที่ Student LIFF ครับ";
-                 const pushMsg = `🎉 จบคาบเรียนแล้ว!\n\nคุณได้คะแนนรวม ${finalScore} คะแนน จากบทเรียน "${articleTitle}"${deepLinkSuffix}`;
-
-                 if (p.resolvedUserId) {
-                   await LineNotificationService.sendToUser(p.resolvedUserId, pushMsg, { type: "notifyScoreUpdates" });
-                 }
-              }
-            } catch (e) {
-              logger.error("[Socket] Failed to trigger score notification:", e);
+            // Non-blocking badge unlock check for the tutor
+            if (session.tutorId) {
+              checkAndUnlockBadges(session.tutorId).catch((e) =>
+                logger.error("[Socket] Badge check failed:", e),
+              );
             }
-          })();
+
+            // Trigger LINE Notifications for final score
+            (async () => {
+              try {
+                const articleTitle = session.articleData?.title || "บทเรียน";
+                const studentList = Array.from(session.participants.values());
+
+                for (const p of studentList) {
+                   // Get final score in current context
+                   const finalScore = p.score || 0;
+                   const historyDeepLink = LineNotificationService.buildLiffDeepLink("/lesson/history");
+                   const deepLinkSuffix = historyDeepLink ? `\n\n${historyDeepLink}` : "\n\nเข้าเช็คประวัติการเรียนและเฉลยคำตอบได้ที่ Student LIFF ครับ";
+                   const pushMsg = `🎉 จบคาบเรียนแล้ว!\n\nคุณได้คะแนนรวม ${finalScore} คะแนน จากบทเรียน "${articleTitle}"${deepLinkSuffix}`;
+
+                   if (p.resolvedUserId) {
+                     await LineNotificationService.sendToUser(p.resolvedUserId, pushMsg, { type: "notifyScoreUpdates" });
+                   }
+                }
+              } catch (e) {
+                logger.error("[Socket] Failed to trigger score notification:", e);
+              }
+            })();
+          }
         }
 
         if (shouldRewind && !session.isDemo) {
@@ -782,12 +830,22 @@ export const setupLessonSocket = (io: Server) => {
         if (!session.isDemo) {
           void persistLiveState(session);
         }
+        acknowledge?.({ ok: true, phase: targetPhase });
       } else if (shouldRewind) {
-        socket.emit("error", {
-          message: "This phase cannot be rewound because its saved state is no longer available.",
-        });
+        const message = "This phase cannot be rewound because its saved state is no longer available.";
+        socket.emit("error", { message });
+        acknowledge?.({ ok: false, code: "PHASE_RESTORE_UNAVAILABLE", message });
+      } else {
+        acknowledge?.({ ok: false, code: "SESSION_NOT_FOUND", message: "Lesson session was not found." });
       }
-    });
+      } catch (error) {
+        logger.error(`[Socket] Failed to change session ${sessionId} to phase ${targetPhase}:`, error);
+        const message = "Could not change the lesson phase. Please try again.";
+        socket.emit("error", { message });
+        acknowledge?.({ ok: false, code: "PHASE_CHANGE_FAILED", message });
+      }
+      },
+    );
 
     socket.on("start_game_vote", ({ sessionId, phase }) => {
       const activeSession = lessonSessionService.getSession(sessionId);
@@ -985,11 +1043,16 @@ export const setupLessonSocket = (io: Server) => {
     socket.on("submit_answer", async ({ sessionId, answer, question, expectedAnswer }) => {
       const authorizedSession = lessonSessionService.getSession(sessionId);
       if (!isStudentSessionParticipant(actor, authorizedSession)) {
+        socket.emit("answer_received", { success: false, code: "SESSION_ACCESS_LOST" });
         rejectForbidden("submit_answer");
         return;
       }
 
       const studentId = actor.userId;
+      let aiSlotAcquired = false;
+      let aiRequestKey: string | undefined;
+      let answerCommitted = false;
+      try {
       if (authorizedSession?.participants.get(studentId)?.hasAnsweredCurrentPhase) {
         socket.emit("answer_received", {
           success: false,
@@ -998,7 +1061,10 @@ export const setupLessonSocket = (io: Server) => {
         return;
       }
       const session = lessonSessionService.getSession(sessionId);
-      if (!session) return;
+      if (!session) {
+        socket.emit("answer_received", { success: false, code: "SESSION_NOT_FOUND" });
+        return;
+      }
 
       // AI-evaluated phases: 9=Guided Response, 14=Guided Writing,
       // 16=teacher-mediated language questions.  Validate and reserve the
@@ -1007,7 +1073,6 @@ export const setupLessonSocket = (io: Server) => {
       const isAiPhase = session.currentPhase === 9 || session.currentPhase === 14 || session.currentPhase === 16;
       let evaluatedAnswer = answer;
       let result: ReturnType<typeof lessonSessionService.submitAnswer>;
-      let aiRequestKey: string | undefined;
 
       if (isAiPhase) {
         if (typeof answer !== "string") {
@@ -1035,6 +1100,7 @@ export const setupLessonSocket = (io: Server) => {
             socket.emit("answer_received", { success: false, code: slot.code });
             return;
           }
+          aiSlotAcquired = true;
         }
 
         const reservation = lessonSessionService.reserveAnswer(sessionId, studentId);
@@ -1083,12 +1149,21 @@ export const setupLessonSocket = (io: Server) => {
             aiVerified: false,
           };
         } finally {
-          if (shouldCallProvider && aiRequestKey) releaseAiSlot(studentId, aiRequestKey);
+          if (aiSlotAcquired && aiRequestKey) {
+            releaseAiSlot(studentId, aiRequestKey);
+            aiSlotAcquired = false;
+          }
         }
 
         result = lessonSessionService.completeReservedAnswer(sessionId, studentId, evaluatedAnswer);
       } else {
         result = lessonSessionService.submitAnswer(sessionId, studentId, evaluatedAnswer);
+      }
+
+      if (!result) {
+        lessonSessionService.releaseReservedAnswer(sessionId, studentId);
+        socket.emit("answer_received", { success: false, code: "SESSION_STATE_LOST" });
+        return;
       }
 
       if (result) {
@@ -1099,6 +1174,7 @@ export const setupLessonSocket = (io: Server) => {
           });
           return;
         }
+        answerCommitted = true;
         // Update participant's total score
         const participant = result.session.participants.get(studentId);
         if (participant) {
@@ -1354,6 +1430,16 @@ export const setupLessonSocket = (io: Server) => {
           logger.info(`[Socket] All participants answered in session ${sessionId} phase ${result.session.currentPhase}`);
         }
       }
+      } catch (error) {
+        if (aiSlotAcquired && aiRequestKey) {
+          releaseAiSlot(studentId, aiRequestKey);
+        }
+        if (!answerCommitted) {
+          lessonSessionService.releaseReservedAnswer(sessionId, studentId);
+        }
+        logger.error(`[Socket] Failed to process answer in session ${sessionId}:`, error);
+        socket.emit("answer_received", { success: false, code: "ANSWER_PROCESSING_FAILED" });
+      }
     });
 
     // Student toggles a sentence flag during Step 3 (Read the Article) to ask the tutor about pronunciation
@@ -1466,11 +1552,23 @@ export const setupLessonSocket = (io: Server) => {
 
       if (tutorSession) {
         const { sessionId } = tutorSession;
+        const disconnectedAt = Date.now();
+        stopSessionHeartbeat(sessionId);
         logger.info(`[Socket] Tutor disconnect detected for: ${socket.id}. Session ${sessionId} will close if tutor does not reconnect.`);
 
         setTimeout(async () => {
           const latestSession = lessonSessionService.getSession(sessionId);
           if (latestSession?.tutorSocketId !== socket.id) {
+            return;
+          }
+
+          // A tutor may reconnect to a different Cloud Run instance. The
+          // in-memory socket id on this instance is then still stale, while
+          // the shared lease has already been heartbeated by the new owner.
+          // Keep the room alive in that case so students are not kicked out.
+          const activeLock = await dbWriter.getActiveSessionLock(latestSession.classId || "");
+          if (activeLock?.sessionId === sessionId && activeLock.lastHeartbeatAt.getTime() > disconnectedAt) {
+            logger.info("[Socket] Session " + sessionId + " was recovered after tutor disconnect; keeping it active.");
             return;
           }
 

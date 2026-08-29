@@ -24,6 +24,26 @@ const getSocketUrl = () => {
   return typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3002';
 };
 
+function getAnswerSubmissionMessage(code?: string) {
+  switch (code) {
+    case "AI_CONCURRENCY_LIMIT":
+    case "AI_QUOTA_EXCEEDED":
+      return "ระบบกำลังตรวจคำตอบจำนวนมาก กรุณารอสักครู่แล้วลองส่งใหม่อีกครั้ง";
+    case "AI_REQUEST_ALREADY_IN_PROGRESS":
+      return "ระบบกำลังตรวจคำตอบนี้อยู่ กรุณารอสักครู่";
+    case "ANSWER_ALREADY_SUBMITTED":
+      return "คำตอบข้อนี้ถูกส่งไปแล้ว";
+    case "ANSWER_TOO_LONG":
+      return "คำตอบยาวเกินกำหนด กรุณาย่อคำตอบแล้วลองใหม่";
+    case "SESSION_ACCESS_LOST":
+    case "SESSION_NOT_FOUND":
+    case "SESSION_STATE_LOST":
+      return "การเชื่อมต่อห้องเรียนสะดุด ระบบกำลังเชื่อมต่อใหม่ กรุณาลองส่งอีกครั้ง";
+    default:
+      return "ส่งคำตอบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง";
+  }
+}
+
 export interface LessonPair {
   pairNumber: number;
   members: { studentId: string; name: string; pictureUrl?: string }[];
@@ -59,6 +79,7 @@ export interface LessonSessionData {
   sessionId: string;
   currentStudentId?: string;
   currentPhase: number;
+  hasAnswered?: boolean;
   articleData?: LessonArticleData;
   activeSentenceIndex?: number;
   phaseSelectedIndices?: Record<number, number>;
@@ -135,9 +156,11 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   const [flagCounts, setFlagCounts] = useState<Record<number, number>>({});
   const [languageAnswer, setLanguageAnswer] = useState<{ question: string; answer: string } | null>(null);
   const [phaseReadOnly, setPhaseReadOnly] = useState(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
 
   const socketRef = useRef<Socket | null>(null);
   const hasAnsweredRef = useRef(false);
+  const submissionPendingRef = useRef(false);
 
   useEffect(() => {
     hasAnsweredRef.current = hasAnswered;
@@ -156,13 +179,27 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
         });
         const tokenData = await tokenResponse.json().catch(() => ({})) as { socketToken?: string };
         if (!tokenResponse.ok || !tokenData.socketToken) {
-          setError("Your session is not ready. Please sign in again.");
+          if (!cancelled) setError("Your session is not ready. Please sign in again.");
           return;
         }
         if (cancelled) return;
 
+        const initialToken = tokenData.socketToken;
         const newSocket = io(getSocketUrl(), {
-          auth: { token: tokenData.socketToken },
+          // Lesson tokens expire after a few minutes. Refresh the handshake
+          // token for reconnects so a transient network change does not make
+          // the student lose the room while submitting an answer.
+          auth: (callback) => {
+            void fetch("/api/auth/socket-token", {
+              cache: "no-store",
+              credentials: "same-origin",
+            })
+              .then(async (response) => {
+                const data = await response.json().catch(() => ({})) as { socketToken?: string };
+                callback({ token: response.ok && data.socketToken ? data.socketToken : initialToken });
+              })
+              .catch(() => callback({ token: initialToken }));
+          },
           path: '/socket.io',
           addTrailingSlash: false,
           timeout: 8000,
@@ -172,20 +209,34 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
         setSocket(newSocket);
 
     newSocket.on('connect', () => {
+      if (cancelled) return;
       setError(null);
       newSocket.emit('join_class', { classId, studentId, name, pictureUrl });
     });
 
     newSocket.on('connect_error', (err) => {
+      if (cancelled) return;
       setError(err.message || 'Could not connect to the learning service.');
+    });
+
+    newSocket.on('disconnect', (reason) => {
+      submissionPendingRef.current = false;
+      if (!cancelled && reason !== 'io client disconnect') {
+        setSubmissionError('การเชื่อมต่อห้องเรียนขาดหาย ระบบกำลังเชื่อมต่อใหม่');
+      }
     });
 
     newSocket.on('join_success', (data: LessonSessionData) => {
       setPaymentRequired(null);
+      const answered = Boolean(data.hasAnswered);
       setSessionData(data);
       setArticleData(data.articleData ?? null);
       setPhaseReadOnly(Boolean(data.phaseRestored));
       setFlagCounts(data.flagCounts || {});
+      setHasAnswered(answered);
+      hasAnsweredRef.current = answered;
+      submissionPendingRef.current = false;
+      setSubmissionError(null);
     });
 
     newSocket.on('participants_updated', (data: { participants: LessonParticipant[] }) => {
@@ -224,7 +275,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     });
 
     newSocket.on('phase_changed', (data: { phase: number; phaseSelectedIndices?: Record<number, number>; pairs?: LessonPair[] | null; gameState?: GamePhaseState | null; phaseRestored?: boolean; resumePhase?: number; activeSentenceIndex?: number; flagCounts?: Record<number, number> }) => {
-      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null, phaseRestored: data.phaseRestored ?? false, resumePhase: data.resumePhase, activeSentenceIndex: data.activeSentenceIndex, flagCounts: data.flagCounts ?? {} } : null);
+      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, hasAnswered: false, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null, phaseRestored: data.phaseRestored ?? false, resumePhase: data.resumePhase, activeSentenceIndex: data.activeSentenceIndex, flagCounts: data.flagCounts ?? {} } : null);
       setPhaseReadOnly(Boolean(data.phaseRestored));
       setFlagCounts(data.flagCounts || {});
       setHasAnswered(false);
@@ -234,6 +285,8 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
       setIsEveryoneReady(false);
       setAiFeedback(null);
       setLanguageAnswer(null);
+      submissionPendingRef.current = false;
+      setSubmissionError(null);
       // Sentence flags reset at the start of a fresh instructional cycle
       if (data.phase === 1) setFlagCounts({});
     });
@@ -246,7 +299,13 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
       setFlagCounts(data.flagCounts || {});
     });
 
-    newSocket.on('answer_received', () => {
+    newSocket.on('answer_received', (data: { success?: boolean; code?: string; message?: string }) => {
+      submissionPendingRef.current = false;
+      if (data?.success === false) {
+        setSubmissionError(data.message || getAnswerSubmissionMessage(data.code));
+        return;
+      }
+      setSubmissionError(null);
       setHasAnswered(true);
       hasAnsweredRef.current = true;
     });
@@ -282,13 +341,20 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     void init();
     return () => {
       cancelled = true;
+      submissionPendingRef.current = false;
       activeSocket?.disconnect();
+      if (socketRef.current === activeSocket) {
+        socketRef.current = null;
+        setSocket(null);
+      }
     };
   }, [classId, studentId, name, pictureUrl]);
 
   const submitAnswer = (answer: string, question?: string, expectedAnswer?: string) => {
-    if (phaseReadOnly) return;
+    if (phaseReadOnly || hasAnsweredRef.current || submissionPendingRef.current) return;
     if (socketRef.current && sessionData) {
+      submissionPendingRef.current = true;
+      setSubmissionError(null);
       socketRef.current.emit('submit_answer', { 
         sessionId: sessionData.sessionId, 
         studentId, 
@@ -356,6 +422,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
     kicked,
     flagCounts,
     languageAnswer,
+    submissionError,
     submitAnswer,
     toggleReady,
     flagSentence,

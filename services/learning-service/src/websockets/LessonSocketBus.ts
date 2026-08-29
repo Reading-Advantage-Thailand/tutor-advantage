@@ -5,7 +5,7 @@ import { logger } from "@tutor-advantage/shared-config";
 const CHANNEL = "tutor_advantage_lesson_events";
 const MAX_NOTIFY_BYTES = 7_500;
 
-type BusEvent = {
+export type LessonBusEvent = {
   sourceInstanceId: string;
   sessionId: string;
   event: string;
@@ -21,7 +21,11 @@ let instanceId = "";
  * when Redis is not available. The database-backed session lease/state makes
  * reconnects safe; this bus mirrors room events to sockets on other instances.
  */
-export async function startLessonSocketBus(io: Server, sourceInstanceId: string) {
+export async function startLessonSocketBus(
+  io: Server,
+  sourceInstanceId: string,
+  onRemoteEvent?: (event: LessonBusEvent) => void,
+) {
   if (process.env.NODE_ENV === "test" || !process.env.DATABASE_URL) return;
   instanceId = sourceInstanceId;
   const nextClient = new Client({ connectionString: process.env.DATABASE_URL });
@@ -31,8 +35,13 @@ export async function startLessonSocketBus(io: Server, sourceInstanceId: string)
     nextClient.on("notification", (message) => {
       if (!message.payload) return;
       try {
-        const event = JSON.parse(message.payload) as BusEvent;
+        const event = JSON.parse(message.payload) as LessonBusEvent;
         if (!event.sessionId || event.sourceInstanceId === instanceId) return;
+        try {
+          onRemoteEvent?.(event);
+        } catch (error) {
+          logger.warn("[LessonBus] Failed to apply remote lesson state:", error);
+        }
         if (event.targetUserId) {
           for (const socket of io.sockets.sockets.values()) {
             if (socket.data.actor?.userId === event.targetUserId) {

@@ -171,6 +171,10 @@ function cloneJson<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
 }
 
+function isRecord(value: unknown): value is Record<string, any> {
+  return typeof value === "object" && value !== null;
+}
+
 export function getGameCategoryForPhase(phase: number): GameCategory | null {
   if (phase === VOCABULARY_GAME_PHASE) return "vocabulary";
   if (phase === SENTENCE_GAME_PHASE) return "sentence";
@@ -767,6 +771,131 @@ class LessonSessionService {
     }));
   }
 
+  /**
+   * Keep the local in-memory projection current when a student socket is
+   * connected to a different learning-service instance than the tutor. The
+   * PostgreSQL bus already mirrors the UI event; applying the same event here
+   * prevents a later answer/reconnect from being evaluated against an old
+   * phase on that instance.
+   */
+  applyRemoteEvent(sessionId: string, event: string, payload: unknown): void {
+    const session = this.sessions.get(sessionId);
+    if (!session) return;
+
+    if (event === "session_deleted") {
+      this.deleteSession(sessionId);
+      return;
+    }
+
+    if (event === "phase_changed") {
+      this.applyRemotePhase(session, payload);
+      return;
+    }
+
+    if (event === "participants_updated" || event === "participant_joined" || event === "participant_left") {
+      if (!isRecord(payload) || !Array.isArray(payload.participants)) return;
+      for (const raw of payload.participants) {
+        if (!isRecord(raw) || typeof raw.studentId !== "string") continue;
+        const existing = session.participants.get(raw.studentId);
+        const hasLatestAnswer = Object.prototype.hasOwnProperty.call(raw, "latestAnswer");
+        const hasAnswered = Object.prototype.hasOwnProperty.call(raw, "hasAnsweredCurrentPhase");
+        session.participants.set(raw.studentId, {
+          studentId: raw.studentId,
+          resolvedUserId: typeof raw.resolvedUserId === "string"
+            ? raw.resolvedUserId
+            : existing?.resolvedUserId,
+          name: typeof raw.name === "string" ? raw.name : existing?.name || "Student",
+          pictureUrl: typeof raw.pictureUrl === "string"
+            ? raw.pictureUrl
+            : existing?.pictureUrl,
+          socketId: existing?.socketId
+            || (typeof raw.socketId === "string" ? raw.socketId : "restored:" + raw.studentId),
+          score: typeof raw.score === "number" ? raw.score : existing?.score || 0,
+          hasAnsweredCurrentPhase: hasAnswered
+            ? raw.hasAnsweredCurrentPhase === true
+            : existing?.hasAnsweredCurrentPhase === true,
+          latestAnswer: hasLatestAnswer ? raw.latestAnswer : existing?.latestAnswer,
+          isReady: typeof raw.isReady === "boolean"
+            ? raw.isReady
+            : existing?.isReady === true,
+        });
+      }
+      return;
+    }
+
+    if (event === "active_sentence_synced" && isRecord(payload)) {
+      const index = Number(payload.activeSentenceIndex);
+      if (Number.isInteger(index)) session.activeSentenceIndex = index;
+      return;
+    }
+
+    if (
+      (event === "game_state_changed" || event === "game_votes_updated" || event === "game_results_updated")
+      && isRecord(payload)
+    ) {
+      session.gameState = isRecord(payload.gameState)
+        ? cloneJson(payload.gameState as GamePhaseState)
+        : undefined;
+    }
+  }
+
+  private applyRemotePhase(session: LessonSession, payload: unknown): void {
+    if (!isRecord(payload)) return;
+    const phase = Number(payload.phase);
+    if (!Number.isInteger(phase) || phase < 0 || phase > FINAL_LEADERBOARD_PHASE) return;
+
+    session.currentPhase = phase;
+    session.phaseRestored = payload.phaseRestored === true;
+    session.resumePhase = typeof payload.resumePhase === "number"
+      ? payload.resumePhase
+      : undefined;
+    session.activeSentenceIndex = typeof payload.activeSentenceIndex === "number"
+      ? payload.activeSentenceIndex
+      : undefined;
+    if (isRecord(payload.phaseSelectedIndices)) {
+      session.phaseSelectedIndices = cloneJson(payload.phaseSelectedIndices as Record<number, number>);
+    }
+    if (Object.prototype.hasOwnProperty.call(payload, "currentDbSessionId")) {
+      session.currentDbSessionId = typeof payload.currentDbSessionId === "string"
+        ? payload.currentDbSessionId
+        : undefined;
+    }
+    session.gameState = isRecord(payload.gameState)
+      ? cloneJson(payload.gameState as GamePhaseState)
+      : undefined;
+
+    if (phase === PAIR_CONVERSATION_PHASE && Array.isArray(payload.pairs)) {
+      session.pairs = payload.pairs
+        .filter(isRecord)
+        .map((pair, index) => {
+          const memberIds = Array.isArray(pair.studentIds)
+            ? pair.studentIds.filter((studentId): studentId is string => typeof studentId === "string")
+            : Array.isArray(pair.members)
+              ? pair.members
+                .filter(isRecord)
+                .map((member) => member.studentId)
+                .filter((studentId): studentId is string => typeof studentId === "string")
+              : [];
+          return {
+            pairNumber: Number.isInteger(Number(pair.pairNumber))
+              ? Number(pair.pairNumber)
+              : index + 1,
+            studentIds: memberIds,
+          };
+        });
+    } else {
+      session.pairs = undefined;
+    }
+
+    session.status = phase > 0 ? "ACTIVE" : "LOBBY";
+    for (const participant of session.participants.values()) {
+      participant.hasAnsweredCurrentPhase = false;
+      participant.latestAnswer = undefined;
+      if (phase === 1) participant.score = 0;
+    }
+    if (phase === 1) session.sentenceFlags = new Map();
+  }
+
   syncActiveSentence(sessionId: string, index: number): LessonSession | null {
     const session = this.sessions.get(sessionId);
     if (session) {
@@ -823,6 +952,22 @@ class LessonSessionService {
     }
 
     return { session, allAnswered, accepted: true };
+  }
+
+  /**
+   * Release a reservation when the socket handler fails before it can commit
+   * the answer. Without this rollback, a transient exception would leave the
+   * student permanently marked as answered for the phase and unable to retry.
+   */
+  releaseReservedAnswer(sessionId: string, studentId: string): boolean {
+    const session = this.sessions.get(sessionId);
+    const participant = session?.participants.get(studentId);
+    if (!participant || !participant.hasAnsweredCurrentPhase || participant.latestAnswer !== undefined) {
+      return false;
+    }
+
+    participant.hasAnsweredCurrentPhase = false;
+    return true;
   }
 
   endQuestion(sessionId: string): { session: LessonSession; answers: Array<{ studentId: string; answer: any }> } | undefined {
