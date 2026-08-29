@@ -174,6 +174,7 @@ export const useLessonSocket = (
         });
 
         socketInstance.on('phase_changed', (data: { phase: number; phaseChangeId?: string; phaseSelectedIndices?: Record<number, number>; pairs?: TutorSessionData['pairs']; gameState?: GamePhaseState | null; phaseRestored?: boolean; resumePhase?: number; activeSentenceIndex?: number; flagCounts?: Record<number, number> }) => {
+          if (cancelled || socketRef.current !== socketInstance || !socketInstance.connected) return;
           if (data.phaseChangeId && data.phaseChangeId === phaseChangeIdRef.current) {
             return;
           }

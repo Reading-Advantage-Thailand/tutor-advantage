@@ -744,6 +744,11 @@ export const setupLessonSocket = (io: Server) => {
         { sessionId, phase },
         acknowledge?: (result: { ok: boolean; phase?: number; code?: string; message?: string }) => void,
       ) => {
+      if (!socket.connected) {
+        acknowledge?.({ ok: false, code: "SOCKET_DISCONNECTED", message: "The lesson connection is no longer active." });
+        return;
+      }
+
       const authorizedSession = lessonSessionService.getSession(sessionId);
       if (!isTutorSessionOwner(actor, socket.id, authorizedSession)) {
         rejectForbidden("change_phase");
