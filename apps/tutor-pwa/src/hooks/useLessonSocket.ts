@@ -261,12 +261,11 @@ export const useLessonSocket = (
       setAllAnsweredData([]);
       setQuestionEnded(false);
     };
-  }, [tutorId, articleId, classId, classBookCycleId, bookId, demo, lessonSocketUrl]);
+  }, [tutorId, articleId, classId, classBookCycleId, bookId, demo, lessonSocketUrl, invalidatePhaseChange]);
 
   const changePhase = useCallback((phase: number): Promise<boolean> => {
     const pendingRequest = phaseChangeInFlightRef.current;
     if (pendingRequest) return pendingRequest;
-
     const activeSocket = socketRef.current;
     const activeSession = sessionDataRef.current;
 
@@ -288,11 +287,10 @@ export const useLessonSocket = (
     phaseChangeInFlightRef.current = request;
 
     let settled = false;
-    let timeout: ReturnType<typeof setTimeout> | undefined;
     const settle = (ok: boolean) => {
       if (settled) return;
       settled = true;
-      if (timeout) clearTimeout(timeout);
+      clearTimeout(timeout);
       if (phaseChangeRequestIdRef.current === requestId) {
         phaseChangeInFlightRef.current = null;
         phaseChangeCancelRef.current = null;
@@ -302,7 +300,7 @@ export const useLessonSocket = (
 
     phaseChangeCancelRef.current = () => settle(false);
 
-    timeout = setTimeout(() => {
+    const timeout = setTimeout(() => {
       setError('The lesson server did not confirm the phase change. Please check the connection and try again.');
       settle(false);
     }, PHASE_CHANGE_TIMEOUT_MS);
