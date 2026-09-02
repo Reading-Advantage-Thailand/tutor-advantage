@@ -1668,8 +1668,10 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const words = articleData?.words || [];
     if (words.length < 4)
       return (
-        <div className="flex-1 flex items-center justify-center text-xl">
-          {t("lesson.interactive.notEnoughVocab")}
+        <div data-tour-target={preparationMode ? "phase-9-empty-state" : undefined} className="flex-1 flex items-center justify-center text-xl">
+          <div data-tour-target={preparationMode ? "phase-9-student-status" : undefined}>
+            {t("lesson.interactive.notEnoughVocab")}
+          </div>
         </div>
       );
 
@@ -1735,8 +1737,10 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const sentences = articleData?.sentences || [];
     if (sentences.length < 1)
       return (
-        <div className="flex-1 flex items-center justify-center text-xl">
-          {t("lesson.interactive.notEnoughSentences")}
+        <div data-tour-target={preparationMode ? "phase-11-empty-state" : undefined} className="flex-1 flex items-center justify-center text-xl">
+          <div data-tour-target={preparationMode ? "phase-11-student-status" : undefined}>
+            {t("lesson.interactive.notEnoughSentences")}
+          </div>
         </div>
       );
 
@@ -1748,8 +1752,10 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const words = String(targetSentence).split(" ");
     if (words.length < 3)
       return (
-        <div className="flex-1 flex items-center justify-center text-xl">
-          {t("lesson.interactive.sentenceTooShort")}
+        <div data-tour-target={preparationMode ? "phase-11-empty-state" : undefined} className="flex-1 flex items-center justify-center text-xl">
+          <div data-tour-target={preparationMode ? "phase-11-student-status" : undefined}>
+            {t("lesson.interactive.sentenceTooShort")}
+          </div>
         </div>
       );
 
@@ -1807,8 +1813,10 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const sentences = articleData?.sentences || [];
     if (sentences.length < 1)
       return (
-        <div className="flex-1 flex items-center justify-center text-xl">
-          {t("lesson.interactive.notEnoughSentences")}
+        <div data-tour-target={preparationMode ? "phase-12-empty-state" : undefined} className="flex-1 flex items-center justify-center text-xl">
+          <div data-tour-target={preparationMode ? "phase-12-student-status" : undefined}>
+            {t("lesson.interactive.notEnoughSentences")}
+          </div>
         </div>
       );
 
@@ -3738,6 +3746,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         >
           <button
             onClick={() => setIsToolbarHidden(false)}
+            data-tour-target={preparationMode ? "show-toolbar-button" : undefined}
             className="flex items-center gap-2 rounded-2xl border border-white/15 bg-slate-950/80 px-4 py-3 text-sm font-black text-white shadow-2xl backdrop-blur-xl transition-colors hover:bg-slate-900"
           >
             <Eye size={16} />
@@ -3804,6 +3813,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
             <button
               onClick={() => setIsToolbarHidden(true)}
+              data-tour-target={preparationMode ? "hide-toolbar-button" : undefined}
               className={`${quietButtonClass} shrink-0 flex items-center gap-1.5`}
             >
               <EyeOff size={14} />
@@ -3827,6 +3837,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             <button
               onClick={handlePreviousPhase}
               disabled={currentPhase <= 1 || isChangingPhase}
+              data-tour-target={preparationMode ? "previous-phase-button" : undefined}
               className={`${quietButtonClass} disabled:cursor-not-allowed disabled:opacity-45`}
             >
               <ChevronLeft size={16} />

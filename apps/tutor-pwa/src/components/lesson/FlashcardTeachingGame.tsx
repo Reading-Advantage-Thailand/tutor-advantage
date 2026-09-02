@@ -36,8 +36,8 @@ export function FlashcardTeachingGame({ words = [], participants, answered, onSp
 
   if (!current) {
     return (
-      <div data-tour-target={preparationMode ? "phase-2-student-status" : undefined} className="flex flex-1 items-center justify-center rounded-3xl border border-amber-400/30 bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-950 p-10 text-center text-white shadow-2xl">
-        <div>
+      <div data-tour-target={preparationMode ? "phase-2-empty-state" : undefined} className="flex flex-1 items-center justify-center rounded-3xl border border-amber-400/30 bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-950 p-10 text-center text-white shadow-2xl">
+        <div data-tour-target={preparationMode ? "phase-2-student-status" : undefined}>
           <BookOpen className="mx-auto mb-4 size-14 text-amber-300" />
           <h2 className="text-2xl font-black">ยังไม่มีคำศัพท์สำหรับ Flashcard</h2>
           <p className="mt-2 text-white/60">เพิ่มคำศัพท์ในบทเรียนก่อนเริ่ม Phase นี้</p>

@@ -138,6 +138,27 @@ function sentenceText(sentence: any): string {
   ).trim();
 }
 
+function primaryPartCount(articleData: ArticleData, sentences: any[]): number {
+  if ((articleData as any)?.content_provider !== "PRIMARY_ADVANTAGE") return 0;
+
+  const explicitPartCount = Math.max(
+    Array.isArray((articleData as any)?.primaryParts) ? (articleData as any).primaryParts.length : 0,
+    Array.isArray((articleData as any)?.parts) ? (articleData as any).parts.length : 0,
+  );
+  const paragraphCount = String((articleData as any)?.passage || "")
+    .split(/\n+/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean).length;
+  const validSentenceCount = sentences.map(sentenceText).filter(Boolean).length;
+  const inferredPartCount = Math.max(
+    explicitPartCount,
+    Math.min(3, paragraphCount),
+    validSentenceCount >= 3 ? 3 : validSentenceCount > 0 ? 1 : 0,
+  );
+
+  return Math.min(3, inferredPartCount);
+}
+
 function hasReadingAudio(articleData: ArticleData, sentences: any[]): boolean {
   const directAudio = [
     (articleData as any)?.audio_url,
@@ -147,7 +168,11 @@ function hasReadingAudio(articleData: ArticleData, sentences: any[]): boolean {
   const sentenceAudio = sentences.some((sentence) =>
     typeof sentence === "object" && /^https?:\/\//i.test(String(sentence?.audioUrl || sentence?.audio_url || "")),
   );
-  return directAudio || sentenceAudio;
+  const manifestSentenceAudio = Array.isArray((articleData as any)?.audio_manifest?.sentences)
+    && (articleData as any).audio_manifest.sentences.some((sentence: any) =>
+      /^https?:\/\//i.test(String(sentence?.audioUrl || sentence?.audio_url || "")),
+    );
+  return directAudio || sentenceAudio || manifestSentenceAudio;
 }
 
 function questionCount(articleData: ArticleData, phase: number): number {
@@ -166,6 +191,7 @@ function phaseFocusGuidance(): Record<number, Focus[]> {
       focus("phase-1-checklist", "Checklist เปิดบทเรียน", "ส่วนนี้คือสิ่งที่ติวเตอร์ควรทำในช่วงเริ่มต้น: แนะนำเรื่อง ตั้งเป้าหมาย และชวนคิด", "เลือกทำทีละข้อ ไม่ต้องอ่านทุกข้อความบนจอให้นักเรียนฟัง"),
     ],
     [LESSON_PHASE.FLASHCARDS]: [
+      focus("previous-phase-button", "ย้อนกลับไป Phase ก่อนหน้า", "หลังจากเริ่ม Phase 2 แล้ว ปุ่มนี้ใช้ย้อนกลับไปทบทวนช่วงก่อนหน้าได้โดยไม่ต้องเริ่มบทเรียนใหม่", "ลองกดปุ่มนี้หนึ่งครั้ง แล้วกด ถัดไป ในการ์ดไกด์เพื่อกลับเข้าสู่ลำดับการสอน", { action: "click" }),
       focus("phase-2-flashcards", "รู้จักหน้าบัตรคำศัพท์", "นี่คือ Flashcard จริงของ Lesson ใช้สำหรับให้เด็กเห็นคำศัพท์ทีละใบและลองนึกความหมายด้วยตัวเอง", "เริ่มจากให้เด็กอ่านคำศัพท์บนหน้าใบการ์ดก่อน"),
       focus("phase-2-flashcard-card", "กดที่การ์ดเพื่อพลิกดู", "คลิกที่ตัวการ์ดเพื่อสลับระหว่างหน้าคำศัพท์และหน้าความหมายได้ทันที", "ให้เด็กลองตอบความหมายก่อน แล้วค่อยพลิกการ์ดดูเฉลย", { action: "click", autoAdvance: true }),
       focus("phase-2-flashcard-audio", "ฟังการออกเสียงคำศัพท์", "กดลำโพงบน Flashcard เพื่อเปิดเสียงคำศัพท์หรือใช้เสียงสำรองของเบราว์เซอร์เมื่อบทความไม่มีไฟล์เสียง", "ให้เด็กฟังแล้วอ่านตาม", { action: "click", autoAdvance: true }),
@@ -258,10 +284,211 @@ function phaseHasData(articleData: ArticleData, phase: number): boolean {
   if (phase === LESSON_PHASE.FLASHCARDS) return words.length > 0;
   if (phase === LESSON_PHASE.COMPREHENSION) return questionCount(articleData, phase) > 0;
   if (phase === LESSON_PHASE.VOCABULARY_PRACTICE) return words.length >= 4;
-  if (([LESSON_PHASE.SENTENCE_PRACTICE, LESSON_PHASE.SENTENCE_ORDER] as number[]).includes(phase)) {
+  if (phase === LESSON_PHASE.SENTENCE_PRACTICE) {
     return sentences.some((sentence) => sentenceText(sentence).split(/\s+/).filter(Boolean).length >= 3);
   }
+  if (phase === LESSON_PHASE.SENTENCE_ORDER) return sentences.some((sentence) => Boolean(sentenceText(sentence)));
   return questionCount(articleData, phase) > 0;
+}
+
+function specialDataGuidance(articleData: ArticleData): Record<number, Focus[]> {
+  const notices: Record<number, Focus[]> = {};
+  const words = articleWords(articleData);
+  const sentences = articleSentences(articleData);
+  const validSentences = sentences.map(sentenceText).filter(Boolean);
+  const addNotice = (phase: number, target: string, title: string, description: string, tip: string) => {
+    notices[phase] = [
+      ...(notices[phase] || []),
+      focus(target, title, description, tip),
+    ];
+  };
+
+  if (words.length === 0) {
+    addNotice(
+      LESSON_PHASE.FLASHCARDS,
+      "phase-2-empty-state",
+      "กรณีไม่มีคำศัพท์",
+      "บทความนี้ยังไม่มี vocabulary จึงไม่มีการ์ดให้พลิกหรือเลื่อนไปใบถัดไป หน้านี้จะแสดงสถานะให้เตรียมข้อมูลก่อนสอน",
+      "ข้ามการสาธิตการ์ดได้ และกลับมาเติมคำศัพท์ในบทเรียนก่อนเปิดใช้จริง",
+    );
+    addNotice(
+      LESSON_PHASE.VOCABULARY_CONTEXT,
+      "phase-4-passage",
+      "ไม่มีคำศัพท์ให้ไฮไลต์",
+      "เมื่อบทความไม่มี vocabulary รายการคำศัพท์จะว่าง ให้ใช้ passage อธิบายความหมายจากบริบทแทน",
+      "อย่าปล่อยให้ช่วงนี้กลายเป็นหน้าว่าง ให้ชวนเด็กชี้คำสำคัญจากประโยคแทน",
+    );
+  } else if (words.length === 1) {
+    addNotice(
+      LESSON_PHASE.FLASHCARDS,
+      "phase-2-flashcards",
+      "กรณีมี Flashcard ใบเดียว",
+      "บทความนี้มีคำศัพท์เพียงหนึ่งคำ ปุ่ม ถัดไป จึง disabled ตามข้อมูลจริง ให้เน้นการพลิก การฟัง และการเรียกคืนความหมาย",
+      "ไม่ต้องรอการ์ดใบถัดไป ให้ใช้ใบเดียวฝึกออกเสียงและแต่งประโยคเพิ่ม",
+    );
+  }
+
+  const readingIssues: string[] = [];
+  if (!hasReadingAudio(articleData, sentences)) {
+    readingIssues.push("ไม่มีไฟล์เสียงอ่าน จึงใช้การอ่านจาก passage และเสียงสำรองของเบราว์เซอร์เมื่อจำเป็น");
+  }
+  if (validSentences.length === 0) {
+    readingIssues.push("ไม่มี sentence data จึงไม่สามารถเลือกหรือข้ามทีละประโยคได้");
+  } else if (validSentences.length === 1) {
+    readingIssues.push("มีบทอ่านเพียงหนึ่งช่วง ปุ่มไปประโยคถัดไปจึง disabled");
+  }
+  if ((articleData as any)?.content_provider === "PRIMARY_ADVANTAGE" && primaryPartCount(articleData, sentences) <= 1) {
+    readingIssues.push("ไม่มีการแบ่ง Part แบบ Primary จึงใช้บทอ่านหน้าเดียว");
+  }
+  if (readingIssues.length > 0) {
+    addNotice(
+      LESSON_PHASE.READ_ARTICLE,
+      "phase-3-reading-passage",
+      "กรณีข้อมูลบทอ่านไม่เต็มชุด",
+      `${readingIssues.join(" ")}. ทัวร์จะข้าม control ที่ใช้ข้อมูลส่วนนี้ไม่ได้ แต่ยังสอน flow ที่ใช้ได้จริงต่อให้ครบ`,
+      "สอนเฉพาะ control ที่ยังใช้งานได้กับบทความนี้ และกลับมาเพิ่มข้อมูลเมื่อพร้อม",
+    );
+  }
+  if (validSentences.length === 0) {
+    addNotice(
+      LESSON_PHASE.KEY_SENTENCES,
+      "phase-6-sentences",
+      "ยังไม่มี Key Sentence",
+      "บทความนี้ไม่มี sentence data สำหรับสร้างรายการ Key Sentences จึงใช้พื้นที่อธิบายแทนและข้ามปุ่มเสียงของประโยค",
+      "เพิ่ม sentence data ก่อนใช้ช่วงนี้เพื่อฝึกอ่านและสังเกตโครงสร้าง",
+    );
+  }
+
+  if (words.length < 4) {
+    addNotice(
+      LESSON_PHASE.VOCABULARY_PRACTICE,
+      "phase-9-empty-state",
+      "คำศัพท์ยังไม่ครบสำหรับแบบฝึก",
+      "Phase ฝึกคำศัพท์ต้องมีอย่างน้อย 4 คำเพื่อสร้างตัวเลือกที่มีคุณภาพ ตอนนี้ Lesson จะแสดงข้อความให้เติมข้อมูลแทน",
+      "ใช้ Phase 2 ทบทวนคำที่มีไปก่อน แล้วค่อยกลับมาสร้างแบบฝึกเมื่อครบ 4 คำ",
+    );
+  }
+  if (!phaseHasData(articleData, LESSON_PHASE.COMPREHENSION)) {
+    addNotice(
+      LESSON_PHASE.COMPREHENSION,
+      "phase-7-question",
+      "ยังไม่มีคำถามตรวจความเข้าใจ",
+      "บทความนี้ยังไม่มี multiple-choice question จึงใช้คำถามทั่วไปเป็น placeholder และไม่มีตัวเลือกจริงให้วิเคราะห์",
+      "เพิ่มคำถามและตัวเลือกก่อนใช้ Phase นี้ในห้องเรียนจริง",
+    );
+  }
+  if (!phaseHasData(articleData, LESSON_PHASE.DEEP_READING)) {
+    addNotice(
+      LESSON_PHASE.DEEP_READING,
+      "phase-5-questions",
+      "ยังไม่มีคำถามอ่านเชิงลึก",
+      "บทความนี้ยังไม่มี short-answer question สำหรับ Comprehension Guide จึงแสดงคำอธิบาย fallback แทนรายการคำถาม",
+      "เตรียมคำถามปลายเปิดจากบทอ่านก่อนใช้ช่วงนี้เพื่อค้นหาหลักฐาน",
+    );
+  }
+  if (!phaseHasData(articleData, LESSON_PHASE.GUIDED_RESPONSE)) {
+    addNotice(
+      LESSON_PHASE.GUIDED_RESPONSE,
+      "phase-8-question",
+      "ยังไม่มีคำถามปลายเปิด",
+      "ไม่มี short-answer question ให้แสดง จึงใช้คำอธิบายทั่วไปแทน และจะไม่สาธิตเสียงอ่านของคำถาม",
+      "เพิ่ม prompt ปลายเปิดก่อนสอนการเรียบเรียงคำตอบ",
+    );
+  }
+  if (!phaseHasData(articleData, LESSON_PHASE.SENTENCE_PRACTICE)) {
+    addNotice(
+      LESSON_PHASE.SENTENCE_PRACTICE,
+      "phase-11-empty-state",
+      "ยังไม่มีประโยคสำหรับเติมคำ",
+      "ต้องมีประโยคที่ยาวพอจึงจะสร้างช่องว่างและตัวเลือกได้ หน้านี้จะแสดงข้อความให้เตรียม sentence data แทน",
+      "เพิ่มประโยคอย่างน้อยหนึ่งประโยคที่มีสามคำขึ้นไปก่อนใช้แบบฝึกนี้",
+    );
+  }
+  if (sentences.length === 0) {
+    addNotice(
+      LESSON_PHASE.SENTENCE_ORDER,
+      "phase-12-empty-state",
+      "ยังไม่มีประโยคสำหรับเรียงคำ",
+      "ไม่มี sentence data ให้สร้างโจทย์เรียงคำ จึงแสดงข้อความเตรียมข้อมูลแทน",
+      "เพิ่มประโยคจากบทอ่านก่อนเริ่มกิจกรรมเรียงประโยค",
+    );
+  }
+  if (!phaseHasData(articleData, LESSON_PHASE.GUIDED_WRITING)) {
+    addNotice(
+      LESSON_PHASE.GUIDED_WRITING,
+      "phase-13-writing",
+      "ยังไม่มี Writing Prompt",
+      "ไม่มี short-answer prompt สำหรับ Guided Writing จึงใช้ prompt ทั่วไปและไม่มีปุ่มเสียงของคำถาม",
+      "เพิ่ม prompt การเขียนก่อนให้นักเรียนวางแผนคำตอบ",
+    );
+  }
+
+  return notices;
+}
+
+function shouldSkipFocus(articleData: ArticleData, phase: number, current: Focus): boolean {
+  const words = articleWords(articleData);
+  const sentences = articleSentences(articleData);
+  const validSentences = sentences.map(sentenceText).filter(Boolean);
+  const hasReadingAudioData = hasReadingAudio(articleData, sentences);
+  const hasPrimaryParts = primaryPartCount(articleData, sentences) > 1;
+
+  if (phase === LESSON_PHASE.FLASHCARDS && !words.length) {
+    return !["previous-phase-button", "phase-2-flashcards"].includes(current.target);
+  }
+  if (phase === LESSON_PHASE.FLASHCARDS && words.length === 1 && current.target === "phase-2-flashcard-next") {
+    return true;
+  }
+  if (phase === LESSON_PHASE.READ_ARTICLE && !validSentences.length && current.target === "phase-3-first-sentence") {
+    return true;
+  }
+  if (phase === LESSON_PHASE.READ_ARTICLE && !hasReadingAudioData && [
+    "phase-3-audio-player",
+    "phase-3-play-button",
+    "phase-3-speed",
+    "phase-3-previous-sentence",
+    "phase-3-next-sentence",
+  ].includes(current.target)) {
+    return true;
+  }
+  if (phase === LESSON_PHASE.READ_ARTICLE && !validSentences.length && [
+    "phase-3-previous-sentence",
+    "phase-3-next-sentence",
+  ].includes(current.target)) {
+    return true;
+  }
+  if (phase === LESSON_PHASE.READ_ARTICLE && !hasPrimaryParts && [
+    "phase-3-previous-part",
+    "phase-3-next-part",
+  ].includes(current.target)) {
+    return true;
+  }
+  if (phase === LESSON_PHASE.VOCABULARY_CONTEXT && !words.length && current.target === "phase-4-first-audio") {
+    return true;
+  }
+  if (phase === LESSON_PHASE.DEEP_READING && !phaseHasData(articleData, phase) && current.target.startsWith("phase-5-first-question")) {
+    return true;
+  }
+  if (phase === LESSON_PHASE.KEY_SENTENCES && !sentences.some(sentenceText) && current.target === "phase-6-first-audio") {
+    return true;
+  }
+  if (([
+    LESSON_PHASE.COMPREHENSION,
+    LESSON_PHASE.VOCABULARY_PRACTICE,
+    LESSON_PHASE.SENTENCE_PRACTICE,
+  ] as number[]).includes(phase) && !phaseHasData(articleData, phase)) {
+    return true;
+  }
+  if (phase === LESSON_PHASE.SENTENCE_ORDER && !sentences.some(sentenceText)) {
+    return true;
+  }
+  if (phase === LESSON_PHASE.GUIDED_RESPONSE && !phaseHasData(articleData, phase)) {
+    return true;
+  }
+  if (phase === LESSON_PHASE.GUIDED_WRITING && !phaseHasData(articleData, phase)) {
+    return true;
+  }
+  return false;
 }
 
 function resolveFocusTarget(articleData: ArticleData, phase: number, current: Focus): Focus {
@@ -269,7 +496,7 @@ function resolveFocusTarget(articleData: ArticleData, phase: number, current: Fo
   const sentences = articleSentences(articleData);
   const hasShortAnswer = questionCount(articleData, phase) > 0;
   const hasReading = hasReadingAudio(articleData, sentences);
-  const hasPrimaryParts = Boolean((articleData as any)?.primaryParts?.length || (articleData as any)?.parts?.length);
+  const hasPrimaryParts = primaryPartCount(articleData, sentences) > 1;
   const fallback = (target: string, title: string, description: string): Focus => ({
     ...current,
     target,
@@ -287,7 +514,13 @@ function resolveFocusTarget(articleData: ArticleData, phase: number, current: Fo
   if (phase === LESSON_PHASE.FLASHCARDS && current.target === "phase-2-flashcard-next" && words.length <= 1) {
     return fallback("phase-2-flashcard-progress", "กรณีมี Flashcard ใบเดียว", "เมื่อมีการ์ดใบเดียว ปุ่ม ถัดไป จะ disabled อยู่แล้ว ให้สอนการพลิกและเปิดเฉลยแทน");
   }
-  if (phase === LESSON_PHASE.READ_ARTICLE && !hasReading && current.action === "click") {
+  if (phase === LESSON_PHASE.READ_ARTICLE && !hasReading && [
+    "phase-3-audio-player",
+    "phase-3-play-button",
+    "phase-3-speed",
+    "phase-3-previous-sentence",
+    "phase-3-next-sentence",
+  ].includes(current.target)) {
     return fallback("phase-3-reading-passage", "บทความไม่มีเสียงอ่าน", "ไม่มีไฟล์เสียงในบทความนี้ ให้สอนการอ่านจาก passage แทน");
   }
   if (phase === LESSON_PHASE.VOCABULARY_CONTEXT && !words.length && current.action === "click") {
@@ -330,6 +563,7 @@ const phaseStep = (phase: number, step: Omit<TutorGuideStep, "phase">): TutorGui
 
 export function buildTutorGuideSteps(articleData: ArticleData): TutorGuideStep[] {
   const focusByPhase = phaseFocusGuidance();
+  const specialByPhase = specialDataGuidance(articleData);
   const steps: TutorGuideStep[] = [
     phaseStep(LESSON_PHASE.LAUNCH, {
       target: "lesson-control-panel",
@@ -337,6 +571,22 @@ export function buildTutorGuideSteps(articleData: ArticleData): TutorGuideStep[]
       description: "แผงนี้ใช้ดู Phase ปัจจุบัน เปิด Full screen ซ่อนแถบควบคุม และกดไปยังช่วงถัดไปของบทเรียน",
       tip: "ในห้องจริง แผงนี้คือจุดควบคุมการสอนทั้งหมดของติวเตอร์",
       action: "none",
+    }),
+    phaseStep(LESSON_PHASE.LAUNCH, {
+      target: "hide-toolbar-button",
+      title: "ซ่อน Toolbar ชั่วคราว",
+      description: "กดปุ่มนี้เพื่อซ่อนแผงควบคุมและให้พื้นที่เนื้อหาบนจอโล่งขึ้นระหว่างอธิบายบทเรียน",
+      tip: "เหมาะเมื่ออยากให้นักเรียนโฟกัสที่บทอ่านหรือโจทย์โดยไม่เห็นปุ่มควบคุม",
+      action: "click",
+      autoAdvance: true,
+    }),
+    phaseStep(LESSON_PHASE.LAUNCH, {
+      target: "show-toolbar-button",
+      title: "แสดง Toolbar กลับมา",
+      description: "เมื่อ Toolbar ถูกซ่อน ปุ่มนี้จะลอยอยู่มุมล่าง ใช้กดเพื่อเรียกแผงควบคุมกลับมา",
+      tip: "เรียกกลับมาก่อนเปลี่ยน Phase หรือจบคำถาม",
+      action: "click",
+      autoAdvance: true,
     }),
     phaseStep(LESSON_PHASE.LAUNCH, {
       target: "fullscreen-button",
@@ -358,7 +608,12 @@ export function buildTutorGuideSteps(articleData: ArticleData): TutorGuideStep[]
       action: "none",
     }));
 
+    for (const special of specialByPhase[phase] || []) {
+      steps.push(phaseStep(phase, { ...special, action: "none" }));
+    }
+
     for (const rawFocus of focusByPhase[phase] || []) {
+      if (shouldSkipFocus(articleData, phase, rawFocus)) continue;
       const resolved = resolveFocusTarget(articleData, phase, rawFocus);
       steps.push(phaseStep(phase, { ...resolved, action: resolved.action || "none" }));
     }
