@@ -76,7 +76,7 @@ ${limitInput(studentAnswer)}
   }
 };
 
-// Schema for Guided Writing feedback (Step 11)
+// Schema for Guided Writing feedback (Phase 13)
 const WritingSchema = z.object({
   score: z.number().int().min(0).max(5).describe('คะแนน 0-5 ตามความครบถ้วน การใช้ภาษา และการอ้างอิงบทความ'),
   feedback: z.string().max(1000).describe('ข้อเสนอแนะการเขียนเป็นภาษาไทย ชมจุดเด่นและแนะนำสิ่งที่ควรปรับ')
@@ -118,7 +118,7 @@ ${limitInput(draft, 8000)}
   }
 };
 
-// Schema for teacher-mediated Language Question answers (Step 12)
+// Schema for teacher-mediated Language Question answers (Phase 15)
 const LanguageAnswerSchema = z.object({
   answer: z.string().max(2000).describe('คำอธิบายภาษาอังกฤษแบบเข้าใจง่ายเป็นภาษาไทย พร้อมตัวอย่างสั้นๆ ถ้าช่วยได้')
 });

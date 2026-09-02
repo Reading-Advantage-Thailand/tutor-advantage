@@ -703,7 +703,7 @@ export const th = {
       introChecklistGoalDesc: "บอก vocab และ skills ที่จะได้เรียน",
       introChecklistSparkTitle: "ปลุกไฟ",
       introChecklistSparkDesc: "ถามคำถาม pre-reading สร้าง curiosity",
-      phase2Subtitle: "Phase 2 - ปูพื้นคำศัพท์ก่อนอ่าน",
+      phase2Subtitle: "Phase 2 - เรียนรู้ผ่านบัตรคำศัพท์",
       speakTitle: "อ่านออกเสียง",
       pronunciationHint: "กดปุ่มลำโพงเพื่อฟังการออกเสียง - แนะนำให้นักเรียนอ่านตามทีละคำ",
       phase3SilentRead1: "ให้นักเรียนอ่านในใจก่อน",

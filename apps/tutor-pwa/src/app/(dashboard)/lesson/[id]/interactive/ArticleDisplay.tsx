@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect, useMemo, useCallback } from "react"
 import { t } from "@/lib/i18n";
 import { BookOpen, Volume2, AlertTriangle } from "lucide-react";
 import { useThaiTranslations } from "@/hooks/useThaiTranslations";
+import { LESSON_PHASE } from "@/lib/lessonPhases";
 
 import { ArticleData } from "@/lib/lesson-types";
 
@@ -171,7 +172,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     ? `https://storage.googleapis.com/artifacts.reading-advantage.appspot.com/images/${articleData.id}.png`
     : null);
 
-  // ── Audio state for Phase 9 ─────────────────────────────────
+  // ── Audio state for the reading phase ────────────────────────
   const audioRef = useRef<HTMLAudioElement>(null);
   // Primary keeps one preloaded full-article audio element for seeking between
   // sentence timestamps. This mirrors Primary's ArticleContent/useAudioPlayer.
@@ -223,7 +224,12 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     [articleData?.translated_passage],
   );
   const shouldTranslateArticle = Boolean(
-    articleData && [4, 5, 6, 7].includes(phase),
+    articleData && ([
+      LESSON_PHASE.READ_ARTICLE,
+      LESSON_PHASE.VOCABULARY_CONTEXT,
+      LESSON_PHASE.DEEP_READING,
+      LESSON_PHASE.KEY_SENTENCES,
+    ] as number[]).includes(phase),
   );
   const { translations: thaiSentences, loading: translatingArticle } =
     useThaiTranslations(sentenceTexts, {
@@ -252,14 +258,14 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   }, [isPrimaryContent, sentences]);
 
   useEffect(() => {
-    if (phase !== 5) return;
+    if (phase !== LESSON_PHASE.VOCABULARY_CONTEXT) return;
 
     const passage = phase5PassageRef.current;
     const vocab = phase5VocabRef.current;
     if (!passage || !vocab) return;
 
     const syncPanelHeight = () => {
-      // In fullscreen the Phase 4 grid owns the available viewport height.
+      // In fullscreen the Phase 4 vocabulary grid owns the available viewport height.
       // Matching the vocabulary panel to the passage's content height would
       // leave a large unused area below both cards.
       if (isFullscreen || window.innerWidth < 1024) {
@@ -464,7 +470,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     const granularUrl = getManifestAudioUrl(rawUrl);
 
     setActiveIdx(sentenceIndex);
-    if (phase === 4 && granularUrl && audioRef.current) {
+    if (phase === LESSON_PHASE.READ_ARTICLE && granularUrl && audioRef.current) {
       playGranularArticleSentence(sentenceIndex, false);
       return;
     }
@@ -661,7 +667,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   // Exact Primary article-reader tracking model: requestAnimationFrame reads
   // the full-article MP3 timeline and drives sentence and word highlights.
   useEffect(() => {
-    if (!isPrimaryContent || hasGranularSentenceAudio || phase !== 4 || !isPlaying) return;
+    if (!isPrimaryContent || hasGranularSentenceAudio || phase !== LESSON_PHASE.READ_ARTICLE || !isPlaying) return;
 
     const track = () => {
       const audio = audioRef.current;
@@ -844,9 +850,9 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     }
   };
 
-  // Auto-scroll active sentence into view in Step 3 (Read the Article)
+  // Auto-scroll active sentence into view in Phase 3 (Read the Article)
   useEffect(() => {
-    if (phase !== 4 || activeIdx < 0) return;
+    if (phase !== LESSON_PHASE.READ_ARTICLE || activeIdx < 0) return;
     const el = document.getElementById(`read-sentence-${activeIdx}`);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [activeIdx, phase]);
@@ -854,7 +860,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   const lastReportedIdxRef = useRef(-2);
   useEffect(() => {
     if (
-      phase === 4 &&
+      phase === LESSON_PHASE.READ_ARTICLE &&
       onActiveIdxChange &&
       activeIdx !== lastReportedIdxRef.current
     ) {
@@ -865,7 +871,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
   // Auto-translate vocab words and English definitions
   useEffect(() => {
-    if (phase !== 2 && phase !== 5) return;
+    if (phase !== LESSON_PHASE.VOCABULARY_CONTEXT) return;
 
     // 1. Find words missing a short Thai translation (definition.th)
     const missingTh: { index: number; text: string }[] = [];
@@ -969,7 +975,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   };
 
   /* ─── Phase 1: Introduction ──────────────────────────────── */
-  if (phase === 1) {
+  if (phase === LESSON_PHASE.LAUNCH) {
     return (
       <div className="flex-1 flex flex-col lg:flex-row gap-6 items-stretch py-6 px-4 w-full max-w-6xl mx-auto animate-in fade-in duration-500">
         {/* Left: Article Image Panel */}
@@ -1031,7 +1037,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               <p className="text-white/60 text-[10px] uppercase tracking-wider">
                 Phase
               </p>
-              <p className="text-white font-black text-xl">Phase 1 / 19</p>
+              <p className="text-white font-black text-xl">Phase 1 / 18</p>
             </div>
           </div>
         </div>
@@ -1104,163 +1110,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     );
   }
 
-  /* ─── Phase 2: Vocabulary Preview ───────────────────────── */
-  if (phase === 2) {
-    const cardColors = [
-      {
-        bg: "bg-purple-500",
-        light: "bg-purple-500/10",
-        border: "border-purple-500/30",
-        text: "text-purple-700 dark:text-purple-300",
-      },
-      {
-        bg: "bg-fuchsia-500",
-        light: "bg-fuchsia-500/10",
-        border: "border-fuchsia-500/30",
-        text: "text-fuchsia-700 dark:text-fuchsia-300",
-      },
-      {
-        bg: "bg-violet-500",
-        light: "bg-violet-500/10",
-        border: "border-violet-500/30",
-        text: "text-violet-700 dark:text-violet-300",
-      },
-      {
-        bg: "bg-pink-500",
-        light: "bg-pink-500/10",
-        border: "border-pink-500/30",
-        text: "text-pink-700 dark:text-pink-300",
-      },
-      {
-        bg: "bg-indigo-500",
-        light: "bg-indigo-500/10",
-        border: "border-indigo-500/30",
-        text: "text-indigo-700 dark:text-indigo-300",
-      },
-      {
-        bg: "bg-rose-500",
-        light: "bg-rose-500/10",
-        border: "border-rose-500/30",
-        text: "text-rose-700 dark:text-rose-300",
-      },
-    ];
-
-    return (
-      <div className="flex-1 flex flex-col items-center py-8 px-6 w-full animate-in fade-in duration-500">
-        <div className="flex items-center gap-4 mb-8 w-full max-w-5xl">
-          <span className="rounded-full bg-purple-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
-            Phase 2
-          </span>
-          <div className="flex-1">
-            <h2 className="text-3xl font-black text-purple-900 dark:text-purple-100">
-              Vocabulary Preview
-            </h2>
-            <p className="text-purple-500 dark:text-purple-400 text-sm mt-1">
-              {t("lesson.interactive.phase2Subtitle")}
-            </p>
-          </div>
-          <div className="bg-purple-600 text-white rounded-2xl px-5 py-3 text-center">
-            <p className="text-3xl font-black">{words.length}</p>
-            <p className="text-xs opacity-80 uppercase tracking-wider">
-              {t("lesson.interactive.vocabulary")}
-            </p>
-          </div>
-        </div>
-
-        <div data-tour-target="phase-2-vocabulary-list" className="grid grid-cols-2 md:grid-cols-3 gap-5 w-full max-w-5xl">
-          {words.map((item: any, index: number) => {
-            const wordText =
-              typeof item === "object"
-                ? item.vocabulary || item.word || item.text
-                : item;
-            const defTh =
-              typeof item === "object" && item.definition
-                ? item.definition.th || autoVocabTh[index] || null
-                : autoVocabTh[index] || null;
-            const defEn =
-              typeof item === "object" && item.definition
-                ? item.definition.en
-                : null;
-            const c = cardColors[index % cardColors.length];
-
-            const speak = () => {
-              playWord(index);
-            };
-
-            return (
-              <div
-                key={index}
-                onClick={speak}
-                className={`group relative cursor-pointer rounded-2xl border-2 ${c.border} ${c.light} overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1`}
-                style={{ minHeight: "160px" }}
-              >
-                <div className="p-5 flex flex-col h-full gap-2">
-                  {/* Top row: number badge + speak button */}
-                  <div className="flex items-center justify-between mb-1">
-                    <div
-                      className={`${c.bg} text-white text-xs font-bold uppercase tracking-widest px-2 py-0.5 rounded-full`}
-                    >
-                      #{index + 1}
-                    </div>
-                    <button
-                      type="button"
-                      data-tour-target={index === 0 ? "vocabulary-first-audio" : undefined}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        speak();
-                      }}
-                      title={t("lesson.interactive.speakTitle")}
-                      className={`w-8 h-8 rounded-full ${c.bg} text-white flex items-center justify-center shadow hover:opacity-80 active:scale-90 transition-all`}
-                    >
-                      <Volume2 size={16} />
-                    </button>
-                  </div>
-
-                  {/* Word */}
-                  <p className={`font-black text-2xl ${c.text}`}>
-                    {String(wordText)}
-                  </p>
-
-                  {/* Thai translation - always visible */}
-                  {defTh && (
-                    <p className="text-foreground font-semibold text-sm leading-snug">
-                      {defTh}
-                    </p>
-                  )}
-
-                  {/* English definition + Thai explanation translation */}
-                  {defEn && (
-                    <div className="mt-auto space-y-1">
-                      <p className="text-muted-foreground text-xs italic leading-snug">
-                        {defEn}
-                      </p>
-                      {autoVocabEnTh[index] && (
-                        <p className="text-purple-600 dark:text-purple-400 font-semibold text-xs leading-snug border-t border-purple-500/20 pt-1">
-                          {autoVocabEnTh[index]}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-                <div
-                  className={`absolute bottom-0 left-0 right-0 h-1 ${c.bg} opacity-40`}
-                />
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="mt-6 bg-muted border border-border rounded-xl px-6 py-3 text-purple-700 dark:text-purple-400 text-sm font-medium">
-          {t("lesson.interactive.pronunciationHint")}
-        </div>
-      </div>
-    );
-  }
-
-  /* ─── Step 3 (Read the Article) is rendered by the audio reader block below ─── */
+  /* ─── Phase 3 (Read the Article) is rendered by the audio reader block below ─── */
 
   /* ─── Phase 4: Vocabulary Focus ──────────────────────────── */
-  if (phase === 5) {
+  if (phase === LESSON_PHASE.VOCABULARY_CONTEXT) {
     const vocabWords: string[] = words.map((w: any) =>
       typeof w === "object"
         ? w.vocabulary || w.word || w.text || ""
@@ -1295,7 +1148,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       >
         <div className={`flex w-full flex-wrap items-center gap-3 ${isFullscreen ? "mb-2" : "mb-4"}`}>
           <span className="rounded-full bg-amber-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
-            Phase 5
+            Phase 4
           </span>
           <span className="rounded-full border border-amber-500/20 bg-amber-500/10 px-4 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-400">
             Vocabulary Focus
@@ -1317,7 +1170,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           {/* Passage with highlights */}
           <div
             ref={phase5PassageRef}
-            data-tour-target="phase-5-passage"
+            data-tour-target="phase-4-passage"
             className={`flex min-h-0 flex-col rounded-2xl border border-border border-t-2 border-t-amber-400 bg-card shadow-lg shadow-slate-900/5 ${
               isFullscreen ? "h-full overflow-hidden p-4" : "overflow-y-auto p-5 sm:p-6"
             }`}
@@ -1351,7 +1204,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           {/* Vocab sidebar */}
           <div
             ref={phase5VocabRef}
-            data-tour-target="phase-5-vocabulary"
+            data-tour-target="phase-4-vocabulary"
             className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-purple-500/20 bg-purple-500/[0.06] p-4 shadow-lg shadow-purple-900/5 sm:p-5"
           >
             <h3 className={`flex items-center gap-3 text-sm font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 ${isFullscreen ? "mb-2" : "mb-4"}`}>
@@ -1434,7 +1287,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     <button
                       type="button"
                       onClick={() => playWord(i)}
-                      data-tour-target={i === 0 ? "phase-5-first-audio" : undefined}
+                      data-tour-target={i === 0 ? "phase-4-first-audio" : undefined}
                       title={t("lesson.interactive.speakTitle")}
                       className={isFullscreen
                         ? "absolute right-3 top-3 inline-flex size-8 items-center justify-center rounded-full bg-purple-500/10 text-purple-600 transition-all hover:bg-purple-500/20 active:scale-95"
@@ -1453,7 +1306,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   }
 
   /* ─── Phase 5: Deep Reading ──────────────────────────────── */
-  if (phase === 6) {
+  if (phase === LESSON_PHASE.DEEP_READING) {
     const comprehensionQuestions =
       articleData.shortAnswerQuestions?.slice(0, 3) || [];
     const getQuestionAudioUrl = (question: string, questionData: any) => {
@@ -1474,7 +1327,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
       >
         <div className={`flex w-full flex-wrap items-center gap-3 ${isFullscreen ? "mb-2" : "mb-4"}`}>
           <span className="rounded-full bg-teal-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
-            Phase 6
+            Phase 5
           </span>
           <span className="rounded-full border border-teal-500/20 bg-teal-500/10 px-4 py-1.5 text-xs font-bold text-teal-700 dark:text-teal-400">
             Deep Reading
@@ -1487,7 +1340,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         <div className="grid w-full min-h-0 flex-1 grid-cols-1 items-stretch gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(390px,.85fr)]">
           {/* Passage - high contrast indigo-950 deep */}
           <div className="min-h-0 min-w-0">
-            <div data-tour-target="phase-6-passage" className={`flex h-full min-h-0 flex-col rounded-2xl border-t-4 border-teal-400 bg-indigo-950 shadow-2xl ${isFullscreen ? "overflow-hidden p-5" : "p-5 sm:p-7"}`}>
+            <div data-tour-target="phase-5-passage" className={`flex h-full min-h-0 flex-col rounded-2xl border-t-4 border-teal-400 bg-indigo-950 shadow-2xl ${isFullscreen ? "overflow-hidden p-5" : "p-5 sm:p-7"}`}>
               <h3 className={`text-xs font-bold uppercase tracking-widest text-teal-400 ${isFullscreen ? "mb-2" : "mb-4"}`}>
                 {articleData.title}
               </h3>
@@ -1513,7 +1366,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
           {/* Comprehension Guide */}
           <div className={`flex min-h-0 min-w-0 flex-col ${isFullscreen ? "gap-3" : "space-y-4"}`}>
-            <div data-tour-target="phase-6-questions" className={`flex min-h-0 flex-1 flex-col rounded-2xl border-2 border-border bg-muted ${isFullscreen ? "p-4" : "p-5"}`}>
+            <div data-tour-target="phase-5-questions" className={`flex min-h-0 flex-1 flex-col rounded-2xl border-2 border-border bg-muted ${isFullscreen ? "p-4" : "p-5"}`}>
               <h4 className={`mb-2 flex items-center gap-2 font-bold text-foreground ${isFullscreen ? "text-lg" : "text-sm"}`}>
                 <span>Guide</span> Comprehension Guide
               </h4>
@@ -1528,7 +1381,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                       label={`Q${i + 1}`}
                       question={q.question}
                       onSpeak={() => playClipUrl(getQuestionAudioUrl(q.question, q), q.question)}
-                      dataTourTarget={i === 0 ? "phase-6-first-question" : undefined}
+                      dataTourTarget={i === 0 ? "phase-5-first-question" : undefined}
                       className={isFullscreen ? "h-full" : ""}
                       large={isFullscreen}
                     />
@@ -1558,7 +1411,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   }
 
   /* ─── Phase 6: Key Sentences ─────────────────────────────── */
-  if (phase === 7) {
+  if (phase === LESSON_PHASE.KEY_SENTENCES) {
     const sentenceColors = [
       "border-green-500/40 bg-green-500/10",
       "border-emerald-500/40 bg-emerald-500/10",
@@ -1681,7 +1534,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         )}
         <div className={`flex w-full flex-wrap items-center gap-3 ${isFullscreen ? "mb-2" : "mb-4"}`}>
           <span className="rounded-full bg-green-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
-            Phase 7
+            Phase 6
           </span>
           <span className="rounded-full border border-green-500/20 bg-green-500/10 px-4 py-1.5 text-xs font-bold text-green-700 dark:text-green-400">
             Key Sentences
@@ -1694,7 +1547,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
 
         <div className="grid w-full min-h-0 flex-1 grid-cols-1 items-stretch gap-4 lg:grid-cols-2">
           {/* Timeline */}
-          <div data-tour-target="phase-7-sentences" className={`min-h-0 min-w-0 ${isFullscreen ? "flex h-full flex-col" : ""}`}>
+          <div data-tour-target="phase-6-sentences" className={`min-h-0 min-w-0 ${isFullscreen ? "flex h-full flex-col" : ""}`}>
             <h3 className={`flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-green-800 dark:text-green-300 ${isFullscreen ? "mb-2" : "mb-4"}`}>
               <span>List</span> Key Sentences Timeline
             </h3>
@@ -1738,7 +1591,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                                 playSentence(sentenceIndex);
                               }}
                               title={t("lesson.interactive.speakTitle")}
-                              data-tour-target={index === 0 ? "phase-7-first-audio" : undefined}
+                              data-tour-target={index === 0 ? "phase-6-first-audio" : undefined}
                               className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-green-500/15 text-green-700 transition-colors hover:bg-green-500/25 dark:text-green-300"
                             >
                               <Volume2 size={15} />
@@ -1764,7 +1617,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
           </div>
 
           {/* Passage with context */}
-          <div data-tour-target="phase-7-article" className={`min-h-0 min-w-0 ${isFullscreen ? "flex h-full flex-col" : ""}`}>
+          <div data-tour-target="phase-6-article" className={`min-h-0 min-w-0 ${isFullscreen ? "flex h-full flex-col" : ""}`}>
             <h3 className={`flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-green-800 dark:text-green-300 ${isFullscreen ? "mb-2" : "mb-4"}`}>
               <span>Article</span> Passage Reference
             </h3>
@@ -1793,8 +1646,8 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     );
   }
 
-  /* ─── Step 3: Read the Article + Audio Player + Sentence Flag ───────────────── */
-  if (phase === 4) {
+  /* ─── Phase 3: Read the Article + Audio Player + Sentence Flag ──────────────── */
+  if (phase === LESSON_PHASE.READ_ARTICLE) {
     const progressPct = duration > 0 ? (currentTime / duration) * 100 : 0;
     const phase4AudioUrl = hasGranularSentenceAudio
       ? granularSentenceUrls.find(Boolean) || null
@@ -1897,7 +1750,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         <span
           id={`read-sentence-${idx}`}
           key={idx}
-          data-tour-target={idx === 0 ? "phase-4-first-sentence" : undefined}
+          data-tour-target={idx === 0 ? "phase-3-first-sentence" : undefined}
           onClick={canSelectSentence ? () => seekToSentence(idx) : undefined}
           className={`${canSelectSentence ? "cursor-pointer" : "cursor-default"} rounded-lg px-0.5 transition-all duration-200 ${
             isActive
@@ -2025,12 +1878,12 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         )}
 
         {/* Scrollable article area */}
-        <div data-tour-target="phase-4-reading-passage" className="flex-1 overflow-y-auto px-2 py-5 pb-40 sm:px-3">
+        <div data-tour-target="phase-3-reading-passage" className="flex-1 overflow-y-auto px-2 py-5 pb-40 sm:px-3">
           {/* Header */}
           <div className="mx-auto mb-5 w-full max-w-[1500px]">
             <div className="flex items-center gap-3 mb-4">
               <span className="bg-orange-500 text-white text-sm font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow">
-                Phase 4
+                Phase 3
               </span>
               <span className="bg-card text-orange-600 dark:text-orange-400 text-sm font-bold px-4 py-1.5 rounded-full border-2 border-orange-500/30">
                 {t("lesson.interactive.period1")}
@@ -2065,7 +1918,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     type="button"
                     onClick={() => goToPrimaryPart(-1)}
                     disabled={primaryReadingPageIndex <= 0}
-                    data-tour-target="phase-4-previous-part"
+                    data-tour-target="phase-3-previous-part"
                     className="rounded-full border border-orange-500/30 px-3 py-1.5 transition-colors hover:bg-orange-500/10 disabled:cursor-not-allowed disabled:opacity-30"
                   >
                     ← Previous Part
@@ -2077,7 +1930,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     type="button"
                     onClick={() => goToPrimaryPart(1)}
                     disabled={primaryReadingPageIndex >= primaryReadingGroups.length - 1}
-                    data-tour-target="phase-4-next-part"
+                    data-tour-target="phase-3-next-part"
                     className="rounded-full border border-orange-500/30 px-3 py-1.5 transition-colors hover:bg-orange-500/10 disabled:cursor-not-allowed disabled:opacity-30"
                   >
                     Next Part →
@@ -2110,7 +1963,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                       <span
                         id={`read-sentence-${idx}`}
                         key={idx}
-                        data-tour-target={idx === 0 ? "phase-4-first-sentence" : undefined}
+                        data-tour-target={idx === 0 ? "phase-3-first-sentence" : undefined}
                         onClick={canSelectSentence ? () => seekToSentence(idx) : undefined}
                         className={`${canSelectSentence ? "cursor-pointer" : "cursor-default"} rounded-lg px-0.5 transition-all duration-200 ${
                           isActive
@@ -2168,14 +2021,14 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             )}
 
             {/* Player pill */}
-            <div data-tour-target="phase-4-audio-player" className="bg-card border-2 border-orange-500/40 rounded-2xl shadow-2xl px-5 py-4 flex items-center gap-4 w-[560px]">
+            <div data-tour-target="phase-3-audio-player" className="bg-card border-2 border-orange-500/40 rounded-2xl shadow-2xl px-5 py-4 flex items-center gap-4 w-[560px]">
               {/* Skip prev */}
               <button
                 onClick={() => {
                   if (activeIdx > 0) seekToSentence(activeIdx - 1);
                 }}
                 disabled={activeIdx <= 0}
-                data-tour-target="phase-4-previous-sentence"
+                data-tour-target="phase-3-previous-sentence"
                 className="w-11 h-11 rounded-full bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center hover:bg-orange-500/30 transition-all disabled:opacity-30 text-xl shrink-0"
               >
                 ⏮
@@ -2184,7 +2037,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               {/* Play/Pause */}
               <button
                 onClick={togglePlay}
-                data-tour-target="phase-4-play-button"
+                data-tour-target="phase-3-play-button"
                 className="w-14 h-14 rounded-full bg-orange-500 text-white flex items-center justify-center text-2xl shadow-lg hover:bg-orange-600 active:scale-90 transition-all shrink-0"
               >
                 {isPlaying ? "⏸" : "▶"}
@@ -2194,7 +2047,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
               <button
                 onClick={cycleSpeechRate}
                 title="Reading speed"
-                data-tour-target="phase-4-speed"
+                data-tour-target="phase-3-speed"
                 className="w-14 h-11 rounded-full bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center hover:bg-orange-500/30 transition-all active:scale-95 text-sm font-black shrink-0"
               >
                 {speechRate}x
@@ -2207,7 +2060,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                     seekToSentence(activeIdx + 1);
                 }}
                 disabled={activeIdx >= sentences.length - 1}
-                data-tour-target="phase-4-next-sentence"
+                data-tour-target="phase-3-next-sentence"
                 className="w-11 h-11 rounded-full bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center hover:bg-orange-500/30 transition-all disabled:opacity-30 text-xl shrink-0"
               >
                 ⏭

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { ArticleData } from "@/lib/lesson-types";
+import type { ArticleData } from "../../../../../../lib/lesson-types";
 import { buildTutorGuideSteps } from "./TutorGuidePlan";
 
 function article(overrides: Record<string, unknown> = {}): ArticleData {
@@ -43,23 +43,23 @@ function phaseSteps(steps: ReturnType<typeof buildTutorGuideSteps>, phase: numbe
 }
 
 describe("Feature Lesson Tutor Guide plan", () => {
-  it("covers all 19 lesson phases in screen order", () => {
+  it("covers all 18 lesson phases in screen order", () => {
     const steps = buildTutorGuideSteps(article());
     const phases = new Set(steps.map((step) => step.phase));
 
-    expect([...phases]).toEqual(Array.from({ length: 19 }, (_, index) => index));
+    expect([...phases]).toEqual(Array.from({ length: 18 }, (_, index) => index));
     expect(steps.findIndex((step) => step.target === "phase-next-button" && step.phase === 0)).toBeLessThan(
       steps.findIndex((step) => step.target === "phase-next-button" && step.phase === 1),
     );
     expect(steps.at(-1)?.target).toBe("preparation-exit-button");
   });
 
-  it("does not duplicate the Phase 10 question focus", () => {
-    const steps = phaseSteps(buildTutorGuideSteps(article()), 10);
-    expect(steps.filter((step) => step.target === "phase-10-question")).toHaveLength(1);
+  it("does not duplicate the Phase 9 question focus", () => {
+    const steps = phaseSteps(buildTutorGuideSteps(article()), 9);
+    expect(steps.filter((step) => step.target === "phase-9-question")).toHaveLength(1);
   });
 
-  it.each([11, 15])("teaches every game state in Phase %s", (phase) => {
+  it.each([10, 14])("teaches every game state in Phase %s", (phase) => {
     const targets = phaseSteps(buildTutorGuideSteps(article()), phase).map((step) => step.target);
     const order = [
       "game-vote-options",
@@ -81,7 +81,7 @@ describe("Feature Lesson Tutor Guide plan", () => {
   });
 
   it("teaches end-question and result review for every question result phase", () => {
-    for (const phase of [8, 9, 10, 12, 13, 14]) {
+    for (const phase of [7, 8, 9, 11, 12, 13]) {
       const steps = phaseSteps(buildTutorGuideSteps(article()), phase);
       expect(steps.some((step) => step.target === "preparation-end-question-button" && step.action === "click")).toBe(true);
       expect(steps.some((step) => step.target === `phase-${phase}-results`)).toBe(true);
@@ -98,36 +98,36 @@ describe("Feature Lesson Tutor Guide plan", () => {
     }));
     const missingDataClickTargets = new Set([
       "vocabulary-first-audio",
-      "phase-3-flashcard-card",
-      "phase-3-flashcard-audio",
-      "phase-3-flashcard-reveal",
-      "phase-3-flashcard-next",
-      "phase-4-play-button",
-      "phase-4-speed",
-      "phase-4-next-sentence",
-      "phase-5-first-audio",
-      "phase-6-first-question-audio",
-      "phase-7-first-audio",
+      "phase-2-flashcard-card",
+      "phase-2-flashcard-audio",
+      "phase-2-flashcard-reveal",
+      "phase-2-flashcard-next",
+      "phase-3-play-button",
+      "phase-3-speed",
+      "phase-3-next-sentence",
+      "phase-4-first-audio",
+      "phase-5-first-question-audio",
+      "phase-6-first-audio",
+      "phase-7-question-audio",
       "phase-8-question-audio",
-      "phase-9-question-audio",
-      "phase-10-question",
-      "phase-10-options",
+      "phase-9-question",
+      "phase-9-options",
+      "phase-11-question-audio",
+      "phase-11-options",
       "phase-12-question-audio",
       "phase-12-options",
       "phase-13-question-audio",
-      "phase-13-options",
-      "phase-14-question-audio",
     ]);
 
     expect(steps.filter((step) => step.action === "click" && missingDataClickTargets.has(step.target))).toHaveLength(0);
   });
 
-  it("does not wait for a disabled Next button when Phase 3 has one card", () => {
+  it("does not wait for a disabled Next button when Phase 2 has one card", () => {
     const steps = phaseSteps(buildTutorGuideSteps(article({
       words: [{ vocabulary: "explore", definition: { th: "สำรวจ" } }],
-    })), 3);
+    })), 2);
     const nextStep = steps.find((step) => step.title === "กรณีมี Flashcard ใบเดียว");
-    expect(nextStep?.target).toBe("phase-3-flashcard-progress");
+    expect(nextStep?.target).toBe("phase-2-flashcard-progress");
     expect(nextStep?.action).toBe("none");
   });
 });

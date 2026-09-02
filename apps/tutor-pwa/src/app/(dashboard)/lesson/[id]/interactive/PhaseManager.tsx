@@ -41,14 +41,23 @@ import { RuneMatchTeachingGame } from "@/components/lesson/RuneMatchTeachingGame
 import { CastleDefenseTeachingGame } from "@/components/lesson/CastleDefenseTeachingGame";
 import { PotionRushTeachingGame } from "@/components/lesson/PotionRushTeachingGame";
 import { FlashcardTeachingGame } from "@/components/lesson/FlashcardTeachingGame";
+import {
+  GAME_PHASES,
+  LESSON_PHASE,
+  PHASE_GROUPS,
+  PHASE_NAMES,
+  QUESTION_PHASES,
+  RESULT_REVIEW_PHASES,
+  TOTAL_LESSON_PHASES,
+} from "@/lib/lessonPhases";
 
-const TOTAL_PHASES = 19;
-const VOCAB_GAME_PHASE = 11;
-const SENTENCE_GAME_PHASE = 15;
-const FINAL_LEADERBOARD_PHASE = 19;
+const TOTAL_PHASES = TOTAL_LESSON_PHASES;
+const VOCAB_GAME_PHASE = LESSON_PHASE.VOCABULARY_GAME;
+const SENTENCE_GAME_PHASE = LESSON_PHASE.SENTENCE_GAME;
+const FINAL_LEADERBOARD_PHASE = LESSON_PHASE.WRAP_UP;
 
-const PREPARATION_QUESTION_PHASES = [3, 8, 9, 10, 12, 13, 14, 16, 17];
-const PREPARATION_RESULT_PHASES = [8, 9, 10, 12, 13, 14];
+const PREPARATION_QUESTION_PHASES = QUESTION_PHASES;
+const PREPARATION_RESULT_PHASES = RESULT_REVIEW_PHASES;
 const PREPARATION_MOCK_STUDENTS: Participant[] = [
   { studentId: "preparation-student-1", name: "น้องมิน", score: 0 },
   { studentId: "preparation-student-2", name: "น้องต้น", score: 0 },
@@ -91,9 +100,14 @@ function createPreparationAnswer(
   student: Participant,
   index: number,
 ): AnswerData {
-  const answer = [8, 10, 12, 13].includes(phase)
+  const answer = ([
+    LESSON_PHASE.COMPREHENSION,
+    LESSON_PHASE.VOCABULARY_PRACTICE,
+    LESSON_PHASE.SENTENCE_PRACTICE,
+    LESSON_PHASE.SENTENCE_ORDER,
+  ] as number[]).includes(phase)
     ? ["A", "B", "A", "C"][index]
-    : [9, 14].includes(phase)
+      : ([LESSON_PHASE.GUIDED_RESPONSE, LESSON_PHASE.GUIDED_WRITING] as number[]).includes(phase)
       ? {
           text: [
             "The library has many interesting books.",
@@ -103,7 +117,7 @@ function createPreparationAnswer(
           ][index],
           aiScore: [4.5, 3.5, 4, 2.5][index],
         }
-      : phase === 16
+      : phase === LESSON_PHASE.LANGUAGE_QUESTIONS
         ? {
             text: [
               "Why did the students visit the library?",
@@ -113,7 +127,7 @@ function createPreparationAnswer(
             ][index],
             languageAnswer: "ลองชวนผู้เรียนอธิบายเหตุผลจากเนื้อเรื่องด้วยประโยคเต็ม",
           }
-        : phase === 17
+        : phase === LESSON_PHASE.REFLECTION
           ? { text: "วันนี้ฉันได้เรียนรู้คำศัพท์ใหม่และกล้าเล่าเรื่องมากขึ้น" }
           : "completed";
 
@@ -519,7 +533,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   const preparationGameResultsCompleteNotifiedRef = React.useRef<number | null>(null);
   // Dev-only: mock participant list to preview the wrap-up leaderboard
   const [mockLeaderboard, setMockLeaderboard] = React.useState<any[] | null>(null);
-  // Dev-only: mock pairs to preview the Step 14 pair-conversation layout
+  // Dev-only: mock pairs to preview the Phase 17 pair-conversation layout
   const [mockPairs, setMockPairs] = React.useState<
     { pairNumber: number; members: { studentId: string; name: string; pictureUrl?: string }[] }[] | null
   >(null);
@@ -698,7 +712,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   // The phase-change spinner is released by the request promise instead; if
   // this effect cleared it immediately, a second click could race the first
   // request while the server was still broadcasting the transition.
-  const isGamePhase = [VOCAB_GAME_PHASE, SENTENCE_GAME_PHASE].includes(currentPhase);
+  const isGamePhase = GAME_PHASES.includes(currentPhase);
   const isInteractivePhase = PREPARATION_QUESTION_PHASES.includes(currentPhase);
 
   // Reset the local preparation simulation when the server confirms a new phase.
@@ -715,7 +729,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     preparationGameVotesCompleteNotifiedRef.current = null;
     preparationGameResultsCompleteNotifiedRef.current = null;
     setPreparationGameState(
-      preparationMode && [VOCAB_GAME_PHASE, SENTENCE_GAME_PHASE].includes(currentPhase)
+      preparationMode && GAME_PHASES.includes(currentPhase)
         ? createPreparationGameState(currentPhase)
         : null,
     );
@@ -1026,6 +1040,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       : isRewoundPhase ||
         (!isInteractivePhase && !isGamePhase) ||
         totalParticipants === 0 ||
+        preparationAnswersReadyToEnd ||
         (isGamePhase && !hasPlayableGameForPhase) ||
         (isGamePhase && gameState?.status === "results" && gameResultsCount > 0) ||
         (isGamePhase && totalParticipants > 0 && gameResultsCount >= totalParticipants) ||
@@ -1118,7 +1133,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       mock[mock.length - 1].members.push(students[students.length - 1]);
     }
     setMockPairs(mock);
-    requestPhaseChange(17);
+    requestPhaseChange(LESSON_PHASE.PAIR_CONVERSATION);
   }, [mockPairs, requestPhaseChange]);
 
   React.useEffect(() => {
@@ -1187,7 +1202,13 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   // Confetti effect when results are ready
   React.useEffect(() => {
-    if ([3, 8, 10, 12, 13].includes(currentPhase) && showQuestionResults) {
+    if (([
+      LESSON_PHASE.FLASHCARDS,
+      LESSON_PHASE.COMPREHENSION,
+      LESSON_PHASE.VOCABULARY_PRACTICE,
+      LESSON_PHASE.SENTENCE_PRACTICE,
+      LESSON_PHASE.SENTENCE_ORDER,
+    ] as number[]).includes(currentPhase) && showQuestionResults) {
       confetti({
         particleCount: 150,
         spread: 80,
@@ -1568,7 +1589,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   };
 
   const renderMCQ = () => {
-      const idx = sessionData?.phaseSelectedIndices?.[8] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.COMPREHENSION] || 0;
     const mcqQuestion = articleData?.multipleChoiceQuestions?.[idx];
     const manifestMcqQuestion =
       getManifestQuestionByText(mcqQuestion?.question, "mcq") ||
@@ -1607,7 +1628,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const shuffledOptions = seededShuffle(
       rawOptions,
       (sessionData?.sessionId || "fallback") +
-        "_phase8_" +
+        "_phase7_" +
         mcqQuestion?.question,
     );
 
@@ -1652,7 +1673,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         </div>
       );
 
-    const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.VOCABULARY_PRACTICE] || 0;
     const targetWord = words[idx] || words[0];
     const question = `${t("lesson.interactive.vocabQuestionPrefix")} "${targetWord.vocabulary || targetWord.word || targetWord.text}" ${t("lesson.interactive.vocabQuestionSuffix")}`;
 
@@ -1686,7 +1707,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     const shuffledOptions = seededShuffle(
       optionsArray,
       (sessionData?.sessionId || "fallback") +
-        "_phase10_" +
+        "_phase9_" +
         targetWord?.vocabulary,
     );
 
@@ -1719,7 +1740,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         </div>
       );
 
-    const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.SENTENCE_PRACTICE] || 0;
     const targetSentence =
       typeof sentences[idx] === "object"
         ? sentences[idx].sentences
@@ -1754,7 +1775,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
     const shuffledOptions = seededShuffle(
       optionsArray,
-      (sessionData?.sessionId || "fallback") + "_phase12_" + targetSentence,
+      (sessionData?.sessionId || "fallback") + "_phase11_" + targetSentence,
     );
 
     const newCorrectIdx = shuffledOptions.indexOf(correctWord);
@@ -1791,7 +1812,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         </div>
       );
 
-    const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.SENTENCE_ORDER] || 0;
     const targetSentence =
       typeof sentences[idx] === "object"
         ? sentences[idx].sentences
@@ -1804,7 +1825,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       const res = seededShuffle(
         array,
         (sessionData?.sessionId || "fallback") +
-      "_phase13_words_" +
+        "_phase12_words_" +
           targetSentence,
       );
       if (res.join(" ") === array.join(" ")) res.reverse(); // Ensure it is actually different from the original
@@ -1828,7 +1849,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
     const shuffledOptions = seededShuffle(
       optionsArray,
-      (sessionData?.sessionId || "fallback") + "_phase13b_" + targetSentence,
+      (sessionData?.sessionId || "fallback") + "_phase12b_" + targetSentence,
     );
 
     const newCorrectIdx = shuffledOptions.indexOf(targetSentence);
@@ -2154,7 +2175,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         {/* Left: Question + Progress */}
         <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center gap-5 overflow-hidden">
           {/* Question card with glow */}
-              <div data-tour-target={preparationMode ? "phase-9-question" : undefined} className="relative w-full max-w-2xl text-center">
+              <div data-tour-target={preparationMode ? "phase-8-question" : undefined} className="relative w-full max-w-2xl text-center">
             <div className="absolute -inset-3 rounded-3xl bg-gradient-to-r from-violet-500/10 via-blue-500/10 to-violet-500/10 blur-2xl pointer-events-none" />
             <div className="relative bg-card/60 backdrop-blur border border-border/60 rounded-3xl px-8 py-7 shadow-lg">
               <div className="flex items-center justify-center gap-2 mb-3">
@@ -2172,7 +2193,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                   <button
                     type="button"
                     onClick={() => playMcqAudio(shortAnswerAudioUrl, shortAnswerQuestion.question, "")}
-                    data-tour-target={preparationMode ? "phase-9-question-audio" : undefined}
+                    data-tour-target={preparationMode ? "phase-8-question-audio" : undefined}
                     title={t("lesson.interactive.speakTitle")}
                     className="size-10 rounded-full bg-violet-500/15 hover:bg-violet-500/25 text-violet-600 dark:text-violet-300 flex items-center justify-center shrink-0 transition-colors"
                   >
@@ -2185,7 +2206,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
           {/* Progress ring + bar */}
           <div
-            data-tour-target={preparationMode ? "phase-9-student-status" : undefined}
+            data-tour-target={preparationMode ? "phase-8-student-status" : undefined}
             className="flex flex-col items-center gap-3 w-full max-w-xs"
           >
             <div className="relative">
@@ -2287,7 +2308,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       : null;
 
     return (
-      <div data-tour-target={preparationMode ? "phase-19-summary" : undefined} className="flex-1 flex flex-col items-center max-w-4xl mx-auto w-full relative overflow-y-auto pb-4">
+      <div data-tour-target={preparationMode ? "phase-18-summary" : undefined} className="flex-1 flex flex-col items-center max-w-4xl mx-auto w-full relative overflow-y-auto pb-4">
         {/* Subtle article image watermark */}
         {articleImageUrl && (
           <div
@@ -2460,9 +2481,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     );
   };
 
-  // ── Step 11: Guided Writing (AI-scored) ──
+  // ── Phase 13: Guided Writing (AI-scored) ──
   const renderWriting = () => {
-    const idx = sessionData?.phaseSelectedIndices?.[14] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.GUIDED_WRITING] || 0;
     const writingQuestion =
       articleData?.shortAnswerQuestions?.[idx] ||
       articleData?.shortAnswerQuestions?.[0];
@@ -2505,7 +2526,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     return (
       <div className="flex h-full min-h-0 flex-1 gap-5 overflow-hidden">
         <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center gap-5">
-          <div data-tour-target={preparationMode ? "phase-14-writing" : undefined} className="w-full max-w-3xl rounded-3xl overflow-hidden shadow-xl border border-sky-500/20">
+          <div data-tour-target={preparationMode ? "phase-13-writing" : undefined} className="w-full max-w-3xl rounded-3xl overflow-hidden shadow-xl border border-sky-500/20">
             <div className="bg-gradient-to-r from-sky-500 to-blue-600 px-8 py-5 flex flex-col gap-2">
               <div>
                 <span className="text-white/80 text-xs font-bold uppercase tracking-widest">
@@ -2519,7 +2540,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                     <button
                       type="button"
                       onClick={() => playMcqAudio(writingAudioUrl, writingQuestion.question, "")}
-                      data-tour-target={preparationMode ? "phase-14-question-audio" : undefined}
+                      data-tour-target={preparationMode ? "phase-13-question-audio" : undefined}
                       title={t("lesson.interactive.speakTitle")}
                       className="size-10 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center shrink-0 transition-colors"
                     >
@@ -2534,14 +2555,14 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           <p className="text-muted-foreground text-sm text-center max-w-xl">
             {t("lesson.interactive.writingPlannerModel")}
           </p>
-          {renderTutorProgress("bg-sky-500", "phase-14-student-status")}
+          {renderTutorProgress("bg-sky-500", "phase-13-student-status")}
         </div>
         <LiveLeaderboard participants={participants} preparationMode={preparationMode} answeredStudentIds={leaderboardAnsweredStudentIds} />
       </div>
     );
   };
 
-  // ── Step 12: Language Questions (teacher-mediated AI) ──
+  // ── Phase 15: Language Questions (teacher-mediated AI) ──
   const renderLanguageQuestions = () => {
     const questions = allAnsweredData
       .map((a) => (typeof a.answer === "object" ? a.answer : { text: a.answer }))
@@ -2557,7 +2578,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               {t("lesson.interactive.languagePrompt")}
             </p>
           </div>
-          <div data-tour-target={preparationMode ? "phase-16-question-list" : undefined} className="w-full max-w-2xl bg-card border border-border rounded-2xl p-5">
+          <div data-tour-target={preparationMode ? "phase-15-question-list" : undefined} className="w-full max-w-2xl bg-card border border-border rounded-2xl p-5">
             <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
               {t("lesson.interactive.languageQuestionsHeading")}
             </p>
@@ -2566,7 +2587,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                 {questions.map((q: any, i) => (
                   <li
                     key={i}
-                    data-tour-target={preparationMode && i === 0 ? "phase-16-first-question" : undefined}
+                    data-tour-target={preparationMode && i === 0 ? "phase-15-first-question" : undefined}
                     className="relative group text-foreground text-sm bg-muted/50 rounded-xl px-4 py-3 border border-transparent hover:border-violet-500/30 transition-all cursor-help"
                   >
                     <div className="flex items-start gap-2">
@@ -2575,7 +2596,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                     </div>
                     {q.languageAnswer && (
                       <div
-                        data-tour-target={preparationMode && i === 0 ? "phase-16-ai-answer" : undefined}
+                        data-tour-target={preparationMode && i === 0 ? "phase-15-ai-answer" : undefined}
                         className={preparationMode
                           ? "mt-3 rounded-xl border border-violet-400/30 bg-violet-900/10 p-3 text-violet-700 dark:bg-violet-950/40 dark:text-violet-100"
                           : "absolute left-1/2 -translate-x-1/2 bottom-[105%] mb-2 hidden group-hover:block w-[400px] max-w-[50vw] z-50 bg-violet-900/95 dark:bg-violet-950/95 text-white p-4 rounded-2xl shadow-2xl border border-violet-400/30 pointer-events-none animate-in fade-in zoom-in-95 duration-200"}
@@ -2602,20 +2623,20 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               </div>
             )}
           </div>
-          {renderTutorProgress("bg-violet-500", "phase-16-student-status")}
+          {renderTutorProgress("bg-violet-500", "phase-15-student-status")}
         </div>
         <LiveLeaderboard participants={participants} preparationMode={preparationMode} answeredStudentIds={leaderboardAnsweredStudentIds} />
       </div>
     );
   };
 
-  // ── Step 13: Lesson Reflection ──
+  // ── Phase 16: Lesson Reflection ──
   const renderReflection = () => (
     <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center gap-6 px-4">
       <span className="bg-amber-500/10 text-amber-700 dark:text-amber-400 text-xs font-bold px-3 py-1 rounded-full border border-amber-500/20">
         {t("lesson.interactive.reflectionTitle")}
       </span>
-      <div data-tour-target={preparationMode ? "phase-17-reflection" : undefined} className="bg-card border-t-4 border-amber-500 rounded-3xl shadow-xl p-12 max-w-2xl w-full text-center">
+      <div data-tour-target={preparationMode ? "phase-16-reflection" : undefined} className="bg-card border-t-4 border-amber-500 rounded-3xl shadow-xl p-12 max-w-2xl w-full text-center">
         <div className="text-5xl mb-4">📝</div>
         <p className="text-xl font-bold text-foreground leading-snug">
           {t("lesson.interactive.reflectionPrompt")}
@@ -2627,7 +2648,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               {t("lesson.interactive.reflectionSubmitted")}
             </p>
             {preparationMode && (
-              <div data-tour-target="phase-17-responses" className="mt-5 space-y-2 text-left">
+              <div data-tour-target="phase-16-responses" className="mt-5 space-y-2 text-left">
                 {allAnsweredData.map((answer) => {
                   const text = typeof answer.answer === "object"
                     ? String((answer.answer as any)?.text || "")
@@ -2644,11 +2665,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           </>
         )}
       </div>
-      {renderTutorProgress("bg-amber-500", "phase-17-student-status")}
+      {renderTutorProgress("bg-amber-500", "phase-16-student-status")}
     </div>
   );
 
-  // ── Step 14: Pair Conversation (random pairs talk about the lesson) ──
+  // ── Phase 17: Pair Conversation (random pairs talk about the lesson) ──
   const renderPairConversation = () => {
     const pairs: {
       pairNumber: number;
@@ -2689,7 +2710,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             </p>
           </div>
         ) : (
-          <div data-tour-target={preparationMode ? "phase-18-pairs" : undefined} className="w-full max-w-4xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div data-tour-target={preparationMode ? "phase-17-pairs" : undefined} className="w-full max-w-4xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {pairs.map((pair) => (
               <div
                 key={pair.pairNumber}
@@ -2726,7 +2747,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         )}
 
         <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div data-tour-target={preparationMode ? "phase-18-starters" : undefined} className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-5">
+          <div data-tour-target={preparationMode ? "phase-17-starters" : undefined} className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-5">
             <h4 className="text-xs font-black uppercase tracking-widest text-rose-500 mb-3">
               {t("lesson.interactive.pairStartersTitle")}
             </h4>
@@ -2741,7 +2762,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
               ))}
             </ul>
           </div>
-          <div data-tour-target={preparationMode ? "phase-18-tutor-actions" : undefined} className="bg-muted/60 border border-border rounded-2xl p-5">
+          <div data-tour-target={preparationMode ? "phase-17-tutor-actions" : undefined} className="bg-muted/60 border border-border rounded-2xl p-5">
             <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-3">
               Tutor Actions
             </h4>
@@ -2757,7 +2778,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   };
 
   const renderFlashcards = () => (
-    <div data-tour-target={preparationMode ? "phase-3-flashcards" : undefined} className="w-full min-w-0">
+    <div data-tour-target={preparationMode ? "phase-2-flashcards" : undefined} className="w-full min-w-0">
       <FlashcardTeachingGame
         words={(articleData as any)?.words || []}
         participants={participants}
@@ -3490,85 +3511,36 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
 
   const renderPhaseContent = () => {
     if (currentPhase === 0 && participants.length === 0) return renderLobby();
-    if (currentPhase === 3) return renderFlashcards(); // Vocabulary Flashcards
-    if (currentPhase === 8) return renderMCQ(); // Comprehension Check
-    if (currentPhase === 9) return renderShortAnswer(); // Guided Response
-    if (currentPhase === 10) return renderVocabKahoot(); // Vocabulary Practice
+    if (currentPhase === LESSON_PHASE.FLASHCARDS) return renderFlashcards();
+    if (currentPhase === LESSON_PHASE.COMPREHENSION) return renderMCQ();
+    if (currentPhase === LESSON_PHASE.GUIDED_RESPONSE) return renderShortAnswer();
+    if (currentPhase === LESSON_PHASE.VOCABULARY_PRACTICE) return renderVocabKahoot();
     if (currentPhase === VOCAB_GAME_PHASE) return renderGamePhase("vocabulary");
-    if (currentPhase === 12) return renderSentenceFlashcardKahoot(); // Sentence Practice (fill)
-    if (currentPhase === 13) return renderSentenceOrderingKahoot(); // Sentence Practice (order)
-    if (currentPhase === 14) return renderWriting(); // Guided Writing
+    if (currentPhase === LESSON_PHASE.SENTENCE_PRACTICE) return renderSentenceFlashcardKahoot();
+    if (currentPhase === LESSON_PHASE.SENTENCE_ORDER) return renderSentenceOrderingKahoot();
+    if (currentPhase === LESSON_PHASE.GUIDED_WRITING) return renderWriting();
     if (currentPhase === SENTENCE_GAME_PHASE) return renderGamePhase("sentence");
-    if (currentPhase === 16) return renderLanguageQuestions(); // Language Questions
-    if (currentPhase === 17) return renderReflection(); // Lesson Reflection
-    if (currentPhase === 18) return renderPairConversation(); // Pair Conversation
-    if (currentPhase === FINAL_LEADERBOARD_PHASE) return renderLeaderboard(); // Wrap-up
+    if (currentPhase === LESSON_PHASE.LANGUAGE_QUESTIONS) return renderLanguageQuestions();
+    if (currentPhase === LESSON_PHASE.REFLECTION) return renderReflection();
+    if (currentPhase === LESSON_PHASE.PAIR_CONVERSATION) return renderPairConversation();
+    if (currentPhase === FINAL_LEADERBOARD_PHASE) return renderLeaderboard();
 
-    // Presentation phases 1-2 and 4-7 (Launch, Vocab, Read+audio, Collect Vocab, Deep Reading, Collect Sentences)
+    // Presentation phases: Launch, Read, Vocabulary Context, Deep Reading, and Key Sentences.
     return renderPresentation();
   };
 
-  const phaseGroups = [
-    {
-      label: t("lesson.interactive.period1"),
-      phases: [1, 2, 3, 4, 5],
-      color: "bg-indigo-500",
-      lightColor: "bg-indigo-100",
-      textColor: "text-indigo-700",
-    },
-    {
-      label: t("lesson.interactive.period2"),
-      phases: [6, 7, 8],
-      color: "bg-blue-500",
-      lightColor: "bg-blue-100",
-      textColor: "text-blue-700",
-    },
-    {
-      label: t("lesson.interactive.period3"),
-      phases: [9, 10, 11, 12, 13, 14, 15],
-      color: "bg-purple-500",
-      lightColor: "bg-purple-100",
-      textColor: "text-purple-700",
-    },
-    {
-      label: t("lesson.interactive.period4"),
-      phases: [16, 17, 18],
-      color: "bg-amber-500",
-      lightColor: "bg-amber-100",
-      textColor: "text-amber-700",
-    },
-    {
-      label: t("lesson.interactive.wrapUp"),
-      phases: [19],
-      color: "bg-emerald-500",
-      lightColor: "bg-emerald-100",
-      textColor: "text-emerald-700",
-    },
+  const phaseGroupStyles = [
+    { label: t("lesson.interactive.period1"), color: "bg-indigo-500", lightColor: "bg-indigo-100", textColor: "text-indigo-700" },
+    { label: t("lesson.interactive.period2"), color: "bg-blue-500", lightColor: "bg-blue-100", textColor: "text-blue-700" },
+    { label: t("lesson.interactive.period3"), color: "bg-purple-500", lightColor: "bg-purple-100", textColor: "text-purple-700" },
+    { label: t("lesson.interactive.period4"), color: "bg-amber-500", lightColor: "bg-amber-100", textColor: "text-amber-700" },
+    { label: t("lesson.interactive.wrapUp"), color: "bg-emerald-500", lightColor: "bg-emerald-100", textColor: "text-emerald-700" },
   ];
+  const phaseGroups = PHASE_GROUPS.map((group, index) => ({ ...group, ...phaseGroupStyles[index] }));
 
-  // The screen's source of truth is the 19-phase lesson sequence. Phase 12 and
-  // 13 are separate practice screens even though they share a learning theme.
   const phaseNames: Record<number, string> = {
     0: "Lobby",
-    1: "Phase 1 · Launch",
-    2: "Phase 2 · Vocabulary Preview",
-    3: "Phase 3 · Vocabulary Flashcards",
-    4: "Phase 4 · Read the Article",
-    5: "Phase 5 · Vocabulary in Context",
-    6: "Phase 6 · Deep Reading",
-    7: "Phase 7 · Key Sentences",
-    8: "Phase 8 · Comprehension Check",
-    9: "Phase 9 · Guided Response",
-    10: "Phase 10 · Vocabulary Practice",
-    11: "Phase 11 · Vocabulary Game",
-    12: "Phase 12 · Sentence Practice",
-    13: "Phase 13 · Sentence Ordering",
-    14: "Phase 14 · Guided Writing",
-    15: "Phase 15 · Sentence Game",
-    16: "Phase 16 · Language Questions",
-    17: "Phase 17 · Reflection",
-    18: "Phase 18 · Pair Conversation",
-    19: "Phase 19 · Wrap-up",
+    ...Object.fromEntries(Object.entries(PHASE_NAMES).map(([phase, name]) => [phase, `Phase ${phase} · ${name}`])),
   };
 
   const renderPhaseProgressBar = () => {

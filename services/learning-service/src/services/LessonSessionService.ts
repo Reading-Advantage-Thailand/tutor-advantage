@@ -87,7 +87,7 @@ export interface LessonSession {
   phaseSelectedIndices?: Record<number, number>;
   // Step 3 (Read the Article) Sentence Flags: sentenceIndex -> set of studentIds who flagged it
   sentenceFlags?: Map<number, Set<string>>;
-  // Step 14 (Pair Conversation): random pairs, regenerated every time phase 18 starts
+  // Pair Conversation: random pairs, regenerated every time phase 17 starts
   pairs?: { pairNumber: number; studentIds: string[] }[];
   gameState?: GamePhaseState;
   currentDbSessionId?: string; // Track active DB ID for dynamic restarting
@@ -143,11 +143,24 @@ function getRandomIndex(count: number, excludedIndex?: number): number {
   return candidates[Math.floor(Math.random() * candidates.length)];
 }
 
-export const LIVE_LESSON_TOTAL_PHASES = 19;
-export const VOCABULARY_GAME_PHASE = 11;
-export const SENTENCE_GAME_PHASE = 15;
-export const PAIR_CONVERSATION_PHASE = 18;
-export const FINAL_LEADERBOARD_PHASE = 19;
+export const LIVE_LESSON_TOTAL_PHASES = 18;
+export const FLASHCARD_PHASE = 2;
+export const READ_ARTICLE_PHASE = 3;
+export const VOCABULARY_CONTEXT_PHASE = 4;
+export const DEEP_READING_PHASE = 5;
+export const KEY_SENTENCES_PHASE = 6;
+export const COMPREHENSION_PHASE = 7;
+export const GUIDED_RESPONSE_PHASE = 8;
+export const VOCABULARY_PRACTICE_PHASE = 9;
+export const VOCABULARY_GAME_PHASE = 10;
+export const SENTENCE_PRACTICE_PHASE = 11;
+export const SENTENCE_ORDER_PHASE = 12;
+export const GUIDED_WRITING_PHASE = 13;
+export const SENTENCE_GAME_PHASE = 14;
+export const LANGUAGE_QUESTIONS_PHASE = 15;
+export const REFLECTION_PHASE = 16;
+export const PAIR_CONVERSATION_PHASE = 17;
+export const FINAL_LEADERBOARD_PHASE = 18;
 
 const ENABLED_GAME_BY_CATEGORY: Record<GameCategory, Set<string>> = {
   vocabulary: new Set([
@@ -266,29 +279,29 @@ class LessonSessionService {
       }
     }
 
-    // 19-phase map. Phase 3 is the vocabulary flashcard mission.
+    // 18-phase map. Phase 2 is the vocabulary flashcard mission.
     // Interactive index slots:
-    //   8=Comprehension(MCQ) 9=GuidedResponse(ShortAnswer) 10=VocabPractice
-    //   12=SentencePractice(fill) 13=SentencePractice(order) 14=GuidedWriting(prompt)
+    //   7=Comprehension(MCQ) 8=GuidedResponse(ShortAnswer) 9=VocabPractice
+    //   11=SentencePractice(fill) 12=SentencePractice(order) 13=GuidedWriting(prompt)
     const phaseSelectedIndices: Record<number, number> = {};
     if (articleData?.multipleChoiceQuestions?.length) {
-      phaseSelectedIndices[8] = Math.floor(Math.random() * articleData.multipleChoiceQuestions.length);
+      phaseSelectedIndices[COMPREHENSION_PHASE] = Math.floor(Math.random() * articleData.multipleChoiceQuestions.length);
     }
     if (articleData?.shortAnswerQuestions?.length) {
       const count = articleData.shortAnswerQuestions.length;
-      phaseSelectedIndices[9] = getRandomIndex(count);
-      phaseSelectedIndices[14] = getRandomIndex(count); // Guided Writing prompt
+      phaseSelectedIndices[GUIDED_RESPONSE_PHASE] = getRandomIndex(count);
+      phaseSelectedIndices[GUIDED_WRITING_PHASE] = getRandomIndex(count);
     }
     if (articleData?.words?.length) {
-      phaseSelectedIndices[10] = Math.floor(Math.random() * articleData.words.length);
+      phaseSelectedIndices[VOCABULARY_PRACTICE_PHASE] = Math.floor(Math.random() * articleData.words.length);
     }
     if (articleData?.sentences?.length) {
-      phaseSelectedIndices[12] = getRandomLongSentenceIndex(articleData.sentences);
-      phaseSelectedIndices[13] = getRandomLongSentenceIndex(articleData.sentences);
+      phaseSelectedIndices[SENTENCE_PRACTICE_PHASE] = getRandomLongSentenceIndex(articleData.sentences);
+      phaseSelectedIndices[SENTENCE_ORDER_PHASE] = getRandomLongSentenceIndex(articleData.sentences);
     }
 
-    logger.info(`[Service] Available MCQ questions (Phase 8):`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
-    logger.info(`[Service] Available Short Answer questions (Phase 9):`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
+    logger.info(`[Service] Available MCQ questions (Phase ${COMPREHENSION_PHASE}):`, articleData?.multipleChoiceQuestions?.map((q: any) => q.question));
+    logger.info(`[Service] Available Short Answer questions (Phase ${GUIDED_RESPONSE_PHASE}):`, articleData?.shortAnswerQuestions?.map((q: any) => q.question));
 
     // Force fresh UUID session instantiation every time to ensure unique, separated histories
     const sessionId = sessionIdOverride || uuidv4();
@@ -425,17 +438,17 @@ class LessonSessionService {
     }
 
     // Force re-randomize every time we enter the phase
-    // 8=MCQ 9=ShortAnswer 10=VocabPractice 12/13=SentenceGames 14=GuidedWriting prompt
-    if (phase === 8) {
+    // 7=MCQ 8=ShortAnswer 9=VocabPractice 11/12=SentencePractice 13=GuidedWriting prompt
+    if (phase === COMPREHENSION_PHASE) {
       const count = session.articleData?.multipleChoiceQuestions?.length || 1;
-      session.phaseSelectedIndices[8] = Math.floor(Math.random() * count);
-    } else if (phase === 9 || phase === 14) {
+      session.phaseSelectedIndices[COMPREHENSION_PHASE] = Math.floor(Math.random() * count);
+    } else if (phase === GUIDED_RESPONSE_PHASE || phase === GUIDED_WRITING_PHASE) {
       const count = session.articleData?.shortAnswerQuestions?.length || 1;
       session.phaseSelectedIndices[phase] = getRandomIndex(count);
-    } else if (phase === 10) {
+    } else if (phase === VOCABULARY_PRACTICE_PHASE) {
       const count = session.articleData?.words?.length || 1;
-      session.phaseSelectedIndices[10] = Math.floor(Math.random() * count);
-    } else if (phase === 12 || phase === 13) {
+      session.phaseSelectedIndices[VOCABULARY_PRACTICE_PHASE] = Math.floor(Math.random() * count);
+    } else if (phase === SENTENCE_PRACTICE_PHASE || phase === SENTENCE_ORDER_PHASE) {
       session.phaseSelectedIndices[phase] = getRandomLongSentenceIndex(session.articleData?.sentences || []);
     }
 
@@ -451,7 +464,7 @@ class LessonSessionService {
       };
     }
 
-    // Step 14 (Pair Conversation): shuffle students into fresh pairs every entry
+    // Pair Conversation: shuffle students into fresh pairs every entry
     if (phase === PAIR_CONVERSATION_PHASE) {
       this.generatePairs(session);
     }
@@ -461,7 +474,7 @@ class LessonSessionService {
     }
 
     logger.info(`[Service] Session phase changed to: ${phase}`);
-    if ([8, 9, 10, 12, 13, 14].includes(phase)) {
+    if ([COMPREHENSION_PHASE, GUIDED_RESPONSE_PHASE, VOCABULARY_PRACTICE_PHASE, SENTENCE_PRACTICE_PHASE, SENTENCE_ORDER_PHASE, GUIDED_WRITING_PHASE].includes(phase)) {
        const idx = session.phaseSelectedIndices?.[phase] || 0;
        logger.info(`[Service] Selected Question Index for Phase ${phase}:`, idx);
     }
@@ -742,7 +755,7 @@ class LessonSessionService {
     };
   }
 
-  // Step 14 (Pair Conversation): randomly pair up everyone in the room.
+  // Pair Conversation: randomly pair up everyone in the room.
   // An odd student out joins the last pair as a group of three.
   private generatePairs(session: LessonSession) {
     const ids = Array.from(session.participants.keys());
@@ -1021,7 +1034,7 @@ class LessonSessionService {
     return { session, answers };
   }
 
-  // Toggle a student's flag on a sentence (Phase 4 Reading). Returns updated count for that sentence.
+  // Toggle a student's flag on a sentence (Phase 3 Reading). Returns updated count for that sentence.
   toggleSentenceFlag(sessionId: string, studentId: string, sentenceIndex: number):
     { session: LessonSession; sentenceIndex: number; count: number; flagged: boolean } | undefined {
     const session = this.sessions.get(sessionId);

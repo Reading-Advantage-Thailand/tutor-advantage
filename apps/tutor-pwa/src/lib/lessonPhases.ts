@@ -1,0 +1,125 @@
+/**
+ * The lesson flow shared by the live lesson surface and the tutor guide demo.
+ *
+ * Keep this registry as the source of truth for phase numbers. The demo uses
+ * the same lesson components as a live lesson, so it must not maintain a
+ * second phase map.
+ */
+export const LESSON_PHASE = {
+  LAUNCH: 1,
+  FLASHCARDS: 2,
+  READ_ARTICLE: 3,
+  VOCABULARY_CONTEXT: 4,
+  DEEP_READING: 5,
+  KEY_SENTENCES: 6,
+  COMPREHENSION: 7,
+  GUIDED_RESPONSE: 8,
+  VOCABULARY_PRACTICE: 9,
+  VOCABULARY_GAME: 10,
+  SENTENCE_PRACTICE: 11,
+  SENTENCE_ORDER: 12,
+  GUIDED_WRITING: 13,
+  SENTENCE_GAME: 14,
+  LANGUAGE_QUESTIONS: 15,
+  REFLECTION: 16,
+  PAIR_CONVERSATION: 17,
+  WRAP_UP: 18,
+} as const;
+
+export const TOTAL_LESSON_PHASES = LESSON_PHASE.WRAP_UP;
+
+export const QUESTION_PHASES: number[] = [
+  LESSON_PHASE.FLASHCARDS,
+  LESSON_PHASE.COMPREHENSION,
+  LESSON_PHASE.GUIDED_RESPONSE,
+  LESSON_PHASE.VOCABULARY_PRACTICE,
+  LESSON_PHASE.SENTENCE_PRACTICE,
+  LESSON_PHASE.SENTENCE_ORDER,
+  LESSON_PHASE.GUIDED_WRITING,
+  LESSON_PHASE.LANGUAGE_QUESTIONS,
+  LESSON_PHASE.REFLECTION,
+];
+
+export const RESULT_REVIEW_PHASES: number[] = [
+  LESSON_PHASE.COMPREHENSION,
+  LESSON_PHASE.GUIDED_RESPONSE,
+  LESSON_PHASE.VOCABULARY_PRACTICE,
+  LESSON_PHASE.SENTENCE_PRACTICE,
+  LESSON_PHASE.SENTENCE_ORDER,
+  LESSON_PHASE.GUIDED_WRITING,
+];
+
+export const GAME_PHASES: number[] = [
+  LESSON_PHASE.VOCABULARY_GAME,
+  LESSON_PHASE.SENTENCE_GAME,
+];
+
+export const PHASE_NAMES: Record<number, string> = {
+  [LESSON_PHASE.LAUNCH]: "เปิดบทเรียน",
+  [LESSON_PHASE.FLASHCARDS]: "บัตรคำศัพท์",
+  [LESSON_PHASE.READ_ARTICLE]: "อ่านบทความ",
+  [LESSON_PHASE.VOCABULARY_CONTEXT]: "เก็บคำศัพท์",
+  [LESSON_PHASE.DEEP_READING]: "อ่านเชิงลึก",
+  [LESSON_PHASE.KEY_SENTENCES]: "เก็บประโยค",
+  [LESSON_PHASE.COMPREHENSION]: "ตรวจความเข้าใจ",
+  [LESSON_PHASE.GUIDED_RESPONSE]: "ตอบแบบมีโครง",
+  [LESSON_PHASE.VOCABULARY_PRACTICE]: "ฝึกคำศัพท์",
+  [LESSON_PHASE.VOCABULARY_GAME]: "เกมคำศัพท์",
+  [LESSON_PHASE.SENTENCE_PRACTICE]: "เติมคำ",
+  [LESSON_PHASE.SENTENCE_ORDER]: "เรียงประโยค",
+  [LESSON_PHASE.GUIDED_WRITING]: "เขียน",
+  [LESSON_PHASE.SENTENCE_GAME]: "เกมประโยค",
+  [LESSON_PHASE.LANGUAGE_QUESTIONS]: "คำถามภาษา",
+  [LESSON_PHASE.REFLECTION]: "Reflection",
+  [LESSON_PHASE.PAIR_CONVERSATION]: "สนทนา",
+  [LESSON_PHASE.WRAP_UP]: "สรุป",
+};
+
+export type LessonPhaseGroup = {
+  label: string;
+  phases: number[];
+};
+
+export const PHASE_GROUPS: LessonPhaseGroup[] = [
+  {
+    label: "Introduction",
+    phases: [
+      LESSON_PHASE.LAUNCH,
+      LESSON_PHASE.FLASHCARDS,
+      LESSON_PHASE.READ_ARTICLE,
+      LESSON_PHASE.VOCABULARY_CONTEXT,
+      LESSON_PHASE.DEEP_READING,
+    ],
+  },
+  {
+    label: "Practice",
+    phases: [
+      LESSON_PHASE.KEY_SENTENCES,
+      LESSON_PHASE.COMPREHENSION,
+      LESSON_PHASE.GUIDED_RESPONSE,
+    ],
+  },
+  {
+    label: "Interactive",
+    phases: [
+      LESSON_PHASE.VOCABULARY_PRACTICE,
+      LESSON_PHASE.VOCABULARY_GAME,
+      LESSON_PHASE.SENTENCE_PRACTICE,
+      LESSON_PHASE.SENTENCE_ORDER,
+      LESSON_PHASE.GUIDED_WRITING,
+      LESSON_PHASE.SENTENCE_GAME,
+    ],
+  },
+  {
+    label: "Wrap-up",
+    phases: [
+      LESSON_PHASE.LANGUAGE_QUESTIONS,
+      LESSON_PHASE.REFLECTION,
+      LESSON_PHASE.PAIR_CONVERSATION,
+    ],
+  },
+  {
+    label: "Finish",
+    phases: [LESSON_PHASE.WRAP_UP],
+  },
+];

@@ -2,8 +2,17 @@ import { getJwtSecret, logger } from "@tutor-advantage/shared-config";
 import { Server, Socket } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
 import {
+  COMPREHENSION_PHASE,
+  FLASHCARD_PHASE,
   FINAL_LEADERBOARD_PHASE,
+  GUIDED_RESPONSE_PHASE,
+  GUIDED_WRITING_PHASE,
+  LANGUAGE_QUESTIONS_PHASE,
   PAIR_CONVERSATION_PHASE,
+  REFLECTION_PHASE,
+  SENTENCE_ORDER_PHASE,
+  SENTENCE_PRACTICE_PHASE,
+  VOCABULARY_PRACTICE_PHASE,
   lessonSessionService,
 } from "../services/LessonSessionService";
 import { evaluateShortAnswer, evaluateWriting, answerLanguageQuestion } from "../services/AIEvaluator";
@@ -1126,11 +1135,11 @@ export const setupLessonSocket = (io: Server) => {
         return;
       }
 
-      // AI-evaluated phases: 9=Guided Response, 14=Guided Writing,
-      // 16=teacher-mediated language questions.  Validate and reserve the
+      // AI-evaluated phases: 8=Guided Response, 13=Guided Writing,
+      // 15=teacher-mediated language questions. Validate and reserve the
       // answer before any provider call so duplicate socket events cannot fan
       // out into duplicate Gemini requests.
-      const isAiPhase = session.currentPhase === 9 || session.currentPhase === 14 || session.currentPhase === 16;
+      const isAiPhase = session.currentPhase === GUIDED_RESPONSE_PHASE || session.currentPhase === GUIDED_WRITING_PHASE || session.currentPhase === LANGUAGE_QUESTIONS_PHASE;
       let evaluatedAnswer = answer;
       let result: ReturnType<typeof lessonSessionService.submitAnswer>;
 
@@ -1140,7 +1149,7 @@ export const setupLessonSocket = (io: Server) => {
           return;
         }
 
-        const maxAnswerLength = session.currentPhase === 14 ? 8000 : 4000;
+        const maxAnswerLength = session.currentPhase === GUIDED_WRITING_PHASE ? 8000 : 4000;
         const questionText = typeof question === "string" ? question : "";
         const expectedText = typeof expectedAnswer === "string" ? expectedAnswer : "";
         if (
@@ -1152,7 +1161,7 @@ export const setupLessonSocket = (io: Server) => {
           return;
         }
 
-        const shouldCallProvider = session.currentPhase !== 16 || answer.trim().length > 0;
+        const shouldCallProvider = session.currentPhase !== LANGUAGE_QUESTIONS_PHASE || answer.trim().length > 0;
         aiRequestKey = `${studentId}:${sessionId}:${session.currentPhase}`;
         if (shouldCallProvider) {
           const slot = acquireAiSlot(studentId, aiRequestKey);
@@ -1174,8 +1183,8 @@ export const setupLessonSocket = (io: Server) => {
         }
 
         try {
-          if (session.currentPhase === 9 || session.currentPhase === 14) {
-            const aiResult = session.currentPhase === 14
+          if (session.currentPhase === GUIDED_RESPONSE_PHASE || session.currentPhase === GUIDED_WRITING_PHASE) {
+            const aiResult = session.currentPhase === GUIDED_WRITING_PHASE
               ? await evaluateWriting(questionText, answer)
               : await evaluateShortAnswer(questionText, expectedText, answer);
             evaluatedAnswer = {
@@ -1238,8 +1247,8 @@ export const setupLessonSocket = (io: Server) => {
         // Update participant's total score
         const participant = result.session.participants.get(studentId);
         if (participant) {
-          if (result.session.currentPhase === 9 || result.session.currentPhase === 14) {
-            // Guided Response (9) / Guided Writing (14) with AI score
+          if (result.session.currentPhase === GUIDED_RESPONSE_PHASE || result.session.currentPhase === GUIDED_WRITING_PHASE) {
+            // Guided Response (8) / Guided Writing (13) with AI score
             participant.score = (participant.score || 0) + (evaluatedAnswer.aiScore || 0);
 
             // --- PERSIST DB ANSWER (AI-SCORED) ---
@@ -1254,7 +1263,7 @@ export const setupLessonSocket = (io: Server) => {
               questionText: question,
               correctAnswer: expectedAnswer
             });
-          } else if (result.session.currentPhase === 16) {
+          } else if (result.session.currentPhase === LANGUAGE_QUESTIONS_PHASE) {
             // Language Questions: participation point, store question + AI answer
             participant.score = (participant.score || 0) + 1;
 
@@ -1269,7 +1278,7 @@ export const setupLessonSocket = (io: Server) => {
               questionText: "Language question",
               correctAnswer: ""
             });
-          } else if (result.session.currentPhase === 17) {
+          } else if (result.session.currentPhase === REFLECTION_PHASE) {
             // Lesson Reflection: store ratings, no competitive score
             dbWriter.persistAnswer({
               sessionId: result.session.currentDbSessionId || sessionId,
@@ -1286,14 +1295,14 @@ export const setupLessonSocket = (io: Server) => {
             let resolvedAnswerText = String(answer);
             const choiceIdx = String(answer).trim().toUpperCase().charCodeAt(0) - 65; // A=0, B=1, C=2, D=3
 
-            if (result.session.currentPhase === 3) {
+            if (result.session.currentPhase === FLASHCARD_PHASE) {
               // Vocabulary Flashcards: the student submits after rating every card.
               const payload = typeof answer === "string" ? answer : JSON.stringify(answer);
               resolvedAnswerText = payload;
               correctLabel = "FLASHCARD_COMPLETE";
-            } else if (result.session.currentPhase === 8) {
-              // Comprehension Check / MCQ (Step 7)
-              const idx = result.session.phaseSelectedIndices?.[8] || 0;
+            } else if (result.session.currentPhase === COMPREHENSION_PHASE) {
+              // Comprehension Check / MCQ (Phase 7)
+              const idx = result.session.phaseSelectedIndices?.[COMPREHENSION_PHASE] || 0;
               const mcqQuestion = result.session.articleData?.multipleChoiceQuestions?.[idx];
               if (mcqQuestion) {
                 const rawAnswer = mcqQuestion.answer || '';
@@ -1325,7 +1334,7 @@ export const setupLessonSocket = (io: Server) => {
                 const correctOptionText = answerIdx !== -1 ? rawOptions[answerIdx] : rawAnswer;
 
                 // Apply matching deterministic shuffle derived from session + question
-                const shuffledOptions = seededShuffle(rawOptions, sessionId + "_phase8_" + mcqQuestion.question);
+                const shuffledOptions = seededShuffle(rawOptions, sessionId + "_phase7_" + mcqQuestion.question);
                 
                 const newCorrectIdx = shuffledOptions.indexOf(correctOptionText);
                 if (newCorrectIdx !== -1) {
@@ -1339,10 +1348,10 @@ export const setupLessonSocket = (io: Server) => {
                   resolvedAnswerText = shuffledOptions[choiceIdx] || String(answer);
                 }
               }
-            } else if (result.session.currentPhase === 10) {
-              // Vocabulary Practice (Step 9)
+            } else if (result.session.currentPhase === VOCABULARY_PRACTICE_PHASE) {
+              // Vocabulary Practice (Phase 9)
               const words = result.session.articleData?.words || [];
-              const idx = result.session.phaseSelectedIndices?.[10] || 0;
+              const idx = result.session.phaseSelectedIndices?.[VOCABULARY_PRACTICE_PHASE] || 0;
               const targetWord = words[idx] || words[0];
               if (targetWord) {
                 const correctTranslation = targetWord.definition?.th || targetWord.translation || "ความหมายที่ถูกต้อง";
@@ -1369,7 +1378,7 @@ export const setupLessonSocket = (io: Server) => {
                   fillCounter++;
                 }
 
-                const shuffledOptions = seededShuffle(optionsArray, sessionId + "_phase10_" + (targetWord.vocabulary || targetWord.word));
+                const shuffledOptions = seededShuffle(optionsArray, sessionId + "_phase9_" + (targetWord.vocabulary || targetWord.word));
 
                 const newCorrectIdx = shuffledOptions.indexOf(correctTranslation);
                 if (newCorrectIdx !== -1) {
@@ -1381,10 +1390,10 @@ export const setupLessonSocket = (io: Server) => {
                   resolvedAnswerText = shuffledOptions[choiceIdx];
                 }
               }
-            } else if (result.session.currentPhase === 12) {
-              // Sentence Practice — fill in the blank (Step 10a)
+            } else if (result.session.currentPhase === SENTENCE_PRACTICE_PHASE) {
+              // Sentence Practice — fill in the blank (Phase 11)
               const sentences = result.session.articleData?.sentences || [];
-              const idx = result.session.phaseSelectedIndices?.[12] || 0;
+              const idx = result.session.phaseSelectedIndices?.[SENTENCE_PRACTICE_PHASE] || 0;
               const targetSentence = typeof sentences[idx] === 'object' ? sentences[idx].sentences : sentences[idx];
               if (targetSentence) {
                 const words = String(targetSentence).split(' ');
@@ -1394,7 +1403,7 @@ export const setupLessonSocket = (io: Server) => {
                 
                 const optionsArray = [correctWord, distractors[0] || "Word A", distractors[1] || "Word B", distractors[2] || "Word C"];
                 
-                const shuffledOptions = seededShuffle(optionsArray, sessionId + "_phase12_" + targetSentence);
+                const shuffledOptions = seededShuffle(optionsArray, sessionId + "_phase11_" + targetSentence);
                 
                 const newCorrectIdx = shuffledOptions.indexOf(correctWord);
                 if (newCorrectIdx !== -1) {
@@ -1406,10 +1415,10 @@ export const setupLessonSocket = (io: Server) => {
                   resolvedAnswerText = shuffledOptions[choiceIdx];
                 }
               }
-            } else if (result.session.currentPhase === 13) {
-              // Sentence Practice — put words in order (Step 10b)
+            } else if (result.session.currentPhase === SENTENCE_ORDER_PHASE) {
+              // Sentence Practice — put words in order (Phase 12)
               const sentences = result.session.articleData?.sentences || [];
-              const idx = result.session.phaseSelectedIndices?.[13] || 0;
+              const idx = result.session.phaseSelectedIndices?.[SENTENCE_ORDER_PHASE] || 0;
               const targetSentence = typeof sentences[idx] === 'object' ? sentences[idx].sentences : sentences[idx];
               if (targetSentence) {
                 const words = String(targetSentence).split(' ').filter((w: any) => String(w).trim().length > 0);
@@ -1419,7 +1428,7 @@ export const setupLessonSocket = (io: Server) => {
                 
                 const optionsArray = [targetSentence, optA.join(' '), optB.join(' '), optC.join(' ')];
                 
-                const shuffledOptions = seededShuffle(optionsArray, sessionId + "_phase13b_" + targetSentence);
+                const shuffledOptions = seededShuffle(optionsArray, sessionId + "_phase12b_" + targetSentence);
                 
                 const newCorrectIdx = shuffledOptions.indexOf(targetSentence);
                 if (newCorrectIdx !== -1) {
@@ -1433,7 +1442,7 @@ export const setupLessonSocket = (io: Server) => {
               }
             }
 
-            const isCorrect = result.session.currentPhase === 3
+            const isCorrect = result.session.currentPhase === FLASHCARD_PHASE
               ? true
               : String(answer).trim().toUpperCase() === correctLabel.trim().toUpperCase();
             if (isCorrect) {
@@ -1502,7 +1511,7 @@ export const setupLessonSocket = (io: Server) => {
       }
     });
 
-    // Student toggles a sentence flag during Step 3 (Read the Article) to ask the tutor about pronunciation
+    // Student toggles a sentence flag during Phase 3 (Read the Article) to ask the tutor about pronunciation
     socket.on("flag_sentence", ({ sessionId, sentenceIndex }) => {
       const activeSession = lessonSessionService.getSession(sessionId);
       if (!isStudentSessionParticipant(actor, activeSession)) {

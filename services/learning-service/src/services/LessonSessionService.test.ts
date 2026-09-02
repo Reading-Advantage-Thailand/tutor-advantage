@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { lessonSessionService as service } from "./LessonSessionService";
+import {
+  COMPREHENSION_PHASE,
+  GUIDED_RESPONSE_PHASE,
+  SENTENCE_GAME_PHASE,
+  VOCABULARY_GAME_PHASE,
+  lessonSessionService as service,
+} from "./LessonSessionService";
 
 describe("lessonSessionService", () => {
   beforeEach(() => {
@@ -93,7 +99,7 @@ describe("lessonSessionService", () => {
   it("reserves an answer before a slow evaluator and rejects concurrent duplicates", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
     service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
-    service.setPhase(session.sessionId, 9);
+    service.setPhase(session.sessionId, GUIDED_RESPONSE_PHASE);
 
     const reservation = service.reserveAnswer(session.sessionId, "student-1");
     expect(reservation?.accepted).toBe(true);
@@ -111,7 +117,7 @@ describe("lessonSessionService", () => {
   it("rolls back an answer reservation when processing fails before commit", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
     service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
-    service.setPhase(session.sessionId, 9);
+    service.setPhase(session.sessionId, GUIDED_RESPONSE_PHASE);
 
     expect(service.reserveAnswer(session.sessionId, "student-1")?.accepted).toBe(true);
     expect(service.releaseReservedAnswer(session.sessionId, "student-1")).toBe(true);
@@ -126,8 +132,8 @@ describe("lessonSessionService", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
     service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
     service.applyRemoteEvent(session.sessionId, "phase_changed", {
-      phase: 9,
-      phaseSelectedIndices: { 9: 2 },
+      phase: GUIDED_RESPONSE_PHASE,
+      phaseSelectedIndices: { [GUIDED_RESPONSE_PHASE]: 2 },
       currentDbSessionId: "cycle-1",
       phaseRestored: false,
     });
@@ -143,9 +149,9 @@ describe("lessonSessionService", () => {
     });
 
     expect(session).toMatchObject({
-      currentPhase: 9,
+      currentPhase: GUIDED_RESPONSE_PHASE,
       currentDbSessionId: "cycle-1",
-      phaseSelectedIndices: { 9: 2 },
+      phaseSelectedIndices: { [GUIDED_RESPONSE_PHASE]: 2 },
     });
     expect(session.participants.get("student-1")).toMatchObject({
       name: "Ada Updated",
@@ -193,14 +199,14 @@ describe("lessonSessionService", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
     service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
 
-    service.setPhase(session.sessionId, 10);
-    service.setPhase(session.sessionId, 11);
-    expect(service.rewindPhase(session.sessionId, 10)).toBe(session);
+    service.setPhase(session.sessionId, COMPREHENSION_PHASE);
+    service.setPhase(session.sessionId, GUIDED_RESPONSE_PHASE);
+    expect(service.rewindPhase(session.sessionId, COMPREHENSION_PHASE)).toBe(session);
 
     expect(service.toggleReady(session.sessionId, "student-1")).toBeUndefined();
     expect(service.submitAnswer(session.sessionId, "student-1", "answer")).toBeUndefined();
     expect(service.toggleSentenceFlag(session.sessionId, "student-1", 0)).toBeUndefined();
-    expect(service.startGameVote(session.sessionId, 10)).toBeNull();
+    expect(service.startGameVote(session.sessionId, VOCABULARY_GAME_PHASE)).toBeNull();
     expect(service.submitGameVote(session.sessionId, "student-1", "dragon-flight")).toBeNull();
     expect(service.submitGameResult(session.sessionId, "student-1", { score: 10 })).toBeNull();
   });
@@ -223,8 +229,8 @@ describe("lessonSessionService", () => {
     service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
     service.joinSessionByClassId("class-1", "student-2", "Bob", "socket-b");
 
-    service.setPhase(session.sessionId, 11);
-    expect(session.gameState).toMatchObject({ phase: 11, category: "vocabulary", status: "voting" });
+    service.setPhase(session.sessionId, VOCABULARY_GAME_PHASE);
+    expect(session.gameState).toMatchObject({ phase: VOCABULARY_GAME_PHASE, category: "vocabulary", status: "voting" });
 
     service.submitGameVote(session.sessionId, "student-1", "dragon-flight");
     service.submitGameVote(session.sessionId, "student-2", "dragon-flight");
@@ -259,18 +265,18 @@ describe("lessonSessionService", () => {
     expect(session.participants.get("student-1")?.score).toBe(8);
     expect(session.participants.get("student-2")?.score).toBe(10);
 
-    service.setPhase(session.sessionId, 15);
-    expect(session.gameState).toMatchObject({ phase: 15, category: "sentence", status: "voting" });
+    service.setPhase(session.sessionId, SENTENCE_GAME_PHASE);
+    expect(session.gameState).toMatchObject({ phase: SENTENCE_GAME_PHASE, category: "sentence", status: "voting" });
     expect(session.gameState?.results).toEqual({});
   });
 
   it("falls back to default games when no one votes", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
 
-    service.setPhase(session.sessionId, 11);
+    service.setPhase(session.sessionId, VOCABULARY_GAME_PHASE);
     expect(service.lockGameVote(session.sessionId)?.selectedGameId).toBe("dragon-flight");
 
-    service.setPhase(session.sessionId, 15);
+    service.setPhase(session.sessionId, SENTENCE_GAME_PHASE);
     expect(service.lockGameVote(session.sessionId)?.selectedGameId).toBe("castle-defense");
   });
 
@@ -278,7 +284,7 @@ describe("lessonSessionService", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
     service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
 
-    service.setPhase(session.sessionId, 11);
+    service.setPhase(session.sessionId, VOCABULARY_GAME_PHASE);
     expect(service.submitGameVote(session.sessionId, "student-1", "alchemists-synthesis")).toBeNull();
     expect(session.gameState?.votes).toEqual({});
     expect(service.lockGameVote(session.sessionId)?.selectedGameId).toBe("dragon-flight");
@@ -287,7 +293,7 @@ describe("lessonSessionService", () => {
   it("supports an optional teacher demo and tutorial before the countdown", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
 
-    service.setPhase(session.sessionId, 11);
+    service.setPhase(session.sessionId, VOCABULARY_GAME_PHASE);
     expect(service.lockGameVote(session.sessionId)).toMatchObject({
       status: "ready",
       selectedGameId: "dragon-flight",
@@ -309,7 +315,7 @@ describe("lessonSessionService", () => {
   it("lets the tutor disable tutorial and start the countdown directly", () => {
     const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
 
-    service.setPhase(session.sessionId, 15);
+    service.setPhase(session.sessionId, SENTENCE_GAME_PHASE);
     service.lockGameVote(session.sessionId);
     expect(service.startGameIntro(session.sessionId, {
       teacherDemoEnabled: false,

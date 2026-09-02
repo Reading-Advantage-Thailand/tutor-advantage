@@ -36,7 +36,7 @@ export function FlashcardTeachingGame({ words = [], participants, answered, onSp
 
   if (!current) {
     return (
-      <div data-tour-target={preparationMode ? "phase-3-student-status" : undefined} className="flex flex-1 items-center justify-center rounded-3xl border border-amber-400/30 bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-950 p-10 text-center text-white shadow-2xl">
+      <div data-tour-target={preparationMode ? "phase-2-student-status" : undefined} className="flex flex-1 items-center justify-center rounded-3xl border border-amber-400/30 bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-950 p-10 text-center text-white shadow-2xl">
         <div>
           <BookOpen className="mx-auto mb-4 size-14 text-amber-300" />
           <h2 className="text-2xl font-black">ยังไม่มีคำศัพท์สำหรับ Flashcard</h2>
@@ -57,7 +57,7 @@ export function FlashcardTeachingGame({ words = [], participants, answered, onSp
       <section className="flex min-w-0 flex-1 flex-col items-center justify-center">
         <div className="mb-5 flex w-full max-w-2xl items-center justify-between">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-amber-300">Phase 3 · Vocabulary Flashcards</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-amber-300">Phase 2 · Vocabulary Flashcards</p>
             <h2 className="mt-1 text-2xl font-black sm:text-3xl">ภารกิจจำคำศัพท์</h2>
           </div>
           <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-2 text-right backdrop-blur">
@@ -70,7 +70,7 @@ export function FlashcardTeachingGame({ words = [], participants, answered, onSp
           <button
             type="button"
             onClick={() => setFlipped((value) => !value)}
-            data-tour-target="phase-3-flashcard-card"
+            data-tour-target="phase-2-flashcard-card"
             className="group relative min-h-[320px] w-full overflow-hidden rounded-[32px] border border-amber-300/30 bg-gradient-to-br from-amber-300 via-orange-400 to-rose-500 p-1 text-left shadow-[0_22px_70px_rgba(245,158,11,0.25)] transition-transform hover:scale-[1.01]"
             aria-label="พลิกการ์ดคำศัพท์"
           >
@@ -91,7 +91,7 @@ export function FlashcardTeachingGame({ words = [], participants, answered, onSp
             <button
               type="button"
               onClick={speakCurrent}
-              data-tour-target={preparationMode ? "phase-3-flashcard-audio" : undefined}
+              data-tour-target={preparationMode ? "phase-2-flashcard-audio" : undefined}
               className="absolute right-5 top-5 inline-flex size-11 items-center justify-center rounded-2xl bg-white/15 text-white shadow-lg backdrop-blur transition hover:bg-white/25 active:scale-90"
               aria-label={`ฟังการออกเสียง ${wordText(current, index)}`}
               title="ฟังการออกเสียง"
@@ -102,7 +102,7 @@ export function FlashcardTeachingGame({ words = [], participants, answered, onSp
         </div>
 
         <div className="mt-5 w-full max-w-2xl">
-          <div data-tour-target="phase-3-flashcard-progress" className="mb-2 flex justify-between text-[10px] font-black uppercase tracking-widest text-white/50">
+          <div data-tour-target="phase-2-flashcard-progress" className="mb-2 flex justify-between text-[10px] font-black uppercase tracking-widest text-white/50">
             <span>Mission progress</span><span>{Math.round(progress)}%</span>
           </div>
           <div className="h-3 overflow-hidden rounded-full bg-black/30">
@@ -114,10 +114,10 @@ export function FlashcardTeachingGame({ words = [], participants, answered, onSp
           <button type="button" onClick={() => { setIndex((value) => Math.max(0, value - 1)); setFlipped(false); }} disabled={index === 0} className="inline-flex h-12 items-center gap-2 rounded-2xl bg-white/10 px-4 text-sm font-black transition hover:bg-white/20 disabled:opacity-30">
             <ChevronLeft size={18} /> ก่อนหน้า
           </button>
-          <button type="button" onClick={() => setFlipped((value) => !value)} data-tour-target="phase-3-flashcard-reveal" className="inline-flex h-12 items-center gap-2 rounded-2xl bg-amber-300 px-6 text-sm font-black text-slate-950 shadow-lg transition hover:bg-amber-200">
+          <button type="button" onClick={() => setFlipped((value) => !value)} data-tour-target="phase-2-flashcard-reveal" className="inline-flex h-12 items-center gap-2 rounded-2xl bg-amber-300 px-6 text-sm font-black text-slate-950 shadow-lg transition hover:bg-amber-200">
             <RotateCcw size={17} /> {flipped ? "ดูคำศัพท์" : "เปิดเฉลย"}
           </button>
-          <button type="button" onClick={() => { setIndex((value) => Math.min(cards.length - 1, value + 1)); setFlipped(false); }} disabled={index === cards.length - 1} data-tour-target="phase-3-flashcard-next" className="inline-flex h-12 items-center gap-2 rounded-2xl bg-white/10 px-4 text-sm font-black transition hover:bg-white/20 disabled:opacity-30">
+          <button type="button" onClick={() => { setIndex((value) => Math.min(cards.length - 1, value + 1)); setFlipped(false); }} disabled={index === cards.length - 1} data-tour-target="phase-2-flashcard-next" className="inline-flex h-12 items-center gap-2 rounded-2xl bg-white/10 px-4 text-sm font-black transition hover:bg-white/20 disabled:opacity-30">
             ถัดไป <ChevronRight size={18} />
           </button>
         </div>
@@ -129,7 +129,7 @@ export function FlashcardTeachingGame({ words = [], participants, answered, onSp
           <span className="rounded-full bg-emerald-400/15 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-emerald-300">Live</span>
         </div>
           <p className="mt-2 text-xs leading-relaxed text-white/55">นักเรียนเปิดการ์ดและกดระดับความมั่นใจบนมือถือ เมื่อทำครบจะขึ้นสถานะที่นี่</p>
-          <div data-tour-target={preparationMode ? "phase-3-student-status" : undefined} className="my-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
+          <div data-tour-target={preparationMode ? "phase-2-student-status" : undefined} className="my-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-center">
           <p className="text-3xl font-black text-amber-200">{answered}<span className="text-base text-white/45">/{participants.length}</span></p>
           <p className="mt-1 text-[10px] font-black uppercase tracking-widest text-white/45">students completed</p>
         </div>

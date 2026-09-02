@@ -16,13 +16,11 @@ import { AdvantageArcadeRuntime } from '@/components/lesson/AdvantageArcadeRunti
 import { toast } from 'sonner';
 import { getGameById, getGamesByCategory, getGameTutorial } from '@/lib/liveLessonGames';
 import { preloadGameAssets } from '@/lib/games/gameAssetPreloader';
-import { Lock, Volume2 } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { VocabularyFlashcardPhase } from '@/components/lesson/VocabularyFlashcardPhase';
-import { useTtsPlayer } from '@/hooks/useTtsPlayer';
+import { GAME_PHASES, LESSON_PHASE, TOTAL_LESSON_PHASES } from '@/lib/lessonPhases';
 
-const VOCAB_GAME_PHASE = 11;
-const SENTENCE_GAME_PHASE = 15;
-const FINAL_LEADERBOARD_PHASE = 19;
+const FINAL_LEADERBOARD_PHASE = TOTAL_LESSON_PHASES;
 
 // ── Phase Config (Look at Screen) ────────────────────────────────────────────
 const PHASE_CONFIG: Record<number, {
@@ -31,7 +29,7 @@ const PHASE_CONFIG: Record<number, {
   gradientFrom: string; gradientTo: string; tip: string
 }> = {
   1: { emoji: '📖', label: 'แนะนำบทเรียน',   color: 'text-indigo-600 dark:text-indigo-400', bg: 'bg-indigo-500/10',  border: 'border-indigo-500/30',  gradientFrom: 'from-indigo-500',  gradientTo: 'to-violet-600',  tip: 'คุณครูกำลังแนะนำบทเรียนวันนี้' },
-  2: { emoji: '📝', label: 'คำศัพท์ใหม่',    color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-500/10',  border: 'border-violet-500/30',  gradientFrom: 'from-violet-500',  gradientTo: 'to-purple-600',  tip: 'ดูคำศัพท์สำคัญบนจอของครู' },
+  2: { emoji: '🃏', label: 'บัตรคำศัพท์',    color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-500/10',  border: 'border-violet-500/30',  gradientFrom: 'from-violet-500',  gradientTo: 'to-purple-600',  tip: 'ทบทวนคำศัพท์ด้วย Flashcard บนมือถือ' },
   3: { emoji: '👀', label: 'อ่านบทความ',      color: 'text-sky-600 dark:text-sky-400',       bg: 'bg-sky-500/10',     border: 'border-sky-500/30',     gradientFrom: 'from-sky-500',     gradientTo: 'to-blue-600',    tip: 'อ่านบทความพร้อมคุณครู' },
   4: { emoji: '🔍', label: 'โฟกัสคำศัพท์',   color: 'text-amber-600 dark:text-amber-400',   bg: 'bg-amber-500/10',   border: 'border-amber-500/30',   gradientFrom: 'from-amber-400',   gradientTo: 'to-orange-500',  tip: 'สังเกตคำศัพท์ที่ไฮไลต์บนจอ' },
   5: { emoji: '🧠', label: 'อ่านเชิงลึก',     color: 'text-emerald-600 dark:text-emerald-400',bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', gradientFrom: 'from-emerald-500', gradientTo: 'to-teal-600',    tip: 'ฟังคุณครูอธิบายความหมาย' },
@@ -84,20 +82,19 @@ function PlayLessonContent() {
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewComment, setReviewComment] = useState('');
   const [reviewLoaded, setReviewLoaded] = useState(false);
-  // Step 11 Guided Writing
+  // Phase 13 Guided Writing
   const [writingPlan, setWritingPlan] = useState('');
   const [writingDraft, setWritingDraft] = useState('');
-  // Step 12 Language Questions
+  // Phase 15 Language Questions
   const [languageQuestion, setLanguageQuestion] = useState('');
   const [languageSkipped, setLanguageSkipped] = useState(false);
-  // Step 13 Reflection
+  // Phase 16 Reflection
   const [understanding, setUnderstanding] = useState('');
   const [effort, setEffort] = useState('');
-  // Dev-only: preview the Step 14 pair view without a real session.
+  // Dev-only: preview the Phase 17 pair view without a real session.
   // 0 = off, 1 = pair (1 partner), 2 = group of three (2 partners)
   const [devPairPreview, setDevPairPreview] = useState<0 | 1 | 2>(0);
-  const currentPhase = devPairPreview ? 18 : (sessionData?.currentPhase ?? 0);
-  const { isSpeaking: isWordSpeaking, speak: speakWord } = useTtsPlayer();
+  const currentPhase = devPairPreview ? LESSON_PHASE.PAIR_CONVERSATION : (sessionData?.currentPhase ?? 0);
   const submittedGameKeyRef = useRef<string | null>(null);
   const [pendingGameResult, setPendingGameResult] = useState<{ key: string; score: number } | null>(null);
   const gameState = sessionData?.gameState ?? null;
@@ -147,7 +144,7 @@ function PlayLessonContent() {
   }, [submissionError]);
 
   // Reset my sentence flags at the start of a fresh instructional cycle
-  useEffect(() => { if (currentPhase === 1) setMyFlags(new Set()); }, [currentPhase]);
+  useEffect(() => { if (currentPhase === LESSON_PHASE.LAUNCH) setMyFlags(new Set()); }, [currentPhase]);
 
   const [, setClockTick] = useState(0);
   useEffect(() => {
@@ -185,7 +182,7 @@ function PlayLessonContent() {
   }, [sessionData, classId, router]);
 
   useEffect(() => {
-    if (!classId || currentPhase !== 17 || reviewLoaded) return;
+    if (!classId || currentPhase !== LESSON_PHASE.REFLECTION || reviewLoaded) return;
 
     studentApi.getClassReview(classId)
       .then((data) => {
@@ -367,25 +364,25 @@ function PlayLessonContent() {
     const currentPhase = sessionData?.currentPhase;
     let questionText = t("interactivePlay.defaultQuestion");
     let expected = "";
-    if (currentPhase === 8) {
-      const idx = sessionData?.phaseSelectedIndices?.[8] || 0;
+    if (currentPhase === LESSON_PHASE.COMPREHENSION) {
+      const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.COMPREHENSION] || 0;
       const q = articleData?.multipleChoiceQuestions?.[idx];
       questionText = q?.question || questionText;
       expected = q?.answer || expected;
-    } else if (currentPhase === 10) {
-      const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
+    } else if (currentPhase === LESSON_PHASE.VOCABULARY_PRACTICE) {
+      const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.VOCABULARY_PRACTICE] || 0;
       const w = articleData?.words?.[idx];
       questionText = `${t("interactivePlay.vocabMeaningPrefix")} "${w?.vocabulary || w?.word || w?.text}" ${t("interactivePlay.vocabMeaningSuffix")}`;
       expected = w?.definition?.th || w?.translation || "";
-    } else if (currentPhase === 12) {
-      const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
+    } else if (currentPhase === LESSON_PHASE.SENTENCE_PRACTICE) {
+      const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.SENTENCE_PRACTICE] || 0;
       const s = articleData?.sentences?.[idx];
       const targetStr = typeof s === 'object' ? s.sentences : s;
       const words = String(targetStr).split(' ');
       questionText = words.slice(0, words.length - 1).join(' ') + ' _____';
       expected = words[words.length - 1].replace(/[.,!?]/g, '');
-    } else if (currentPhase === 13) {
-      const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
+    } else if (currentPhase === LESSON_PHASE.SENTENCE_ORDER) {
+      const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.SENTENCE_ORDER] || 0;
       const s = articleData?.sentences?.[idx];
       const targetStr = typeof s === 'object' ? s.sentences : s;
       questionText = `${t("interactivePlay.orderSentencePrefix")} ${idx + 1}`;
@@ -420,18 +417,18 @@ function PlayLessonContent() {
     flagSentence(sentenceIndex);
   };
 
-  // Step 11 Guided Writing — submit draft for AI feedback
+  // Guided Writing — submit draft for AI feedback
   const handleWritingSubmit = () => {
     if (phaseReadOnly || !writingDraft.trim() || hasAnswered || isSubmitting) return;
     playSound('submit');
     setIsSubmitting(true);
     setSelectedChoice(writingDraft);
-    const idx = sessionData?.phaseSelectedIndices?.[14] || 0;
+    const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.GUIDED_WRITING] || 0;
     const prompt = articleData?.shortAnswerQuestions?.[idx]?.question || t("interactivePlay.writingTitle");
     submitAnswer(writingDraft, prompt, '');
   };
 
-  // Step 12 Language Questions — submit question for teacher-mediated AI answer
+  // Language Questions — submit question for teacher-mediated AI answer
   const handleLanguageSubmit = () => {
     if (phaseReadOnly || !languageQuestion.trim() || hasAnswered || isSubmitting) return;
     playSound('submit');
@@ -439,7 +436,7 @@ function PlayLessonContent() {
     submitAnswer(languageQuestion, 'Language question', '');
   };
 
-  // Step 12 — skip when the student has no question (counts as answered, no AI)
+  // Skip when the student has no question (counts as answered, no AI)
   const handleLanguageSkip = () => {
     if (phaseReadOnly || hasAnswered || isSubmitting) return;
     playSound('select');
@@ -448,7 +445,7 @@ function PlayLessonContent() {
     submitAnswer('', 'Language question', '');
   };
 
-  // Step 13 Reflection — submit understanding + effort ratings (and tutor star review if given)
+  // Reflection — submit understanding + effort ratings (and tutor star review if given)
   const handleReflectionSubmit = async () => {
     if (phaseReadOnly || !understanding || !effort || hasAnswered || isSubmitting) return;
     playSound('submit');
@@ -459,8 +456,13 @@ function PlayLessonContent() {
     submitAnswer(`ความเข้าใจ: ${understanding} · ความพยายาม: ${effort}`, 'Lesson reflection', '');
   };
 
-  // Step 3 (Read the Article) has its own tap-to-flag UI, so it is not a passive look-at-screen phase
-  const isLookAtScreenPhase = [1, 2, 5, 6, 7].includes(currentPhase);
+  // Reading has its own tap-to-flag UI, so it is not a passive look-at-screen phase.
+  const isLookAtScreenPhase = ([
+    LESSON_PHASE.LAUNCH,
+    LESSON_PHASE.VOCABULARY_CONTEXT,
+    LESSON_PHASE.DEEP_READING,
+    LESSON_PHASE.KEY_SENTENCES,
+  ] as number[]).includes(currentPhase);
   const articleId = articleData?.id;
   const articleTitle = articleData?.title;
   const articleImageUrl = articleId
@@ -570,7 +572,7 @@ function PlayLessonContent() {
     };
 
     switch (currentPhase) {
-      case 1: {
+      case LESSON_PHASE.LAUNCH: {
         const summary = ad?.translated_summary?.th?.[0] || (typeof ad?.summary === 'string' ? ad.summary : ad?.summary?.th?.[0]);
         if (!summary) return null;
         return (
@@ -579,44 +581,11 @@ function PlayLessonContent() {
           </div>
         );
       }
-      case 2:
-        if (!words.length) return null;
-        return (
-          <div className="bg-card rounded-2xl border border-border shadow-sm p-4">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-3">คำศัพท์ ({words.length})</p>
-            <div className="space-y-2">
-              {words.map((item, i) => {
-                const wt = typeof item === 'object' ? (item.vocabulary || item.word || item.text) : item;
-                const th = typeof item === 'object' ? (item.definition?.th || item.translation) : undefined;
-                const wordText = String(wt || `Word ${i + 1}`);
-                const audioUrl = typeof item === 'object' ? item.audioUrl || item.audio_url : undefined;
-                return (
-                  <div key={i} className="flex items-center justify-between gap-3 border-b border-border/50 last:border-0 pb-1.5 last:pb-0">
-                    <div className="flex min-w-0 items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => speakWord(wordText, audioUrl)}
-                        className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-violet-500/10 text-violet-600 transition hover:bg-violet-500/20 active:scale-90 dark:text-violet-300"
-                        aria-label={`ฟังการออกเสียง ${wordText}`}
-                        title="ฟังการออกเสียง"
-                      >
-                        <Volume2 size={15} className={isWordSpeaking ? "animate-pulse" : ""} />
-                      </button>
-                      <span className="truncate font-bold text-foreground text-sm">{wordText}</span>
-                    </div>
-                    {th && <span className="text-muted-foreground text-xs text-right">{th}</span>}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      case 4:
-      case 6:
-        return renderPassage(false);
-      case 5:
+      case LESSON_PHASE.VOCABULARY_CONTEXT:
         return renderPassage(true);
-      case 7: {
+      case LESSON_PHASE.DEEP_READING:
+        return renderPassage(false);
+      case LESSON_PHASE.KEY_SENTENCES: {
         if (!sentences.length) return null;
         // Mirror the tutor's key-sentence selection (ArticleDisplay phase 6) so both screens show the same subset.
         const getText = (item: string | { sentences?: string }) => String(typeof item === 'object' ? item.sentences || '' : item || '');
@@ -1198,9 +1167,9 @@ function PlayLessonContent() {
           </div>
         )}
 
-        {/* ─── Phase 1–6, 9: Look at Screen ─── */}
+        {/* ─── Look-at-screen phases ─── */}
         {isLookAtScreenPhase && (() => {
-          const cfg = PHASE_CONFIG[currentPhase === 5 ? 4 : currentPhase === 6 ? 5 : currentPhase === 7 ? 6 : currentPhase];
+          const cfg = PHASE_CONFIG[currentPhase];
           if (!cfg) return null;
           return (
             <div className="phase-enter w-full max-w-sm flex flex-col gap-4 overflow-y-auto max-h-[calc(100dvh-80px)] pb-4">
@@ -1238,10 +1207,10 @@ function PlayLessonContent() {
           );
         })()}
 
-        {[VOCAB_GAME_PHASE, SENTENCE_GAME_PHASE].includes(currentPhase) && renderGamePhaseMobile()}
+        {GAME_PHASES.includes(currentPhase) && renderGamePhaseMobile()}
 
-        {/* ─── Step 3: Read the Article + Sentence Flag ─── */}
-        {currentPhase === 3 && (
+        {/* ─── Phase 2: Vocabulary Flashcards ─── */}
+        {currentPhase === LESSON_PHASE.FLASHCARDS && (
           <VocabularyFlashcardPhase
             key={`flashcards-${sessionData?.sessionId || 'preview'}`}
             words={articleData?.words}
@@ -1255,7 +1224,8 @@ function PlayLessonContent() {
           />
         )}
 
-        {currentPhase === 4 && (
+        {/* ─── Phase 3: Read the Article + Sentence Flag ─── */}
+        {currentPhase === LESSON_PHASE.READ_ARTICLE && (
           <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
             <div className="bg-teal-500/10 border-2 border-teal-500/30 rounded-3xl p-5 text-center shrink-0">
               <div className="text-4xl mb-2">🎧</div>
@@ -1309,9 +1279,9 @@ function PlayLessonContent() {
           </div>
         )}
 
-        {/* ─── Step 11: Guided Writing (phase 12) ─── */}
-        {currentPhase === 14 && (() => {
-          const idx = sessionData?.phaseSelectedIndices?.[14] || 0;
+        {/* ─── Phase 13: Guided Writing ─── */}
+        {currentPhase === LESSON_PHASE.GUIDED_WRITING && (() => {
+          const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.GUIDED_WRITING] || 0;
           const prompt = articleData?.shortAnswerQuestions?.[idx]?.question || t("interactivePlay.writingTitle");
           const frames = ['I think that…', 'One reason is…', 'For example,…', 'In conclusion,…'];
           return (
@@ -1389,8 +1359,8 @@ function PlayLessonContent() {
           );
         })()}
 
-        {/* ─── Step 12: Language Questions (phase 13) ─── */}
-        {currentPhase === 16 && (
+        {/* ─── Phase 15: Language Questions ─── */}
+        {currentPhase === LESSON_PHASE.LANGUAGE_QUESTIONS && (
           <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
             {missedQuestion ? (
               renderMissedQuestionSummary()
@@ -1451,8 +1421,8 @@ function PlayLessonContent() {
           </div>
         )}
 
-        {/* ─── Step 13: Lesson Reflection (phase 14) ─── */}
-        {currentPhase === 17 && (
+        {/* ─── Phase 16: Lesson Reflection ─── */}
+        {currentPhase === LESSON_PHASE.REFLECTION && (
           <LessonReflectionPhase
             hasAnswered={hasAnswered}
             reviewRating={reviewRating}
@@ -1470,7 +1440,7 @@ function PlayLessonContent() {
           />
         )}
 
-        {currentPhase === 18 && (
+        {currentPhase === LESSON_PHASE.PAIR_CONVERSATION && (
           <LessonPairPhase
             devPairPreview={devPairPreview}
             sessionData={sessionData}
@@ -1486,8 +1456,8 @@ function PlayLessonContent() {
           />
         )}
 
-        {/* ─── MCQ-style Phases: Comprehension(7), Vocab(9), Sentence fill(10), Sentence order(11) ─── */}
-        {[8, 10, 12, 13].includes(currentPhase) && (
+        {/* ─── MCQ-style Phases: Comprehension(7), Vocab(9), Sentence fill(11), Sentence order(12) ─── */}
+        {([LESSON_PHASE.COMPREHENSION, LESSON_PHASE.VOCABULARY_PRACTICE, LESSON_PHASE.SENTENCE_PRACTICE, LESSON_PHASE.SENTENCE_ORDER] as number[]).includes(currentPhase) && (
           <div className="phase-enter w-full max-w-md flex-1 flex flex-col gap-3 min-h-0">
             {missedQuestion ? (
               renderMissedQuestionSummary()
@@ -1525,21 +1495,21 @@ function PlayLessonContent() {
                   </div>
                   <div className="px-4 py-4 text-center font-bold text-foreground text-sm leading-relaxed">
                     {(() => {
-                      if (currentPhase === 8) {
-                        const idx = sessionData?.phaseSelectedIndices?.[8] || 0;
+                      if (currentPhase === LESSON_PHASE.COMPREHENSION) {
+                        const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.COMPREHENSION] || 0;
                         return articleData?.multipleChoiceQuestions?.[idx]?.question || t("interactivePlay.defaultQuestion");
-                      } else if (currentPhase === 10) {
-                        const idx = sessionData?.phaseSelectedIndices?.[10] || 0;
+                      } else if (currentPhase === LESSON_PHASE.VOCABULARY_PRACTICE) {
+                        const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.VOCABULARY_PRACTICE] || 0;
                         const w = articleData?.words?.[idx];
                         return `${t("interactivePlay.vocabMeaningPrefix")} "${w?.vocabulary || w?.word || w?.text}" ${t("interactivePlay.vocabMeaningSuffix")}`;
-                      } else if (currentPhase === 12) {
-                        const idx = sessionData?.phaseSelectedIndices?.[12] || 0;
+                      } else if (currentPhase === LESSON_PHASE.SENTENCE_PRACTICE) {
+                        const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.SENTENCE_PRACTICE] || 0;
                         const s = articleData?.sentences?.[idx];
                         const targetStr = typeof s === 'object' ? s.sentences : s;
                         const words = String(targetStr).split(' ');
                         return `${t("interactivePlay.fillBlankPrefix")} ${words.slice(0, words.length - 1).join(' ')} _____`;
-                      } else if (currentPhase === 13) {
-                        const idx = sessionData?.phaseSelectedIndices?.[13] || 0;
+                      } else if (currentPhase === LESSON_PHASE.SENTENCE_ORDER) {
+                        const idx = sessionData?.phaseSelectedIndices?.[LESSON_PHASE.SENTENCE_ORDER] || 0;
                         return `${t("interactivePlay.orderSentencePrefix")} ${idx + 1}`;
                       }
                       return t("interactivePlay.defaultQuestion");
@@ -1564,8 +1534,8 @@ function PlayLessonContent() {
           </div>
         )}
 
-        {/* ─── Guided Response / Short Answer (Step 8) ─── */}
-        {currentPhase === 9 && (
+        {/* ─── Phase 8: Guided Response / Short Answer ─── */}
+        {currentPhase === LESSON_PHASE.GUIDED_RESPONSE && (
           <div className="phase-enter w-full max-w-md flex-1 min-h-0 flex flex-col gap-3 overflow-y-auto py-2">
 
             {missedQuestion ? (
