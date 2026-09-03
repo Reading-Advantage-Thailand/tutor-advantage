@@ -249,16 +249,19 @@ interface PhaseManagerProps {
   onPreparationGameResultsComplete?: (phase: number) => void;
   preparationMockAnswersStarted?: boolean;
   preparationGuideMode?: boolean;
+  preparationFreeExplore?: boolean;
 }
 
 // ── Live Leaderboard Sidebar (Desktop) ───────────────────────────────────────
 function LiveLeaderboard({
   participants,
   preparationMode = false,
+  preparationFreeExplore = false,
   answeredStudentIds = [],
 }: {
   participants: Participant[];
   preparationMode?: boolean;
+  preparationFreeExplore?: boolean;
   answeredStudentIds?: string[];
 }) {
   const sorted = [...participants].sort(
@@ -281,13 +284,13 @@ function LiveLeaderboard({
               <span>Leaderboard</span>
               {preparationMode && (
                 <span className="rounded-full bg-fuchsia-500/25 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-fuchsia-200">
-                  Mock
+                  {preparationFreeExplore ? "Preview" : "Mock"}
                 </span>
               )}
             </p>
             <p className="text-slate-400 text-[10px] mt-0.5">
               {sorted.length} นักเรียน
-              {preparationMode && ` · ตอบแล้ว ${answeredCount}/${sorted.length}`}
+              {preparationMode && (preparationFreeExplore ? " · ข้อมูลตัวอย่าง" : ` · ตอบแล้ว ${answeredCount}/${sorted.length}`)}
             </p>
           </div>
         </div>
@@ -374,7 +377,9 @@ function LiveLeaderboard({
                   </p>
                   {preparationMode && (
                     <p className={`mb-1 text-[9px] font-black ${answeredIds.has(p.studentId) ? "text-emerald-500" : "text-amber-500"}`}>
-                      {answeredIds.has(p.studentId) ? "ตอบแล้ว" : "กำลังคิดคำตอบ"}
+                      {preparationFreeExplore
+                        ? "พร้อมให้สำรวจ"
+                        : answeredIds.has(p.studentId) ? "ตอบแล้ว" : "กำลังคิดคำตอบ"}
                     </p>
                   )}
                   <div className="h-1 w-full rounded-full bg-muted overflow-hidden">
@@ -512,6 +517,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   onPreparationGameResultsComplete,
   preparationMockAnswersStarted = true,
   preparationGuideMode = false,
+  preparationFreeExplore = false,
 }) => {
   const [isChangingPhase, setIsChangingPhase] = React.useState(false);
   const phaseChangePendingRef = React.useRef(false);
@@ -818,7 +824,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         : questionEnded || totalAnswered >= totalParticipants)
     : questionEnded || allAnsweredData.length > 0;
   const preparationAnswerStatusText = preparationMode
-    ? showQuestionResults
+    ? preparationFreeExplore
+      ? "โหมดสำรวจอิสระ · ไปต่อได้ทันที ไม่ต้องรอนักเรียน"
+      : showQuestionResults
       ? "นักเรียนตอบครบแล้ว กำลังสรุปผลให้ดู"
       : preparationAnswerCountComplete
         ? "นักเรียนตอบครบแล้ว กำลังเปิดหน้าสรุปผล"
@@ -831,7 +839,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   // In preparation mode, let the tutor see the same waiting state as a real
   // lesson while four sample students answer one by one.
   React.useEffect(() => {
-    if (!preparationMode || !preparationMockAnswersStarted || !isInteractivePhase || isGamePhase) return;
+    if (preparationFreeExplore || !preparationMode || !preparationMockAnswersStarted || !isInteractivePhase || isGamePhase) return;
 
     const targetAnswerCount = preparationGuideMode
       ? PREPARATION_GUIDE_READY_ANSWER_COUNT
@@ -886,6 +894,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     onPreparationAnswersComplete,
     preparationMockAnswersStarted,
     preparationGuideMode,
+    preparationFreeExplore,
     preparationMode,
   ]);
 
@@ -923,20 +932,22 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   // Simulate students voting at a steady pace so the tutor can see the vote
   // count, the leader, and the voters update before locking the vote.
   React.useEffect(() => {
-    if (!preparationMode || !isGamePhase || gameState?.status !== "voting" || !currentGameCategory) return;
+    if (preparationFreeExplore || !preparationMode || !isGamePhase || gameState?.status !== "voting" || !currentGameCategory) return;
 
     const enabledGames = getGamesByCategory(currentGameCategory).filter((game) => game.enabled !== false);
     let nextStudentIndex = 0;
     const timer = window.setInterval(() => {
+      const studentIndex = nextStudentIndex;
+      const student = PREPARATION_MOCK_STUDENTS[studentIndex];
+      if (!student) {
+        window.clearInterval(timer);
+        return;
+      }
+      nextStudentIndex += 1;
+
       setPreparationGameState((previous) => {
         if (!previous || previous.status !== "voting") return previous;
-        const student = PREPARATION_MOCK_STUDENTS[nextStudentIndex];
-        if (!student) {
-          window.clearInterval(timer);
-          return previous;
-        }
-        const voteTarget = enabledGames[nextStudentIndex === PREPARATION_MOCK_STUDENTS.length - 1 ? 1 : 0] || enabledGames[0];
-        nextStudentIndex += 1;
+        const voteTarget = enabledGames[studentIndex === PREPARATION_MOCK_STUDENTS.length - 1 ? 1 : 0] || enabledGames[0];
         if (!voteTarget) return previous;
         return {
           ...previous,
@@ -946,10 +957,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     }, 1400);
 
     return () => window.clearInterval(timer);
-  }, [currentGameCategory, gameState?.status, isGamePhase, preparationMode]);
+  }, [currentGameCategory, gameState?.status, isGamePhase, preparationFreeExplore, preparationMode]);
 
   React.useEffect(() => {
     if (
+      preparationFreeExplore ||
       !preparationMode ||
       !isGamePhase ||
       gameState?.status !== "voting" ||
@@ -968,6 +980,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     gameState?.votes,
     isGamePhase,
     onPreparationGameVotesComplete,
+    preparationFreeExplore,
     preparationMode,
     totalParticipants,
   ]);
@@ -976,25 +989,26 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   // monitor and let the mock students finish one by one before the result
   // screen appears.
   React.useEffect(() => {
-    if (!preparationMode || !isGamePhase || gameState?.status !== "playing") return;
+    if (preparationFreeExplore || !preparationMode || !isGamePhase || gameState?.status !== "playing") return;
 
     let nextStudentIndex = Object.keys(gameState.results || {}).length;
     const timer = window.setInterval(() => {
+      const studentIndex = nextStudentIndex;
+      const student = PREPARATION_MOCK_STUDENTS[studentIndex];
+      if (!student) {
+        window.clearInterval(timer);
+        return;
+      }
+      nextStudentIndex += 1;
+
       setPreparationGameState((previous) => {
         if (!previous || previous.status !== "playing") return previous;
-        const student = PREPARATION_MOCK_STUDENTS[nextStudentIndex];
-        if (!student) {
-          window.clearInterval(timer);
-          return previous;
-        }
-
         const result = createPreparationGameResult(
           previous.selectedGameId || "dragon-flight",
           previous.category,
           student,
-          nextStudentIndex,
+          studentIndex,
         );
-        nextStudentIndex += 1;
         const nextResults = { ...previous.results, [student.studentId]: result };
         const isComplete = Object.keys(nextResults).length >= PREPARATION_MOCK_STUDENTS.length;
         return {
@@ -1006,10 +1020,11 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     }, 1400);
 
     return () => window.clearInterval(timer);
-  }, [gameState?.status, isGamePhase, preparationMode]);
+  }, [gameState?.status, isGamePhase, preparationFreeExplore, preparationMode]);
 
   React.useEffect(() => {
     if (
+      preparationFreeExplore ||
       !preparationMode ||
       !isGamePhase ||
       gameState?.status !== "results" ||
@@ -1028,13 +1043,15 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     gameState?.status,
     isGamePhase,
     onPreparationGameResultsComplete,
+    preparationFreeExplore,
     preparationMode,
     totalParticipants,
   ]);
 
   // Can proceed if everyone answered OR if results are already showing OR if no participants
-  const canProceed =
-    (preparationGuideResultGateActive &&
+  const canProceed = preparationFreeExplore
+    ? true
+    : (preparationGuideResultGateActive &&
       !(preparationGuideMode ? preparationQuestionEnded : preparationAnswerCountComplete))
       ? false
       : isRewoundPhase ||
@@ -1049,7 +1066,9 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         showQuestionResults;
 
   React.useEffect(() => {
-    if (canProceed) {
+    if (preparationFreeExplore) {
+      setCanProceedDelayed(true);
+    } else if (canProceed) {
       const timer = setTimeout(() => {
         setCanProceedDelayed(true);
       }, 1000); // 1 sec delay before allowing proceeding
@@ -1057,10 +1076,10 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     } else {
       setCanProceedDelayed(false);
     }
-  }, [canProceed]);
+  }, [canProceed, preparationFreeExplore]);
 
   const handleNextPhase = React.useCallback(() => {
-    if (!isChangingPhase && canProceedDelayed) {
+    if (!isChangingPhase && (preparationFreeExplore || canProceedDelayed)) {
       const nextPhase = isRewoundPhase && sessionData?.resumePhase && sessionData.resumePhase > currentPhase
         ? sessionData.resumePhase
         : currentPhase < TOTAL_PHASES
@@ -1075,7 +1094,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         requestPhaseChange(0);
       }
     }
-  }, [currentPhase, isChangingPhase, canProceedDelayed, requestPhaseChange, isRewoundPhase, sessionData?.resumePhase]);
+  }, [currentPhase, isChangingPhase, canProceedDelayed, preparationFreeExplore, requestPhaseChange, isRewoundPhase, sessionData?.resumePhase]);
 
   const handlePreviousPhase = React.useCallback(() => {
     if (currentPhase <= 1 || isChangingPhase) return;
@@ -1087,7 +1106,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   const handleEndQuestion = React.useCallback(() => {
     if (isRewoundPhase || questionEnded || totalParticipants === 0) return;
     if (preparationMode) {
-      if (!preparationAnswersReadyToEnd) return;
+      if (!preparationFreeExplore && !preparationAnswersReadyToEnd) return;
       playSound("submit");
       setPreparationQuestionEnded(true);
       return;
@@ -1095,7 +1114,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     if (!endQuestion) return;
     playSound("submit");
     endQuestion();
-  }, [endQuestion, isRewoundPhase, preparationAnswersReadyToEnd, preparationMode, questionEnded, totalParticipants]);
+  }, [endQuestion, isRewoundPhase, preparationAnswersReadyToEnd, preparationFreeExplore, preparationMode, questionEnded, totalParticipants]);
 
   const toggleMockLeaderboard = React.useCallback(() => {
     if (mockLeaderboard) {
@@ -1143,7 +1162,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         return;
       }
 
-      if (e.key === "ArrowRight" && canProceedDelayed && !isChangingPhase) {
+      if (e.key === "ArrowRight" && (preparationFreeExplore || canProceedDelayed) && !isChangingPhase) {
         handleNextPhase();
       }
     };
@@ -1153,6 +1172,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
     handleNextPhase,
     canProceedDelayed,
     isChangingPhase,
+    preparationFreeExplore,
     currentPhase,
     isFullscreen,
   ]);
@@ -1583,7 +1603,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         </div>
 
         {/* Right: Live Leaderboard */}
-        <LiveLeaderboard participants={participants} preparationMode={preparationMode} answeredStudentIds={leaderboardAnsweredStudentIds} />
+        <LiveLeaderboard participants={participants} preparationMode={preparationMode} preparationFreeExplore={preparationFreeExplore} answeredStudentIds={leaderboardAnsweredStudentIds} />
       </div>
     );
   };
@@ -2301,7 +2321,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         </div>
 
         {/* Right: Live Leaderboard */}
-        <LiveLeaderboard participants={participants} preparationMode={preparationMode} answeredStudentIds={leaderboardAnsweredStudentIds} />
+        <LiveLeaderboard participants={participants} preparationMode={preparationMode} preparationFreeExplore={preparationFreeExplore} answeredStudentIds={leaderboardAnsweredStudentIds} />
       </div>
     );
   };
@@ -2565,7 +2585,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           </p>
           {renderTutorProgress("bg-sky-500", "phase-13-student-status")}
         </div>
-        <LiveLeaderboard participants={participants} preparationMode={preparationMode} answeredStudentIds={leaderboardAnsweredStudentIds} />
+        <LiveLeaderboard participants={participants} preparationMode={preparationMode} preparationFreeExplore={preparationFreeExplore} answeredStudentIds={leaderboardAnsweredStudentIds} />
       </div>
     );
   };
@@ -2633,7 +2653,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           </div>
           {renderTutorProgress("bg-violet-500", "phase-15-student-status")}
         </div>
-        <LiveLeaderboard participants={participants} preparationMode={preparationMode} answeredStudentIds={leaderboardAnsweredStudentIds} />
+        <LiveLeaderboard participants={participants} preparationMode={preparationMode} preparationFreeExplore={preparationFreeExplore} answeredStudentIds={leaderboardAnsweredStudentIds} />
       </div>
     );
   };
@@ -3512,7 +3532,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             )}
           </div>
         </div>
-        {!isFullscreen && <LiveLeaderboard participants={participants} preparationMode={preparationMode} answeredStudentIds={leaderboardAnsweredStudentIds} />}
+        {!isFullscreen && <LiveLeaderboard participants={participants} preparationMode={preparationMode} preparationFreeExplore={preparationFreeExplore} answeredStudentIds={leaderboardAnsweredStudentIds} />}
       </div>
     );
   };
@@ -3571,7 +3591,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             </span>
           </div>
           <span className="text-xs text-muted-foreground font-medium">
-            {currentPhase} / {TOTAL_PHASES}
+            {preparationFreeExplore ? "เลือก Phase ได้อิสระ" : `${currentPhase} / ${TOTAL_PHASES}`}
           </span>
         </div>
 
@@ -3583,16 +3603,36 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
             const isCurrent = p === currentPhase;
             return (
               <div key={p} className="flex-1 flex flex-col items-center gap-1">
-                <div
-                  className={`h-2 w-full rounded-full transition-all duration-500 ${
-                    isCurrent
-                      ? `${group?.color || "bg-muted-foreground"} shadow-md scale-y-150 phase-active-glow`
-                      : isPast
-                        ? (group?.color || "bg-muted-foreground") +
-                          " opacity-60"
-                        : "bg-border"
-                  }`}
-                />
+                {preparationFreeExplore ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!isCurrent && !isChangingPhase) requestPhaseChange(p);
+                    }}
+                    disabled={isCurrent || isChangingPhase}
+                    aria-label={`ไป Phase ${p}${phaseNames[p] ? ` · ${phaseNames[p]}` : ""}`}
+                    aria-current={isCurrent ? "step" : undefined}
+                    className={`h-3 w-full rounded-full transition-all duration-300 disabled:cursor-default ${
+                      isCurrent
+                        ? `${group?.color || "bg-muted-foreground"} shadow-md scale-y-125 phase-active-glow`
+                        : isPast
+                          ? (group?.color || "bg-muted-foreground") +
+                            " opacity-60 hover:scale-y-150 hover:opacity-100"
+                          : "bg-border hover:scale-y-150 hover:bg-sky-300 dark:hover:bg-sky-700"
+                    }`}
+                  />
+                ) : (
+                  <div
+                    className={`h-2 w-full rounded-full transition-all duration-500 ${
+                      isCurrent
+                        ? `${group?.color || "bg-muted-foreground"} shadow-md scale-y-150 phase-active-glow`
+                        : isPast
+                          ? (group?.color || "bg-muted-foreground") +
+                            " opacity-60"
+                          : "bg-border"
+                    }`}
+                  />
+                )}
               </div>
             );
           })}
@@ -3615,7 +3655,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
   };
 
   const renderControlToolbar = () => {
-    const isNextDisabled = !canProceedDelayed || isChangingPhase;
+    const isNextDisabled = (preparationFreeExplore ? false : !canProceedDelayed) || isChangingPhase;
     const gameStatus = gameState?.status;
     const hasGameResults = isGamePhase && gameResultsCount > 0;
     const canEndQuestion =
@@ -3624,7 +3664,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
       !questionEnded &&
       totalParticipants > 0 &&
       totalAnswered < totalParticipants &&
-      (!preparationMode || preparationAnswersReadyToEnd);
+      (!preparationMode || preparationFreeExplore || preparationAnswersReadyToEnd);
     const useGamePrimaryAction = isGamePhase && !isRewoundPhase && !hasGameResults && hasPlayableGameForPhase;
     const gamePrimaryLabel =
       gameStatus === "voting" && !hasPlayableGameForPhase
@@ -3643,14 +3683,16 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
           ? gameState?.tutorialEnabled ? "จบการสาธิต ไป Tutorial" : "จบการสาธิตและเริ่มเกม"
         : gameStatus === "tutorial"
           ? "เริ่มเกม"
+        : gameStatus === "playing" && preparationFreeExplore
+          ? "ดูผลตัวอย่างทันที"
         : gameStatus === "countdown"
           ? t("lesson.interactive.countdownInProgress")
           : t("lesson.interactive.gamePlaying");
     const isGamePrimaryDisabled =
       gameStatus === "countdown" ||
-      gameStatus === "playing" ||
+      (gameStatus === "playing" && !preparationFreeExplore) ||
       (gameStatus === "voting" && !hasPlayableGameForPhase) ||
-      (preparationMode &&
+      (!preparationFreeExplore && preparationMode &&
         gameStatus === "voting" &&
         Object.keys(gameState?.votes || {}).length < totalParticipants);
     const handleGamePrimaryAction = () => {
@@ -3701,6 +3743,19 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         } else {
           startGameIntro({ tutorialEnabled, teacherDemoEnabled });
         }
+        return;
+      }
+      if (gameStatus === "playing" && preparationFreeExplore) {
+        setPreparationGameState((previous) => previous
+          ? {
+              ...previous,
+              status: "results",
+              results: createPreparationGameResults(
+                previous.selectedGameId || "dragon-flight",
+                previous.category,
+              ),
+            }
+          : previous);
         return;
       }
       if (gameStatus === "teacher_demo") {
@@ -3779,7 +3834,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                     โหมด
                   </p>
                   <p className="text-sm font-black text-violet-100">
-                    เตรียมสอน
+                    {preparationFreeExplore ? "สำรวจอิสระ" : "เตรียมสอน"}
                   </p>
                 </div>
               ) : <div className="hidden rounded-xl bg-white/10 px-3 py-2 sm:block">
@@ -3876,7 +3931,7 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent" />
                   {t("lesson.interactive.processing")}
                 </>
-              ) : !canProceedDelayed ? (
+              ) : !preparationFreeExplore && !canProceedDelayed ? (
                 t("lesson.interactive.waitingAnswers")
               ) : currentPhase === FINAL_LEADERBOARD_PHASE ? (
                 <>

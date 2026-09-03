@@ -422,7 +422,8 @@ export default function PrepareLessonClient({
             onPreparationAnswersComplete={handlePreparationAnswersComplete}
             onPreparationGameVotesComplete={handlePreparationGameVotesComplete}
             onPreparationGameResultsComplete={handlePreparationGameResultsComplete}
-            preparationMockAnswersStarted={!guideOpen || Boolean(currentGuideStep?.waitForMockAnswers)}
+            preparationMockAnswersStarted={mode === "guided" && (!guideOpen || Boolean(currentGuideStep?.waitForMockAnswers))}
+            preparationFreeExplore={mode === "explore"}
             onFinishSession={closePreparation}
             guideOverlay={guideOpen && currentGuideStep ? (
               <TutorGuideOverlay
@@ -432,7 +433,6 @@ export default function PrepareLessonClient({
                 onPrevious={() => moveGuide(-1)}
                 canAdvance={!waitingForPreparationMock}
                 onNext={handleGuideNext}
-                onClose={() => setGuideOpen(false)}
               />
             ) : null}
           />

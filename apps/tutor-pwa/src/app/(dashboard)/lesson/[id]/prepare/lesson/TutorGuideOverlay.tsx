@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronLeft, ChevronRight, MousePointer2, X } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, MousePointer2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export type TutorGuideStep = {
@@ -26,7 +26,6 @@ export default function TutorGuideOverlay({
   totalSteps,
   onPrevious,
   onNext,
-  onClose,
   canAdvance = true,
 }: {
   step: TutorGuideStep;
@@ -34,7 +33,6 @@ export default function TutorGuideOverlay({
   totalSteps: number;
   onPrevious: () => void;
   onNext: () => void;
-  onClose: () => void;
   canAdvance?: boolean;
 }) {
   const [targetRect, setTargetRect] = useState<Rect | null>(null);
@@ -171,19 +169,50 @@ export default function TutorGuideOverlay({
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[200]">
-      {!targetRect && <div className="absolute inset-0 bg-slate-950/65" aria-hidden="true" />}
+      {!targetRect && <div className="pointer-events-auto absolute inset-0 bg-slate-950/65" aria-hidden="true" />}
 
       {targetRect && (
-        <div
-          className="absolute rounded-2xl border-2 border-violet-300 shadow-[0_0_0_9999px_rgba(15,23,42,0.68),0_0_0_6px_rgba(167,139,250,0.2)] transition-all duration-300"
-          style={{
-            top: targetRect.top - 8,
-            left: targetRect.left - 8,
-            width: targetRect.width + 16,
-            height: targetRect.height + 16,
-          }}
-          aria-hidden="true"
-        />
+        <>
+          <div
+            className="pointer-events-auto absolute inset-x-0 top-0 bg-slate-950/68"
+            style={{ height: Math.max(0, targetRect.top - 8) }}
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-auto absolute bottom-0 left-0 bg-slate-950/68"
+            style={{
+              top: targetRect.top + targetRect.height + 8,
+              right: 0,
+            }}
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-auto absolute bottom-0 left-0 bg-slate-950/68"
+            style={{
+              top: Math.max(0, targetRect.top - 8),
+              width: Math.max(0, targetRect.left - 8),
+            }}
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-auto absolute right-0 bottom-0 bg-slate-950/68"
+            style={{
+              top: Math.max(0, targetRect.top - 8),
+              left: targetRect.left + targetRect.width + 8,
+            }}
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute rounded-2xl border-2 border-violet-300 shadow-[0_0_0_6px_rgba(167,139,250,0.2)] transition-all duration-300"
+            style={{
+              top: targetRect.top - 8,
+              left: targetRect.left - 8,
+              width: targetRect.width + 16,
+              height: targetRect.height + 16,
+            }}
+            aria-hidden="true"
+          />
+        </>
       )}
 
       <section
@@ -192,7 +221,7 @@ export default function TutorGuideOverlay({
         style={coachmarkStyle}
         aria-label="Tutor guided tour"
       >
-        <div className="flex items-start justify-between gap-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 py-4 text-white">
+        <div className="flex items-start gap-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 py-4 text-white">
           <div className="flex items-start gap-3">
             <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-xl bg-white/15">
               <MousePointer2 className="size-4" />
@@ -204,14 +233,6 @@ export default function TutorGuideOverlay({
               <h2 className="mt-1 text-base font-black leading-tight">{step.title}</h2>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg p-1.5 text-white/80 transition-colors hover:bg-white/15 hover:text-white"
-            aria-label="ปิด Guided Tour"
-          >
-            <X className="size-4" />
-          </button>
         </div>
 
         <div className="p-5">
