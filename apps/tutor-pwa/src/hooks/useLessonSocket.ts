@@ -64,6 +64,7 @@ export const useLessonSocket = (
   const sessionDataRef = useRef<TutorSessionData | null>(null);
   const finishRequestRef = useRef<Promise<boolean> | null>(null);
   const sessionReadyRef = useRef(false);
+  const phaseVersionRef = useRef(0);
   const phaseChangeIdRef = useRef<string | null>(null);
   const phaseChangeInFlightRef = useRef<Promise<boolean> | null>(null);
   const phaseChangeRequestIdRef = useRef(0);
@@ -149,6 +150,16 @@ export const useLessonSocket = (
         socketInstance.on('session_created', (data) => {
           if (cancelled || !socketInstance.connected) return;
           sessionReadyRef.current = true;
+          const hasPhaseVersion = Number.isInteger(data.phaseVersion) && Number(data.phaseVersion) >= 0;
+          const incomingPhaseVersion = hasPhaseVersion
+            ? Number(data.phaseVersion)
+            : 0;
+          if (incomingPhaseVersion < phaseVersionRef.current || (!hasPhaseVersion && phaseVersionRef.current > 0)) {
+            // Do not let a delayed reconnect snapshot overwrite a newer
+            // phase event already rendered by this tutor socket.
+            return;
+          }
+          phaseVersionRef.current = incomingPhaseVersion;
           phaseChangeIdRef.current = typeof data.phaseChangeId === 'string'
             ? data.phaseChangeId
             : null;
@@ -173,14 +184,26 @@ export const useLessonSocket = (
           setParticipants(data.participants);
         });
 
-        socketInstance.on('phase_changed', (data: { phase: number; phaseChangeId?: string; phaseSelectedIndices?: Record<number, number>; pairs?: TutorSessionData['pairs']; gameState?: GamePhaseState | null; phaseRestored?: boolean; resumePhase?: number; activeSentenceIndex?: number; flagCounts?: Record<number, number> }) => {
+        socketInstance.on('phase_changed', (data: { phase: number; phaseVersion?: number; phaseChangeId?: string; phaseSelectedIndices?: Record<number, number>; pairs?: TutorSessionData['pairs']; gameState?: GamePhaseState | null; phaseRestored?: boolean; resumePhase?: number; activeSentenceIndex?: number; flagCounts?: Record<number, number> }) => {
           if (cancelled || socketRef.current !== socketInstance || !socketInstance.connected) return;
+          const hasPhaseVersion = Number.isInteger(data.phaseVersion) && Number(data.phaseVersion) >= 0;
+          const incomingPhaseVersion = hasPhaseVersion ? Number(data.phaseVersion) : undefined;
+          if (incomingPhaseVersion !== undefined) {
+            if (
+              incomingPhaseVersion < phaseVersionRef.current ||
+              (incomingPhaseVersion === phaseVersionRef.current && incomingPhaseVersion > 0)
+            ) return;
+            phaseVersionRef.current = incomingPhaseVersion;
+          } else if (phaseVersionRef.current > 0) {
+            // Ignore an unversioned event from an older rolling deployment.
+            return;
+          }
           if (data.phaseChangeId && data.phaseChangeId === phaseChangeIdRef.current) {
             return;
           }
           if (data.phaseChangeId) phaseChangeIdRef.current = data.phaseChangeId;
           setSessionData(prev => {
-            const next = prev ? { ...prev, currentPhase: data.phase, phaseChangeId: data.phaseChangeId ?? prev.phaseChangeId, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null, phaseRestored: data.phaseRestored ?? false, resumePhase: data.resumePhase, activeSentenceIndex: data.activeSentenceIndex, flagCounts: data.flagCounts ?? {} } : null;
+            const next = prev ? { ...prev, currentPhase: data.phase, phaseVersion: incomingPhaseVersion ?? prev.phaseVersion, phaseChangeId: data.phaseChangeId ?? prev.phaseChangeId, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null, phaseRestored: data.phaseRestored ?? false, resumePhase: data.resumePhase, activeSentenceIndex: data.activeSentenceIndex, flagCounts: data.flagCounts ?? {} } : null;
             sessionDataRef.current = next;
             return next;
           });
@@ -244,6 +267,7 @@ export const useLessonSocket = (
       sessionReadyRef.current = false;
       invalidatePhaseChange();
       phaseChangeIdRef.current = null;
+      phaseVersionRef.current = 0;
       if (newSocket) {
         // Disconnecting is not the same as explicitly cancelling a lesson.
         // React can run this cleanup during Strict Mode, route transitions,

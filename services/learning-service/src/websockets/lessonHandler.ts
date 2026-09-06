@@ -71,12 +71,34 @@ export const setupLessonSocket = (io: Server) => {
     io.to(session.tutorSocketId).emit(event, payload);
     publishLessonEvent(session.sessionId, event, payload, session.tutorId);
   };
-  const persistLiveState = async (session: { sessionId: string; currentDbSessionId?: string; currentPhase: number; activeSentenceIndex?: number; phaseSelectedIndices?: Record<number, number> }) => {
-    await dbWriter.persistLiveSessionState(session.sessionId, session);
-    if (session.currentDbSessionId && session.currentDbSessionId !== session.sessionId) {
-      await dbWriter.persistLiveSessionState(session.currentDbSessionId, session);
-    }
+  const persistLiveState = async (session: {
+    sessionId: string;
+    currentDbSessionId?: string;
+    currentPhase: number;
+    phaseVersion: number;
+    expectedPhaseVersion?: number;
+    expectedMirrorPhaseVersion?: number;
+    activeSentenceIndex?: number;
+    phaseSelectedIndices?: Record<number, number>;
+  }): Promise<boolean> => {
+    return dbWriter.persistLiveSessionState(session.sessionId, session, session.currentDbSessionId);
   };
+
+  const getPhaseChangedPayload = (session: ReturnType<typeof lessonSessionService.createSession>) => ({
+    phase: session.currentPhase,
+    phaseVersion: session.phaseVersion,
+    phaseChangeId: session.phaseChangeId,
+    phaseSelectedIndices: session.phaseSelectedIndices,
+    pairs: session.currentPhase === PAIR_CONVERSATION_PHASE
+      ? lessonSessionService.getPairsPayload(session)
+      : null,
+    gameState: lessonSessionService.getGameStatePayload(session),
+    phaseRestored: session.phaseRestored ?? false,
+    resumePhase: session.resumePhase,
+    activeSentenceIndex: session.activeSentenceIndex,
+    flagCounts: lessonSessionService.getFlagCounts(session),
+    currentDbSessionId: session.currentDbSessionId,
+  });
 
   const announceTutorOwner = (session: { sessionId: string; tutorSocketId: string; tutorId: string; tutorOwnerVersion: number }) => {
     publishLessonEvent(
@@ -179,7 +201,7 @@ export const setupLessonSocket = (io: Server) => {
     else aiInFlightByUser.set(userId, inFlight - 1);
   };
 
-  const restoreSharedSession = async (classId: string, tutorSocketId: string) => {
+  const getSharedSessionForClass = async (classId: string, expectedTutorId?: string) => {
     const lock = await dbWriter.getActiveSessionLock(classId);
     if (!lock) return undefined;
 
@@ -189,50 +211,115 @@ export const setupLessonSocket = (io: Server) => {
     if (
       !sharedSession ||
       sharedSession.classId !== classId ||
+      (expectedTutorId && sharedSession.tutorUserId !== expectedTutorId) ||
       (sharedSession.status !== "ACTIVE" && sharedSession.status !== "FINISHED")
     ) {
       return undefined;
     }
 
-    const articleData = await getArticleDetails(sharedSession.articleId, sharedSession.bookId || undefined);
-    if (!articleData) return undefined;
+    return sharedSession;
+  };
 
-    const restoredSession = lessonSessionService.createSession(
-      sharedSession.tutorUserId,
-      tutorSocketId,
-      sharedSession.articleId,
-      articleData,
-      classId,
-      sharedSession.classBookCycleId || undefined,
-      sharedSession.bookId || undefined,
-      false,
-      sharedSession.sessionId,
-      {
-        currentPhase: sharedSession.currentPhase,
-                activeSentenceIndex: sharedSession.activeSentenceIndex,
-                phaseSelectedIndices: (sharedSession.phaseSelectedIndices as Record<number, number> | null) || null,
-                currentDbSessionId: sharedSession.currentDbSessionId,
-                status: sharedSession.currentPhase > 0 ? "ACTIVE" : "LOBBY",
-      },
-    );
+  const getRestoredState = (sharedSession: {
+    currentPhase: number;
+    phaseVersion: number;
+    activeSentenceIndex: number | null;
+    phaseSelectedIndices: unknown;
+    currentDbSessionId: string | null;
+  }) => ({
+    currentPhase: sharedSession.currentPhase,
+    phaseVersion: sharedSession.phaseVersion,
+    activeSentenceIndex: sharedSession.activeSentenceIndex,
+    phaseSelectedIndices: (sharedSession.phaseSelectedIndices as Record<number, number> | null) || null,
+    currentDbSessionId: sharedSession.currentDbSessionId,
+    status: sharedSession.currentPhase > 0 ? "ACTIVE" as const : "LOBBY" as const,
+  });
 
-    const participants = await prisma.sessionParticipant.findMany({
-      where: { sessionId: sharedSession.sessionId },
-      include: { student: { select: { displayName: true, profilePictureUrl: true } } },
-    });
-    for (const participant of participants) {
-      lessonSessionService.joinSessionByClassId(
-        classId,
-        participant.studentUserId,
-        participant.student.displayName || "Student",
-        `restored:${participant.studentUserId}`,
-        participant.student.profilePictureUrl || undefined,
-        participant.studentUserId,
-      );
-      const localParticipant = restoredSession.participants.get(participant.studentUserId);
-      if (localParticipant) localParticipant.score = participant.score;
+  const mergePersistedParticipants = async (
+    session: ReturnType<typeof lessonSessionService.createSession>,
+    sessionIds: string | string[],
+  ) => {
+    const orderedSessionIds = Array.from(new Set(
+      (Array.isArray(sessionIds) ? sessionIds : [sessionIds]).filter(Boolean),
+    ));
+    const restoredStudentIds = new Set<string>();
+    for (const persistedSessionId of orderedSessionIds) {
+      const participants = await prisma.sessionParticipant.findMany({
+        where: { sessionId: persistedSessionId },
+        include: { student: { select: { displayName: true, profilePictureUrl: true } } },
+      });
+      for (const participant of participants) {
+        // Prefer the active cycle's score. The room/session row is only a
+        // fallback for students whose enrollment write was missed.
+        if (restoredStudentIds.has(participant.studentUserId)) continue;
+        restoredStudentIds.add(participant.studentUserId);
+        lessonSessionService.mergePersistedParticipant(
+          session.sessionId,
+          participant.studentUserId,
+          participant.student.displayName || "Student",
+          participant.student.profilePictureUrl || undefined,
+          participant.score,
+        );
+      }
     }
-    await restorePersistedAnswerState(restoredSession);
+  };
+
+  const restoreSharedSession = async (
+    classId: string,
+    tutorSocketId: string,
+    expectedTutorId?: string,
+  ) => {
+    const sharedSession = await getSharedSessionForClass(classId, expectedTutorId);
+    if (!sharedSession) return undefined;
+
+    let restoredSession = lessonSessionService.getSessionByClassId(classId);
+    const previousLocalPhase = restoredSession?.currentPhase;
+    const previousLocalPhaseVersion = restoredSession?.phaseVersion;
+    if (!restoredSession) {
+      const articleData = await getArticleDetails(sharedSession.articleId, sharedSession.bookId || undefined);
+      if (!articleData) return undefined;
+
+      restoredSession = lessonSessionService.createSession(
+        sharedSession.tutorUserId,
+        tutorSocketId,
+        sharedSession.articleId,
+        articleData,
+        classId,
+        sharedSession.classBookCycleId || undefined,
+        sharedSession.bookId || undefined,
+        false,
+        sharedSession.sessionId,
+        getRestoredState(sharedSession),
+      );
+    }
+
+    // Reconcile even when the object already exists. This closes the stale
+    // in-memory projection gap after a missed cross-instance notification.
+    lessonSessionService.reconcileRestoredState(
+      restoredSession.sessionId,
+      getRestoredState(sharedSession),
+    );
+    const phaseWasReconciled =
+      previousLocalPhase === undefined ||
+      previousLocalPhaseVersion === undefined ||
+      previousLocalPhase !== restoredSession.currentPhase ||
+      previousLocalPhaseVersion !== restoredSession.phaseVersion;
+    const persistedStateIsCurrent =
+      sharedSession.phaseVersion >= restoredSession.phaseVersion &&
+      sharedSession.currentPhase === restoredSession.currentPhase;
+    if (persistedStateIsCurrent) {
+      await mergePersistedParticipants(
+        restoredSession,
+        [sharedSession.currentDbSessionId || "", sharedSession.sessionId],
+      );
+      await restorePersistedAnswerState(restoredSession);
+    }
+    if (phaseWasReconciled) {
+      // Heal already-connected clients on other service instances that missed
+      // the transient bus event; reconnecting students still receive the same
+      // authoritative state through join_success below.
+      broadcastSession(restoredSession.sessionId, "phase_changed", getPhaseChangedPayload(restoredSession));
+    }
     startSessionHeartbeat(classId, restoredSession.sessionId);
     return restoredSession;
   };
@@ -341,6 +428,7 @@ export const setupLessonSocket = (io: Server) => {
           socket.emit("session_created", {
           sessionId: demoSession.sessionId,
           currentPhase: demoSession.currentPhase,
+          phaseVersion: demoSession.phaseVersion,
           phaseChangeId: demoSession.phaseChangeId,
           participants: Array.from(demoSession.participants.values()),
           phaseRestored: demoSession.phaseRestored ?? false,
@@ -445,7 +533,15 @@ export const setupLessonSocket = (io: Server) => {
 
         if (!socket.connected) return;
 
-        const localSession = classId ? lessonSessionService.getSessionByClassId(classId) : undefined;
+        let localSession = classId ? lessonSessionService.getSessionByClassId(classId) : undefined;
+        if (classId && localSession) {
+          try {
+            const refreshedSession = await restoreSharedSession(classId, socket.id, tutorId);
+            if (refreshedSession) localSession = refreshedSession;
+          } catch (error) {
+            logger.warn(`[Socket] Could not reconcile existing session for class ${classId}:`, error);
+          }
+        }
         const proposedSessionId = localSession?.sessionId || uuidv4();
         if (classId && ownedClass && !localSession) {
           const lock = await dbWriter.claimActiveSession(classId, proposedSessionId, ownedClass.tutorUserId);
@@ -453,59 +549,15 @@ export const setupLessonSocket = (io: Server) => {
             // Another instance may own the socket room.  Rehydrate the
             // persisted session header/state locally instead of creating a
             // second room or dropping a reconnecting tutor on the floor.
-            const sharedSession = lock.existingSessionId
-              ? await prisma.interactiveSession.findUnique({
-                  where: { sessionId: lock.existingSessionId },
-                })
-              : null;
-            if (
-              sharedSession &&
-              sharedSession.classId === classId &&
-              sharedSession.tutorUserId === ownedClass.tutorUserId &&
-              (sharedSession.status === "ACTIVE" || sharedSession.status === "FINISHED")
-            ) {
+            const restoredSession = await restoreSharedSession(classId, socket.id, tutorId);
+            if (restoredSession) {
               if (!socket.connected) return;
-              const restoredSession = lessonSessionService.createSession(
-                tutorId,
-                socket.id,
-                sharedSession.articleId,
-                articleData,
-                classId,
-                sharedSession.classBookCycleId || resolvedCycleId,
-                sharedSession.bookId || resolvedBookId,
-                false,
-                sharedSession.sessionId,
-                {
-                  currentPhase: sharedSession.currentPhase,
-                  activeSentenceIndex: sharedSession.activeSentenceIndex,
-                  phaseSelectedIndices: (sharedSession.phaseSelectedIndices as Record<number, number> | null) || null,
-                  currentDbSessionId: sharedSession.currentDbSessionId,
-                  status: sharedSession.currentPhase > 0 ? "ACTIVE" : "LOBBY",
-                },
-              );
-              const restoredParticipants = await prisma.sessionParticipant.findMany({
-                where: { sessionId: sharedSession.sessionId },
-                include: { student: { select: { displayName: true, profilePictureUrl: true } } },
-              });
-              for (const participant of restoredParticipants) {
-                lessonSessionService.joinSessionByClassId(
-                  classId,
-                  participant.studentUserId,
-                  participant.student.displayName || "Student",
-                  `restored:${participant.studentUserId}`,
-                  participant.student.profilePictureUrl || undefined,
-                  participant.studentUserId,
-                );
-                const localParticipant = restoredSession.participants.get(participant.studentUserId);
-                if (localParticipant) localParticipant.score = participant.score;
-              }
-              await restorePersistedAnswerState(restoredSession);
               socket.join(restoredSession.sessionId);
-              startSessionHeartbeat(classId, restoredSession.sessionId);
               announceTutorOwner(restoredSession);
               socket.emit("session_created", {
                 sessionId: restoredSession.sessionId,
                 currentPhase: restoredSession.currentPhase,
+                phaseVersion: restoredSession.phaseVersion,
                 phaseChangeId: restoredSession.phaseChangeId,
                 participants: Array.from(restoredSession.participants.values()),
                 phaseRestored: restoredSession.phaseRestored ?? false,
@@ -559,6 +611,7 @@ export const setupLessonSocket = (io: Server) => {
           false,
           proposedSessionId,
         );
+        const sessionWasReused = localSession === session;
         if (claimedLock && session.sessionId !== claimedLock.sessionId) {
           await dbWriter.releaseActiveSession(claimedLock.classId, claimedLock.sessionId);
           claimedLock = undefined;
@@ -568,13 +621,34 @@ export const setupLessonSocket = (io: Server) => {
         socket.join(session.sessionId);
 
         // PERSIST START OF SESSION TO DB (This creates initial Cycle 1 record)
-        await dbWriter.persistSessionStart(session.sessionId, tutorId, resolvedArticleId, classId, resolvedCycleId, resolvedBookId);
-        await persistLiveState(session);
+        const sessionStartPersisted = await dbWriter.persistSessionStart(
+          session.sessionId,
+          tutorId,
+          resolvedArticleId,
+          classId,
+          resolvedCycleId,
+          resolvedBookId,
+        );
+        const liveStatePersisted = sessionStartPersisted && await persistLiveState({
+          ...session,
+          // A reconnect reuses the current in-memory session/version. A
+          // brand-new room also starts at version zero, so the same CAS rule
+          // covers both paths.
+          expectedPhaseVersion: session.phaseVersion,
+        });
+        if (!liveStatePersisted) {
+          if (!sessionWasReused) {
+            lessonSessionService.deleteSession(session.sessionId);
+            stopSessionHeartbeat(session.sessionId);
+          }
+          throw new Error("Could not persist the new live lesson session.");
+        }
         announceTutorOwner(session);
 
         socket.emit("session_created", {
           sessionId: session.sessionId,
           currentPhase: session.currentPhase,
+          phaseVersion: session.phaseVersion,
           phaseChangeId: session.phaseChangeId,
           participants: Array.from(session.participants.values()),
           phaseRestored: session.phaseRestored ?? false,
@@ -586,6 +660,12 @@ export const setupLessonSocket = (io: Server) => {
           pairs: session.currentPhase === PAIR_CONVERSATION_PHASE ? lessonSessionService.getPairsPayload(session) : null,
           gameState: lessonSessionService.getGameStatePayload(session),
         });
+        if (sessionWasReused && session.currentPhase > 0) {
+          // A tutor reconnect is also a chance to repair students that stayed
+          // connected to another instance while the original bus event was
+          // unavailable.
+          broadcastSession(session.sessionId, "phase_changed", getPhaseChangedPayload(session));
+        }
         logger.info(`[Socket] Session created: ${session.sessionId} for class ${classId}`);
       } catch (error_err) {
         if (claimedLock) {
@@ -625,12 +705,11 @@ export const setupLessonSocket = (io: Server) => {
       }
 
       let activeSession = lessonSessionService.getSessionByClassId(classId);
-      if (!activeSession) {
-        try {
-          activeSession = await restoreSharedSession(classId, `shared-tutor:${classId}`);
-        } catch (error) {
-          logger.warn(`[Socket] Could not restore shared session for class ${classId}:`, error);
-        }
+      try {
+        const reconciledSession = await restoreSharedSession(classId, `shared-tutor:${classId}`);
+        if (reconciledSession) activeSession = reconciledSession;
+      } catch (error) {
+        logger.warn(`[Socket] Could not reconcile shared session for class ${classId}:`, error);
       }
       if (activeSession?.classBookCycleId) {
         let activeAccess = await prisma.enrollmentPackage.findFirst({
@@ -702,6 +781,7 @@ export const setupLessonSocket = (io: Server) => {
           sessionId: session.sessionId,
           currentStudentId: studentId,
           currentPhase: session.currentPhase,
+          phaseVersion: session.phaseVersion,
           phaseChangeId: session.phaseChangeId,
           hasAnswered: Boolean(session.participants.get(studentId)?.hasAnsweredCurrentPhase),
           articleData: session.articleData,
@@ -779,9 +859,13 @@ export const setupLessonSocket = (io: Server) => {
         return;
       }
 
+      const previousPhase = authorizedSession?.currentPhase ?? 0;
+      const transitionSnapshot = lessonSessionService.captureTransitionState(sessionId);
+      let createdCycleId: string | undefined;
+      let phaseBroadcasted = false;
+
       phaseChangesInFlight.add(sessionId);
       try {
-      const previousPhase = authorizedSession?.currentPhase ?? 0;
       const shouldRewind = targetPhase > 0 && targetPhase < previousPhase;
       const session = shouldRewind
         ? lessonSessionService.rewindPhase(sessionId, targetPhase)
@@ -800,11 +884,12 @@ export const setupLessonSocket = (io: Server) => {
             // --- RESTART CYCLES (2, 3+) ---
             // This generates a TOTALLY distinct row in student dashboard history while keeping same socket room!
             const newDbId = uuidv4();
+            createdCycleId = newDbId;
             session.currentDbSessionId = newDbId; // Set explicit new key for this cycle
             logger.info(`[Socket] RECYCLE: Starting fresh learning loop for room ${sessionId}. New DB Session: ${newDbId}`);
             
             // 1. Create NEW DB header record
-            await dbWriter.persistSessionStart(
+            const cycleStarted = await dbWriter.persistSessionStart(
               newDbId,
               session.tutorId,
               session.articleId,
@@ -812,6 +897,9 @@ export const setupLessonSocket = (io: Server) => {
               session.classBookCycleId,
               session.bookId,
             );
+            if (!cycleStarted) {
+              throw new Error("Could not create the new live lesson cycle.");
+            }
             
             // 2. Automatically enroll all existing students in the NEW round immediately
             const activePeers = Array.from(session.participants.keys());
@@ -824,26 +912,23 @@ export const setupLessonSocket = (io: Server) => {
         // Persist before broadcasting so a tutor reconnecting to another
         // Cloud Run instance cannot rehydrate an older phase from the DB.
         if (!session.isDemo) {
-          await persistLiveState(session);
+          const persisted = await persistLiveState({
+            ...session,
+            expectedPhaseVersion: transitionSnapshot?.phaseVersion,
+            expectedMirrorPhaseVersion: createdCycleId ? 0 : transitionSnapshot?.phaseVersion,
+          });
+          if (!persisted) {
+            throw new Error("Could not persist the lesson phase; the phase change was not broadcast.");
+          }
         }
 
         // Broadcast new phase to everyone in the room.
         // Pair Conversation carries the freshly generated pairs.
-        broadcastSession(sessionId, "phase_changed", {
-          phase: targetPhase,
-          phaseChangeId: session.phaseChangeId,
-          phaseSelectedIndices: session.phaseSelectedIndices,
-          pairs: targetPhase === PAIR_CONVERSATION_PHASE ? lessonSessionService.getPairsPayload(session) : null,
-          gameState: lessonSessionService.getGameStatePayload(session),
-          phaseRestored: session.phaseRestored ?? false,
-          resumePhase: session.resumePhase,
-          activeSentenceIndex: session.activeSentenceIndex,
-          flagCounts: lessonSessionService.getFlagCounts(session),
-          currentDbSessionId: session.currentDbSessionId,
-        });
+        broadcastSession(sessionId, "phase_changed", getPhaseChangedPayload(session));
         broadcastSession(sessionId, "participants_updated", {
           participants: Array.from(session.participants.values())
         });
+        phaseBroadcasted = true;
         logger.info(`Session ${sessionId} changed to phase ${targetPhase}`);
 
         // Returning to the lobby closes the current DB round while keeping the
@@ -906,6 +991,15 @@ export const setupLessonSocket = (io: Server) => {
         acknowledge?.({ ok: false, code: "SESSION_NOT_FOUND", message: "Lesson session was not found." });
       }
       } catch (error) {
+        // A phase is only valid after its DB commit. If persistence failed,
+        // restore the complete in-memory transition (including rewind
+        // checkpoints and cycle identity) so the next retry starts cleanly.
+        if (!phaseBroadcasted && transitionSnapshot) {
+          lessonSessionService.restoreTransitionState(sessionId, transitionSnapshot);
+          if (createdCycleId && createdCycleId !== transitionSnapshot.currentDbSessionId) {
+            await dbWriter.updateSessionStatus(createdCycleId, "CANCELLED");
+          }
+        }
         logger.error(`[Socket] Failed to change session ${sessionId} to phase ${targetPhase}:`, error);
         const message = "Could not change the lesson phase. Please try again.";
         socket.emit("error", { message });

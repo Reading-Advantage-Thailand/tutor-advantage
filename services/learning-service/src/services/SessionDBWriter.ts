@@ -73,23 +73,58 @@ export const persistLiveSessionState = async (
   sessionId: string,
   state: {
     currentPhase: number;
+    phaseVersion: number;
+    expectedPhaseVersion?: number;
+    expectedMirrorPhaseVersion?: number;
     activeSentenceIndex?: number;
     phaseSelectedIndices?: Record<number, number>;
     currentDbSessionId?: string;
   },
-) => {
+  mirrorSessionId?: string,
+): Promise<boolean> => {
+  const sessionIds = Array.from(new Set([sessionId, mirrorSessionId].filter(Boolean))) as string[];
+
   try {
-    await prisma.interactiveSession.updateMany({
-      where: { sessionId },
-      data: {
-        currentPhase: state.currentPhase,
-        activeSentenceIndex: state.activeSentenceIndex ?? null,
-        phaseSelectedIndices: state.phaseSelectedIndices ?? undefined,
-        currentDbSessionId: state.currentDbSessionId ?? null,
-      },
-    });
+    const results = await prisma.$transaction(
+      sessionIds.map((id) => {
+        const expectedPhaseVersion = id === sessionId
+          ? state.expectedPhaseVersion
+          : state.expectedMirrorPhaseVersion ?? state.expectedPhaseVersion;
+
+        return prisma.interactiveSession.updateMany({
+          // A stale service instance must never overwrite a newer phase that
+          // was already committed by the active tutor instance. For a phase
+          // transition use an exact compare-and-swap value; the only exception
+          // is a newly created cycle mirror, whose initial version is zero.
+          where: {
+            sessionId: id,
+            phaseVersion: expectedPhaseVersion === undefined
+              ? { lte: state.phaseVersion }
+              : expectedPhaseVersion,
+          },
+          data: {
+            currentPhase: state.currentPhase,
+            phaseVersion: state.phaseVersion,
+            activeSentenceIndex: state.activeSentenceIndex ?? null,
+            phaseSelectedIndices: state.phaseSelectedIndices ?? undefined,
+            currentDbSessionId: state.currentDbSessionId ?? null,
+            updatedAt: new Date(),
+          },
+        });
+      }),
+    );
+
+    const success = results.length === sessionIds.length && results.every((result) => result.count === 1);
+    if (!success) {
+      logger.warn(
+        `[SessionDB] Refused to persist live lesson state ${sessionId}: ` +
+        `one or more rows were missing or already had a newer phase version.`,
+      );
+    }
+    return success;
   } catch (error) {
     logger.warn(`[SessionDB] Failed to persist live lesson state ${sessionId}:`, error);
+    return false;
   }
 };
 
@@ -162,7 +197,7 @@ export const persistSessionStart = async (
 
     if (!resolvedTutorId) {
       logger.warn(`[SessionDB] Cannot create session entry: Tutor ID not found & could not resolve via Class/Role.`);
-      return;
+      return false;
     }
 
     // Validate classId format before inserting into DB (must be UUID)
@@ -188,8 +223,10 @@ export const persistSessionStart = async (
         bookId: dbBookId,
       }
     });
+    return true;
   } catch (error) {
     logger.error(`[SessionDB] Error persisting session start:`, error);
+    return false;
   }
 };
 

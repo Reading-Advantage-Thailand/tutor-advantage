@@ -79,6 +79,7 @@ export interface LessonSessionData {
   sessionId: string;
   currentStudentId?: string;
   currentPhase: number;
+  phaseVersion?: number;
   phaseChangeId?: string;
   hasAnswered?: boolean;
   articleData?: LessonArticleData;
@@ -162,6 +163,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
   const socketRef = useRef<Socket | null>(null);
   const hasAnsweredRef = useRef(false);
   const submissionPendingRef = useRef(false);
+  const phaseVersionRef = useRef(0);
   const phaseChangeIdRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -230,6 +232,17 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
 
     newSocket.on('join_success', (data: LessonSessionData) => {
       setPaymentRequired(null);
+      const hasPhaseVersion = Number.isInteger(data.phaseVersion) && Number(data.phaseVersion) >= 0;
+      const incomingPhaseVersion = hasPhaseVersion
+        ? Number(data.phaseVersion)
+        : 0;
+      if (incomingPhaseVersion < phaseVersionRef.current || (!hasPhaseVersion && phaseVersionRef.current > 0)) {
+        // A reconnect response can race with a newer phase event already
+        // received on this socket. Never let that older snapshot move the
+        // student back to a previous question.
+        return;
+      }
+      phaseVersionRef.current = incomingPhaseVersion;
       phaseChangeIdRef.current = typeof data.phaseChangeId === 'string'
         ? data.phaseChangeId
         : null;
@@ -279,13 +292,26 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
       setPaymentRequired(data);
     });
 
-    newSocket.on('phase_changed', (data: { phase: number; phaseChangeId?: string; phaseSelectedIndices?: Record<number, number>; pairs?: LessonPair[] | null; gameState?: GamePhaseState | null; phaseRestored?: boolean; resumePhase?: number; activeSentenceIndex?: number; flagCounts?: Record<number, number> }) => {
+    newSocket.on('phase_changed', (data: { phase: number; phaseVersion?: number; phaseChangeId?: string; phaseSelectedIndices?: Record<number, number>; pairs?: LessonPair[] | null; gameState?: GamePhaseState | null; phaseRestored?: boolean; resumePhase?: number; activeSentenceIndex?: number; flagCounts?: Record<number, number> }) => {
       if (cancelled || socketRef.current !== newSocket || !newSocket.connected) return;
+      const hasPhaseVersion = Number.isInteger(data.phaseVersion) && Number(data.phaseVersion) >= 0;
+      const incomingPhaseVersion = hasPhaseVersion ? Number(data.phaseVersion) : undefined;
+      if (incomingPhaseVersion !== undefined) {
+        if (
+          incomingPhaseVersion < phaseVersionRef.current ||
+          (incomingPhaseVersion === phaseVersionRef.current && incomingPhaseVersion > 0)
+        ) return;
+        phaseVersionRef.current = incomingPhaseVersion;
+      } else if (phaseVersionRef.current > 0) {
+        // Do not allow an old unversioned event from a rolling deployment to
+        // move a client backwards after it has joined the versioned protocol.
+        return;
+      }
       if (data.phaseChangeId && data.phaseChangeId === phaseChangeIdRef.current) {
         return;
       }
       if (data.phaseChangeId) phaseChangeIdRef.current = data.phaseChangeId;
-      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, phaseChangeId: data.phaseChangeId ?? prev.phaseChangeId, hasAnswered: false, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null, phaseRestored: data.phaseRestored ?? false, resumePhase: data.resumePhase, activeSentenceIndex: data.activeSentenceIndex, flagCounts: data.flagCounts ?? {} } : null);
+      setSessionData(prev => prev ? { ...prev, currentPhase: data.phase, phaseVersion: incomingPhaseVersion ?? prev.phaseVersion, phaseChangeId: data.phaseChangeId ?? prev.phaseChangeId, hasAnswered: false, phaseSelectedIndices: data.phaseSelectedIndices, pairs: data.pairs ?? null, gameState: data.gameState ?? null, phaseRestored: data.phaseRestored ?? false, resumePhase: data.resumePhase, activeSentenceIndex: data.activeSentenceIndex, flagCounts: data.flagCounts ?? {} } : null);
       setPhaseReadOnly(Boolean(data.phaseRestored));
       setFlagCounts(data.flagCounts || {});
       setHasAnswered(false);
@@ -358,6 +384,7 @@ export const useLessonSocket = (classId: string | undefined, studentId: string, 
         setSocket(null);
       }
       phaseChangeIdRef.current = null;
+      phaseVersionRef.current = 0;
     };
   }, [classId, studentId, name, pictureUrl]);
 

@@ -13,7 +13,7 @@ export interface SessionParticipant {
   isReady: boolean;
 }
 
-interface PhaseSnapshot {
+export interface PhaseSnapshot {
   currentPhase: number;
   status: LessonSession["status"];
   participants: SessionParticipant[];
@@ -23,6 +23,24 @@ interface PhaseSnapshot {
   pairs?: { pairNumber: number; studentIds: string[] }[];
   gameState?: GamePhaseState;
   currentDbSessionId?: string;
+}
+
+export interface LessonSessionTransitionSnapshot {
+  currentPhase: number;
+  phaseVersion: number;
+  phaseChangeId: string;
+  phaseRestored?: boolean;
+  resumePhase?: number;
+  status: LessonSession["status"];
+  participants: SessionParticipant[];
+  activeSentenceIndex?: number;
+  phaseSelectedIndices?: Record<number, number>;
+  sentenceFlags: Array<[number, string[]]>;
+  pairs?: { pairNumber: number; studentIds: string[] }[];
+  gameState?: GamePhaseState;
+  currentDbSessionId?: string;
+  finalNotificationSent?: boolean;
+  phaseSnapshots: Array<[number, PhaseSnapshot]>;
 }
 
 export type GameCategory = "vocabulary" | "sentence";
@@ -72,6 +90,9 @@ export interface LessonSession {
   articleId: string;
   articleData: any;
   currentPhase: number;
+  // Monotonically increases for every phase transition, including reopening
+  // the same phase. It lets every service instance reject stale events.
+  phaseVersion: number;
   // Unique identity for each phase transition, including reopening the same
   // phase. Clients use it to ignore duplicate bus/socket deliveries.
   phaseChangeId: string;
@@ -104,6 +125,7 @@ export interface RestoredLiveSessionState {
   activeSentenceIndex?: number | null;
   phaseSelectedIndices?: Record<number, number> | null;
   currentDbSessionId?: string | null;
+  phaseVersion?: number | null;
   phaseChangeId?: string | null;
   status?: LessonSession["status"];
 }
@@ -193,6 +215,11 @@ function cloneJson<T>(value: T): T {
 
 function isRecord(value: unknown): value is Record<string, any> {
   return typeof value === "object" && value !== null;
+}
+
+function toNonNegativeInteger(value: unknown): number | undefined {
+  const numberValue = Number(value);
+  return Number.isInteger(numberValue) && numberValue >= 0 ? numberValue : undefined;
 }
 
 export function getGameCategoryForPhase(phase: number): GameCategory | null {
@@ -316,6 +343,7 @@ class LessonSessionService {
       articleId,
       articleData,
       currentPhase: restoredState?.currentPhase ?? 0,
+      phaseVersion: restoredState?.phaseVersion ?? 0,
       phaseChangeId: restoredState?.phaseChangeId || uuidv4(),
       phaseRestored: false,
       resumePhase: undefined,
@@ -350,6 +378,152 @@ class LessonSessionService {
     return this.sessions.get(sessionId);
   }
 
+  /** Capture all mutable state touched by a phase transition. */
+  captureTransitionState(sessionId: string): LessonSessionTransitionSnapshot | undefined {
+    const session = this.sessions.get(sessionId);
+    if (!session) return undefined;
+
+    return {
+      currentPhase: session.currentPhase,
+      phaseVersion: session.phaseVersion,
+      phaseChangeId: session.phaseChangeId,
+      phaseRestored: session.phaseRestored,
+      resumePhase: session.resumePhase,
+      status: session.status,
+      participants: Array.from(session.participants.values()).map((participant) => cloneJson(participant)),
+      activeSentenceIndex: session.activeSentenceIndex,
+      phaseSelectedIndices: cloneJson(session.phaseSelectedIndices),
+      sentenceFlags: Array.from(session.sentenceFlags?.entries() || []).map(([index, studentIds]) => [
+        index,
+        Array.from(studentIds),
+      ]),
+      pairs: cloneJson(session.pairs),
+      gameState: cloneJson(session.gameState),
+      currentDbSessionId: session.currentDbSessionId,
+      finalNotificationSent: session.finalNotificationSent,
+      phaseSnapshots: Array.from(session.phaseSnapshots.entries()).map(([phase, snapshot]) => [
+        phase,
+        cloneJson(snapshot),
+      ]),
+    };
+  }
+
+  /** Restore a transition snapshot after a failed database commit. */
+  restoreTransitionState(
+    sessionId: string,
+    snapshot: LessonSessionTransitionSnapshot,
+  ): LessonSession | undefined {
+    const session = this.sessions.get(sessionId);
+    if (!session) return undefined;
+
+    session.currentPhase = snapshot.currentPhase;
+    session.phaseVersion = snapshot.phaseVersion;
+    session.phaseChangeId = snapshot.phaseChangeId;
+    session.phaseRestored = snapshot.phaseRestored;
+    session.resumePhase = snapshot.resumePhase;
+    session.status = snapshot.status;
+    session.participants = new Map(
+      snapshot.participants.map((participant) => [
+        participant.studentId,
+        cloneJson(participant),
+      ]),
+    );
+    session.activeSentenceIndex = snapshot.activeSentenceIndex;
+    session.phaseSelectedIndices = cloneJson(snapshot.phaseSelectedIndices);
+    session.sentenceFlags = new Map(
+      snapshot.sentenceFlags.map(([index, studentIds]) => [index, new Set(studentIds)]),
+    );
+    session.pairs = cloneJson(snapshot.pairs);
+    session.gameState = cloneJson(snapshot.gameState);
+    session.currentDbSessionId = snapshot.currentDbSessionId;
+    session.finalNotificationSent = snapshot.finalNotificationSent;
+    session.phaseSnapshots = new Map(
+      snapshot.phaseSnapshots.map(([phase, phaseSnapshot]) => [phase, cloneJson(phaseSnapshot)]),
+    );
+
+    return session;
+  }
+
+  /**
+   * Reconcile an existing in-memory projection with the authoritative state
+   * loaded from the database during a reconnect. A local session may already
+   * exist when a client reconnects to a different Cloud Run instance, so this
+   * must be callable even when createSession() would reuse that object.
+   */
+  reconcileRestoredState(
+    sessionId: string,
+    restoredState: RestoredLiveSessionState,
+  ): LessonSession | undefined {
+    const session = this.sessions.get(sessionId);
+    if (!session) return undefined;
+
+    const restoredPhase = restoredState.currentPhase === null || restoredState.currentPhase === undefined
+      ? undefined
+      : toNonNegativeInteger(restoredState.currentPhase);
+    const restoredVersion = restoredState.phaseVersion === null || restoredState.phaseVersion === undefined
+      ? undefined
+      : toNonNegativeInteger(restoredState.phaseVersion);
+
+    // Never let an older database read regress a projection that has already
+    // received a newer phase event from the active tutor instance.
+    if (restoredVersion !== undefined && restoredVersion < session.phaseVersion) {
+      return session;
+    }
+
+    // Once versioning is active, a same-version phase mismatch can only come
+    // from an old writer that does not know how to update phaseVersion. Keep
+    // the already ordered in-memory state instead of accepting that legacy
+    // overwrite. Version-zero rows remain recoverable for pre-migration live
+    // sessions.
+    if (
+      restoredVersion !== undefined &&
+      restoredVersion === session.phaseVersion &&
+      restoredVersion > 0 &&
+      restoredPhase !== undefined &&
+      restoredPhase !== session.currentPhase
+    ) {
+      return session;
+    }
+
+    const phaseChanged =
+      (restoredPhase !== undefined && restoredPhase !== session.currentPhase) ||
+      (restoredVersion !== undefined && restoredVersion > session.phaseVersion);
+
+    if (restoredPhase !== undefined) session.currentPhase = restoredPhase;
+    if (restoredVersion !== undefined) session.phaseVersion = Math.max(session.phaseVersion, restoredVersion);
+    if (typeof restoredState.phaseChangeId === "string" && restoredState.phaseChangeId) {
+      session.phaseChangeId = restoredState.phaseChangeId;
+    } else if (phaseChanged) {
+      session.phaseChangeId = uuidv4();
+    }
+    if (restoredState.activeSentenceIndex !== undefined) {
+      session.activeSentenceIndex = restoredState.activeSentenceIndex ?? undefined;
+    }
+    if (restoredState.phaseSelectedIndices !== undefined && restoredState.phaseSelectedIndices !== null) {
+      session.phaseSelectedIndices = cloneJson(restoredState.phaseSelectedIndices);
+    }
+    if (restoredState.currentDbSessionId !== undefined) {
+      session.currentDbSessionId = restoredState.currentDbSessionId ?? undefined;
+    }
+    if (restoredState.status) {
+      session.status = restoredState.status;
+    } else if (restoredPhase !== undefined) {
+      session.status = restoredPhase > 0 ? "ACTIVE" : "LOBBY";
+    }
+
+    if (phaseChanged) {
+      for (const participant of session.participants.values()) {
+        participant.hasAnsweredCurrentPhase = false;
+        participant.latestAnswer = undefined;
+      }
+      session.gameState = undefined;
+      session.pairs = undefined;
+      if (session.currentPhase === 1) session.sentenceFlags = new Map();
+    }
+
+    return session;
+  }
+
   getSessionByTutorSocketId(socketId: string): LessonSession | undefined {
     for (const session of this.sessions.values()) {
       if (session.tutorSocketId === socketId) {
@@ -375,6 +549,36 @@ class LessonSessionService {
       isReady: existing ? existing.isReady : false
     });
 
+    return session;
+  }
+
+  /** Merge a persisted participant without replacing a live socket identity. */
+  mergePersistedParticipant(
+    sessionId: string,
+    studentId: string,
+    name: string,
+    pictureUrl: string | undefined,
+    score: number,
+  ): LessonSession | undefined {
+    const session = this.sessions.get(sessionId);
+    if (!session) return undefined;
+
+    const existing = session.participants.get(studentId);
+    if (!existing) {
+      return this.joinSessionByClassId(
+        session.classId || "",
+        studentId,
+        name,
+        `restored:${studentId}`,
+        pictureUrl,
+        studentId,
+      );
+    }
+
+    existing.resolvedUserId = existing.resolvedUserId || studentId;
+    if (name) existing.name = name;
+    if (pictureUrl) existing.pictureUrl = pictureUrl;
+    existing.score = score;
     return session;
   }
 
@@ -416,6 +620,7 @@ class LessonSessionService {
     }
 
     session.currentPhase = phase;
+    session.phaseVersion += 1;
     session.phaseChangeId = uuidv4();
     session.phaseRestored = false;
     session.resumePhase = undefined;
@@ -518,6 +723,7 @@ class LessonSessionService {
       : session.currentPhase;
 
     session.currentPhase = snapshot.currentPhase;
+    session.phaseVersion += 1;
     session.phaseChangeId = uuidv4();
     session.phaseRestored = true;
     session.resumePhase = resumePhase;
@@ -888,13 +1094,38 @@ class LessonSessionService {
     const phase = Number(payload.phase);
     if (!Number.isInteger(phase) || phase < 0 || phase > FINAL_LEADERBOARD_PHASE) return;
 
+    const phaseVersion = payload.phaseVersion === null || payload.phaseVersion === undefined
+      ? undefined
+      : toNonNegativeInteger(payload.phaseVersion);
     const phaseChangeId = typeof payload.phaseChangeId === "string"
       ? payload.phaseChangeId
       : undefined;
+    if (phaseVersion !== undefined) {
+      // A phase transition is uniquely identified by its version. Equal and
+      // older events are duplicates/stale deliveries and must not overwrite
+      // the current projection.
+      // Version zero is reserved for legacy rows created before the versioned
+      // protocol. Allow one phase snapshot at that version when its transition
+      // id differs so those rows can still be repaired across instances.
+      if (
+        phaseVersion < session.phaseVersion ||
+        (phaseVersion === session.phaseVersion && phaseVersion > 0)
+      ) return;
+    } else if (session.phaseVersion > 0) {
+      // Legacy unversioned events cannot be ordered safely once this session
+      // has entered the versioned protocol.
+      return;
+    }
     if (phaseChangeId && phaseChangeId === session.phaseChangeId) return;
 
+    const phaseChanged =
+      phase !== session.currentPhase ||
+      phaseVersion !== undefined ||
+      (phaseChangeId !== undefined && phaseChangeId !== session.phaseChangeId);
     session.currentPhase = phase;
+    if (phaseVersion !== undefined) session.phaseVersion = phaseVersion;
     if (phaseChangeId) session.phaseChangeId = phaseChangeId;
+    else if (phaseChanged) session.phaseChangeId = uuidv4();
     session.phaseRestored = payload.phaseRestored === true;
     session.resumePhase = typeof payload.resumePhase === "number"
       ? payload.resumePhase
@@ -938,12 +1169,14 @@ class LessonSessionService {
     }
 
     session.status = phase > 0 ? "ACTIVE" : "LOBBY";
-    for (const participant of session.participants.values()) {
-      participant.hasAnsweredCurrentPhase = false;
-      participant.latestAnswer = undefined;
-      if (phase === 1) participant.score = 0;
+    if (phaseChanged) {
+      for (const participant of session.participants.values()) {
+        participant.hasAnsweredCurrentPhase = false;
+        participant.latestAnswer = undefined;
+        if (phase === 1) participant.score = 0;
+      }
+      if (phase === 1) session.sentenceFlags = new Map();
     }
-    if (phase === 1) session.sentenceFlags = new Map();
   }
 
   syncActiveSentence(sessionId: string, index: number): LessonSession | null {

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   COMPREHENSION_PHASE,
   GUIDED_RESPONSE_PHASE,
+  KEY_SENTENCES_PHASE,
   SENTENCE_GAME_PHASE,
   VOCABULARY_GAME_PHASE,
   lessonSessionService as service,
@@ -133,6 +134,8 @@ describe("lessonSessionService", () => {
     service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
     service.applyRemoteEvent(session.sessionId, "phase_changed", {
       phase: GUIDED_RESPONSE_PHASE,
+      phaseVersion: 0,
+      phaseChangeId: "legacy-phase",
       phaseSelectedIndices: { [GUIDED_RESPONSE_PHASE]: 2 },
       currentDbSessionId: "cycle-1",
       phaseRestored: false,
@@ -158,6 +161,90 @@ describe("lessonSessionService", () => {
       score: 7,
       hasAnsweredCurrentPhase: true,
       latestAnswer: "answer",
+      socketId: "socket-a",
+    });
+  });
+
+  it("keeps the synchronized game payload when applying a versioned phase event", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+
+    service.applyRemoteEvent(session.sessionId, "phase_changed", {
+      phase: VOCABULARY_GAME_PHASE,
+      phaseVersion: 1,
+      gameState: {
+        phase: VOCABULARY_GAME_PHASE,
+        category: "vocabulary",
+        status: "voting",
+        votes: {},
+        results: {},
+        voteFirstSeen: {},
+      },
+    });
+
+    expect(session.currentPhase).toBe(VOCABULARY_GAME_PHASE);
+    expect(session.phaseVersion).toBe(1);
+    expect(session.gameState).toMatchObject({
+      phase: VOCABULARY_GAME_PHASE,
+      category: "vocabulary",
+      status: "voting",
+    });
+  });
+
+  it("reconciles a stale local phase from persisted state and rejects older events", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+
+    const reconciled = service.reconcileRestoredState(session.sessionId, {
+      currentPhase: GUIDED_RESPONSE_PHASE,
+      phaseVersion: 8,
+      activeSentenceIndex: 2,
+      phaseSelectedIndices: { [KEY_SENTENCES_PHASE]: 1, [GUIDED_RESPONSE_PHASE]: 0 },
+      currentDbSessionId: "cycle-1",
+    });
+
+    expect(reconciled).toBe(session);
+    expect(session).toMatchObject({
+      currentPhase: GUIDED_RESPONSE_PHASE,
+      phaseVersion: 8,
+      activeSentenceIndex: 2,
+      currentDbSessionId: "cycle-1",
+    });
+
+    session.participants.get("student-1")!.hasAnsweredCurrentPhase = true;
+    session.participants.get("student-1")!.latestAnswer = "new answer";
+    service.applyRemoteEvent(session.sessionId, "phase_changed", {
+      phase: KEY_SENTENCES_PHASE,
+      phaseVersion: 7,
+      phaseChangeId: "older-transition",
+    });
+
+    expect(session.currentPhase).toBe(GUIDED_RESPONSE_PHASE);
+    expect(session.phaseVersion).toBe(8);
+
+    service.reconcileRestoredState(session.sessionId, {
+      currentPhase: KEY_SENTENCES_PHASE,
+      phaseVersion: 8,
+    });
+    expect(session.currentPhase).toBe(GUIDED_RESPONSE_PHASE);
+  });
+
+  it("restores the full transition state after a failed phase commit", () => {
+    const session = service.createSession("tutor-1", "socket-1", "article-1", {}, "class-1");
+    service.joinSessionByClassId("class-1", "student-1", "Ada", "socket-a");
+    service.setPhase(session.sessionId, KEY_SENTENCES_PHASE);
+    session.participants.get("student-1")!.score = 17;
+    const snapshot = service.captureTransitionState(session.sessionId)!;
+
+    service.setPhase(session.sessionId, GUIDED_RESPONSE_PHASE);
+    service.restoreTransitionState(session.sessionId, snapshot);
+
+    expect(session).toMatchObject({
+      currentPhase: KEY_SENTENCES_PHASE,
+      phaseVersion: snapshot.phaseVersion,
+      phaseChangeId: snapshot.phaseChangeId,
+    });
+    expect(session.participants.get("student-1")).toMatchObject({
+      score: 17,
       socketId: "socket-a",
     });
   });

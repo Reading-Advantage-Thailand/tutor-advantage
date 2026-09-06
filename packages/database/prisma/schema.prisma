@@ -307,6 +307,7 @@ model InteractiveSession {
   tutorUserId String   @map("tutor_user_id") @db.Uuid
   articleId   String   @map("article_id")
   currentPhase Int     @default(0) @map("current_phase")
+  phaseVersion Int     @default(0) @map("phase_version")
   activeSentenceIndex Int? @map("active_sentence_index")
   phaseSelectedIndices Json? @map("phase_selected_indices")
   currentDbSessionId String? @map("current_db_session_id") @db.Uuid
