@@ -44,6 +44,7 @@ import {
   notifyClassLobby,
 } from "./controllers/classController";
 import { getDemoLessonCatalog } from "./controllers/demoController";
+import { getAssessment, startAssessment, submitAssessment, getAssessmentReport, openPostAssessment, commentAssessment } from "./controllers/assessmentController";
 import { generateReferral } from "./controllers/referralController";
 import {
   enrollStudent,
@@ -162,6 +163,13 @@ app.post("/v1/classes/:classId/book-cycles", authMiddleware, createClassBookCycl
 app.post("/v1/classes/:classId/book-cycles/:cycleId/access", authMiddleware, prepareClassBookCycleAccess);
 
 // Protected Referral Routes
+app.get("/v1/book-cycles/:cycleId/assessment", authMiddleware, getAssessment);
+app.post("/v1/book-cycles/:cycleId/assessment/start", authMiddleware, startAssessment);
+app.post("/v1/book-cycles/:cycleId/assessment/submit", authMiddleware, submitAssessment);
+app.get("/v1/book-cycles/:cycleId/assessment/report", authMiddleware, getAssessmentReport);
+app.post("/v1/book-cycles/:cycleId/assessment/open-post", authMiddleware, openPostAssessment);
+app.patch("/v1/book-cycles/:cycleId/assessment/attempts/:attemptId/comment", authMiddleware, commentAssessment);
+
 app.post("/v1/referrals/generate", authMiddleware, generateReferral);
 
 // Protected Enrollment Route

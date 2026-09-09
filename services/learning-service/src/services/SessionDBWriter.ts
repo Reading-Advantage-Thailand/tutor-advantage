@@ -98,6 +98,7 @@ export const persistLiveSessionState = async (
           // is a newly created cycle mirror, whose initial version is zero.
           where: {
             sessionId: id,
+            ...(state.currentPhase > 0 ? { assessmentMode: "LESSON" } : {}),
             phaseVersion: expectedPhaseVersion === undefined
               ? { lte: state.phaseVersion }
               : expectedPhaseVersion,

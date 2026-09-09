@@ -74,6 +74,7 @@ const playNotificationSound = () => {
 
 export function Sidebar({ notifications: initialNotifications }: SidebarProps) {
   const pathname = usePathname();
+  const isLiveClassroom = pathname.startsWith("/lesson/");
   const [notifications, setNotifications] = useState(initialNotifications);
   const prevUnreadRef = useRef<number | undefined>(undefined);
 
@@ -149,9 +150,10 @@ export function Sidebar({ notifications: initialNotifications }: SidebarProps) {
         {navItems.map((item) => {
           const Icon = item.icon;
           const active =
-            item.href === "/dashboard"
+            (item.href === "/dashboard/classes" && isLiveClassroom) ||
+            (item.href === "/dashboard"
               ? pathname === item.href
-              : pathname.startsWith(item.href);
+              : pathname.startsWith(item.href));
           return (
             <Link
               key={item.href}

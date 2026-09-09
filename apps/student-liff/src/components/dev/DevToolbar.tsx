@@ -240,7 +240,7 @@ export function DevToolbar() {
       {/* ── Floating toggle button ───────────────────────────────────────── */}
       <button
         onClick={handleOpen}
-        className="fixed bottom-24 right-4 z-[9999] flex items-center gap-1.5 rounded-full bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 px-3 py-2 text-xs font-bold hover:bg-emerald-700 active:scale-95 transition-all lg:bottom-5 lg:right-5"
+        className="dev-toolbar-toggle fixed bottom-24 right-4 z-[9999] flex items-center gap-1.5 rounded-full bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 px-3 py-2 text-xs font-bold hover:bg-emerald-700 active:scale-95 transition-all lg:bottom-5 lg:right-5"
         title="Dev Toolbar"
       >
         <Terminal className="h-3.5 w-3.5" />
@@ -250,7 +250,7 @@ export function DevToolbar() {
 
       {/* ── Panel ────────────────────────────────────────────────────────── */}
       {open && (
-        <div className="fixed bottom-36 right-4 z-[9998] w-[340px] max-h-[75vh] flex flex-col rounded-2xl border border-emerald-500/30 bg-background shadow-2xl shadow-black/20 overflow-hidden lg:bottom-16 lg:right-5">
+        <div className="dev-toolbar-panel fixed bottom-36 right-4 z-[9998] w-[340px] max-h-[75vh] flex flex-col rounded-2xl border border-emerald-500/30 bg-background shadow-2xl shadow-black/20 overflow-hidden lg:bottom-16 lg:right-5">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 bg-emerald-500/10 border-b border-emerald-500/20 shrink-0">
             <div className="flex items-center gap-2">

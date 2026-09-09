@@ -5,3 +5,4 @@ export * from "./env";
 export * from "./guardianPolicy";
 export * from "./securityConfig";
 export * from "./middlewares/openapi";
+export type { AssessmentMode, AssessmentControl, AssessmentQuestion, LiveAssessmentState } from "./assessmentTypes";

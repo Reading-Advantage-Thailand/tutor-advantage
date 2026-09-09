@@ -11,6 +11,8 @@ import { useLessonSocket } from "@/hooks/useLessonSocket";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 import { playSound } from "@/lib/sounds";
+import { useLiveAssessment } from "@/hooks/useLiveAssessment";
+import LiveAssessmentStudent from "@/components/LiveAssessmentStudent";
 
 interface PageProps {
   params: Promise<{ classId: string }>;
@@ -40,6 +42,7 @@ export default function LessonLobbyPage({ params }: PageProps) {
 
   // Use socket for lobby
   const {
+    socket,
     sessionData,
     participants,
     error,
@@ -48,6 +51,7 @@ export default function LessonLobbyPage({ params }: PageProps) {
     nudgeMessage,
     kicked
   } = useLessonSocket(classInfo?.isEnrolled ? classId : undefined, studentId, studentName, pictureUrl);
+  const assessment = useLiveAssessment(socket, sessionData?.sessionId, sessionData?.currentPhase);
 
   useEffect(() => {
     if (liffReady && classId) {
@@ -215,8 +219,24 @@ export default function LessonLobbyPage({ params }: PageProps) {
   }
 
   const myParticipant = participants.find(p => p.studentId === studentId);
+  if (assessment.state?.supported && assessment.state.mode !== "LESSON" && assessment.state.status !== "LOBBY" && sessionData?.currentPhase === 0) {
+    return <main className="live-assessment-page">
+      <LiveAssessmentStudent key={`${assessment.state.sessionId}-${assessment.state.mode}`} state={assessment.state} busy={assessment.busy} error={assessment.error} onAnswer={assessment.answer} lessonName={classInfo.name} tutorName={classInfo.tutor?.name} />
+    </main>;
+  }
   const isReady = myParticipant?.isReady || false;
   const readyCount = participants.filter(p => p.isReady).length;
+  const selectedActivity = assessment.state?.supported ? assessment.state.mode : "LESSON";
+  const activityTitle = selectedActivity === "PRE"
+    ? "แบบประเมินก่อนเรียน"
+    : selectedActivity === "POST"
+      ? "แบบประเมินหลังเรียน"
+      : "เรียนตาม Lesson";
+  const activityDescription = selectedActivity === "LESSON"
+    ? "เมื่อทุกคนพร้อม คุณครูจะเริ่มบทเรียนพร้อมกัน"
+    : isReady
+      ? `คุณพร้อมแล้ว รอคุณครูเริ่ม${activityTitle}`
+      : `กดพร้อมก่อน แล้วรอคุณครูเริ่ม${activityTitle}`;
 
   return (
     <div className="page-shell" style={{ background: "var(--surface-bg)", minHeight: "100dvh" }}>
@@ -284,6 +304,18 @@ export default function LessonLobbyPage({ params }: PageProps) {
               <h2 style={{ color: "#fff", fontSize: "1.25rem", fontWeight: 800, marginBottom: 4 }}>{classInfo.name}</h2>
               <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.875rem" }}>{t("lessonLobby.tutorPrefix")} {classInfo.tutor?.name || t("lessonLobby.defaultTutor")}</p>
            </div>
+        </div>
+
+        {/* The selected activity stays visible while students ready up in the normal Lobby. */}
+        <div className="glass-card" aria-live="polite" style={{ padding: "16px 18px", border: "1px solid rgba(6,199,85,0.28)", background: "linear-gradient(135deg, rgba(6,199,85,0.10), rgba(59,130,246,0.06))", display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ width: 44, height: 44, flexShrink: 0, borderRadius: 14, background: "var(--brand-500)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <Play size={20} fill="currentColor" />
+          </div>
+          <div style={{ minWidth: 0 }}>
+            <p style={{ color: "var(--brand-600)", fontSize: "0.6875rem", fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 3 }}>กิจกรรมที่กำลังจะเริ่ม</p>
+            <h3 style={{ color: "var(--text-primary)", fontSize: "1rem", fontWeight: 800, marginBottom: 3 }}>{activityTitle}</h3>
+            <p style={{ color: "var(--text-tertiary)", fontSize: "0.8125rem", lineHeight: 1.5 }}>{activityDescription}</p>
+          </div>
         </div>
 
         {/* Participants Count */}
@@ -368,7 +400,9 @@ export default function LessonLobbyPage({ params }: PageProps) {
            ) : (
               <div className="glass-card" style={{ padding: "16px", textAlign: "center", border: "1px solid var(--surface-border)" }}>
                 <p style={{ fontSize: "0.875rem", color: "var(--text-primary)", fontWeight: 500 }}>
-                  {isReady ? t("lessonLobby.waitingTutor") : t("lessonLobby.readyInstruction")}
+                  {selectedActivity === "LESSON"
+                    ? isReady ? t("lessonLobby.waitingTutor") : t("lessonLobby.readyInstruction")
+                    : activityDescription}
                 </p>
               </div>
            )}

@@ -22,6 +22,7 @@ import * as dbWriter from "../services/SessionDBWriter";
 import { LineNotificationService } from "../services/LineNotificationService";
 import { checkAndUnlockBadges } from "../services/BadgeService";
 import { prisma } from "@tutor-advantage/database";
+import { setupAssessmentSocket } from "./assessmentHandler";
 import { publishLessonEvent, startLessonSocketBus } from "./LessonSocketBus";
 import {
   isStudentSessionParticipant,
@@ -361,6 +362,7 @@ export const setupLessonSocket = (io: Server) => {
 
   io.on("connection", (socket: Socket) => {
     const actor = socket.data.actor as SocketActor;
+    setupAssessmentSocket(socket, actor, broadcastSession);
     const rejectForbidden = (action: string) => {
       logger.warn(
         `[Socket] Forbidden ${action} by ${actor.role} ${actor.userId} (${socket.id})`,
@@ -470,12 +472,6 @@ export const setupLessonSocket = (io: Server) => {
           }
         }
 
-        // Non-demo classes must name the article to teach.
-        if (!resolvedArticleId) {
-          socket.emit("error", { message: "กรุณาเลือกบทเรียนก่อนเริ่มสอน (missing articleId)" });
-          return;
-        }
-
         if (classId) {
           // A caller may send all three IDs, so validate them all.  Previously
           // supplying both cycleId and bookId skipped this block entirely and
@@ -504,6 +500,16 @@ export const setupLessonSocket = (io: Server) => {
           resolvedCycleId = cycle?.classBookCycleId;
           resolvedBookId = derivedBookId;
 
+          // The class lobby can open before the tutor chooses an activity.
+          if (!resolvedArticleId && resolvedBookId) {
+            const firstArticle = await prisma.article.findFirst({
+              where: { bookId: resolvedBookId },
+              orderBy: [{ createdAt: "asc" }, { articleId: "asc" }],
+              select: { articleId: true },
+            });
+            resolvedArticleId = firstArticle?.articleId;
+          }
+
           if (resolvedBookId) {
             const articleBinding = await prisma.article.findFirst({
               where: { articleId: resolvedArticleId, bookId: resolvedBookId },
@@ -525,6 +531,10 @@ export const setupLessonSocket = (io: Server) => {
           }
         }
 
+        if (!resolvedArticleId) {
+          socket.emit("error", { message: "หนังสือนี้ยังไม่มีบทเรียนสำหรับเปิด Lobby" });
+          return;
+        }
         const articleData = await getArticleDetails(resolvedArticleId, resolvedBookId);
         if (!articleData) {
           socket.emit("error", { message: "ไม่พบบทเรียนที่เลือก" });

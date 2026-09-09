@@ -40,10 +40,10 @@ describe("persistLiveSessionState", () => {
     )).resolves.toBe(true);
 
     expect(prisma.interactiveSession.updateMany).toHaveBeenNthCalledWith(1, expect.objectContaining({
-      where: { sessionId: "room-session", phaseVersion: 4 },
+      where: { sessionId: "room-session", phaseVersion: 4, assessmentMode: "LESSON" },
     }));
     expect(prisma.interactiveSession.updateMany).toHaveBeenNthCalledWith(2, expect.objectContaining({
-      where: { sessionId: "cycle-session", phaseVersion: 0 },
+      where: { sessionId: "cycle-session", phaseVersion: 0, assessmentMode: "LESSON" },
     }));
   });
 

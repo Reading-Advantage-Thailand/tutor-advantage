@@ -22,10 +22,10 @@ import {
   CalendarClock,
   Calendar as CalendarIcon,
   Ticket,
-  List,
-  LayoutGrid,
-  MoreVertical,
   GraduationCap,
+  Search,
+  Clock3,
+  Rocket,
 } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
@@ -117,7 +117,7 @@ export function ArticleSelector({
   const [creatingCycle, setCreatingCycle] = useState(false);
   const [openBookDialogOpen, setOpenBookDialogOpen] = useState(false);
   const [toast, setToast] = useState<ToastState | null>(null);
-  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
+  const [articleSearch, setArticleSearch] = useState("");
   const isPrimaryBook = (book: Pick<BookOption, "bookCode" | "title">) =>
     String(book.bookCode || book.title || "").startsWith("Primary ");
   const booksByProgram = {
@@ -129,6 +129,16 @@ export function ArticleSelector({
   );
   const articleImageUrl = (article: any) =>
     (Array.isArray(article.imageUrls) ? article.imageUrls[0] : null) || article.imageUrl || null;
+  const filteredArticles = useMemo(() => {
+    const query = articleSearch.trim().toLocaleLowerCase("th");
+    if (!query) return articles;
+    return articles.filter((article) =>
+      [article.title, article.summary, article.type]
+        .filter(Boolean)
+        .some((value) => String(value).toLocaleLowerCase("th").includes(query)),
+    );
+  }, [articleSearch, articles]);
+  const selectedArticleData = articles.find((article) => article.id === selectedArticle);
   const cycleLabel = (cycle: { sequence: number; title: string }) => {
     const title = cycle.title.startsWith("Primary ")
       ? cycle.title.replace(/\s*\([A-C]\d\)$/i, "")
@@ -282,7 +292,7 @@ export function ArticleSelector({
     );
 
   return (
-    <Card className="border-border/60 bg-gradient-to-br from-background via-background to-primary/5 min-h-[400px] max-h-[80vh] overflow-hidden shadow-sm flex flex-col">
+    <Card className="flex min-h-[420px] max-h-[82vh] flex-col overflow-hidden rounded-3xl border-border/60 bg-card shadow-sm">
       {toast && (
         <div
           role="status"
@@ -296,43 +306,26 @@ export function ArticleSelector({
           </div>
         </div>
       )}
-      <CardHeader className="pb-4 shrink-0">
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 w-full">
-          <div>
-            <CardTitle className="text-base font-bold flex items-center gap-2.5 text-foreground">
-              <BookOpen className="h-5 w-5 text-emerald-600" />
-              {t("tutorClass.detail.articleTitle")}
-            </CardTitle>
-            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-              {t("tutorClass.detail.articleDescription")}
-            </p>
-          </div>
-          <div className="flex items-center gap-2 self-start">
-            <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-lg border border-border/50">
-              <Button
-                variant={viewMode === "list" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("list")}
-                className={`h-8 px-3 text-xs gap-1.5 ${viewMode === "list" ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                <List className="h-4 w-4" />
-                รายการ
-              </Button>
-              <Button
-                variant={viewMode === "grid" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("grid")}
-                className={`h-8 px-3 text-xs gap-1.5 ${viewMode === "grid" ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                <LayoutGrid className="h-4 w-4" />
-                คอลัมน์
-              </Button>
+      <CardHeader className="shrink-0 space-y-4 border-b border-border/60 bg-gradient-to-r from-primary/8 via-background to-background p-4 sm:p-5">
+        <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
+          <div className="flex items-start gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <BookOpen className="size-5" />
+            </span>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <CardTitle className="text-lg font-black text-foreground">เลือกบทเรียนวันนี้</CardTitle>
+                <span className="rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-bold text-primary">ขั้นตอนที่ 1</span>
+              </div>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">เลือกหนึ่งบทความ จากนั้นเตรียมสอนหรือสร้างห้องเรียนได้ทันที</p>
             </div>
+          </div>
+          <div className="shrink-0">
             <Dialog open={openBookDialogOpen} onOpenChange={setOpenBookDialogOpen}>
               <DialogTrigger
                 render={
-                  <Button variant="outline" size="sm" className="h-9 px-4 text-xs font-medium">
-                    เปิดเล่มใหม่
+                  <Button variant="outline" className="h-10 rounded-xl px-4 text-xs font-bold">
+                    <BookOpen className="size-4" /> เปิดเล่มใหม่
                   </Button>
                 }
               />
@@ -392,224 +385,141 @@ export function ArticleSelector({
             </Dialog>
           </div>
         </div>
-        
-        <div className="mt-4 flex flex-col gap-2">
-          <select
-            value={selectedCycleId}
-            onChange={(event) => setSelectedCycleId(event.target.value)}
-            className="w-full md:w-[400px] h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground focus:ring-1 focus:ring-emerald-500"
-          >
-            {bookCycles.map((cycle) => (
-              <option key={cycle.id} value={cycle.id}>
-                {cycleLabel(cycle)}
-              </option>
-            ))}
-          </select>
+
+        <div className="grid gap-2.5 md:grid-cols-[minmax(15rem,0.8fr)_minmax(14rem,1.2fr)]">
+          <label className="relative">
+            <span className="sr-only">เลือกเล่มเรียน</span>
+            <BookOpen className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-primary" />
+            <select
+              value={selectedCycleId}
+              onChange={(event) => { setSelectedCycleId(event.target.value); setArticleSearch(""); }}
+              className="h-11 w-full appearance-none rounded-xl border border-input bg-background pl-10 pr-9 text-sm font-semibold text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
+            >
+              {bookCycles.map((cycle) => (
+                <option key={cycle.id} value={cycle.id}>{cycleLabel(cycle)}</option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          </label>
+          <label className="relative">
+            <span className="sr-only">ค้นหาบทความ</span>
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="search"
+              value={articleSearch}
+              onChange={(event) => setArticleSearch(event.target.value)}
+              placeholder="ค้นหาชื่อบทเรียนหรือประเภท…"
+              className="h-11 w-full rounded-xl border border-input bg-background pl-10 pr-3 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/15"
+            />
+          </label>
         </div>
       </CardHeader>
 
-      <CardContent className="pb-6 flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto pr-2 min-h-0 scrollbar-thin">
+      <CardContent className="flex min-h-0 flex-1 flex-col overflow-hidden p-0">
+        <div className="min-h-0 flex-1 overflow-y-auto p-3 scrollbar-thin sm:p-4">
           {fetching ? (
-            <div className="py-24 flex flex-col items-center justify-center text-center gap-2">
-              <div className="animate-spin h-6 w-6 border-2 border-emerald-600 border-t-transparent rounded-full" />
-              <p className="text-xs text-muted-foreground font-medium">
-                {t("tutorClass.detail.articleLoading")}
-              </p>
+            <div className="flex min-h-56 flex-col items-center justify-center gap-3 text-center">
+              <div className="size-7 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              <p className="text-sm font-medium text-muted-foreground">{t("tutorClass.detail.articleLoading")}</p>
             </div>
           ) : error ? (
-            <div className="py-24 flex flex-col items-center justify-center text-center gap-2">
-              <p className="text-xs text-destructive font-medium">{error}</p>
+            <div className="flex min-h-56 flex-col items-center justify-center gap-2 text-center">
+              <XCircle className="size-8 text-destructive" />
+              <p className="text-sm font-medium text-destructive">{error}</p>
             </div>
           ) : articles.length === 0 ? (
-            <div className="py-24 flex flex-col items-center justify-center text-center gap-2">
-              <p className="text-xs text-muted-foreground font-medium">
-                {t("tutorClass.detail.articleEmpty")}
-              </p>
+            <div className="flex min-h-56 flex-col items-center justify-center gap-2 text-center">
+              <BookOpen className="size-8 text-muted-foreground" />
+              <p className="text-sm font-medium text-muted-foreground">{t("tutorClass.detail.articleEmpty")}</p>
             </div>
-          ) : viewMode === "list" ? (
-            <div className="w-full rounded-md border border-border/60 overflow-hidden bg-card">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-muted-foreground bg-muted/30 border-b border-border/60">
-                  <tr>
-                    <th className="px-4 py-3 font-medium w-12 text-center"></th>
-                    <th className="px-4 py-3 font-medium w-24">บทที่</th>
-                    <th className="px-4 py-3 font-medium">บทความ</th>
-                    {!isPrimaryCycle && (
-                      <th className="px-4 py-3 font-medium w-24 text-center">ระดับ</th>
-                    )}
-                    <th className="px-4 py-3 font-medium w-32">ประเภท</th>
-                    <th className="px-4 py-3 font-medium w-32">เวลาที่แนะนำ</th>
-                    <th className="px-4 py-3 font-medium w-12 text-center"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {articles.map((article: any, idx: number) => (
-                    <tr 
-                      key={article.id}
-                      onClick={() => setSelectedArticle(article.id)}
-                      className={`border-b border-border/60 last:border-0 hover:bg-muted/30 cursor-pointer transition-colors ${selectedArticle === article.id ? "bg-emerald-50/50 dark:bg-emerald-950/20" : ""} ${article.isCompleted ? "opacity-80" : ""}`}
-                    >
-                      <td className="px-4 py-4 text-center align-middle">
-                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${selectedArticle === article.id ? 'border-emerald-600 bg-emerald-600' : 'border-input bg-background'}`}>
-                          {selectedArticle === article.id && <div className="w-2 h-2 rounded-full bg-white" />}
-                        </div>
-                      </td>
-                      <td className="px-4 py-4 align-middle whitespace-nowrap text-muted-foreground">
-                        บทที่ {idx + 1}
-                      </td>
-                      <td className="px-4 py-4 align-middle">
-                        <div className="flex items-center gap-4">
-                          {articleImageUrl(article) && (
-                            <div className="w-16 h-12 rounded bg-muted/40 overflow-hidden shrink-0 border border-border/50 relative">
-                              <img 
-                                src={articleImageUrl(article)}
-                                alt="" 
-                                className="w-full h-full object-cover" 
-                                loading="lazy"
-                                onError={(event) => event.currentTarget.parentElement?.remove()}
-                              />
-                              {article.isCompleted && (
-                                <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
-                                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                                </div>
-                              )}
-                            </div>
-                          )}
-                          <div className="min-w-0 flex flex-col justify-center">
-                            <p className={`font-bold leading-snug truncate ${selectedArticle === article.id ? "text-emerald-700 dark:text-emerald-400" : "text-foreground"}`}>
-                              {article.title}
-                            </p>
-                            {article.summary && (
-                              <p className="text-xs text-muted-foreground truncate mt-0.5">
-                                {article.summary}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      {!isPrimaryCycle && <td className="px-4 py-4 align-middle text-center whitespace-nowrap">
-                        {article.showCefr !== false && article.cefrLevel && (
-                          <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-full">
-                            CEFR {article.cefrLevel}
-                          </span>
-                        )}
-                      </td>}
-                      <td className="px-4 py-4 align-middle text-muted-foreground text-xs whitespace-nowrap">
-                        {article.type || (idx % 2 === 0 ? "เนื้อเรื่อง" : "ชีวประวัติ")}
-                      </td>
-                      <td className="px-4 py-4 align-middle text-muted-foreground text-xs whitespace-nowrap">
-                        {article.recommendedTime || "10 นาที"}
-                      </td>
-                      <td className="px-4 py-4 align-middle text-center">
-                        <button className="text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-muted">
-                          <MoreVertical className="h-4 w-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          ) : filteredArticles.length === 0 ? (
+            <div className="flex min-h-56 flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border text-center">
+              <Search className="size-8 text-muted-foreground" />
+              <p className="font-bold text-foreground">ไม่พบบทเรียนที่ค้นหา</p>
+              <button type="button" className="text-xs font-semibold text-primary hover:underline" onClick={() => setArticleSearch("")}>ล้างคำค้นหา</button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 pb-2">
-              {articles.map((article: any, idx: number) => (
-                <div
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {filteredArticles.map((article: any) => {
+                const articleIndex = articles.findIndex((item) => item.id === article.id);
+                const isSelected = selectedArticle === article.id;
+                return (
+                <button
+                  type="button"
                   key={article.id}
                   onClick={() => setSelectedArticle(article.id)}
-                  className={`group border rounded-xl p-4 transition-all duration-300 relative overflow-hidden cursor-pointer flex flex-col h-full ${
-                    selectedArticle === article.id
-                      ? "border-emerald-600/50 bg-emerald-50/50 shadow-md ring-1 ring-emerald-600/20"
-                      : "border-border/60 bg-card hover:bg-muted/40 hover:border-emerald-600/30 hover:shadow-sm"
-                  } ${article.isCompleted ? "opacity-85 saturate-[0.9]" : ""}`}
+                  aria-pressed={isSelected}
+                  className={`group relative flex min-h-32 overflow-hidden rounded-2xl border p-3 text-left outline-none transition duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 ${isSelected ? "border-primary bg-primary/8 shadow-md shadow-primary/10 ring-1 ring-primary/20" : "border-border/60 bg-background hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md"}`}
                 >
-                  <div
-                    className={`absolute top-0 bottom-0 left-0 w-1.5 transition-all duration-300 z-10 ${
-                      selectedArticle === article.id
-                        ? "bg-emerald-600"
-                        : "bg-transparent group-hover:bg-emerald-600/40"
-                    }`}
-                  />
-                  
                   {articleImageUrl(article) && (
-                    <div className="w-full h-36 rounded-lg bg-muted/40 overflow-hidden mb-4 relative shrink-0 border border-border/50 shadow-sm group-hover:shadow-md transition-shadow">
-                      <img 
+                    <div className="relative mr-3 h-24 w-24 shrink-0 overflow-hidden rounded-xl border border-border/50 bg-muted sm:h-28 sm:w-28">
+                      <img
                         src={articleImageUrl(article)}
-                        alt={article.title} 
-                        className={`w-full h-full object-cover transition-transform duration-700 ease-out ${selectedArticle === article.id ? 'scale-105' : 'group-hover:scale-105'}`} 
+                        alt=""
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                         loading="lazy"
                         onError={(event) => event.currentTarget.parentElement?.remove()}
                       />
-                      {article.isCompleted && (
-                        <div className="absolute inset-0 bg-background/20 backdrop-blur-[2px] flex items-center justify-center">
-                          <span className="bg-emerald-500/90 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5">
-                            <CheckCircle2 className="h-3.5 w-3.5" />
-                            {t("tutorClass.detail.taught")}
-                          </span>
-                        </div>
-                      )}
                     </div>
                   )}
-
-                  <div className="pl-2 flex flex-col flex-1">
-                    <div className="flex items-center flex-wrap gap-2 mb-2">
-                      <span className="text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground px-2 py-0.5 rounded-md border border-border/40">
-                        {t("tutorClass.detail.chapterPrefix")} {idx + 1}
+                  <div className="min-w-0 flex-1 py-0.5">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-bold text-muted-foreground">
+                        {t("tutorClass.detail.chapterPrefix")} {articleIndex + 1}
                       </span>
-                      {!articleImageUrl(article) && article.isCompleted && (
-                        <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 flex items-center gap-1">
-                          <div className="w-1 h-1 rounded-full bg-emerald-500" />
-                          {t("tutorClass.detail.taught")}
-                        </span>
-                      )}
-                      {article.showCefr !== false && article.cefrLevel && (
-                        <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20">
-                          CEFR {article.cefrLevel}
+                      <span className="flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                        <Clock3 className="size-3" /> {article.recommendedTime || "10 นาที"}
+                      </span>
+                      {article.isCompleted && (
+                        <span className="flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-600">
+                          <CheckCircle2 className="size-3" /> {t("tutorClass.detail.taught")}
                         </span>
                       )}
                     </div>
-                    <h3
-                      className={`text-sm font-bold leading-snug transition-colors line-clamp-2 ${selectedArticle === article.id ? "text-emerald-700" : "text-foreground group-hover:text-emerald-700/80"}`}
-                    >
-                      {article.title}
-                    </h3>
+                    <h3 className={`mt-2 line-clamp-2 text-sm font-black leading-snug ${isSelected ? "text-primary" : "text-foreground"}`}>{article.title}</h3>
                     {article.summary && (
-                      <p className="text-xs text-muted-foreground font-medium line-clamp-3 mt-2 leading-relaxed flex-1">
-                        {article.summary}
-                      </p>
+                      <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">{article.summary}</p>
                     )}
+                    <p className="mt-2 text-[10px] font-semibold text-muted-foreground">{article.type || (articleIndex % 2 === 0 ? "เนื้อเรื่อง" : "ชีวประวัติ")}{!isPrimaryCycle && article.showCefr !== false && article.cefrLevel ? ` · CEFR ${article.cefrLevel}` : ""}</p>
                   </div>
-                </div>
-              ))}
+                  <span className={`absolute right-3 top-3 flex size-6 items-center justify-center rounded-full border-2 transition ${isSelected ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-transparent"}`}>
+                    <CheckCircle2 className="size-4" />
+                  </span>
+                </button>
+              );})}
             </div>
           )}
         </div>
 
-        <div className="pt-4 shrink-0 flex items-center justify-between border-t border-border/60 mt-2">
-          <p className="text-sm font-medium text-emerald-700">
-            แสดงเพิ่มเติม (ทั้งหมด {articles.length} บทความ)
-          </p>
-          <div className="flex flex-wrap items-center justify-end gap-3 sm:gap-4">
-            <p className="text-sm font-medium text-emerald-700">
-              เลือกแล้ว {selectedArticle ? 1 : 0} บทความ
-            </p>
+        <div className="shrink-0 border-t border-border/60 bg-background/95 p-3 backdrop-blur sm:p-4">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">บทเรียนที่เลือก</p>
+              <p className={`mt-0.5 truncate text-sm font-bold ${selectedArticleData ? "text-foreground" : "text-muted-foreground"}`}>
+                {selectedArticleData?.title || "เลือกบทเรียนด้านบนเพื่อดำเนินการต่อ"}
+              </p>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2 lg:flex lg:shrink-0">
             <Button
               variant="outline"
-              className="gap-2 border-violet-500/40 font-bold text-violet-700 hover:bg-violet-500/10 hover:text-violet-800 dark:text-violet-300 dark:hover:text-violet-200"
+              className="h-12 gap-3 rounded-xl border-violet-500/35 bg-violet-500/5 px-5 font-bold text-violet-700 hover:bg-violet-500/10 hover:text-violet-800 dark:text-violet-300 dark:hover:text-violet-200"
               disabled={!selectedArticle || loading || fetching}
               onClick={handlePrepareLesson}
             >
-              <GraduationCap className="h-4 w-4" />
-              เตรียมสอน
+              <span className="flex size-8 items-center justify-center rounded-lg bg-violet-500/10"><GraduationCap className="size-4" /></span>
+              <span className="text-left"><b className="block leading-tight">เตรียมสอน</b><small className="font-medium opacity-70">ดูแผนและสื่อการสอน</small></span>
             </Button>
             <Button
-              className="gap-2 font-bold shadow-md transition-all duration-300 bg-emerald-600 hover:bg-emerald-700 text-white"
+              className="h-12 gap-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-5 font-bold text-white shadow-lg shadow-emerald-600/20 transition hover:from-emerald-700 hover:to-teal-700"
               disabled={!selectedArticle || loading || fetching}
               onClick={handleStartLesson}
             >
-              {loading ? "กำลังสร้างห้องเรียน..." : "สร้างห้องเรียน & เริ่มสอน >"}
+              {loading ? <Loader2 className="size-5 animate-spin" /> : <span className="flex size-8 items-center justify-center rounded-lg bg-white/15"><Rocket className="size-4" /></span>}
+              <span className="text-left"><b className="block leading-tight">{loading ? "กำลังสร้างห้องเรียน…" : "สร้างห้องเรียน"}</b><small className="font-medium text-white/75">ไปที่ Lobby เพื่อเริ่มกิจกรรม</small></span>
+              {!loading && <ChevronRight className="size-4" />}
             </Button>
           </div>
+        </div>
         </div>
       </CardContent>
     </Card>

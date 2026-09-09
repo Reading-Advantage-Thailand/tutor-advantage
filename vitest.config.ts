@@ -2,6 +2,8 @@ import { defineConfig } from "vitest/config";
 import path from "node:path";
 
 export default defineConfig({
+  // Next.js preserves JSX for its own compiler; component tests must transform it.
+  oxc: { jsx: { runtime: "automatic" } },
   resolve: {
     alias: {
       "@tutor-advantage/database": path.resolve(

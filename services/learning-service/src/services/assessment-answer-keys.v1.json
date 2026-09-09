@@ -1,0 +1,5856 @@
+{
+  "schemaVersion": 1,
+  "bankVersion": "article-assessments-v1",
+  "articles": {
+    "The_New_Student": {
+      "version": "article-assessments-v1-99a23fd2523b",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 1,
+          "pre-v3": 0,
+          "pre-v4": 3,
+          "pre-v5": 1,
+          "pre-r1": 0,
+          "pre-r2": 2,
+          "pre-r3": 2,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 2,
+          "pre-l3": 2,
+          "pre-l4": 1,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 2,
+          "post-v3": 1,
+          "post-v4": 1,
+          "post-v5": 1,
+          "post-r1": 0,
+          "post-r2": 3,
+          "post-r3": 2,
+          "post-r4": 2,
+          "post-r5": 2,
+          "post-l1": 0,
+          "post-l2": 2,
+          "post-l3": 2,
+          "post-l4": 0,
+          "post-l5": 0
+        }
+      }
+    },
+    "cmptwtxr9000ps601w205rmrk": {
+      "version": "article-assessments-v1-32774744e64d",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 3,
+          "pre-v3": 0,
+          "pre-v4": 1,
+          "pre-v5": 2,
+          "pre-r1": 1,
+          "pre-r2": 1,
+          "pre-r3": 0,
+          "pre-r4": 0,
+          "pre-r5": 2,
+          "pre-l1": 1,
+          "pre-l2": 1,
+          "pre-l3": 1,
+          "pre-l4": 0,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 1,
+          "post-v3": 0,
+          "post-v4": 0,
+          "post-v5": 3,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 2,
+          "post-r4": 3,
+          "post-r5": 1,
+          "post-l1": 3,
+          "post-l2": 0,
+          "post-l3": 1,
+          "post-l4": 0,
+          "post-l5": 3
+        }
+      }
+    },
+    "cmgqx8v6602p3t79btatvfjuw": {
+      "version": "article-assessments-v1-700733270f5b",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 3,
+          "pre-v3": 3,
+          "pre-v4": 2,
+          "pre-v5": 3,
+          "pre-r1": 0,
+          "pre-r2": 0,
+          "pre-r3": 2,
+          "pre-r4": 1,
+          "pre-r5": 2,
+          "pre-l1": 1,
+          "pre-l2": 3,
+          "pre-l3": 1,
+          "pre-l4": 3,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 3,
+          "post-v3": 0,
+          "post-v4": 3,
+          "post-v5": 2,
+          "post-r1": 1,
+          "post-r2": 0,
+          "post-r3": 1,
+          "post-r4": 2,
+          "post-r5": 2,
+          "post-l1": 3,
+          "post-l2": 2,
+          "post-l3": 1,
+          "post-l4": 3,
+          "post-l5": 0
+        }
+      }
+    },
+    "cmgqx5orz02mjt79bwvfnndan": {
+      "version": "article-assessments-v1-ef59659b830c",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 0,
+          "pre-v3": 2,
+          "pre-v4": 3,
+          "pre-v5": 0,
+          "pre-r1": 0,
+          "pre-r2": 2,
+          "pre-r3": 2,
+          "pre-r4": 0,
+          "pre-r5": 1,
+          "pre-l1": 3,
+          "pre-l2": 1,
+          "pre-l3": 3,
+          "pre-l4": 1,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 0,
+          "post-v3": 3,
+          "post-v4": 1,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 0,
+          "post-r3": 2,
+          "post-r4": 0,
+          "post-r5": 0,
+          "post-l1": 1,
+          "post-l2": 2,
+          "post-l3": 0,
+          "post-l4": 2,
+          "post-l5": 2
+        }
+      }
+    },
+    "cmgqx869w02ogt79bw2io9h8x": {
+      "version": "article-assessments-v1-a80f26896c14",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 1,
+          "pre-v3": 2,
+          "pre-v4": 1,
+          "pre-v5": 0,
+          "pre-r1": 3,
+          "pre-r2": 3,
+          "pre-r3": 2,
+          "pre-r4": 3,
+          "pre-r5": 3,
+          "pre-l1": 1,
+          "pre-l2": 0,
+          "pre-l3": 0,
+          "pre-l4": 0,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 0,
+          "post-v3": 2,
+          "post-v4": 3,
+          "post-v5": 0,
+          "post-r1": 3,
+          "post-r2": 3,
+          "post-r3": 1,
+          "post-r4": 2,
+          "post-r5": 2,
+          "post-l1": 2,
+          "post-l2": 3,
+          "post-l3": 1,
+          "post-l4": 0,
+          "post-l5": 3
+        }
+      }
+    },
+    "cmgqx6jsj02n6t79bndt5dfz3": {
+      "version": "article-assessments-v1-6899b4f677f2",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 0,
+          "pre-v4": 1,
+          "pre-v5": 2,
+          "pre-r1": 3,
+          "pre-r2": 1,
+          "pre-r3": 1,
+          "pre-r4": 3,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 2,
+          "pre-l3": 2,
+          "pre-l4": 0,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 3,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 2,
+          "post-r2": 2,
+          "post-r3": 0,
+          "post-r4": 2,
+          "post-r5": 1,
+          "post-l1": 2,
+          "post-l2": 3,
+          "post-l3": 0,
+          "post-l4": 3,
+          "post-l5": 0
+        }
+      }
+    },
+    "cmgqx3ase02kmt79bokadq5kq": {
+      "version": "article-assessments-v1-db9133e65419",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 3,
+          "pre-v3": 0,
+          "pre-v4": 0,
+          "pre-v5": 3,
+          "pre-r1": 3,
+          "pre-r2": 0,
+          "pre-r3": 1,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 1,
+          "pre-l2": 2,
+          "pre-l3": 1,
+          "pre-l4": 0,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 0,
+          "post-v3": 0,
+          "post-v4": 3,
+          "post-v5": 3,
+          "post-r1": 1,
+          "post-r2": 2,
+          "post-r3": 1,
+          "post-r4": 0,
+          "post-r5": 1,
+          "post-l1": 3,
+          "post-l2": 1,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 0
+        }
+      }
+    },
+    "cmgqx2jpn02jzt79b3vddpbqg": {
+      "version": "article-assessments-v1-979d02b669fd",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 0,
+          "pre-v3": 0,
+          "pre-v4": 1,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 2,
+          "pre-r3": 1,
+          "pre-r4": 1,
+          "pre-r5": 2,
+          "pre-l1": 3,
+          "pre-l2": 1,
+          "pre-l3": 0,
+          "pre-l4": 1,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 3,
+          "post-v3": 0,
+          "post-v4": 0,
+          "post-v5": 1,
+          "post-r1": 0,
+          "post-r2": 3,
+          "post-r3": 0,
+          "post-r4": 3,
+          "post-r5": 0,
+          "post-l1": 2,
+          "post-l2": 2,
+          "post-l3": 3,
+          "post-l4": 3,
+          "post-l5": 3
+        }
+      }
+    },
+    "cmgqwqttc02agt79bu70tnn77": {
+      "version": "article-assessments-v1-d34ecf0e7230",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 2,
+          "pre-v3": 1,
+          "pre-v4": 1,
+          "pre-v5": 0,
+          "pre-r1": 1,
+          "pre-r2": 2,
+          "pre-r3": 1,
+          "pre-r4": 2,
+          "pre-r5": 0,
+          "pre-l1": 3,
+          "pre-l2": 0,
+          "pre-l3": 0,
+          "pre-l4": 1,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 0,
+          "post-v3": 0,
+          "post-v4": 0,
+          "post-v5": 2,
+          "post-r1": 2,
+          "post-r2": 1,
+          "post-r3": 2,
+          "post-r4": 3,
+          "post-r5": 1,
+          "post-l1": 1,
+          "post-l2": 0,
+          "post-l3": 3,
+          "post-l4": 3,
+          "post-l5": 1
+        }
+      }
+    },
+    "cmgqwjryb025ct79b7sk7eniv": {
+      "version": "article-assessments-v1-81b4cad60284",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 1,
+          "pre-v3": 3,
+          "pre-v4": 2,
+          "pre-v5": 1,
+          "pre-r1": 3,
+          "pre-r2": 2,
+          "pre-r3": 3,
+          "pre-r4": 3,
+          "pre-r5": 1,
+          "pre-l1": 3,
+          "pre-l2": 0,
+          "pre-l3": 0,
+          "pre-l4": 0,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 0,
+          "post-r2": 2,
+          "post-r3": 2,
+          "post-r4": 2,
+          "post-r5": 0,
+          "post-l1": 0,
+          "post-l2": 1,
+          "post-l3": 0,
+          "post-l4": 1,
+          "post-l5": 1
+        }
+      }
+    },
+    "cmgqw4k3e01v8t79bvnxhviym": {
+      "version": "article-assessments-v1-3fa8d90bcd0e",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 2,
+          "pre-v3": 3,
+          "pre-v4": 3,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 2,
+          "pre-r3": 1,
+          "pre-r4": 3,
+          "pre-r5": 1,
+          "pre-l1": 0,
+          "pre-l2": 3,
+          "pre-l3": 2,
+          "pre-l4": 2,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 3,
+          "post-v5": 3,
+          "post-r1": 1,
+          "post-r2": 2,
+          "post-r3": 3,
+          "post-r4": 3,
+          "post-r5": 3,
+          "post-l1": 0,
+          "post-l2": 2,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 1
+        }
+      }
+    },
+    "cmgqw2xjt01tyt79bpr10b65a": {
+      "version": "article-assessments-v1-4bddcf43bcd1",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 0,
+          "pre-v3": 3,
+          "pre-v4": 0,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 0,
+          "pre-r3": 3,
+          "pre-r4": 1,
+          "pre-r5": 3,
+          "pre-l1": 1,
+          "pre-l2": 0,
+          "pre-l3": 0,
+          "pre-l4": 1,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 3,
+          "post-v3": 0,
+          "post-v4": 2,
+          "post-v5": 0,
+          "post-r1": 2,
+          "post-r2": 0,
+          "post-r3": 3,
+          "post-r4": 2,
+          "post-r5": 0,
+          "post-l1": 3,
+          "post-l2": 3,
+          "post-l3": 1,
+          "post-l4": 0,
+          "post-l5": 0
+        }
+      }
+    },
+    "cmgqw5grp01vvt79bhrv8p6wo": {
+      "version": "article-assessments-v1-78d737017c51",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 2,
+          "pre-v3": 2,
+          "pre-v4": 2,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 2,
+          "pre-r3": 3,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 2,
+          "pre-l2": 2,
+          "pre-l3": 3,
+          "pre-l4": 0,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 3,
+          "post-v3": 1,
+          "post-v4": 3,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 0,
+          "post-r3": 0,
+          "post-r4": 0,
+          "post-r5": 2,
+          "post-l1": 3,
+          "post-l2": 0,
+          "post-l3": 3,
+          "post-l4": 1,
+          "post-l5": 2
+        }
+      }
+    },
+    "cmgqwi2v60242t79bum2yj76o": {
+      "version": "article-assessments-v1-bbc1ad4dc603",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 1,
+          "pre-v4": 1,
+          "pre-v5": 0,
+          "pre-r1": 3,
+          "pre-r2": 3,
+          "pre-r3": 0,
+          "pre-r4": 0,
+          "pre-r5": 2,
+          "pre-l1": 3,
+          "pre-l2": 3,
+          "pre-l3": 1,
+          "pre-l4": 2,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 0,
+          "post-v3": 1,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 2,
+          "post-r2": 0,
+          "post-r3": 0,
+          "post-r4": 0,
+          "post-r5": 3,
+          "post-l1": 2,
+          "post-l2": 3,
+          "post-l3": 0,
+          "post-l4": 3,
+          "post-l5": 3
+        }
+      }
+    },
+    "cmgqw91v601ybt79bqg631j6n": {
+      "version": "article-assessments-v1-4dea5463e133",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 0,
+          "pre-v3": 1,
+          "pre-v4": 2,
+          "pre-v5": 2,
+          "pre-r1": 1,
+          "pre-r2": 2,
+          "pre-r3": 2,
+          "pre-r4": 3,
+          "pre-r5": 1,
+          "pre-l1": 1,
+          "pre-l2": 0,
+          "pre-l3": 0,
+          "pre-l4": 1,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 3,
+          "post-v3": 0,
+          "post-v4": 2,
+          "post-v5": 3,
+          "post-r1": 0,
+          "post-r2": 2,
+          "post-r3": 0,
+          "post-r4": 2,
+          "post-r5": 0,
+          "post-l1": 2,
+          "post-l2": 0,
+          "post-l3": 1,
+          "post-l4": 0,
+          "post-l5": 2
+        }
+      }
+    },
+    "cmgqw3mmi01ult79bgi4ilosw": {
+      "version": "article-assessments-v1-5379fcdb10eb",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 0,
+          "pre-v4": 0,
+          "pre-v5": 3,
+          "pre-r1": 1,
+          "pre-r2": 3,
+          "pre-r3": 1,
+          "pre-r4": 1,
+          "pre-r5": 2,
+          "pre-l1": 2,
+          "pre-l2": 3,
+          "pre-l3": 3,
+          "pre-l4": 0,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 0,
+          "post-v3": 1,
+          "post-v4": 2,
+          "post-v5": 3,
+          "post-r1": 1,
+          "post-r2": 3,
+          "post-r3": 3,
+          "post-r4": 0,
+          "post-r5": 3,
+          "post-l1": 3,
+          "post-l2": 2,
+          "post-l3": 1,
+          "post-l4": 3,
+          "post-l5": 0
+        }
+      }
+    },
+    "cmgqwiyu5024pt79bybta0gyn": {
+      "version": "article-assessments-v1-c04eee66e79a",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 1,
+          "pre-v3": 3,
+          "pre-v4": 3,
+          "pre-v5": 0,
+          "pre-r1": 0,
+          "pre-r2": 0,
+          "pre-r3": 3,
+          "pre-r4": 3,
+          "pre-r5": 1,
+          "pre-l1": 3,
+          "pre-l2": 1,
+          "pre-l3": 3,
+          "pre-l4": 0,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 3,
+          "post-v3": 0,
+          "post-v4": 1,
+          "post-v5": 0,
+          "post-r1": 2,
+          "post-r2": 1,
+          "post-r3": 0,
+          "post-r4": 3,
+          "post-r5": 1,
+          "post-l1": 1,
+          "post-l2": 3,
+          "post-l3": 1,
+          "post-l4": 2,
+          "post-l5": 1
+        }
+      }
+    },
+    "cmgqwbh0b0208t79btb3784p5": {
+      "version": "article-assessments-v1-c5204fe887e6",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 1,
+          "pre-v3": 0,
+          "pre-v4": 3,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 0,
+          "pre-r3": 1,
+          "pre-r4": 0,
+          "pre-r5": 3,
+          "pre-l1": 3,
+          "pre-l2": 2,
+          "pre-l3": 2,
+          "pre-l4": 2,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 1,
+          "post-v3": 1,
+          "post-v4": 1,
+          "post-v5": 2,
+          "post-r1": 0,
+          "post-r2": 3,
+          "post-r3": 2,
+          "post-r4": 3,
+          "post-r5": 2,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 2,
+          "post-l4": 1,
+          "post-l5": 3
+        }
+      }
+    },
+    "cmgqw79fb01x5t79bjxadplhj": {
+      "version": "article-assessments-v1-b2cce352e69a",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 2,
+          "pre-v3": 2,
+          "pre-v4": 0,
+          "pre-v5": 0,
+          "pre-r1": 1,
+          "pre-r2": 0,
+          "pre-r3": 1,
+          "pre-r4": 1,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 0,
+          "pre-l3": 3,
+          "pre-l4": 1,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 0,
+          "post-v3": 1,
+          "post-v4": 3,
+          "post-v5": 1,
+          "post-r1": 1,
+          "post-r2": 2,
+          "post-r3": 2,
+          "post-r4": 0,
+          "post-r5": 3,
+          "post-l1": 3,
+          "post-l2": 3,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 0
+        }
+      }
+    },
+    "cmgqwwo0d02evt79b2hcfi25a": {
+      "version": "article-assessments-v1-b01e5cf8f246",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 0,
+          "pre-v3": 3,
+          "pre-v4": 2,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 1,
+          "pre-r3": 2,
+          "pre-r4": 1,
+          "pre-r5": 0,
+          "pre-l1": 2,
+          "pre-l2": 1,
+          "pre-l3": 2,
+          "pre-l4": 1,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 1,
+          "post-v3": 0,
+          "post-v4": 0,
+          "post-v5": 2,
+          "post-r1": 2,
+          "post-r2": 0,
+          "post-r3": 1,
+          "post-r4": 0,
+          "post-r5": 0,
+          "post-l1": 1,
+          "post-l2": 2,
+          "post-l3": 3,
+          "post-l4": 0,
+          "post-l5": 1
+        }
+      }
+    },
+    "cmgqx1pgg02jct79b3i9nex0p": {
+      "version": "article-assessments-v1-1b8095bfa97e",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 3,
+          "pre-v3": 3,
+          "pre-v4": 0,
+          "pre-v5": 1,
+          "pre-r1": 0,
+          "pre-r2": 0,
+          "pre-r3": 1,
+          "pre-r4": 0,
+          "pre-r5": 1,
+          "pre-l1": 0,
+          "pre-l2": 1,
+          "pre-l3": 3,
+          "pre-l4": 3,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 2,
+          "post-r1": 1,
+          "post-r2": 0,
+          "post-r3": 0,
+          "post-r4": 1,
+          "post-r5": 0,
+          "post-l1": 2,
+          "post-l2": 3,
+          "post-l3": 1,
+          "post-l4": 1,
+          "post-l5": 1
+        }
+      }
+    },
+    "cmgqwyoky02gst79bbtf5i5sr": {
+      "version": "article-assessments-v1-3211c4b07342",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 1,
+          "pre-v3": 0,
+          "pre-v4": 1,
+          "pre-v5": 1,
+          "pre-r1": 2,
+          "pre-r2": 2,
+          "pre-r3": 0,
+          "pre-r4": 3,
+          "pre-r5": 3,
+          "pre-l1": 1,
+          "pre-l2": 2,
+          "pre-l3": 1,
+          "pre-l4": 3,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 1,
+          "post-v3": 0,
+          "post-v4": 1,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 1,
+          "post-r3": 2,
+          "post-r4": 2,
+          "post-r5": 1,
+          "post-l1": 1,
+          "post-l2": 3,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 1
+        }
+      }
+    },
+    "cmgqx78et02ntt79ba4h2yzwx": {
+      "version": "article-assessments-v1-24fe8ab92ccd",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 3,
+          "pre-v3": 3,
+          "pre-v4": 3,
+          "pre-v5": 1,
+          "pre-r1": 2,
+          "pre-r2": 1,
+          "pre-r3": 1,
+          "pre-r4": 2,
+          "pre-r5": 0,
+          "pre-l1": 3,
+          "pre-l2": 0,
+          "pre-l3": 3,
+          "pre-l4": 0,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 0,
+          "post-v3": 3,
+          "post-v4": 3,
+          "post-v5": 1,
+          "post-r1": 0,
+          "post-r2": 2,
+          "post-r3": 0,
+          "post-r4": 1,
+          "post-r5": 0,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 3,
+          "post-l4": 1,
+          "post-l5": 2
+        }
+      }
+    },
+    "cmgqwu4ah02d0t79bvkt6vr9l": {
+      "version": "article-assessments-v1-16d0ddd54695",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 3,
+          "pre-v3": 0,
+          "pre-v4": 0,
+          "pre-v5": 3,
+          "pre-r1": 1,
+          "pre-r2": 2,
+          "pre-r3": 2,
+          "pre-r4": 0,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 0,
+          "pre-l3": 1,
+          "pre-l4": 1,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 1,
+          "post-v3": 1,
+          "post-v4": 3,
+          "post-v5": 0,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 1,
+          "post-r4": 0,
+          "post-r5": 2,
+          "post-l1": 2,
+          "post-l2": 3,
+          "post-l3": 1,
+          "post-l4": 2,
+          "post-l5": 1
+        }
+      }
+    },
+    "cmgqwsfcs02bqt79bkaa1pjaw": {
+      "version": "article-assessments-v1-6a85140b9686",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 3,
+          "pre-v3": 1,
+          "pre-v4": 0,
+          "pre-v5": 1,
+          "pre-r1": 3,
+          "pre-r2": 3,
+          "pre-r3": 0,
+          "pre-r4": 0,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 2,
+          "pre-l3": 1,
+          "pre-l4": 3,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 3,
+          "post-v3": 3,
+          "post-v4": 0,
+          "post-v5": 1,
+          "post-r1": 2,
+          "post-r2": 1,
+          "post-r3": 2,
+          "post-r4": 0,
+          "post-r5": 3,
+          "post-l1": 3,
+          "post-l2": 0,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 2
+        }
+      }
+    },
+    "cmgqwp0ko0296t79bq4rp03zl": {
+      "version": "article-assessments-v1-3bc7e1992ca0",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 2,
+          "pre-v3": 1,
+          "pre-v4": 0,
+          "pre-v5": 3,
+          "pre-r1": 3,
+          "pre-r2": 0,
+          "pre-r3": 2,
+          "pre-r4": 1,
+          "pre-r5": 1,
+          "pre-l1": 3,
+          "pre-l2": 3,
+          "pre-l3": 3,
+          "pre-l4": 3,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 2,
+          "post-v3": 0,
+          "post-v4": 3,
+          "post-v5": 3,
+          "post-r1": 2,
+          "post-r2": 2,
+          "post-r3": 1,
+          "post-r4": 0,
+          "post-r5": 0,
+          "post-l1": 3,
+          "post-l2": 0,
+          "post-l3": 0,
+          "post-l4": 3,
+          "post-l5": 0
+        }
+      }
+    },
+    "cmgqwroxi02b3t79bfy88lhk6": {
+      "version": "article-assessments-v1-f1c2d825e395",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 2,
+          "pre-v3": 1,
+          "pre-v4": 3,
+          "pre-v5": 0,
+          "pre-r1": 3,
+          "pre-r2": 2,
+          "pre-r3": 1,
+          "pre-r4": 3,
+          "pre-r5": 0,
+          "pre-l1": 3,
+          "pre-l2": 2,
+          "pre-l3": 1,
+          "pre-l4": 3,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 3,
+          "post-v3": 1,
+          "post-v4": 2,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 2,
+          "post-r3": 3,
+          "post-r4": 0,
+          "post-r5": 3,
+          "post-l1": 2,
+          "post-l2": 2,
+          "post-l3": 1,
+          "post-l4": 2,
+          "post-l5": 2
+        }
+      }
+    },
+    "cmgqw9uh501yyt79bluoefagb": {
+      "version": "article-assessments-v1-7db9ba850ba5",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 0,
+          "pre-v3": 0,
+          "pre-v4": 3,
+          "pre-v5": 2,
+          "pre-r1": 2,
+          "pre-r2": 3,
+          "pre-r3": 0,
+          "pre-r4": 1,
+          "pre-r5": 1,
+          "pre-l1": 3,
+          "pre-l2": 2,
+          "pre-l3": 1,
+          "pre-l4": 3,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 0,
+          "post-v3": 1,
+          "post-v4": 1,
+          "post-v5": 1,
+          "post-r1": 0,
+          "post-r2": 1,
+          "post-r3": 1,
+          "post-r4": 2,
+          "post-r5": 0,
+          "post-l1": 0,
+          "post-l2": 0,
+          "post-l3": 1,
+          "post-l4": 0,
+          "post-l5": 2
+        }
+      }
+    },
+    "cmgqwaqno01zlt79bff8rxuri": {
+      "version": "article-assessments-v1-74c3925a7761",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 1,
+          "pre-v3": 0,
+          "pre-v4": 0,
+          "pre-v5": 2,
+          "pre-r1": 3,
+          "pre-r2": 0,
+          "pre-r3": 1,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 3,
+          "pre-l2": 2,
+          "pre-l3": 3,
+          "pre-l4": 3,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 1,
+          "post-v3": 0,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 3,
+          "post-r2": 1,
+          "post-r3": 0,
+          "post-r4": 1,
+          "post-r5": 3,
+          "post-l1": 0,
+          "post-l2": 3,
+          "post-l3": 3,
+          "post-l4": 0,
+          "post-l5": 1
+        }
+      }
+    },
+    "OyEA0jRP5GnpFZBCrgMl": {
+      "version": "article-assessments-v1-b0d1108630fa",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 1,
+          "pre-v4": 3,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 3,
+          "pre-r3": 1,
+          "pre-r4": 1,
+          "pre-r5": 1,
+          "pre-l1": 0,
+          "pre-l2": 3,
+          "pre-l3": 2,
+          "pre-l4": 3,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 1,
+          "post-v3": 3,
+          "post-v4": 3,
+          "post-v5": 1,
+          "post-r1": 2,
+          "post-r2": 3,
+          "post-r3": 1,
+          "post-r4": 1,
+          "post-r5": 0,
+          "post-l1": 1,
+          "post-l2": 3,
+          "post-l3": 3,
+          "post-l4": 0,
+          "post-l5": 2
+        }
+      }
+    },
+    "lsiMiDgyCV9MbBjKjsyl": {
+      "version": "article-assessments-v1-a96a0c22cb80",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 0,
+          "pre-v3": 2,
+          "pre-v4": 1,
+          "pre-v5": 2,
+          "pre-r1": 1,
+          "pre-r2": 3,
+          "pre-r3": 0,
+          "pre-r4": 3,
+          "pre-r5": 3,
+          "pre-l1": 2,
+          "pre-l2": 0,
+          "pre-l3": 2,
+          "pre-l4": 2,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 2,
+          "post-v3": 0,
+          "post-v4": 1,
+          "post-v5": 2,
+          "post-r1": 1,
+          "post-r2": 2,
+          "post-r3": 1,
+          "post-r4": 0,
+          "post-r5": 1,
+          "post-l1": 0,
+          "post-l2": 0,
+          "post-l3": 1,
+          "post-l4": 2,
+          "post-l5": 1
+        }
+      }
+    },
+    "KkJOkCCBrfYWBMtrw7AZ": {
+      "version": "article-assessments-v1-f67dc5044911",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 3,
+          "pre-v3": 1,
+          "pre-v4": 0,
+          "pre-v5": 2,
+          "pre-r1": 2,
+          "pre-r2": 3,
+          "pre-r3": 0,
+          "pre-r4": 3,
+          "pre-r5": 0,
+          "pre-l1": 2,
+          "pre-l2": 0,
+          "pre-l3": 3,
+          "pre-l4": 2,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 1,
+          "post-v3": 3,
+          "post-v4": 2,
+          "post-v5": 3,
+          "post-r1": 1,
+          "post-r2": 0,
+          "post-r3": 1,
+          "post-r4": 0,
+          "post-r5": 1,
+          "post-l1": 2,
+          "post-l2": 0,
+          "post-l3": 2,
+          "post-l4": 0,
+          "post-l5": 3
+        }
+      }
+    },
+    "MjtQFpxdhlewLdgvwZMx": {
+      "version": "article-assessments-v1-00e40b00cfdb",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 3,
+          "pre-v3": 0,
+          "pre-v4": 1,
+          "pre-v5": 2,
+          "pre-r1": 0,
+          "pre-r2": 3,
+          "pre-r3": 3,
+          "pre-r4": 3,
+          "pre-r5": 2,
+          "pre-l1": 1,
+          "pre-l2": 0,
+          "pre-l3": 0,
+          "pre-l4": 2,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 0,
+          "post-v3": 3,
+          "post-v4": 3,
+          "post-v5": 3,
+          "post-r1": 0,
+          "post-r2": 2,
+          "post-r3": 2,
+          "post-r4": 3,
+          "post-r5": 0,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 2,
+          "post-l4": 0,
+          "post-l5": 3
+        }
+      }
+    },
+    "cmn57x04l00f2s60et9r9k1c6": {
+      "version": "article-assessments-v1-8b71e472cb28",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 2,
+          "pre-v3": 1,
+          "pre-v4": 3,
+          "pre-v5": 1,
+          "pre-r1": 1,
+          "pre-r2": 1,
+          "pre-r3": 3,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 2,
+          "pre-l2": 2,
+          "pre-l3": 0,
+          "pre-l4": 2,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 2,
+          "post-v5": 1,
+          "post-r1": 3,
+          "post-r2": 3,
+          "post-r3": 0,
+          "post-r4": 3,
+          "post-r5": 1,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 1
+        }
+      }
+    },
+    "cmjhremv1000ds60ew177qfxg": {
+      "version": "article-assessments-v1-c04d715640a9",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 0,
+          "pre-v3": 0,
+          "pre-v4": 2,
+          "pre-v5": 1,
+          "pre-r1": 1,
+          "pre-r2": 3,
+          "pre-r3": 2,
+          "pre-r4": 1,
+          "pre-r5": 1,
+          "pre-l1": 3,
+          "pre-l2": 3,
+          "pre-l3": 3,
+          "pre-l4": 1,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 3,
+          "post-v3": 3,
+          "post-v4": 3,
+          "post-v5": 1,
+          "post-r1": 0,
+          "post-r2": 1,
+          "post-r3": 3,
+          "post-r4": 0,
+          "post-r5": 1,
+          "post-l1": 3,
+          "post-l2": 0,
+          "post-l3": 0,
+          "post-l4": 2,
+          "post-l5": 3
+        }
+      }
+    },
+    "YbIjlPcIZbnBlcvJ1q9J": {
+      "version": "article-assessments-v1-d953284629f7",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 2,
+          "pre-v3": 1,
+          "pre-v4": 0,
+          "pre-v5": 3,
+          "pre-r1": 0,
+          "pre-r2": 1,
+          "pre-r3": 1,
+          "pre-r4": 0,
+          "pre-r5": 0,
+          "pre-l1": 2,
+          "pre-l2": 2,
+          "pre-l3": 2,
+          "pre-l4": 1,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 3,
+          "post-v3": 1,
+          "post-v4": 2,
+          "post-v5": 1,
+          "post-r1": 1,
+          "post-r2": 2,
+          "post-r3": 2,
+          "post-r4": 0,
+          "post-r5": 1,
+          "post-l1": 1,
+          "post-l2": 2,
+          "post-l3": 1,
+          "post-l4": 1,
+          "post-l5": 2
+        }
+      }
+    },
+    "cmmki0z6z0002s60e30ppdzvg": {
+      "version": "article-assessments-v1-6b2a515d65e2",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 3,
+          "pre-v4": 3,
+          "pre-v5": 2,
+          "pre-r1": 1,
+          "pre-r2": 0,
+          "pre-r3": 1,
+          "pre-r4": 0,
+          "pre-r5": 1,
+          "pre-l1": 0,
+          "pre-l2": 2,
+          "pre-l3": 0,
+          "pre-l4": 2,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 2,
+          "post-v3": 3,
+          "post-v4": 3,
+          "post-v5": 1,
+          "post-r1": 3,
+          "post-r2": 0,
+          "post-r3": 1,
+          "post-r4": 0,
+          "post-r5": 0,
+          "post-l1": 2,
+          "post-l2": 0,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 2
+        }
+      }
+    },
+    "juueom8cpLZvs4fZHdDd": {
+      "version": "article-assessments-v1-7b83066c51e4",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 3,
+          "pre-v3": 0,
+          "pre-v4": 3,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 0,
+          "pre-r3": 1,
+          "pre-r4": 0,
+          "pre-r5": 0,
+          "pre-l1": 2,
+          "pre-l2": 1,
+          "pre-l3": 2,
+          "pre-l4": 1,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 1,
+          "post-v5": 1,
+          "post-r1": 1,
+          "post-r2": 0,
+          "post-r3": 2,
+          "post-r4": 1,
+          "post-r5": 0,
+          "post-l1": 1,
+          "post-l2": 3,
+          "post-l3": 0,
+          "post-l4": 3,
+          "post-l5": 3
+        }
+      }
+    },
+    "vxElH4I71CEIAKxbU9bD": {
+      "version": "article-assessments-v1-b77d3a6292cc",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 2,
+          "pre-v4": 0,
+          "pre-v5": 1,
+          "pre-r1": 1,
+          "pre-r2": 0,
+          "pre-r3": 1,
+          "pre-r4": 3,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 3,
+          "pre-l3": 1,
+          "pre-l4": 2,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 1,
+          "post-v3": 1,
+          "post-v4": 0,
+          "post-v5": 3,
+          "post-r1": 3,
+          "post-r2": 1,
+          "post-r3": 2,
+          "post-r4": 3,
+          "post-r5": 3,
+          "post-l1": 3,
+          "post-l2": 0,
+          "post-l3": 0,
+          "post-l4": 2,
+          "post-l5": 0
+        }
+      }
+    },
+    "4KEEDPYfLpRWutFuYceS": {
+      "version": "article-assessments-v1-9aa96ff24ce0",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 1,
+          "pre-v3": 3,
+          "pre-v4": 2,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 1,
+          "pre-r3": 3,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 1,
+          "pre-l3": 2,
+          "pre-l4": 2,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 0,
+          "post-v3": 1,
+          "post-v4": 2,
+          "post-v5": 3,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 3,
+          "post-r4": 1,
+          "post-r5": 0,
+          "post-l1": 3,
+          "post-l2": 2,
+          "post-l3": 1,
+          "post-l4": 3,
+          "post-l5": 2
+        }
+      }
+    },
+    "b20DYB3KOU2GLYJv1Y1r": {
+      "version": "article-assessments-v1-f51ec6aa8881",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 3,
+          "pre-v3": 3,
+          "pre-v4": 0,
+          "pre-v5": 2,
+          "pre-r1": 0,
+          "pre-r2": 1,
+          "pre-r3": 2,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 1,
+          "pre-l3": 2,
+          "pre-l4": 1,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 0,
+          "post-v3": 3,
+          "post-v4": 2,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 0,
+          "post-r3": 3,
+          "post-r4": 0,
+          "post-r5": 0,
+          "post-l1": 1,
+          "post-l2": 2,
+          "post-l3": 0,
+          "post-l4": 2,
+          "post-l5": 3
+        }
+      }
+    },
+    "Bm9w2y9wQAf1Fr4mYUzA": {
+      "version": "article-assessments-v1-e97678f44ceb",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 1,
+          "pre-v3": 0,
+          "pre-v4": 2,
+          "pre-v5": 2,
+          "pre-r1": 0,
+          "pre-r2": 1,
+          "pre-r3": 0,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 1,
+          "pre-l2": 3,
+          "pre-l3": 0,
+          "pre-l4": 1,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 0,
+          "post-v3": 3,
+          "post-v4": 3,
+          "post-v5": 3,
+          "post-r1": 2,
+          "post-r2": 3,
+          "post-r3": 1,
+          "post-r4": 0,
+          "post-r5": 1,
+          "post-l1": 1,
+          "post-l2": 3,
+          "post-l3": 2,
+          "post-l4": 2,
+          "post-l5": 1
+        }
+      }
+    },
+    "MMmPVvbXr1LnBo7P0oTT": {
+      "version": "article-assessments-v1-619c05f805dc",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 2,
+          "pre-v4": 2,
+          "pre-v5": 2,
+          "pre-r1": 2,
+          "pre-r2": 1,
+          "pre-r3": 0,
+          "pre-r4": 1,
+          "pre-r5": 2,
+          "pre-l1": 3,
+          "pre-l2": 1,
+          "pre-l3": 3,
+          "pre-l4": 3,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 2,
+          "post-v3": 1,
+          "post-v4": 0,
+          "post-v5": 1,
+          "post-r1": 1,
+          "post-r2": 1,
+          "post-r3": 2,
+          "post-r4": 0,
+          "post-r5": 0,
+          "post-l1": 3,
+          "post-l2": 2,
+          "post-l3": 0,
+          "post-l4": 2,
+          "post-l5": 1
+        }
+      }
+    },
+    "AgYv5H7fCZL2u2N4qBwT": {
+      "version": "article-assessments-v1-2f2fe9a34612",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 1,
+          "pre-v4": 2,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 1,
+          "pre-r3": 0,
+          "pre-r4": 3,
+          "pre-r5": 1,
+          "pre-l1": 2,
+          "pre-l2": 3,
+          "pre-l3": 2,
+          "pre-l4": 2,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 3,
+          "post-v3": 0,
+          "post-v4": 1,
+          "post-v5": 1,
+          "post-r1": 0,
+          "post-r2": 2,
+          "post-r3": 2,
+          "post-r4": 1,
+          "post-r5": 0,
+          "post-l1": 3,
+          "post-l2": 1,
+          "post-l3": 0,
+          "post-l4": 2,
+          "post-l5": 0
+        }
+      }
+    },
+    "nFZObhzKbSGn5IFMbmf4": {
+      "version": "article-assessments-v1-055bd5afa6b1",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 1,
+          "pre-v3": 3,
+          "pre-v4": 2,
+          "pre-v5": 3,
+          "pre-r1": 2,
+          "pre-r2": 0,
+          "pre-r3": 2,
+          "pre-r4": 0,
+          "pre-r5": 1,
+          "pre-l1": 1,
+          "pre-l2": 3,
+          "pre-l3": 1,
+          "pre-l4": 2,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 0,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 3,
+          "post-r1": 2,
+          "post-r2": 1,
+          "post-r3": 2,
+          "post-r4": 2,
+          "post-r5": 1,
+          "post-l1": 1,
+          "post-l2": 2,
+          "post-l3": 0,
+          "post-l4": 2,
+          "post-l5": 0
+        }
+      }
+    },
+    "cmjw1t3ky00mps60etppweqpu": {
+      "version": "article-assessments-v1-49bdb446f45e",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 3,
+          "pre-v3": 3,
+          "pre-v4": 1,
+          "pre-v5": 0,
+          "pre-r1": 1,
+          "pre-r2": 0,
+          "pre-r3": 2,
+          "pre-r4": 0,
+          "pre-r5": 1,
+          "pre-l1": 3,
+          "pre-l2": 2,
+          "pre-l3": 1,
+          "pre-l4": 2,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 0,
+          "post-v3": 0,
+          "post-v4": 0,
+          "post-v5": 2,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 1,
+          "post-r4": 2,
+          "post-r5": 2,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 0,
+          "post-l4": 0,
+          "post-l5": 0
+        }
+      }
+    },
+    "1lnzzXylJmtQWd39qmkQ": {
+      "version": "article-assessments-v1-8059a6e3d327",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 3,
+          "pre-v3": 1,
+          "pre-v4": 0,
+          "pre-v5": 2,
+          "pre-r1": 3,
+          "pre-r2": 1,
+          "pre-r3": 3,
+          "pre-r4": 1,
+          "pre-r5": 1,
+          "pre-l1": 1,
+          "pre-l2": 0,
+          "pre-l3": 3,
+          "pre-l4": 0,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 3,
+          "post-v3": 0,
+          "post-v4": 2,
+          "post-v5": 2,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 0,
+          "post-r4": 3,
+          "post-r5": 2,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 0,
+          "post-l4": 0,
+          "post-l5": 2
+        }
+      }
+    },
+    "0tVl8K7MCiecTPJ1lmdE": {
+      "version": "article-assessments-v1-34fa67a35ed6",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 1,
+          "pre-v3": 2,
+          "pre-v4": 3,
+          "pre-v5": 1,
+          "pre-r1": 0,
+          "pre-r2": 3,
+          "pre-r3": 2,
+          "pre-r4": 1,
+          "pre-r5": 1,
+          "pre-l1": 3,
+          "pre-l2": 2,
+          "pre-l3": 1,
+          "pre-l4": 2,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 3,
+          "post-v3": 2,
+          "post-v4": 1,
+          "post-v5": 1,
+          "post-r1": 2,
+          "post-r2": 1,
+          "post-r3": 2,
+          "post-r4": 2,
+          "post-r5": 2,
+          "post-l1": 3,
+          "post-l2": 2,
+          "post-l3": 1,
+          "post-l4": 2,
+          "post-l5": 3
+        }
+      }
+    },
+    "7apvHQXjJb8od9KowL92": {
+      "version": "article-assessments-v1-834878113bd0",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 0,
+          "pre-v4": 0,
+          "pre-v5": 1,
+          "pre-r1": 3,
+          "pre-r2": 0,
+          "pre-r3": 2,
+          "pre-r4": 3,
+          "pre-r5": 3,
+          "pre-l1": 3,
+          "pre-l2": 3,
+          "pre-l3": 1,
+          "pre-l4": 1,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 1,
+          "post-r1": 1,
+          "post-r2": 2,
+          "post-r3": 3,
+          "post-r4": 2,
+          "post-r5": 3,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 2,
+          "post-l4": 3,
+          "post-l5": 3
+        }
+      }
+    },
+    "vGLJOdqIOYsJS0orm79e": {
+      "version": "article-assessments-v1-73fad76826c3",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 0,
+          "pre-v3": 3,
+          "pre-v4": 2,
+          "pre-v5": 0,
+          "pre-r1": 3,
+          "pre-r2": 2,
+          "pre-r3": 2,
+          "pre-r4": 0,
+          "pre-r5": 0,
+          "pre-l1": 0,
+          "pre-l2": 1,
+          "pre-l3": 3,
+          "pre-l4": 1,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 0,
+          "post-v3": 3,
+          "post-v4": 0,
+          "post-v5": 3,
+          "post-r1": 1,
+          "post-r2": 0,
+          "post-r3": 3,
+          "post-r4": 0,
+          "post-r5": 1,
+          "post-l1": 3,
+          "post-l2": 3,
+          "post-l3": 1,
+          "post-l4": 3,
+          "post-l5": 1
+        }
+      }
+    },
+    "uT67FwqUlttv74p2snCr": {
+      "version": "article-assessments-v1-8f66c1d35b99",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 0,
+          "pre-v3": 2,
+          "pre-v4": 1,
+          "pre-v5": 3,
+          "pre-r1": 1,
+          "pre-r2": 0,
+          "pre-r3": 2,
+          "pre-r4": 0,
+          "pre-r5": 3,
+          "pre-l1": 2,
+          "pre-l2": 0,
+          "pre-l3": 0,
+          "pre-l4": 3,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 3,
+          "post-v5": 3,
+          "post-r1": 3,
+          "post-r2": 1,
+          "post-r3": 3,
+          "post-r4": 0,
+          "post-r5": 2,
+          "post-l1": 1,
+          "post-l2": 0,
+          "post-l3": 3,
+          "post-l4": 1,
+          "post-l5": 0
+        }
+      }
+    },
+    "ZT2sa9qiH0lHnYH9ayfF": {
+      "version": "article-assessments-v1-c693b24b19b6",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 1,
+          "pre-v3": 3,
+          "pre-v4": 2,
+          "pre-v5": 1,
+          "pre-r1": 1,
+          "pre-r2": 1,
+          "pre-r3": 0,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 2,
+          "pre-l3": 3,
+          "pre-l4": 2,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 2,
+          "post-v3": 3,
+          "post-v4": 2,
+          "post-v5": 0,
+          "post-r1": 0,
+          "post-r2": 1,
+          "post-r3": 1,
+          "post-r4": 2,
+          "post-r5": 0,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 2,
+          "post-l4": 0,
+          "post-l5": 3
+        }
+      }
+    },
+    "cmmtse9p801a4s60en4k8d32q": {
+      "version": "article-assessments-v1-5682e35959fe",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 1,
+          "pre-v3": 2,
+          "pre-v4": 1,
+          "pre-v5": 1,
+          "pre-r1": 0,
+          "pre-r2": 1,
+          "pre-r3": 1,
+          "pre-r4": 1,
+          "pre-r5": 0,
+          "pre-l1": 1,
+          "pre-l2": 2,
+          "pre-l3": 0,
+          "pre-l4": 1,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 0,
+          "post-v3": 1,
+          "post-v4": 0,
+          "post-v5": 3,
+          "post-r1": 3,
+          "post-r2": 0,
+          "post-r3": 2,
+          "post-r4": 2,
+          "post-r5": 3,
+          "post-l1": 2,
+          "post-l2": 0,
+          "post-l3": 2,
+          "post-l4": 1,
+          "post-l5": 2
+        }
+      }
+    },
+    "cmmscy4zq00wys60eetu0jbr2": {
+      "version": "article-assessments-v1-fe6d4c0c60ca",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 0,
+          "pre-v3": 3,
+          "pre-v4": 2,
+          "pre-v5": 1,
+          "pre-r1": 3,
+          "pre-r2": 0,
+          "pre-r3": 2,
+          "pre-r4": 2,
+          "pre-r5": 0,
+          "pre-l1": 1,
+          "pre-l2": 2,
+          "pre-l3": 0,
+          "pre-l4": 0,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 3,
+          "post-v3": 0,
+          "post-v4": 3,
+          "post-v5": 2,
+          "post-r1": 3,
+          "post-r2": 0,
+          "post-r3": 3,
+          "post-r4": 2,
+          "post-r5": 0,
+          "post-l1": 2,
+          "post-l2": 2,
+          "post-l3": 1,
+          "post-l4": 3,
+          "post-l5": 3
+        }
+      }
+    },
+    "fzMRYypdLSTFhc8rdM7h": {
+      "version": "article-assessments-v1-808d09ae1166",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 0,
+          "pre-v3": 3,
+          "pre-v4": 3,
+          "pre-v5": 3,
+          "pre-r1": 2,
+          "pre-r2": 1,
+          "pre-r3": 0,
+          "pre-r4": 0,
+          "pre-r5": 1,
+          "pre-l1": 1,
+          "pre-l2": 3,
+          "pre-l3": 0,
+          "pre-l4": 3,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 3,
+          "post-v5": 3,
+          "post-r1": 0,
+          "post-r2": 2,
+          "post-r3": 0,
+          "post-r4": 2,
+          "post-r5": 1,
+          "post-l1": 1,
+          "post-l2": 0,
+          "post-l3": 0,
+          "post-l4": 0,
+          "post-l5": 1
+        }
+      }
+    },
+    "5whpV1ZrLk7qb1lgAJnT": {
+      "version": "article-assessments-v1-ad2ac0f7b812",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 0,
+          "pre-v3": 2,
+          "pre-v4": 2,
+          "pre-v5": 2,
+          "pre-r1": 2,
+          "pre-r2": 2,
+          "pre-r3": 1,
+          "pre-r4": 0,
+          "pre-r5": 3,
+          "pre-l1": 1,
+          "pre-l2": 0,
+          "pre-l3": 0,
+          "pre-l4": 2,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 3,
+          "post-v3": 1,
+          "post-v4": 0,
+          "post-v5": 2,
+          "post-r1": 1,
+          "post-r2": 2,
+          "post-r3": 3,
+          "post-r4": 2,
+          "post-r5": 0,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 0,
+          "post-l4": 1,
+          "post-l5": 2
+        }
+      }
+    },
+    "cmkmhgh5501lds60ev7s791s5": {
+      "version": "article-assessments-v1-11d55e065b38",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 0,
+          "pre-v3": 3,
+          "pre-v4": 3,
+          "pre-v5": 3,
+          "pre-r1": 2,
+          "pre-r2": 0,
+          "pre-r3": 1,
+          "pre-r4": 3,
+          "pre-r5": 0,
+          "pre-l1": 3,
+          "pre-l2": 2,
+          "pre-l3": 1,
+          "pre-l4": 1,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 1,
+          "post-v3": 0,
+          "post-v4": 2,
+          "post-v5": 2,
+          "post-r1": 3,
+          "post-r2": 1,
+          "post-r3": 3,
+          "post-r4": 2,
+          "post-r5": 3,
+          "post-l1": 3,
+          "post-l2": 2,
+          "post-l3": 0,
+          "post-l4": 3,
+          "post-l5": 2
+        }
+      }
+    },
+    "cmjfm919v0232s60eo0tzv1x8": {
+      "version": "article-assessments-v1-096c1e20237a",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 2,
+          "pre-v3": 2,
+          "pre-v4": 0,
+          "pre-v5": 3,
+          "pre-r1": 2,
+          "pre-r2": 0,
+          "pre-r3": 1,
+          "pre-r4": 3,
+          "pre-r5": 0,
+          "pre-l1": 3,
+          "pre-l2": 3,
+          "pre-l3": 1,
+          "pre-l4": 3,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 0,
+          "post-v3": 2,
+          "post-v4": 1,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 0,
+          "post-r3": 0,
+          "post-r4": 3,
+          "post-r5": 2,
+          "post-l1": 0,
+          "post-l2": 1,
+          "post-l3": 3,
+          "post-l4": 3,
+          "post-l5": 3
+        }
+      }
+    },
+    "i4iNzw6AArWrTOU0SE6f": {
+      "version": "article-assessments-v1-1b0e7be4c0e2",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 0,
+          "pre-v4": 1,
+          "pre-v5": 1,
+          "pre-r1": 2,
+          "pre-r2": 3,
+          "pre-r3": 2,
+          "pre-r4": 3,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 1,
+          "pre-l3": 3,
+          "pre-l4": 2,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 0,
+          "post-v3": 3,
+          "post-v4": 0,
+          "post-v5": 3,
+          "post-r1": 2,
+          "post-r2": 3,
+          "post-r3": 2,
+          "post-r4": 0,
+          "post-r5": 0,
+          "post-l1": 0,
+          "post-l2": 3,
+          "post-l3": 1,
+          "post-l4": 0,
+          "post-l5": 2
+        }
+      }
+    },
+    "cmixr8kil000us60esgwguw0z": {
+      "version": "article-assessments-v1-ac0e8f8a6393",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 2,
+          "pre-v3": 2,
+          "pre-v4": 2,
+          "pre-v5": 3,
+          "pre-r1": 2,
+          "pre-r2": 2,
+          "pre-r3": 2,
+          "pre-r4": 2,
+          "pre-r5": 2,
+          "pre-l1": 0,
+          "pre-l2": 2,
+          "pre-l3": 2,
+          "pre-l4": 1,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 1,
+          "post-v3": 2,
+          "post-v4": 2,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 3,
+          "post-r3": 0,
+          "post-r4": 0,
+          "post-r5": 3,
+          "post-l1": 0,
+          "post-l2": 0,
+          "post-l3": 0,
+          "post-l4": 3,
+          "post-l5": 0
+        }
+      }
+    },
+    "mQBtacaks53c7Djci9n6": {
+      "version": "article-assessments-v1-6c8f1c240db2",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 2,
+          "pre-v3": 3,
+          "pre-v4": 3,
+          "pre-v5": 2,
+          "pre-r1": 2,
+          "pre-r2": 2,
+          "pre-r3": 2,
+          "pre-r4": 3,
+          "pre-r5": 2,
+          "pre-l1": 0,
+          "pre-l2": 0,
+          "pre-l3": 1,
+          "pre-l4": 0,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 2,
+          "post-v3": 0,
+          "post-v4": 3,
+          "post-v5": 1,
+          "post-r1": 1,
+          "post-r2": 3,
+          "post-r3": 1,
+          "post-r4": 2,
+          "post-r5": 2,
+          "post-l1": 2,
+          "post-l2": 1,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 3
+        }
+      }
+    },
+    "cmgu0xb0i00rqs60e2djeq0xt": {
+      "version": "article-assessments-v1-c1d18ab53c4e",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 3,
+          "pre-v3": 1,
+          "pre-v4": 0,
+          "pre-v5": 2,
+          "pre-r1": 3,
+          "pre-r2": 0,
+          "pre-r3": 2,
+          "pre-r4": 2,
+          "pre-r5": 1,
+          "pre-l1": 3,
+          "pre-l2": 2,
+          "pre-l3": 2,
+          "pre-l4": 1,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 1,
+          "post-v3": 2,
+          "post-v4": 3,
+          "post-v5": 3,
+          "post-r1": 0,
+          "post-r2": 3,
+          "post-r3": 0,
+          "post-r4": 3,
+          "post-r5": 1,
+          "post-l1": 0,
+          "post-l2": 1,
+          "post-l3": 2,
+          "post-l4": 1,
+          "post-l5": 1
+        }
+      }
+    },
+    "h31ImmMoHtDQS3jxOuOy": {
+      "version": "article-assessments-v1-966811e93eb0",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 3,
+          "pre-v3": 0,
+          "pre-v4": 0,
+          "pre-v5": 0,
+          "pre-r1": 0,
+          "pre-r2": 2,
+          "pre-r3": 2,
+          "pre-r4": 0,
+          "pre-r5": 1,
+          "pre-l1": 1,
+          "pre-l2": 2,
+          "pre-l3": 2,
+          "pre-l4": 1,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 0,
+          "post-v3": 3,
+          "post-v4": 2,
+          "post-v5": 3,
+          "post-r1": 0,
+          "post-r2": 0,
+          "post-r3": 0,
+          "post-r4": 2,
+          "post-r5": 2,
+          "post-l1": 3,
+          "post-l2": 3,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 2
+        }
+      }
+    },
+    "PfzjAu0eSyuUokFK2rnk": {
+      "version": "article-assessments-v1-70cc918d33bb",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 3,
+          "pre-v3": 1,
+          "pre-v4": 0,
+          "pre-v5": 3,
+          "pre-r1": 1,
+          "pre-r2": 0,
+          "pre-r3": 1,
+          "pre-r4": 0,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 1,
+          "pre-l3": 0,
+          "pre-l4": 1,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 1,
+          "post-v5": 0,
+          "post-r1": 3,
+          "post-r2": 3,
+          "post-r3": 3,
+          "post-r4": 1,
+          "post-r5": 3,
+          "post-l1": 3,
+          "post-l2": 1,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 0
+        }
+      }
+    },
+    "7UQDbGLuIPZbE7yYa33x": {
+      "version": "article-assessments-v1-f702c41aad68",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 3,
+          "pre-v3": 3,
+          "pre-v4": 2,
+          "pre-v5": 3,
+          "pre-r1": 0,
+          "pre-r2": 1,
+          "pre-r3": 1,
+          "pre-r4": 0,
+          "pre-r5": 0,
+          "pre-l1": 3,
+          "pre-l2": 3,
+          "pre-l3": 2,
+          "pre-l4": 3,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 0,
+          "post-v3": 3,
+          "post-v4": 3,
+          "post-v5": 3,
+          "post-r1": 1,
+          "post-r2": 0,
+          "post-r3": 3,
+          "post-r4": 3,
+          "post-r5": 1,
+          "post-l1": 0,
+          "post-l2": 0,
+          "post-l3": 3,
+          "post-l4": 1,
+          "post-l5": 3
+        }
+      }
+    },
+    "5a3MFFCMZSJLOc2CXiy2": {
+      "version": "article-assessments-v1-3e07242cf7de",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 1,
+          "pre-v3": 3,
+          "pre-v4": 2,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 0,
+          "pre-r3": 2,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 3,
+          "pre-l2": 2,
+          "pre-l3": 0,
+          "pre-l4": 0,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 2,
+          "post-v5": 2,
+          "post-r1": 2,
+          "post-r2": 3,
+          "post-r3": 1,
+          "post-r4": 0,
+          "post-r5": 2,
+          "post-l1": 0,
+          "post-l2": 1,
+          "post-l3": 0,
+          "post-l4": 1,
+          "post-l5": 1
+        }
+      }
+    },
+    "ok5b5Be1QOBPzX2as2S4": {
+      "version": "article-assessments-v1-774cec3785c7",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 0,
+          "pre-v4": 2,
+          "pre-v5": 1,
+          "pre-r1": 0,
+          "pre-r2": 3,
+          "pre-r3": 3,
+          "pre-r4": 0,
+          "pre-r5": 0,
+          "pre-l1": 1,
+          "pre-l2": 0,
+          "pre-l3": 0,
+          "pre-l4": 0,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 2,
+          "post-v3": 3,
+          "post-v4": 2,
+          "post-v5": 3,
+          "post-r1": 0,
+          "post-r2": 1,
+          "post-r3": 1,
+          "post-r4": 2,
+          "post-r5": 0,
+          "post-l1": 0,
+          "post-l2": 2,
+          "post-l3": 3,
+          "post-l4": 3,
+          "post-l5": 2
+        }
+      }
+    },
+    "BHusTKr0h8i6vOhbrfpx": {
+      "version": "article-assessments-v1-11c8382f932c",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 1,
+          "pre-v3": 2,
+          "pre-v4": 2,
+          "pre-v5": 3,
+          "pre-r1": 2,
+          "pre-r2": 1,
+          "pre-r3": 0,
+          "pre-r4": 3,
+          "pre-r5": 1,
+          "pre-l1": 0,
+          "pre-l2": 3,
+          "pre-l3": 0,
+          "pre-l4": 1,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 0,
+          "post-v3": 0,
+          "post-v4": 0,
+          "post-v5": 3,
+          "post-r1": 1,
+          "post-r2": 1,
+          "post-r3": 2,
+          "post-r4": 0,
+          "post-r5": 3,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 3,
+          "post-l4": 1,
+          "post-l5": 0
+        }
+      }
+    },
+    "rY1QKnciUBBhE9MyadbF": {
+      "version": "article-assessments-v1-acb0d877619b",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 3,
+          "pre-v3": 1,
+          "pre-v4": 2,
+          "pre-v5": 1,
+          "pre-r1": 0,
+          "pre-r2": 2,
+          "pre-r3": 3,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 3,
+          "pre-l2": 2,
+          "pre-l3": 2,
+          "pre-l4": 2,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 3,
+          "post-v3": 1,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 2,
+          "post-r3": 1,
+          "post-r4": 1,
+          "post-r5": 3,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 3,
+          "post-l4": 1,
+          "post-l5": 3
+        }
+      }
+    },
+    "cmitgx6xd000ts60ew7qdd5a4": {
+      "version": "article-assessments-v1-1ca98b184365",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 0,
+          "pre-v3": 3,
+          "pre-v4": 0,
+          "pre-v5": 1,
+          "pre-r1": 3,
+          "pre-r2": 3,
+          "pre-r3": 1,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 3,
+          "pre-l2": 0,
+          "pre-l3": 3,
+          "pre-l4": 1,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 2,
+          "post-v3": 3,
+          "post-v4": 1,
+          "post-v5": 0,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 1,
+          "post-r4": 0,
+          "post-r5": 2,
+          "post-l1": 0,
+          "post-l2": 1,
+          "post-l3": 3,
+          "post-l4": 3,
+          "post-l5": 2
+        }
+      }
+    },
+    "AEh9oRp1WDa8CApSdrCr": {
+      "version": "article-assessments-v1-d299f2388876",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 2,
+          "pre-v3": 2,
+          "pre-v4": 1,
+          "pre-v5": 1,
+          "pre-r1": 3,
+          "pre-r2": 3,
+          "pre-r3": 3,
+          "pre-r4": 2,
+          "pre-r5": 2,
+          "pre-l1": 3,
+          "pre-l2": 1,
+          "pre-l3": 3,
+          "pre-l4": 1,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 2,
+          "post-v3": 0,
+          "post-v4": 1,
+          "post-v5": 2,
+          "post-r1": 1,
+          "post-r2": 0,
+          "post-r3": 3,
+          "post-r4": 3,
+          "post-r5": 1,
+          "post-l1": 3,
+          "post-l2": 0,
+          "post-l3": 1,
+          "post-l4": 1,
+          "post-l5": 3
+        }
+      }
+    },
+    "hFxfpuViJkutoIqbcUwP": {
+      "version": "article-assessments-v1-a12254dd3ec5",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 3,
+          "pre-v3": 3,
+          "pre-v4": 1,
+          "pre-v5": 1,
+          "pre-r1": 2,
+          "pre-r2": 0,
+          "pre-r3": 2,
+          "pre-r4": 2,
+          "pre-r5": 1,
+          "pre-l1": 0,
+          "pre-l2": 3,
+          "pre-l3": 0,
+          "pre-l4": 0,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 3,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 2,
+          "post-r1": 3,
+          "post-r2": 0,
+          "post-r3": 3,
+          "post-r4": 1,
+          "post-r5": 3,
+          "post-l1": 3,
+          "post-l2": 3,
+          "post-l3": 1,
+          "post-l4": 1,
+          "post-l5": 3
+        }
+      }
+    },
+    "cmhnbfgmv02aks60ebexfxwjv": {
+      "version": "article-assessments-v1-2ba879828c80",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 1,
+          "pre-v3": 0,
+          "pre-v4": 0,
+          "pre-v5": 1,
+          "pre-r1": 3,
+          "pre-r2": 3,
+          "pre-r3": 2,
+          "pre-r4": 0,
+          "pre-r5": 1,
+          "pre-l1": 2,
+          "pre-l2": 1,
+          "pre-l3": 2,
+          "pre-l4": 1,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 2,
+          "post-v3": 3,
+          "post-v4": 1,
+          "post-v5": 1,
+          "post-r1": 1,
+          "post-r2": 2,
+          "post-r3": 0,
+          "post-r4": 3,
+          "post-r5": 0,
+          "post-l1": 2,
+          "post-l2": 0,
+          "post-l3": 0,
+          "post-l4": 3,
+          "post-l5": 3
+        }
+      }
+    },
+    "chuRe1DJvPmMoRGW76hF": {
+      "version": "article-assessments-v1-aa6751c47235",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 1,
+          "pre-v3": 1,
+          "pre-v4": 2,
+          "pre-v5": 2,
+          "pre-r1": 2,
+          "pre-r2": 1,
+          "pre-r3": 0,
+          "pre-r4": 2,
+          "pre-r5": 1,
+          "pre-l1": 2,
+          "pre-l2": 0,
+          "pre-l3": 1,
+          "pre-l4": 3,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 3,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 2,
+          "post-r1": 3,
+          "post-r2": 0,
+          "post-r3": 0,
+          "post-r4": 1,
+          "post-r5": 3,
+          "post-l1": 2,
+          "post-l2": 2,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 3
+        }
+      }
+    },
+    "ni2xVrAHyhxgCyv50gkQ": {
+      "version": "article-assessments-v1-72189ed995fb",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 3,
+          "pre-v3": 0,
+          "pre-v4": 2,
+          "pre-v5": 1,
+          "pre-r1": 0,
+          "pre-r2": 3,
+          "pre-r3": 2,
+          "pre-r4": 1,
+          "pre-r5": 0,
+          "pre-l1": 0,
+          "pre-l2": 3,
+          "pre-l3": 3,
+          "pre-l4": 3,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 0,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 2,
+          "post-r3": 3,
+          "post-r4": 2,
+          "post-r5": 0,
+          "post-l1": 0,
+          "post-l2": 3,
+          "post-l3": 0,
+          "post-l4": 2,
+          "post-l5": 3
+        }
+      }
+    },
+    "ZVpzwnckH1oFrnuDiXuh": {
+      "version": "article-assessments-v1-db73a5409082",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 2,
+          "pre-v4": 3,
+          "pre-v5": 2,
+          "pre-r1": 1,
+          "pre-r2": 1,
+          "pre-r3": 3,
+          "pre-r4": 2,
+          "pre-r5": 0,
+          "pre-l1": 0,
+          "pre-l2": 2,
+          "pre-l3": 3,
+          "pre-l4": 2,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 2,
+          "post-v3": 3,
+          "post-v4": 3,
+          "post-v5": 2,
+          "post-r1": 3,
+          "post-r2": 0,
+          "post-r3": 2,
+          "post-r4": 1,
+          "post-r5": 0,
+          "post-l1": 2,
+          "post-l2": 1,
+          "post-l3": 2,
+          "post-l4": 3,
+          "post-l5": 2
+        }
+      }
+    },
+    "gCxlXVCOY1YnpbwsHOwg": {
+      "version": "article-assessments-v1-faac1ace85d1",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 2,
+          "pre-v3": 3,
+          "pre-v4": 0,
+          "pre-v5": 1,
+          "pre-r1": 1,
+          "pre-r2": 1,
+          "pre-r3": 3,
+          "pre-r4": 1,
+          "pre-r5": 1,
+          "pre-l1": 1,
+          "pre-l2": 0,
+          "pre-l3": 3,
+          "pre-l4": 2,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 2,
+          "post-v3": 1,
+          "post-v4": 1,
+          "post-v5": 2,
+          "post-r1": 0,
+          "post-r2": 3,
+          "post-r3": 1,
+          "post-r4": 0,
+          "post-r5": 1,
+          "post-l1": 0,
+          "post-l2": 3,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 2
+        }
+      }
+    },
+    "ZU86LBsTRTVADkLuBuBN": {
+      "version": "article-assessments-v1-229b1fd7ba04",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 0,
+          "pre-v3": 3,
+          "pre-v4": 0,
+          "pre-v5": 3,
+          "pre-r1": 0,
+          "pre-r2": 2,
+          "pre-r3": 2,
+          "pre-r4": 1,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 2,
+          "pre-l3": 2,
+          "pre-l4": 3,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 0,
+          "post-v3": 2,
+          "post-v4": 1,
+          "post-v5": 2,
+          "post-r1": 2,
+          "post-r2": 0,
+          "post-r3": 2,
+          "post-r4": 2,
+          "post-r5": 1,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 0,
+          "post-l4": 0,
+          "post-l5": 1
+        }
+      }
+    },
+    "GopoxMhN05ICdRQTzZYw": {
+      "version": "article-assessments-v1-9c16a7bd581a",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 2,
+          "pre-v3": 0,
+          "pre-v4": 2,
+          "pre-v5": 1,
+          "pre-r1": 2,
+          "pre-r2": 1,
+          "pre-r3": 1,
+          "pre-r4": 2,
+          "pre-r5": 0,
+          "pre-l1": 3,
+          "pre-l2": 3,
+          "pre-l3": 2,
+          "pre-l4": 2,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 0,
+          "post-v3": 2,
+          "post-v4": 1,
+          "post-v5": 3,
+          "post-r1": 2,
+          "post-r2": 3,
+          "post-r3": 1,
+          "post-r4": 3,
+          "post-r5": 2,
+          "post-l1": 3,
+          "post-l2": 0,
+          "post-l3": 3,
+          "post-l4": 3,
+          "post-l5": 0
+        }
+      }
+    },
+    "cmjwrjbp700tis60eq8qzcfpp": {
+      "version": "article-assessments-v1-f51531105e03",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 3,
+          "pre-v3": 1,
+          "pre-v4": 2,
+          "pre-v5": 1,
+          "pre-r1": 3,
+          "pre-r2": 0,
+          "pre-r3": 1,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 3,
+          "pre-l2": 3,
+          "pre-l3": 3,
+          "pre-l4": 2,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 1,
+          "post-v5": 1,
+          "post-r1": 3,
+          "post-r2": 3,
+          "post-r3": 0,
+          "post-r4": 3,
+          "post-r5": 0,
+          "post-l1": 0,
+          "post-l2": 3,
+          "post-l3": 0,
+          "post-l4": 0,
+          "post-l5": 1
+        }
+      }
+    },
+    "0o7eOLMiyCT9r3iljbOd": {
+      "version": "article-assessments-v1-2bee0f88e90f",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 0,
+          "pre-v3": 1,
+          "pre-v4": 0,
+          "pre-v5": 2,
+          "pre-r1": 1,
+          "pre-r2": 3,
+          "pre-r3": 2,
+          "pre-r4": 2,
+          "pre-r5": 1,
+          "pre-l1": 2,
+          "pre-l2": 2,
+          "pre-l3": 2,
+          "pre-l4": 1,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 0,
+          "post-v3": 1,
+          "post-v4": 3,
+          "post-v5": 3,
+          "post-r1": 0,
+          "post-r2": 3,
+          "post-r3": 3,
+          "post-r4": 1,
+          "post-r5": 0,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 1,
+          "post-l4": 2,
+          "post-l5": 0
+        }
+      }
+    },
+    "PV8t70u68XwKXjWh8DaR": {
+      "version": "article-assessments-v1-6f299c4a70dd",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 0,
+          "pre-v3": 0,
+          "pre-v4": 3,
+          "pre-v5": 1,
+          "pre-r1": 2,
+          "pre-r2": 3,
+          "pre-r3": 2,
+          "pre-r4": 0,
+          "pre-r5": 0,
+          "pre-l1": 1,
+          "pre-l2": 3,
+          "pre-l3": 1,
+          "pre-l4": 0,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 1,
+          "post-v3": 0,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 3,
+          "post-r2": 0,
+          "post-r3": 0,
+          "post-r4": 0,
+          "post-r5": 2,
+          "post-l1": 1,
+          "post-l2": 0,
+          "post-l3": 1,
+          "post-l4": 1,
+          "post-l5": 1
+        }
+      }
+    },
+    "seLILcBfZNSfaapisRra": {
+      "version": "article-assessments-v1-a19a018ab9c3",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 2,
+          "pre-v3": 2,
+          "pre-v4": 1,
+          "pre-v5": 2,
+          "pre-r1": 3,
+          "pre-r2": 2,
+          "pre-r3": 0,
+          "pre-r4": 1,
+          "pre-r5": 2,
+          "pre-l1": 1,
+          "pre-l2": 0,
+          "pre-l3": 2,
+          "pre-l4": 2,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 3,
+          "post-r1": 0,
+          "post-r2": 3,
+          "post-r3": 0,
+          "post-r4": 0,
+          "post-r5": 2,
+          "post-l1": 0,
+          "post-l2": 3,
+          "post-l3": 1,
+          "post-l4": 1,
+          "post-l5": 0
+        }
+      }
+    },
+    "4ZZeSspAGo285csIxNcc": {
+      "version": "article-assessments-v1-dbc5d5e97e85",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 0,
+          "pre-v3": 1,
+          "pre-v4": 1,
+          "pre-v5": 3,
+          "pre-r1": 1,
+          "pre-r2": 0,
+          "pre-r3": 1,
+          "pre-r4": 1,
+          "pre-r5": 0,
+          "pre-l1": 3,
+          "pre-l2": 1,
+          "pre-l3": 2,
+          "pre-l4": 0,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 3,
+          "post-v3": 0,
+          "post-v4": 3,
+          "post-v5": 2,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 0,
+          "post-r4": 3,
+          "post-r5": 1,
+          "post-l1": 2,
+          "post-l2": 2,
+          "post-l3": 3,
+          "post-l4": 1,
+          "post-l5": 1
+        }
+      }
+    },
+    "9VRaZ4coQyiz4gJW91av": {
+      "version": "article-assessments-v1-ca9cab64bf84",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 1,
+          "pre-v3": 2,
+          "pre-v4": 3,
+          "pre-v5": 0,
+          "pre-r1": 1,
+          "pre-r2": 2,
+          "pre-r3": 3,
+          "pre-r4": 3,
+          "pre-r5": 0,
+          "pre-l1": 0,
+          "pre-l2": 0,
+          "pre-l3": 2,
+          "pre-l4": 1,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 0,
+          "post-v3": 0,
+          "post-v4": 3,
+          "post-v5": 1,
+          "post-r1": 2,
+          "post-r2": 1,
+          "post-r3": 3,
+          "post-r4": 2,
+          "post-r5": 0,
+          "post-l1": 3,
+          "post-l2": 0,
+          "post-l3": 2,
+          "post-l4": 2,
+          "post-l5": 2
+        }
+      }
+    },
+    "gyWWNG0hzEt4bFEHkGX1": {
+      "version": "article-assessments-v1-30f3dff9a7d8",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 0,
+          "pre-v3": 1,
+          "pre-v4": 1,
+          "pre-v5": 2,
+          "pre-r1": 1,
+          "pre-r2": 0,
+          "pre-r3": 3,
+          "pre-r4": 1,
+          "pre-r5": 3,
+          "pre-l1": 3,
+          "pre-l2": 0,
+          "pre-l3": 3,
+          "pre-l4": 0,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 1,
+          "post-v3": 1,
+          "post-v4": 2,
+          "post-v5": 3,
+          "post-r1": 0,
+          "post-r2": 1,
+          "post-r3": 1,
+          "post-r4": 1,
+          "post-r5": 1,
+          "post-l1": 3,
+          "post-l2": 1,
+          "post-l3": 3,
+          "post-l4": 1,
+          "post-l5": 2
+        }
+      }
+    },
+    "iSYAqKTgtXABlx5IYuNY": {
+      "version": "article-assessments-v1-ecca334f8a7c",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 1,
+          "pre-v3": 0,
+          "pre-v4": 2,
+          "pre-v5": 0,
+          "pre-r1": 1,
+          "pre-r2": 1,
+          "pre-r3": 3,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 1,
+          "pre-l2": 0,
+          "pre-l3": 3,
+          "pre-l4": 1,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 2,
+          "post-v3": 3,
+          "post-v4": 0,
+          "post-v5": 1,
+          "post-r1": 1,
+          "post-r2": 3,
+          "post-r3": 1,
+          "post-r4": 2,
+          "post-r5": 2,
+          "post-l1": 0,
+          "post-l2": 0,
+          "post-l3": 2,
+          "post-l4": 0,
+          "post-l5": 1
+        }
+      }
+    },
+    "7MrOtihsv9tsz3SaBfVC": {
+      "version": "article-assessments-v1-569406055349",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 0,
+          "pre-v3": 0,
+          "pre-v4": 0,
+          "pre-v5": 0,
+          "pre-r1": 3,
+          "pre-r2": 3,
+          "pre-r3": 3,
+          "pre-r4": 1,
+          "pre-r5": 2,
+          "pre-l1": 2,
+          "pre-l2": 0,
+          "pre-l3": 1,
+          "pre-l4": 3,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 1,
+          "post-v5": 0,
+          "post-r1": 3,
+          "post-r2": 0,
+          "post-r3": 1,
+          "post-r4": 0,
+          "post-r5": 3,
+          "post-l1": 2,
+          "post-l2": 2,
+          "post-l3": 1,
+          "post-l4": 2,
+          "post-l5": 3
+        }
+      }
+    },
+    "XTXZcvdQ1juCo7wSnmtZ": {
+      "version": "article-assessments-v1-e1bb35db7a55",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 3,
+          "pre-v3": 0,
+          "pre-v4": 2,
+          "pre-v5": 3,
+          "pre-r1": 2,
+          "pre-r2": 0,
+          "pre-r3": 2,
+          "pre-r4": 2,
+          "pre-r5": 2,
+          "pre-l1": 0,
+          "pre-l2": 1,
+          "pre-l3": 3,
+          "pre-l4": 0,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 3,
+          "post-v3": 1,
+          "post-v4": 1,
+          "post-v5": 1,
+          "post-r1": 0,
+          "post-r2": 1,
+          "post-r3": 0,
+          "post-r4": 3,
+          "post-r5": 0,
+          "post-l1": 0,
+          "post-l2": 1,
+          "post-l3": 1,
+          "post-l4": 2,
+          "post-l5": 0
+        }
+      }
+    },
+    "BwJEsTpAiGfxqxvSmRZ3": {
+      "version": "article-assessments-v1-52b87a5ad052",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 3,
+          "pre-v4": 0,
+          "pre-v5": 1,
+          "pre-r1": 0,
+          "pre-r2": 1,
+          "pre-r3": 1,
+          "pre-r4": 3,
+          "pre-r5": 1,
+          "pre-l1": 2,
+          "pre-l2": 0,
+          "pre-l3": 1,
+          "pre-l4": 3,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 3,
+          "post-v5": 3,
+          "post-r1": 1,
+          "post-r2": 1,
+          "post-r3": 3,
+          "post-r4": 2,
+          "post-r5": 1,
+          "post-l1": 0,
+          "post-l2": 3,
+          "post-l3": 2,
+          "post-l4": 1,
+          "post-l5": 3
+        }
+      }
+    },
+    "CRiCha2pxDeP0xx1KqnS": {
+      "version": "article-assessments-v1-400a712b8809",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 0,
+          "pre-v3": 1,
+          "pre-v4": 3,
+          "pre-v5": 1,
+          "pre-r1": 2,
+          "pre-r2": 0,
+          "pre-r3": 3,
+          "pre-r4": 2,
+          "pre-r5": 2,
+          "pre-l1": 0,
+          "pre-l2": 3,
+          "pre-l3": 3,
+          "pre-l4": 1,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 3,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 3,
+          "post-r2": 3,
+          "post-r3": 1,
+          "post-r4": 2,
+          "post-r5": 1,
+          "post-l1": 0,
+          "post-l2": 0,
+          "post-l3": 0,
+          "post-l4": 0,
+          "post-l5": 2
+        }
+      }
+    },
+    "KzUwB5Uc6139Fw5fcnpx": {
+      "version": "article-assessments-v1-f8c7d1e020be",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 2,
+          "pre-v4": 0,
+          "pre-v5": 1,
+          "pre-r1": 2,
+          "pre-r2": 0,
+          "pre-r3": 2,
+          "pre-r4": 1,
+          "pre-r5": 0,
+          "pre-l1": 2,
+          "pre-l2": 1,
+          "pre-l3": 1,
+          "pre-l4": 2,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 0,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 2,
+          "post-r1": 0,
+          "post-r2": 3,
+          "post-r3": 0,
+          "post-r4": 2,
+          "post-r5": 1,
+          "post-l1": 1,
+          "post-l2": 2,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 2
+        }
+      }
+    },
+    "44QFyTUgeUGPKf9gfLlL": {
+      "version": "article-assessments-v1-1519934ceced",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 0,
+          "pre-v3": 1,
+          "pre-v4": 3,
+          "pre-v5": 0,
+          "pre-r1": 3,
+          "pre-r2": 2,
+          "pre-r3": 3,
+          "pre-r4": 1,
+          "pre-r5": 0,
+          "pre-l1": 1,
+          "pre-l2": 3,
+          "pre-l3": 1,
+          "pre-l4": 2,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 2,
+          "post-r1": 1,
+          "post-r2": 1,
+          "post-r3": 1,
+          "post-r4": 3,
+          "post-r5": 2,
+          "post-l1": 2,
+          "post-l2": 1,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 0
+        }
+      }
+    },
+    "xAo8XxZoSl5fpbkicsqe": {
+      "version": "article-assessments-v1-35ea944c3d9c",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 1,
+          "pre-v3": 3,
+          "pre-v4": 0,
+          "pre-v5": 3,
+          "pre-r1": 2,
+          "pre-r2": 0,
+          "pre-r3": 2,
+          "pre-r4": 3,
+          "pre-r5": 3,
+          "pre-l1": 3,
+          "pre-l2": 2,
+          "pre-l3": 3,
+          "pre-l4": 1,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 0,
+          "post-v3": 3,
+          "post-v4": 1,
+          "post-v5": 3,
+          "post-r1": 2,
+          "post-r2": 2,
+          "post-r3": 3,
+          "post-r4": 1,
+          "post-r5": 0,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 3,
+          "post-l4": 0,
+          "post-l5": 1
+        }
+      }
+    },
+    "ayOLHwUR3JnnjVsY43yc": {
+      "version": "article-assessments-v1-f62eee9692fd",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 0,
+          "pre-v3": 0,
+          "pre-v4": 2,
+          "pre-v5": 1,
+          "pre-r1": 3,
+          "pre-r2": 3,
+          "pre-r3": 0,
+          "pre-r4": 1,
+          "pre-r5": 3,
+          "pre-l1": 1,
+          "pre-l2": 2,
+          "pre-l3": 1,
+          "pre-l4": 1,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 1,
+          "post-r3": 3,
+          "post-r4": 0,
+          "post-r5": 3,
+          "post-l1": 3,
+          "post-l2": 2,
+          "post-l3": 2,
+          "post-l4": 2,
+          "post-l5": 2
+        }
+      }
+    },
+    "cmkgrpes5003os60ex7cqbzva": {
+      "version": "article-assessments-v1-9369427ce73c",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 1,
+          "pre-v4": 0,
+          "pre-v5": 1,
+          "pre-r1": 2,
+          "pre-r2": 1,
+          "pre-r3": 2,
+          "pre-r4": 1,
+          "pre-r5": 1,
+          "pre-l1": 0,
+          "pre-l2": 0,
+          "pre-l3": 1,
+          "pre-l4": 1,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 1,
+          "post-v3": 2,
+          "post-v4": 1,
+          "post-v5": 3,
+          "post-r1": 1,
+          "post-r2": 0,
+          "post-r3": 3,
+          "post-r4": 2,
+          "post-r5": 1,
+          "post-l1": 3,
+          "post-l2": 2,
+          "post-l3": 3,
+          "post-l4": 3,
+          "post-l5": 1
+        }
+      }
+    },
+    "cml5szh5o00aas60e5wv1q9ez": {
+      "version": "article-assessments-v1-c3af3de52df4",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 0,
+          "pre-v3": 0,
+          "pre-v4": 1,
+          "pre-v5": 1,
+          "pre-r1": 0,
+          "pre-r2": 0,
+          "pre-r3": 3,
+          "pre-r4": 0,
+          "pre-r5": 0,
+          "pre-l1": 3,
+          "pre-l2": 3,
+          "pre-l3": 0,
+          "pre-l4": 0,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 1,
+          "post-v3": 2,
+          "post-v4": 1,
+          "post-v5": 0,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 2,
+          "post-r4": 1,
+          "post-r5": 0,
+          "post-l1": 3,
+          "post-l2": 0,
+          "post-l3": 0,
+          "post-l4": 3,
+          "post-l5": 2
+        }
+      }
+    },
+    "VpbPd6AcDo1LXDmwwpcz": {
+      "version": "article-assessments-v1-d869daace8a0",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 0,
+          "pre-v3": 1,
+          "pre-v4": 2,
+          "pre-v5": 2,
+          "pre-r1": 2,
+          "pre-r2": 0,
+          "pre-r3": 0,
+          "pre-r4": 3,
+          "pre-r5": 0,
+          "pre-l1": 2,
+          "pre-l2": 1,
+          "pre-l3": 3,
+          "pre-l4": 2,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 3,
+          "post-v3": 1,
+          "post-v4": 3,
+          "post-v5": 3,
+          "post-r1": 3,
+          "post-r2": 1,
+          "post-r3": 1,
+          "post-r4": 2,
+          "post-r5": 2,
+          "post-l1": 2,
+          "post-l2": 0,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 2
+        }
+      }
+    },
+    "LYoo0xXVqh1vxV5hPY7L": {
+      "version": "article-assessments-v1-bf8d34077ae7",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 0,
+          "pre-v3": 2,
+          "pre-v4": 3,
+          "pre-v5": 1,
+          "pre-r1": 0,
+          "pre-r2": 2,
+          "pre-r3": 3,
+          "pre-r4": 3,
+          "pre-r5": 2,
+          "pre-l1": 0,
+          "pre-l2": 0,
+          "pre-l3": 1,
+          "pre-l4": 3,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 3,
+          "post-v3": 2,
+          "post-v4": 3,
+          "post-v5": 2,
+          "post-r1": 0,
+          "post-r2": 0,
+          "post-r3": 0,
+          "post-r4": 2,
+          "post-r5": 0,
+          "post-l1": 1,
+          "post-l2": 2,
+          "post-l3": 1,
+          "post-l4": 2,
+          "post-l5": 1
+        }
+      }
+    },
+    "sVt8IafJKn3g5PyjMEDA": {
+      "version": "article-assessments-v1-9d0fbbb30dd2",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 0,
+          "pre-v3": 0,
+          "pre-v4": 3,
+          "pre-v5": 3,
+          "pre-r1": 2,
+          "pre-r2": 1,
+          "pre-r3": 3,
+          "pre-r4": 1,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 2,
+          "pre-l3": 3,
+          "pre-l4": 1,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 3,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 3,
+          "post-r1": 2,
+          "post-r2": 3,
+          "post-r3": 3,
+          "post-r4": 3,
+          "post-r5": 0,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 0,
+          "post-l4": 2,
+          "post-l5": 0
+        }
+      }
+    },
+    "bag4wyd75fJ5rUvwQXZd": {
+      "version": "article-assessments-v1-aae9c62f64a1",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 3,
+          "pre-v3": 0,
+          "pre-v4": 3,
+          "pre-v5": 3,
+          "pre-r1": 2,
+          "pre-r2": 2,
+          "pre-r3": 1,
+          "pre-r4": 0,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 1,
+          "pre-l3": 1,
+          "pre-l4": 1,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 1,
+          "post-v3": 1,
+          "post-v4": 3,
+          "post-v5": 3,
+          "post-r1": 1,
+          "post-r2": 2,
+          "post-r3": 0,
+          "post-r4": 3,
+          "post-r5": 1,
+          "post-l1": 3,
+          "post-l2": 3,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 3
+        }
+      }
+    },
+    "qzevLhkp2cShRgVIQtGN": {
+      "version": "article-assessments-v1-58b04d1d632c",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 3,
+          "pre-v3": 3,
+          "pre-v4": 3,
+          "pre-v5": 0,
+          "pre-r1": 1,
+          "pre-r2": 3,
+          "pre-r3": 3,
+          "pre-r4": 0,
+          "pre-r5": 2,
+          "pre-l1": 0,
+          "pre-l2": 1,
+          "pre-l3": 0,
+          "pre-l4": 1,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 2,
+          "post-r3": 2,
+          "post-r4": 2,
+          "post-r5": 0,
+          "post-l1": 2,
+          "post-l2": 1,
+          "post-l3": 2,
+          "post-l4": 0,
+          "post-l5": 0
+        }
+      }
+    },
+    "30mWkKsXiHcmK5Py82HE": {
+      "version": "article-assessments-v1-9eb7e0ca5a1f",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 2,
+          "pre-v3": 2,
+          "pre-v4": 3,
+          "pre-v5": 2,
+          "pre-r1": 3,
+          "pre-r2": 2,
+          "pre-r3": 0,
+          "pre-r4": 0,
+          "pre-r5": 0,
+          "pre-l1": 3,
+          "pre-l2": 0,
+          "pre-l3": 2,
+          "pre-l4": 2,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 2,
+          "post-v3": 0,
+          "post-v4": 2,
+          "post-v5": 3,
+          "post-r1": 0,
+          "post-r2": 3,
+          "post-r3": 0,
+          "post-r4": 2,
+          "post-r5": 1,
+          "post-l1": 3,
+          "post-l2": 3,
+          "post-l3": 2,
+          "post-l4": 0,
+          "post-l5": 2
+        }
+      }
+    },
+    "wWSMX7cQ66RHSv9W8RGZ": {
+      "version": "article-assessments-v1-7351d0e6efc7",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 1,
+          "pre-v3": 2,
+          "pre-v4": 3,
+          "pre-v5": 2,
+          "pre-r1": 1,
+          "pre-r2": 0,
+          "pre-r3": 2,
+          "pre-r4": 3,
+          "pre-r5": 1,
+          "pre-l1": 3,
+          "pre-l2": 0,
+          "pre-l3": 2,
+          "pre-l4": 1,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 2,
+          "post-v3": 3,
+          "post-v4": 1,
+          "post-v5": 1,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 1,
+          "post-r4": 1,
+          "post-r5": 3,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 0,
+          "post-l4": 2,
+          "post-l5": 1
+        }
+      }
+    },
+    "j6ZCQ1jRK2tSwXODUOo0": {
+      "version": "article-assessments-v1-1befc304c0af",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 2,
+          "pre-v3": 3,
+          "pre-v4": 3,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 2,
+          "pre-r3": 1,
+          "pre-r4": 0,
+          "pre-r5": 1,
+          "pre-l1": 3,
+          "pre-l2": 1,
+          "pre-l3": 2,
+          "pre-l4": 1,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 1,
+          "post-v3": 1,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 2,
+          "post-r4": 2,
+          "post-r5": 2,
+          "post-l1": 0,
+          "post-l2": 2,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 2
+        }
+      }
+    },
+    "5kA4C3PujXGSSt1OW4oi": {
+      "version": "article-assessments-v1-3fe98fc3f170",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 3,
+          "pre-v3": 2,
+          "pre-v4": 2,
+          "pre-v5": 1,
+          "pre-r1": 0,
+          "pre-r2": 2,
+          "pre-r3": 2,
+          "pre-r4": 3,
+          "pre-r5": 0,
+          "pre-l1": 1,
+          "pre-l2": 3,
+          "pre-l3": 0,
+          "pre-l4": 1,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 3,
+          "post-v3": 0,
+          "post-v4": 3,
+          "post-v5": 0,
+          "post-r1": 0,
+          "post-r2": 1,
+          "post-r3": 1,
+          "post-r4": 2,
+          "post-r5": 2,
+          "post-l1": 0,
+          "post-l2": 2,
+          "post-l3": 0,
+          "post-l4": 1,
+          "post-l5": 2
+        }
+      }
+    },
+    "JXmRcSQks7LTFN0ipVAy": {
+      "version": "article-assessments-v1-81ba70e30182",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 3,
+          "pre-v3": 1,
+          "pre-v4": 2,
+          "pre-v5": 3,
+          "pre-r1": 3,
+          "pre-r2": 0,
+          "pre-r3": 2,
+          "pre-r4": 0,
+          "pre-r5": 2,
+          "pre-l1": 2,
+          "pre-l2": 3,
+          "pre-l3": 2,
+          "pre-l4": 3,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 0,
+          "post-v3": 3,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 2,
+          "post-r3": 2,
+          "post-r4": 0,
+          "post-r5": 3,
+          "post-l1": 1,
+          "post-l2": 3,
+          "post-l3": 3,
+          "post-l4": 1,
+          "post-l5": 0
+        }
+      }
+    },
+    "QQtnABasb5uOCvjoWaPd": {
+      "version": "article-assessments-v1-531440fe8186",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 3,
+          "pre-v3": 1,
+          "pre-v4": 1,
+          "pre-v5": 2,
+          "pre-r1": 2,
+          "pre-r2": 2,
+          "pre-r3": 3,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 3,
+          "pre-l2": 3,
+          "pre-l3": 3,
+          "pre-l4": 1,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 2,
+          "post-v3": 1,
+          "post-v4": 0,
+          "post-v5": 3,
+          "post-r1": 0,
+          "post-r2": 1,
+          "post-r3": 0,
+          "post-r4": 3,
+          "post-r5": 2,
+          "post-l1": 3,
+          "post-l2": 3,
+          "post-l3": 1,
+          "post-l4": 3,
+          "post-l5": 2
+        }
+      }
+    },
+    "RoT9WUo5frmxyfjN2U9J": {
+      "version": "article-assessments-v1-a6ebdda738af",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 2,
+          "pre-v3": 3,
+          "pre-v4": 1,
+          "pre-v5": 2,
+          "pre-r1": 1,
+          "pre-r2": 1,
+          "pre-r3": 0,
+          "pre-r4": 3,
+          "pre-r5": 0,
+          "pre-l1": 3,
+          "pre-l2": 2,
+          "pre-l3": 3,
+          "pre-l4": 1,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 1,
+          "post-v3": 3,
+          "post-v4": 1,
+          "post-v5": 1,
+          "post-r1": 0,
+          "post-r2": 1,
+          "post-r3": 3,
+          "post-r4": 1,
+          "post-r5": 1,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 3,
+          "post-l4": 3,
+          "post-l5": 0
+        }
+      }
+    },
+    "lWXWegLFVjpO1lzmeLUO": {
+      "version": "article-assessments-v1-3d55e037c151",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 0,
+          "pre-v3": 3,
+          "pre-v4": 0,
+          "pre-v5": 2,
+          "pre-r1": 1,
+          "pre-r2": 3,
+          "pre-r3": 1,
+          "pre-r4": 3,
+          "pre-r5": 1,
+          "pre-l1": 1,
+          "pre-l2": 1,
+          "pre-l3": 3,
+          "pre-l4": 0,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 2,
+          "post-v3": 1,
+          "post-v4": 1,
+          "post-v5": 0,
+          "post-r1": 0,
+          "post-r2": 1,
+          "post-r3": 1,
+          "post-r4": 3,
+          "post-r5": 3,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 3,
+          "post-l4": 0,
+          "post-l5": 1
+        }
+      }
+    },
+    "mIGa1v9cgtJgkXAnmVGy": {
+      "version": "article-assessments-v1-5bfed949084a",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 2,
+          "pre-v3": 2,
+          "pre-v4": 2,
+          "pre-v5": 0,
+          "pre-r1": 1,
+          "pre-r2": 1,
+          "pre-r3": 1,
+          "pre-r4": 2,
+          "pre-r5": 0,
+          "pre-l1": 1,
+          "pre-l2": 3,
+          "pre-l3": 1,
+          "pre-l4": 0,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 3,
+          "post-v3": 2,
+          "post-v4": 1,
+          "post-v5": 2,
+          "post-r1": 3,
+          "post-r2": 1,
+          "post-r3": 1,
+          "post-r4": 1,
+          "post-r5": 0,
+          "post-l1": 0,
+          "post-l2": 1,
+          "post-l3": 2,
+          "post-l4": 2,
+          "post-l5": 3
+        }
+      }
+    },
+    "cmimt2el00003dcaobo9b9r3f": {
+      "version": "article-assessments-v1-f00936f0ac98",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 0,
+          "pre-v3": 3,
+          "pre-v4": 0,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 0,
+          "pre-r3": 2,
+          "pre-r4": 2,
+          "pre-r5": 0,
+          "pre-l1": 2,
+          "pre-l2": 1,
+          "pre-l3": 3,
+          "pre-l4": 1,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 0,
+          "post-r2": 3,
+          "post-r3": 1,
+          "post-r4": 0,
+          "post-r5": 1,
+          "post-l1": 1,
+          "post-l2": 2,
+          "post-l3": 0,
+          "post-l4": 2,
+          "post-l5": 3
+        }
+      }
+    },
+    "xhNwd3G8tk4zEqI5XYRI": {
+      "version": "article-assessments-v1-16255d11d33d",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 1,
+          "pre-v3": 3,
+          "pre-v4": 1,
+          "pre-v5": 3,
+          "pre-r1": 0,
+          "pre-r2": 0,
+          "pre-r3": 3,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 2,
+          "pre-l2": 3,
+          "pre-l3": 2,
+          "pre-l4": 1,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 2,
+          "post-v3": 1,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 2,
+          "post-r4": 2,
+          "post-r5": 2,
+          "post-l1": 0,
+          "post-l2": 0,
+          "post-l3": 2,
+          "post-l4": 0,
+          "post-l5": 3
+        }
+      }
+    },
+    "cml526drc00ges60emv019fn6": {
+      "version": "article-assessments-v1-85e95c14d377",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 2,
+          "pre-v3": 2,
+          "pre-v4": 2,
+          "pre-v5": 0,
+          "pre-r1": 0,
+          "pre-r2": 2,
+          "pre-r3": 0,
+          "pre-r4": 1,
+          "pre-r5": 2,
+          "pre-l1": 2,
+          "pre-l2": 1,
+          "pre-l3": 1,
+          "pre-l4": 1,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 2,
+          "post-v3": 1,
+          "post-v4": 3,
+          "post-v5": 3,
+          "post-r1": 0,
+          "post-r2": 2,
+          "post-r3": 3,
+          "post-r4": 0,
+          "post-r5": 2,
+          "post-l1": 0,
+          "post-l2": 0,
+          "post-l3": 0,
+          "post-l4": 3,
+          "post-l5": 0
+        }
+      }
+    },
+    "1fp84I1JPobquiidnSiT": {
+      "version": "article-assessments-v1-bbc2fd153caa",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 3,
+          "pre-v4": 3,
+          "pre-v5": 1,
+          "pre-r1": 0,
+          "pre-r2": 2,
+          "pre-r3": 0,
+          "pre-r4": 1,
+          "pre-r5": 2,
+          "pre-l1": 3,
+          "pre-l2": 3,
+          "pre-l3": 3,
+          "pre-l4": 2,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 1,
+          "post-v3": 0,
+          "post-v4": 2,
+          "post-v5": 0,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 3,
+          "post-r4": 1,
+          "post-r5": 2,
+          "post-l1": 3,
+          "post-l2": 3,
+          "post-l3": 3,
+          "post-l4": 0,
+          "post-l5": 1
+        }
+      }
+    },
+    "cmjwriyvf00sts60em3b14w7d": {
+      "version": "article-assessments-v1-a85f4fcc0a06",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 0,
+          "pre-v3": 1,
+          "pre-v4": 0,
+          "pre-v5": 3,
+          "pre-r1": 2,
+          "pre-r2": 2,
+          "pre-r3": 0,
+          "pre-r4": 3,
+          "pre-r5": 0,
+          "pre-l1": 3,
+          "pre-l2": 3,
+          "pre-l3": 1,
+          "pre-l4": 0,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 2,
+          "post-v5": 1,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 0,
+          "post-r4": 2,
+          "post-r5": 3,
+          "post-l1": 1,
+          "post-l2": 3,
+          "post-l3": 2,
+          "post-l4": 2,
+          "post-l5": 3
+        }
+      }
+    },
+    "cmjsh7kiu01q6s60ez51ws8r3": {
+      "version": "article-assessments-v1-77e2a4813eca",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 2,
+          "pre-v3": 1,
+          "pre-v4": 0,
+          "pre-v5": 0,
+          "pre-r1": 1,
+          "pre-r2": 0,
+          "pre-r3": 3,
+          "pre-r4": 0,
+          "pre-r5": 0,
+          "pre-l1": 2,
+          "pre-l2": 0,
+          "pre-l3": 0,
+          "pre-l4": 0,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 3,
+          "post-v3": 0,
+          "post-v4": 3,
+          "post-v5": 3,
+          "post-r1": 1,
+          "post-r2": 3,
+          "post-r3": 3,
+          "post-r4": 2,
+          "post-r5": 2,
+          "post-l1": 1,
+          "post-l2": 2,
+          "post-l3": 2,
+          "post-l4": 0,
+          "post-l5": 2
+        }
+      }
+    },
+    "cmgf0s7ol00dos60efhlwbcgu": {
+      "version": "article-assessments-v1-da55e737f75e",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 0,
+          "pre-v3": 1,
+          "pre-v4": 2,
+          "pre-v5": 0,
+          "pre-r1": 1,
+          "pre-r2": 1,
+          "pre-r3": 3,
+          "pre-r4": 3,
+          "pre-r5": 2,
+          "pre-l1": 1,
+          "pre-l2": 3,
+          "pre-l3": 3,
+          "pre-l4": 2,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 3,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 0,
+          "post-r2": 3,
+          "post-r3": 2,
+          "post-r4": 3,
+          "post-r5": 1,
+          "post-l1": 2,
+          "post-l2": 3,
+          "post-l3": 2,
+          "post-l4": 3,
+          "post-l5": 0
+        }
+      }
+    },
+    "cmjih4iqc006ps60eur0zlqvb": {
+      "version": "article-assessments-v1-a260db161808",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 3,
+          "pre-v3": 3,
+          "pre-v4": 0,
+          "pre-v5": 2,
+          "pre-r1": 3,
+          "pre-r2": 2,
+          "pre-r3": 1,
+          "pre-r4": 1,
+          "pre-r5": 0,
+          "pre-l1": 3,
+          "pre-l2": 1,
+          "pre-l3": 1,
+          "pre-l4": 2,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 2,
+          "post-v3": 3,
+          "post-v4": 2,
+          "post-v5": 1,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 2,
+          "post-r4": 1,
+          "post-r5": 3,
+          "post-l1": 3,
+          "post-l2": 2,
+          "post-l3": 0,
+          "post-l4": 3,
+          "post-l5": 2
+        }
+      }
+    },
+    "cmkbrnka801c9s60e6y5n61q0": {
+      "version": "article-assessments-v1-4946f203efab",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 1,
+          "pre-v3": 3,
+          "pre-v4": 2,
+          "pre-v5": 1,
+          "pre-r1": 2,
+          "pre-r2": 3,
+          "pre-r3": 0,
+          "pre-r4": 3,
+          "pre-r5": 1,
+          "pre-l1": 0,
+          "pre-l2": 1,
+          "pre-l3": 1,
+          "pre-l4": 2,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 1,
+          "post-v5": 1,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 3,
+          "post-r4": 3,
+          "post-r5": 2,
+          "post-l1": 2,
+          "post-l2": 3,
+          "post-l3": 1,
+          "post-l4": 0,
+          "post-l5": 0
+        }
+      }
+    },
+    "WBTAniq6iDywaXQLBZYF": {
+      "version": "article-assessments-v1-6030d3589cfd",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 0,
+          "pre-v3": 2,
+          "pre-v4": 2,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 0,
+          "pre-r3": 3,
+          "pre-r4": 1,
+          "pre-r5": 2,
+          "pre-l1": 0,
+          "pre-l2": 3,
+          "pre-l3": 2,
+          "pre-l4": 0,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 1,
+          "post-v3": 3,
+          "post-v4": 1,
+          "post-v5": 3,
+          "post-r1": 2,
+          "post-r2": 3,
+          "post-r3": 2,
+          "post-r4": 1,
+          "post-r5": 1,
+          "post-l1": 2,
+          "post-l2": 3,
+          "post-l3": 0,
+          "post-l4": 1,
+          "post-l5": 0
+        }
+      }
+    },
+    "cml6hmdgq00n5s60etpeou7u0": {
+      "version": "article-assessments-v1-10fbe88aa02f",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 0,
+          "pre-v3": 0,
+          "pre-v4": 1,
+          "pre-v5": 3,
+          "pre-r1": 3,
+          "pre-r2": 1,
+          "pre-r3": 0,
+          "pre-r4": 3,
+          "pre-r5": 2,
+          "pre-l1": 2,
+          "pre-l2": 3,
+          "pre-l3": 3,
+          "pre-l4": 0,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 0,
+          "post-v3": 0,
+          "post-v4": 2,
+          "post-v5": 1,
+          "post-r1": 3,
+          "post-r2": 0,
+          "post-r3": 0,
+          "post-r4": 1,
+          "post-r5": 3,
+          "post-l1": 0,
+          "post-l2": 1,
+          "post-l3": 1,
+          "post-l4": 3,
+          "post-l5": 3
+        }
+      }
+    },
+    "cmj2ralem013us60eboxwb8pr": {
+      "version": "article-assessments-v1-c710ab60f611",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 1,
+          "pre-v3": 2,
+          "pre-v4": 1,
+          "pre-v5": 1,
+          "pre-r1": 0,
+          "pre-r2": 3,
+          "pre-r3": 3,
+          "pre-r4": 0,
+          "pre-r5": 1,
+          "pre-l1": 1,
+          "pre-l2": 0,
+          "pre-l3": 1,
+          "pre-l4": 0,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 1,
+          "post-v3": 0,
+          "post-v4": 2,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 1,
+          "post-r3": 0,
+          "post-r4": 0,
+          "post-r5": 2,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 0,
+          "post-l4": 0,
+          "post-l5": 1
+        }
+      }
+    },
+    "cmgpqkvxo01qds60eazl5v6a1": {
+      "version": "article-assessments-v1-19fb2878f884",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 2,
+          "pre-v3": 1,
+          "pre-v4": 2,
+          "pre-v5": 3,
+          "pre-r1": 3,
+          "pre-r2": 3,
+          "pre-r3": 0,
+          "pre-r4": 0,
+          "pre-r5": 1,
+          "pre-l1": 2,
+          "pre-l2": 1,
+          "pre-l3": 2,
+          "pre-l4": 2,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 3,
+          "post-v3": 1,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 0,
+          "post-r3": 3,
+          "post-r4": 1,
+          "post-r5": 3,
+          "post-l1": 0,
+          "post-l2": 3,
+          "post-l3": 2,
+          "post-l4": 1,
+          "post-l5": 0
+        }
+      }
+    },
+    "iO4trC2AgGcR843wEx94": {
+      "version": "article-assessments-v1-e572b696bf1d",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 2,
+          "pre-v3": 2,
+          "pre-v4": 0,
+          "pre-v5": 3,
+          "pre-r1": 3,
+          "pre-r2": 3,
+          "pre-r3": 2,
+          "pre-r4": 0,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 0,
+          "pre-l3": 1,
+          "pre-l4": 3,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 3,
+          "post-v3": 1,
+          "post-v4": 1,
+          "post-v5": 1,
+          "post-r1": 0,
+          "post-r2": 1,
+          "post-r3": 1,
+          "post-r4": 1,
+          "post-r5": 1,
+          "post-l1": 1,
+          "post-l2": 3,
+          "post-l3": 0,
+          "post-l4": 1,
+          "post-l5": 0
+        }
+      }
+    },
+    "hoJzpKVdEvJRSGN5kZz4": {
+      "version": "article-assessments-v1-4a7fa4d94b09",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 3,
+          "pre-v3": 3,
+          "pre-v4": 3,
+          "pre-v5": 3,
+          "pre-r1": 3,
+          "pre-r2": 2,
+          "pre-r3": 2,
+          "pre-r4": 3,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 0,
+          "pre-l3": 3,
+          "pre-l4": 3,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 2,
+          "post-v3": 3,
+          "post-v4": 2,
+          "post-v5": 0,
+          "post-r1": 3,
+          "post-r2": 3,
+          "post-r3": 1,
+          "post-r4": 3,
+          "post-r5": 2,
+          "post-l1": 0,
+          "post-l2": 2,
+          "post-l3": 3,
+          "post-l4": 3,
+          "post-l5": 0
+        }
+      }
+    },
+    "V4lVrdNQsadqMMG4rLEx": {
+      "version": "article-assessments-v1-9024e078c8fa",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 1,
+          "pre-v3": 3,
+          "pre-v4": 2,
+          "pre-v5": 2,
+          "pre-r1": 0,
+          "pre-r2": 3,
+          "pre-r3": 2,
+          "pre-r4": 2,
+          "pre-r5": 2,
+          "pre-l1": 0,
+          "pre-l2": 2,
+          "pre-l3": 1,
+          "pre-l4": 2,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 1,
+          "post-v3": 0,
+          "post-v4": 2,
+          "post-v5": 0,
+          "post-r1": 2,
+          "post-r2": 2,
+          "post-r3": 2,
+          "post-r4": 1,
+          "post-r5": 0,
+          "post-l1": 2,
+          "post-l2": 1,
+          "post-l3": 3,
+          "post-l4": 1,
+          "post-l5": 0
+        }
+      }
+    },
+    "bMkxX79S3wDnV5TunNzH": {
+      "version": "article-assessments-v1-e2edc8cf0e04",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 3,
+          "pre-v3": 3,
+          "pre-v4": 2,
+          "pre-v5": 1,
+          "pre-r1": 1,
+          "pre-r2": 2,
+          "pre-r3": 2,
+          "pre-r4": 3,
+          "pre-r5": 1,
+          "pre-l1": 3,
+          "pre-l2": 0,
+          "pre-l3": 2,
+          "pre-l4": 1,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 1,
+          "post-v3": 1,
+          "post-v4": 1,
+          "post-v5": 1,
+          "post-r1": 1,
+          "post-r2": 0,
+          "post-r3": 0,
+          "post-r4": 3,
+          "post-r5": 1,
+          "post-l1": 1,
+          "post-l2": 3,
+          "post-l3": 2,
+          "post-l4": 0,
+          "post-l5": 1
+        }
+      }
+    },
+    "UASIW8snbbE4IyQTiyHY": {
+      "version": "article-assessments-v1-50f691cd0412",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 3,
+          "pre-v3": 2,
+          "pre-v4": 0,
+          "pre-v5": 0,
+          "pre-r1": 0,
+          "pre-r2": 1,
+          "pre-r3": 0,
+          "pre-r4": 0,
+          "pre-r5": 0,
+          "pre-l1": 1,
+          "pre-l2": 0,
+          "pre-l3": 2,
+          "pre-l4": 2,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 2,
+          "post-v3": 0,
+          "post-v4": 3,
+          "post-v5": 0,
+          "post-r1": 3,
+          "post-r2": 1,
+          "post-r3": 2,
+          "post-r4": 2,
+          "post-r5": 2,
+          "post-l1": 3,
+          "post-l2": 0,
+          "post-l3": 2,
+          "post-l4": 3,
+          "post-l5": 1
+        }
+      }
+    },
+    "iqPyiVb28JvJWchR2x5n": {
+      "version": "article-assessments-v1-61efd5f71018",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 0,
+          "pre-v3": 2,
+          "pre-v4": 0,
+          "pre-v5": 3,
+          "pre-r1": 3,
+          "pre-r2": 0,
+          "pre-r3": 0,
+          "pre-r4": 3,
+          "pre-r5": 0,
+          "pre-l1": 2,
+          "pre-l2": 2,
+          "pre-l3": 2,
+          "pre-l4": 3,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 2,
+          "post-v3": 1,
+          "post-v4": 0,
+          "post-v5": 3,
+          "post-r1": 2,
+          "post-r2": 3,
+          "post-r3": 1,
+          "post-r4": 1,
+          "post-r5": 3,
+          "post-l1": 0,
+          "post-l2": 3,
+          "post-l3": 0,
+          "post-l4": 1,
+          "post-l5": 1
+        }
+      }
+    },
+    "kthnsZE0his52tjpyDwI": {
+      "version": "article-assessments-v1-c7eb962bddb3",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 0,
+          "pre-v4": 2,
+          "pre-v5": 2,
+          "pre-r1": 2,
+          "pre-r2": 2,
+          "pre-r3": 1,
+          "pre-r4": 0,
+          "pre-r5": 3,
+          "pre-l1": 2,
+          "pre-l2": 2,
+          "pre-l3": 1,
+          "pre-l4": 3,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 2,
+          "post-v3": 1,
+          "post-v4": 3,
+          "post-v5": 0,
+          "post-r1": 0,
+          "post-r2": 0,
+          "post-r3": 3,
+          "post-r4": 0,
+          "post-r5": 3,
+          "post-l1": 3,
+          "post-l2": 3,
+          "post-l3": 0,
+          "post-l4": 3,
+          "post-l5": 2
+        }
+      }
+    },
+    "BINSURK3l0UIjjXQ3Lho": {
+      "version": "article-assessments-v1-1a5252dcd46a",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 0,
+          "pre-v3": 0,
+          "pre-v4": 1,
+          "pre-v5": 1,
+          "pre-r1": 0,
+          "pre-r2": 3,
+          "pre-r3": 1,
+          "pre-r4": 1,
+          "pre-r5": 3,
+          "pre-l1": 2,
+          "pre-l2": 1,
+          "pre-l3": 3,
+          "pre-l4": 1,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 3,
+          "post-v3": 1,
+          "post-v4": 3,
+          "post-v5": 2,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 3,
+          "post-r4": 3,
+          "post-r5": 3,
+          "post-l1": 1,
+          "post-l2": 3,
+          "post-l3": 1,
+          "post-l4": 3,
+          "post-l5": 2
+        }
+      }
+    },
+    "Kngf1cWGxRby0omZRG6B": {
+      "version": "article-assessments-v1-c6da8d7ec6c6",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 1,
+          "pre-v3": 1,
+          "pre-v4": 1,
+          "pre-v5": 2,
+          "pre-r1": 0,
+          "pre-r2": 1,
+          "pre-r3": 2,
+          "pre-r4": 1,
+          "pre-r5": 1,
+          "pre-l1": 0,
+          "pre-l2": 3,
+          "pre-l3": 2,
+          "pre-l4": 2,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 1,
+          "post-v3": 0,
+          "post-v4": 3,
+          "post-v5": 1,
+          "post-r1": 0,
+          "post-r2": 3,
+          "post-r3": 0,
+          "post-r4": 3,
+          "post-r5": 0,
+          "post-l1": 2,
+          "post-l2": 0,
+          "post-l3": 0,
+          "post-l4": 0,
+          "post-l5": 1
+        }
+      }
+    },
+    "9f3IhYOE7SfJjirJLHte": {
+      "version": "article-assessments-v1-3470ad31d902",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 3,
+          "pre-v3": 0,
+          "pre-v4": 0,
+          "pre-v5": 2,
+          "pre-r1": 0,
+          "pre-r2": 1,
+          "pre-r3": 0,
+          "pre-r4": 3,
+          "pre-r5": 0,
+          "pre-l1": 3,
+          "pre-l2": 2,
+          "pre-l3": 3,
+          "pre-l4": 0,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 0,
+          "post-v3": 0,
+          "post-v4": 1,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 2,
+          "post-r3": 3,
+          "post-r4": 1,
+          "post-r5": 0,
+          "post-l1": 2,
+          "post-l2": 2,
+          "post-l3": 0,
+          "post-l4": 2,
+          "post-l5": 1
+        }
+      }
+    },
+    "CZkjBDAcet1AimWjwAjF": {
+      "version": "article-assessments-v1-154b1019cf99",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 3,
+          "pre-v3": 0,
+          "pre-v4": 3,
+          "pre-v5": 3,
+          "pre-r1": 3,
+          "pre-r2": 1,
+          "pre-r3": 2,
+          "pre-r4": 2,
+          "pre-r5": 1,
+          "pre-l1": 3,
+          "pre-l2": 0,
+          "pre-l3": 3,
+          "pre-l4": 0,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 0,
+          "post-v3": 3,
+          "post-v4": 3,
+          "post-v5": 1,
+          "post-r1": 1,
+          "post-r2": 0,
+          "post-r3": 3,
+          "post-r4": 2,
+          "post-r5": 3,
+          "post-l1": 1,
+          "post-l2": 3,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 0
+        }
+      }
+    },
+    "vBZRHhd6lNwTye5af2we": {
+      "version": "article-assessments-v1-830fe64fb22f",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 2,
+          "pre-v3": 3,
+          "pre-v4": 2,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 2,
+          "pre-r3": 0,
+          "pre-r4": 2,
+          "pre-r5": 3,
+          "pre-l1": 2,
+          "pre-l2": 0,
+          "pre-l3": 3,
+          "pre-l4": 3,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 0,
+          "post-v3": 1,
+          "post-v4": 2,
+          "post-v5": 3,
+          "post-r1": 3,
+          "post-r2": 3,
+          "post-r3": 1,
+          "post-r4": 0,
+          "post-r5": 1,
+          "post-l1": 3,
+          "post-l2": 3,
+          "post-l3": 0,
+          "post-l4": 3,
+          "post-l5": 1
+        }
+      }
+    },
+    "9fOD2YynQ86J6U9mcnx8": {
+      "version": "article-assessments-v1-037c187c7695",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 1,
+          "pre-v3": 2,
+          "pre-v4": 3,
+          "pre-v5": 0,
+          "pre-r1": 1,
+          "pre-r2": 3,
+          "pre-r3": 1,
+          "pre-r4": 2,
+          "pre-r5": 2,
+          "pre-l1": 1,
+          "pre-l2": 2,
+          "pre-l3": 2,
+          "pre-l4": 0,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 0,
+          "post-v3": 1,
+          "post-v4": 1,
+          "post-v5": 0,
+          "post-r1": 3,
+          "post-r2": 1,
+          "post-r3": 1,
+          "post-r4": 1,
+          "post-r5": 0,
+          "post-l1": 0,
+          "post-l2": 3,
+          "post-l3": 1,
+          "post-l4": 2,
+          "post-l5": 1
+        }
+      }
+    },
+    "FWSuj1yh5kzajOz2ra4W": {
+      "version": "article-assessments-v1-0d244bcf208a",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 0,
+          "pre-v3": 2,
+          "pre-v4": 3,
+          "pre-v5": 0,
+          "pre-r1": 0,
+          "pre-r2": 0,
+          "pre-r3": 1,
+          "pre-r4": 2,
+          "pre-r5": 1,
+          "pre-l1": 2,
+          "pre-l2": 1,
+          "pre-l3": 3,
+          "pre-l4": 0,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 3,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 2,
+          "post-r3": 2,
+          "post-r4": 0,
+          "post-r5": 3,
+          "post-l1": 1,
+          "post-l2": 3,
+          "post-l3": 0,
+          "post-l4": 0,
+          "post-l5": 0
+        }
+      }
+    },
+    "mk1cGngBZEvlEMejyY1J": {
+      "version": "article-assessments-v1-f11b76827274",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 0,
+          "pre-v3": 1,
+          "pre-v4": 1,
+          "pre-v5": 3,
+          "pre-r1": 1,
+          "pre-r2": 1,
+          "pre-r3": 3,
+          "pre-r4": 0,
+          "pre-r5": 1,
+          "pre-l1": 0,
+          "pre-l2": 2,
+          "pre-l3": 1,
+          "pre-l4": 1,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 2,
+          "post-v3": 0,
+          "post-v4": 3,
+          "post-v5": 1,
+          "post-r1": 3,
+          "post-r2": 0,
+          "post-r3": 0,
+          "post-r4": 2,
+          "post-r5": 1,
+          "post-l1": 0,
+          "post-l2": 1,
+          "post-l3": 2,
+          "post-l4": 2,
+          "post-l5": 0
+        }
+      }
+    },
+    "Usdm93Q1U6dhVEGsg54x": {
+      "version": "article-assessments-v1-64caa717608d",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 0,
+          "pre-v3": 2,
+          "pre-v4": 3,
+          "pre-v5": 0,
+          "pre-r1": 1,
+          "pre-r2": 1,
+          "pre-r3": 2,
+          "pre-r4": 0,
+          "pre-r5": 1,
+          "pre-l1": 0,
+          "pre-l2": 2,
+          "pre-l3": 1,
+          "pre-l4": 0,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 3,
+          "post-v3": 3,
+          "post-v4": 2,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 0,
+          "post-r3": 2,
+          "post-r4": 1,
+          "post-r5": 2,
+          "post-l1": 1,
+          "post-l2": 3,
+          "post-l3": 1,
+          "post-l4": 1,
+          "post-l5": 0
+        }
+      }
+    },
+    "WBHMs7EzNCPdrsrTkflF": {
+      "version": "article-assessments-v1-187f1a27f26a",
+      "answers": {
+        "PRE": {
+          "pre-v1": 3,
+          "pre-v2": 2,
+          "pre-v3": 1,
+          "pre-v4": 3,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 3,
+          "pre-r3": 3,
+          "pre-r4": 3,
+          "pre-r5": 1,
+          "pre-l1": 0,
+          "pre-l2": 1,
+          "pre-l3": 0,
+          "pre-l4": 0,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 2,
+          "post-v3": 2,
+          "post-v4": 3,
+          "post-v5": 0,
+          "post-r1": 1,
+          "post-r2": 3,
+          "post-r3": 2,
+          "post-r4": 1,
+          "post-r5": 1,
+          "post-l1": 1,
+          "post-l2": 1,
+          "post-l3": 2,
+          "post-l4": 2,
+          "post-l5": 1
+        }
+      }
+    },
+    "j9q5K2q7a3FILal0CxRx": {
+      "version": "article-assessments-v1-cea1f519351a",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 0,
+          "pre-v3": 2,
+          "pre-v4": 2,
+          "pre-v5": 0,
+          "pre-r1": 3,
+          "pre-r2": 2,
+          "pre-r3": 1,
+          "pre-r4": 3,
+          "pre-r5": 3,
+          "pre-l1": 0,
+          "pre-l2": 2,
+          "pre-l3": 0,
+          "pre-l4": 2,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 3,
+          "post-v3": 2,
+          "post-v4": 0,
+          "post-v5": 2,
+          "post-r1": 3,
+          "post-r2": 2,
+          "post-r3": 3,
+          "post-r4": 3,
+          "post-r5": 1,
+          "post-l1": 0,
+          "post-l2": 0,
+          "post-l3": 0,
+          "post-l4": 2,
+          "post-l5": 0
+        }
+      }
+    },
+    "gVYeO54oRcBTNRdgCufB": {
+      "version": "article-assessments-v1-81283cd7c7bb",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 0,
+          "pre-v3": 1,
+          "pre-v4": 1,
+          "pre-v5": 0,
+          "pre-r1": 2,
+          "pre-r2": 3,
+          "pre-r3": 3,
+          "pre-r4": 1,
+          "pre-r5": 3,
+          "pre-l1": 1,
+          "pre-l2": 0,
+          "pre-l3": 2,
+          "pre-l4": 0,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 0,
+          "post-v3": 0,
+          "post-v4": 1,
+          "post-v5": 2,
+          "post-r1": 3,
+          "post-r2": 1,
+          "post-r3": 0,
+          "post-r4": 3,
+          "post-r5": 0,
+          "post-l1": 0,
+          "post-l2": 1,
+          "post-l3": 1,
+          "post-l4": 3,
+          "post-l5": 2
+        }
+      }
+    },
+    "2ERO17dpy8fxPjbF9y6M": {
+      "version": "article-assessments-v1-983d8b38cc41",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 1,
+          "pre-v3": 0,
+          "pre-v4": 0,
+          "pre-v5": 3,
+          "pre-r1": 2,
+          "pre-r2": 1,
+          "pre-r3": 0,
+          "pre-r4": 0,
+          "pre-r5": 0,
+          "pre-l1": 1,
+          "pre-l2": 2,
+          "pre-l3": 2,
+          "pre-l4": 2,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 3,
+          "post-v3": 0,
+          "post-v4": 0,
+          "post-v5": 0,
+          "post-r1": 3,
+          "post-r2": 0,
+          "post-r3": 2,
+          "post-r4": 3,
+          "post-r5": 0,
+          "post-l1": 2,
+          "post-l2": 3,
+          "post-l3": 3,
+          "post-l4": 0,
+          "post-l5": 3
+        }
+      }
+    },
+    "NSpNkX8OyjXmZl3Aiw5J": {
+      "version": "article-assessments-v1-8b48f9985ef8",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 2,
+          "pre-v3": 2,
+          "pre-v4": 1,
+          "pre-v5": 1,
+          "pre-r1": 1,
+          "pre-r2": 0,
+          "pre-r3": 0,
+          "pre-r4": 0,
+          "pre-r5": 2,
+          "pre-l1": 0,
+          "pre-l2": 2,
+          "pre-l3": 1,
+          "pre-l4": 0,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 1,
+          "post-v3": 3,
+          "post-v4": 0,
+          "post-v5": 3,
+          "post-r1": 0,
+          "post-r2": 3,
+          "post-r3": 3,
+          "post-r4": 0,
+          "post-r5": 3,
+          "post-l1": 2,
+          "post-l2": 1,
+          "post-l3": 2,
+          "post-l4": 1,
+          "post-l5": 0
+        }
+      }
+    },
+    "ArqKbTO9S0QCaJl0r51e": {
+      "version": "article-assessments-v1-a1836a73613c",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 0,
+          "pre-v3": 0,
+          "pre-v4": 2,
+          "pre-v5": 3,
+          "pre-r1": 3,
+          "pre-r2": 0,
+          "pre-r3": 0,
+          "pre-r4": 3,
+          "pre-r5": 0,
+          "pre-l1": 1,
+          "pre-l2": 2,
+          "pre-l3": 0,
+          "pre-l4": 2,
+          "pre-l5": 2
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 3,
+          "post-v3": 1,
+          "post-v4": 3,
+          "post-v5": 2,
+          "post-r1": 3,
+          "post-r2": 3,
+          "post-r3": 3,
+          "post-r4": 1,
+          "post-r5": 2,
+          "post-l1": 0,
+          "post-l2": 1,
+          "post-l3": 3,
+          "post-l4": 2,
+          "post-l5": 2
+        }
+      }
+    },
+    "Yi3OGXBEdqSIyENRySgs": {
+      "version": "article-assessments-v1-7ed522fa7a4c",
+      "answers": {
+        "PRE": {
+          "pre-v1": 2,
+          "pre-v2": 0,
+          "pre-v3": 3,
+          "pre-v4": 1,
+          "pre-v5": 2,
+          "pre-r1": 2,
+          "pre-r2": 0,
+          "pre-r3": 3,
+          "pre-r4": 1,
+          "pre-r5": 0,
+          "pre-l1": 3,
+          "pre-l2": 0,
+          "pre-l3": 3,
+          "pre-l4": 0,
+          "pre-l5": 3
+        },
+        "POST": {
+          "post-v1": 1,
+          "post-v2": 3,
+          "post-v3": 3,
+          "post-v4": 0,
+          "post-v5": 3,
+          "post-r1": 2,
+          "post-r2": 0,
+          "post-r3": 2,
+          "post-r4": 3,
+          "post-r5": 3,
+          "post-l1": 3,
+          "post-l2": 0,
+          "post-l3": 0,
+          "post-l4": 1,
+          "post-l5": 1
+        }
+      }
+    },
+    "otGARuUmJDBaoxFLJJEW": {
+      "version": "article-assessments-v1-3474c942854a",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 0,
+          "pre-v3": 0,
+          "pre-v4": 3,
+          "pre-v5": 2,
+          "pre-r1": 0,
+          "pre-r2": 2,
+          "pre-r3": 2,
+          "pre-r4": 1,
+          "pre-r5": 0,
+          "pre-l1": 3,
+          "pre-l2": 1,
+          "pre-l3": 0,
+          "pre-l4": 0,
+          "pre-l5": 1
+        },
+        "POST": {
+          "post-v1": 2,
+          "post-v2": 1,
+          "post-v3": 0,
+          "post-v4": 0,
+          "post-v5": 2,
+          "post-r1": 0,
+          "post-r2": 1,
+          "post-r3": 3,
+          "post-r4": 0,
+          "post-r5": 0,
+          "post-l1": 0,
+          "post-l2": 1,
+          "post-l3": 0,
+          "post-l4": 3,
+          "post-l5": 0
+        }
+      }
+    },
+    "O0NkneVeChqGGbq49fdr": {
+      "version": "article-assessments-v1-7f871e088a37",
+      "answers": {
+        "PRE": {
+          "pre-v1": 1,
+          "pre-v2": 0,
+          "pre-v3": 1,
+          "pre-v4": 0,
+          "pre-v5": 2,
+          "pre-r1": 0,
+          "pre-r2": 3,
+          "pre-r3": 1,
+          "pre-r4": 2,
+          "pre-r5": 1,
+          "pre-l1": 2,
+          "pre-l2": 0,
+          "pre-l3": 3,
+          "pre-l4": 0,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 0,
+          "post-v2": 1,
+          "post-v3": 3,
+          "post-v4": 2,
+          "post-v5": 1,
+          "post-r1": 2,
+          "post-r2": 2,
+          "post-r3": 2,
+          "post-r4": 0,
+          "post-r5": 1,
+          "post-l1": 2,
+          "post-l2": 2,
+          "post-l3": 1,
+          "post-l4": 1,
+          "post-l5": 1
+        }
+      }
+    },
+    "vhQPapCRtJ8zdXOODg7n": {
+      "version": "article-assessments-v1-24f8b071aa3c",
+      "answers": {
+        "PRE": {
+          "pre-v1": 0,
+          "pre-v2": 3,
+          "pre-v3": 2,
+          "pre-v4": 3,
+          "pre-v5": 0,
+          "pre-r1": 3,
+          "pre-r2": 0,
+          "pre-r3": 3,
+          "pre-r4": 2,
+          "pre-r5": 2,
+          "pre-l1": 3,
+          "pre-l2": 3,
+          "pre-l3": 1,
+          "pre-l4": 2,
+          "pre-l5": 0
+        },
+        "POST": {
+          "post-v1": 3,
+          "post-v2": 0,
+          "post-v3": 3,
+          "post-v4": 3,
+          "post-v5": 0,
+          "post-r1": 2,
+          "post-r2": 0,
+          "post-r3": 2,
+          "post-r4": 2,
+          "post-r5": 2,
+          "post-l1": 2,
+          "post-l2": 1,
+          "post-l3": 0,
+          "post-l4": 1,
+          "post-l5": 3
+        }
+      }
+    }
+  }
+}

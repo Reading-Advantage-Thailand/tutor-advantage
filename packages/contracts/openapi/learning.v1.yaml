@@ -7,6 +7,211 @@ servers:
   - url: http://localhost:3002
     description: Local development server
 paths:
+  /v1/book-cycles/{cycleId}/assessment:
+    get:
+      summary: Get own Origins 2 pilot results and phase availability
+      security:
+        - bearerAuth: []
+      parameters:
+        - &a1
+          name: cycleId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses: &a2
+        "200":
+          description: Assessment result (no answer key or listening transcript)
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error]
+                properties:
+                  error:
+                    type: object
+                    required: [code, message]
+                    properties:
+                      code: { type: string }
+                      message: { type: string }
+        "401":
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error]
+                properties:
+                  error:
+                    type: object
+                    required: [code, message]
+                    properties:
+                      code: { type: string }
+                      message: { type: string }
+        "403":
+          description: Enrollment/package access or class ownership required
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error]
+                properties:
+                  error:
+                    type: object
+                    required: [code, message]
+                    properties:
+                      code: { type: string }
+                      message: { type: string }
+        "404":
+          description: Cycle or supported assessment not found
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error]
+                properties:
+                  error:
+                    type: object
+                    required: [code, message]
+                    properties:
+                      code: { type: string }
+                      message: { type: string }
+        "409":
+          description: Assessment phase closed, not started, or form version changed
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error]
+                properties:
+                  error:
+                    type: object
+                    required: [code, message]
+                    properties:
+                      code: { type: string }
+                      message: { type: string }
+        "500":
+          description: Unexpected server error
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error]
+                properties:
+                  error:
+                    type: object
+                    required: [code, message]
+                    properties:
+                      code: { type: string }
+                      message: { type: string }
+  /v1/book-cycles/{cycleId}/assessment/start:
+    post:
+      summary: Retired self-service start; use teacher-controlled Lobby
+      deprecated: true
+      description: Authorized supported requests return 409 TEACHER_CONTROLLED. Start through assessment_control on the authenticated lesson socket.
+      security:
+        - bearerAuth: []
+      parameters:
+        - *a1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - stage
+              properties:
+                stage: &a3
+                  type: string
+                  enum:
+                    - PRE
+                    - POST
+      responses: *a2
+  /v1/book-cycles/{cycleId}/assessment/submit:
+    post:
+      summary: Retired self-service submission; teacher finishes the assessment
+      deprecated: true
+      description: Authorized supported requests return 409 TEACHER_CONTROLLED. Students save individual answers through assessment_answer; only teacher finish grades complete drafts.
+      security:
+        - bearerAuth: []
+      parameters:
+        - *a1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - stage
+                - answers
+              properties:
+                stage: *a3
+                answers:
+                  type: object
+                  minProperties: 15
+                  maxProperties: 15
+                  additionalProperties:
+                    type: integer
+                    minimum: 0
+                    maximum: 3
+      responses: *a2
+  /v1/book-cycles/{cycleId}/assessment/report:
+    get:
+      summary: Class owner report including students without results
+      security:
+        - bearerAuth: []
+      parameters:
+        - *a1
+      responses: *a2
+  /v1/book-cycles/{cycleId}/assessment/open-post:
+    post:
+      summary: Retired HTTP post opening; use teacher-controlled Lobby
+      deprecated: true
+      description: Authorized supported requests return 409 TEACHER_CONTROLLED. Selecting POST then starting through assessment_control permanently closes pre-assessment.
+      security:
+        - bearerAuth: []
+      parameters:
+        - *a1
+      responses: *a2
+  /v1/book-cycles/{cycleId}/assessment/attempts/{attemptId}/comment:
+    patch:
+      summary: Class owner saves student-visible feedback
+      security:
+        - bearerAuth: []
+      parameters:
+        - *a1
+        - name: attemptId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - comment
+              properties:
+                comment:
+                  type: string
+                  maxLength: 2000
+      responses: *a2
   /health:
     get:
       summary: Health Check

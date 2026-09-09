@@ -50,6 +50,7 @@ model User {
   activeLessonSessionLocks ActiveLessonSessionLock[]
   sessionParticipants SessionParticipant[]
   sessionAnswers      SessionAnswer[]
+  assessmentAttempts AssessmentAttempt[]
 
   @@map("users")
   @@schema("identity")
@@ -205,11 +206,48 @@ model ClassBookCycle {
   class   Class   @relation(fields: [classId], references: [classId], onDelete: Cascade)
   book    Book    @relation(fields: [bookId], references: [bookId])
   access  EnrollmentPackage[]
+  assessmentWindow AssessmentWindow?
+  assessmentAttempts AssessmentAttempt[]
 
   @@unique([classId, bookId])
   @@unique([classId, sequence])
   @@index([classId, status])
   @@map("class_book_cycles")
+  @@schema("learning")
+}
+
+model AssessmentWindow {
+  classBookCycleId String @id @map("class_book_cycle_id") @db.Uuid
+  postOpenedAt DateTime? @map("post_opened_at") @db.Timestamptz
+  openedBy String? @map("opened_by") @db.Uuid
+  cycle ClassBookCycle @relation(fields: [classBookCycleId], references: [classBookCycleId], onDelete: Cascade)
+
+  @@map("assessment_windows")
+  @@schema("learning")
+}
+
+model AssessmentAttempt {
+  attemptId String @id @default(dbgenerated("gen_random_uuid()")) @map("attempt_id") @db.Uuid
+  classBookCycleId String @map("class_book_cycle_id") @db.Uuid
+  studentUserId String @map("student_user_id") @db.Uuid
+  stage String
+  formVersion String @map("form_version")
+  startedAt DateTime @default(now()) @map("started_at") @db.Timestamptz
+  submittedAt DateTime? @map("submitted_at") @db.Timestamptz
+  answers Json?
+  scores Json?
+  total Int?
+  teacherComment String? @map("teacher_comment")
+  draftAnswers Json? @map("draft_answers")
+  assessmentSessionId String? @map("assessment_session_id") @db.Uuid
+  commentedAt DateTime? @map("commented_at") @db.Timestamptz
+  commentedBy String? @map("commented_by") @db.Uuid
+  cycle ClassBookCycle @relation(fields: [classBookCycleId], references: [classBookCycleId], onDelete: Cascade)
+  student User @relation(fields: [studentUserId], references: [userId])
+
+  @@unique([classBookCycleId, studentUserId, stage])
+  @@index([studentUserId, submittedAt])
+  @@map("assessment_attempts")
   @@schema("learning")
 }
 
@@ -308,6 +346,10 @@ model InteractiveSession {
   articleId   String   @map("article_id")
   currentPhase Int     @default(0) @map("current_phase")
   phaseVersion Int     @default(0) @map("phase_version")
+  assessmentMode String @default("LESSON") @map("assessment_mode")
+  assessmentStatus String @default("LOBBY") @map("assessment_status")
+  assessmentRevision Int @default(0) @map("assessment_revision")
+  assessmentStartedAt DateTime? @map("assessment_started_at") @db.Timestamptz
   activeSentenceIndex Int? @map("active_sentence_index")
   phaseSelectedIndices Json? @map("phase_selected_indices")
   currentDbSessionId String? @map("current_db_session_id") @db.Uuid

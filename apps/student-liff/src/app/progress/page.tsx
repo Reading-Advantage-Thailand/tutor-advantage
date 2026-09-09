@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import AssessmentPanel from "@/components/AssessmentPanel";
 
 interface ProgressStats {
   level: string;
@@ -654,6 +655,7 @@ export default function ProgressPage() {
       <div style={{ padding: "16px 16px", display: "flex", flexDirection: "column", gap: 16, opacity: switching ? 0.5 : 1, transition: "opacity 0.2s" }}>
 
         {/* Main progress card */}
+        {data.selectedBookCycleId && !switching && <AssessmentPanel key={data.selectedBookCycleId} cycleId={data.selectedBookCycleId} classId={data.selectedClassId || undefined} />}
         <div className="curved-bottom" style={{ background: `linear-gradient(135deg, ${hasData ? stats.seriesColor : "#06c755"} 0%, #037d36 100%)`, borderRadius: 24, overflow: "hidden", position: "relative" }}>
           <div aria-hidden style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.06)" }} />
           <div style={{ padding: "24px 20px" }}>

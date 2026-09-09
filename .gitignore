@@ -28,6 +28,9 @@ public/swe-worker-*.js.map
 apps/tutor-pwa/public/sw.js
 apps/tutor-pwa/public/swe-worker-*.js
 
+# Generated assessment manifests are published to Cloud Storage.
+packages/database/assessment-manifests/public/
+
 .gha-key.json
 *.key.json
 

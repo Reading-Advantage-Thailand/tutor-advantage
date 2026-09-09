@@ -12,6 +12,7 @@ import { StudentApiError, studentApi } from "@/lib/api";
 import { useLiff } from "@/components/providers/LiffProvider";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import AssessmentPanel from "@/components/AssessmentPanel";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -732,6 +733,7 @@ export default function ClassDetailPage({ params }: PageProps) {
       <div style={{ padding: "20px 16px", display: "flex", flexDirection: "column", gap: 20, paddingBottom: 120, marginTop: -8 }}>
 
         {/* Tutor card */}
+        {selectedCycleId && canReadSelectedCycle && <AssessmentPanel key={selectedCycleId} cycleId={selectedCycleId} classId={id} />}
         <div className="glass-card" style={{ padding: "18px" }}>
           <div style={{ display: "flex", gap: 14, alignItems: "center", marginBottom: 12 }}>
             {cls.tutor?.pictureUrl ? (
