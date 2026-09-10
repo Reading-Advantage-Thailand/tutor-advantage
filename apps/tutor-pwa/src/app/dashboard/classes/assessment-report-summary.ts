@@ -1,5 +1,6 @@
 export type AssessmentAttempt = {
   attemptId: string;
+  articleId?: string;
   stage: "PRE" | "POST";
   submittedAt: string | null;
   total: number | null;
@@ -14,7 +15,9 @@ export type AssessmentStudent = {
 };
 
 export type AssessmentReportData = {
-  postOpenedAt: string | null;
+  title?: string;
+  articles?: { articleId: string; title: string }[];
+  windows?: { articleId: string; postOpenedAt: string | null }[];
   students: AssessmentStudent[];
 };
 
@@ -24,8 +27,8 @@ export const ASSESSMENT_SKILLS = [
   { key: "listening", label: "การฟัง" },
 ] as const;
 
-export function completedAssessmentAttempt(student: AssessmentStudent, stage: AssessmentAttempt["stage"]) {
-  return student.attempts.find((attempt) => attempt.stage === stage && attempt.submittedAt);
+export function completedAssessmentAttempt(student: AssessmentStudent, stage: AssessmentAttempt["stage"], articleId?: string) {
+  return student.attempts.find((attempt) => attempt.stage === stage && attempt.submittedAt && (!articleId || !attempt.articleId || attempt.articleId === articleId));
 }
 
 function average(values: number[]) {

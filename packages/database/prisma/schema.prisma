@@ -206,7 +206,7 @@ model ClassBookCycle {
   class   Class   @relation(fields: [classId], references: [classId], onDelete: Cascade)
   book    Book    @relation(fields: [bookId], references: [bookId])
   access  EnrollmentPackage[]
-  assessmentWindow AssessmentWindow?
+  assessmentWindows AssessmentWindow[]
   assessmentAttempts AssessmentAttempt[]
 
   @@unique([classId, bookId])
@@ -217,11 +217,14 @@ model ClassBookCycle {
 }
 
 model AssessmentWindow {
-  classBookCycleId String @id @map("class_book_cycle_id") @db.Uuid
+  assessmentWindowId String @id @default(dbgenerated("gen_random_uuid()")) @map("assessment_window_id") @db.Uuid
+  classBookCycleId String @map("class_book_cycle_id") @db.Uuid
+  articleId String @map("article_id")
   postOpenedAt DateTime? @map("post_opened_at") @db.Timestamptz
   openedBy String? @map("opened_by") @db.Uuid
   cycle ClassBookCycle @relation(fields: [classBookCycleId], references: [classBookCycleId], onDelete: Cascade)
 
+  @@unique([classBookCycleId, articleId])
   @@map("assessment_windows")
   @@schema("learning")
 }
@@ -229,6 +232,7 @@ model AssessmentWindow {
 model AssessmentAttempt {
   attemptId String @id @default(dbgenerated("gen_random_uuid()")) @map("attempt_id") @db.Uuid
   classBookCycleId String @map("class_book_cycle_id") @db.Uuid
+  articleId String @map("article_id")
   studentUserId String @map("student_user_id") @db.Uuid
   stage String
   formVersion String @map("form_version")
@@ -245,7 +249,7 @@ model AssessmentAttempt {
   cycle ClassBookCycle @relation(fields: [classBookCycleId], references: [classBookCycleId], onDelete: Cascade)
   student User @relation(fields: [studentUserId], references: [userId])
 
-  @@unique([classBookCycleId, studentUserId, stage])
+  @@unique([classBookCycleId, articleId, studentUserId, stage])
   @@index([studentUserId, submittedAt])
   @@map("assessment_attempts")
   @@schema("learning")

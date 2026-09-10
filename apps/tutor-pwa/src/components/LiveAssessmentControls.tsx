@@ -57,12 +57,12 @@ export default function LiveAssessmentControls({ state, busy, error, onControl, 
       <p className="mt-1 max-w-sm text-sm leading-relaxed text-muted-foreground">รอให้นักเรียนเข้าห้องและกด Ready ครบ แล้วกดปุ่มเริ่มสอนด้านล่าง</p>
     </div>}
     {state.mode !== "LESSON" && <div className="mt-2 space-y-2">
-      <p className="text-xs leading-snug text-muted-foreground">Primary Origins 2 · 15 ข้อ · นักเรียนทำเอง ครูดูความคืบหน้า</p>
+      <p className="text-xs leading-snug text-muted-foreground">{state.articleTitle || "แบบประเมินประจำบท"} · 15 ข้อ · นักเรียนทำเอง ครูดูความคืบหน้า</p>
       {state.status === "LOBBY" && <div className="space-y-2">
         <p className="rounded-xl bg-muted/35 px-3 py-2 text-xs text-foreground">{state.mode === "POST" ? "เริ่มหลังเรียนแล้ว จะกลับไปทำก่อนเรียนไม่ได้" : "แนะนำให้ทำก่อนเริ่มสอนเนื้อหา"}</p>
         <p className="px-1 text-xs leading-relaxed text-muted-foreground">เลือกกิจกรรมไว้แล้ว เมื่อทุกคนพร้อมให้เริ่มพร้อมกันจากปุ่มด้านล่าง</p>
         {devMode && <div className="flex justify-end">{resetButton}</div>}
-        {devMode && confirmReset && <p className="rounded-xl border border-rose-500/25 bg-rose-500/10 px-3 py-2 text-xs leading-relaxed text-rose-800 dark:text-rose-200">[DEV] การรีเซ็ตจะลบผล PRE/POST และคำตอบร่างของทุกคนในเล่มนี้ กด “ยืนยันรีเซ็ต” อีกครั้งเพื่อดำเนินการ</p>}
+        {devMode && confirmReset && <p className="rounded-xl border border-rose-500/25 bg-rose-500/10 px-3 py-2 text-xs leading-relaxed text-rose-800 dark:text-rose-200">[DEV] การรีเซ็ตจะลบผล PRE/POST และคำตอบร่างของทุกคนในบทนี้ กด “ยืนยันรีเซ็ต” อีกครั้งเพื่อดำเนินการ</p>}
       </div>}
       {state.status !== "LOBBY" && <>
         <button
@@ -142,7 +142,7 @@ export default function LiveAssessmentControls({ state, busy, error, onControl, 
           if (done < state.progress.length && !confirmFinish) { setConfirmFinish(true); return; }
           if (await onControl({ action: "finish", revision: state.revision })) setConfirmFinish(false);
         }}>{busy ? "กำลังสรุปผล…" : confirmFinish ? "ยืนยันจบ แม้ยังมีคนไม่ครบ" : "จบแบบประเมินและสรุปผล"}</button>{devMode && resetButton}</div>{confirmFinish && <button className="w-full py-1 text-sm text-muted-foreground underline" onClick={() => setConfirmFinish(false)}>รอต่อ</button>}{devMode && confirmReset && <p className="rounded-xl border border-rose-500/25 bg-rose-500/10 px-3 py-2 text-xs leading-relaxed text-rose-800 dark:text-rose-200">[DEV] การรีเซ็ตจะหยุดแบบทดสอบนี้ และลบผล PRE/POST กับคำตอบร่างของทุกคน กด “ยืนยันรีเซ็ต” อีกครั้งเพื่อดำเนินการ</p>}</div>}
-        {state.status === "FINISHED" && <><p className="rounded-xl bg-emerald-500/10 px-3 py-2 text-sm leading-relaxed text-emerald-800 dark:text-emerald-200">สรุปผลแล้ว ดูรายงานในหน้าคลาส หรือเลือก “เรียนตาม Lesson” เพื่อเรียนต่อในห้องเดิม</p>{devMode && <div className="mt-2 flex justify-end">{resetButton}</div>}{devMode && confirmReset && <p className="mt-2 rounded-xl border border-rose-500/25 bg-rose-500/10 px-3 py-2 text-xs leading-relaxed text-rose-800 dark:text-rose-200">[DEV] การรีเซ็ตจะลบผล PRE/POST และคำตอบร่างของทุกคนในเล่มนี้ กด “ยืนยันรีเซ็ต” อีกครั้งเพื่อดำเนินการ</p>}</>}
+        {state.status === "FINISHED" && <><p className="rounded-xl bg-emerald-500/10 px-3 py-2 text-sm leading-relaxed text-emerald-800 dark:text-emerald-200">สรุปผลแล้ว ดูรายงานในหน้าคลาส หรือเลือก “เรียนตาม Lesson” เพื่อเรียนต่อในห้องเดิม</p>{devMode && <div className="mt-2 flex justify-end">{resetButton}</div>}{devMode && confirmReset && <p className="mt-2 rounded-xl border border-rose-500/25 bg-rose-500/10 px-3 py-2 text-xs leading-relaxed text-rose-800 dark:text-rose-200">[DEV] การรีเซ็ตจะลบผล PRE/POST และคำตอบร่างของทุกคนในบทนี้ กด “ยืนยันรีเซ็ต” อีกครั้งเพื่อดำเนินการ</p>}</>}
       </>}
     </div>}
     </div>

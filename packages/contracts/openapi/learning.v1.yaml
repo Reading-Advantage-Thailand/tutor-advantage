@@ -9,7 +9,7 @@ servers:
 paths:
   /v1/book-cycles/{cycleId}/assessment:
     get:
-      summary: Get own Origins 2 pilot results and phase availability
+      summary: Get own article assessment results and availability
       security:
         - bearerAuth: []
       parameters:

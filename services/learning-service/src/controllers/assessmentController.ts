@@ -2,7 +2,7 @@ import { Response } from "express";
 import { prisma } from "@tutor-advantage/database";
 import { logger } from "@tutor-advantage/shared-config";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
-import { supportsAssessment } from "../services/origins2Assessment";
+import { assessmentArticleIds } from "../services/articleAssessmentBank";
 
 class AssessmentError extends Error {
   constructor(public status: number, public code: string, message: string) { super(message); }
@@ -25,10 +25,18 @@ async function access(req: AuthenticatedRequest, teacher = false) {
   }
   return cycle;
 }
-function requireSupported(cycle: Awaited<ReturnType<typeof access>>) {
-  if (!supportsAssessment(cycle.book) || cycle.class.isDemo) fail(404, "UNSUPPORTED_BOOK", "การประเมินทดลองเปิดเฉพาะ Primary Origins 2");
+async function supportedArticles(cycle: Awaited<ReturnType<typeof access>>) {
+  if (cycle.class.isDemo) return [];
+  const ids = assessmentArticleIds();
+  const articles = await prisma.article.findMany({ where: { bookId: cycle.bookId }, select: { articleId: true, title: true }, orderBy: { createdAt: "asc" } });
+  return articles.filter((article) => ids.has(article.articleId));
 }
-const resultSelect = { attemptId: true, studentUserId: true, stage: true, formVersion: true, startedAt: true, submittedAt: true, scores: true, total: true, teacherComment: true, commentedAt: true } as const;
+async function requireSupported(cycle: Awaited<ReturnType<typeof access>>) {
+  const articles = await supportedArticles(cycle);
+  if (!articles.length) fail(404, "UNSUPPORTED_BOOK", "เล่มนี้ยังไม่มีแบบประเมิน");
+  return articles;
+}
+const resultSelect = { attemptId: true, articleId: true, studentUserId: true, stage: true, formVersion: true, startedAt: true, submittedAt: true, scores: true, total: true, teacherComment: true, commentedAt: true } as const;
 function endpoint(fn: (req: AuthenticatedRequest) => Promise<unknown>) {
   return async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     res.setHeader("Cache-Control", "no-store");
@@ -42,26 +50,27 @@ function endpoint(fn: (req: AuthenticatedRequest) => Promise<unknown>) {
 }
 export const getAssessment = endpoint(async req => {
   const cycle = await access(req);
-  if (!supportsAssessment(cycle.book) || cycle.class.isDemo) return { supported: false };
-  const [window, attempts] = await Promise.all([
-    prisma.assessmentWindow.findUnique({ where: { classBookCycleId: cycle.classBookCycleId } }),
+  const articles = await supportedArticles(cycle);
+  if (!articles.length) return { supported: false };
+  const [windows, attempts] = await Promise.all([
+    prisma.assessmentWindow.findMany({ where: { classBookCycleId: cycle.classBookCycleId }, select: { articleId: true, postOpenedAt: true } }),
     prisma.assessmentAttempt.findMany({ where: { classBookCycleId: cycle.classBookCycleId, studentUserId: req.user!.userId }, select: resultSelect }),
   ]);
-  return { supported: true, title: "Primary Origins 2", postOpenedAt: window?.postOpenedAt ?? null, attempts };
+  return { supported: true, title: cycle.book.title, articles, windows, attempts };
 });
 // The retired self-service endpoints cannot bypass the live room controller.
 export const startAssessment = endpoint(async req => {
-  requireSupported(await access(req));
+  await requireSupported(await access(req));
   return fail(409, "TEACHER_CONTROLLED", "เข้าห้อง Lobby และรอครูเริ่มแบบประเมิน");
 });
 export const submitAssessment = endpoint(async req => {
-  requireSupported(await access(req));
+  await requireSupported(await access(req));
   return fail(409, "TEACHER_CONTROLLED", "ส่งคำตอบจากห้องที่ครูเปิดเท่านั้น");
 });
 export const getAssessmentReport = endpoint(async req => {
-  const cycle = await access(req, true); requireSupported(cycle);
-  const [window, attempts, enrollments] = await Promise.all([
-    prisma.assessmentWindow.findUnique({ where: { classBookCycleId: cycle.classBookCycleId } }),
+  const cycle = await access(req, true); const articles = await requireSupported(cycle);
+  const [windows, attempts, enrollments] = await Promise.all([
+    prisma.assessmentWindow.findMany({ where: { classBookCycleId: cycle.classBookCycleId }, select: { articleId: true, postOpenedAt: true } }),
     prisma.assessmentAttempt.findMany({ where: { classBookCycleId: cycle.classBookCycleId }, select: resultSelect }),
     prisma.enrollment.findMany({ where: { classId: cycle.classId, status: "ACTIVE" }, include: { packageAccess: true } }),
   ]);
@@ -71,14 +80,14 @@ export const getAssessmentReport = endpoint(async req => {
   });
   const ids = [...new Set([...eligible.map(e => e.studentUserId), ...attempts.map(a => a.studentUserId)])];
   const students = await prisma.user.findMany({ where: { userId: { in: ids } }, select: { userId: true, displayName: true }, orderBy: { displayName: "asc" } });
-  return { postOpenedAt: window?.postOpenedAt ?? null, students: students.map(s => ({ ...s, attempts: attempts.filter(a => a.studentUserId === s.userId) })) };
+  return { title: cycle.book.title, articles, windows, students: students.map(s => ({ ...s, attempts: attempts.filter(a => a.studentUserId === s.userId) })) };
 });
 export const openPostAssessment = endpoint(async req => {
-  requireSupported(await access(req, true));
+  await requireSupported(await access(req, true));
   return fail(409, "TEACHER_CONTROLLED", "เลือกก่อน/หลังเรียนและกดเริ่มจาก Lobby");
 });
 export const commentAssessment = endpoint(async req => {
-  const cycle = await access(req, true); requireSupported(cycle);
+  const cycle = await access(req, true); await requireSupported(cycle);
   if (!uuid.test(req.params.attemptId) || typeof req.body?.comment !== "string" || req.body.comment.length > 2000) return fail(400, "INVALID_COMMENT", "ความเห็นต้องไม่เกิน 2,000 ตัวอักษร");
   const updated = await prisma.assessmentAttempt.updateMany({ where: { attemptId: req.params.attemptId, classBookCycleId: cycle.classBookCycleId, submittedAt: { not: null } }, data: { teacherComment: req.body.comment.trim(), commentedAt: new Date(), commentedBy: req.user!.userId } });
   if (!updated.count) return fail(404, "NOT_FOUND", "ไม่พบผลประเมิน");

@@ -90,7 +90,7 @@ export default function LiveAssessmentStudent({
               <BookOpen size={19} strokeWidth={2.5} />
             </span>
             <div>
-              <p className="assessment-kicker">Primary Origins 2</p>
+              <p className="assessment-kicker">{state.articleTitle || "แบบประเมินประจำบท"}</p>
               <p className="assessment-context">{lessonName || "ห้องเรียนออนไลน์"}{tutorName ? ` · ครู ${tutorName}` : ""}</p>
             </div>
           </div>

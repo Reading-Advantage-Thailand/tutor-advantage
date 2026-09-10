@@ -62,9 +62,9 @@ function MiniSkillChart({ summary }: { summary: ReturnType<typeof summarizeAsses
   );
 }
 
-function StudentResult({ student, cycleId }: { student: AssessmentStudent; cycleId: string }) {
-  const pre = completedAssessmentAttempt(student, "PRE");
-  const post = completedAssessmentAttempt(student, "POST");
+function StudentResult({ student, cycleId, articleId }: { student: AssessmentStudent; cycleId: string; articleId?: string }) {
+  const pre = completedAssessmentAttempt(student, "PRE", articleId);
+  const post = completedAssessmentAttempt(student, "POST", articleId);
   const target = post || pre;
   const [comment, setComment] = useState(target?.teacherComment || "");
   const [status, setStatus] = useState("");
@@ -143,6 +143,7 @@ export default function AssessmentReport({ cycleId }: { cycleId: string }) {
   const [error, setError] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedArticleId, setSelectedArticleId] = useState("");
 
   async function refresh(showProgress = true) {
     setError("");
@@ -164,7 +165,23 @@ export default function AssessmentReport({ cycleId }: { cycleId: string }) {
     return () => { active = false; };
   }, [cycleId]);
 
-  const summary = useMemo(() => report ? summarizeAssessment(report) : null, [report]);
+  useEffect(() => {
+    if (!report?.articles?.length) return;
+    if (!report.articles.some((article) => article.articleId === selectedArticleId)) {
+      const withResults = report.articles.find((article) => report.students.some((student) => student.attempts.some((attempt) => attempt.articleId === article.articleId && attempt.submittedAt)));
+      setSelectedArticleId(withResults?.articleId || report.articles[0].articleId);
+    }
+  }, [report, selectedArticleId]);
+
+  const selectedArticle = report?.articles?.find((article) => article.articleId === selectedArticleId);
+  const scopedReport = useMemo(() => report ? {
+    ...report,
+    students: report.students.map((student) => ({
+      ...student,
+      attempts: student.attempts.filter((attempt) => !selectedArticleId || !attempt.articleId || attempt.articleId === selectedArticleId),
+    })),
+  } : null, [report, selectedArticleId]);
+  const summary = useMemo(() => scopedReport ? summarizeAssessment(scopedReport) : null, [scopedReport]);
   const averageChange = summary && summary.preAverage !== null && summary.postAverage !== null
     ? summary.postAverage - summary.preAverage
     : null;
@@ -176,9 +193,20 @@ export default function AssessmentReport({ cycleId }: { cycleId: string }) {
           <div className="min-w-0">
             <div className="flex items-center gap-2 text-xs font-bold text-primary">
               <span className="flex size-8 items-center justify-center rounded-xl bg-primary/10"><TrendingUp className="size-4" /></span>
-              Primary Origins 2
+              {report?.title || "ผลการประเมิน"}
             </div>
             <h2 className="mt-2 text-lg font-black text-foreground">พัฒนาการก่อน–หลังเรียน</h2>
+            {(report?.articles?.length || 0) > 1 && (
+              <select
+                aria-label="เลือกบทเรียนสำหรับดูผลประเมิน"
+                value={selectedArticleId}
+                onChange={(event) => setSelectedArticleId(event.target.value)}
+                className="mt-2 h-9 max-w-full rounded-xl border border-input bg-background px-3 text-xs font-semibold text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
+              >
+                {report?.articles?.map((article) => <option key={article.articleId} value={article.articleId}>{article.title}</option>)}
+              </select>
+            )}
+            {selectedArticle && (report?.articles?.length || 0) === 1 && <p className="mt-1 text-xs text-muted-foreground">{selectedArticle.title}</p>}
             {error ? (
               <p role="alert" className="mt-2 text-sm text-destructive">{error}</p>
             ) : !summary ? (
@@ -232,7 +260,7 @@ export default function AssessmentReport({ cycleId }: { cycleId: string }) {
               <span className="flex size-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground"><BarChart3 className="size-5" /></span>
               <div>
                 <DialogTitle className="text-lg font-black">รายละเอียดพัฒนาการทั้งห้อง</DialogTitle>
-                <DialogDescription className="mt-1">คะแนนก่อน–หลังเรียนรายคน และคำแนะนำที่นักเรียนจะเห็น</DialogDescription>
+                <DialogDescription className="mt-1">{selectedArticle?.title || "คะแนนก่อน–หลังเรียนรายคน"} · คำแนะนำที่นักเรียนจะเห็น</DialogDescription>
               </div>
             </div>
           </DialogHeader>
@@ -260,9 +288,10 @@ export default function AssessmentReport({ cycleId }: { cycleId: string }) {
               <div className="grid gap-3 lg:grid-cols-2">
                 {report.students.map((student) => (
                   <StudentResult
-                    key={`${student.userId}-${completedAssessmentAttempt(student, "POST")?.attemptId || completedAssessmentAttempt(student, "PRE")?.attemptId || "empty"}`}
+                    key={`${student.userId}-${selectedArticleId}-${completedAssessmentAttempt(student, "POST", selectedArticleId)?.attemptId || completedAssessmentAttempt(student, "PRE", selectedArticleId)?.attemptId || "empty"}`}
                     student={student}
                     cycleId={cycleId}
+                    articleId={selectedArticleId || undefined}
                   />
                 ))}
               </div>

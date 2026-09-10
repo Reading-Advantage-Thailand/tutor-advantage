@@ -206,7 +206,7 @@ export default async function ClassDetailPage({
 
         <div className="space-y-4 lg:space-y-5">
           <ArticleSelector classId={classId} bookCycles={cls.bookCycles || []} />
-          {(cls.bookCycles || []).filter((cycle: { bookCode?: string }) => ["primary origins 2"].includes((cycle.bookCode || "").toLowerCase())).map((cycle: { id: string }) => <AssessmentReport key={cycle.id} cycleId={cycle.id} />)}
+          {(cls.bookCycles || []).map((cycle: { id: string }) => <AssessmentReport key={cycle.id} cycleId={cycle.id} />)}
           {process.env.NODE_ENV === "development" && (
             <DevClassSimulator classId={classId} />
           )}

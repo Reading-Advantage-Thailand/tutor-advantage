@@ -3,7 +3,11 @@ import { prisma, seedStudent, seedTutor, seedClass } from "./setup";
 import { assessmentSnapshot, controlAssessment, saveAssessmentAnswer } from "../../services/learning-service/src/services/LiveAssessmentService";
 import type { LessonSession } from "../../services/learning-service/src/services/LessonSessionService";
 import { randomUUID } from "node:crypto";
-import { FORMS } from "../../services/learning-service/src/services/origins2Assessment";
+import answerKeys from "../../services/learning-service/src/services/assessment-answer-keys.v1.json";
+
+const articleId = "The_New_Student";
+const articleAnswers = answerKeys.articles[articleId];
+const form = (stage: "PRE" | "POST") => Object.entries(articleAnswers.answers[stage]).map(([id, correct]) => ({ id, correct }));
 
 // CI supplies a migrated, dedicated Postgres database through the existing
 // integration configuration. Never point this suite at the application DB.
@@ -28,9 +32,9 @@ describe.skipIf(process.env.SKIP_INTEGRATION_TESTS === "1")("Assessment persiste
     cycleId = (await prisma.classBookCycle.create({ data: { classId, bookId, sequence: 1 } })).classBookCycleId;
     await prisma.enrollment.createMany({ data: [studentId, secondStudentId].map(studentUserId => ({ classId, studentUserId, status: "ACTIVE" })) });
     const sessionId = randomUUID();
-    await prisma.interactiveSession.create({ data: { sessionId, classId, bookId, classBookCycleId: cycleId, tutorUserId: tutorId, articleId: "assessment-pilot", status: "ACTIVE" } });
+    await prisma.interactiveSession.create({ data: { sessionId, classId, bookId, classBookCycleId: cycleId, tutorUserId: tutorId, articleId, status: "ACTIVE" } });
     await prisma.activeLessonSessionLock.create({ data: { classId, sessionId, tutorUserId: tutorId } });
-    session = { sessionId, classId, classBookCycleId: cycleId, tutorId, participants: new Map([studentId, secondStudentId].map(id => [id, { studentId: id, name: "Student", socketId: id, isReady: true }])) } as LessonSession;
+    session = { sessionId, articleId, classId, classBookCycleId: cycleId, tutorId, participants: new Map([studentId, secondStudentId].map(id => [id, { studentId: id, name: "Student", socketId: id, isReady: true }])) } as LessonSession;
   });
   afterAll(async () => {
     if (classId) {
@@ -48,22 +52,22 @@ describe.skipIf(process.env.SKIP_INTEGRATION_TESTS === "1")("Assessment persiste
     expect((await assessmentSnapshot(session, studentId)).items).toHaveLength(15);
   });
   it("simultaneous answer writes merge without losing saved choices", async () => {
-    await Promise.all(FORMS.PRE.slice(0, 2).map(q => saveAssessmentAnswer(session, studentId, { revision: 2, questionId: q.id, choice: q.correct })));
+    await Promise.all(form("PRE").slice(0, 2).map(q => saveAssessmentAnswer(session, studentId, { revision: 2, questionId: q.id, choice: q.correct })));
     const state = await assessmentSnapshot(session, studentId);
     expect(Object.keys(state.answers)).toHaveLength(2);
     expect(state.completed).toBe(false);
     expect((await assessmentSnapshot(session, secondStudentId)).answers).toEqual({});
   });
   it("teacher finish grades complete drafts and leaves incomplete ones unscored", async () => {
-    for (const q of FORMS.PRE.slice(2)) await saveAssessmentAnswer(session, studentId, { revision: 2, questionId: q.id, choice: q.correct });
-    await saveAssessmentAnswer(session, secondStudentId, { revision: 2, questionId: FORMS.PRE[0].id, choice: 0 });
+    for (const q of form("PRE").slice(2)) await saveAssessmentAnswer(session, studentId, { revision: 2, questionId: q.id, choice: q.correct });
+    await saveAssessmentAnswer(session, secondStudentId, { revision: 2, questionId: form("PRE")[0].id, choice: 0 });
     expect((await assessmentSnapshot(session, studentId)).completed).toBe(false);
     await controlAssessment(session, { action: "finish", revision: 2 });
     const full = await prisma.assessmentAttempt.findFirstOrThrow({ where: { classBookCycleId: cycleId, studentUserId: studentId, stage: "PRE" } });
     const partial = await prisma.assessmentAttempt.findFirstOrThrow({ where: { classBookCycleId: cycleId, studentUserId: secondStudentId, stage: "PRE" } });
     expect(full.total).toBe(15); expect(full.submittedAt).not.toBeNull();
     expect(partial.total).toBeNull(); expect(partial.submittedAt).toBeNull();
-    await expect(saveAssessmentAnswer(session, secondStudentId, { revision: 2, questionId: FORMS.PRE[1].id, choice: 0 })).rejects.toThrow();
+    await expect(saveAssessmentAnswer(session, secondStudentId, { revision: 2, questionId: form("PRE")[1].id, choice: 0 })).rejects.toThrow();
     expect((await assessmentSnapshot(session, studentId)).completed).toBe(true);
   });
   it("can return to Lesson in the same room and later start post without fabricating a baseline", async () => {
@@ -71,7 +75,7 @@ describe.skipIf(process.env.SKIP_INTEGRATION_TESTS === "1")("Assessment persiste
     expect((await assessmentSnapshot(session)).mode).toBe("LESSON");
     await controlAssessment(session, { action: "select", mode: "POST", revision: 4 });
     await controlAssessment(session, { action: "start", revision: 5 });
-    for (const q of FORMS.POST) await saveAssessmentAnswer(session, secondStudentId, { revision: 6, questionId: q.id, choice: q.correct });
+    for (const q of form("POST")) await saveAssessmentAnswer(session, secondStudentId, { revision: 6, questionId: q.id, choice: q.correct });
     await controlAssessment(session, { action: "finish", revision: 6 });
     const results = await prisma.assessmentAttempt.findMany({ where: { studentUserId: secondStudentId, classBookCycleId: cycleId, submittedAt: { not: null } } });
     expect(results).toHaveLength(1); expect(results[0].stage).toBe("POST"); expect(results[0].total).toBe(15);

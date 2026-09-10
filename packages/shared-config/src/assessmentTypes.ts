@@ -4,6 +4,8 @@ export type AssessmentQuestion = { id: string; skill: "vocabulary" | "reading" |
 export type LiveAssessmentState = {
   sessionId: string;
   supported: boolean;
+  articleId?: string;
+  articleTitle?: string;
   mode: AssessmentMode;
   status: "LOBBY" | "RUNNING" | "FINISHED";
   revision: number;
