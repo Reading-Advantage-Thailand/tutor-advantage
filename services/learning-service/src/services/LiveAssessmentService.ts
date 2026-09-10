@@ -116,6 +116,7 @@ export async function assessmentSnapshot(session: LessonSession, studentId?: str
   ]);
   if (!live) return blank;
   const paused = !lock || lock.sessionId !== session.sessionId || Date.now() - lock.lastHeartbeatAt.getTime() > 45_000 || live.currentPhase !== 0 || live.status !== "ACTIVE";
+  const activeForm = live.assessmentMode === "PRE" || live.assessmentMode === "POST" ? bank.forms[live.assessmentMode] : [];
   const attempts = live.assessmentMode === "LESSON" ? [] : await prisma.assessmentAttempt.findMany({ where: { classBookCycleId: cycle.classBookCycleId, articleId: session.articleId, stage: live.assessmentMode, ...(studentId ? { studentUserId: studentId } : {}) }, include: { student: { select: { displayName: true } } } });
   const own = studentId ? attempts.find(a => a.studentUserId === studentId) : undefined;
   const roster = new Map(Array.from(session.participants.values()).map(p => [p.resolvedUserId || p.studentId, { studentId: p.studentId, name: p.name, connected: true }]));
@@ -124,13 +125,13 @@ export async function assessmentSnapshot(session: LessonSession, studentId?: str
   }
   return {
     ...blank, supported: true, articleId: session.articleId, articleTitle: bank.title, mode: live.assessmentMode as LiveAssessmentState["mode"], status: live.assessmentStatus as LiveAssessmentState["status"], revision: live.assessmentRevision, postOpened: Boolean(window?.postOpenedAt), paused,
-    items: live.assessmentStatus === "RUNNING" && live.assessmentMode !== "LESSON" && !own?.submittedAt && !paused ? bank.forms[live.assessmentMode as AssessmentStage] : [],
+    items: live.assessmentStatus === "RUNNING" && !own?.submittedAt && !paused ? activeForm : [],
     answers: own?.assessmentSessionId === session.sessionId ? drafts(own.draftAnswers) : {},
     completed: Boolean(own?.submittedAt),
     progress: studentId ? [] : Array.from(roster.entries()).map(([userId, p]) => {
       const a = attempts.find(a => a.studentUserId === userId);
-      const count = a?.submittedAt ? bank.forms[live.assessmentMode as AssessmentStage].length : a?.assessmentSessionId === session.sessionId ? Object.keys(drafts(a.draftAnswers)).length : 0;
-      return { ...p, answered: count, completed: count === bank.forms[live.assessmentMode as AssessmentStage].length, previouslyCompleted: Boolean(a?.submittedAt && a.assessmentSessionId !== session.sessionId) };
+      const count = a?.submittedAt ? activeForm.length : a?.assessmentSessionId === session.sessionId ? Object.keys(drafts(a.draftAnswers)).length : 0;
+      return { ...p, answered: count, completed: activeForm.length > 0 && count === activeForm.length, previouslyCompleted: Boolean(a?.submittedAt && a.assessmentSessionId !== session.sessionId) };
     }),
   };
 }

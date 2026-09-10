@@ -16,12 +16,12 @@ SET "article_id" = COALESCE(
   'legacy-primary-origins2'
 );
 
-UPDATE "learning"."assessment_windows" AS window
+UPDATE "learning"."assessment_windows" AS assessment_window
 SET "article_id" = COALESCE(
   (
     SELECT attempt."article_id"
     FROM "learning"."assessment_attempts" AS attempt
-    WHERE attempt."class_book_cycle_id" = window."class_book_cycle_id"
+    WHERE attempt."class_book_cycle_id" = assessment_window."class_book_cycle_id"
     ORDER BY attempt."started_at" ASC
     LIMIT 1
   ),
