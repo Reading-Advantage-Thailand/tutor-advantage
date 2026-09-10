@@ -6,11 +6,13 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY packages/database/package.json ./packages/database/
 COPY packages/database/prisma ./packages/database/prisma
+COPY packages/shared-config/package.json ./packages/shared-config/
 COPY apps/tutor-pwa/package.json ./apps/tutor-pwa/
 
 RUN npm ci
 
 COPY packages/database/ ./packages/database/
+COPY packages/shared-config/ ./packages/shared-config/
 COPY apps/tutor-pwa/ ./apps/tutor-pwa/
 
 ENV NODE_ENV=production
@@ -19,6 +21,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Keep the tutor runtime image tied to the lesson-flow build.
 RUN npx prisma generate --schema=packages/database/prisma/schema.prisma
 RUN npm run build -w @tutor-advantage/database
+RUN npm run build -w @tutor-advantage/shared-config
 RUN npm run build -w tutor-pwa
 
 FROM node:20-slim AS runner

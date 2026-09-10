@@ -33,6 +33,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@tutor-advantage/shared-config": "1.0.0",
     "@eslint/eslintrc": "^3",
     "@line/liff-inspector": "^1.0.3",
     "@tailwindcss/postcss": "^4",

@@ -6,10 +6,12 @@ FROM node:20-slim AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+COPY packages/shared-config/package.json ./packages/shared-config/
 COPY apps/student-liff/package.json ./apps/student-liff/
 
 RUN npm ci
 
+COPY packages/shared-config/ ./packages/shared-config/
 COPY apps/student-liff/ ./apps/student-liff/
 
 ENV NODE_ENV=production
@@ -29,6 +31,7 @@ ENV IDENTITY_SERVICE_URL=$IDENTITY_SERVICE_URL
 ARG FINANCE_SERVICE_URL=https://finance-mlm-service-1090865515742.asia-southeast1.run.app
 ENV FINANCE_SERVICE_URL=$FINANCE_SERVICE_URL
 
+RUN npm run build -w @tutor-advantage/shared-config
 RUN npm run build -w student-liff
 
 FROM node:20-slim AS runner
