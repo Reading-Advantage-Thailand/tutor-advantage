@@ -22,7 +22,6 @@ import {
   DevClassSimulator,
 } from "./client-components";
 import { notFound } from "next/navigation";
-import AssessmentReport from "../AssessmentReport";
 
 async function getClassData(classId: string, token: string) {
   const res = await fetch(`${LEARNING_URL}/v1/classes/${classId}`, {
@@ -206,7 +205,6 @@ export default async function ClassDetailPage({
 
         <div className="space-y-4 lg:space-y-5">
           <ArticleSelector classId={classId} bookCycles={cls.bookCycles || []} />
-          {(cls.bookCycles || []).map((cycle: { id: string }) => <AssessmentReport key={cycle.id} cycleId={cycle.id} />)}
           {process.env.NODE_ENV === "development" && (
             <DevClassSimulator classId={classId} />
           )}

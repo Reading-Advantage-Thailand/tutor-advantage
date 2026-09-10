@@ -73,6 +73,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import AssessmentReport from "../AssessmentReport";
 
 export { ClassStatusToggle } from "./components/ClassStatusToggle";
 
@@ -292,7 +293,8 @@ export function ArticleSelector({
     );
 
   return (
-    <Card className="flex min-h-[420px] max-h-[82vh] flex-col overflow-hidden rounded-3xl border-border/60 bg-card shadow-sm">
+    <>
+      <Card className="flex min-h-[420px] max-h-[82vh] flex-col overflow-hidden rounded-3xl border-border/60 bg-card shadow-sm">
       {toast && (
         <div
           role="status"
@@ -522,7 +524,9 @@ export function ArticleSelector({
         </div>
         </div>
       </CardContent>
-    </Card>
+      </Card>
+      {selectedCycleId && <AssessmentReport key={selectedCycleId} cycleId={selectedCycleId} />}
+    </>
   );
 }
 
