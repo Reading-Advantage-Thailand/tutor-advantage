@@ -50,6 +50,7 @@ import {
   RESULT_REVIEW_PHASES,
   TOTAL_LESSON_PHASES,
 } from "@/lib/lessonPhases";
+import { getChoiceAnswerLabel } from "@/lib/lessonAnswers";
 
 const TOTAL_PHASES = TOTAL_LESSON_PHASES;
 const VOCAB_GAME_PHASE = LESSON_PHASE.VOCABULARY_GAME;
@@ -1371,14 +1372,18 @@ export const PhaseManager: React.FC<PhaseManagerProps> = ({
         C: "#f59e0b",
         D: "#10b981",
       };
+      const normalizedAnswers = allAnsweredData.map((answer) => ({
+        ...answer,
+        choiceLabel: getChoiceAnswerLabel(answer.answer),
+      }));
       const data = ["A", "B", "C", "D"].map((key) => ({
         name: key,
-        count: allAnsweredData.filter((a) => a.answer === key).length,
+        count: normalizedAnswers.filter((answer) => answer.choiceLabel === key).length,
         fill: correctAnswer === key ? "#10b981" : optionFills[key] || "#94a3b8",
       }));
 
-      const correctCount = allAnsweredData.filter(
-        (a) => a.answer === correctAnswer,
+      const correctCount = normalizedAnswers.filter(
+        (answer) => answer.choiceLabel === correctAnswer,
       ).length;
       const wrongCount = allAnsweredData.length - correctCount;
       const accuracy =
