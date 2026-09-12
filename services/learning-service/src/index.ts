@@ -73,6 +73,15 @@ import {
 import { getStudentLessonHistory, getLessonSessionDetails } from "./controllers/lessonHistoryController";
 import { handleLineWebhook } from "./controllers/lineWebhookController";
 import {
+  connectVoiceSession,
+  createVoiceSession,
+  endVoiceSession,
+  getClassVoiceSummary,
+  getEntitlement,
+  getVoiceSessions,
+} from "./controllers/aiVoiceController";
+import { recoverVoiceSessions } from "./services/AiVoiceService";
+import {
   devSeedLessonHistory,
   devPurgeLessonHistory,
   devActivateEnrollments,
@@ -187,6 +196,14 @@ app.post("/v1/student/share-link", authMiddleware, generateStudentShareLink);
 app.get("/v1/lessons/history", authMiddleware, getStudentLessonHistory);
 app.get("/v1/lessons/history/:sessionId", authMiddleware, getLessonSessionDetails);
 
+// Metered AI voice practice
+app.get("/v1/book-cycles/:cycleId/voice-entitlement", authMiddleware, getEntitlement);
+app.get("/v1/book-cycles/:cycleId/voice-sessions", authMiddleware, getVoiceSessions);
+app.post("/v1/book-cycles/:cycleId/voice-sessions", authMiddleware, createVoiceSession);
+app.post("/v1/voice-sessions/:sessionId/connected", authMiddleware, connectVoiceSession);
+app.post("/v1/voice-sessions/:sessionId/end", authMiddleware, endVoiceSession);
+app.get("/v1/classes/:classId/voice-practice-summary", authMiddleware, getClassVoiceSummary);
+
 // Protected Chat Routes
 app.get("/v1/chat/conversations", authMiddleware, getConversations);
 app.get(
@@ -262,6 +279,7 @@ const io = new Server(httpServer, {
 import { setupLessonSocket } from "./websockets/lessonHandler";
 import { stopLessonSocketBus } from "./websockets/LessonSocketBus";
 setupLessonSocket(io);
+void recoverVoiceSessions();
 
 httpServer.listen(port, () => {
   logger.info(`Learning Service running on port ${port}`);

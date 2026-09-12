@@ -6,6 +6,7 @@ import {
   ArrowLeft,
   Calendar,
   AlertTriangle,
+  Mic2,
 } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
@@ -32,6 +33,16 @@ async function getClassData(classId: string, token: string) {
   return res.json();
 }
 
+async function getVoiceSummary(classId: string, token: string) {
+  const res = await fetch(`${LEARNING_URL}/v1/classes/${classId}/voice-practice-summary`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
+  if (!res.ok) return [];
+  const data = await res.json() as { sessions?: any[] };
+  return data.sessions || [];
+}
+
 // In Next.js 15, `params` is a Promise
 export default async function ClassDetailPage({
   params,
@@ -42,7 +53,10 @@ export default async function ClassDetailPage({
   const cookieStore = await cookies();
   const token = cookieStore.get("tutor_session")?.value || "";
 
-  const response = await getClassData(classId, token);
+  const [response, voiceSessions] = await Promise.all([
+    getClassData(classId, token),
+    getVoiceSummary(classId, token),
+  ]);
   if (!response || !response.class) {
     return notFound();
   }
@@ -205,6 +219,44 @@ export default async function ClassDetailPage({
 
         <div className="space-y-4 lg:space-y-5">
           <ArticleSelector classId={classId} bookCycles={cls.bookCycles || []} />
+          <Card className="rounded-3xl border-border/60 bg-card shadow-sm">
+            <CardContent className="p-4 sm:p-5">
+              <div className="mb-4 flex items-center gap-3">
+                <span className="flex size-10 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600"><Mic2 className="size-5" /></span>
+                <div>
+                  <h2 className="font-black text-foreground">สรุปการฝึกสนทนากับ AI</h2>
+                  <p className="text-xs text-muted-foreground">แสดงเฉพาะผลประเมิน ไม่มีไฟล์เสียงหรือบทสนทนาดิบ</p>
+                </div>
+              </div>
+              {voiceSessions.length === 0 ? (
+                <p className="rounded-2xl bg-muted/40 p-5 text-center text-sm text-muted-foreground">ยังไม่มีผลการฝึกสนทนา</p>
+              ) : (
+                <div className="grid gap-3 md:grid-cols-2">
+                  {voiceSessions.slice(0, 20).map((session: any) => {
+                    const summary = session.summary || {};
+                    const scores = session.scores || {};
+                    const values = [scores.fluency, scores.grammar, scores.vocabulary, scores.pronunciation].filter((value: unknown) => typeof value === "number") as number[];
+                    const average = values.length ? (values.reduce((sum, value) => sum + value, 0) / values.length).toFixed(1) : "–";
+                    return (
+                      <article key={session.voiceSessionId} className="rounded-2xl border border-border/60 bg-muted/20 p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-bold text-foreground">{session.student?.displayName || "นักเรียน"}</p>
+                            <p className="mt-0.5 text-xs text-muted-foreground">{session.articleId} · {Math.ceil(session.consumedSeconds / 60)} นาที</p>
+                          </div>
+                          <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700">{average}/5</span>
+                        </div>
+                        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{summary.summaryTh || "ระบบยังสร้างสรุปไม่สำเร็จ"}</p>
+                        {Array.isArray(summary.improvements) && summary.improvements.length > 0 && (
+                          <p className="mt-2 text-xs text-amber-700"><strong>ควรฝึกต่อ:</strong> {summary.improvements.join(" · ")}</p>
+                        )}
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
           {process.env.NODE_ENV === "development" && (
             <DevClassSimulator classId={classId} />
           )}

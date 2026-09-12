@@ -13,6 +13,8 @@ env:
   PROJECT_ID: reading-advantage
   REGION: asia-southeast1
   REGISTRY: asia-southeast1-docker.pkg.dev/reading-advantage/tutor-advantage
+  AI_VOICE_ENABLED: ${{ vars.AI_VOICE_ENABLED || 'false' }}
+  AI_VOICE_MODEL: gpt-realtime-2.1-mini
   ALLOWED_ORIGINS: >-
     https://student-liff-1090865515742.asia-southeast1.run.app,
     https://student-liff-hxamzdhgwa-as.a.run.app,
@@ -258,7 +260,13 @@ jobs:
           if [[ "${{ matrix.service }}" == "learning-service" ]]; then
             DEPLOY_FLAGS+=(
               "--update-secrets=DATABASE_URL_PRIMARY_ADVANTAGE=ta-database_url_primary_advantage:latest"
+              "--update-env-vars=AI_VOICE_ENABLED=${AI_VOICE_ENABLED},AI_VOICE_MODEL=${AI_VOICE_MODEL}"
             )
+            if [[ -n "${{ secrets.OPENAI_API_KEY_SECRET_NAME }}" ]]; then
+              DEPLOY_FLAGS+=(
+                "--update-secrets=OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY_SECRET_NAME }}:latest"
+              )
+            fi
           fi
 
           if [[ "${{ matrix.service }}" == "finance-mlm-service" ]]; then

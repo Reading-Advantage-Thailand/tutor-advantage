@@ -51,6 +51,8 @@ model User {
   sessionParticipants SessionParticipant[]
   sessionAnswers      SessionAnswer[]
   assessmentAttempts AssessmentAttempt[]
+  aiVoiceSessions     AiVoiceSession[]
+  activeAiVoiceSession ActiveAiVoiceSession?
 
   @@map("users")
   @@schema("identity")
@@ -208,6 +210,7 @@ model ClassBookCycle {
   access  EnrollmentPackage[]
   assessmentWindows AssessmentWindow[]
   assessmentAttempts AssessmentAttempt[]
+  aiVoiceSessions AiVoiceSession[]
 
   @@unique([classId, bookId])
   @@unique([classId, sequence])
@@ -303,11 +306,60 @@ model EnrollmentPackage {
 
   enrollment     Enrollment     @relation(fields: [enrollmentId], references: [enrollmentId])
   classBookCycle ClassBookCycle @relation(fields: [classBookCycleId], references: [classBookCycleId])
+  aiVoiceSessions AiVoiceSession[]
 
   @@unique([enrollmentId, classBookCycleId])
   @@index([studentUserId, status])
   @@index([classBookCycleId, status])
   @@map("enrollment_packages")
+  @@schema("learning")
+}
+
+// Metered AI speaking practice attached to one purchased book cycle. Audio and
+// raw transcripts are deliberately not persisted; only derived feedback is kept.
+model AiVoiceSession {
+  voiceSessionId      String    @id @default(dbgenerated("gen_random_uuid()")) @map("voice_session_id") @db.Uuid
+  enrollmentPackageId String    @map("enrollment_package_id") @db.Uuid
+  classBookCycleId    String    @map("class_book_cycle_id") @db.Uuid
+  studentUserId       String    @map("student_user_id") @db.Uuid
+  articleId           String    @map("article_id")
+  providerCallId      String?   @map("provider_call_id")
+  status              String    @default("PENDING")
+  reservedSeconds     Int       @map("reserved_seconds")
+  consumedSeconds     Int       @default(0) @map("consumed_seconds")
+  startedAt           DateTime? @map("started_at") @db.Timestamptz
+  endedAt             DateTime? @map("ended_at") @db.Timestamptz
+  expiresAt           DateTime  @map("expires_at") @db.Timestamptz
+  endReason           String?   @map("end_reason")
+  summary             Json?
+  scores              Json?
+  providerUsage       Json?     @map("provider_usage")
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime  @default(now()) @map("updated_at") @db.Timestamptz
+
+  enrollmentPackage EnrollmentPackage @relation(fields: [enrollmentPackageId], references: [enrollmentPackageId], onDelete: Cascade)
+  classBookCycle     ClassBookCycle    @relation(fields: [classBookCycleId], references: [classBookCycleId], onDelete: Cascade)
+  student            User              @relation(fields: [studentUserId], references: [userId], onDelete: Cascade)
+  activeLock         ActiveAiVoiceSession?
+
+  @@index([enrollmentPackageId, createdAt])
+  @@index([classBookCycleId, studentUserId, createdAt])
+  @@index([status, expiresAt])
+  @@map("ai_voice_sessions")
+  @@schema("learning")
+}
+
+model ActiveAiVoiceSession {
+  studentUserId  String   @id @map("student_user_id") @db.Uuid
+  voiceSessionId String   @unique @map("voice_session_id") @db.Uuid
+  expiresAt      DateTime @map("expires_at") @db.Timestamptz
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  student User           @relation(fields: [studentUserId], references: [userId], onDelete: Cascade)
+  session AiVoiceSession @relation(fields: [voiceSessionId], references: [voiceSessionId], onDelete: Cascade)
+
+  @@index([expiresAt])
+  @@map("active_ai_voice_sessions")
   @@schema("learning")
 }
 // ----------------------------------------------------------------------

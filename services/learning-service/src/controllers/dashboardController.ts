@@ -4,8 +4,9 @@ import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { lessonSessionService } from "../services/LessonSessionService";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
-import { formatNextSession } from "./classController";
+import { compareArticlesByCatalogOrder, formatNextSession, isCatalogArticleVisible } from "./classController";
 import { v4 as uuidv4 } from "uuid";
+import { assessmentArticleIds } from "../services/articleAssessmentBank";
 
 const STUDENT_APP_PROD_URL = "https://student-liff-1090865515742.asia-southeast1.run.app";
 const STUDENT_APP_DEV_URL = "https://resource-pushpin-tabby.ngrok-free.dev";
@@ -25,6 +26,15 @@ type ArticleAccess = {
   bookId: string;
   classIds: Set<string>;
 };
+
+export function sessionBelongsToBookCycle(
+  session: { classBookCycleId?: string | null; bookId?: string | null },
+  cycle: { classBookCycleId?: string | null; bookId: string; sequence: number },
+) {
+  if (session.classBookCycleId) return session.classBookCycleId === cycle.classBookCycleId;
+  if (session.bookId) return session.bookId === cycle.bookId;
+  return cycle.sequence === 1;
+}
 
 /**
  * Resolve the book(s) a user is currently allowed to study before reading
@@ -487,28 +497,37 @@ export async function getStudentProgress(
     const canAccessCycle = (cycle: any) =>
       cycle.sequence === 1 && cycle.bookId === enrollment.class.bookId ||
       activeAccessCycleIds.has(cycle.classBookCycleId);
-    const selectedCycle = requestedCycleId
-      ? classCycles.find((cycle: any) => cycle.classBookCycleId === requestedCycleId && canAccessCycle(cycle))
-      : [...classCycles].reverse().find(canAccessCycle);
-    const activeCycle = selectedCycle || classCycles[0];
-    const book = activeCycle.book;
-
-    // 2. Only include sessions from the selected class. Progress must never bleed
-    // across another class that happens to use the same book.
     const classParticipations = await prisma.sessionParticipant.findMany({
       where: {
         studentUserId: userId,
         session: { status: "FINISHED", classId: enrollment.class.classId },
       },
-      include: { session: true }
+      include: { session: true },
+      orderBy: { joinedAt: "desc" },
     }) as any[];
-    const participations = classParticipations.filter((p) =>
-      p.session.bookId === book.bookId ||
-      (!p.session.bookId && activeCycle.sequence === 1),
+    const latestCompletedSession = classParticipations[0]?.session;
+    const mostRecentlyStudiedCycle = latestCompletedSession
+      ? classCycles.find((cycle: any) => canAccessCycle(cycle) && (
+          sessionBelongsToBookCycle(latestCompletedSession, cycle)
+        ))
+      : null;
+    const selectedCycle = requestedCycleId
+      ? classCycles.find((cycle: any) => cycle.classBookCycleId === requestedCycleId && canAccessCycle(cycle))
+      : mostRecentlyStudiedCycle || [...classCycles].reverse().find(canAccessCycle);
+    const activeCycle = selectedCycle || classCycles[0];
+    const book = activeCycle.book;
+
+    // 2. Only include sessions from the selected class. Progress must never bleed
+    // across another class that happens to use the same book.
+    const participationBelongsToCycle = (participation: any, cycle: any) => {
+      return sessionBelongsToBookCycle(participation.session, cycle);
+    };
+    const participations = classParticipations.filter((participation) =>
+      participationBelongsToCycle(participation, activeCycle),
     );
 
     const distinctArticlesRead = new Set(
-      participations.map(p => `${p.session.bookId || "legacy"}:${p.session.articleId}`),
+      participations.map(p => p.session.articleId),
     );
 
     // Calculate real session durations from timestamps (cap at 90 min each)
@@ -534,7 +553,7 @@ export async function getStudentProgress(
     }
 
     // 3. Get Book Articles — natural sort on trailing number in articleId
-    const [dbArticles, cycleArticles] = await Promise.all([
+    const [dbArticles, cycleArticles, assessmentAttempts] = await Promise.all([
       prisma.article.findMany({
         where: { bookId: book.bookId },
         orderBy: [
@@ -546,18 +565,34 @@ export async function getStudentProgress(
         where: { bookId: { in: classCycles.map((cycle: any) => cycle.bookId) } },
         select: { bookId: true, articleId: true },
       }),
+      activeCycle.classBookCycleId
+        ? prisma.assessmentAttempt.findMany({
+            where: {
+              classBookCycleId: activeCycle.classBookCycleId,
+              studentUserId: userId,
+              submittedAt: { not: null },
+            },
+            select: { articleId: true },
+          })
+        : Promise.resolve([]),
     ]);
 
-    const articles = dbArticles.map((art, idx) => {
-      const isRead =
-        distinctArticlesRead.has(`${book.bookId}:${art.articleId}`) ||
-        distinctArticlesRead.has(`legacy:${art.articleId}`);
+    const submittedAssessmentArticleIds = new Set(assessmentAttempts.map((attempt) => attempt.articleId));
+    const supportedAssessmentArticleIds = assessmentArticleIds();
+
+    const orderedArticles = dbArticles
+      .filter(isCatalogArticleVisible)
+      .sort(compareArticlesByCatalogOrder);
+    const articles = orderedArticles.map((art, idx) => {
+      const isRead = distinctArticlesRead.has(art.articleId);
       return {
         id: art.articleId,
         no: idx + 1,
         title: art.title || "Untitled",
         done: isRead,
         minutes: isRead ? (articleMinutes.get(art.articleId) ?? 25) : 0,
+        assessmentSupported: supportedAssessmentArticleIds.has(art.articleId),
+        assessmentDone: submittedAssessmentArticleIds.has(art.articleId),
       };
     });
 
@@ -613,9 +648,10 @@ export async function getStudentProgress(
     }
 
     const articlesRead = articles.filter(a => a.done).length;
-    const totalArticles = dbArticles.length || book.articleCount || 10;
+    const totalArticles = orderedArticles.length || book.articleCount || 10;
     const cycleArticleIds = new Map<string, Set<string>>();
     for (const article of cycleArticles) {
+      if (!isCatalogArticleVisible(article)) continue;
       const ids = cycleArticleIds.get(article.bookId) ?? new Set<string>();
       ids.add(article.articleId);
       cycleArticleIds.set(article.bookId, ids);
@@ -624,7 +660,7 @@ export async function getStudentProgress(
       const articleIds = cycleArticleIds.get(cycle.bookId) ?? new Set<string>();
       const completedArticles = [...articleIds].filter((articleId) =>
         classParticipations.some((p) =>
-          (p.session.bookId === cycle.bookId || (!p.session.bookId && cycle.sequence === 1)) &&
+          participationBelongsToCycle(p, cycle) &&
           p.session.articleId === articleId,
         ),
       ).length;
@@ -743,7 +779,10 @@ export async function getStudentArticle(
         session: {
           articleId,
           status: "FINISHED",
-          bookId: { in: Array.from(authorizedBookIds) },
+          OR: [
+            { bookId: { in: Array.from(authorizedBookIds) } },
+            { bookId: null },
+          ],
           ...(authorizedClassIds.size > 0
             ? { classId: { in: Array.from(authorizedClassIds) } }
             : {}),

@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
-import AssessmentPanel from "@/components/AssessmentPanel";
 
 interface ProgressStats {
   level: string;
@@ -49,6 +48,8 @@ interface ProgressArticle {
   title: string;
   minutes: number;
   done: boolean;
+  assessmentSupported: boolean;
+  assessmentDone: boolean;
 }
 
 interface EnrolledClassOption {
@@ -399,6 +400,25 @@ function LearningJourneyMap({
                           <><Lock size={11} />{mapCopy.locked}</>
                         )}
                       </div>
+                      {isUnlocked && article.assessmentSupported && (
+                        <div
+                          style={{
+                            marginTop: 7,
+                            padding: "5px 7px",
+                            borderRadius: 8,
+                            background: article.assessmentDone ? "var(--brand-50)" : "#fff7ed",
+                            color: article.assessmentDone ? "var(--brand-700)" : "#c2410c",
+                            fontSize: "0.625rem",
+                            fontWeight: 800,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 4,
+                          }}
+                        >
+                          {article.assessmentDone ? <CheckCircle2 size={11} /> : <AlertCircle size={11} />}
+                          {article.assessmentDone ? "ทำแบบประเมินแล้ว" : "ยังไม่ได้ทำแบบประเมิน"}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -655,7 +675,6 @@ export default function ProgressPage() {
       <div style={{ padding: "16px 16px", display: "flex", flexDirection: "column", gap: 16, opacity: switching ? 0.5 : 1, transition: "opacity 0.2s" }}>
 
         {/* Main progress card */}
-        {data.selectedBookCycleId && !switching && <AssessmentPanel key={data.selectedBookCycleId} cycleId={data.selectedBookCycleId} classId={data.selectedClassId || undefined} />}
         <div className="curved-bottom" style={{ background: `linear-gradient(135deg, ${hasData ? stats.seriesColor : "#06c755"} 0%, #037d36 100%)`, borderRadius: 24, overflow: "hidden", position: "relative" }}>
           <div aria-hidden style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.06)" }} />
           <div style={{ padding: "24px 20px" }}>
@@ -804,6 +823,12 @@ export default function ProgressPage() {
                         <Clock size={10} /> {art.minutes} {t("progress.minuteUnit")}
                       </div>
                     )}
+                    {isInteractive && art.assessmentSupported && (
+                      <div style={{ fontSize: "0.6875rem", color: art.assessmentDone ? "var(--brand-700)" : "#c2410c", marginTop: 4, display: "flex", alignItems: "center", gap: 4, fontWeight: 700 }}>
+                        {art.assessmentDone ? <CheckCircle2 size={11} /> : <AlertCircle size={11} />}
+                        {art.assessmentDone ? "ทำแบบประเมินแล้ว" : "ยังไม่ได้ทำแบบประเมิน"}
+                      </div>
+                    )}
                   </div>
 
                   {art.done ? (
@@ -821,13 +846,22 @@ export default function ProgressPage() {
               );
 
               return isInteractive ? (
-                <Link
-                  key={art.id}
-                  href={`/student/read/${art.id}`}
-                  style={{ display: "block", textDecoration: "none", color: "inherit", WebkitTapHighlightColor: "transparent" }}
-                >
-                  {row}
-                </Link>
+                <div key={art.id}>
+                  <Link
+                    href={`/student/read/${art.id}`}
+                    style={{ display: "block", textDecoration: "none", color: "inherit", WebkitTapHighlightColor: "transparent" }}
+                  >
+                    {row}
+                  </Link>
+                  {art.done && data.selectedBookCycleId && (
+                    <Link
+                      href={`/voice-practice?cycleId=${encodeURIComponent(data.selectedBookCycleId)}&articleId=${encodeURIComponent(art.id)}`}
+                      style={{ display: "block", margin: "0 16px 12px 56px", padding: "9px 12px", borderRadius: 12, background: "var(--brand-50)", color: "var(--brand-700)", textAlign: "center", textDecoration: "none", fontSize: "0.75rem", fontWeight: 800 }}
+                    >
+                      🎙️ ฝึกสนทนากับ AI
+                    </Link>
+                  )}
+                </div>
               ) : (
                 <div key={art.id}>{row}</div>
               );

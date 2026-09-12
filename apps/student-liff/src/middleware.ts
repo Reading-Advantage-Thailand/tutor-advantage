@@ -17,6 +17,7 @@ const PRIVATE_ROUTES = [
   "/enroll",
   "/study",
   "/lesson",
+  "/voice-practice",
 ];
 
 const LIFF_BOOTSTRAP_PARAMS = [
@@ -42,6 +43,7 @@ function withSecurityHeaders(response: NextResponse, request?: NextRequest) {
     "font-src 'self' data: https://fonts.gstatic.com",
     "connect-src 'self' https://api.line.me https://access.line.me https://liff.line.me https://liff-shortcut.line.me https://*.line-apps.com https://*.line.me https://liffsdk.line-scdn.net https://*.line-scdn.net http://localhost:3001 http://localhost:3002 ws://localhost:3001 ws://localhost:3002 https://*.ngrok-free.app wss://*.ngrok-free.app https://*.ngrok-free.dev wss://*.ngrok-free.dev",
     "frame-src 'self' https://liff.line.me https://*.line.me",
+    "media-src 'self' blob:",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -59,7 +61,7 @@ function withSecurityHeaders(response: NextResponse, request?: NextRequest) {
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set(
     "Permissions-Policy",
-    'camera=(self "https://liff.line.me"), microphone=(), geolocation=(), interest-cohort=()'
+    'camera=(), microphone=(self "https://liff.line.me"), geolocation=(), interest-cohort=()'
   );
 
   return response;

@@ -99,7 +99,11 @@ const curatedArticleOrder = new Map<string, number>(
 
 const hiddenCuratedArticleIds = new Set(["44QFyTUgeUGPKf9gfLlL"]);
 
-function compareArticlesByCatalogOrder<
+export function isCatalogArticleVisible(article: { articleId: string }) {
+  return !hiddenCuratedArticleIds.has(article.articleId);
+}
+
+export function compareArticlesByCatalogOrder<
   T extends { articleId: string; createdAt?: Date | string | null },
 >(a: T, b: T) {
   const aOrder = curatedArticleOrder.get(a.articleId);
@@ -1451,7 +1455,7 @@ export async function getClassArticles(req: AuthenticatedRequest, res: Response)
     const isPrimaryBook = Boolean(cycleBook?.bookCode.startsWith("Primary "));
 
     let dbArticles = dbArticlesRaw
-      .filter((article) => !hiddenCuratedArticleIds.has(article.articleId))
+      .filter(isCatalogArticleVisible)
       .sort(compareArticlesByCatalogOrder);
 
     if (cls.isDemo) {

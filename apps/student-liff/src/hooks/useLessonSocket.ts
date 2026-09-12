@@ -77,6 +77,7 @@ export interface GamePhaseState {
 
 export interface LessonSessionData {
   sessionId: string;
+  classBookCycleId?: string;
   currentStudentId?: string;
   currentPhase: number;
   phaseVersion?: number;

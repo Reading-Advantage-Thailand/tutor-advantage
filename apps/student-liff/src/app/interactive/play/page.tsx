@@ -1453,6 +1453,8 @@ function PlayLessonContent() {
           <LessonWrapUpPhase
             participants={participants}
             studentId={studentId}
+            classBookCycleId={sessionData?.classBookCycleId}
+            articleId={articleData?.id}
           />
         )}
 

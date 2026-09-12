@@ -7,9 +7,11 @@ import { LessonParticipant } from '@/hooks/useLessonSocket';
 interface LessonWrapUpPhaseProps {
   participants: LessonParticipant[];
   studentId: string;
+  classBookCycleId?: string;
+  articleId?: string;
 }
 
-export function LessonWrapUpPhase({ participants, studentId }: LessonWrapUpPhaseProps) {
+export function LessonWrapUpPhase({ participants, studentId, classBookCycleId, articleId }: LessonWrapUpPhaseProps) {
   const router = useRouter();
   const sorted = [...participants].sort((a, b) => (b.score || 0) - (a.score || 0));
   const studentIndex = sorted.findIndex(p => p.studentId === studentId);
@@ -84,6 +86,14 @@ export function LessonWrapUpPhase({ participants, studentId }: LessonWrapUpPhase
         <h4 className="font-black text-emerald-600 dark:text-emerald-400 text-sm mb-1">{t("interactivePlay.lessonCompletedTitle")}</h4>
         <p className="text-emerald-600/80 dark:text-emerald-400/80 text-xs leading-relaxed">{t("interactivePlay.lessonCompletedDescription")}</p>
       </div>
+
+      <button
+        disabled={!classBookCycleId || !articleId}
+        onClick={() => router.push(`/voice-practice?cycleId=${encodeURIComponent(classBookCycleId || '')}&articleId=${encodeURIComponent(articleId || '')}`)}
+        className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 disabled:opacity-50 text-white font-black py-4 rounded-2xl shadow-xl active:scale-95 transition-all"
+      >
+        🎙️ ฝึกสนทนากับ AI
+      </button>
 
       <button
         onClick={() => router.push('/dashboard')}

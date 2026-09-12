@@ -7,6 +7,105 @@ servers:
   - url: http://localhost:3002
     description: Local development server
 paths:
+  /v1/book-cycles/{cycleId}/voice-entitlement:
+    get:
+      summary: Get the student's metered AI voice entitlement for a purchased book
+      security: [{ bearerAuth: [] }]
+      parameters: [{ name: cycleId, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "200":
+          description: Voice entitlement and unlocked completed articles
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/VoiceEntitlement" }
+        "403": { $ref: "#/components/responses/VoiceError" }
+  /v1/book-cycles/{cycleId}/voice-sessions:
+    get:
+      summary: List the student's completed AI voice sessions without raw transcripts or audio
+      security: [{ bearerAuth: [] }]
+      parameters: [{ name: cycleId, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "200":
+          description: Voice session history
+          content: { application/json: { schema: { type: object, required: [sessions], properties: { sessions: { type: array, items: { $ref: "#/components/schemas/VoiceSessionSummary" } } } } } }
+    post:
+      summary: Reserve book quota and create an OpenAI Realtime WebRTC call
+      security: [{ bearerAuth: [] }]
+      parameters: [{ name: cycleId, in: path, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [articleId, sdp]
+              properties:
+                articleId: { type: string, minLength: 1, maxLength: 200 }
+                sdp: { type: string, minLength: 3, maxLength: 100000 }
+      responses:
+        "201":
+          description: WebRTC answer and the pending connection lease deadline
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [sessionId, answerSdp, expiresAt, reservedSeconds, remainingSeconds]
+                properties:
+                  sessionId: { type: string, format: uuid }
+                  answerSdp: { type: string }
+                  expiresAt: { type: string, format: date-time }
+                  reservedSeconds: { type: integer, minimum: 1, maximum: 600 }
+                  remainingSeconds: { type: integer, minimum: 0 }
+        "409": { $ref: "#/components/responses/VoiceError" }
+        "503": { $ref: "#/components/responses/VoiceError" }
+  /v1/voice-sessions/{sessionId}/connected:
+    post:
+      summary: Start authoritative wall-clock billing after the WebRTC peer connection succeeds
+      security: [{ bearerAuth: [] }]
+      parameters: [{ name: sessionId, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "200":
+          description: Idempotent connected acknowledgement and final quota deadline
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [sessionId, expiresAt]
+                properties:
+                  sessionId: { type: string, format: uuid }
+                  expiresAt: { type: string, format: date-time }
+        "403": { $ref: "#/components/responses/VoiceError" }
+        "404": { $ref: "#/components/responses/VoiceError" }
+  /v1/voice-sessions/{sessionId}/end:
+    post:
+      summary: End an AI voice session idempotently and persist derived feedback only
+      security: [{ bearerAuth: [] }]
+      parameters: [{ name: sessionId, in: path, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                transcript: { type: string, maxLength: 20000, description: Transient fallback input; never persisted }
+      responses:
+        "200":
+          description: Final metered usage and derived feedback
+          content: { application/json: { schema: { type: object, additionalProperties: true } } }
+        "404": { $ref: "#/components/responses/VoiceError" }
+  /v1/classes/{classId}/voice-practice-summary:
+    get:
+      summary: Get derived voice-practice feedback for the owning tutor
+      security: [{ bearerAuth: [] }]
+      parameters: [{ name: classId, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "200":
+          description: Class voice summaries without transcripts or audio
+          content: { application/json: { schema: { type: object, required: [sessions], properties: { sessions: { type: array, items: { $ref: "#/components/schemas/VoiceSessionSummary" } } } } } }
+        "403": { $ref: "#/components/responses/VoiceError" }
   /v1/book-cycles/{cycleId}/assessment:
     get:
       summary: Get own article assessment results and availability
@@ -340,6 +439,54 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    VoiceEntitlement:
+      type: object
+      required: [enabled, totalSeconds, unlockedSeconds, usedSeconds, remainingSeconds, completedArticles, eligibleArticles]
+      properties:
+        enabled: { type: boolean }
+        totalSeconds: { type: integer, minimum: 0 }
+        unlockedSeconds: { type: integer, minimum: 0 }
+        usedSeconds: { type: integer, minimum: 0 }
+        remainingSeconds: { type: integer, minimum: 0 }
+        completedArticles: { type: integer, minimum: 0 }
+        eligibleArticles:
+          type: array
+          items:
+            type: object
+            required: [articleId, title]
+            properties:
+              articleId: { type: string }
+              title: { type: string }
+        activeSession:
+          oneOf:
+            - type: "null"
+            - type: object
+              required: [sessionId, expiresAt]
+              properties:
+                sessionId: { type: string, format: uuid }
+                expiresAt: { type: string, format: date-time }
+    VoiceSessionSummary:
+      type: object
+      additionalProperties: true
+      required: [voiceSessionId, articleId, consumedSeconds]
+      properties:
+        voiceSessionId: { type: string, format: uuid }
+        articleId: { type: string }
+        consumedSeconds: { type: integer, minimum: 0 }
+        summary: { type: [object, "null"], additionalProperties: true }
+        scores: { type: [object, "null"], additionalProperties: true }
+    VoiceErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          type: object
+          additionalProperties: false
+          required: [code, message]
+          properties:
+            code: { type: string }
+            message: { type: string }
     NonNegativeSatang:
       type: integer
       minimum: 0
@@ -361,6 +508,11 @@ components:
             details:
               type: object
   responses:
+    VoiceError:
+      description: Voice practice authorization, quota, concurrency, or provider error
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/VoiceErrorEnvelope" }
     BadRequestError:
       description: Bad Request
       content:

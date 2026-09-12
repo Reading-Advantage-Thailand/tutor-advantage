@@ -115,6 +115,20 @@ export const studentApi = {
     return fetchWithAuth(`/student/progress${qs}`);
   },
   getStudentArticle: (articleId: string) => fetchWithAuth(`/student/articles/${articleId}`),
+  getVoiceEntitlement: (cycleId: string) => fetchWithAuth(`/book-cycles/${encodeURIComponent(cycleId)}/voice-entitlement`),
+  getVoiceSessions: (cycleId: string) => fetchWithAuth(`/book-cycles/${encodeURIComponent(cycleId)}/voice-sessions`),
+  createVoiceSession: (cycleId: string, payload: { articleId: string; sdp: string }) => fetchWithAuth(`/book-cycles/${encodeURIComponent(cycleId)}/voice-sessions`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  }),
+  connectVoiceSession: (sessionId: string) => fetchWithAuth(`/voice-sessions/${encodeURIComponent(sessionId)}/connected`, {
+    method: 'POST',
+    body: JSON.stringify({}),
+  }),
+  endVoiceSession: (sessionId: string, payload?: { transcript?: string }) => fetchWithAuth(`/voice-sessions/${encodeURIComponent(sessionId)}/end`, {
+    method: 'POST',
+    body: JSON.stringify(payload || {}),
+  }),
   generateShareLink: (classId?: string) => fetchWithAuth('/student/share-link', {
     method: 'POST',
     body: JSON.stringify(classId ? { classId } : {}),
