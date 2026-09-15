@@ -1,11 +1,12 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { AlertCircle, Mic, MicOff, PhoneOff, Sparkles, Volume2 } from "lucide-react";
+import { AlertCircle, ChevronLeft, Clock3, Headphones, Lightbulb, Mic, MicOff, PhoneOff } from "lucide-react";
 import { toast } from "sonner";
 import { studentApi } from "@/lib/api";
+import styles from "./voice-practice.module.css";
 
 type Entitlement = {
   enabled: boolean;
@@ -45,6 +46,37 @@ async function waitForIceGathering(pc: RTCPeerConnection) {
   });
 }
 
+function CoachMascot({ state, level }: { state: "idle" | "connecting" | "listening" | "thinking" | "speaking" | "muted"; level: number }) {
+  return (
+    <div className={styles.mascotScene} data-state={state} style={{ "--voice-level": Math.max(.08, level) } as CSSProperties} aria-hidden="true">
+      <span className={styles.sparkOne}>✦</span><span className={styles.sparkTwo}>●</span><span className={styles.sparkThree}>✦</span>
+      <div className={styles.voiceRing} /><div className={styles.voiceRingTwo} />
+      <div className={styles.mascotShadow} />
+      <svg className={styles.mascot} viewBox="0 0 220 220" role="presentation">
+        <defs>
+          <linearGradient id="coachBody" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#ffb75e"/><stop offset="1" stopColor="#f47b35"/></linearGradient>
+          <linearGradient id="coachShirt" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#22c98b"/><stop offset="1" stopColor="#079f70"/></linearGradient>
+        </defs>
+        <path d="M48 76 40 27l43 28M172 76l8-49-43 28" fill="url(#coachBody)" stroke="#c85d2a" strokeWidth="5" strokeLinejoin="round"/>
+        <path d="m50 58-5-20 21 16m104 4 5-20-21 16" fill="#ffd6b1"/>
+        <ellipse cx="110" cy="177" rx="65" ry="37" fill="url(#coachShirt)"/>
+        <path d="M71 173c19 13 58 13 78 0" fill="none" stroke="#fff" strokeOpacity=".34" strokeWidth="4" strokeLinecap="round"/>
+        <ellipse cx="110" cy="104" rx="72" ry="65" fill="url(#coachBody)" stroke="#c85d2a" strokeWidth="5"/>
+        <path d="M50 108c20 2 32 14 40 33-23 2-40-9-47-24m127-9c-20 2-32 14-40 33 23 2 40-9 47-24" fill="#fff2df"/>
+        <ellipse cx="110" cy="120" rx="41" ry="35" fill="#fff2df"/>
+        <g className={styles.mascotEyes} fill="#24332f"><ellipse cx="83" cy="94" rx="7" ry="9"/><ellipse cx="137" cy="94" rx="7" ry="9"/></g>
+        <circle cx="81" cy="91" r="2.2" fill="#fff"/><circle cx="135" cy="91" r="2.2" fill="#fff"/>
+        <path d="m110 105-9 8 9 6 9-6Z" fill="#5e3529"/>
+        <path className={styles.mascotMouth} d="M95 124c8 10 22 10 30 0" fill="none" stroke="#5e3529" strokeWidth="4" strokeLinecap="round"/>
+        <path d="M57 117c-9 1-18 5-24 11m132-11c9 1 18 5 24 11M57 126c-8 3-14 7-18 12m126-12c8 3 14 7 18 12" stroke="#7a3e2c" strokeWidth="2.4" strokeLinecap="round" opacity=".55"/>
+        <path d="M64 84c8-5 15-5 22-1m48 0c7-4 14-4 22 1" fill="none" stroke="#9d4c2d" strokeWidth="4" strokeLinecap="round"/>
+        <circle cx="50" cy="109" r="8" fill="#ff9c83" opacity=".5"/><circle cx="170" cy="109" r="8" fill="#ff9c83" opacity=".5"/>
+      </svg>
+      <div className={styles.headphones}><span /><span /></div>
+    </div>
+  );
+}
+
 function VoicePracticeContent() {
   const params = useSearchParams();
   const cycleId = params.get("cycleId") || "";
@@ -58,6 +90,7 @@ function VoicePracticeContent() {
   const [remaining, setRemaining] = useState(0);
   const [caption, setCaption] = useState("พร้อมเริ่มฝึกสนทนา");
   const [volume, setVolume] = useState(0);
+  const [coachSpeaking, setCoachSpeaking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ summary?: unknown; scores?: unknown } | null>(null);
   const peerRef = useRef<RTCPeerConnection | null>(null);
@@ -67,6 +100,8 @@ function VoicePracticeContent() {
   const sessionRef = useRef<StartResult | null>(null);
   const transcriptRef = useRef<string[]>([]);
   const endingRef = useRef(false);
+  const providerConnectedRef = useRef(false);
+  const greetingSentRef = useRef(false);
   const analyserFrameRef = useRef<number | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
 
@@ -91,6 +126,20 @@ function VoicePracticeContent() {
 
   useEffect(() => { void loadEntitlement(); }, [loadEntitlement]);
 
+  const sendOpeningGreeting = useCallback(() => {
+    const channel = channelRef.current;
+    if (!providerConnectedRef.current || greetingSentRef.current || channel?.readyState !== "open") return;
+    greetingSentRef.current = true;
+    setCaption("รีดี้กำลังทักทาย…");
+    channel.send(JSON.stringify({
+      type: "response.create",
+      response: {
+        output_modalities: ["audio"],
+        instructions: "Start the practice now without waiting for the learner. Introduce yourself as Reedy in one warm, short Thai sentence, then use simple English to ask the first easy question about this lesson. The complete greeting must be 2-3 short sentences and under 15 seconds. Make it clear that the learner may answer in Thai, English, or mix both.",
+      },
+    }));
+  }, []);
+
   const cleanupMedia = useCallback(() => {
     if (analyserFrameRef.current !== null) cancelAnimationFrame(analyserFrameRef.current);
     analyserFrameRef.current = null;
@@ -103,7 +152,9 @@ function VoicePracticeContent() {
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
     if (audioRef.current) audioRef.current.srcObject = null;
+    providerConnectedRef.current = false;
     setConnected(false);
+    setCoachSpeaking(false);
     setVolume(0);
   }, []);
 
@@ -187,6 +238,8 @@ function VoicePracticeContent() {
       const type = String(data.type || "");
       if (type === "input_audio_buffer.speech_started") setCaption("กำลังฟังคุณพูด…");
       if (type === "input_audio_buffer.speech_stopped") setCaption("AI กำลังคิด…");
+      if (type === "response.output_audio.delta" || type === "response.audio.delta") setCoachSpeaking(true);
+      if (type === "response.output_audio.done" || type === "response.audio.done" || type === "response.done") setCoachSpeaking(false);
       if (type === "conversation.item.input_audio_transcription.completed" && typeof data.transcript === "string") {
         const text = data.transcript.trim();
         if (text) {
@@ -214,6 +267,8 @@ function VoicePracticeContent() {
     setResult(null);
     transcriptRef.current = [];
     endingRef.current = false;
+    providerConnectedRef.current = false;
+    greetingSentRef.current = false;
     try {
       if (!navigator.mediaDevices?.getUserMedia || typeof RTCPeerConnection === "undefined") {
         throw new Error("เบราว์เซอร์นี้ไม่รองรับการสนทนาด้วยเสียง");
@@ -237,8 +292,9 @@ function VoicePracticeContent() {
               const connectedSession = value as { expiresAt: string };
               sessionRef.current = { ...active, expiresAt: connectedSession.expiresAt };
               setRemaining(Math.max(0, Math.ceil((new Date(connectedSession.expiresAt).getTime() - Date.now()) / 1000)));
+              providerConnectedRef.current = true;
               setConnected(true);
-              setCaption("เริ่มพูดกับ AI ได้เลย");
+              sendOpeningGreeting();
             }).catch(() => void endSession("CONNECTION_LOST"));
           }
         }
@@ -249,6 +305,7 @@ function VoicePracticeContent() {
       const channel = pc.createDataChannel("oai-events");
       channelRef.current = channel;
       channel.onmessage = onRealtimeEvent;
+      channel.onopen = sendOpeningGreeting;
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
       await waitForIceGathering(pc);
@@ -287,55 +344,65 @@ function VoicePracticeContent() {
   const canStart = Boolean(selectedArticle && entitlement?.enabled && entitlement.remainingSeconds > 0 && !entitlement.activeSession);
   const summary = result?.summary as { summaryTh?: string; strengths?: string[]; improvements?: string[] } | undefined;
   const scores = result?.scores as Record<string, number | null> | undefined;
+  const coachState = muted ? "muted" : starting ? "connecting" : coachSpeaking ? "speaking" : caption.includes("กำลังฟัง") ? "listening" : caption.includes("กำลังคิด") ? "thinking" : connected ? "listening" : "idle";
+  const coachStatus = muted ? "พักฟังก่อนนะ" : starting ? "กำลังเข้าห้องฝึก…" : coachSpeaking ? "รีดี้กำลังพูด" : caption.includes("กำลังคิด") ? "ขอคิดแป๊บนึงนะ" : connected ? "รีดี้กำลังฟังคุณ" : "รีดี้พร้อมฝึกกับคุณ";
 
   return (
-    <main className="min-h-dvh bg-gradient-to-b from-emerald-950 via-slate-950 to-slate-900 text-white p-5 flex flex-col">
+    <main className={styles.page}>
       <audio ref={audioRef} autoPlay playsInline className="hidden" />
-      <header className="flex items-center justify-between gap-3">
-        <Link href="/progress" className="text-sm text-white/70">← กลับ</Link>
-        <div className="rounded-full bg-white/10 px-4 py-2 font-black tabular-nums">{formatTime(connected ? remaining : entitlement?.remainingSeconds || 0)}</div>
+      <header className={styles.header}>
+        <Link href="/progress" className={styles.backButton}><ChevronLeft size={20} /> <span>กลับ</span></Link>
+        <div className={styles.timer}><Clock3 size={16} /><div><small>เวลาฝึก</small><strong>{formatTime(connected ? remaining : entitlement?.remainingSeconds || 0)}</strong></div></div>
       </header>
 
-      <section className="flex-1 flex flex-col items-center justify-center text-center gap-6 max-w-md w-full mx-auto">
-        <div>
-          <p className="text-emerald-300 text-xs font-black uppercase tracking-[0.25em]">AI Speaking Coach</p>
-          <h1 className="mt-2 text-2xl font-black">{selectedArticle?.title || "ฝึกสนทนากับ AI"}</h1>
-          <p className="mt-2 text-white/60 text-sm">พูดภาษาอังกฤษได้เลย AI จะช่วยแก้ประโยคและฝึกต่อจากบทเรียน</p>
+      <section className={styles.content}>
+        <div className={styles.intro}>
+          <div className={styles.coachBadge}><span>R</span> ฝึกกับ “รีดี้”</div>
+          <p className={styles.lessonLabel}>บทสนทนาจากเรื่อง</p>
+          <h1>{selectedArticle?.title || "ฝึกพูดภาษาอังกฤษ"}</h1>
+          <p>คุยสบายๆ เหมือนซ้อมกับเพื่อน รีดี้จะช่วยชวนคุยและแก้ประโยคให้</p>
         </div>
 
-        <div className={`relative grid place-items-center size-48 rounded-full transition-all ${connected ? "bg-emerald-400/20 shadow-[0_0_70px_rgba(52,211,153,0.28)]" : "bg-white/10"}`}>
-          {connected && Array.from({ length: 12 }).map((_, index) => (
-            <span key={index} className="absolute bottom-8 w-1 rounded-full bg-emerald-300 transition-all" style={{ left: `${27 + index * 4}%`, height: `${8 + volume * (18 + (index % 4) * 12)}px` }} />
-          ))}
-          {connected ? <Volume2 className="size-16 text-emerald-300" /> : <Sparkles className="size-16 text-white/70" />}
+        <div className={styles.coachArea}>
+          <div className={styles.statusBubble}><span className={styles.statusDot} />{coachStatus}</div>
+          <CoachMascot state={coachState} level={volume} />
+          {connected && <div className={styles.liveWave} aria-hidden="true">{Array.from({ length: 9 }).map((_, index) => <span key={index} style={{ height: `${7 + volume * (16 + (index % 4) * 16)}px` }} />)}</div>}
         </div>
 
-        <div className="min-h-20 w-full rounded-2xl border border-white/10 bg-white/5 p-4 grid place-items-center">
-          <p className="text-sm leading-relaxed text-white/85">{caption}</p>
+        <div className={styles.captionCard} data-active={connected || undefined}>
+          <Headphones size={18} />
+          <p>{caption}</p>
         </div>
 
-        {error && <div role="alert" className="rounded-xl bg-red-500/15 border border-red-400/30 p-3 text-sm text-red-100">{error}</div>}
+        {!connected && !error && <div className={styles.tips}><div><Lightbulb size={15} /> ไม่ต้องกลัวผิด</div><span />พูดแทรกได้ตลอด<span />คุยสั้นๆ ทีละประโยค</div>}
+
+        {error && <div role="alert" className={styles.error}><AlertCircle size={18} /><span>{error}</span></div>}
 
         {!connected ? (
-          <button disabled={!canStart || starting} onClick={startSession} className="w-full rounded-2xl bg-emerald-500 py-4 font-black shadow-xl disabled:opacity-40">
-            {starting ? "กำลังเชื่อมต่อ…" : !entitlement?.enabled ? "ระบบกำลังเตรียมเปิดให้บริการ" : entitlement?.activeSession ? "มีการสนทนาเปิดอยู่ในอุปกรณ์อื่น" : "🎙️ เริ่มสนทนา"}
-          </button>
-        ) : (
-          <div className="flex gap-4">
-            <button onClick={toggleMute} aria-label={muted ? "เปิดไมโครโฟน" : "ปิดไมโครโฟน"} className="grid place-items-center size-16 rounded-full bg-white/10 border border-white/15">
-              {muted ? <MicOff /> : <Mic />}
+          <div className={styles.startArea}>
+            <button disabled={!canStart || starting} onClick={startSession} className={styles.startButton} aria-label="เริ่มคุยกับรีดี้">
+              <span className={styles.startRipple} /><span className={styles.startRippleTwo} />
+              <Mic size={36} />
             </button>
-            <button disabled={ending} onClick={() => void endSession()} aria-label="จบการสนทนา" className="grid place-items-center size-16 rounded-full bg-red-500 shadow-lg disabled:opacity-50">
-              <PhoneOff />
+            <strong>{starting ? "กำลังเข้าห้องฝึก…" : !entitlement?.enabled ? "ระบบกำลังเตรียมเปิดให้บริการ" : entitlement?.activeSession ? "มีการสนทนาเปิดอยู่ในอุปกรณ์อื่น" : "แตะเพื่อเริ่มคุย"}</strong>
+            {canStart && !starting && <small>รีดี้พร้อมฟังแล้ว</small>}
+          </div>
+        ) : (
+          <div className={styles.controls}>
+            <button onClick={toggleMute} aria-label={muted ? "เปิดไมโครโฟน" : "ปิดไมโครโฟน"} className={`${styles.controlButton} ${muted ? styles.muted : ""}`}>
+              {muted ? <MicOff /> : <Mic />}<small>{muted ? "เปิดไมค์" : "ปิดไมค์"}</small>
+            </button>
+            <button disabled={ending} onClick={() => void endSession()} aria-label="จบการสนทนา" className={`${styles.controlButton} ${styles.endButton}`}>
+              <PhoneOff /><small>{ending ? "กำลังจบ…" : "จบการฝึก"}</small>
             </button>
           </div>
         )}
 
         {summary?.summaryTh && (
-          <div className="w-full text-left rounded-2xl bg-white text-slate-900 p-5">
-            <h2 className="font-black text-lg">สรุปการฝึก</h2>
-            <p className="mt-2 text-sm text-slate-600">{summary.summaryTh}</p>
-            {scores && <div className="mt-4 grid grid-cols-2 gap-2 text-xs">{Object.entries(scores).map(([key, value]) => <div key={key} className="rounded-lg bg-slate-100 p-2"><span className="capitalize">{key}</span><strong className="float-right">{value ?? "–"}/5</strong></div>)}</div>}
+          <div className={styles.summary}>
+            <div className={styles.summaryHeading}><span>🎉</span><div><small>GOOD JOB!</small><h2>สรุปการฝึกกับรีดี้</h2></div></div>
+            <p>{summary.summaryTh}</p>
+            {scores && <div className={styles.scoreGrid}>{Object.entries(scores).map(([key, value]) => <div key={key}><span className="capitalize">{key}</span><strong>{value ?? "–"}<small>/5</small></strong></div>)}</div>}
           </div>
         )}
       </section>

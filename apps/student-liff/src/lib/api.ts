@@ -57,7 +57,9 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {},
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       if (!isServer && response.status >= 500) {
-        console.error(`[studentApi] Error ${response.status}:`, errorData);
+        // Keep expected provider/service failures in the app UI. console.error makes
+        // Next.js dev mode cover the whole mobile screen with its issues overlay.
+        console.warn(`[studentApi] Error ${response.status}:`, errorData);
       }
       throw new StudentApiError(response.status, errorData);
     }
