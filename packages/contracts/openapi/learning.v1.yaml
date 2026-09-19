@@ -82,15 +82,6 @@ paths:
       summary: End an AI voice session idempotently and persist derived feedback only
       security: [{ bearerAuth: [] }]
       parameters: [{ name: sessionId, in: path, required: true, schema: { type: string, format: uuid } }]
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              type: object
-              additionalProperties: false
-              properties:
-                transcript: { type: string, maxLength: 20000, description: Transient fallback input; never persisted }
       responses:
         "200":
           description: Final metered usage and derived feedback

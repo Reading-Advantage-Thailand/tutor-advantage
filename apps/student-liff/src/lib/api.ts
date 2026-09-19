@@ -127,9 +127,9 @@ export const studentApi = {
     method: 'POST',
     body: JSON.stringify({}),
   }),
-  endVoiceSession: (sessionId: string, payload?: { transcript?: string }) => fetchWithAuth(`/voice-sessions/${encodeURIComponent(sessionId)}/end`, {
+  endVoiceSession: (sessionId: string) => fetchWithAuth(`/voice-sessions/${encodeURIComponent(sessionId)}/end`, {
     method: 'POST',
-    body: JSON.stringify(payload || {}),
+    body: JSON.stringify({}),
   }),
   generateShareLink: (classId?: string) => fetchWithAuth('/student/share-link', {
     method: 'POST',

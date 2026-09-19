@@ -1,12 +1,15 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { AlertCircle, ChevronLeft, Clock3, Headphones, Lightbulb, Mic, MicOff, PhoneOff } from "lucide-react";
+import { AlertCircle, BookOpenCheck, ChevronDown, ChevronLeft, Clock3, Headphones, Lightbulb, Mic, MicOff, PhoneOff, X } from "lucide-react";
 import { toast } from "sonner";
 import { studentApi } from "@/lib/api";
 import styles from "./voice-practice.module.css";
+import Reedy from "./Reedy";
+import GuidedReading, { passageSegments, type ReadingCue } from "./GuidedReading";
+import { REEDY_PREVIEW_EVENT, REEDY_READING_PREVIEW_EVENT, REEDY_READING_PREVIEWS } from "@/lib/reedy-preview";
 
 type Entitlement = {
   enabled: boolean;
@@ -27,6 +30,74 @@ type StartResult = {
   remainingSeconds: number;
 };
 
+type ReviewWord = {
+  vocabulary?: string;
+  word?: string;
+  text?: string;
+  definition?: { th?: string };
+  translation?: string;
+};
+
+type ArticleReview = {
+  title?: string;
+  passage?: string;
+  summary?: string | { th?: string[] };
+  translated_summary?: { th?: string[] };
+  words?: ReviewWord[];
+  sentences?: Array<string | { sentences?: string; sentence?: string; text?: string }>;
+  shortAnswerQuestions?: Array<{ question?: string }>;
+};
+
+function getReviewSummary(article: ArticleReview | null) {
+  if (!article) return "จำใจความได้ไม่หมดก็ไม่เป็นไร รีดี้จะช่วยค่อย ๆ ทวนระหว่างคุย";
+  const translated = article.translated_summary?.th?.filter(Boolean).join(" ");
+  const localized = typeof article.summary === "object" ? article.summary.th?.filter(Boolean).join(" ") : undefined;
+  const summary = translated || localized || (typeof article.summary === "string" ? article.summary : "") || article.passage || "";
+  return summary.trim() || "จำใจความได้ไม่หมดก็ไม่เป็นไร รีดี้จะช่วยค่อย ๆ ทวนระหว่างคุย";
+}
+
+function getReviewWords(article: ArticleReview | null, limit = 6) {
+  const seen = new Set<string>();
+  return (article?.words || []).flatMap((word) => {
+    const text = (word.vocabulary || word.word || word.text || "").trim();
+    if (!text || seen.has(text.toLowerCase())) return [];
+    seen.add(text.toLowerCase());
+    return [{ text, meaning: (word.definition?.th || word.translation || "").trim() }];
+  }).slice(0, limit);
+}
+
+function pickAcrossArticle(items: string[], limit: number) {
+  if (items.length <= limit) return items;
+  const indexes = Array.from({ length: limit }, (_, index) => Math.round(index * (items.length - 1) / (limit - 1)));
+  return indexes.map((index) => items[index]);
+}
+
+function getReviewKeyPoints(article: ArticleReview | null) {
+  const sentenceItems = (article?.sentences || []).flatMap((sentence) => {
+    const text = (typeof sentence === "string"
+      ? sentence
+      : sentence.sentences || sentence.sentence || sentence.text || "").trim();
+    return text ? [text] : [];
+  });
+  const passageItems = (article?.passage || "")
+    .match(/[^.!?。！？]+[.!?。！？]?/g)
+    ?.map((sentence) => sentence.trim())
+    .filter(Boolean) || [];
+  const source = sentenceItems.length > 0 ? sentenceItems : passageItems;
+  return pickAcrossArticle([...new Set(source)], 5);
+}
+
+function getReviewQuestions(article: ArticleReview | null) {
+  return (article?.shortAnswerQuestions || [])
+    .map((item) => item.question?.trim() || "")
+    .filter(Boolean)
+    .slice(0, 2);
+}
+
+function normalizeArticleTitle(title?: string) {
+  return (title || "").trim().toLocaleLowerCase().replace(/\s+/g, " ");
+}
+
 function formatTime(seconds: number) {
   const safe = Math.max(0, Math.floor(seconds));
   return `${Math.floor(safe / 60)}:${String(safe % 60).padStart(2, "0")}`;
@@ -46,42 +117,25 @@ async function waitForIceGathering(pc: RTCPeerConnection) {
   });
 }
 
-function CoachMascot({ state, level }: { state: "idle" | "connecting" | "listening" | "thinking" | "speaking" | "muted"; level: number }) {
-  return (
-    <div className={styles.mascotScene} data-state={state} style={{ "--voice-level": Math.max(.08, level) } as CSSProperties} aria-hidden="true">
-      <span className={styles.sparkOne}>✦</span><span className={styles.sparkTwo}>●</span><span className={styles.sparkThree}>✦</span>
-      <div className={styles.voiceRing} /><div className={styles.voiceRingTwo} />
-      <div className={styles.mascotShadow} />
-      <svg className={styles.mascot} viewBox="0 0 220 220" role="presentation">
-        <defs>
-          <linearGradient id="coachBody" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#ffb75e"/><stop offset="1" stopColor="#f47b35"/></linearGradient>
-          <linearGradient id="coachShirt" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#22c98b"/><stop offset="1" stopColor="#079f70"/></linearGradient>
-        </defs>
-        <path d="M48 76 40 27l43 28M172 76l8-49-43 28" fill="url(#coachBody)" stroke="#c85d2a" strokeWidth="5" strokeLinejoin="round"/>
-        <path d="m50 58-5-20 21 16m104 4 5-20-21 16" fill="#ffd6b1"/>
-        <ellipse cx="110" cy="177" rx="65" ry="37" fill="url(#coachShirt)"/>
-        <path d="M71 173c19 13 58 13 78 0" fill="none" stroke="#fff" strokeOpacity=".34" strokeWidth="4" strokeLinecap="round"/>
-        <ellipse cx="110" cy="104" rx="72" ry="65" fill="url(#coachBody)" stroke="#c85d2a" strokeWidth="5"/>
-        <path d="M50 108c20 2 32 14 40 33-23 2-40-9-47-24m127-9c-20 2-32 14-40 33 23 2 40-9 47-24" fill="#fff2df"/>
-        <ellipse cx="110" cy="120" rx="41" ry="35" fill="#fff2df"/>
-        <g className={styles.mascotEyes} fill="#24332f"><ellipse cx="83" cy="94" rx="7" ry="9"/><ellipse cx="137" cy="94" rx="7" ry="9"/></g>
-        <circle cx="81" cy="91" r="2.2" fill="#fff"/><circle cx="135" cy="91" r="2.2" fill="#fff"/>
-        <path d="m110 105-9 8 9 6 9-6Z" fill="#5e3529"/>
-        <path className={styles.mascotMouth} d="M95 124c8 10 22 10 30 0" fill="none" stroke="#5e3529" strokeWidth="4" strokeLinecap="round"/>
-        <path d="M57 117c-9 1-18 5-24 11m132-11c9 1 18 5 24 11M57 126c-8 3-14 7-18 12m126-12c8 3 14 7 18 12" stroke="#7a3e2c" strokeWidth="2.4" strokeLinecap="round" opacity=".55"/>
-        <path d="M64 84c8-5 15-5 22-1m48 0c7-4 14-4 22 1" fill="none" stroke="#9d4c2d" strokeWidth="4" strokeLinecap="round"/>
-        <circle cx="50" cy="109" r="8" fill="#ff9c83" opacity=".5"/><circle cx="170" cy="109" r="8" fill="#ff9c83" opacity=".5"/>
-      </svg>
-      <div className={styles.headphones}><span /><span /></div>
-    </div>
-  );
-}
 
 function VoicePracticeContent() {
   const params = useSearchParams();
   const cycleId = params.get("cycleId") || "";
   const articleId = params.get("articleId") || "";
   const [entitlement, setEntitlement] = useState<Entitlement | null>(null);
+  const [articleReview, setArticleReview] = useState<ArticleReview | null>(null);
+  const [reviewExpanded, setReviewExpanded] = useState(false);
+  const [fullPassageExpanded, setFullPassageExpanded] = useState(false);
+  const [readingOpen, setReadingOpen] = useState(false);
+  const [readingOffered, setReadingOffered] = useState(false);
+  const [readingQuote, setReadingQuote] = useState("");
+  const [readingPreview, setReadingPreview] = useState<"speaking" | "listening" | null>(null);
+  const previewStepRef = useRef(0);
+  const readingOpenRef = useRef(false);
+  const readingArticleRef = useRef<ArticleReview | null>(null);
+  const handledToolsRef = useRef(new Set<string>());
+  const responseBusyRef = useRef(false);
+  readingArticleRef.current = articleReview;
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState(false);
   const [connected, setConnected] = useState(false);
@@ -91,6 +145,7 @@ function VoicePracticeContent() {
   const [caption, setCaption] = useState("พร้อมเริ่มฝึกสนทนา");
   const [volume, setVolume] = useState(0);
   const [coachSpeaking, setCoachSpeaking] = useState(false);
+  const [learnerSpeaking, setLearnerSpeaking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ summary?: unknown; scores?: unknown } | null>(null);
   const peerRef = useRef<RTCPeerConnection | null>(null);
@@ -98,7 +153,6 @@ function VoicePracticeContent() {
   const channelRef = useRef<RTCDataChannel | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const sessionRef = useRef<StartResult | null>(null);
-  const transcriptRef = useRef<string[]>([]);
   const endingRef = useRef(false);
   const providerConnectedRef = useRef(false);
   const greetingSentRef = useRef(false);
@@ -114,17 +168,61 @@ function VoicePracticeContent() {
       return;
     }
     try {
-      const data = await studentApi.getVoiceEntitlement(cycleId) as Entitlement;
+      const [data, review] = await Promise.all([
+        studentApi.getVoiceEntitlement(cycleId) as Promise<Entitlement>,
+        articleId
+          ? studentApi.getStudentArticle(articleId).catch(() => null) as Promise<{ article?: ArticleReview } | null>
+          : Promise.resolve(null),
+      ]);
+      const eligibleArticle = data.eligibleArticles.find((article) => article.articleId === articleId);
+      const reviewArticle = review?.article || null;
+      const reviewMatchesCycle = !reviewArticle?.title
+        || !eligibleArticle?.title
+        || normalizeArticleTitle(reviewArticle.title) === normalizeArticleTitle(eligibleArticle.title);
       setEntitlement(data);
+      // Article IDs can collide across local/external catalogs. Never show a
+      // recap from a different lesson just because the IDs happen to match.
+      setArticleReview(reviewMatchesCycle ? reviewArticle : null);
       setRemaining(data.remainingSeconds);
     } catch {
       setError("โหลดสิทธิ์ฝึกสนทนาไม่สำเร็จ");
     } finally {
       setLoading(false);
     }
-  }, [cycleId]);
+  }, [articleId, cycleId]);
 
   useEffect(() => { void loadEntitlement(); }, [loadEntitlement]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "development") return;
+    const preview = (event: Event) => {
+      const action: unknown = (event as CustomEvent).detail;
+      if (!REEDY_READING_PREVIEWS.some(([value]) => value === action)) return;
+      if (sessionRef.current || starting || connected) { toast.info("จบการสนทนาก่อนทดสอบหน้าจอจำลองนะครับ"); return; }
+      if (action === "reset") {
+        setReadingPreview(null); setReadingOpen(false); readingOpenRef.current = false;
+        setReadingOffered(false); setReadingQuote(""); setCaption("พร้อมเริ่มฝึกสนทนา"); previewStepRef.current = 0;
+        window.dispatchEvent(new CustomEvent(REEDY_PREVIEW_EVENT, { detail: null }));
+        return;
+      }
+      const article = readingArticleRef.current;
+      if (!article?.passage?.trim()) { toast.info("ยังไม่มีบทความสำหรับทดสอบ"); return; }
+      window.dispatchEvent(new CustomEvent(REEDY_PREVIEW_EVENT, { detail: null }));
+      setReviewExpanded(false); setReadingPreview(action === "listen" ? "listening" : "speaking");
+      setReadingOffered(action === "offer"); setReadingOpen(action !== "offer"); readingOpenRef.current = action !== "offer";
+      if (action === "offer") { setCaption("จำไม่ได้ไม่เป็นไร เปิดบทความอ่านด้วยกันไหม?"); return; }
+      const sentences = passageSegments(article.passage).map((text) => text.trim()).filter(Boolean);
+      if (action === "word") {
+        const words = getReviewWords(article, Infinity);
+        if (!words.length) { toast.info("บทนี้ไม่มีข้อมูลคำศัพท์"); return; }
+        const word = words[previewStepRef.current++ % words.length]; setReadingQuote(word.text);
+        setCaption(`ลองอ่านคำว่า ${word.text} ด้วยกันนะ`);
+      } else if (action === "listen") { setCaption("ตาคุณแล้ว ลองอ่านตรงที่รีดี้ชี้ได้เลย"); }
+      else { if (action === "open") previewStepRef.current = 0; else previewStepRef.current++; const sentence = sentences[previewStepRef.current % sentences.length]; setReadingQuote(sentence); setCaption("อ่านประโยคที่รีดี้ชี้ไปด้วยกันนะ"); }
+    };
+    window.addEventListener(REEDY_READING_PREVIEW_EVENT, preview);
+    return () => window.removeEventListener(REEDY_READING_PREVIEW_EVENT, preview);
+  }, [connected, starting]);
 
   const sendOpeningGreeting = useCallback(() => {
     const channel = channelRef.current;
@@ -135,7 +233,9 @@ function VoicePracticeContent() {
       type: "response.create",
       response: {
         output_modalities: ["audio"],
-        instructions: "Start the practice now without waiting for the learner. Introduce yourself as Reedy in one warm, short Thai sentence, then use simple English to ask the first easy question about this lesson. The complete greeting must be 2-3 short sentences and under 15 seconds. Make it clear that the learner may answer in Thai, English, or mix both.",
+        instructions: readingOpenRef.current
+          ? "Start now. The learner already opened the full article on screen to read together. Introduce yourself warmly in Thai, give one simple memory cue, and ask one easy lesson question. You choose the teaching sequence; the learner only answers or reads aloud. Keep under 15 seconds."
+          : "Start the practice now without waiting for the learner. Introduce yourself as Reedy in one warm, short Thai sentence. Give exactly one concise Thai memory cue about the lesson's central idea, without reading or revealing the whole passage, then ask one very easy personal-experience question in simple English that connects to the lesson. Keep the complete opening under 15 seconds and make it clear the learner may answer in Thai, English, or mix both.",
       },
     }));
   }, []);
@@ -154,6 +254,8 @@ function VoicePracticeContent() {
     if (audioRef.current) audioRef.current.srcObject = null;
     providerConnectedRef.current = false;
     setConnected(false);
+    responseBusyRef.current = false;
+    setReadingOffered(false);
     setCoachSpeaking(false);
     setVolume(0);
   }, []);
@@ -163,25 +265,10 @@ function VoicePracticeContent() {
     endingRef.current = true;
     setEnding(true);
     const active = sessionRef.current;
-    const channel = channelRef.current;
     streamRef.current?.getAudioTracks().forEach((track) => { track.enabled = false; });
-    if (active && channel?.readyState === "open") {
-      channel.send(JSON.stringify({
-        type: "response.create",
-        response: {
-          output_modalities: ["text"],
-          instructions: "End the practice now. Call submit_practice_summary exactly once with a concise Thai summary, strengths, improvements, practiced topics, and fair 0-5 scores.",
-          tool_choice: { type: "function", name: "submit_practice_summary" },
-        },
-      }));
-      await new Promise((resolve) => window.setTimeout(resolve, 2_500));
-    }
-    cleanupMedia();
     if (active) {
       try {
-        const ended = await studentApi.endVoiceSession(active.sessionId, {
-          transcript: transcriptRef.current.join("\n").slice(0, 20_000),
-        }) as { summary?: unknown; scores?: unknown };
+        const ended = await studentApi.endVoiceSession(active.sessionId) as { summary?: unknown; scores?: unknown };
         setResult({ summary: ended.summary, scores: ended.scores });
         setCaption(reason === "QUOTA_REACHED" ? "ครบเวลาฝึกของรอบนี้แล้ว" : "จบการฝึกแล้ว");
         await loadEntitlement();
@@ -189,6 +276,7 @@ function VoicePracticeContent() {
         setCaption("จบการเชื่อมต่อแล้ว ระบบจะปรับยอดเวลาให้อัตโนมัติ");
       }
     }
+    cleanupMedia();
     sessionRef.current = null;
     setEnding(false);
   }, [cleanupMedia, loadEntitlement]);
@@ -236,21 +324,60 @@ function VoicePracticeContent() {
     try {
       const data = JSON.parse(event.data) as Record<string, unknown>;
       const type = String(data.type || "");
-      if (type === "input_audio_buffer.speech_started") setCaption("กำลังฟังคุณพูด…");
-      if (type === "input_audio_buffer.speech_stopped") setCaption("AI กำลังคิด…");
-      if (type === "response.output_audio.delta" || type === "response.audio.delta") setCoachSpeaking(true);
-      if (type === "response.output_audio.done" || type === "response.audio.done" || type === "response.done") setCoachSpeaking(false);
+      if (type === "response.created") responseBusyRef.current = true;
+      if (type === "response.done") {
+        responseBusyRef.current = false;
+        if (endingRef.current) return;
+        const response = data.response as { status?: string; output?: Array<{ type?: string; name?: string; call_id?: string; arguments?: string }> } | undefined;
+        let handled = false;
+        for (const item of response?.output || []) {
+          if (item.type !== "function_call" || item.name !== "guide_reading" || !item.call_id || handledToolsRef.current.has(item.call_id)) continue;
+          handledToolsRef.current.add(item.call_id);
+          let success = false;
+          let highlightedQuote = "";
+          if (response?.status === "completed") {
+            try {
+              const cue = JSON.parse(item.arguments || "{}") as ReadingCue;
+              const article = readingArticleRef.current;
+              const passage = article?.passage || "";
+              if (passage.trim()) {
+                if (cue.action === "offer") { setReadingOffered(true); success = true; }
+                if (cue.action === "open") {
+                  highlightedQuote = typeof cue.quote === "string" && cue.quote.trim() && passage.includes(cue.quote.trim())
+                    ? cue.quote.trim() : passageSegments(passage)[0].trim();
+                  readingOpenRef.current = true; setReadingOpen(true); setReadingOffered(false); setReviewExpanded(false);
+                  setReadingQuote(highlightedQuote); success = true;
+                }
+                if ((cue.action === "focus" || cue.action === "word") && readingOpenRef.current && typeof cue.quote === "string" && cue.quote.trim()) {
+                  const quote = cue.quote.trim();
+                  const valid = cue.action === "word" ? getReviewWords(article, Infinity).some((word) => word.text.toLowerCase() === quote.toLowerCase()) : passage.includes(quote);
+                  if (valid) { highlightedQuote = quote; setReadingQuote(quote); success = true; }
+                }
+                if (cue.action === "close") { readingOpenRef.current = false; setReadingOpen(false); setReadingOffered(false); setReadingQuote(""); success = true; }
+              }
+            } catch { /* Never render malformed or invented teaching content. */ }
+          }
+          channelRef.current?.send(JSON.stringify({ type: "conversation.item.create", item: { type: "function_call_output", call_id: item.call_id, output: JSON.stringify({ success, readingOpen: readingOpenRef.current, highlightedQuote }) } }));
+          handled = true;
+        }
+        if (handled && response?.status === "completed" && channelRef.current?.readyState === "open") {
+          responseBusyRef.current = true;
+          channelRef.current.send(JSON.stringify({ type: "response.create", response: { output_modalities: ["audio"], tool_choice: "none", instructions: "Continue using the guide_reading result. For offer, ask in Thai whether to open the article and WAIT for consent. For open, read the exact highlighted quote slowly, give one brief Thai hint, and invite the learner to repeat; do not ask them to choose a sentence. For focus or word, read the exact highlighted text slowly once, give one short Thai hint, invite repetition, then WAIT. For close, return to one easy lesson question. If the tool failed, explain the display is unavailable and continue verbally. Keep under 15 seconds." } }));
+        }
+      }
+      if (type === "input_audio_buffer.speech_started") { setLearnerSpeaking(true); setCoachSpeaking(false); setCaption("กำลังฟังคุณพูด…"); }
+      if (type === "input_audio_buffer.speech_stopped") { setLearnerSpeaking(false); setCaption("AI กำลังคิด…"); }
+      if (type === "output_audio_buffer.started") setCoachSpeaking(true);
+      if (type === "output_audio_buffer.stopped" || type === "output_audio_buffer.cleared") setCoachSpeaking(false);
       if (type === "conversation.item.input_audio_transcription.completed" && typeof data.transcript === "string") {
         const text = data.transcript.trim();
         if (text) {
-          transcriptRef.current.push(`Student: ${text}`);
           setCaption(text);
         }
       }
       if (type === "response.output_audio_transcript.done" && typeof data.transcript === "string") {
         const text = data.transcript.trim();
         if (text) {
-          transcriptRef.current.push(`AI: ${text}`);
           setCaption(text);
         }
       }
@@ -263,12 +390,14 @@ function VoicePracticeContent() {
   const startSession = async () => {
     if (!cycleId || !articleId || starting || connected) return;
     setStarting(true);
+    setReadingPreview(null);
+    window.dispatchEvent(new CustomEvent(REEDY_PREVIEW_EVENT, { detail: null }));
     setError(null);
     setResult(null);
-    transcriptRef.current = [];
     endingRef.current = false;
     providerConnectedRef.current = false;
     greetingSentRef.current = false;
+    handledToolsRef.current.clear();
     try {
       if (!navigator.mediaDevices?.getUserMedia || typeof RTCPeerConnection === "undefined") {
         throw new Error("เบราว์เซอร์นี้ไม่รองรับการสนทนาด้วยเสียง");
@@ -344,7 +473,12 @@ function VoicePracticeContent() {
   const canStart = Boolean(selectedArticle && entitlement?.enabled && entitlement.remainingSeconds > 0 && !entitlement.activeSession);
   const summary = result?.summary as { summaryTh?: string; strengths?: string[]; improvements?: string[] } | undefined;
   const scores = result?.scores as Record<string, number | null> | undefined;
-  const coachState = muted ? "muted" : starting ? "connecting" : coachSpeaking ? "speaking" : caption.includes("กำลังฟัง") ? "listening" : caption.includes("กำลังคิด") ? "thinking" : connected ? "listening" : "idle";
+  const reviewSummary = getReviewSummary(articleReview);
+  const reviewWords = getReviewWords(articleReview);
+  const reviewKeyPoints = getReviewKeyPoints(articleReview);
+  const reviewQuestions = getReviewQuestions(articleReview);
+  const displayTitle = selectedArticle?.title || articleReview?.title || "ฝึกพูดภาษาอังกฤษ";
+  const coachState = error ? "reassuring" : result ? "celebrating" : starting ? "connecting" : coachSpeaking ? "speaking" : muted ? "muted" : learnerSpeaking && connected ? "listening" : caption.includes("กำลังคิด") && connected ? "thinking" : connected ? "listening" : "idle";
   const coachStatus = muted ? "พักฟังก่อนนะ" : starting ? "กำลังเข้าห้องฝึก…" : coachSpeaking ? "รีดี้กำลังพูด" : caption.includes("กำลังคิด") ? "ขอคิดแป๊บนึงนะ" : connected ? "รีดี้กำลังฟังคุณ" : "รีดี้พร้อมฝึกกับคุณ";
 
   return (
@@ -355,19 +489,63 @@ function VoicePracticeContent() {
         <div className={styles.timer}><Clock3 size={16} /><div><small>เวลาฝึก</small><strong>{formatTime(connected ? remaining : entitlement?.remainingSeconds || 0)}</strong></div></div>
       </header>
 
-      <section className={styles.content}>
+      <section className={`${styles.content} ${readingOpen ? styles.readingMode : ""}`}>
         <div className={styles.intro}>
           <div className={styles.coachBadge}><span>R</span> ฝึกกับ “รีดี้”</div>
           <p className={styles.lessonLabel}>บทสนทนาจากเรื่อง</p>
-          <h1>{selectedArticle?.title || "ฝึกพูดภาษาอังกฤษ"}</h1>
+          <h1>{displayTitle}</h1>
           <p>คุยสบายๆ เหมือนซ้อมกับเพื่อน รีดี้จะช่วยชวนคุยและแก้ประโยคให้</p>
         </div>
 
         <div className={styles.coachArea}>
-          <div className={styles.statusBubble}><span className={styles.statusDot} />{coachStatus}</div>
-          <CoachMascot state={coachState} level={volume} />
+          <span className="sr-only">{coachStatus}</span>
+          <Reedy state={readingPreview || coachState} level={volume} />
           {connected && <div className={styles.liveWave} aria-hidden="true">{Array.from({ length: 9 }).map((_, index) => <span key={index} style={{ height: `${7 + volume * (16 + (index % 4) * 16)}px` }} />)}</div>}
         </div>
+
+        {readingPreview && <button className={styles.previewBadge} onClick={() => window.dispatchEvent(new CustomEvent(REEDY_READING_PREVIEW_EVENT, { detail: "reset" }))}>DEV · จำลองหน้าอ่าน ไม่มีเสียง <X size={12} /></button>}
+        {readingOpen && articleReview?.passage && <GuidedReading title={displayTitle} passage={articleReview.passage} quote={readingQuote} words={getReviewWords(articleReview, Infinity)} speaking={readingPreview ? readingPreview === "speaking" : coachSpeaking} connected={connected || Boolean(readingPreview)} />}
+        {readingOffered && !readingOpen && <div className={styles.readingOffer} role="status"><strong>จำไม่ได้ก็ไม่เป็นไร ♡</strong><p>เปิดบทความอ่านไปกับรีดี้ไหม?</p><small>ตอบรีดี้ได้เลยว่า “เปิดเลย” หรือ “ขอลองคุยต่อ”</small></div>}
+
+        {!connected && !readingOpen && (
+          <section className={styles.memoryCard}>
+            <button type="button" className={styles.memoryHeader} onClick={() => setReviewExpanded((value) => !value)} aria-expanded={reviewExpanded}>
+              <span className={styles.memoryIcon}><BookOpenCheck size={18} /></span>
+              <span><small>MEMORY REFRESH</small><strong>ทบทวนสั้น ๆ ก่อนคุย</strong></span>
+              <ChevronDown className={styles.memoryChevron} size={18} aria-hidden="true" />
+            </button>
+          </section>
+        )}
+
+        {!connected && reviewExpanded && (
+          <div className={styles.memoryOverlay} role="presentation" onClick={() => setReviewExpanded(false)}>
+            <section className={styles.memorySheet} role="dialog" aria-modal="true" aria-labelledby="memory-review-title" onClick={(event) => event.stopPropagation()}>
+              <span className={styles.sheetHandle} aria-hidden="true" />
+              <header className={styles.sheetHeader}>
+                <span className={styles.memoryIcon}><BookOpenCheck size={19} /></span>
+                <span><small>MEMORY REFRESH</small><strong id="memory-review-title">ทบทวนสั้น ๆ ก่อนคุย</strong></span>
+                <button type="button" onClick={() => setReviewExpanded(false)} aria-label="ปิดเนื้อหาทบทวน"><X size={20} /></button>
+              </header>
+              <div className={styles.memoryBody}>
+                <section className={styles.memoryOverview}>
+                  <small>เรื่องนี้พูดถึงอะไร</small>
+                  <p>{reviewSummary}</p>
+                </section>
+                {reviewKeyPoints.length > 0 && <section className={styles.keyPoints}><small>ภาพรวมตั้งแต่ต้นถึงท้ายบท</small><ol>{reviewKeyPoints.map((sentence) => <li key={sentence}>{sentence}</li>)}</ol></section>}
+                {reviewWords.length > 0 && <section className={styles.vocabularySection}><small>คำศัพท์ช่วยจำ</small><div className={styles.memoryWords}>{reviewWords.map((word) => <span key={word.text}><strong>{word.text}</strong>{word.meaning && <small>{word.meaning}</small>}</span>)}</div></section>}
+                {reviewQuestions.length > 0 && <section className={styles.recallQuestions}><small>ลองนึกคำตอบก่อนคุย</small>{reviewQuestions.map((question) => <p key={question}>{question}</p>)}</section>}
+                <div className={styles.sentenceStarter}><small>ถ้ายังนึกไม่ออก เริ่มด้วย</small><strong>“I remember that…”</strong></div>
+                {articleReview?.passage?.trim() && <>
+                  <button type="button" className={styles.fullPassageButton} onClick={() => setFullPassageExpanded((value) => !value)} aria-expanded={fullPassageExpanded}>
+                    <span>{fullPassageExpanded ? "ซ่อนบทความเต็ม" : "เปิดดูบทความเต็ม"}</span><ChevronDown size={16} aria-hidden="true" />
+                  </button>
+                  {fullPassageExpanded && <section className={styles.fullPassage}><small>บทความเต็ม</small><p>{articleReview.passage}</p></section>}
+                </>}
+                <p className={styles.memoryReassurance}>จำไม่ได้ไม่เป็นไร รีดี้จะช่วยใบ้ทีละขั้น</p>
+              </div>
+            </section>
+          </div>
+        )}
 
         <div className={styles.captionCard} data-active={connected || undefined}>
           <Headphones size={18} />

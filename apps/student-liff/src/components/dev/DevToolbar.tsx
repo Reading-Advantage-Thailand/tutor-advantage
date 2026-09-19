@@ -12,6 +12,7 @@ import {
   LogOut, Flame, Trash2, PlusCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { REEDY_POSES, REEDY_PREVIEW_EVENT, REEDY_READING_PREVIEW_EVENT, REEDY_READING_PREVIEWS } from "@/lib/reedy-preview";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -285,6 +286,32 @@ export function DevToolbar() {
           </div>
 
           <div className="overflow-y-auto flex-1">
+            {pathname === "/voice-practice" && (
+              <section className="px-4 py-3 border-b border-border/50">
+                <p className="text-xs font-bold mb-1">📖 ทดสอบอ่านไปกับรีดี้</p>
+                <p className="text-[10px] text-muted-foreground mb-2">ใช้ก่อนเริ่มสนทนา • จำลองหน้าจอ ไม่มีเสียง ไม่ใช้สิทธิ์</p>
+                <div className="grid grid-cols-2 gap-1.5 mb-4">
+                  {REEDY_READING_PREVIEWS.map(([action, label]) => <button key={action} type="button" className="rounded-lg border border-emerald-500/20 p-2 text-xs text-left hover:bg-emerald-500/10" onClick={() => {
+                    window.dispatchEvent(new CustomEvent(REEDY_READING_PREVIEW_EVENT, { detail: action }));
+                    setOpen(false);
+                  }}>{label}</button>)}
+                </div>
+                <p className="text-xs font-bold mb-1">🦊 ทดสอบท่าทางรีดี้</p>
+                <p className="text-[10px] text-muted-foreground mb-2">แสดงท่าจำลองโดยไม่เปิดไมค์หรือใช้เวลาเรียน</p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {REEDY_POSES.map(([pose, label]) => (
+                    <button key={pose} type="button" className="rounded-lg border border-emerald-500/20 p-2 text-xs text-left hover:bg-emerald-500/10" onClick={() => {
+                      window.dispatchEvent(new CustomEvent(REEDY_PREVIEW_EVENT, { detail: pose }));
+                      setOpen(false);
+                    }}>{label}</button>
+                  ))}
+                </div>
+                <button type="button" className="mt-2 w-full rounded-lg bg-emerald-600 p-2 text-xs font-bold text-white" onClick={() => {
+                  window.dispatchEvent(new CustomEvent(REEDY_PREVIEW_EVENT, { detail: null }));
+                  setOpen(false);
+                }}>กลับไปตามสถานะสนทนาจริง</button>
+              </section>
+            )}
             <div className="px-4 py-3 border-b border-border/50 bg-emerald-500/5">
               <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 mb-2">
                 Authentication

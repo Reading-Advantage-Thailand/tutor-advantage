@@ -1,0 +1,62 @@
+.scene{position:relative;width:280px;height:257px;flex:none;isolation:isolate;--level:0}
+.character{position:absolute;width:252px;height:260px;left:14px;bottom:0;overflow:visible;filter:drop-shadow(0 9px 12px #003c2320)}
+.halo{position:absolute;inset:27px 19px 10px;border:2px solid #18bb8230;border-radius:50%;box-shadow:0 0 0 16px #18bb8208,0 0 0 33px #18bb8205;background:radial-gradient(circle,#39d68a14,transparent 70%);transform:scale(calc(1 + var(--level)*.08));transition:transform .15s}
+.body{transform-origin:160px 310px;animation:breathe 3.6s ease-in-out infinite}
+.head{transform-origin:160px 225px;animation:sway 5s ease-in-out infinite}
+.eyes{transform-box:fill-box;transform-origin:center;animation:blink 5.2s infinite}
+.waveArm{transform-box:view-box;transform-origin:100px 233px;animation:wave 5s ease-in-out infinite}
+.previewLabel{position:absolute;bottom:0;left:50%;transform:translateX(-50%);padding:3px 8px;border-radius:8px;background:#173d32;color:#baffdf;font-size:10px;white-space:nowrap;z-index:3}
+.rightArm{transform-origin:222px 243px}
+.mouth{transform-box:fill-box;transform-origin:center}
+.encouragement{position:absolute;z-index:2;right:-8px;top:0;border:1.5px solid #36d9aa;border-radius:17px 17px 17px 4px;background:#e0fff1;color:#117451;padding:6px 10px;font-size:11px;font-weight:850;transform:rotate(-7deg);animation:float 4s ease-in-out infinite;white-space:nowrap}
+.star,.starTwo{position:absolute;z-index:2;color:#fbd87c;font-size:23px;top:103px;left:2px;animation:twinkle 2.7s infinite}.starTwo{left:auto;right:1px;top:175px;font-size:15px;animation-delay:1s}
+.scene[data-state=listening] .head{animation:listen 2.8s ease-in-out infinite}.scene[data-state=listening] .waveArm{animation:none;transform:rotate(-12deg)}
+.scene[data-state=speaking] .mouth{animation:speak .23s ease-in-out infinite alternate}.scene[data-state=speaking] .head{animation:nod .8s ease-in-out infinite}.scene[data-state=speaking] .waveArm{animation:gesture 1.8s ease-in-out infinite}
+.scene[data-state=thinking] .head,.scene[data-state=connecting] .head{animation:ponder 3s ease-in-out infinite}.scene[data-state=thinking] .waveArm,.scene[data-state=connecting] .waveArm{animation:none;transform:rotate(-18deg)}
+.scene[data-state=muted] .waveArm{animation:none;transform:rotate(-25deg)}.scene[data-state=muted] .head{animation:breathe 4s ease-in-out infinite}.scene[data-state=muted] .halo{opacity:.4}
+.scene[data-state=celebrating] .character{animation:celebrate .8s ease-in-out 3}.scene[data-state=celebrating] .rightArm{animation:cheer .6s ease-in-out infinite alternate}.scene[data-state=celebrating] .waveArm{animation:wave 1.3s ease-in-out infinite}
+.scene[data-state=reassuring] .head{animation:listen 4s ease-in-out infinite}.scene[data-state=reassuring] .waveArm{animation:gesture 3s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.015,1.025)}}
+@keyframes sway{50%{transform:rotate(-3deg) translateY(-2px)}}
+@keyframes blink{0%,43%,47%,100%{transform:scaleY(1)}45%{transform:scaleY(.08)}}
+@keyframes wave{0%,42%,100%{transform:rotate(0)}8%,24%{transform:rotate(5deg)}16%,32%{transform:rotate(-9deg)}}
+@keyframes gesture{50%{transform:rotate(-9deg)}}
+@keyframes listen{50%{transform:rotate(6deg) translateY(2px)}}
+@keyframes ponder{50%{transform:rotate(-7deg)}}
+@keyframes nod{50%{transform:translateY(3px) rotate(2deg)}}
+@keyframes speak{from{transform:scaleY(.5)}to{transform:scaleY(1.1)}}
+@keyframes celebrate{50%{transform:translateY(-9px) rotate(-3deg)}}
+@keyframes cheer{to{transform:rotate(-55deg)}}
+@keyframes float{50%{transform:translateY(-4px) rotate(-3deg)}}
+@keyframes twinkle{50%{opacity:.35;transform:scale(.7)}}
+@media(max-height:820px){.scene{transform:scale(.72);margin:-36px 0}}
+@media(prefers-reduced-motion:reduce){.scene *{animation:none!important;transition:none!important}}
+:global(.dark) .encouragement{background:#123c30;color:#81f2c9}
+.scene[data-state=listening] .head{animation:attentive 3s ease-in-out infinite}
+.scene[data-state=connecting] .head{animation:none;transform:rotate(0)}
+.scene[data-state=thinking] .head{animation:none;transform:rotate(-5deg)}
+.scene[data-state=reassuring] .head{animation:affirm 2s ease-in-out infinite}
+.scene[data-state=muted] .eyes{animation:none}
+.scene[data-state=celebrating] .character{animation:celebrate .9s ease-in-out infinite}
+.scene[data-state=muted] .star,.scene[data-state=muted] .starTwo{opacity:.2;animation:none}
+.cuppedHand{transform-origin:28px 190px;animation:cup 3s ease-in-out infinite}
+.listenLines{animation:listeningPulse 1.5s ease-in-out infinite}
+.chinHand{transform-origin:108px 250px;animation:chinTap 3s ease-in-out infinite}
+.thoughtMark{animation:float 3s ease-in-out infinite}
+.supportArm{transform-origin:217px 260px;animation:thumbUp 2s ease-in-out infinite}
+.heart{transform-box:fill-box;transform-origin:center;animation:heartBeat 1.4s ease-in-out infinite}
+.explainArm{transform-origin:218px 261px;animation:explain 1.4s ease-in-out infinite}
+.speechDots circle,.connectionDots circle{animation:dotBounce 1.2s ease-in-out infinite}.speechDots circle:nth-child(2),.connectionDots circle:nth-child(2){animation-delay:.2s}.speechDots circle:nth-child(3),.connectionDots circle:nth-child(3){animation-delay:.4s}
+.victoryArms{transform-origin:160px 246px;animation:hooray .9s ease-in-out infinite}
+.confetti{animation:confettiFall 1.8s ease-out infinite}
+@keyframes attentive{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(-5deg) translateY(2px)}}
+@keyframes cup{50%{transform:translateX(2px)}}
+@keyframes listeningPulse{50%{opacity:.25}}
+@keyframes chinTap{50%{transform:rotate(2deg)}}
+@keyframes affirm{50%{transform:translateY(5px) rotate(3deg)}}
+@keyframes thumbUp{50%{transform:rotate(-4deg)}}
+@keyframes heartBeat{50%{transform:scale(1.17)}}
+@keyframes explain{50%{transform:rotate(-7deg)}}
+@keyframes dotBounce{50%{transform:translateY(-6px);opacity:.3}}
+@keyframes hooray{50%{transform:scaleX(1.04)}}
+@keyframes confettiFall{from{transform:translateY(-14px);opacity:0}30%{opacity:1}to{transform:translateY(32px);opacity:0}}

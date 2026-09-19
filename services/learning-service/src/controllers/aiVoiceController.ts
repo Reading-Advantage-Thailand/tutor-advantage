@@ -47,10 +47,8 @@ export async function connectVoiceSession(req: AuthenticatedRequest, res: Respon
 export async function endVoiceSession(req: AuthenticatedRequest, res: Response) {
   try {
     if (!req.user?.userId || req.user.role !== "STUDENT") throw new AiVoiceError("FORBIDDEN", 403, "Student access required");
-    const transcript = typeof req.body?.transcript === "string" ? req.body.transcript.slice(0, 20_000) : undefined;
     const session = await finalizeVoiceSession(req.params.sessionId, "USER_ENDED", {
       studentUserId: req.user.userId,
-      transcript,
     });
     res.status(200).json({
       sessionId: session.voiceSessionId,
