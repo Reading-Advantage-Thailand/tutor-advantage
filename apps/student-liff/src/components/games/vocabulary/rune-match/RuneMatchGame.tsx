@@ -3,6 +3,7 @@
 import React, {
   useCallback,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
@@ -40,6 +41,11 @@ import { Button } from "@/components/ui/button";
 import { useGameFullscreen } from "@/hooks/useGameFullscreen";
 import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
 import { calculateXP } from "@/lib/games/xp";
+import {
+  formatRuneLabel,
+  getRuneLabelMetrics,
+  getTimePresentation,
+} from "@/lib/games/runeMatchPresentation";
 
 export type RuneMatchGameResult = {
   xp: number;
@@ -79,7 +85,7 @@ const RUNE_MATCH_TUTORIAL_STEPS = [
 ];
 
 const MOBILE_GAME_CONTAINER_CLASS =
-  "relative h-dvh min-h-[520px] w-full overflow-hidden rounded-none border border-white/10 bg-slate-900/40 backdrop-blur-sm sm:h-[80vh] sm:rounded-2xl md:aspect-video md:h-auto";
+  "relative h-dvh min-h-[520px] w-full overflow-hidden rounded-none border border-sky-200/30 bg-slate-800 shadow-2xl backdrop-blur-sm sm:h-[80vh] sm:rounded-2xl md:h-[80vh] md:max-h-[860px]";
 
 const getRuneMatchScore = (state: RuneMatchState) => {
   return Math.min(10, state.correctAnswers);
@@ -119,6 +125,7 @@ export function RuneMatchGame({
   const [loadError, setLoadError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const hasReportedRef = useRef(false);
+  const instructionsId = useId();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -127,7 +134,7 @@ export function RuneMatchGame({
   const [tutProgress, setTutProgress] = useState(0);
 
   const { containerRef: fullscreenRef, enterFullscreen, exitFullscreen } = useGameFullscreen();
-  const { getEffectiveTextSize } = useAccessibilitySettings();
+  const { settings, getEffectiveTextSize } = useAccessibilitySettings();
 
   const mergedRef = useCallback(
     (node: HTMLDivElement | null) => {
@@ -143,8 +150,8 @@ export function RuneMatchGame({
     const isMobile = dimensions.width < 768;
 
     if (isMobile) {
-      const monsterAreaHeight = Math.min(110, (dimensions.height - bottomOffset) * 0.2);
-      const availableGridArea = dimensions.height - monsterAreaHeight - bottomOffset - 65;
+      const monsterAreaHeight = Math.min(124, (dimensions.height - bottomOffset) * 0.22);
+      const availableGridArea = dimensions.height - monsterAreaHeight - bottomOffset - 72;
       const availableGridWidth = dimensions.width - padding * 2;
       const availableGridHeight = Math.max(180, availableGridArea);
       const cellSize = Math.min(
@@ -166,7 +173,7 @@ export function RuneMatchGame({
         isMobile: true,
       };
     } else {
-      const sidebarWidth = Math.min(200, dimensions.width * 0.25);
+      const sidebarWidth = Math.min(220, dimensions.width * 0.27);
       const gridAreaWidth = dimensions.width - sidebarWidth - padding * 2;
       const availableHeight = dimensions.height - bottomOffset - padding * 2;
       const cellSize = Math.min(
@@ -683,11 +690,62 @@ export function RuneMatchGame({
     );
   };
 
+  const timePresentation = getTimePresentation(
+    gameState.player.hp,
+    gameState.player.maxHp,
+  );
+  const selectedRune = gameState.selectedCell
+    ? gameState.grid[gameState.selectedCell.row]?.[gameState.selectedCell.col]
+    : null;
+  const selectedRuneText =
+    selectedRune?.type === "vocabulary" ? selectedRune.text : null;
+
+  const renderStatCard = (
+    x: number,
+    y: number,
+    width: number,
+    label: string,
+    value: string,
+    accent: string,
+    background = "rgba(15, 23, 42, 0.92)",
+  ) => (
+    <Group x={x} y={y}>
+      <Rect
+        width={width}
+        height={32}
+        fill={background}
+        stroke={accent}
+        strokeWidth={1.5}
+        cornerRadius={9}
+      />
+      <Text
+        text={label}
+        x={8}
+        y={4}
+        width={width - 16}
+        fontSize={getEffectiveTextSize(10)}
+        fill="#cbd5e1"
+        fontStyle="bold"
+      />
+      <Text
+        text={value}
+        x={8}
+        y={15}
+        width={width - 16}
+        fontSize={getEffectiveTextSize(14)}
+        fill={accent}
+        fontStyle="bold"
+      />
+    </Group>
+  );
+
   return (
     <div
       ref={mergedRef}
       data-testid="rune-match-container"
       className={MOBILE_GAME_CONTAINER_CLASS}
+      role="application"
+      aria-describedby={instructionsId}
     >
       <Stage width={dimensions.width} height={dimensions.height}>
         <Layer>
@@ -695,11 +753,21 @@ export function RuneMatchGame({
             x={gameState.shakeIntensity * (Math.random() * 10 - 5)}
             y={gameState.shakeIntensity * (Math.random() * 10 - 5)}
           >
+            <Rect
+              width={dimensions.width}
+              height={dimensions.height}
+              fill="#17324d"
+            />
             <KonvaImage
               image={assets.background}
               width={dimensions.width}
               height={dimensions.height}
-              opacity={0.2}
+              opacity={0.42}
+            />
+            <Rect
+              width={dimensions.width}
+              height={dimensions.height}
+              fill="rgba(255, 255, 255, 0.05)"
             />
             {(gameState.status === "playing" ||
               gameState.status === "victory" ||
@@ -713,7 +781,9 @@ export function RuneMatchGame({
                       y={0}
                       width={layout.sidebarWidth}
                       height={dimensions.height}
-                      fill="rgba(0, 0, 0, 0.3)"
+                      fill="rgba(8, 20, 36, 0.9)"
+                      stroke="rgba(125, 211, 252, 0.35)"
+                      strokeWidth={1}
                     />
                     {gameState.monster && (
                       <Group>
@@ -757,23 +827,23 @@ export function RuneMatchGame({
                       </Group>
                     )}
                     <Text
-                      text="POWER WORD"
+                      text={selectedRuneText ? "SELECTED RUNE" : "POWER WORD"}
                       x={10}
                       y={160}
                       width={layout.sidebarWidth - 20}
                       fontSize={getEffectiveTextSize(16)}
-                      fill="#94a3b8"
+                      fill="#bae6fd"
                       fontStyle="bold"
                       align="center"
                       fontFamily="Arial"
                     />
                     <Text
-                      text={gameState.powerWord?.toUpperCase() || ""}
+                      text={selectedRuneText || gameState.powerWord?.toUpperCase() || ""}
                       x={10}
                       y={175}
                       width={layout.sidebarWidth - 20}
                       fontSize={getEffectiveTextSize(16)}
-                      fill="#facc15"
+                      fill="#fef08a"
                       fontStyle="bold"
                       align="center"
                       fontFamily="Sarabun, Arial"
@@ -793,7 +863,7 @@ export function RuneMatchGame({
                       y={238}
                       width={layout.sidebarWidth - 20}
                       fontSize={getEffectiveTextSize(16)}
-                      fill="#22c55e"
+                      fill="#86efac"
                       fontStyle="bold"
                       align="center"
                     />
@@ -868,9 +938,9 @@ export function RuneMatchGame({
                             <Rect
                               width={width}
                               height={height}
-                              fill="#1e293b"
+                              fill={isDisabled ? "#1e293b" : "#0f2942"}
                               stroke={isDisabled ? "#334155" : color}
-                              strokeWidth={1}
+                              strokeWidth={isDisabled ? 1 : 2}
                               cornerRadius={8}
                               shadowColor={isDisabled ? "transparent" : color}
                               shadowBlur={isDisabled ? 0 : 5}
@@ -890,8 +960,8 @@ export function RuneMatchGame({
                               y={32}
                               width={width}
                               align="center"
-                              fontSize={getEffectiveTextSize(16)}
-                              fill="#cbd5e1"
+                              fontSize={getEffectiveTextSize(13)}
+                              fill={isDisabled ? "#94a3b8" : "#f8fafc"}
                               fontStyle="bold"
                             />
                             <Group x={width - 16} y={-5}>
@@ -903,7 +973,7 @@ export function RuneMatchGame({
                                 width={16}
                                 align="center"
                                 fontSize={getEffectiveTextSize(16)}
-                                fill="#000000"
+                                fill="#ffffff"
                                 fontStyle="bold"
                               />
                             </Group>
@@ -955,14 +1025,27 @@ export function RuneMatchGame({
                 {/* Mobile Header Top Bar */}
                 {layout.isMobile && (
                   <Group>
+                    <Rect
+                      x={8}
+                      y={6}
+                      width={dimensions.width - 16}
+                      height={108}
+                      fill="rgba(8, 20, 36, 0.94)"
+                      stroke="rgba(125, 211, 252, 0.55)"
+                      strokeWidth={1.5}
+                      cornerRadius={14}
+                      shadowColor="#020617"
+                      shadowBlur={10}
+                      shadowOpacity={0.45}
+                    />
                     {gameState.monster && (
                       <Group>
                         <KonvaImage
                           image={assets.monsters[gameState.monster.type]}
-                          x={dimensions.width / 2 - 35}
-                          y={5}
-                          width={70}
-                          height={70}
+                          x={14}
+                          y={12}
+                          width={58}
+                          height={58}
                           crop={{
                             x:
                               monsterAnimFrame *
@@ -986,9 +1069,9 @@ export function RuneMatchGame({
                           }}
                         />
                         {renderHealthBar(
-                          dimensions.width / 2 - 90,
-                          78,
-                          180,
+                          80,
+                          13,
+                          dimensions.width - 94,
                           gameState.monster.hp,
                           gameState.monster.maxHp,
                           "#ef4444",
@@ -996,6 +1079,46 @@ export function RuneMatchGame({
                         )}
                       </Group>
                     )}
+                    {renderStatCard(
+                      80,
+                      40,
+                      (dimensions.width - 102) / 2,
+                      "จับคู่แล้ว",
+                      `${gameState.correctAnswers}/${RUNE_MATCH_CONFIG.game.targetMatches}`,
+                      "#86efac",
+                    )}
+                    {renderStatCard(
+                      86 + (dimensions.width - 102) / 2,
+                      40,
+                      (dimensions.width - 102) / 2,
+                      "เวลาที่เหลือ",
+                      `${timePresentation.seconds} วินาที`,
+                      timePresentation.color,
+                      timePresentation.background,
+                    )}
+                    <Text
+                      text={selectedRuneText ? "เลือกแล้ว" : "คำเป้าหมาย"}
+                      x={80}
+                      y={78}
+                      width={60}
+                      fontSize={getEffectiveTextSize(11)}
+                      fill="#bae6fd"
+                      fontStyle="bold"
+                    />
+                    <Text
+                      text={selectedRuneText || gameState.powerWord || "จับคู่คำที่มีความหมายตรงกัน"}
+                      x={140}
+                      y={75}
+                      width={dimensions.width - 154}
+                      height={28}
+                      fontSize={getEffectiveTextSize(16)}
+                      fill="#fef08a"
+                      fontStyle="bold"
+                      align="right"
+                      verticalAlign="middle"
+                      ellipsis
+                      wrap="char"
+                    />
                   </Group>
                 )}
 
@@ -1005,9 +1128,9 @@ export function RuneMatchGame({
                   y={layout.gridY - 6}
                   width={layout.gridWidth + 12}
                   height={layout.gridHeight + 12}
-                  fill="rgba(0, 0, 0, 0.4)"
+                  fill="rgba(226, 232, 240, 0.18)"
                   cornerRadius={12}
-                  stroke="rgba(255, 255, 255, 0.1)"
+                  stroke="rgba(186, 230, 253, 0.7)"
                   strokeWidth={2}
                 />
                 {gameState.grid.map((row, r) =>
@@ -1032,6 +1155,11 @@ export function RuneMatchGame({
                     };
                     const isHinted = gameState.hintCells.some(
                       (cell) => cell.row === r && cell.col === c,
+                    );
+                    const labelMetrics = getRuneLabelMetrics(
+                      rune.type === "vocabulary" ? rune.text : "",
+                      layout.cellSize,
+                      settings.textSizeMultiplier,
                     );
                     return (
                       <Group
@@ -1073,26 +1201,36 @@ export function RuneMatchGame({
                           crop={crop}
                         />
                         {rune.type === "vocabulary" && (
-                          <Text
-                            text={rune.text}
-                            width={runeSize - 4}
-                            height={runeSize - 4}
-                            x={2}
-                            y={2}
-                            fontSize={Math.max(
-                              14,
-                              Math.min(
-                                layout.cellSize / 3.2,
-                                (runeSize - 6) /
-                                  Math.max(1, rune.text.length / 2),
-                              ),
-                            )}
-                            fill="#0f172a"
-                            align="center"
-                            verticalAlign="middle"
-                            fontFamily="Sarabun, Arial"
-                            fontStyle="bold"
-                          />
+                          <Group>
+                            <Rect
+                              x={2}
+                              y={runeSize * 0.1}
+                              width={runeSize - 4}
+                              height={runeSize * 0.8}
+                              fill="rgba(8, 20, 36, 0.92)"
+                              stroke="rgba(224, 242, 254, 0.9)"
+                              strokeWidth={1}
+                              cornerRadius={Math.max(5, runeSize * 0.1)}
+                              shadowColor="#020617"
+                              shadowBlur={4}
+                              shadowOpacity={0.65}
+                            />
+                            <Text
+                              text={formatRuneLabel(rune.text)}
+                              width={runeSize - 8}
+                              height={runeSize * 0.8 - 4}
+                              x={4}
+                              y={runeSize * 0.1 + 2}
+                              fontSize={labelMetrics.fontSize}
+                              lineHeight={labelMetrics.lineHeight}
+                              fill="#ffffff"
+                              align="center"
+                              verticalAlign="middle"
+                              fontFamily="Sarabun, Arial"
+                              fontStyle="bold"
+                              wrap="char"
+                            />
+                          </Group>
                         )}
                       </Group>
                     );
@@ -1108,7 +1246,7 @@ export function RuneMatchGame({
                       const availableWidth = dimensions.width - 20;
                       const buttonWidth =
                         (availableWidth - gap * (cols - 1)) / cols;
-                      const height = 44;
+                      const height = 50;
 
                       const renderButton = (
                         index: number,
@@ -1129,14 +1267,14 @@ export function RuneMatchGame({
                             y={y}
                             onClick={!isDisabled ? onClick : undefined}
                             onTap={!isDisabled ? onClick : undefined}
-                            opacity={isDisabled ? 0.5 : 1}
+                            opacity={isDisabled ? 0.62 : 1}
                           >
                             <Rect
                               width={buttonWidth}
                               height={height}
-                              fill="#1e293b"
+                              fill={isDisabled ? "#1e293b" : "#0f2942"}
                               stroke={isDisabled ? "#334155" : color}
-                              strokeWidth={1}
+                              strokeWidth={isDisabled ? 1 : 2}
                               cornerRadius={8}
                               shadowColor={isDisabled ? "transparent" : color}
                               shadowBlur={isDisabled ? 0 : 4}
@@ -1145,19 +1283,19 @@ export function RuneMatchGame({
                             <Text
                               text={icon}
                               x={0}
-                              y={6}
+                              y={7}
                               width={buttonWidth}
                               align="center"
-                              fontSize={16}
+                              fontSize={18}
                             />
                             <Text
                               text={label}
                               x={0}
-                              y={26}
+                              y={29}
                               width={buttonWidth}
                               align="center"
-                              fontSize={11}
-                              fill="#cbd5e1"
+                              fontSize={getEffectiveTextSize(13)}
+                              fill={isDisabled ? "#94a3b8" : "#f8fafc"}
                               fontStyle="bold"
                             />
                             <Group x={buttonWidth - 14} y={-4}>
@@ -1168,8 +1306,8 @@ export function RuneMatchGame({
                                 y={-4}
                                 width={14}
                                 align="center"
-                                fontSize={10}
-                                fill="#000000"
+                                fontSize={getEffectiveTextSize(11)}
+                                fill="#ffffff"
                                 fontStyle="bold"
                               />
                             </Group>
@@ -1405,6 +1543,11 @@ export function RuneMatchGame({
           </Group>
         </Layer>
       </Stage>
+      <p id={instructionsId} className="sr-only">
+        Rune Match: เลือกรูนสองแผ่นที่อยู่ติดกันเพื่อจับคู่คำศัพท์กับคำแปล
+        ดูเวลา จำนวนคู่ และคำเป้าหมายได้จากแถบสถานะด้านบน
+        ปุ่มสกิลที่จางลงคือสกิลที่ยังใช้ไม่ได้หรือใช้หมดแล้ว
+      </p>
       {tutorialMode && (
         <div
           className="absolute z-40 w-[92%] max-w-lg -translate-x-1/2 pointer-events-none transition-all duration-300"
