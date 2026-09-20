@@ -62,8 +62,11 @@ export type RuneMatchGameProps = {
   tutorialMode?: boolean;
   tutorialStep?: number;
   disableAutoFullscreen?: boolean;
+  restartOnComplete?: boolean;
   onComplete: (result: RuneMatchGameResult) => void;
 };
+
+const GAME_TICK_INTERVAL_MS = 50;
 
 const RUNE_MATCH_TUTORIAL_STEPS = [
   {
@@ -111,16 +114,18 @@ export function RuneMatchGame({
   tutorialMode = false,
   tutorialStep = 0,
   disableAutoFullscreen = false,
+  restartOnComplete = false,
   onComplete,
 }: RuneMatchGameProps) {
   const [gameState, setGameState] = useState<RuneMatchState | null>(null);
   const [assets, setAssets] = useState<RuneMatchAssets | null>(null);
 
   const targetTutorialMove = useMemo(() => {
-    if (!gameState || gameState.grid.length === 0) return null;
-    const moves = findPossibleMoves(gameState.grid);
+    const grid = gameState?.grid;
+    if (!tutorialMode || !grid || grid.length === 0) return null;
+    const moves = findPossibleMoves(grid);
     return moves.length > 0 ? moves[0] : null;
-  }, [gameState]);
+  }, [tutorialMode, gameState?.grid]);
 
   const [loadError, setLoadError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -233,19 +238,16 @@ export function RuneMatchGame({
 
   useEffect(() => {
     let lastTime = performance.now();
-    let frameId: number;
-    const tick = (now: number) => {
-      const rawDt = now - lastTime;
+    const intervalId = window.setInterval(() => {
+      const now = performance.now();
+      const dt = Math.min(now - lastTime, 250);
       lastTime = now;
-      const dt = Math.min(rawDt, 50);
       setGameState((current) => {
         if (!current || current.status !== "playing") return current;
         return advanceTime(current, dt);
       });
-      frameId = requestAnimationFrame(tick);
-    };
-    frameId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frameId);
+    }, GAME_TICK_INTERVAL_MS);
+    return () => window.clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
@@ -492,7 +494,7 @@ export function RuneMatchGame({
     if (hasReportedRef.current) return;
     if (gameState.status === "victory" || gameState.status === "defeat") {
       hasReportedRef.current = true;
-      if (tutorialMode || disableAutoFullscreen) {
+      if (tutorialMode || restartOnComplete) {
         const timer = setTimeout(() => {
           hasReportedRef.current = false;
           setGameState(createPlayingGame("goblin"));
@@ -526,11 +528,11 @@ export function RuneMatchGame({
           ],
       });
     }
-  }, [gameState, onComplete, tutorialMode, disableAutoFullscreen, createPlayingGame]);
+  }, [gameState, onComplete, tutorialMode, restartOnComplete, createPlayingGame]);
 
   const tutVisuals = useMemo(() => {
     if (!tutorialMode || !gameState || gameState.grid.length === 0) return null;
-    const move = targetTutorialMove || findPossibleMoves(gameState.grid)[0];
+    const move = targetTutorialMove;
     if (!move) return null;
 
     const fromX = layout.gridX + move.from.col * layout.cellSize + layout.cellSize / 2;
@@ -610,6 +612,31 @@ export function RuneMatchGame({
       step,
     };
   }, [tutorialMode, gameState, targetTutorialMove, layout, dimensions, tutorialStep, tutProgress]);
+
+  const runePresentationById = useMemo(() => {
+    const presentation = new Map<
+      string,
+      { text: string; fontSize: number; lineHeight: number }
+    >();
+    const grid = gameState?.grid;
+    if (!grid) return presentation;
+
+    for (const row of grid) {
+      for (const rune of row) {
+        if (rune.type !== "vocabulary") continue;
+        const metrics = getRuneLabelMetrics(
+          rune.text,
+          layout.cellSize,
+          settings.textSizeMultiplier,
+        );
+        presentation.set(rune.id, {
+          text: formatRuneLabel(rune.text),
+          ...metrics,
+        });
+      }
+    }
+    return presentation;
+  }, [gameState?.grid, layout.cellSize, settings.textSizeMultiplier]);
 
   if (!assets || !gameState || dimensions.width === 0) {
     return (
@@ -1156,11 +1183,7 @@ export function RuneMatchGame({
                     const isHinted = gameState.hintCells.some(
                       (cell) => cell.row === r && cell.col === c,
                     );
-                    const labelMetrics = getRuneLabelMetrics(
-                      rune.type === "vocabulary" ? rune.text : "",
-                      layout.cellSize,
-                      settings.textSizeMultiplier,
-                    );
+                    const labelPresentation = runePresentationById.get(rune.id);
                     return (
                       <Group
                         key={rune.id}
@@ -1216,19 +1239,19 @@ export function RuneMatchGame({
                               shadowOpacity={0.65}
                             />
                             <Text
-                              text={formatRuneLabel(rune.text)}
+                              text={labelPresentation?.text || rune.text}
                               width={runeSize - 8}
                               height={runeSize * 0.8 - 4}
                               x={4}
                               y={runeSize * 0.1 + 2}
-                              fontSize={labelMetrics.fontSize}
-                              lineHeight={labelMetrics.lineHeight}
+                              fontSize={labelPresentation?.fontSize || 12}
+                              lineHeight={labelPresentation?.lineHeight || 1.05}
                               fill="#ffffff"
                               align="center"
                               verticalAlign="middle"
                               fontFamily="Sarabun, Arial"
                               fontStyle="bold"
-                              wrap="char"
+                              wrap="none"
                             />
                           </Group>
                         )}

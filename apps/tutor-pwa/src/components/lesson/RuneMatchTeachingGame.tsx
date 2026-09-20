@@ -89,6 +89,7 @@ export function RuneMatchTeachingGame({ vocabulary, mode, fullscreen = false }: 
         tutorialMode={mode === "tutorial"}
         tutorialStep={tutorialStep}
         disableAutoFullscreen={true}
+        restartOnComplete={mode === "teacher"}
         onComplete={handleComplete}
       />
 

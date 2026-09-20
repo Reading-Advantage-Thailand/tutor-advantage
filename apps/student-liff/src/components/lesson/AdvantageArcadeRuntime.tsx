@@ -271,7 +271,12 @@ export function AdvantageArcadeRuntime({
         />
       )}
       {resolvedGameId === "rune-match" && (
-        <RuneMatchGame vocabulary={vocabulary} tutorialMode={tutorialMode} onComplete={handleComplete} />
+        <RuneMatchGame
+          vocabulary={vocabulary}
+          tutorialMode={tutorialMode}
+          restartOnComplete={restartOnComplete}
+          onComplete={handleComplete}
+        />
       )}
       {resolvedGameId === "alchemists-synthesis" && (
         <AlchemistsSynthesisGame vocabulary={vocabulary} onComplete={handleComplete} />
