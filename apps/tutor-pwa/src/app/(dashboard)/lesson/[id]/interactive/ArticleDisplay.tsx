@@ -193,6 +193,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
   const isSeekingRef = useRef(false); // prevent highlight flickering during seek
   const audioRequestRef = useRef(0);
   const granularAutoAdvanceRef = useRef(false);
+  const autoAdvanceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
   const [activeWordIdx, setActiveWordIdx] = useState(-1);
@@ -502,6 +503,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     clearSentenceStopMonitor();
     clipAudioRef.current?.pause();
     audio.pause();
+    audio.currentTime = 0;
     audio.src = url;
     audio.load();
     audio.playbackRate = speechRate;
@@ -514,7 +516,10 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
     setCurrentTime(0);
     setDuration(0);
     const start = () => {
+      audio.removeEventListener("canplay", start);
+      audio.removeEventListener("loadedmetadata", start);
       if (audioRequestRef.current !== requestId || audioRef.current !== audio) return;
+      audio.currentTime = 0;
       audio
         .play()
         .then(() => {
@@ -522,18 +527,32 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
             setIsPlaying(true);
           }
         })
-        .catch(() => {
+        .catch((err) => {
           if (audioRequestRef.current === requestId && audioRef.current === audio) {
-            setIsPlaying(false);
+            if (err?.name !== "AbortError") {
+              setIsPlaying(false);
+            }
           }
         });
     };
-    if (audio.readyState >= HTMLMediaElement.HAVE_METADATA) start();
-    else audio.addEventListener("loadedmetadata", start, { once: true });
+    if (audio.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+      start();
+    } else {
+      audio.addEventListener("canplay", start, { once: true });
+      audio.addEventListener("loadedmetadata", start, { once: true });
+    }
     return true;
   };
 
+  const clearAutoAdvanceTimer = () => {
+    if (autoAdvanceTimerRef.current !== null) {
+      clearTimeout(autoAdvanceTimerRef.current);
+      autoAdvanceTimerRef.current = null;
+    }
+  };
+
   const clearSentenceStopMonitor = () => {
+    clearAutoAdvanceTimer();
     if (sentenceStopRafRef.current !== null) {
       cancelAnimationFrame(sentenceStopRafRef.current);
       sentenceStopRafRef.current = null;
@@ -1831,7 +1850,7 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
         {phase4AudioUrl && (
           <audio
             ref={audioRef}
-            src={phase4AudioUrl}
+            src={hasGranularSentenceAudio ? undefined : (readingAdvantageAudioUrl || undefined)}
             preload="auto"
             onTimeUpdate={handleTimeUpdate}
             onSeeked={() => {
@@ -1855,17 +1874,24 @@ export const ArticleDisplay: React.FC<ArticleDisplayProps> = ({
                 nextPlayableSentenceIndex >= 0
               ) {
                 // Keep Play-all running across sentence and Part boundaries.
-                // The visible Part is derived from activeIdx, so selecting the
-                // next sentence also advances the Primary illustration/page.
-                playGranularArticleSentence(nextPlayableSentenceIndex, true);
+                // Defer to the next event loop tick so the media engine cleanly exits 'ended' state.
+                clearSentenceStopMonitor();
+                autoAdvanceTimerRef.current = setTimeout(() => {
+                  autoAdvanceTimerRef.current = null;
+                  if (granularAutoAdvanceRef.current) {
+                    playGranularArticleSentence(nextPlayableSentenceIndex, true);
+                  }
+                }, 20);
               } else if (hasGranularSentenceAudio) {
                 // Keep the completed sentence selected so its highlight and
                 // translation remain visible after single-sentence playback.
+                clearSentenceStopMonitor();
                 granularAutoAdvanceRef.current = false;
                 setIsPlaying(false);
                 setActiveWordIdx(-1);
                 activeWordRef.current = -1;
               } else {
+                clearSentenceStopMonitor();
                 granularAutoAdvanceRef.current = false;
                 setIsPlaying(false);
                 activeSentenceRef.current = -1;
