@@ -12,6 +12,7 @@ import {
   type VoiceSafetyDecision,
   type VoiceSafetyReason,
 } from "./voiceSafety";
+import { consumedVoiceSeconds } from "./voiceSessionTime";
 
 const MAX_SESSION_SECONDS = 600;
 const PENDING_LEASE_SECONDS = 45;
@@ -96,13 +97,12 @@ async function releaseExpiredLock(tx: Tx, studentUserId: string, now: Date) {
     include: { session: true },
   });
   if (!lock || lock.expiresAt > now) return lock;
-  const startedAt = lock.session.startedAt?.getTime();
-  const elapsed = startedAt ? Math.max(0, Math.ceil((now.getTime() - startedAt) / 1000)) : 0;
+  const elapsed = consumedVoiceSeconds(lock.session.startedAt, now, lock.session.reservedSeconds);
   await tx.aiVoiceSession.update({
     where: { voiceSessionId: lock.voiceSessionId },
     data: {
       status: "ENDED",
-      consumedSeconds: Math.min(lock.session.reservedSeconds, elapsed),
+      consumedSeconds: elapsed,
       endedAt: now,
       endReason: "LEASE_EXPIRED",
     },
@@ -143,6 +143,8 @@ async function entitlementWithTx(tx: Tx, studentUserId: string, classBookCycleId
     activeSession: activeLock ? {
       sessionId: activeLock.voiceSessionId,
       expiresAt: activeLock.expiresAt,
+      articleId: activeLock.session.articleId,
+      classBookCycleId: activeLock.session.classBookCycleId,
     } : null,
     enabled: isAiVoiceEnabled(),
   };
@@ -538,10 +540,10 @@ export async function finalizeVoiceSession(
     throw new AiVoiceError("FORBIDDEN", 403, "This voice session belongs to another student");
   }
   if (existing.status === "ENDED" || existing.status === "PROVIDER_FAILED") return existing;
+  // Charge only until the end request arrived, not the time spent generating feedback.
+  const endedAt = new Date();
   await awaitSidebandSummary(voiceSessionId);
-  const now = new Date();
-  const elapsed = existing.startedAt ? Math.max(0, Math.ceil((now.getTime() - existing.startedAt.getTime()) / 1000)) : 0;
-  const consumedSeconds = Math.min(existing.reservedSeconds, elapsed);
+  const consumedSeconds = consumedVoiceSeconds(existing.startedAt, endedAt, existing.reservedSeconds);
   const sideband = sidebands.get(voiceSessionId);
   let feedback = sideband?.summary || null;
   // Strict mode never trusts a client-supplied transcript for grading. Only
@@ -563,7 +565,7 @@ export async function finalizeVoiceSession(
       data: {
         status: "ENDED",
         consumedSeconds,
-        endedAt: now,
+        endedAt,
         endReason,
         summary: feedback ? { summaryTh: feedback.summaryTh, strengths: feedback.strengths, improvements: feedback.improvements, practicedTopics: feedback.practicedTopics || [] } : Prisma.JsonNull,
         scores: feedback?.scores || Prisma.JsonNull,

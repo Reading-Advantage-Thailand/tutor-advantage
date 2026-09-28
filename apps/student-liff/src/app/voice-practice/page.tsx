@@ -19,7 +19,7 @@ type Entitlement = {
   remainingSeconds: number;
   completedArticles: number;
   eligibleArticles: Array<{ articleId: string; title: string }>;
-  activeSession?: { sessionId: string; expiresAt: string } | null;
+  activeSession?: { sessionId: string; expiresAt: string; articleId: string; classBookCycleId: string } | null;
 };
 
 type StartResult = {
@@ -140,6 +140,7 @@ function VoicePracticeContent() {
   const [starting, setStarting] = useState(false);
   const [connected, setConnected] = useState(false);
   const [ending, setEnding] = useState(false);
+  const [recovering, setRecovering] = useState(false);
   const [muted, setMuted] = useState(false);
   const [remaining, setRemaining] = useState(0);
   const [caption, setCaption] = useState("พร้อมเริ่มฝึกสนทนา");
@@ -184,6 +185,7 @@ function VoicePracticeContent() {
       // recap from a different lesson just because the IDs happen to match.
       setArticleReview(reviewMatchesCycle ? reviewArticle : null);
       setRemaining(data.remainingSeconds);
+      return data;
     } catch {
       setError("โหลดสิทธิ์ฝึกสนทนาไม่สำเร็จ");
     } finally {
@@ -304,6 +306,15 @@ function VoicePracticeContent() {
     const active = sessionRef.current;
     if (active && !endingRef.current) void studentApi.endVoiceSession(active.sessionId);
   }, [cleanupMedia]);
+
+  useEffect(() => {
+    const closeOnPageExit = () => {
+      const active = sessionRef.current;
+      if (active && !endingRef.current) void studentApi.endVoiceSessionKeepalive(active.sessionId);
+    };
+    window.addEventListener("pagehide", closeOnPageExit);
+    return () => window.removeEventListener("pagehide", closeOnPageExit);
+  }, []);
 
   const startVolumeMeter = (stream: MediaStream) => {
     const context = new AudioContext();
@@ -460,6 +471,35 @@ function VoicePracticeContent() {
     }
   };
 
+  const resolveInterruptedSession = async (continuePracticing: boolean) => {
+    const interrupted = entitlement?.activeSession;
+    if (!interrupted || recovering) return;
+    setRecovering(true);
+    setError(null);
+    try {
+      const ended = await studentApi.endVoiceSession(interrupted.sessionId) as { consumedSeconds: number; summary?: unknown; scores?: unknown };
+      const refreshed = await loadEntitlement();
+      if (!refreshed) throw new Error("ตรวจสอบเวลาที่เหลือไม่สำเร็จ กรุณาลองอีกครั้ง");
+      if (continuePracticing) {
+        if (interrupted.articleId !== articleId || interrupted.classBookCycleId !== cycleId) {
+          window.location.assign(`/voice-practice?cycleId=${encodeURIComponent(interrupted.classBookCycleId)}&articleId=${encodeURIComponent(interrupted.articleId)}`);
+        } else if (refreshed.remainingSeconds <= 0) {
+          setCaption("ครบเวลาฝึกแล้ว");
+          setResult({ summary: ended.summary, scores: ended.scores });
+        } else {
+          await startSession();
+        }
+      } else {
+        setResult({ summary: ended.summary, scores: ended.scores });
+        setCaption(`จบรอบก่อนแล้ว ใช้เวลาฝึก ${formatTime(ended.consumedSeconds)}`);
+      }
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "จัดการรอบที่ค้างไม่สำเร็จ กรุณาลองอีกครั้ง");
+    } finally {
+      setRecovering(false);
+    }
+  };
+
   const toggleMute = () => {
     const track = streamRef.current?.getAudioTracks()[0];
     if (!track) return;
@@ -555,6 +595,17 @@ function VoicePracticeContent() {
         {!connected && !error && <div className={styles.tips}><div><Lightbulb size={15} /> ไม่ต้องกลัวผิด</div><span />พูดแทรกได้ตลอด<span />คุยสั้นๆ ทีละประโยค</div>}
 
         {error && <div role="alert" className={styles.error}><AlertCircle size={18} /><span>{error}</span></div>}
+
+        {entitlement?.activeSession && !connected && (
+          <section className={styles.interruptedSession} aria-label="รอบฝึกที่ค้างอยู่">
+            <strong>มีรอบฝึกก่อนหน้าที่ยังเปิดอยู่</strong>
+            <p>หากปิดหน้าหรือเสียงหลุด ระบบจะคิดเวลาเท่าที่ใช้ไป แล้วเริ่มการเชื่อมต่อใหม่เมื่อกลับไปฝึกต่อ</p>
+            <div>
+              <button type="button" disabled={recovering} onClick={() => void resolveInterruptedSession(true)}>กลับไปฝึกต่อ</button>
+              <button type="button" disabled={recovering} onClick={() => void resolveInterruptedSession(false)}>จบรอบนี้</button>
+            </div>
+          </section>
+        )}
 
         {!connected ? (
           <div className={styles.startArea}>

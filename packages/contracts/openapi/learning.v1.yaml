@@ -452,10 +452,12 @@ components:
           oneOf:
             - type: "null"
             - type: object
-              required: [sessionId, expiresAt]
+              required: [sessionId, expiresAt, articleId, classBookCycleId]
               properties:
                 sessionId: { type: string, format: uuid }
                 expiresAt: { type: string, format: date-time }
+                articleId: { type: string }
+                classBookCycleId: { type: string, format: uuid }
     VoiceSessionSummary:
       type: object
       additionalProperties: true
