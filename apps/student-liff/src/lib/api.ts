@@ -136,6 +136,10 @@ export const studentApi = {
     body: JSON.stringify({}),
     keepalive: true,
   }),
+  sendVoiceReadingIntent: (sessionId: string, action: "accept" | "decline" | "close") => fetchWithAuth(`/voice-sessions/${encodeURIComponent(sessionId)}/reading-intent`, {
+    method: 'POST',
+    body: JSON.stringify({ action }),
+  }),
   generateShareLink: (classId?: string) => fetchWithAuth('/student/share-link', {
     method: 'POST',
     body: JSON.stringify(classId ? { classId } : {}),

@@ -503,6 +503,31 @@ export async function markVoiceSessionConnected(voiceSessionId: string, studentU
   return { sessionId: voiceSessionId, expiresAt: session.expiresAt };
 }
 
+export async function sendReadingIntent(voiceSessionId: string, studentUserId: string, action: "accept" | "decline" | "close") {
+  const session = await prisma.aiVoiceSession.findUnique({ where: { voiceSessionId } });
+  if (!session) throw new AiVoiceError("NOT_FOUND", 404, "Voice session not found");
+  if (session.studentUserId !== studentUserId) throw new AiVoiceError("FORBIDDEN", 403, "This voice session belongs to another student");
+  if (session.status !== "ACTIVE" || !session.startedAt || session.expiresAt <= new Date()) {
+    throw new AiVoiceError("VOICE_PROVIDER_UNAVAILABLE", 409, "Voice session is no longer active");
+  }
+  const state = sidebands.get(voiceSessionId);
+  if (!state || state.closing || state.connection.socket.readyState !== 1) {
+    throw new AiVoiceError("VOICE_PROVIDER_UNAVAILABLE", 503, "Voice connection is unavailable");
+  }
+  const intent = {
+    accept: "I accept Reedy's offer to open this lesson and read together.",
+    decline: "I want to keep talking instead of opening the reading view.",
+    close: "Please close the reading view and return to conversation.",
+  }[action];
+  state.connection.send({ type: "conversation.item.create", item: { type: "message", role: "user", content: [{ type: "input_text", text: intent }] } } as never);
+  state.connection.send({ type: "response.create", response: {
+    output_modalities: ["audio"],
+    instructions: "The learner pressed a trusted reading control. Follow that intent within the current lesson. Use guide_reading for the display change, then give one short helpful response. Do not call submit_practice_summary.",
+    max_output_tokens: 220,
+    tool_choice: "auto",
+  } } as never);
+}
+
 function normalizeProviderSummary(value: unknown): ProviderSummary | null {
   if (!value || typeof value !== "object") return null;
   const item = value as Record<string, unknown>;

@@ -87,6 +87,29 @@ paths:
           description: Final metered usage and derived feedback
           content: { application/json: { schema: { type: object, additionalProperties: true } } }
         "404": { $ref: "#/components/responses/VoiceError" }
+  /v1/voice-sessions/{sessionId}/reading-intent:
+    post:
+      summary: Send a fixed reading control intent through the server sideband
+      security: [{ bearerAuth: [] }]
+      parameters: [{ name: sessionId, in: path, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [action]
+              properties:
+                action: { type: string, enum: [accept, decline, close] }
+      responses:
+        "202":
+          description: Reading control accepted
+          content: { application/json: { schema: { type: object, required: [accepted], properties: { accepted: { type: boolean } } } } }
+        "400": { $ref: "#/components/responses/VoiceError" }
+        "403": { $ref: "#/components/responses/VoiceError" }
+        "409": { $ref: "#/components/responses/VoiceError" }
+        "503": { $ref: "#/components/responses/VoiceError" }
   /v1/classes/{classId}/voice-practice-summary:
     get:
       summary: Get derived voice-practice feedback for the owning tutor

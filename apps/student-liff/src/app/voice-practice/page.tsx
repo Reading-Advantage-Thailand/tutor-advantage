@@ -141,6 +141,9 @@ function VoicePracticeContent() {
   const [connected, setConnected] = useState(false);
   const [ending, setEnding] = useState(false);
   const [recovering, setRecovering] = useState(false);
+  const [checkingMic, setCheckingMic] = useState(false);
+  const [micCheck, setMicCheck] = useState<string | null>(null);
+  const [sendingReadingIntent, setSendingReadingIntent] = useState(false);
   const [muted, setMuted] = useState(false);
   const [remaining, setRemaining] = useState(0);
   const [caption, setCaption] = useState("พร้อมเริ่มฝึกสนทนา");
@@ -471,6 +474,68 @@ function VoicePracticeContent() {
     }
   };
 
+  const checkMicrophone = async () => {
+    if (checkingMic || connected) return;
+    setCheckingMic(true);
+    setMicCheck("กำลังฟังเสียงรอบตัว… กรุณาเงียบสักครู่");
+    let testStream: MediaStream | null = null;
+    let context: AudioContext | null = null;
+    try {
+      testStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false });
+      context = new AudioContext();
+      const analyser = context.createAnalyser();
+      analyser.fftSize = 2048;
+      context.createMediaStreamSource(testStream).connect(analyser);
+      const samples = new Float32Array(analyser.fftSize);
+      const listen = async (durationMs: number) => {
+        const levels: number[] = [];
+        const deadline = Date.now() + durationMs;
+        while (Date.now() < deadline) {
+          analyser.getFloatTimeDomainData(samples);
+          levels.push(Math.sqrt(samples.reduce((sum, value) => sum + value * value, 0) / samples.length));
+          await new Promise((resolve) => window.setTimeout(resolve, 100));
+        }
+        return levels;
+      };
+      const quiet = await listen(1000);
+      setMicCheck("ลองพูดว่า “Hello Reedy” ด้วยเสียงปกติ");
+      const speaking = await listen(2200);
+      const background = quiet.reduce((sum, value) => sum + value, 0) / quiet.length;
+      const peak = Math.max(...speaking);
+      setMicCheck(background > 0.07
+        ? "เสียงรอบตัวอาจดังเกินไป ลองย้ายไปที่เงียบขึ้นหรือใช้หูฟัง แล้วตรวจใหม่"
+        : peak < 0.02 || peak - background < 0.015
+          ? "เสียงพูดอาจเบา ลองขยับไมค์ให้ใกล้ขึ้นและพูดด้วยเสียงปกติ แล้วตรวจใหม่"
+          : "ไมค์รับเสียงได้ชัด พร้อมเริ่มฝึกกับรีดี้");
+    } catch (cause) {
+      const name = cause instanceof DOMException ? cause.name : "";
+      setMicCheck(name === "NotAllowedError"
+        ? "ยังไม่ได้อนุญาตไมค์ กรุณาเปิดสิทธิ์ไมโครโฟนใน LINE หรือเบราว์เซอร์ แล้วกดตรวจใหม่"
+        : "ตรวจไมค์ไม่สำเร็จ ตรวจว่าอุปกรณ์เชื่อมต่ออยู่ แล้วกดตรวจใหม่");
+    } finally {
+      testStream?.getTracks().forEach((track) => track.stop());
+      if (context) void context.close().catch(() => undefined);
+      setCheckingMic(false);
+    }
+  };
+
+  const sendReadingIntent = async (action: "accept" | "decline" | "close") => {
+    const active = sessionRef.current;
+    if (!active || sendingReadingIntent) return;
+    if (responseBusyRef.current) { toast.info("รอให้รีดี้พูดจบก่อนนะ"); return; }
+    setSendingReadingIntent(true);
+    responseBusyRef.current = true;
+    try {
+      await studentApi.sendVoiceReadingIntent(active.sessionId, action);
+      setCaption("รีดี้กำลังตอบ…");
+    } catch {
+      responseBusyRef.current = false;
+      toast.error("ส่งคำตอบไม่สำเร็จ กรุณาลองอีกครั้ง");
+    } finally {
+      setSendingReadingIntent(false);
+    }
+  };
+
   const resolveInterruptedSession = async (continuePracticing: boolean) => {
     const interrupted = entitlement?.activeSession;
     if (!interrupted || recovering) return;
@@ -547,8 +612,11 @@ function VoicePracticeContent() {
         </div>
 
         {readingPreview && <button className={styles.previewBadge} onClick={() => window.dispatchEvent(new CustomEvent(REEDY_READING_PREVIEW_EVENT, { detail: "reset" }))}>DEV · จำลองหน้าอ่าน ไม่มีเสียง <X size={12} /></button>}
-        {readingOpen && articleReview?.passage && <GuidedReading title={displayTitle} passage={articleReview.passage} quote={readingQuote} words={getReviewWords(articleReview, Infinity)} speaking={readingPreview ? readingPreview === "speaking" : coachSpeaking} connected={connected || Boolean(readingPreview)} />}
-        {readingOffered && !readingOpen && <div className={styles.readingOffer} role="status"><strong>จำไม่ได้ก็ไม่เป็นไร ♡</strong><p>เปิดบทความอ่านไปกับรีดี้ไหม?</p><small>ตอบรีดี้ได้เลยว่า “เปิดเลย” หรือ “ขอลองคุยต่อ”</small></div>}
+        {readingOpen && articleReview?.passage && <>
+          <GuidedReading title={displayTitle} passage={articleReview.passage} quote={readingQuote} words={getReviewWords(articleReview, Infinity)} speaking={readingPreview ? readingPreview === "speaking" : coachSpeaking} connected={connected || Boolean(readingPreview)} />
+          {connected && <button type="button" className={styles.readingFallback} disabled={sendingReadingIntent} onClick={() => void sendReadingIntent("close")}>กลับไปคุยกับรีดี้</button>}
+        </>}
+        {readingOffered && !readingOpen && <div className={styles.readingOffer} role="status"><strong>จำไม่ได้ก็ไม่เป็นไร ♡</strong><p>เปิดบทความอ่านไปกับรีดี้ไหม?</p><small>ตอบด้วยเสียงหรือแตะเลือกได้</small>{connected && <div><button type="button" disabled={sendingReadingIntent} onClick={() => void sendReadingIntent("accept")}>เปิดอ่านด้วยกัน</button><button type="button" disabled={sendingReadingIntent} onClick={() => void sendReadingIntent("decline")}>คุยต่อ</button></div>}</div>}
 
         {!connected && !readingOpen && (
           <section className={styles.memoryCard}>
@@ -598,6 +666,11 @@ function VoicePracticeContent() {
         {!connected && !error && <div className={styles.tips}><div><Lightbulb size={15} /> ไม่ต้องกลัวผิด</div><span />พูดแทรกได้ตลอด<span />คุยสั้นๆ ทีละประโยค</div>}
 
         {error && <div role="alert" className={styles.error}><AlertCircle size={18} /><span>{error}</span></div>}
+        {!connected && !starting && !entitlement?.activeSession && <div className={styles.micCheck}>
+          {micCheck && <p role="status">{micCheck}</p>}
+          <button type="button" disabled={checkingMic} onClick={() => void checkMicrophone()}>{checkingMic ? "กำลังตรวจไมค์…" : micCheck ? "ตรวจไมค์อีกครั้ง" : "ตรวจไมค์ก่อนเริ่ม"}</button>
+          {error && <button type="button" disabled={!canStart} onClick={() => void startSession()}>ลองเริ่มใหม่</button>}
+        </div>}
 
         {entitlement?.activeSession && !connected && (
           <section className={styles.interruptedSession} aria-label="รอบฝึกที่ค้างอยู่">

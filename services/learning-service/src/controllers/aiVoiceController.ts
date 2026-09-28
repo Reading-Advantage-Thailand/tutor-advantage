@@ -7,6 +7,7 @@ import {
   getVoiceEntitlement,
   listStudentVoiceSessions,
   markVoiceSessionConnected,
+  sendReadingIntent,
   startVoiceSession,
 } from "../services/AiVoiceService";
 
@@ -58,6 +59,19 @@ export async function endVoiceSession(req: AuthenticatedRequest, res: Response) 
       summary: session.summary,
       scores: session.scores,
     });
+  } catch (error) { handleError(res, error); }
+}
+
+export async function submitReadingIntent(req: AuthenticatedRequest, res: Response) {
+  try {
+    if (!req.user?.userId || req.user.role !== "STUDENT") throw new AiVoiceError("FORBIDDEN", 403, "Student access required");
+    const action = (req.body as { action?: unknown })?.action;
+    if (action !== "accept" && action !== "decline" && action !== "close") {
+      res.status(400).json({ error: { code: "INVALID_READING_INTENT", message: "A supported reading action is required" } });
+      return;
+    }
+    await sendReadingIntent(req.params.sessionId, req.user.userId, action);
+    res.status(202).json({ accepted: true });
   } catch (error) { handleError(res, error); }
 }
 
