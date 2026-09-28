@@ -4,6 +4,7 @@ import {
   AiVoiceError,
   finalizeVoiceSession,
   getTutorVoiceSummary,
+  getVoiceOperations,
   getVoiceEntitlement,
   listStudentVoiceSessions,
   markVoiceSessionConnected,
@@ -48,7 +49,14 @@ export async function connectVoiceSession(req: AuthenticatedRequest, res: Respon
 export async function endVoiceSession(req: AuthenticatedRequest, res: Response) {
   try {
     if (!req.user?.userId || req.user.role !== "STUDENT") throw new AiVoiceError("FORBIDDEN", 403, "Student access required");
-    const session = await finalizeVoiceSession(req.params.sessionId, "USER_ENDED", {
+    const requestedReason = (req.body as { reason?: unknown })?.reason;
+    const allowedReasons = ["USER_ENDED", "CONNECTION_LOST", "QUOTA_REACHED", "PAGE_CLOSED", "INTERRUPTED_RECOVERY"] as const;
+    if (requestedReason !== undefined && !allowedReasons.includes(requestedReason as typeof allowedReasons[number])) {
+      res.status(400).json({ error: { code: "INVALID_END_REASON", message: "Unsupported voice session end reason" } });
+      return;
+    }
+    const endReason = typeof requestedReason === "string" ? requestedReason : "USER_ENDED";
+    const session = await finalizeVoiceSession(req.params.sessionId, endReason, {
       studentUserId: req.user.userId,
     });
     res.status(200).json({
@@ -59,6 +67,15 @@ export async function endVoiceSession(req: AuthenticatedRequest, res: Response) 
       summary: session.summary,
       scores: session.scores,
     });
+  } catch (error) { handleError(res, error); }
+}
+
+export async function getVoiceOperationsMetrics(req: AuthenticatedRequest, res: Response) {
+  try {
+    if (!req.user?.userId || req.user.role !== "ADMIN") throw new AiVoiceError("FORBIDDEN", 403, "Admin access required");
+    const requestedDays = Number(req.query.days || 30);
+    const days = Number.isInteger(requestedDays) && requestedDays >= 1 && requestedDays <= 90 ? requestedDays : 30;
+    res.status(200).json(await getVoiceOperations(days));
   } catch (error) { handleError(res, error); }
 }
 

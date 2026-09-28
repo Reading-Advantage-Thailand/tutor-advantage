@@ -162,6 +162,7 @@ function VoicePracticeContent() {
   const greetingSentRef = useRef(false);
   const analyserFrameRef = useRef<number | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
+  const disconnectTimerRef = useRef<number | null>(null);
 
   const selectedArticle = entitlement?.eligibleArticles.find((article) => article.articleId === articleId);
 
@@ -246,6 +247,8 @@ function VoicePracticeContent() {
   }, []);
 
   const cleanupMedia = useCallback(() => {
+    if (disconnectTimerRef.current !== null) window.clearTimeout(disconnectTimerRef.current);
+    disconnectTimerRef.current = null;
     if (analyserFrameRef.current !== null) cancelAnimationFrame(analyserFrameRef.current);
     analyserFrameRef.current = null;
     void audioContextRef.current?.close().catch(() => undefined);
@@ -265,7 +268,7 @@ function VoicePracticeContent() {
     setVolume(0);
   }, []);
 
-  const endSession = useCallback(async (reason = "USER_ENDED") => {
+  const endSession = useCallback(async (reason: "USER_ENDED" | "CONNECTION_LOST" | "QUOTA_REACHED" = "USER_ENDED") => {
     if (endingRef.current) return;
     endingRef.current = true;
     setEnding(true);
@@ -273,7 +276,7 @@ function VoicePracticeContent() {
     streamRef.current?.getAudioTracks().forEach((track) => { track.enabled = false; });
     if (active) {
       try {
-        const ended = await studentApi.endVoiceSession(active.sessionId) as { summary?: unknown; scores?: unknown };
+        const ended = await studentApi.endVoiceSession(active.sessionId, reason) as { summary?: unknown; scores?: unknown };
         setResult({ summary: ended.summary, scores: ended.scores });
         setCaption(reason === "QUOTA_REACHED" ? "ครบเวลาฝึกของรอบนี้แล้ว" : "จบการฝึกแล้ว");
         await loadEntitlement();
@@ -428,6 +431,17 @@ function VoicePracticeContent() {
         void audioRef.current.play().catch(() => undefined);
       };
       pc.onconnectionstatechange = () => {
+        if (pc.connectionState !== "disconnected" && disconnectTimerRef.current !== null) {
+          window.clearTimeout(disconnectTimerRef.current);
+          disconnectTimerRef.current = null;
+        }
+        if (pc.connectionState === "disconnected" && disconnectTimerRef.current === null) {
+          setCaption("การเชื่อมต่อสะดุด กำลังรอเครือข่ายกลับมา…");
+          disconnectTimerRef.current = window.setTimeout(() => {
+            disconnectTimerRef.current = null;
+            if (pc.connectionState === "disconnected" && sessionRef.current && !endingRef.current) void endSession("CONNECTION_LOST");
+          }, 8_000);
+        }
         if (pc.connectionState === "connected") {
           const active = sessionRef.current;
           if (active) {
@@ -542,7 +556,7 @@ function VoicePracticeContent() {
     setRecovering(true);
     setError(null);
     try {
-      const ended = await studentApi.endVoiceSession(interrupted.sessionId) as { consumedSeconds: number; summary?: unknown; scores?: unknown };
+      const ended = await studentApi.endVoiceSession(interrupted.sessionId, "INTERRUPTED_RECOVERY") as { consumedSeconds: number; summary?: unknown; scores?: unknown };
       const refreshed = await loadEntitlement();
       if (!refreshed) throw new Error("ตรวจสอบเวลาที่เหลือไม่สำเร็จ กรุณาลองอีกครั้ง");
       if (continuePracticing) {

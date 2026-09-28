@@ -20,6 +20,7 @@ import {
   Ticket,
   CodeXml,
   Settings,
+  AudioLines,
 } from "lucide-react";
 
 import {
@@ -69,6 +70,7 @@ const OPS_ITEMS = [
 ];
 
 const USER_RISK_ITEMS = [
+  { href: "/voice-operations", label: "การฝึกเสียงกับรีดี้", icon: AudioLines },
   { href: "/users", label: t("layout.usersConsent"), icon: Users },
   { href: "/fraud", label: t("layout.fraud"), icon: ShieldAlert },
   { href: "/coupons", label: t("layout.coupons"), icon: Ticket },

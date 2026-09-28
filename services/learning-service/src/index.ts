@@ -77,6 +77,7 @@ import {
   createVoiceSession,
   endVoiceSession,
   submitReadingIntent,
+  getVoiceOperationsMetrics,
   getClassVoiceSummary,
   getEntitlement,
   getVoiceSessions,
@@ -205,6 +206,7 @@ app.post("/v1/voice-sessions/:sessionId/connected", authMiddleware, connectVoice
 app.post("/v1/voice-sessions/:sessionId/end", authMiddleware, endVoiceSession);
 app.post("/v1/voice-sessions/:sessionId/reading-intent", authMiddleware, submitReadingIntent);
 app.get("/v1/classes/:classId/voice-practice-summary", authMiddleware, getClassVoiceSummary);
+app.get("/v1/admin/voice-operations", authMiddleware, getVoiceOperationsMetrics);
 
 // Protected Chat Routes
 app.get("/v1/chat/conversations", authMiddleware, getConversations);

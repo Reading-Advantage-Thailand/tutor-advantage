@@ -13,6 +13,8 @@ import {
   type VoiceSafetyReason,
 } from "./voiceSafety";
 import { consumedVoiceSeconds } from "./voiceSessionTime";
+import { addRealtimeUsage, emptyRealtimeUsage, realtimeCostUsd, type RealtimeUsage } from "./voiceUsage";
+import { summarizeVoiceOperations } from "./voiceOperations";
 
 const MAX_SESSION_SECONDS = 600;
 const PENDING_LEASE_SECONDS = 45;
@@ -42,7 +44,9 @@ type SidebandState = {
   client: OpenAI;
   transcript: string[];
   summary: ProviderSummary | null;
-  usage: unknown;
+  usage: RealtimeUsage;
+  seenResponseIds: Set<string>;
+  usageComplete: boolean;
   closing: boolean;
   summaryRequested: boolean;
   guardQueue: Promise<void>;
@@ -248,7 +252,7 @@ async function createProviderCall(sdp: string, instructions: string) {
   if (!providerCallId || !answerSdp.startsWith("v=0")) {
     throw new AiVoiceError("VOICE_PROVIDER_UNAVAILABLE", 503, "Voice provider returned an invalid session");
   }
-  return { answerSdp, providerCallId };
+  return { answerSdp, providerCallId, model };
 }
 
 async function hangupProviderCall(providerCallId?: string | null) {
@@ -277,7 +281,7 @@ function scheduleExpiry(voiceSessionId: string, expiresAt: Date) {
   sessionTimers.set(voiceSessionId, timer);
 }
 
-function attachSideband(voiceSessionId: string, providerCallId: string) {
+function attachSideband(voiceSessionId: string, providerCallId: string, recovered = false) {
   const apiKey = process.env.OPENAI_API_KEY?.trim();
   if (!apiKey) return;
   try {
@@ -288,7 +292,9 @@ function attachSideband(voiceSessionId: string, providerCallId: string) {
       client,
       transcript: [],
       summary: null,
-      usage: null,
+      usage: emptyRealtimeUsage(),
+      seenResponseIds: new Set(),
+      usageComplete: !recovered,
       closing: false,
       summaryRequested: false,
       guardQueue: Promise.resolve(),
@@ -315,11 +321,20 @@ function attachSideband(voiceSessionId: string, providerCallId: string) {
       }
       if (type === "response.done") {
         const response = event.response as Record<string, unknown> | undefined;
-        if (response?.usage) state.usage = response.usage;
+        const responseId = typeof response?.id === "string" ? response.id : null;
+        if (response?.usage && (!responseId || !state.seenResponseIds.has(responseId))) {
+          const nextUsage = addRealtimeUsage(state.usage, response.usage);
+          if (nextUsage === state.usage) state.usageComplete = false;
+          state.usage = nextUsage;
+          if (responseId) state.seenResponseIds.add(responseId);
+        } else if (response?.status === "completed" && !response.usage) {
+          state.usageComplete = false;
+        }
       }
     });
     connection.on("error", (error) => logger.warn(`[AiVoice] Sideband error for ${voiceSessionId}`, error));
     connection.socket.on("close", () => {
+      state.usageComplete = false;
       if (sidebands.get(voiceSessionId)?.connection === connection && !sessionTimers.has(voiceSessionId)) {
         sidebands.delete(voiceSessionId);
       }
@@ -461,7 +476,7 @@ export async function startVoiceSession(studentUserId: string, classBookCycleId:
     const expiresAt = reservation.session.expiresAt;
     await prisma.aiVoiceSession.update({
       where: { voiceSessionId: reservation.session.voiceSessionId },
-      data: { providerCallId: provider.providerCallId, status: "ACTIVE" },
+      data: { providerCallId: provider.providerCallId, status: "ACTIVE", providerUsage: { model: provider.model } },
     });
     attachSideband(reservation.session.voiceSessionId, provider.providerCallId);
     scheduleExpiry(reservation.session.voiceSessionId, expiresAt);
@@ -565,6 +580,7 @@ export async function finalizeVoiceSession(
     throw new AiVoiceError("FORBIDDEN", 403, "This voice session belongs to another student");
   }
   if (existing.status === "ENDED" || existing.status === "PROVIDER_FAILED") return existing;
+  const recordedReason = !existing.startedAt && endReason === "QUOTA_REACHED" ? "CONNECTION_TIMEOUT" : endReason;
   // Charge only until the end request arrived, not the time spent generating feedback.
   const endedAt = new Date();
   await awaitSidebandSummary(voiceSessionId);
@@ -584,6 +600,11 @@ export async function finalizeVoiceSession(
   const configuredRate = Number(process.env.AI_VOICE_ESTIMATED_COST_THB_PER_MINUTE);
   const estimatedCostPerMinute = Number.isFinite(configuredRate) && configuredRate > 0 ? configuredRate : 0.5;
   const estimatedCostThb = Math.round((consumedSeconds / 60) * estimatedCostPerMinute * 100) / 100;
+  const priorUsage = existing.providerUsage && typeof existing.providerUsage === "object" && !Array.isArray(existing.providerUsage)
+    ? existing.providerUsage as Record<string, unknown> : {};
+  const model = typeof priorUsage.model === "string" ? priorUsage.model : process.env.AI_VOICE_MODEL?.trim() || "gpt-realtime-2.1-mini";
+  const realtimeUsage = sideband?.usage || emptyRealtimeUsage();
+  const measuredRealtimeCostUsd = sideband?.usageComplete ? realtimeCostUsd(model, realtimeUsage) : null;
   const updated = await prisma.$transaction(async (tx) => {
     const session = await tx.aiVoiceSession.update({
       where: { voiceSessionId },
@@ -591,13 +612,19 @@ export async function finalizeVoiceSession(
         status: "ENDED",
         consumedSeconds,
         endedAt,
-        endReason,
+        endReason: recordedReason,
         summary: feedback ? { summaryTh: feedback.summaryTh, strengths: feedback.strengths, improvements: feedback.improvements, practicedTopics: feedback.practicedTopics || [] } : Prisma.JsonNull,
         scores: feedback?.scores || Prisma.JsonNull,
         providerUsage: {
+          model,
           estimatedCostThb,
           estimation: "wall_clock_gpt_realtime_2_1_mini",
-          usage: sideband?.usage || null,
+          measuredRealtimeCostUsd,
+          rateCard: measuredRealtimeCostUsd === null ? null : "openai-2026-09-28",
+          usage: realtimeUsage.responses ? realtimeUsage : null,
+          usageComplete: sideband?.usageComplete || false,
+          inputTranscriptionModel: "gpt-transcribe",
+          inputTranscriptionCostIncluded: false,
           strictGuard: true,
           safetyEvents: sideband?.safetyEvents || {},
         },
@@ -611,7 +638,7 @@ export async function finalizeVoiceSession(
     _sum: { consumedSeconds: true },
   });
   const packageEstimatedCostThb = ((packageUsage._sum.consumedSeconds || 0) / 60) * estimatedCostPerMinute;
-  logger.info(`[AiVoice] session=${voiceSessionId} seconds=${consumedSeconds} estimatedCostThb=${estimatedCostThb}`);
+  logger.info(`[AiVoice] session=${voiceSessionId} seconds=${consumedSeconds} estimatedCostThb=${estimatedCostThb} measuredRealtimeCostUsd=${measuredRealtimeCostUsd ?? "unavailable"}`);
   if (packageEstimatedCostThb > 70) {
     logger.warn(`[AiVoice] Package ${existing.enrollmentPackageId} estimated cost exceeded 70 THB (${packageEstimatedCostThb.toFixed(2)})`);
   }
@@ -632,7 +659,7 @@ export async function recoverVoiceSessions() {
     if (!session.providerCallId || session.expiresAt.getTime() <= Date.now()) {
       void hangupProviderCall(session.providerCallId).finally(() => finalizeVoiceSession(session.voiceSessionId, "SERVICE_RECOVERY"));
     } else {
-      attachSideband(session.voiceSessionId, session.providerCallId);
+      attachSideband(session.voiceSessionId, session.providerCallId, true);
       scheduleExpiry(session.voiceSessionId, session.expiresAt);
     }
   }
@@ -666,4 +693,15 @@ export async function getTutorVoiceSummary(tutorUserId: string, classId: string)
     orderBy: { endedAt: "desc" },
     take: 200,
   });
+}
+
+export async function getVoiceOperations(days = 30) {
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  const rows = await prisma.aiVoiceSession.findMany({
+    where: { createdAt: { gte: since } },
+    select: { voiceSessionId: true, createdAt: true, startedAt: true, status: true, endReason: true,
+      consumedSeconds: true, summary: true, providerUsage: true },
+    orderBy: { createdAt: "desc" },
+  });
+  return { from: since.toISOString(), to: new Date().toISOString(), days, ...summarizeVoiceOperations(rows) };
 }

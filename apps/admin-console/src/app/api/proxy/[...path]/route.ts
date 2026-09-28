@@ -25,7 +25,8 @@ function resolveTargetUrl(pathParts: string[], search: string) {
   // Learning Service routes
   else if (
     pathParts[0] === "v1" &&
-    (pathParts[1] === "books" ||
+    ((pathParts[1] === "admin" && pathParts[2] === "voice-operations") ||
+      pathParts[1] === "books" ||
       pathParts[1] === "demo" ||
       pathParts[1] === "classes" ||
       pathParts[1] === "enroll" ||

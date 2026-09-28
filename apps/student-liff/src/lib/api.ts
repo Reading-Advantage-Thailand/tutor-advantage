@@ -127,13 +127,13 @@ export const studentApi = {
     method: 'POST',
     body: JSON.stringify({}),
   }),
-  endVoiceSession: (sessionId: string) => fetchWithAuth(`/voice-sessions/${encodeURIComponent(sessionId)}/end`, {
+  endVoiceSession: (sessionId: string, reason: "USER_ENDED" | "CONNECTION_LOST" | "QUOTA_REACHED" | "INTERRUPTED_RECOVERY" = "USER_ENDED") => fetchWithAuth(`/voice-sessions/${encodeURIComponent(sessionId)}/end`, {
     method: 'POST',
-    body: JSON.stringify({}),
+    body: JSON.stringify({ reason }),
   }),
   endVoiceSessionKeepalive: (sessionId: string) => fetchWithAuth(`/voice-sessions/${encodeURIComponent(sessionId)}/end`, {
     method: 'POST',
-    body: JSON.stringify({}),
+    body: JSON.stringify({ reason: "PAGE_CLOSED" }),
     keepalive: true,
   }),
   sendVoiceReadingIntent: (sessionId: string, action: "accept" | "decline" | "close") => fetchWithAuth(`/voice-sessions/${encodeURIComponent(sessionId)}/reading-intent`, {
