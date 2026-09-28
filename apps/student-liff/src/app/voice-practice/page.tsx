@@ -517,6 +517,9 @@ function VoicePracticeContent() {
   const reviewWords = getReviewWords(articleReview);
   const reviewKeyPoints = getReviewKeyPoints(articleReview);
   const reviewQuestions = getReviewQuestions(articleReview);
+  const repeatAfterPractice = reviewKeyPoints.find((sentence) => sentence.length <= 140)
+    || reviewWords[0]?.text
+    || "";
   const displayTitle = selectedArticle?.title || articleReview?.title || "ฝึกพูดภาษาอังกฤษ";
   const coachState = error ? "reassuring" : result ? "celebrating" : starting ? "connecting" : coachSpeaking ? "speaking" : muted ? "muted" : learnerSpeaking && connected ? "listening" : caption.includes("กำลังคิด") && connected ? "thinking" : connected ? "listening" : "idle";
   const coachStatus = muted ? "พักฟังก่อนนะ" : starting ? "กำลังเข้าห้องฝึก…" : coachSpeaking ? "รีดี้กำลังพูด" : caption.includes("กำลังคิด") ? "ขอคิดแป๊บนึงนะ" : connected ? "รีดี้กำลังฟังคุณ" : "รีดี้พร้อมฝึกกับคุณ";
@@ -631,6 +634,11 @@ function VoicePracticeContent() {
           <div className={styles.summary}>
             <div className={styles.summaryHeading}><span>🎉</span><div><small>GOOD JOB!</small><h2>สรุปการฝึกกับรีดี้</h2></div></div>
             <p>{summary.summaryTh}</p>
+            <div className={styles.nextPractice}>
+              {summary.strengths?.[0] && <div><small>ทำได้ดี</small><strong>{summary.strengths[0]}</strong></div>}
+              {summary.improvements?.[0] && <div><small>ครั้งหน้าลอง</small><strong>{summary.improvements[0]}</strong></div>}
+            </div>
+            {repeatAfterPractice && <div className={styles.repeatPractice}><small>ลองพูดอีกครั้งจากบทนี้</small><strong lang="en">“{repeatAfterPractice}”</strong><span>อ่านออกเสียงช้า ๆ แล้วลองพูดอีกครั้งโดยไม่มองข้อความ</span></div>}
             {scores && <div className={styles.scoreGrid}>{Object.entries(scores).map(([key, value]) => <div key={key}><span className="capitalize">{key}</span><strong>{value ?? "–"}<small>/5</small></strong></div>)}</div>}
           </div>
         )}
