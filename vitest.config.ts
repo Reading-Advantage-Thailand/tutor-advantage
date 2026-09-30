@@ -6,6 +6,7 @@ export default defineConfig({
   oxc: { jsx: { runtime: "automatic" } },
   resolve: {
     alias: {
+      "@": path.resolve(__dirname, "apps/tutor-pwa/src"),
       "@tutor-advantage/database": path.resolve(
         __dirname,
         "packages/database/src/index.ts",

@@ -30,6 +30,7 @@ import {
   SocketActor,
   verifySocketActor,
 } from "./lessonAuthorization";
+import { restoreChoiceAnswerLabel } from "./lessonAnswerFormat";
 
 export {
   isStudentSessionParticipant,
@@ -132,7 +133,14 @@ export const setupLessonSocket = (io: Server) => {
         const participant = session.participants.get(answer.studentUserId);
         if (!participant) continue;
         participant.hasAnsweredCurrentPhase = true;
-        participant.latestAnswer = answer.answerText ?? undefined;
+        participant.latestAnswer = [
+          COMPREHENSION_PHASE,
+          VOCABULARY_PRACTICE_PHASE,
+          SENTENCE_PRACTICE_PHASE,
+          SENTENCE_ORDER_PHASE,
+        ].includes(session.currentPhase)
+          ? restoreChoiceAnswerLabel(answer.answerText)
+          : answer.answerText ?? undefined;
       }
     } catch (error) {
       logger.warn("[Socket] Could not restore answers for session " + session.sessionId + ":", error);
