@@ -103,6 +103,22 @@ function formatTime(seconds: number) {
   return `${Math.floor(safe / 60)}:${String(safe % 60).padStart(2, "0")}`;
 }
 
+// A response.create `instructions` field replaces the session prompt (lesson
+// context, persona, safety rules) for that response, so send guidance as a
+// system item and let the response keep the server-configured prompt.
+function guidanceItem(text: string) {
+  return JSON.stringify({ type: "conversation.item.create", item: { type: "message", role: "system", content: [{ type: "input_text", text }] } });
+}
+
+// The model follows one concrete instruction far better than a list of cases.
+function readingFollowUpGuidance(action: ReadingCue["action"] | null, success: boolean) {
+  if (!success) return "The guide_reading display update failed. Briefly say the reading view is unavailable right now and continue verbally with one easy lesson question. Keep under 10 seconds.";
+  if (action === "offer") return "The reading offer is now on screen. In one short Thai sentence, reassure the learner that forgetting is fine and ask whether they want to open the article and read it together with you. Then stop and WAIT for their answer. Do not give another clue or practice sentence.";
+  if (action === "open") return "The article is open with the first quote highlighted. Read that exact highlighted quote slowly once, give one brief Thai hint, and invite the learner to read it aloud. Then WAIT. Do not ask them to choose a sentence.";
+  if (action === "focus" || action === "word") return "The highlighted text is on screen. Read it slowly once, give one short Thai hint, invite the learner to repeat, then WAIT.";
+  return "The reading view is closed. Return to conversation with one easy lesson question. Keep under 10 seconds.";
+}
+
 async function waitForIceGathering(pc: RTCPeerConnection) {
   if (pc.iceGatheringState === "complete") return;
   await new Promise<void>((resolve) => {
@@ -235,15 +251,10 @@ function VoicePracticeContent() {
     if (!providerConnectedRef.current || greetingSentRef.current || channel?.readyState !== "open") return;
     greetingSentRef.current = true;
     setCaption("รีดี้กำลังทักทาย…");
-    channel.send(JSON.stringify({
-      type: "response.create",
-      response: {
-        output_modalities: ["audio"],
-        instructions: readingOpenRef.current
-          ? "Start now. The learner already opened the full article on screen to read together. Introduce yourself warmly in Thai, give one simple memory cue, and ask one easy lesson question. You choose the teaching sequence; the learner only answers or reads aloud. Keep under 15 seconds."
-          : "Start the practice now without waiting for the learner. Introduce yourself as Reedy in one warm, short Thai sentence. Give exactly one concise Thai memory cue about the lesson's central idea, without reading or revealing the whole passage, then ask one very easy personal-experience question in simple English that connects to the lesson. Keep the complete opening under 15 seconds and make it clear the learner may answer in Thai, English, or mix both.",
-      },
-    }));
+    channel.send(guidanceItem(readingOpenRef.current
+      ? "Start now. The learner already opened the full article on screen to read together. Introduce yourself warmly in Thai ending with ค่ะ (never ครับ/ค่ะ), give one simple memory cue, and ask one easy lesson question. You choose the teaching sequence; the learner only answers or reads aloud. Keep under 15 seconds."
+      : "Start the practice now without waiting for the learner. Introduce yourself as Reedy in one warm, short Thai sentence ending with ค่ะ (never ครับ/ค่ะ). Give exactly one concise Thai memory cue about the lesson's central idea, without reading or revealing the whole passage, then ask one very easy personal-experience question in simple English that connects to the lesson. Keep the complete opening under 15 seconds and make it clear the learner may answer in Thai, English, or mix both."));
+    channel.send(JSON.stringify({ type: "response.create", response: { output_modalities: ["audio"] } }));
   }, []);
 
   const cleanupMedia = useCallback(() => {
@@ -347,6 +358,8 @@ function VoicePracticeContent() {
         if (endingRef.current) return;
         const response = data.response as { status?: string; output?: Array<{ type?: string; name?: string; call_id?: string; arguments?: string }> } | undefined;
         let handled = false;
+        let handledAction: ReadingCue["action"] | null = null;
+        let handledSuccess = false;
         for (const item of response?.output || []) {
           if (item.type !== "function_call" || item.name !== "guide_reading" || !item.call_id || handledToolsRef.current.has(item.call_id)) continue;
           handledToolsRef.current.add(item.call_id);
@@ -355,6 +368,7 @@ function VoicePracticeContent() {
           if (response?.status === "completed") {
             try {
               const cue = JSON.parse(item.arguments || "{}") as ReadingCue;
+              handledAction = cue.action;
               const article = readingArticleRef.current;
               const passage = article?.passage || "";
               if (passage.trim()) {
@@ -376,10 +390,12 @@ function VoicePracticeContent() {
           }
           channelRef.current?.send(JSON.stringify({ type: "conversation.item.create", item: { type: "function_call_output", call_id: item.call_id, output: JSON.stringify({ success, readingOpen: readingOpenRef.current, highlightedQuote }) } }));
           handled = true;
+          handledSuccess = success;
         }
         if (handled && response?.status === "completed" && channelRef.current?.readyState === "open") {
           responseBusyRef.current = true;
-          channelRef.current.send(JSON.stringify({ type: "response.create", response: { output_modalities: ["audio"], tool_choice: "none", instructions: "Continue using the guide_reading result. For offer, ask in Thai whether to open the article and WAIT for consent. For open, read the exact highlighted quote slowly, give one brief Thai hint, and invite the learner to repeat; do not ask them to choose a sentence. For focus or word, read the exact highlighted text slowly once, give one short Thai hint, invite repetition, then WAIT. For close, return to one easy lesson question. If the tool failed, explain the display is unavailable and continue verbally. Keep under 15 seconds." } }));
+          channelRef.current.send(guidanceItem(readingFollowUpGuidance(handledAction, handledSuccess)));
+          channelRef.current.send(JSON.stringify({ type: "response.create", response: { output_modalities: ["audio"], tool_choice: "none" } }));
         }
       }
       if (type === "input_audio_buffer.speech_started") { setLearnerSpeaking(true); setCoachSpeaking(false); setCaption("กำลังฟังคุณพูด…"); }

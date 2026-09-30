@@ -63,3 +63,31 @@ export function realtimeCostUsd(model: string, usage: RealtimeUsage): number | n
     usage.outputTextTokens * rates.textOut + usage.outputAudioTokens * rates.audioOut
   ) / 1_000_000;
 }
+
+// USD per audio minute. Input transcription is billed separately from Realtime tokens.
+const TRANSCRIPTION_RATE_PER_MINUTE = {
+  "gpt-transcribe": 0.0045,
+  "gpt-4o-transcribe": 0.006,
+  "gpt-4o-mini-transcribe": 0.003,
+} as const;
+
+// Returns the billed duration when the provider reports duration-based usage.
+export function reportedTranscriptionSeconds(raw: unknown): number | null {
+  const usage = record(raw);
+  if (usage.type !== "duration") return null;
+  const seconds = Number(usage.seconds);
+  return Number.isFinite(seconds) && seconds >= 0 ? seconds : null;
+}
+
+// VAD speech boundaries, used when the provider reports token usage instead of duration.
+export function vadSpeechSeconds(audioStartMs: unknown, audioEndMs: unknown): number | null {
+  const start = Number(audioStartMs);
+  const end = Number(audioEndMs);
+  return Number.isFinite(start) && Number.isFinite(end) && end >= start ? (end - start) / 1000 : null;
+}
+
+export function transcriptionCostUsd(model: string, seconds: number): number | null {
+  const rate = TRANSCRIPTION_RATE_PER_MINUTE[model as keyof typeof TRANSCRIPTION_RATE_PER_MINUTE];
+  if (rate === undefined || !Number.isFinite(seconds) || seconds < 0) return null;
+  return (seconds / 60) * rate;
+}

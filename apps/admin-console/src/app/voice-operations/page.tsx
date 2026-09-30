@@ -10,10 +10,12 @@ type Metrics = {
   attempts: number; started: number; failedStarts: number; failedStartRate: number;
   finished: number; disconnected: number; disconnectRate: number;
   summaryFailures: number; summaryFailureRate: number;
-  measuredCostSessions: number; missingCostSessions: number;
-  totalMeasuredRealtimeCostUsd: number; averageMeasuredRealtimeCostUsd: number | null;
+  measuredCostSessions: number; missingCostSessions: number; missingTranscriptionCostSessions: number;
+  totalMeasuredCostUsd: number; totalMeasuredRealtimeCostUsd: number; totalMeasuredTranscriptionCostUsd: number;
+  averageMeasuredCostUsd: number | null;
   recentSessions: Array<{ sessionId: string; createdAt: string; status: string; endReason: string | null;
-    consumedSeconds: number; summaryAvailable: boolean; measuredRealtimeCostUsd: number | null }>;
+    consumedSeconds: number; summaryAvailable: boolean; measuredRealtimeCostUsd: number | null;
+    measuredTranscriptionCostUsd: number | null; measuredCostUsd: number | null }>;
 };
 
 const percent = (value: number) => `${(value * 100).toFixed(1)}%`;
@@ -58,8 +60,8 @@ export default function VoiceOperationsPage() {
     {error && <p role="alert" className="rounded-lg border border-red-300 p-3 text-red-600">{error}</p>}
     <div className="grid gap-4 md:grid-cols-3">{cards.map((card) => <Card key={card.label}><CardHeader><CardTitle className="text-base">{card.label}</CardTitle></CardHeader><CardContent><strong className="text-3xl">{card.rate}</strong><p className="mt-2 text-sm">{card.count} รอบ</p><p className="text-xs text-muted-foreground">{card.detail}</p></CardContent></Card>)}</div>
     {metrics && <>
-      <Card><CardHeader><CardTitle>ต้นทุน Realtime ตาม token ที่รายงาน</CardTitle></CardHeader><CardContent className="space-y-2"><p>รวม {usd(metrics.totalMeasuredRealtimeCostUsd)} · เฉลี่ย {usd(metrics.averageMeasuredRealtimeCostUsd)} ต่อรอบที่มี usage</p><p className="text-sm text-muted-foreground">มีข้อมูล {metrics.measuredCostSessions} รอบ · ขาดข้อมูล {metrics.missingCostSessions} รอบ ตัวเลขนี้คำนวณด้วยราคาที่บันทึกไว้ในระบบและยังไม่รวมค่าถอดเสียง จึงไม่ใช่ยอดเรียกเก็บสุดท้าย</p></CardContent></Card>
-      <Card><CardHeader><CardTitle>รอบล่าสุด</CardTitle></CardHeader><CardContent><div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr className="border-b"><th className="p-2">เวลา</th><th className="p-2">รอบ</th><th className="p-2">สถานะ</th><th className="p-2">ใช้เวลา</th><th className="p-2">สรุป</th><th className="p-2">ต้นทุน Realtime</th></tr></thead><tbody>{metrics.recentSessions.map((session) => <tr key={session.sessionId} className="border-b"><td className="p-2">{new Date(session.createdAt).toLocaleString("th-TH")}</td><td className="p-2 font-mono">{session.sessionId.slice(0, 8)}</td><td className="p-2">{session.endReason || session.status}</td><td className="p-2">{session.consumedSeconds} วินาที</td><td className="p-2">{session.summaryAvailable ? "มี" : "ไม่มี"}</td><td className="p-2">{usd(session.measuredRealtimeCostUsd)}</td></tr>)}</tbody></table></div></CardContent></Card>
+      <Card><CardHeader><CardTitle>ต้นทุนตาม usage ที่ provider รายงาน</CardTitle></CardHeader><CardContent className="space-y-2"><p className="text-2xl font-semibold">รวม {usd(metrics.totalMeasuredCostUsd)} <span className="text-base font-normal text-muted-foreground">· เฉลี่ย {usd(metrics.averageMeasuredCostUsd)} ต่อรอบ</span></p><p className="text-sm">Realtime (token) {usd(metrics.totalMeasuredRealtimeCostUsd)} · ถอดเสียงนักเรียน {usd(metrics.totalMeasuredTranscriptionCostUsd)}</p><p className="text-sm text-muted-foreground">มีข้อมูล {metrics.measuredCostSessions} รอบ · ขาดข้อมูล {metrics.missingCostSessions} รอบ{metrics.missingTranscriptionCostSessions ? ` · ไม่มีค่าถอดเสียง ${metrics.missingTranscriptionCostSessions} รอบ (บันทึกก่อนเริ่มวัด)` : ""} คำนวณด้วยราคาที่บันทึกไว้ในระบบ จึงควรเทียบกับยอดใน billing ของ provider เป็นระยะ</p></CardContent></Card>
+      <Card><CardHeader><CardTitle>รอบล่าสุด</CardTitle></CardHeader><CardContent><div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead><tr className="border-b"><th className="p-2">เวลา</th><th className="p-2">รอบ</th><th className="p-2">สถานะ</th><th className="p-2">ใช้เวลา</th><th className="p-2">สรุป</th><th className="p-2">ต้นทุน</th></tr></thead><tbody>{metrics.recentSessions.map((session) => <tr key={session.sessionId} className="border-b"><td className="p-2">{new Date(session.createdAt).toLocaleString("th-TH")}</td><td className="p-2 font-mono">{session.sessionId.slice(0, 8)}</td><td className="p-2">{session.endReason || session.status}</td><td className="p-2">{session.consumedSeconds} วินาที</td><td className="p-2">{session.summaryAvailable ? "มี" : "ไม่มี"}</td><td className="p-2" title={`Realtime ${usd(session.measuredRealtimeCostUsd)} · ถอดเสียง ${usd(session.measuredTranscriptionCostUsd)}`}>{usd(session.measuredCostUsd)}</td></tr>)}</tbody></table></div></CardContent></Card>
     </>}
   </div>;
 }

@@ -22,5 +22,19 @@ describe("voice operations metrics", () => {
     expect(result.summaryFailureRate).toBe(0.5);
     expect(result.averageMeasuredRealtimeCostUsd).toBe(0.12);
     expect(result.missingCostSessions).toBe(1);
+    expect(result.missingTranscriptionCostSessions).toBe(1);
+  });
+
+  it("adds transcription cost to the measured Realtime cost", () => {
+    const result = summarizeVoiceOperations([
+      { ...base, providerUsage: { measuredRealtimeCostUsd: 0.1, measuredTranscriptionCostUsd: 0.02 } },
+      { ...base, voiceSessionId: "two", providerUsage: { measuredRealtimeCostUsd: 0.3, measuredTranscriptionCostUsd: 0.04 } },
+    ]);
+    expect(result.totalMeasuredRealtimeCostUsd).toBeCloseTo(0.4);
+    expect(result.totalMeasuredTranscriptionCostUsd).toBeCloseTo(0.06);
+    expect(result.totalMeasuredCostUsd).toBeCloseTo(0.46);
+    expect(result.averageMeasuredCostUsd).toBeCloseTo(0.23);
+    expect(result.missingTranscriptionCostSessions).toBe(0);
+    expect(result.recentSessions[1].measuredCostUsd).toBeCloseTo(0.34);
   });
 });

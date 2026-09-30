@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { addRealtimeUsage, emptyRealtimeUsage, realtimeCostUsd } from "./voiceUsage";
+import {
+  addRealtimeUsage, emptyRealtimeUsage, realtimeCostUsd,
+  reportedTranscriptionSeconds, transcriptionCostUsd, vadSpeechSeconds,
+} from "./voiceUsage";
 
 describe("provider reported realtime usage", () => {
   it("sums every response and prices cached audio separately", () => {
@@ -20,5 +23,16 @@ describe("provider reported realtime usage", () => {
     expect(realtimeCostUsd("unknown", addRealtimeUsage(emptyRealtimeUsage(), {
       input_token_details: { text_tokens: 1 }, output_token_details: { text_tokens: 1 },
     }))).toBeNull();
+  });
+});
+
+describe("input transcription usage", () => {
+  it("prefers provider duration and prices gpt-transcribe per minute", () => {
+    expect(reportedTranscriptionSeconds({ type: "duration", seconds: 12.5 })).toBe(12.5);
+    expect(reportedTranscriptionSeconds({ type: "tokens", input_tokens: 17 })).toBeNull();
+    expect(vadSpeechSeconds(1200, 4200)).toBe(3);
+    expect(vadSpeechSeconds(4200, 1200)).toBeNull();
+    expect(transcriptionCostUsd("gpt-transcribe", 120)).toBeCloseTo(0.009);
+    expect(transcriptionCostUsd("unknown", 120)).toBeNull();
   });
 });
