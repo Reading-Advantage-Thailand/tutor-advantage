@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { devRoutesEnabled } from "@/lib/security";
 import { t } from "@/lib/i18n";
 import { DevUsersClient } from "./DevUsersClient";
+import "@/locales/th/dev";
 
 export const metadata: Metadata = {
   title: t("dev.usersTitle"),

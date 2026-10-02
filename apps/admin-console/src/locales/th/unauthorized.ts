@@ -1,4 +1,6 @@
 // Thai UI strings: "unauthorized" namespace. Owner: G5. Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const unauthorized = {
   title: "ไม่มีสิทธิ์เข้าถึงระบบ",
   description:
@@ -19,3 +21,5 @@ export const unauthorized = {
   loggingOut: "กำลังออกจากระบบ…",
   contactSupport: "ติดต่อทีมงาน",
 } as const;
+
+registerMessages("unauthorized", unauthorized);

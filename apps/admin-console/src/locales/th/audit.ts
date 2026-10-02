@@ -1,4 +1,6 @@
 // Thai UI strings: "audit" namespace. Owner: G1. Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const audit = {
   title: "ประวัติกิจกรรม (Audit Trail)",
   description: "บันทึกกิจกรรมทางการเงินและการตั้งค่าระบบที่ไม่สามารถแก้ไขได้",
@@ -152,3 +154,5 @@ export const audit = {
     PaymentIntent: "รายการชำระเงิน",
   },
 } as const;
+
+registerMessages("audit", audit);

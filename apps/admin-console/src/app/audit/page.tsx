@@ -19,7 +19,7 @@ import {
   useAdminSession,
   type DataTableColumn,
 } from "@/components/app";
-import { toast } from "@/components/app/Toast";
+import { toast } from "@/components/app/toastStore";
 import { Button } from "@/components/ui/button";
 import { useTableState } from "@/hooks/useTableState";
 import { api, errorMessage } from "@/lib/api";
@@ -46,6 +46,8 @@ import {
   auditEntityLabel,
   auditStatusDomain,
 } from "./auditLabels";
+import "@/locales/th/audit";
+import "@/locales/th/dashboard";
 
 interface AuditLog {
   auditId: string;

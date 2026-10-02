@@ -20,6 +20,7 @@ import { ActiveWithoutPaymentView } from "./components/ActiveWithoutPaymentView"
 import { OrphanEventsView } from "./components/OrphanEventsView";
 import { PaymentsView } from "./components/PaymentsView";
 import { DAY_OPTIONS, type PaymentsResponse, type ReconView } from "./types";
+import "@/locales/th/reconciliation";
 
 export default function ReconciliationPage() {
   const me = useAdminSession();

@@ -5,6 +5,7 @@ import { ExternalLink, RotateCcw, RotateCw, ZoomIn, ZoomOut } from "lucide-react
 import { Sheet } from "@/components/app";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import "@/locales/th/userDetail";
 
 /**
  * Identity document viewer in a Sheet (bottom sheet on phones): zoom,

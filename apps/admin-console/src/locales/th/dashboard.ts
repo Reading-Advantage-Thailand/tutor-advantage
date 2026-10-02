@@ -1,4 +1,6 @@
 // Thai UI strings: "dashboard" namespace. Owner: G1 (overview). Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const dashboard = {
   welcomePrefix: "สวัสดี,",
   welcomeSuffix: "!",
@@ -70,3 +72,5 @@ export const dashboard = {
   linkDocs: "คู่มือระบบ",
   loadError: "โหลดข้อมูลภาพรวมไม่สำเร็จ",
 } as const;
+
+registerMessages("dashboard", dashboard);

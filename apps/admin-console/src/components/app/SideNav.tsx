@@ -4,9 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogOut, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { t } from "@/lib/i18n";
-import { statusLabel } from "@/lib/status";
+import { roleLabel as labelForRole } from "@/lib/statusRole";
 import { cn } from "@/lib/utils";
-import { UserAvatar } from "./Atoms";
+import { UserAvatar } from "./Avatar";
 import { useWorkQueues } from "./AdminSummary";
 import { CountBadge } from "./CountBadge";
 import { Dropdown } from "./Dropdown";
@@ -63,7 +63,7 @@ function SideNavLink({ item, pathname, count }: { item: NavItem; pathname: strin
 function AccountMenu() {
   const { user } = useShell();
   const name = user?.name || user?.email || t("shell.account");
-  const roleLabel = user ? statusLabel("userRole", user.role) : "";
+  const roleLabel = user ? labelForRole(user.role) : "";
   return (
     <Dropdown
       label={t("shell.account")}

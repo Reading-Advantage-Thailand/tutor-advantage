@@ -1,7 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import { useIdleArmed } from "./useIdleArmed";
 
 export interface SheetProps {
   open: boolean;
@@ -27,11 +28,6 @@ export interface SheetProps {
 
 const SheetImpl = dynamic(() => import("./SheetImpl").then((m) => m.SheetImpl), { ssr: false });
 
-type IdleWindow = Window & {
-  requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
-  cancelIdleCallback?: (handle: number) => void;
-};
-
 /**
  * Responsive modal: bottom sheet on phones, centred dialog on tablet/desktop.
  * Focus trap, Escape/backdrop close, scroll lock, swipe-down (phones).
@@ -43,17 +39,7 @@ type IdleWindow = Window & {
  *   footer={<Button className="w-full md:w-auto">บันทึก</Button>}>…</Sheet>
  */
 export function Sheet(props: SheetProps) {
-  const [armed, setArmed] = useState(false);
-  useEffect(() => {
-    if (armed) return;
-    const win = window as IdleWindow;
-    if (win.requestIdleCallback) {
-      const handle = win.requestIdleCallback(() => setArmed(true), { timeout: 2500 });
-      return () => win.cancelIdleCallback?.(handle);
-    }
-    const timer = window.setTimeout(() => setArmed(true), 800);
-    return () => window.clearTimeout(timer);
-  }, [armed]);
+  const armed = useIdleArmed();
   if (!armed && !props.open) return null;
   return <SheetImpl {...props} />;
 }

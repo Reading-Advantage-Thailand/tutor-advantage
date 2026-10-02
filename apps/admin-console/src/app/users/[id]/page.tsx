@@ -13,13 +13,15 @@ import {
   Section,
   useHasRole,
 } from "@/components/app";
-import { toast } from "@/components/app/Toast";
-import { useRefreshAdminSummary } from "@/components/app/AdminSummary";
+import { toast } from "@/components/app/toastStore";
+import { useRefreshAdminSummary } from "@/components/app/adminSummaryContext";
 import { Button } from "@/components/ui/button";
 import { api, newIdempotencyKey } from "@/lib/api";
 import { formatThaiDate, formatThaiDateTime, PLACEHOLDER } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { displayName, invalidateUser, useUserDetail, type UserDetailV2 } from "./model";
+import "@/locales/th/userDetail";
+import "@/locales/th/userHeader";
 
 const PROVIDER_LABELS: Record<string, string> = { line: "LINE", google: "Google", LINE: "LINE", GOOGLE: "Google" };
 
@@ -62,10 +64,10 @@ function AccountActions({ user, adminId }: { user: UserDetailV2; adminId: string
     user.email ? t("userDetail.email") : null,
     user.phone ? t("userDetail.phone") : null,
     user.dateOfBirth ? t("userDetail.dateOfBirth") : null,
-    user.hasIdCardImage || user.hasBankBookImage ? t("userDetail.tabVerification") : null,
+    user.hasIdCardImage || user.hasBankBookImage ? t("userHeader.tabVerification") : null,
     user.settings.nationalId || user.settings.hasNationalId ? t("userDetail.nationalId") : null,
     user.settings.bankAccountNumber ? t("userDetail.bankAccountNumber") : null,
-    user.settings.address || user.settings.hasAddress ? t("userDetail.deliveryAddress") : null,
+    user.settings.address || user.settings.hasAddress ? t("userHeader.deliveryAddress") : null,
     user.settings.omiseRecipientId ? t("userDetail.omiseTitle") : null,
     user.loginProviders.length ? t("userDetail.loginProviders") : null,
     user.guardians.length ? t("userDetail.guardianSection") : null,
@@ -145,7 +147,7 @@ export default function UserProfileTab() {
   if (!user || !me) return null;
 
   const contact = [
-    { label: t("userDetail.email"), value: user.email ?? t("userDetail.noEmail") },
+    { label: t("userDetail.email"), value: user.email ?? t("userHeader.noEmail") },
     { label: t("userDetail.phone"), value: user.phone ?? PLACEHOLDER },
     ...(isAdmin ? [{ label: t("userDetail.dateOfBirth"), value: formatThaiDate(user.dateOfBirth) }] : []),
     { label: t("userDetail.joinedAt"), value: formatThaiDateTime(user.joinedAt) },
@@ -161,7 +163,7 @@ export default function UserProfileTab() {
             label: t("userDetail.sponsor"),
             value: user.sponsor ? (
               <Link className="text-brand-fg hover:underline" href={`/users/${user.sponsor.id}`}>
-                {user.sponsor.name || t("userDetail.unnamed")}
+                {user.sponsor.name || t("userHeader.unnamed")}
               </Link>
             ) : (
               t("userDetail.noSponsor")

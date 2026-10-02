@@ -21,9 +21,9 @@ import {
   useHasRole,
   type DataTableColumn,
 } from "@/components/app";
-import { useRefreshAdminSummary } from "@/components/app/AdminSummary";
+import { useRefreshAdminSummary } from "@/components/app/adminSummaryContext";
 import { ConfirmDialog } from "@/components/app/ConfirmDialog";
-import { toast } from "@/components/app/Toast";
+import { toast } from "@/components/app/toastStore";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useTableState } from "@/hooks/useTableState";
 import { api, newIdempotencyKey } from "@/lib/api";
@@ -31,6 +31,7 @@ import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatThaiDateTime } from "@/lib/format";
 import { t, type I18nKey } from "@/lib/i18n";
 import { statusLabel, statusOptions } from "@/lib/status";
+import "@/locales/th/fraud";
 
 type FraudAction = "INVESTIGATE" | "MONITOR" | "FREEZE" | "UNFREEZE" | "CLEAR";
 

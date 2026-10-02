@@ -134,7 +134,8 @@ export {
   PageSkeleton,
   LoadingAnnouncement,
 } from "./Skeletons";
-export { toast, Toaster, dismissToast, type ToastTone } from "./Toast";
+export { Toaster } from "./Toast";
+export { toast, dismissToast, type ToastTone } from "./toastStore";
 
 // Controls
 export {

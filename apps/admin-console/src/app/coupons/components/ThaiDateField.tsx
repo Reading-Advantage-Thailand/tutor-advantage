@@ -13,6 +13,7 @@ import {
   partsToDateKey,
   type ThaiDateParts,
 } from "../couponForm";
+import "@/locales/th/coupons";
 
 const THAI_MONTHS = [
   "มกราคม",

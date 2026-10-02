@@ -2,7 +2,9 @@ import { FileText, MessageSquare, ShieldCheck, Workflow, type LucideIcon } from 
 import { IconTile } from "@/components/app/Atoms";
 import { Page, PageHeader } from "@/components/app/Page";
 import { Surface } from "@/components/app/Surface";
-import { adminDocsCopy, t } from "@/lib/i18n";
+import { t } from "@/lib/i18n";
+import { adminDocsCopy } from "@/locales/th/docsCopy";
+import "@/locales/th/docs";
 
 /** Static help hub: server-rendered, no client JS beyond the shell. */
 const SECTION_ICONS: Record<string, LucideIcon> = { operations: Workflow, risk: ShieldCheck, system: FileText };

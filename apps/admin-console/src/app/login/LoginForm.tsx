@@ -6,6 +6,7 @@ import { BrandMark, Notice, SegmentedControl, ThemeToggle } from "@/components/a
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 import type { LoginErrorCode } from "./loginParams";
+import "@/locales/th/login";
 
 type DevRole = "ADMIN" | "FINANCE_CHECKER";
 

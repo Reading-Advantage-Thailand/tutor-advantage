@@ -5,6 +5,7 @@ import { useAdminSession } from "@/components/app";
 import { api } from "@/lib/api";
 import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { t } from "@/lib/i18n";
+import "@/locales/th/userHeader";
 
 export type VerificationField = "idCard" | "bankBook" | "address" | "taxInfo";
 export const VERIFICATION_FIELDS: VerificationField[] = ["idCard", "bankBook", "address", "taxInfo"];
@@ -94,15 +95,15 @@ export function invalidateUser(adminId: string, userId: string) {
 }
 
 export function displayName(user: Pick<UserDetailV2, "name">) {
-  return user.name || t("userDetail.unnamed");
+  return user.name || t("userHeader.unnamed");
 }
 
 export function fieldLabel(field: VerificationField) {
   return {
-    idCard: t("userDetail.idCard"),
-    bankBook: t("userDetail.bankBook"),
-    address: t("userDetail.deliveryAddress"),
-    taxInfo: t("userDetail.taxInfo"),
+    idCard: t("userHeader.idCard"),
+    bankBook: t("userHeader.bankBook"),
+    address: t("userHeader.deliveryAddress"),
+    taxInfo: t("userHeader.taxInfo"),
   }[field];
 }
 

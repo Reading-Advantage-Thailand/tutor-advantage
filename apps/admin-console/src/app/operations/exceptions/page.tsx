@@ -20,8 +20,8 @@ import {
   useAdminSession,
   type DataTableColumn,
 } from "@/components/app";
-import { useRefreshAdminSummary } from "@/components/app/AdminSummary";
-import { toast } from "@/components/app/Toast";
+import { useRefreshAdminSummary } from "@/components/app/adminSummaryContext";
+import { toast } from "@/components/app/toastStore";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/app/ConfirmDialog";
 import { useTableState } from "@/hooks/useTableState";
@@ -30,6 +30,7 @@ import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { formatThaiDateTime } from "@/lib/format";
 import { t, type I18nKey } from "@/lib/i18n";
 import { statusLabel, statusOptions } from "@/lib/status";
+import "@/locales/th/operations";
 
 type Resolution = "ACTIVATE_ENROLLMENT" | "MARK_RESOLVED" | "DISMISS";
 

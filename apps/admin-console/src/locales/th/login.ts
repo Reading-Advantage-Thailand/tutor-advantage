@@ -1,4 +1,6 @@
 // Thai UI strings: "login" namespace. Owner: G5. Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const login = {
   superAdminLabel: "ผู้ดูแลระบบสูงสุด (Super Admin)",
   superAdminDescription: "เข้าถึงได้ทุกส่วนของระบบ พร้อมอำนาจในการตรวจสอบทั้งหมด",
@@ -52,3 +54,5 @@ export const login = {
     unknown: "เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
   },
 } as const;
+
+registerMessages("login", login);

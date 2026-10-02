@@ -3,8 +3,8 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { LogOut, X } from "lucide-react";
 import { t } from "@/lib/i18n";
-import { statusLabel } from "@/lib/status";
-import { UserAvatar } from "./Atoms";
+import { roleLabel } from "@/lib/statusRole";
+import { UserAvatar } from "./Avatar";
 import { EnvBadge } from "./EnvBadge";
 import { logout } from "./session";
 import { useShell } from "./ShellContext";
@@ -51,7 +51,7 @@ export function NavDrawerImpl({ open, onOpenChange, pathname }: NavDrawerProps) 
               <UserAvatar name={name} src={user?.picture || undefined} size="sm" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-fg">{name}</p>
-                <p className="truncate text-xs text-fg-muted">{user ? statusLabel("userRole", user.role) : ""}</p>
+                <p className="truncate text-xs text-fg-muted">{user ? roleLabel(user.role) : ""}</p>
               </div>
               <EnvBadge environment={environment} />
             </div>

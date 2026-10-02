@@ -2,7 +2,7 @@
 
 import { Columns3 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
+import { LazyCheckbox as Checkbox } from "./LazyCheckbox";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { DataTableColumn } from "./DataTable";

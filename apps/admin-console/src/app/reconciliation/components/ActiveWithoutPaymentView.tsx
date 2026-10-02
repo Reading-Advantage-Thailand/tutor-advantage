@@ -24,6 +24,7 @@ import { formatThaiDateTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import type { ActiveWithoutPayment, Paged } from "../types";
 import { DaysSelect } from "./PaymentsView";
+import "@/locales/th/reconciliation";
 
 export function ActiveWithoutPaymentView({ table, days }: { table: UseTableStateResult; days: string }) {
   const me = useAdminSession();

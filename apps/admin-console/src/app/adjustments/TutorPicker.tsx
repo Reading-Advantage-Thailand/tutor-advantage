@@ -6,6 +6,7 @@ import { AdminStatusChip, Field, IdCell, ListGroup, ListRow, SearchField, Spinne
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import { t } from "@/lib/i18n";
+import "@/locales/th/adjustments";
 
 export interface PickedTutor {
   id: string;

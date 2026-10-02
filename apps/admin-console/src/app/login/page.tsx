@@ -3,6 +3,7 @@ import { devRoutesEnabled } from "@/lib/security";
 import { t } from "@/lib/i18n";
 import { LoginForm } from "./LoginForm";
 import { loginErrorCode, safeNextPath } from "./loginParams";
+import "@/locales/th/login";
 
 export const metadata: Metadata = {
   title: t("login.pageTitle"),

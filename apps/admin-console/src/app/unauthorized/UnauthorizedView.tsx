@@ -6,6 +6,7 @@ import { useState } from "react";
 import { BrandMark, IconTile, ThemeToggle, logout } from "@/components/app";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
+import "@/locales/th/unauthorized";
 
 export function UnauthorizedView({ session }: { session: { name: string; role: string } | null }) {
   const [leaving, setLeaving] = useState(false);

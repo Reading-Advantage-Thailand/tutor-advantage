@@ -36,6 +36,7 @@
     "typescript": "^5"
   },
   "sideEffects": [
-    "*.css"
+    "*.css",
+    "./src/locales/th/*.ts"
   ]
 }

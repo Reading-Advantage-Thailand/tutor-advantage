@@ -1,4 +1,6 @@
 // Thai UI strings: "reconciliation" namespace. Owner: G3. Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const reconciliation = {
   nav: "ตรวจสอบการชำระเงิน",
   title: "ตรวจสอบการชำระเงิน (Payment Reconciliation)",
@@ -177,3 +179,5 @@ export const reconciliation = {
     dismissed: "ปิดรายการ webhook แล้ว",
   },
 } as const;
+
+registerMessages("reconciliation", reconciliation);

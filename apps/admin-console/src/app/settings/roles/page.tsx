@@ -24,13 +24,15 @@ import {
   useAdminSession,
   type DataTableColumn,
 } from "@/components/app";
-import { toast } from "@/components/app/Toast";
+import { toast } from "@/components/app/toastStore";
 import { Button } from "@/components/ui/button";
 import { api, newIdempotencyKey } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatThaiDate, PLACEHOLDER } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { statusLabel } from "@/lib/status";
+import "@/locales/th/roles";
+import "@/locales/th/users";
 
 type StaffRole = "ADMIN" | "FINANCE_CHECKER";
 

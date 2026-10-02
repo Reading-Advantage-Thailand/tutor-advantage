@@ -37,6 +37,8 @@ import { formatListTimestamp, formatMinor, formatNumber, formatPeriodMonth, form
 import { t } from "@/lib/i18n";
 import type { NavBadgeKey } from "@/lib/routes";
 import { auditActionLabel, auditActionTone, auditEntityLabel } from "./audit/auditLabels";
+import "@/locales/th/audit";
+import "@/locales/th/dashboard";
 
 /** Fields added to /v1/admin/overview by G1 (older responses simply lack them). */
 interface OverviewExtras {

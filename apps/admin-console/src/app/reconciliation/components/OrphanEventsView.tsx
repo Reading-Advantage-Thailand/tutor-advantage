@@ -19,7 +19,7 @@ import {
   useAdminSession,
   type DataTableColumn,
 } from "@/components/app";
-import { toast } from "@/components/app/Toast";
+import { toast } from "@/components/app/toastStore";
 import { Button } from "@/components/ui/button";
 import type { UseTableStateResult } from "@/hooks/useTableState";
 import { api, newIdempotencyKey } from "@/lib/api";
@@ -28,6 +28,7 @@ import { formatThaiDateTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { statusLabel } from "@/lib/status";
 import type { OrphanEvent, Paged } from "../types";
+import "@/locales/th/reconciliation";
 
 type Pending = { kind: "link" | "dismiss"; row: OrphanEvent; key: string } | null;
 

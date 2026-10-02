@@ -23,8 +23,8 @@ import {
   useAdminSession,
 } from "@/components/app";
 import { Money } from "@/components/app/Money";
-import { toast } from "@/components/app/Toast";
-import { useRefreshAdminSummary } from "@/components/app/AdminSummary";
+import { toast } from "@/components/app/toastStore";
+import { useRefreshAdminSummary } from "@/components/app/adminSummaryContext";
 import { Button } from "@/components/ui/button";
 import { usePolling } from "@/hooks/usePolling";
 import { api, ApiError, newIdempotencyKey } from "@/lib/api";
@@ -33,6 +33,7 @@ import { formatNumber, formatPeriodMonth, formatSatang, formatThaiDateTime } fro
 import { t } from "@/lib/i18n";
 import { PayoutLinesTable } from "./PayoutLinesTable";
 import { bankLabel, satangNumber, type PayoutLineRow, type SettlementDetailResponse, type TimelineEntry } from "../types";
+import "@/locales/th/settlements";
 
 type RunAction = "submit" | "approve" | "devApprove" | "reject" | "refresh";
 

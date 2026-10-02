@@ -6,9 +6,10 @@ import { useTableState } from "@/hooks/useTableState";
 import { api } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
 import { formatThaiDateTime } from "@/lib/format";
-import { t, th } from "@/lib/i18n";
+import { t } from "@/lib/i18n";
 import { statusLabel } from "@/lib/status";
 import { fieldLabel, VERIFICATION_FIELDS, useUserDetail, type VerificationField } from "../model";
+import { userDetail } from "@/locales/th/userDetail";
 
 interface AuditItem {
   id: string;
@@ -24,11 +25,11 @@ function actionLabel(action: string, payload: Record<string, unknown> | null): s
     return payload?.status === "REJECTED" ? t("userDetail.actionUSER_VERIFY_REJECT") : t("userDetail.actionUSER_VERIFY_APPROVE");
   }
   if (action === "ROLE_CHANGE" && typeof payload?.kind === "string") {
-    const kindKey = `roleKind${payload.kind}` as keyof typeof th.userDetail;
-    if (th.userDetail[kindKey]) return th.userDetail[kindKey] as string;
+    const kindKey = `roleKind${payload.kind}` as keyof typeof userDetail;
+    if (userDetail[kindKey]) return userDetail[kindKey] as string;
   }
-  const key = `action${action}` as keyof typeof th.userDetail;
-  return (th.userDetail[key] as string | undefined) ?? action.replace(/_/g, " ").toLowerCase();
+  const key = `action${action}` as keyof typeof userDetail;
+  return (userDetail[key] as string | undefined) ?? action.replace(/_/g, " ").toLowerCase();
 }
 
 /** One short Thai line from the event payload (fields, role change, reason). Never prints PII values. */

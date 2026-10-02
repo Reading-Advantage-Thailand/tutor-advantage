@@ -1,4 +1,6 @@
 // Thai UI strings: "operations" namespace. Owner: G3 (exceptions). Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const operations = {
   loadExceptionsFailed: "ไม่สามารถโหลดข้อมูลข้อผิดพลาดได้",
   updateExceptionSuccessPrefix: "อัปเดตสถานะของข้อผิดพลาดรหัส",
@@ -100,3 +102,5 @@ export const operations = {
     filteredDescription: "ลองเปลี่ยนสถานะ ประเภท หรือคำค้นหา",
   },
 } as const;
+
+registerMessages("operations", operations);

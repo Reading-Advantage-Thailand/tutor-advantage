@@ -7,6 +7,8 @@
  * 2026-10. Unknown values fall back to a humanised neutral chip.
  * Page groups: append missing values to the right domain (append-only).
  */
+import { humanizeStatus, USER_ROLE_STATUS } from "./statusRole";
+
 export type StatusTone = "brand" | "success" | "warning" | "danger" | "info" | "neutral";
 
 export interface StatusMeta {
@@ -138,15 +140,8 @@ export const ADMIN_STATUS = {
     VOID: { label: "ยกเลิกแล้ว", tone: "neutral" },
     EXPIRED: { label: "หมดอายุ", tone: "neutral" },
   },
-  /** identity.users.role */
-  userRole: {
-    ADMIN: { label: "ผู้ดูแลระบบ", tone: "brand" },
-    FINANCE_CHECKER: { label: "ผู้ตรวจสอบการเงิน", tone: "info" },
-    FINANCE_MAKER: { label: "ผู้จัดทำการเงิน", tone: "info" },
-    TUTOR: { label: "ครู", tone: "neutral" },
-    STUDENT: { label: "นักเรียน", tone: "neutral" },
-    GUARDIAN: { label: "ผู้ปกครอง", tone: "neutral" },
-  },
+  /** identity.users.role (lib/statusRole.ts, shared with the shell) */
+  userRole: USER_ROLE_STATUS,
   /** identity.users.is_active (pass "ACTIVE" / "SUSPENDED") */
   account: {
     ACTIVE: { label: "ใช้งานอยู่", tone: "success" },
@@ -169,15 +164,10 @@ export const ADMIN_STATUS = {
 export type StatusDomain = keyof typeof ADMIN_STATUS;
 
 /** "PENDING_TRANSFER" → "Pending transfer" (fallback for unknown values only). */
-function humanize(value: string): string {
-  const text = value.replace(/[_-]+/g, " ").toLowerCase().trim();
-  return text ? text.charAt(0).toUpperCase() + text.slice(1) : "–";
-}
-
 export function statusMeta(domain: StatusDomain, status: string | null | undefined): StatusMeta {
   const key = (status ?? "").toUpperCase();
   const table = ADMIN_STATUS[domain] as Record<string, StatusMeta>;
-  return table[key] ?? { label: key ? humanize(key) : "–", tone: "neutral" };
+  return table[key] ?? { label: key ? humanizeStatus(key) : "–", tone: "neutral" };
 }
 
 export function statusLabel(domain: StatusDomain, status: string | null | undefined): string {

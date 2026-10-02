@@ -1,4 +1,6 @@
 // Thai UI strings: "roles" namespace. Owner: G4. Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const roles = {
   title: "จัดการสิทธิ์การใช้งาน",
   description: "เพิ่มหรือแก้ไขสิทธิ์การเข้าถึงระบบ Admin Console และ Finance Checker",
@@ -71,3 +73,5 @@ export const roles = {
   roleFieldLabel: "สิทธิ์ที่จะให้",
   colAddedAt: "เพิ่มเมื่อ",
 } as const;
+
+registerMessages("roles", roles);

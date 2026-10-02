@@ -1,12 +1,15 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, type ReactNode } from "react";
+import { useCallback, useMemo, type ReactNode } from "react";
 import { usePolling } from "@/hooks/usePolling";
 import { api } from "@/lib/api";
 import { useCachedResource, type CachedResource } from "@/lib/cachedResource";
 import type { NavBadgeKey } from "@/lib/routes";
 import { ADMIN_SUMMARY_POLL_MS } from "./constants";
+import { SummaryContext } from "./adminSummaryContext";
 import { useAdminSession } from "./ShellContext";
+
+export { useRefreshAdminSummary } from "./adminSummaryContext";
 
 /** GET /v1/admin/overview (finance). */
 export interface AdminOverview {
@@ -38,8 +41,6 @@ export const EMPTY_QUEUES: Record<NavBadgeKey, number> = {
   exceptions: 0,
   fraudFlags: 0,
 };
-
-const SummaryContext = createContext<{ refresh: () => Promise<void> }>({ refresh: async () => {} });
 
 export function overviewKey(userId: string) {
   return `${userId}:admin:overview`;
@@ -76,9 +77,4 @@ export function AdminSummaryProvider({ children }: { children: ReactNode }) {
 export function useWorkQueues(): Record<NavBadgeKey, number> {
   const { data } = useAdminOverview();
   return data?.workQueues ?? EMPTY_QUEUES;
-}
-
-/** Refresh the summary now (call after approving/resolving something that changes a queue). */
-export function useRefreshAdminSummary(): () => Promise<void> {
-  return useContext(SummaryContext).refresh;
 }

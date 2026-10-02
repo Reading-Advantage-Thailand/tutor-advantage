@@ -22,7 +22,7 @@ import {
   useHasRole,
   type DataTableColumn,
 } from "@/components/app";
-import { toast } from "@/components/app/Toast";
+import { toast } from "@/components/app/toastStore";
 import { Button, buttonVariants } from "@/components/ui/button";
 import type { UseTableStateResult } from "@/hooks/useTableState";
 import { api, newIdempotencyKey } from "@/lib/api";
@@ -31,6 +31,7 @@ import { formatThaiDateTime } from "@/lib/format";
 import { t, type I18nKey } from "@/lib/i18n";
 import { statusLabel, statusOptions } from "@/lib/status";
 import { ISSUE_TONE, ISSUE_TYPES, type IssueType, type PaymentsResponse, type ReconPayment } from "../types";
+import "@/locales/th/reconciliation";
 
 type Pending = { kind: "activate" | "verify"; row: ReconPayment; key: string } | null;
 

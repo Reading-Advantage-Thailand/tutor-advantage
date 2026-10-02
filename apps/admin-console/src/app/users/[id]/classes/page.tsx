@@ -5,6 +5,7 @@ import { AdminStatusChip, DataTable, EmptyState, type DataTableColumn } from "@/
 import { formatNumber, formatThaiDate } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { useUserDetail, type UserDetailV2 } from "../model";
+import "@/locales/th/userDetail";
 
 type ClassRow = UserDetailV2["classes"][number];
 

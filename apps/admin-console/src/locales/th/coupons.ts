@@ -1,4 +1,6 @@
 // Thai UI strings: "coupons" namespace. Owner: G5. Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const coupons = {
   title: "คูปองชั่วโมงสอน (Teaching-Hour Coupons)",
   description: "ออกคูปองชั่วโมงสอนให้ครูนำไปแจก — ใช้เปิดคลาสฟรีหรือต่ออายุคลาส",
@@ -139,3 +141,5 @@ export const coupons = {
   reviewBack: "กลับไปแก้ไข",
   reviewConfirm: "ยืนยันสร้างคูปอง {hours} ชม.",
 } as const;
+
+registerMessages("coupons", coupons);

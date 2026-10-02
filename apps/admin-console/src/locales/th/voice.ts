@@ -1,4 +1,6 @@
 // Thai UI strings: "voice" namespace (/voice-operations). Owner: G1. Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const voice = {
   title: "การฝึกเสียงกับรีดี้",
   description: "การเริ่มรอบฝึก คุณภาพการเชื่อมต่อ และต้นทุนตามที่ผู้ให้บริการ AI รายงาน",
@@ -55,3 +57,5 @@ export const voice = {
     SAFETY_STOP: "หยุดโดยระบบความปลอดภัย",
   },
 } as const;
+
+registerMessages("voice", voice);

@@ -24,8 +24,8 @@ import {
   type DataTableColumn,
 } from "@/components/app";
 import { Money } from "@/components/app/Money";
-import { toast } from "@/components/app/Toast";
-import { useRefreshAdminSummary } from "@/components/app/AdminSummary";
+import { toast } from "@/components/app/toastStore";
+import { useRefreshAdminSummary } from "@/components/app/adminSummaryContext";
 import { Button } from "@/components/ui/button";
 import { useTableState } from "@/hooks/useTableState";
 import { api, newIdempotencyKey } from "@/lib/api";
@@ -35,6 +35,7 @@ import { statusLabel, statusOptions } from "@/lib/status";
 import { t } from "@/lib/i18n";
 import { TutorPicker, type PickedTutor } from "./TutorPicker";
 import { parseBahtToSatang } from "./money";
+import "@/locales/th/adjustments";
 
 interface Adjustment {
   adjustmentId: string;

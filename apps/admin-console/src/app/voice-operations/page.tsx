@@ -25,7 +25,8 @@ import { useTableState } from "@/hooks/useTableState";
 import { api, errorMessage } from "@/lib/api";
 import { useCachedResource } from "@/lib/cachedResource";
 import { formatNumber, formatPercent, formatThaiDate, formatThaiTime } from "@/lib/format";
-import { t, th } from "@/lib/i18n";
+import { t } from "@/lib/i18n";
+import { voice } from "@/locales/th/voice";
 
 type Metrics = {
   attempts: number;
@@ -61,7 +62,7 @@ type Session = {
 
 const DAYS = ["7", "30", "90"] as const;
 type Days = (typeof DAYS)[number];
-const STATUS_LABELS: Record<string, string> = th.voice.status;
+const STATUS_LABELS: Record<string, string> = voice.status;
 const SAFETY_REASONS = new Set(["HARASSMENT_OR_HATE", "ILLICIT", "PERSONAL_DATA", "PROMPT_INJECTION", "SELF_HARM", "SEXUAL_CONTENT", "VIOLENCE"]);
 
 /** USD with 4 decimals (provider costs are fractions of a cent per session). */

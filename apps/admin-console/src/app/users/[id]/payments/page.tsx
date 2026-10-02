@@ -15,6 +15,7 @@ import { useCachedResource } from "@/lib/cachedResource";
 import { formatPeriodMonth, formatThaiDateTime, PLACEHOLDER } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { useUserDetail } from "../model";
+import "@/locales/th/userDetail";
 
 interface PaymentRow {
   id: string;

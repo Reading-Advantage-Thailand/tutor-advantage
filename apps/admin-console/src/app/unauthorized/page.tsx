@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { ADMIN_TOKEN_COOKIE, verifyAdminToken } from "@/lib/security";
 import { t } from "@/lib/i18n";
 import { UnauthorizedView } from "./UnauthorizedView";
+import "@/locales/th/unauthorized";
 
 export const metadata: Metadata = {
   title: t("unauthorized.pageTitle"),

@@ -1,4 +1,6 @@
 // Thai UI strings: "users" namespace. Owner: G4. Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const users = {
   title: "ผู้ใช้งาน & ความยินยอม",
   description: "จัดการบัญชีผู้ใช้, ความยินยอมจากผู้ปกครอง และการยืนยันตัวตน",
@@ -61,3 +63,5 @@ export const users = {
   emptyFiltered: "ลองเปลี่ยนคำค้นหาหรือล้างตัวกรอง",
   tableCaption: "รายชื่อผู้ใช้งาน",
 } as const;
+
+registerMessages("users", users);

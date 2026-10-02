@@ -1,4 +1,6 @@
 // Thai UI strings: "fraud" namespace. Owner: G3. Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const fraud = {
   title: "ตรวจสอบความเสี่ยง (Risk & Fraud)",
   description: "ติดตามและจัดการความเสี่ยงจากระบบอัตโนมัติ",
@@ -101,3 +103,5 @@ export const fraud = {
     description: "ลองเปลี่ยนสถานะเป็น “ทั้งหมด” เพื่อดูรายการที่ปิดแล้ว",
   },
 } as const;
+
+registerMessages("fraud", fraud);

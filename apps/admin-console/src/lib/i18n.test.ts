@@ -1,5 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { t } from "./i18n";
+import "../locales/th/docs";
+import "../locales/th/layout";
 
 describe("admin-console i18n", () => {
   it("returns typed API messages by key", () => {
@@ -12,8 +14,15 @@ describe("admin-console i18n", () => {
     expect(t("shell.rangeOf", { from: 1, to: 20 })).toBe("1–20 จาก {total} รายการ");
   });
 
-  it("keeps every existing namespace reachable", () => {
+  it("keeps route namespaces reachable once their locale module is imported", () => {
     expect(t("layout.overview")).toBe("ภาพรวม");
     expect(t("docs.title")).toBeTruthy();
+  });
+
+  it("falls back to the key for a namespace the route did not import", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    expect(t("voice.title")).toBe("voice.title");
+    expect(spy).toHaveBeenCalledOnce();
+    spy.mockRestore();
   });
 });

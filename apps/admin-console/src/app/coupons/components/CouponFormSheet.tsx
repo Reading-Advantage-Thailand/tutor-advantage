@@ -20,6 +20,7 @@ import {
 } from "../couponForm";
 import { ThaiDateField } from "./ThaiDateField";
 import { TutorPicker } from "./TutorPicker";
+import "@/locales/th/coupons";
 
 export interface CouponFormSheetProps {
   open: boolean;

@@ -5,11 +5,12 @@
  * Unknown actions fall back to a humanised label, never a raw enum.
  */
 import type { Tone } from "@/components/app";
-import { t, th } from "@/lib/i18n";
+import { t } from "@/lib/i18n";
 import type { StatusDomain } from "@/lib/status";
+import { audit } from "@/locales/th/audit";
 
-const ACTION_LABELS: Record<string, string> = th.audit.actions;
-const ENTITY_LABELS: Record<string, string> = th.audit.entities;
+const ACTION_LABELS: Record<string, string> = audit.actions;
+const ENTITY_LABELS: Record<string, string> = audit.entities;
 
 export type AuditCategory = "settlement" | "adjustment" | "user" | "payment" | "risk" | "coupon" | "system";
 

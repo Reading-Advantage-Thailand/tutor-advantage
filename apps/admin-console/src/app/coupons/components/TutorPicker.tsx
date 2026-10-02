@@ -9,6 +9,7 @@ import { fieldControlClass } from "@/components/app/constants";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import type { TutorOption } from "../couponForm";
+import "@/locales/th/coupons";
 
 export interface TutorPickerProps {
   value: TutorOption | null;

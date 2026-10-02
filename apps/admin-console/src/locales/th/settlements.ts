@@ -1,4 +1,6 @@
 // Thai UI strings: "settlements" namespace. Owner: G2. Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const settlements = {
   draft: "แบบร่าง - รออนุมัติ",
   submitted: "รออนุมัติ Finance",
@@ -209,3 +211,5 @@ export const settlements = {
   colTransfer: "การโอน",
   noName: "ไม่มีชื่อ",
 } as const;
+
+registerMessages("settlements", settlements);

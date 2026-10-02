@@ -1,4 +1,6 @@
 // Thai UI strings: "layout" namespace. Owner: G0 (shell; nav labels read by the shell). Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const layout = {
   overview: "ภาพรวม",
   settlements: "การชำระเงิน",
@@ -28,3 +30,5 @@ export const layout = {
   confirmDeleteMappingTitle: "ยืนยันการลบ",
   confirmDeleteMappingDescription: "คุณต้องการลบการจับคู่ลิงก์นี้ใช่หรือไม่?",
 } as const;
+
+registerMessages("layout", layout);

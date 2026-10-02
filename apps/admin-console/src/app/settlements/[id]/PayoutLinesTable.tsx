@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { formatPercent, formatThaiDateTime } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { ACTIVE_TRANSFER_STATUSES, bankLabel, satangNumber, type PayoutLineRow } from "../types";
+import "@/locales/th/settlements";
 
 export interface PayoutLinesTableProps {
   lines: PayoutLineRow[];

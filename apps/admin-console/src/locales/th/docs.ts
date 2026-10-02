@@ -1,4 +1,6 @@
 // Thai UI strings: "docs" namespace. Owner: G1. Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const docs = {
   title: "คู่มือระบบภายใน",
   description: "ศูนย์รวมความรู้และวิธีการทำงานสำหรับผู้ดูแลระบบ Tutor Advantage",
@@ -12,3 +14,5 @@ export const docs = {
   backToTop: "กลับด้านบน",
   supportCta: "ติดต่อทีมงานทาง LINE",
 } as const;
+
+registerMessages("docs", docs);

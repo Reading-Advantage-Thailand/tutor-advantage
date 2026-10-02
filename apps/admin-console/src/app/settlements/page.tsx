@@ -20,8 +20,8 @@ import {
   useAdminSession,
   type DataTableColumn,
 } from "@/components/app";
-import { toast } from "@/components/app/Toast";
-import { useRefreshAdminSummary } from "@/components/app/AdminSummary";
+import { toast } from "@/components/app/toastStore";
+import { useRefreshAdminSummary } from "@/components/app/adminSummaryContext";
 import { Button } from "@/components/ui/button";
 import { api, ApiError, errorMessage } from "@/lib/api";
 import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
@@ -38,6 +38,7 @@ import { statusOptions } from "@/lib/status";
 import { t } from "@/lib/i18n";
 import { Money } from "@/components/app/Money";
 import type { SettlementListResponse, SettlementPreviewResult, SettlementRunRow } from "./types";
+import "@/locales/th/settlements";
 
 /** Manual preview is only allowed on the 1st (Bangkok) in production; the backend enforces it too. */
 function isSettlementDay(now: Date = new Date()): boolean {

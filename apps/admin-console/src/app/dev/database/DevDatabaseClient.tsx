@@ -21,13 +21,14 @@ import {
   useAdminSession,
   type DataTableColumn,
 } from "@/components/app";
-import { toast } from "@/components/app/Toast";
+import { toast } from "@/components/app/toastStore";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { formatNumber } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import "@/locales/th/dev";
 
 type DbTable = { schemaName: string; tableName: string; rowCount: number; isPreserved: boolean };
 type DbColumn = {

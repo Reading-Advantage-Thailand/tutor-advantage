@@ -20,7 +20,7 @@ import {
   useAdminSession,
   type DataTableColumn,
 } from "@/components/app";
-import { toast } from "@/components/app/Toast";
+import { toast } from "@/components/app/toastStore";
 import { Button } from "@/components/ui/button";
 import { useTableState } from "@/hooks/useTableState";
 import { api, newIdempotencyKey } from "@/lib/api";
@@ -30,6 +30,7 @@ import { t } from "@/lib/i18n";
 import { statusOptions } from "@/lib/status";
 import { couponStatus, type Coupon, type CouponPage } from "./couponForm";
 import { CouponFormSheet } from "./components/CouponFormSheet";
+import "@/locales/th/coupons";
 
 function TutorCell({ name, fallback }: { name: string | null; fallback: string }) {
   return <span className="block max-w-56 truncate">{name || fallback}</span>;

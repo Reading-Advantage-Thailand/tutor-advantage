@@ -25,6 +25,7 @@ import { formatNumber, formatThaiDate } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { statusLabel } from "@/lib/status";
 import type { UserListItem, UserListResponse } from "./types";
+import "@/locales/th/users";
 
 const ROLE_OPTIONS = [
   { value: "", label: t("users.roleAll") },

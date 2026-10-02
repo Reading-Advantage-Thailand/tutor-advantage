@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowDown, ArrowUp, ChevronRight, ChevronsUpDown } from "lucide-react";
 import { useMemo, type ReactNode } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
+import { LazyCheckbox as Checkbox } from "./LazyCheckbox";
 import { t } from "@/lib/i18n";
 import type { SortState } from "@/lib/tableState";
 import { cn } from "@/lib/utils";

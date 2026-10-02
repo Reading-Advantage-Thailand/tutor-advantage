@@ -22,7 +22,7 @@ import {
   type DataTableColumn,
 } from "@/components/app";
 import { Chip } from "@/components/app";
-import { toast } from "@/components/app/Toast";
+import { toast } from "@/components/app/toastStore";
 import { Button } from "@/components/ui/button";
 import { useTableState } from "@/hooks/useTableState";
 import { api, errorMessage } from "@/lib/api";
@@ -30,6 +30,7 @@ import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { formatThaiDate } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { statusOptions } from "@/lib/status";
+import "@/locales/th/dev";
 
 const ROLES = ["ADMIN", "FINANCE_CHECKER", "TUTOR", "STUDENT"] as const;
 const VERIFICATION = ["UNVERIFIED", "PENDING", "VERIFIED", "REJECTED"] as const;

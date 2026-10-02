@@ -17,8 +17,8 @@ import {
   TextField,
   useHasRole,
 } from "@/components/app";
-import { toast } from "@/components/app/Toast";
-import { useRefreshAdminSummary } from "@/components/app/AdminSummary";
+import { toast } from "@/components/app/toastStore";
+import { useRefreshAdminSummary } from "@/components/app/adminSummaryContext";
 import { Button } from "@/components/ui/button";
 import { api, newIdempotencyKey } from "@/lib/api";
 import { formatThaiDateTime, PLACEHOLDER } from "@/lib/format";
@@ -34,6 +34,8 @@ import {
   type UserDetailV2,
   type VerificationField,
 } from "../model";
+import "@/locales/th/userDetail";
+import "@/locales/th/userHeader";
 
 const DocumentViewer = dynamic(() => import("../components/DocumentViewer").then((m) => m.DocumentViewer), { ssr: false });
 
@@ -63,7 +65,7 @@ function fieldData(user: UserDetailV2, field: VerificationField) {
         { label: t("userDetail.bankAccountNumber"), value: <span className="tabular">{hidden(user, s.bankAccountNumber)}</span> },
       ];
     case "address":
-      return [{ label: t("userDetail.deliveryAddress"), value: hidden(user, s.address, s.hasAddress), wide: true }];
+      return [{ label: t("userHeader.deliveryAddress"), value: hidden(user, s.address, s.hasAddress), wide: true }];
     case "taxInfo":
       return [
         { label: t("userDetail.taxName"), value: hidden(user, s.taxName) },
@@ -213,7 +215,7 @@ function OmiseRecipientCard({ user, adminId }: { user: UserDetailV2; adminId: st
             <Button variant="ghost" onClick={() => setSheetOpen(false)}>
               {t("shell.cancel")}
             </Button>
-            <Button onClick={review}>{t("roles.continue")}</Button>
+            <Button onClick={review}>{t("userDetail.reviewAndConfirm")}</Button>
           </div>
         }
       >
@@ -267,7 +269,7 @@ export default function UserVerificationTab() {
 
   if (!user || !me) return null;
   if (user.role !== "TUTOR") {
-    return <Notice tone="neutral">{t("users.notApplicable")}</Notice>;
+    return <Notice tone="neutral">{t("userDetail.verificationNotApplicable")}</Notice>;
   }
 
   const pending = pendingFields(user);

@@ -1,4 +1,6 @@
 // Thai UI strings: "dev" namespace (/dev, /dev/database, DevToolbar). Owner: G5 (DevToolbar strings: G0). Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const dev = {
   navDev: "เครื่องมือนักพัฒนา",
   navDatabase: "ฐานข้อมูล (Dev)",
@@ -97,3 +99,5 @@ export const dev = {
   dbLoadFailed: "โหลดข้อมูลฐานข้อมูลไม่สำเร็จ",
   dbBackToTables: "กลับไปรายการตาราง",
 } as const;
+
+registerMessages("dev", dev);

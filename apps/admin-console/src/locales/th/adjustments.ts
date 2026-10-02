@@ -1,4 +1,6 @@
 // Thai UI strings: "adjustments" namespace. Owner: G2. Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const adjustments = {
   submitSuccess: "ส่งคำขอปรับยอดเงินสำเร็จ รอ Checker อนุมัติ",
   title: "จัดการปรับปรุงยอด (Manual Adjustments)",
@@ -111,3 +113,5 @@ export const adjustments = {
   confirmCreateTitle: "สร้างรายการปรับยอดนี้?",
   confirmCreateBody: "รายการจะมีสถานะ “รออนุมัติ” จนกว่าผู้ตรวจอีกคนจะอนุมัติ",
 } as const;
+
+registerMessages("adjustments", adjustments);

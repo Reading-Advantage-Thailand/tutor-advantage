@@ -1,4 +1,6 @@
 // Thai UI strings: "userDetail" namespace. Owner: G4. Append-only.
+import { registerMessages } from "../../lib/i18n";
+
 export const userDetail = {
   reject: "ปฏิเสธ",
   approve: "อนุมัติ",
@@ -14,13 +16,10 @@ export const userDetail = {
   consentHistory: "ประวัติการกดรับ Consent (Versioned)",
   identityVerification: "การยืนยันตัวตน (Identity Verification)",
   identityDescription: "ตรวจสอบเอกสารประจำตัวและบัญชีธนาคาร",
-  idCard: "สำเนาบัตรประชาชน",
-  bankBook: "หน้าสมุดบัญชี",
   viewFullImage: "ดูรูปเต็ม",
   notUploaded: "ไม่ได้อัปโหลด",
   bankAccountNumber: "เลขบัญชีธนาคาร",
   missingBankAccountNumber: "ไม่ได้ระบุเลขบัญชี",
-  deliveryAddress: "ที่อยู่สำหรับส่งเอกสาร",
   missingAddress: "ไม่ได้ระบุที่อยู่",
   verificationComment: "ความเห็นหรือเหตุผลการปฏิเสธรวม (Global Comment)",
   verificationCommentPlaceholder: "ระบุเหตุผลรวมสำหรับผลการตรวจสอบ...",
@@ -39,10 +38,7 @@ export const userDetail = {
   deleting: "กำลังลบ...",
   confirmDelete: "ยืนยันการลบข้อมูล",
   back: "ย้อนกลับ",
-  backToList: "กลับไปรายการผู้ใช้",
   errorTitle: "เกิดข้อผิดพลาด",
-  loadError: "โหลดข้อมูลไม่สำเร็จ",
-  userNotFound: "ไม่พบผู้ใช้งาน",
   retryButton: "ลองใหม่",
   suspended: "ถูกระงับ",
   tutorRole: "ติวเตอร์",
@@ -52,15 +48,6 @@ export const userDetail = {
   reactivate: "เปิดใช้งาน",
   suspendAccount: "ระงับบัญชี",
   // ── G4 redesign: detail tabs ──
-  tabProfile: "ข้อมูลทั่วไป",
-  tabVerification: "เอกสารยืนยันตัวตน",
-  tabClasses: "คลาสและการลงทะเบียน",
-  tabPayments: "การชำระเงิน",
-  tabAudit: "ประวัติกิจกรรม",
-  tabsLabel: "ส่วนของข้อมูลผู้ใช้",
-  unnamed: "ไม่ระบุชื่อ",
-  noEmail: "ไม่มีอีเมล (สมัครผ่าน LINE)",
-  userId: "รหัสผู้ใช้",
   joinedAt: "สมัครเมื่อ",
   dateOfBirth: "วันเกิด",
   loginProviders: "ช่องทางเข้าสู่ระบบ",
@@ -76,8 +63,6 @@ export const userDetail = {
   consentSection: "ประวัติการยอมรับเงื่อนไข (PDPA)",
   consentNone: "ยังไม่มีประวัติการยอมรับเงื่อนไข",
   consentVersion: "ฉบับวันที่ {version}",
-  piiMaskedNotice: "ข้อมูลส่วนบุคคลบางส่วนถูกซ่อนตามสิทธิ์ผู้ตรวจสอบการเงิน",
-  anonymizedNotice: "บัญชีนี้ถูกลบข้อมูลส่วนบุคคลแล้วเมื่อ {date} ข้อมูลธุรกรรมยังเก็บไว้เพื่อการตรวจสอบบัญชี",
   // account actions
   dangerZone: "การจัดการบัญชี",
   suspendTitle: "ระงับบัญชี",
@@ -102,7 +87,6 @@ export const userDetail = {
   anonymizeReasonPlaceholder: "เช่น ผู้ใช้ขอลบข้อมูลทางอีเมลวันที่ 1 ต.ค.",
   // verification
   verificationIntro: "อนุมัติได้เฉพาะรายการที่ครูส่งมาแล้วและรอตรวจ รายการที่ยังไม่ส่งจะอนุมัติไม่ได้",
-  pendingCount: "รอตรวจ {count} รายการ",
   approveSubmitted: "อนุมัติที่รอตรวจทั้งหมด ({count})",
   approveSubmittedTitle: "อนุมัติเอกสาร {count} รายการ",
   approveSubmittedBody: "รายการต่อไปนี้จะถูกเปลี่ยนเป็น “ยืนยันแล้ว” รายการที่ยังไม่ส่งหรือถูกปฏิเสธแล้วจะไม่ถูกแตะต้อง",
@@ -193,7 +177,6 @@ export const userDetail = {
   actionROLE_CHANGE: "เปลี่ยนสิทธิ์เจ้าหน้าที่",
   actionROLE_REVOKE: "เพิกถอนสิทธิ์เจ้าหน้าที่",
   actionROLE_RESTORE: "คืนสิทธิ์เจ้าหน้าที่",
-  taxInfo: "ข้อมูลภาษีสำหรับใบ 50 ทวิ",
   actionUSER_VERIFY: "ตรวจเอกสารยืนยันตัวตน",
   roleKindCREATE: "สร้างบัญชีเจ้าหน้าที่",
   roleKindGRANT: "ให้สิทธิ์ผู้ดูแลระบบ",
@@ -201,4 +184,8 @@ export const userDetail = {
   roleKindREVOKE: "เพิกถอนสิทธิ์เจ้าหน้าที่",
   roleKindRESTORE: "คืนสิทธิ์เจ้าหน้าที่",
   omiseAutoCreated: "สร้างอัตโนมัติเมื่ออนุมัติสมุดบัญชี",
+  reviewAndConfirm: "ตรวจสอบและยืนยัน",
+  verificationNotApplicable: "ไม่ต้องยืนยัน",
 } as const;
+
+registerMessages("userDetail", userDetail);
