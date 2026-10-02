@@ -26,6 +26,10 @@ import { computeLetterbox } from '@/lib/games/letterbox'
 
 /** Height of the on-screen control strip under the board (buttons + key hints). */
 const CONTROL_STRIP_PX = 88
+/** Top of the tower area in board coordinates (below the translation bar and target line). */
+const TOWER_TOP_PX = 100
+/** Row 0 sits half a cell below the tower top, so the player orb is never cut off. */
+const TOWER_INSET_PX = STORM_CASTLE_TOWER_CONFIG.cellSize / 2
 
 export type StormCastleTowerGameResult = {
   xp: number
@@ -370,89 +374,100 @@ export function StormCastleTowerGame({ vocabulary, onComplete }: StormCastleTowe
               />
             </Group>
             
-            {gameState.windows.map(win => {
-              if (win.state === 'collected') return null
+            {/* Tower (windows, hazards, player) lives below the HUD: shifted by
+                TOWER_TOP_PX and clipped there, so the player orb and falling
+                hazards never poke into the top bar. */}
+            <Group
+              y={TOWER_TOP_PX + TOWER_INSET_PX}
+              clipX={0}
+              clipY={-TOWER_INSET_PX}
+              clipWidth={STORM_CASTLE_TOWER_CONFIG.gameWidth}
+              clipHeight={STORM_CASTLE_TOWER_CONFIG.gameHeight - TOWER_TOP_PX}
+            >
+              {gameState.windows.map(win => {
+                if (win.state === 'collected') return null
               
-              const pos = getGridPosition(win.position.col, win.position.row, gameState.scrollOffset)
-              const isTarget = win.wordIndex === gameState.targetIndex
-              const windowColor = win.state === 'closed' ? '#6b7280' : (isTarget ? '#fbbf24' : '#64748b')
+                const pos = getGridPosition(win.position.col, win.position.row, gameState.scrollOffset)
+                const isTarget = win.wordIndex === gameState.targetIndex
+                const windowColor = win.state === 'closed' ? '#6b7280' : (isTarget ? '#fbbf24' : '#64748b')
               
-              return (
-                <Group key={win.id}>
-                  <Rect
-                    x={pos.x - STORM_CASTLE_TOWER_CONFIG.window.width / 2}
-                    y={pos.y - STORM_CASTLE_TOWER_CONFIG.window.height / 2}
-                    width={STORM_CASTLE_TOWER_CONFIG.window.width}
-                    height={STORM_CASTLE_TOWER_CONFIG.window.height}
-                    fill={win.state === 'closed' ? '#374151' : '#1e293b'}
-                    stroke={windowColor}
-                    strokeWidth={isTarget ? 3 : 1}
-                    cornerRadius={5}
-                  />
-                  {win.state === 'open' && (
-                    <Text
-                      x={pos.x - 30}
-                      y={pos.y - 8}
-                      text={win.word}
-                      fontSize={getEffectiveTextSize(16)}
-                      fill={isTarget ? '#fef3c7' : '#e2e8f0'}
-                      width={60}
-                      align="center"
-                    />
-                  )}
-                </Group>
-              )
-            })}
-            
-            {gameState.hazards.map(hazard => {
-              const x = hazard.column * STORM_CASTLE_TOWER_CONFIG.cellSize + STORM_CASTLE_TOWER_CONFIG.cellSize / 2
-              const y = hazard.y
-              
-              if (hazard.type === 'oil') {
                 return (
-                  <Rect
-                    key={hazard.id}
-                    x={x - STORM_CASTLE_TOWER_CONFIG.hazards.oilWidth / 2}
-                    y={y}
-                    width={STORM_CASTLE_TOWER_CONFIG.hazards.oilWidth}
-                    height={30}
-                    fill="#f97316"
-                    opacity={0.8}
-                    cornerRadius={3}
-                  />
+                  <Group key={win.id}>
+                    <Rect
+                      x={pos.x - STORM_CASTLE_TOWER_CONFIG.window.width / 2}
+                      y={pos.y - STORM_CASTLE_TOWER_CONFIG.window.height / 2}
+                      width={STORM_CASTLE_TOWER_CONFIG.window.width}
+                      height={STORM_CASTLE_TOWER_CONFIG.window.height}
+                      fill={win.state === 'closed' ? '#374151' : '#1e293b'}
+                      stroke={windowColor}
+                      strokeWidth={isTarget ? 3 : 1}
+                      cornerRadius={5}
+                    />
+                    {win.state === 'open' && (
+                      <Text
+                        x={pos.x - 30}
+                        y={pos.y - 8}
+                        text={win.word}
+                        fontSize={getEffectiveTextSize(16)}
+                        fill={isTarget ? '#fef3c7' : '#e2e8f0'}
+                        width={60}
+                        align="center"
+                      />
+                    )}
+                  </Group>
                 )
-              } else {
+              })}
+            
+              {gameState.hazards.map(hazard => {
+                const x = hazard.column * STORM_CASTLE_TOWER_CONFIG.cellSize + STORM_CASTLE_TOWER_CONFIG.cellSize / 2
+                const y = hazard.y
+              
+                if (hazard.type === 'oil') {
+                  return (
+                    <Rect
+                      key={hazard.id}
+                      x={x - STORM_CASTLE_TOWER_CONFIG.hazards.oilWidth / 2}
+                      y={y}
+                      width={STORM_CASTLE_TOWER_CONFIG.hazards.oilWidth}
+                      height={30}
+                      fill="#f97316"
+                      opacity={0.8}
+                      cornerRadius={3}
+                    />
+                  )
+                } else {
+                  return (
+                    <Circle
+                      key={hazard.id}
+                      x={x}
+                      y={y}
+                      radius={STORM_CASTLE_TOWER_CONFIG.hazards.rockRadius}
+                      fill="#78716c"
+                      stroke="#a8a29e"
+                      strokeWidth={2}
+                    />
+                  )
+                }
+              })}
+            
+              {(() => {
+                const playerPos = getGridPosition(
+                  gameState.player.position.col,
+                  gameState.player.position.row,
+                  gameState.scrollOffset
+                )
                 return (
                   <Circle
-                    key={hazard.id}
-                    x={x}
-                    y={y}
-                    radius={STORM_CASTLE_TOWER_CONFIG.hazards.rockRadius}
-                    fill="#78716c"
-                    stroke="#a8a29e"
-                    strokeWidth={2}
+                    x={playerPos.x}
+                    y={playerPos.y}
+                    radius={STORM_CASTLE_TOWER_CONFIG.player.radius}
+                    fill="#3b82f6"
+                    stroke="#60a5fa"
+                    strokeWidth={3}
                   />
                 )
-              }
-            })}
-            
-            {(() => {
-              const playerPos = getGridPosition(
-                gameState.player.position.col,
-                gameState.player.position.row,
-                gameState.scrollOffset
-              )
-              return (
-                <Circle
-                  x={playerPos.x}
-                  y={playerPos.y}
-                  radius={STORM_CASTLE_TOWER_CONFIG.player.radius}
-                  fill="#3b82f6"
-                  stroke="#60a5fa"
-                  strokeWidth={3}
-                />
-              )
-            })()}
+              })()}
+            </Group>
           </Layer>
         </Stage>
       )}
