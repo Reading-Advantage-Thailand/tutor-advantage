@@ -952,19 +952,32 @@ export function DragonFlightGame({
     }
   }, [bossHealth, bossY, displayDragonCount, layout, state.status]);
 
+  // Keep the latest onComplete without making it an effect dependency: parents
+  // (AdvantageArcadeRuntime, the play page) pass a fresh callback every render.
+  const onCompleteRef = useRef(onComplete);
   useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
+
+  const isBossPhase = state.status === "boss";
+
+  // Reset results only when the boss phase ends (or on mount). This used to run
+  // on every animation frame (it depended on state.elapsedMs) and call setState
+  // from a passive effect each time, which tripped React's "Maximum update depth
+  // exceeded" warning after ~50 consecutive frames.
+  useEffect(() => {
+    if (isBossPhase) return;
     if (resultsTimeoutRef.current) {
       clearTimeout(resultsTimeoutRef.current);
       resultsTimeoutRef.current = null;
     }
+    setResults(null);
+    setShowResults(false);
+    setBossSequenceDone(false);
+  }, [isBossPhase]);
 
-    if (state.status !== "boss") {
-      setResults(null);
-      setShowResults(false);
-      setBossSequenceDone(false);
-      return () => undefined;
-    }
-
+  useEffect(() => {
+    if (!isBossPhase) return;
     const nextResults = getDragonFlightResults(
       {
         correctAnswers: state.correctAnswers,
@@ -976,19 +989,13 @@ export function DragonFlightGame({
     ); // Pass elapsed time
     setResults(nextResults);
     setShowResults(false);
-
-    if (onComplete) {
-      onComplete(nextResults);
-    }
-
-    return () => undefined;
+    onCompleteRef.current?.(nextResults);
   }, [
-    state.status,
+    isBossPhase,
     state.correctAnswers,
     state.attempts,
     state.dragonCount,
     state.elapsedMs,
-    onComplete,
     difficulty,
   ]);
 

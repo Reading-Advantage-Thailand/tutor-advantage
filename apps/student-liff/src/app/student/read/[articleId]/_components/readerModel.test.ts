@@ -4,11 +4,13 @@ import {
   getMcqOptions,
   getParagraphs,
   getReviewAnswers,
+  getReviewGameRow,
   getWordAudio,
   getWordText,
   getWordThai,
   isMcq,
   optionLetter,
+  parseGameResultAnswer,
 } from "./readerModel";
 
 describe("word helpers", () => {
@@ -75,5 +77,38 @@ describe("review answers", () => {
   it("counts correct answers over all answers", () => {
     expect(countCorrect(answers)).toEqual({ correct: 1, total: 3 });
     expect(countCorrect(undefined)).toEqual({ correct: 0, total: 0 });
+  });
+});
+
+describe("game result rows", () => {
+  const gameRow = {
+    phase: 6,
+    questionText: "dragon-flight",
+    answerText: '{"gameId":"dragon-flight","score":0,"correct":0,"total":5}',
+    isCorrect: null,
+    score: 120,
+  };
+
+  it("re-exports the tolerant parser", () => {
+    expect(parseGameResultAnswer(gameRow.answerText)?.gameId).toBe("dragon-flight");
+    expect(parseGameResultAnswer("{oops")).toBeNull();
+  });
+
+  it("shows game rows by name and score instead of raw JSON", () => {
+    expect(getReviewGameRow(gameRow)).toEqual({ name: "Dragon Flight", scoreText: "ได้ 120 คะแนน" });
+    expect(getReviewGameRow({ phase: 7, questionText: "Q", answerText: "B: cat", isCorrect: true, score: 10 })).toBeNull();
+  });
+
+  it("leaves game and unscored rows out of the correct count", () => {
+    const answers = [
+      gameRow,
+      { phase: 7, questionText: "Q1", answerText: "A: dog", isCorrect: true, score: 10 },
+      { phase: 8, questionText: "Q2", answerText: "B: cat", isCorrect: false, score: 0 },
+      { phase: 9, questionText: "Q3", answerText: "free text", isCorrect: null, score: 0 },
+      { phase: 10, questionText: "Q4", answerText: "x", isCorrect: true, score: 5, kind: "game" },
+    ];
+    expect(countCorrect(answers)).toEqual({ correct: 1, total: 2 });
+    // Still listed in the review (with a question), just not counted.
+    expect(getReviewAnswers(answers)).toHaveLength(5);
   });
 });

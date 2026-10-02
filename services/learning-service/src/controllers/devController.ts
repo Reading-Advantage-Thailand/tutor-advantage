@@ -2,7 +2,8 @@
  * devController.ts
  *
  * DEV-ONLY endpoints for seeding / purging test data in the learning service.
- * All routes are guarded by the devOnly middleware — unreachable in production.
+ * Mounted via routes/devRoutes.ts only when NODE_ENV !== "production" and
+ * ENABLE_DEV_ROUTES === "true" — unreachable in production.
  */
 import { Request, Response } from "express";
 import { prisma } from "@tutor-advantage/database";

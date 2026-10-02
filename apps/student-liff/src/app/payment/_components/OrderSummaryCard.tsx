@@ -1,5 +1,5 @@
 import { ErrorState, Skeleton } from "@/components/mobile";
-import { formatSatang } from "@/lib/format";
+import { formatSatang, noOrphan } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import type { OrderDisplay } from "@/lib/paymentFlow";
 import type { LoadStatus } from "./usePaymentFlow";
@@ -72,8 +72,8 @@ export function OrderSummaryCard({ status, display, onRetry }: OrderSummaryCardP
     <section className={cardClass} aria-labelledby="payment-order-title">
       <div className="bg-hero px-5 py-[18px] text-hero-fg">
         <p className="text-[13px] leading-[1.5] font-semibold text-hero-fg-muted">{t("payment.select.orderSummary")}</p>
-        <h2 id="payment-order-title" className="mt-0.5 text-[17px] leading-[1.45] font-bold break-words">
-          {display.name}
+        <h2 id="payment-order-title" className="mt-0.5 text-[17px] leading-[1.45] font-bold break-words text-balance">
+          {noOrphan(display.name)}
         </h2>
         <p className="mt-0.5 text-[13px] leading-[1.5] text-hero-fg-muted">
           {display.tutor} · {display.cefr}

@@ -8,7 +8,6 @@ import {
   requestLoggerMiddleware,
   requestIdMiddleware,
   errorHandlerMiddleware,
-  areDevRoutesEnabled,
   assertProductionSecurityConfig,
   getAllowedOrigins,
   isOriginAllowed,
@@ -26,7 +25,7 @@ const { prisma } = require("@tutor-advantage/database") as typeof import("@tutor
 
 import { createServer } from "http";
 import { Server } from "socket.io";
-import { authMiddleware, requireRoles } from "./middlewares/authMiddleware";
+import { authMiddleware } from "./middlewares/authMiddleware";
 import {
   createClass,
   closeClass,
@@ -90,6 +89,7 @@ import {
   devSeedFullProgress,
   devSeedClassAllProgress,
 } from "./controllers/devController";
+import { registerDevRoutes } from "./routes/devRoutes";
 
 const app = express();
 const port = process.env.PORT || 3002;
@@ -252,14 +252,16 @@ app.post("/v1/classes/:classId/apply-coupon", authMiddleware, applyCouponToClass
 // Public LINE OA webhook
 app.post("/v1/line/webhook", handleLineWebhook);
 
-if (areDevRoutesEnabled()) {
-  const adminOnly = requireRoles("ADMIN");
-  app.post("/v1/dev/seed/lesson-history", authMiddleware, adminOnly, devSeedLessonHistory);
-  app.delete("/v1/dev/seed/lesson-history", authMiddleware, adminOnly, devPurgeLessonHistory);
-  app.post("/v1/dev/seed/full-progress", authMiddleware, adminOnly, devSeedFullProgress);
-  app.post("/v1/dev/seed/enrollments/activate", authMiddleware, adminOnly, devActivateEnrollments);
-  app.post("/v1/dev/seed/class-all-progress", authMiddleware, adminOnly, devSeedClassAllProgress);
-}
+// DEV-ONLY seed routes: mounted (and re-checked per request) only when
+// NODE_ENV !== "production" && ENABLE_DEV_ROUTES === "true". Self-scoped seeds
+// accept the caller's own token (dev student toolbar); class-wide stays ADMIN.
+registerDevRoutes(app, authMiddleware, {
+  seedLessonHistory: devSeedLessonHistory,
+  purgeLessonHistory: devPurgeLessonHistory,
+  seedFullProgress: devSeedFullProgress,
+  activateEnrollments: devActivateEnrollments,
+  seedClassAllProgress: devSeedClassAllProgress,
+});
 
 // Apply error handler last
 app.use(openApiValidationErrorHandler);

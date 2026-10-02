@@ -4,6 +4,7 @@ import { prisma } from "@tutor-advantage/database";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
 import { lessonSessionService } from "../services/LessonSessionService";
 import { getArticleDetails } from "../services/ReadingAdvantageDB";
+import { getSessionAnswerKind } from "../services/sessionAnswerKind";
 import { compareArticlesByCatalogOrder, formatNextSession, isCatalogArticleVisible } from "./classController";
 import { v4 as uuidv4 } from "uuid";
 import { assessmentArticleIds } from "../services/articleAssessmentBank";
@@ -821,6 +822,7 @@ export async function getStudentArticle(
           isCorrect: a.isCorrect,
           score: a.score,
           aiFeedback: a.aiFeedback,
+          kind: getSessionAnswerKind(a),
         })),
       },
     });

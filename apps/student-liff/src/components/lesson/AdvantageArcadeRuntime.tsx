@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 import {
   ArcadeGames,
@@ -225,7 +225,14 @@ export function AdvantageArcadeRuntime({
     return () => timers.forEach((timer) => window.clearTimeout(timer))
   }, [autoStart, gameReady, resolvedGameId])
 
-  const handleComplete = (result: ArcadeResult) => {
+  // Parents pass an inline onComplete; read it through a ref so handleComplete
+  // stays referentially stable and never re-triggers a game's effects.
+  const onCompleteRef = useRef(onComplete)
+  useEffect(() => {
+    onCompleteRef.current = onComplete
+  }, [onComplete])
+
+  const handleComplete = useCallback((result: ArcadeResult) => {
     if (completedRef.current) return
     completedRef.current = true
     setHasCompleted(true)
@@ -237,13 +244,13 @@ export function AdvantageArcadeRuntime({
     )
     const rawScore = result.score ?? result.xp ?? correct * 10
 
-    onComplete({
+    onCompleteRef.current({
       score: Math.max(0, Math.round(rawScore)),
       correct: Math.max(0, correct),
       total,
       durationMs: Math.max(0, Math.round(result.durationMs ?? Date.now() - startedAt.current)),
     })
-  }
+  }, [])
 
   const commonClass = "h-dvh min-h-0 w-full overflow-hidden bg-background"
 

@@ -24,7 +24,7 @@ import { studentApi } from "@/lib/api";
 import { invalidateResource, useCachedResource } from "@/lib/cachedResource";
 import { getLevelTone } from "@/lib/cefr";
 import { classDetailResourceKey } from "@/lib/classAccess";
-import { formatTHB } from "@/lib/format";
+import { formatTHB, noOrphan } from "@/lib/format";
 import { t, type I18nKey } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { EnrollAppBar, EnrollSkeleton } from "./_components/EnrollSkeleton";
@@ -182,7 +182,7 @@ function EnrollContent() {
           <Chip tone="onBrand" size="md" icon={CheckCircle2} className="relative">
             {t("enroll.confirmClass")}
           </Chip>
-          <h2 className="relative mt-3 text-[22px] leading-[1.45] font-extrabold">{classDetails.className}</h2>
+          <h2 className="relative mt-3 text-[22px] leading-[1.45] font-extrabold text-balance">{noOrphan(classDetails.className)}</h2>
           <div className="relative mt-3 flex flex-wrap gap-2">
             {classDetails.cefrLevel ? (
               <Chip tone="onBrand" size="md" icon={BarChart2}>

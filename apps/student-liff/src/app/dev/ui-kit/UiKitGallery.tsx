@@ -73,6 +73,7 @@ import {
 } from "@/components/mobile";
 import { CEFR_FILTER_LEVELS, getLevelTone, levelToneClass } from "@/lib/cefr";
 import { cn } from "@/lib/utils";
+import { LeaderboardDemo } from "./LeaderboardDemo";
 
 const ICON_TONES: IconTileTone[] = ["brand", "teal", "amber", "orange", "blue", "purple", "pink", "red", "neutral"];
 const CHIP_TONES: ChipTone[] = ["brand", "success", "warning", "danger", "info", "neutral"];
@@ -416,6 +417,10 @@ export function UiKitGallery() {
 
         <Section title="Celebration (confetti)">
           <CelebrationDemo />
+        </Section>
+
+        <Section title="Live lesson wrap-up & leaderboard">
+          <LeaderboardDemo />
         </Section>
 
         <Section title="Avatars">

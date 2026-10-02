@@ -11,7 +11,7 @@ import { Confetti } from '@/components/celebrate/Confetti';
 import { MobileLeaderboard } from '../MobileLeaderboard';
 import { PhaseColumn } from '../PhaseBlocks';
 import { rankParticipants } from '../leaderboardModel';
-import { getRankMeta } from '../rankMeta';
+import { getWrapUpCelebration } from '../rankMeta';
 
 interface LessonWrapUpPhaseProps {
   participants: LessonParticipant[];
@@ -22,21 +22,27 @@ interface LessonWrapUpPhaseProps {
 
 export function LessonWrapUpPhase({ participants, studentId, classBookCycleId, articleId }: LessonWrapUpPhaseProps) {
   const router = useRouter();
-  const { myRank: rank, myScore: score } = rankParticipants(participants, studentId);
-  const rankMeta = getRankMeta(rank);
+  const ranking = rankParticipants(participants, studentId);
+  const score = ranking.myScore;
+  const celebration = getWrapUpCelebration({
+    rank: ranking.myRank,
+    score,
+    total: ranking.total,
+    tied: ranking.myTied,
+    allTied: ranking.allTied || ranking.noScores,
+  });
   const canPracticeVoice = Boolean(classBookCycleId && articleId);
 
   return (
     <PhaseColumn>
       {/* Fires once when the wrap-up appears; later score/poll updates don't re-fire. */}
-      <Confetti intensity={rank >= 1 && rank <= 3 ? 'big' : 'medium'} />
+      {/* Finishing is always worth a small burst; "big" only for a real podium place. */}
+      <Confetti intensity={celebration.confetti} />
       {/* Rank hero */}
       <section className="rounded-[var(--radius-card)] bg-hero px-5 py-7 text-center text-hero-fg shadow-[var(--shadow-card)]">
-        <p aria-hidden="true" className="text-[64px] leading-[1.15]">{rankMeta.emoji ?? '🎖️'}</p>
-        <h2 className="mt-2 text-2xl leading-[1.35] font-extrabold">{rankMeta.title}</h2>
-        <p className="mt-1 text-[15px] leading-[1.5] text-hero-fg-muted">
-          {t("interactivePlay.rankPrefix")} {rank > 0 ? rank : '-'} {t("interactivePlay.rankFrom")} {participants.length} {t("interactivePlay.personUnit")}
-        </p>
+        <p aria-hidden="true" className="text-[64px] leading-[1.15]">{celebration.emoji}</p>
+        <h2 className="mt-2 text-2xl leading-[1.35] font-extrabold">{celebration.title}</h2>
+        <p className="mt-1 text-[15px] leading-[1.5] text-hero-fg-muted">{celebration.subtitle}</p>
       </section>
 
       {/* Score */}

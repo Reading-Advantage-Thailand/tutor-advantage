@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { Chip, HScroll, IconTile, LevelChip, ProgressBar, SectionHeader } from "@/components/mobile";
 import { getLevelTone, levelToneClass, normalizeCefr } from "@/lib/cefr";
+import { noOrphan } from "@/lib/format";
 import { buildEnrollmentHref, getEnrollmentKey, type Enrollment } from "@/lib/enrollmentStatus";
 import { t } from "@/lib/i18n";
 
@@ -31,7 +32,7 @@ function ClassCard({ enrollment }: { enrollment: Enrollment }) {
           {cefr ? <LevelChip cefr={cefr} /> : null}
         </span>
       ) : null}
-      <span className="line-clamp-2 text-[15px] leading-[1.5] font-bold text-fg">{enrollment.name}</span>
+      <span className="line-clamp-2 text-[15px] leading-[1.5] font-bold text-balance text-fg">{noOrphan(enrollment.name)}</span>
       <span className="truncate text-[13px] leading-[1.5] text-fg-muted">
         {t("dashboard.tutorPrefix")} {enrollment.tutorName}
       </span>

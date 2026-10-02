@@ -111,12 +111,45 @@ export function formatThaiDate(input: DateInput, style: ThaiDateStyle = "medium"
   return date ? dateFormat(DATE_STYLE_OPTIONS[style]).format(date) : "";
 }
 
-/** 24-hour time, e.g. "14:30" or "14:30 น." with `{ suffix: true }`. Returns "" for invalid input. */
+/**
+ * Non-breaking space. Use it between a number and its unit ("10:00 น.",
+ * "5 บท") so a line never wraps leaving the unit alone on the next line.
+ */
+export const NBSP = "\u00A0";
+
+/**
+ * Glues a short last word (≤ `maxTail` characters, e.g. the "1" in
+ * "คลาส Reading Advantage 1") to the word before it with a non-breaking space,
+ * so titles never end with a one-character orphan line. Other text is unchanged.
+ */
+export function noOrphan(text: string | null | undefined, maxTail = 3): string {
+  if (!text) return "";
+  const trimmed = text.trimEnd();
+  const lastSpace = trimmed.lastIndexOf(" ");
+  if (lastSpace <= 0) return text;
+  const tail = trimmed.slice(lastSpace + 1);
+  if (tail.length === 0 || tail.length > maxTail) return text;
+  return `${trimmed.slice(0, lastSpace)}${NBSP}${tail}`;
+}
+
+/**
+ * Keeps times in free text (e.g. a server schedule "จันทร์ 18:00 - 19:30 น.")
+ * on one line: the spaces around a dash between two times and before "น."
+ * become non-breaking. Other spaces are left alone so the text still wraps.
+ */
+export function keepTimesTogether(text: string | null | undefined): string {
+  if (!text) return "";
+  return text
+    .replace(/(\d{1,2}[:.]\d{2})\s*([-–])\s*(?=\d{1,2}[:.]\d{2})/g, `$1${NBSP}$2${NBSP}`)
+    .replace(/(\d)\s+(น\.)/g, `$1${NBSP}$2`);
+}
+
+/** 24-hour time, e.g. "14:30" or "14:30 น." (non-breaking space) with `{ suffix: true }`. Returns "" for invalid input. */
 export function formatThaiTime(input: DateInput, options: { suffix?: boolean } = {}): string {
   const date = toDate(input);
   if (!date) return "";
   const time = dateFormat({ hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(date);
-  return options.suffix ? `${time} น.` : time;
+  return options.suffix ? `${time}${NBSP}น.` : time;
 }
 
 /** Month and Buddhist-era year, e.g. "ตุลาคม 2569" (calendar headers). */

@@ -31,6 +31,7 @@ import {
   getMcqOptions,
   getParagraphs,
   getReviewAnswers,
+  getReviewGameRow,
   getWordAudio,
   getWordText,
   getWordThai,
@@ -185,6 +186,26 @@ function ReviewAnswers({ answers }: { answers: SessionAnswer[] }) {
       <SectionHeader title={t("articleReader.reviewAnswersTitle")} count={interactive.length} className="mb-1" />
       <div className="flex flex-col gap-3">
         {interactive.map((a, i) => {
+          const game = getReviewGameRow(a);
+          if (game) {
+            return (
+              <Surface key={i} as="article">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="min-w-0 truncate text-[13px] leading-[1.5] font-semibold text-fg-muted">
+                    {formatPhaseStep(a.phase)} · {getPhaseMeta(a.phase).label}
+                  </p>
+                  <Chip tone="neutral" size="sm" className="tabular-nums">+{a.score}</Chip>
+                </div>
+                <div className="mt-1.5 flex items-center gap-2">
+                  <Chip tone="neutral" size="sm" className="shrink-0">
+                    <span aria-hidden="true">🎮</span> {t("gameResult.label")}
+                  </Chip>
+                  <p lang="en" className={cn("min-w-0 text-base leading-[1.6] font-semibold break-words text-fg", latinText)}>{game.name}</p>
+                </div>
+                <p className="mt-1.5 text-sm leading-[1.5] font-semibold text-fg-muted tabular-nums">{game.scoreText}</p>
+              </Surface>
+            );
+          }
           const tone = a.isCorrect === true ? "success" : a.isCorrect === false ? "danger" : "neutral";
           return (
             <Surface key={i} as="article">
@@ -194,18 +215,18 @@ function ReviewAnswers({ answers }: { answers: SessionAnswer[] }) {
                 </p>
                 <Chip tone={tone} size="sm" className="tabular-nums">+{a.score}</Chip>
               </div>
-              <p lang="en" className={cn("mt-1.5 text-base leading-[1.6] font-semibold text-fg", latinText)}>{a.questionText}</p>
+              <p lang="en" className={cn("mt-1.5 text-base leading-[1.6] font-semibold break-words text-fg [overflow-wrap:anywhere]", latinText)}>{a.questionText}</p>
               <div className="mt-2.5 flex flex-wrap gap-2">
                 <span
                   className={cn(
-                    "rounded-xl border px-3 py-1.5 text-sm leading-[1.5] font-semibold",
+                    "max-w-full min-w-0 rounded-xl border px-3 py-1.5 text-sm leading-[1.5] font-semibold break-words [overflow-wrap:anywhere]",
                     a.isCorrect === false ? "border-danger-border bg-danger-bg text-danger-fg" : "border-success-border bg-success-bg text-success-fg",
                   )}
                 >
                   {t("articleReader.answerPrefix")}: <span lang="en">{a.answerText || "—"}</span>
                 </span>
                 {a.isCorrect === false && a.correctAnswer ? (
-                  <span className="rounded-xl border border-success-border bg-success-bg px-3 py-1.5 text-sm leading-[1.5] font-semibold text-success-fg">
+                  <span className="max-w-full min-w-0 rounded-xl border border-success-border bg-success-bg px-3 py-1.5 text-sm leading-[1.5] font-semibold break-words text-success-fg [overflow-wrap:anywhere]">
                     {t("articleReader.solutionPrefix")}: <span lang="en">{a.correctAnswer}</span>
                   </span>
                 ) : null}
@@ -213,7 +234,7 @@ function ReviewAnswers({ answers }: { answers: SessionAnswer[] }) {
               {a.aiFeedback ? (
                 <div className="mt-2.5 flex items-start gap-2 rounded-xl border border-info-border bg-info-bg p-3">
                   <Bot aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-info-fg" />
-                  <p className="text-sm leading-[1.6] whitespace-pre-line text-fg">{a.aiFeedback}</p>
+                  <p className="min-w-0 text-sm leading-[1.6] whitespace-pre-line text-fg [overflow-wrap:anywhere]">{a.aiFeedback}</p>
                 </div>
               ) : null}
             </Surface>

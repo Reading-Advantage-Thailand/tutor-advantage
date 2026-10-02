@@ -7,6 +7,8 @@ import {
   formatThaiDate,
   formatThaiMonthYear,
   formatThaiTime,
+  keepTimesTogether,
+  noOrphan,
   toDate,
   toLocalDateKey,
 } from "./format";
@@ -64,7 +66,7 @@ describe("dates", () => {
   it("formats 24-hour times with an optional น. suffix", () => {
     expect(formatThaiTime(oct2)).toBe("14:05");
     expect(formatThaiTime(new Date(2026, 9, 2, 0, 5))).toBe("00:05");
-    expect(formatThaiTime(oct2, { suffix: true })).toBe("14:05 น.");
+    expect(formatThaiTime(oct2, { suffix: true })).toBe("14:05\u00A0น.");
   });
 
   it("formats month and year for calendar headers", () => {
@@ -96,5 +98,33 @@ describe("relative days", () => {
     expect(formatListTimestamp(new Date(2026, 9, 2, 8, 30), now)).toBe("08:30");
     expect(formatListTimestamp(new Date(2026, 9, 1, 20, 0), now)).toBe("เมื่อวาน");
     expect(formatListTimestamp(new Date(2026, 8, 20), now)).toBe("20 ก.ย.");
+  });
+});
+
+describe("noOrphan", () => {
+  it("glues a short last word to the previous one", () => {
+    expect(noOrphan("คลาส Reading Advantage 1")).toBe("คลาส Reading Advantage\u00A01");
+    expect(noOrphan("Book A1")).toBe("Book\u00A0A1");
+  });
+
+  it("leaves long last words, single words and empty text unchanged", () => {
+    expect(noOrphan("คลาส Reading Advantage")).toBe("คลาส Reading Advantage");
+    expect(noOrphan("Reading")).toBe("Reading");
+    expect(noOrphan("")).toBe("");
+  });
+});
+
+describe("keepTimesTogether", () => {
+  it("glues time ranges and the น. unit with non-breaking spaces", () => {
+    expect(keepTimesTogether("ทุกวันจันทร์ และ พฤหัสบดี 18:00 - 19:30")).toBe(
+      "ทุกวันจันทร์ และ พฤหัสบดี 18:00\u00A0-\u00A019:30",
+    );
+    expect(keepTimesTogether("เวลา 10:00 น.")).toBe("เวลา 10:00\u00A0น.");
+    expect(keepTimesTogether("9.00-10.30 น.")).toBe("9.00\u00A0-\u00A010.30\u00A0น.");
+  });
+
+  it("returns empty text for nullish input and leaves other text alone", () => {
+    expect(keepTimesTogether(undefined)).toBe("");
+    expect(keepTimesTogether("ตามนัดหมาย")).toBe("ตามนัดหมาย");
   });
 });

@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { BottomSheet, IconTile, ListGroup, ListRow, SectionHeader, Surface } from "@/components/mobile";
 import { Button } from "@/components/ui/button";
 import { buildClassIcs, buildGoogleCalendarUrl, downloadIcsFile, icsFileName } from "@/lib/classCalendar";
-import { formatThaiDate } from "@/lib/format";
+import { formatThaiDate, keepTimesTogether } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import type { ClassDetail } from "./types";
 
@@ -32,8 +32,8 @@ export function ScheduleSection({ cls, onAddToCalendar }: { cls: ClassDetail; on
       <ListGroup className="mt-1">
         <ListRow
           leading={<IconTile icon={CalendarDays} tone="purple" />}
-          title={cls.schedule}
-          subtitle={`${t("classes.detail.nextLessonPrefix")} ${cls.nextSession || t("classes.detail.tba")}`}
+          title={keepTimesTogether(cls.schedule)}
+          subtitle={`${t("classes.detail.nextLessonPrefix")} ${keepTimesTogether(cls.nextSession) || t("classes.detail.tba")}`}
         />
         {firstDate ? (
           <ListRow leading={<IconTile icon={CalendarRange} tone="blue" />} title={firstDate} subtitle={secondDate} />
@@ -59,9 +59,9 @@ export function NextSessionCard({ cls, onAddToCalendar }: { cls: ClassDetail; on
         <IconTile icon={CalendarClock} tone="purple" size="lg" />
         <div className="min-w-0 flex-1">
           <p className="text-[13px] leading-[1.5] font-semibold text-fg-muted">{t("classes.detail.nextSessionTitle")}</p>
-          <p className="mt-0.5 text-base leading-[1.5] font-bold text-fg">{nextSession}</p>
+          <p className="mt-0.5 text-base leading-[1.5] font-bold text-pretty text-fg">{keepTimesTogether(nextSession)}</p>
           {cls.schedule && cls.schedule !== cls.nextSession ? (
-            <p className="mt-1 text-[13px] leading-[1.5] text-fg-muted">{cls.schedule}</p>
+            <p className="mt-1 text-[13px] leading-[1.5] text-pretty text-fg-muted">{keepTimesTogether(cls.schedule)}</p>
           ) : null}
           {dates ? <p className="mt-1 text-[13px] leading-[1.5] text-fg-muted">{dates}</p> : null}
         </div>

@@ -29,7 +29,8 @@
 @keyframes cheer{to{transform:rotate(-55deg)}}
 @keyframes float{50%{transform:translateY(-4px) rotate(-3deg)}}
 @keyframes twinkle{50%{opacity:.35;transform:scale(.7)}}
-@media(max-height:820px){.scene{transform:scale(.72);margin:-36px 0}}
+/* Shrinks on shorter phones (same 900px breakpoint as the compact voice-practice layout). */
+@media(max-height:900px){.scene{transform:scale(.72);margin:-36px 0}}
 @media(prefers-reduced-motion:reduce){.scene *{animation:none!important;transition:none!important}}
 :global(.dark) .encouragement{background:#123c30;color:#81f2c9}
 .scene[data-state=listening] .head{animation:attentive 3s ease-in-out infinite}
@@ -60,3 +61,4 @@
 @keyframes dotBounce{50%{transform:translateY(-6px);opacity:.3}}
 @keyframes hooray{50%{transform:scaleX(1.04)}}
 @keyframes confettiFall{from{transform:translateY(-14px);opacity:0}30%{opacity:1}to{transform:translateY(32px);opacity:0}}
+@media(min-height:761px) and (max-height:900px){.scene{transform:scale(.84);margin:-20px 0}}

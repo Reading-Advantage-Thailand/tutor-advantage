@@ -12,7 +12,7 @@
  *
  * Relative imports on purpose: the root vitest config maps "@" to tutor-pwa.
  */
-import { toLocalDateKey } from "./format";
+import { NBSP, toLocalDateKey } from "./format";
 import { studentScheduleCopy, t } from "./i18n";
 
 export interface ScheduleClass {
@@ -69,7 +69,8 @@ const TIME_RANGE_PATTERN = /(\d{1,2}[:.]\d{2})\s*[-–]\s*(\d{1,2}[:.]\d{2})/;
 export function extractTime(str: string): string {
   const match = str.match(TIME_RANGE_PATTERN);
   if (match) {
-    return `${match[1].replace(".", ":")} - ${match[2].replace(".", ":")} ${t("schedule.timeSuffix")}`;
+    // Non-breaking spaces keep "18:00 - 19:30 น." on one line (no lone "น." or "- 19:30").
+    return `${match[1].replace(".", ":")}${NBSP}-${NBSP}${match[2].replace(".", ":")}${NBSP}${t("schedule.timeSuffix")}`;
   }
   return t("schedule.byAppointment");
 }

@@ -10,10 +10,18 @@ const sizeClass = {
 
 /**
  * Medal (top three) or "#n" tile for a rank; "–" when there is no rank.
- * The accessible name is "อันดับ n". Server-compatible.
+ * Pass `medal={false}` to show the plain number even on the podium (e.g. a
+ * 0-point row). The accessible name is "อันดับ n". Server-compatible.
  */
-export function RankBadge({ rank, size = "md", className }: { rank: number | null | undefined; size?: keyof typeof sizeClass; className?: string }) {
-  const meta = getRankMeta(rank);
+export function RankBadge({ rank, medal = true, size = "md", className }: {
+  rank: number | null | undefined;
+  /** Allow a podium medal for ranks 1–3 (default true). */
+  medal?: boolean;
+  size?: keyof typeof sizeClass;
+  className?: string;
+}) {
+  const ranked = getRankMeta(rank);
+  const meta = medal ? ranked : { ...ranked, emoji: null, tone: "neutral" as const };
   const s = sizeClass[size];
   return (
     <span

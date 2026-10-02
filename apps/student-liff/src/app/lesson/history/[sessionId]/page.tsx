@@ -15,16 +15,45 @@ import { formatThaiDate } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { DetailSkeleton } from "./_components/DetailSkeleton";
-import { isNotFoundError, parseAnswerChoice } from "./_components/detailModel";
+import { getDetailGameRow, isNotFoundError, parseAnswerChoice } from "./_components/detailModel";
 
 interface Answer {
   phase: number;
   score: number;
   question: string;
   answer: string;
-  isCorrect: boolean;
+  isCorrect: boolean | null;
   correctAnswer?: string;
   aiFeedback?: string;
+  /** "game" for live-lesson game results (newer API responses). */
+  kind?: string;
+}
+
+/** Live-lesson game result: game name and score, no correct/incorrect verdict. */
+function GameAnswerCard({ phaseLabel, score, name, scoreText }: { phaseLabel: string; score: number; name: string; scoreText: string }) {
+  return (
+    <Surface as="article" padding="none" className="overflow-hidden">
+      <div className="flex items-center justify-between gap-2 border-b border-hairline px-4 py-2.5">
+        <p className="min-w-0 truncate text-[13px] leading-[1.5] font-semibold text-fg-muted">{phaseLabel}</p>
+        <Chip tone="neutral" size="sm" className="tabular-nums">
+          +{score} {t("lessonHistory.pointsUnit")}
+        </Chip>
+      </div>
+      <div className="flex items-start gap-3 p-4">
+        <span
+          aria-hidden="true"
+          className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-hairline text-xl"
+        >
+          🎮
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-[13px] leading-[1.5] font-bold text-fg-muted">{t("gameResult.label")}</p>
+          <p lang="en" className="mt-0.5 text-base leading-[1.5] font-bold break-words text-fg">{name}</p>
+          <p className="mt-0.5 text-[15px] leading-[1.5] font-semibold text-fg-muted tabular-nums">{scoreText}</p>
+        </div>
+      </div>
+    </Surface>
+  );
 }
 
 interface Session {
@@ -44,8 +73,11 @@ interface LessonDetail {
 const HISTORY_HREF = "/lesson/history";
 
 function AnswerCard({ answer: a }: { answer: Answer }) {
-  const choice = parseAnswerChoice(a.answer);
   const phaseLabel = `${formatPhaseStep(a.phase)} · ${getPhaseMeta(a.phase).label}`;
+  const game = getDetailGameRow(a);
+  if (game) return <GameAnswerCard phaseLabel={phaseLabel} score={a.score} name={game.name} scoreText={game.scoreText} />;
+
+  const choice = parseAnswerChoice(a.answer);
   const scored = a.score > 0;
 
   return (
@@ -58,7 +90,7 @@ function AnswerCard({ answer: a }: { answer: Answer }) {
       </div>
 
       <div className="flex flex-col gap-3 p-4">
-        <p lang="en" className="text-base leading-[1.6] font-bold text-fg">
+        <p lang="en" className="text-base leading-[1.6] font-bold break-words text-fg [overflow-wrap:anywhere]">
           {a.question || t("lessonHistory.questionFallback")}
         </p>
 
@@ -88,7 +120,7 @@ function AnswerCard({ answer: a }: { answer: Answer }) {
             <p className={cn("text-[13px] leading-[1.5] font-bold", a.isCorrect ? "text-success-fg" : "text-danger-fg")}>
               {t("lessonHistory.yourAnswer")} · {a.isCorrect ? t("lessonHistory.correctLabel") : t("lessonHistory.incorrectLabel")}
             </p>
-            <p className="mt-0.5 text-[15px] leading-[1.5] font-semibold break-words text-fg">
+            <p className="mt-0.5 text-[15px] leading-[1.5] font-semibold break-words text-fg [overflow-wrap:anywhere]">
               {choice.label ? <span className="sr-only">{choice.label}. </span> : null}
               {choice.text}
             </p>
@@ -101,7 +133,7 @@ function AnswerCard({ answer: a }: { answer: Answer }) {
             <Lightbulb aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-warning-fg" />
             <div className="min-w-0">
               <p className="text-[13px] leading-[1.5] font-bold text-warning-fg">{t("lessonHistory.correctAnswer")}</p>
-              <p lang="en" className="mt-0.5 text-[15px] leading-[1.5] font-semibold break-words text-fg">{a.correctAnswer}</p>
+              <p lang="en" className="mt-0.5 text-[15px] leading-[1.5] font-semibold break-words text-fg [overflow-wrap:anywhere]">{a.correctAnswer}</p>
             </div>
           </div>
         ) : null}
@@ -112,7 +144,7 @@ function AnswerCard({ answer: a }: { answer: Answer }) {
             <Bot aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-info-fg" />
             <div className="min-w-0">
               <p className="text-[13px] leading-[1.5] font-bold text-info-fg">{t("lessonHistory.aiFeedbackLabel")}</p>
-              <p className="mt-0.5 text-[15px] leading-[1.6] whitespace-pre-line text-fg">{a.aiFeedback}</p>
+              <p className="mt-0.5 text-[15px] leading-[1.6] whitespace-pre-line text-fg [overflow-wrap:anywhere]">{a.aiFeedback}</p>
             </div>
           </div>
         ) : null}

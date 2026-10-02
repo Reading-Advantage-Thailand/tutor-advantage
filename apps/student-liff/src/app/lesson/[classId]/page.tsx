@@ -30,6 +30,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 import { playSound } from "@/lib/sounds";
 import { cn } from "@/lib/utils";
+import { noOrphan } from "@/lib/format";
 import { buildPlayUrl } from "@/components/lesson/lessonRoutes";
 import { LobbySkeleton } from "./_components/LobbySkeleton";
 import {
@@ -280,8 +281,8 @@ function LessonLobby({ classId, onReconnect }: { classId: string; onReconnect: (
         {/* Class hero */}
         <section className="rounded-[var(--radius-card)] bg-hero p-5 text-hero-fg shadow-[var(--shadow-card)]">
           <Chip tone="onBrand" icon={Radio}>{t("lessonLobby.liveBadge")}</Chip>
-          <h2 className="mt-3 text-xl leading-[1.4] font-extrabold">{classInfo.name}</h2>
-          <p className="mt-1 text-sm leading-[1.5] text-hero-fg-muted">
+          <h2 className="mt-3 text-xl leading-[1.4] font-extrabold text-balance">{noOrphan(classInfo.name)}</h2>
+          <p className="mt-1 text-sm leading-[1.5] text-pretty text-hero-fg-muted">
             {t("lessonLobby.tutorPrefix")} {classInfo.tutor?.name || t("lessonLobby.defaultTutor")}
           </p>
         </section>

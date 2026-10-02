@@ -3,7 +3,7 @@ import { CalendarDays, Users } from "lucide-react";
 import { Chip, LevelChip, UserAvatar } from "@/components/mobile";
 import { formatLevelLabel, getLevelTone, levelToneClass, normalizeCefr } from "@/lib/cefr";
 import { getSeatInfo } from "@/lib/classAccess";
-import { formatTHB } from "@/lib/format";
+import { formatTHB, noOrphan } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { getClassStatusBadge, type ClassListItem } from "./classesList";
 
@@ -35,7 +35,7 @@ export function ClassCard({ cls, onPressStart }: { cls: ClassListItem; onPressSt
       <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-1.5 ${levelTone.solid}`} />
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
-          <h2 className="line-clamp-2 text-base leading-[1.5] font-bold text-fg">{cls.name}</h2>
+          <h2 className="line-clamp-2 text-base leading-[1.5] font-bold text-balance text-fg">{noOrphan(cls.name)}</h2>
           <p className="mt-1 flex min-w-0 items-center gap-2 text-[13px] leading-[1.5] text-fg-muted">
             <UserAvatar name={cls.tutor} size="xs" decorative />
             <span className="truncate">{cls.tutor}</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { BookOpen, Check, Lock } from "lucide-react";
+import { toast } from "sonner";
 import {
   EmptyState,
   ErrorState,
@@ -18,6 +19,7 @@ import {
 import { normalizeCefr } from "@/lib/cefr";
 import { classifyClassLoadError, getArticleRowHref, getLessonListFooter, type ClassAccess } from "@/lib/classAccess";
 import { t } from "@/lib/i18n";
+import { getSequentialLessonPlan, isLessonOpenable, type LessonLockState } from "@/lib/lessonLock";
 import { cn } from "@/lib/utils";
 import type { ClassArticleDetail, ClassDetail } from "./types";
 
@@ -49,30 +51,52 @@ function LessonNumber({ number, completed, locked }: { number: number; completed
 }
 
 /**
- * One lesson. Navigable (→ /student/read/:id) only when the student can read
- * the selected book; otherwise static with a lock. Completed lessons get a check.
+ * One lesson. `state` comes from the shared sequential unlock rule
+ * (lib/lessonLock, same as /progress): done → check + "เรียนแล้ว", current →
+ * "ยังไม่ได้เรียน" + chevron to the reader, locked → muted with a lock and a tap
+ * that explains which lesson to finish first. Without access to the book
+ * (`canRead` false) every row is a static locked peek.
  */
-function LessonRow({ article, canRead }: { article: LessonRowArticle; canRead: boolean }) {
+function LessonRow({
+  article,
+  canRead,
+  state = "current",
+  onLockedTap,
+}: {
+  article: LessonRowArticle;
+  canRead: boolean;
+  state?: LessonLockState;
+  onLockedTap?: () => void;
+}) {
   const cefr = article.showCefr === false ? null : normalizeCefr(article.cefrLevel);
-  const completed = canRead && article.isCompleted;
+  const locked = !canRead || !isLessonOpenable(state);
+  const completed = canRead && state === "done";
+  const lockedBySequence = canRead && locked;
   return (
     <ListRow
-      href={getArticleRowHref(article.id, canRead)}
-      leading={<LessonNumber number={article.articleNumber} completed={completed} locked={!canRead} />}
-      title={article.title}
+      href={locked ? undefined : getArticleRowHref(article.id, canRead)}
+      onClick={lockedBySequence ? onLockedTap : undefined}
+      leading={<LessonNumber number={article.articleNumber} completed={completed} locked={locked} />}
+      title={locked ? <span className="text-fg-muted">{article.title}</span> : article.title}
       subtitle={
-        canRead ? (completed ? t("classes.detail.lessonCompleted") : t("classes.detail.lessonPending")) : undefined
+        canRead
+          ? completed
+            ? t("classes.detail.lessonCompleted")
+            : locked
+              ? t("classes.detail.lessonLocked")
+              : t("classes.detail.lessonPending")
+          : undefined
       }
       trailing={
-        cefr || !canRead ? (
+        cefr || locked ? (
           <>
             {cefr ? <LevelChip cefr={cefr} /> : null}
-            {canRead ? null : (
+            {locked ? (
               <>
                 <Lock aria-hidden="true" className="size-4 text-fg-subtle" />
                 <span className="sr-only">{t("classes.detail.lockedAria")}</span>
               </>
-            )}
+            ) : null}
           </>
         ) : undefined
       }
@@ -109,10 +133,25 @@ function LessonsBody({ articles, canRead }: { articles: ArticlesState; canRead: 
       </Surface>
     );
   }
+  const ordered = [...list].sort((a, b) => a.articleNumber - b.articleNumber);
+  const { currentIndex, states } = getSequentialLessonPlan(
+    ordered.map((article) => ({ done: article.isCompleted })),
+  );
+  const current = currentIndex >= 0 ? ordered[currentIndex] : undefined;
+  const explainLock = () => {
+    if (!current) return;
+    toast.info(`${t("progress.lockedLessonPrefix")} ${current.articleNumber} ${t("progress.lockedLessonSuffix")}`);
+  };
   return (
     <ListGroup aria-label={t("classes.detail.lessonsTitle")}>
-      {list.map((article) => (
-        <LessonRow key={article.id} article={article} canRead={canRead} />
+      {ordered.map((article, index) => (
+        <LessonRow
+          key={article.id}
+          article={article}
+          canRead={canRead}
+          state={states[index]}
+          onLockedTap={explainLock}
+        />
       ))}
     </ListGroup>
   );

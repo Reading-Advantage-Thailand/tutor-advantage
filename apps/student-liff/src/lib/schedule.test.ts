@@ -32,8 +32,8 @@ function weekdaysOf(events: ScheduledEvent[]): Set<number> {
 
 describe("extractTime", () => {
   it("normalises dots and dashes into a Thai time label", () => {
-    expect(extractTime("ทุกวันจันทร์ 18.00-19.30")).toBe("18:00 - 19:30 น.");
-    expect(extractTime("อังคาร 9:00 – 10:30")).toBe("9:00 - 10:30 น.");
+    expect(extractTime("ทุกวันจันทร์ 18.00-19.30")).toBe("18:00\u00A0-\u00A019:30\u00A0น.");
+    expect(extractTime("อังคาร 9:00 – 10:30")).toBe("9:00\u00A0-\u00A010:30\u00A0น.");
   });
 
   it("falls back to 'by appointment' without a time range", () => {
@@ -55,7 +55,7 @@ describe("getStartMinutes", () => {
 
 describe("parseThaiSchedule", () => {
   it("detects Thai day names (both spellings of Thursday)", () => {
-    expect(parseThaiSchedule("ทุกวันจันทร์ 18:00 - 19:30")).toEqual({ days: [1], timeRange: "18:00 - 19:30 น." });
+    expect(parseThaiSchedule("ทุกวันจันทร์ 18:00 - 19:30")).toEqual({ days: [1], timeRange: "18:00\u00A0-\u00A019:30\u00A0น." });
     expect(parseThaiSchedule("อังคาร และ พฤหัส 17.00-18.00").days.sort()).toEqual([2, 4]);
     expect(parseThaiSchedule("วันพฤหัสบดี").days).toEqual([4]);
     expect(parseThaiSchedule("เสาร์-อาทิตย์ 9:00-12:00").days.sort()).toEqual([0, 6]);
@@ -64,14 +64,14 @@ describe("parseThaiSchedule", () => {
   it("treats 'ทุกวัน' without a specific day as every day", () => {
     expect(parseThaiSchedule("ทุกวัน 8:00-9:00")).toEqual({
       days: [0, 1, 2, 3, 4, 5, 6],
-      timeRange: "8:00 - 9:00 น.",
+      timeRange: "8:00\u00A0-\u00A09:00\u00A0น.",
     });
   });
 
   it("keeps the Mon/Wed/Fri fallback for empty, unset or unknown text", () => {
     expect(parseThaiSchedule("")).toEqual({ days: [1, 3, 5], timeRange: "ยังไม่ได้กำหนด" });
     expect(parseThaiSchedule("ยังไม่ได้กำหนด")).toEqual({ days: [1, 3, 5], timeRange: "ยังไม่ได้กำหนด" });
-    expect(parseThaiSchedule("Mon/Wed 10:00-11:00")).toEqual({ days: [1, 3, 5], timeRange: "10:00 - 11:00 น." });
+    expect(parseThaiSchedule("Mon/Wed 10:00-11:00")).toEqual({ days: [1, 3, 5], timeRange: "10:00\u00A0-\u00A011:00\u00A0น." });
     expect(parseThaiSchedule("แล้วแต่ตกลง")).toEqual({ days: [1, 3, 5], timeRange: "ตามนัดหมาย" });
   });
 });
@@ -99,7 +99,7 @@ describe("buildScheduleEvents", () => {
       classId: "c1",
       title: "Reading A",
       tutor: "ครูเอ",
-      time: "18:00 - 19:00 น.",
+      time: "18:00\u00A0-\u00A019:00\u00A0น.",
       startMinutes: 1080,
       type: "class",
     });
@@ -149,7 +149,7 @@ describe("buildScheduleEvents", () => {
       NOW,
     );
     expect(events).toEqual([
-      expect.objectContaining({ id: "demo-2026-10-20", dateStr: "2026-10-20", time: "9:00 - 10:00 น." }),
+      expect.objectContaining({ id: "demo-2026-10-20", dateStr: "2026-10-20", time: "9:00\u00A0-\u00A010:00\u00A0น." }),
     ]);
   });
 

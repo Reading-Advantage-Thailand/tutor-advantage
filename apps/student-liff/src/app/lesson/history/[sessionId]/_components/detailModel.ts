@@ -1,6 +1,24 @@
 // Pure helpers for the lesson result detail page.
 // Relative imports only: vitest maps "@" to another app.
+import { getGameRowView, isGameAnswer, parseGameResultAnswer, type GameRowView } from "../../../../../lib/gameResultAnswer";
 import { t } from "../../../../../lib/i18n";
+
+export { parseGameResultAnswer };
+
+export interface DetailAnswerLike {
+  question?: string | null;
+  answer?: string | null;
+  isCorrect?: boolean | null;
+  score?: number | null;
+  /** "game" for live-lesson game results (newer API responses). */
+  kind?: string | null;
+}
+
+/** Game name + "ได้ N คะแนน" when the row is a live-lesson game result, else null. */
+export function getDetailGameRow(a: DetailAnswerLike): GameRowView | null {
+  if (!isGameAnswer({ answerText: a.answer, isCorrect: a.isCorrect, kind: a.kind })) return null;
+  return getGameRowView({ answerText: a.answer, questionText: a.question, score: a.score });
+}
 
 export interface AnswerChoice {
   /** "A"–"D" when the answer was a multiple-choice option, else null. */

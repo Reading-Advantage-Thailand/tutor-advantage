@@ -745,15 +745,18 @@ function PlayLesson({ onReconnect }: { onReconnect: () => void }) {
                 >
                   <Image src={game.cover} alt="" fill sizes="272px" className="object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/0" />
-                  <span className="absolute top-4 left-4 rounded-full bg-black/55 px-3 py-1 text-xs leading-[1.5] font-semibold text-white">
-                    {categoryLabel}
-                  </span>
-                  {isMine ? (
-                    <span className="absolute top-4 right-4 rounded-full bg-brand-solid px-3 py-1 text-xs leading-[1.5] font-bold text-white">
-                      {t("interactivePlay.selected")}
-                    </span>
-                  ) : null}
                   <div className="relative z-10 mt-auto p-5 text-white">
+                    {/* Chips sit on the bottom scrim, not over the cover art's logo at the top. */}
+                    <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                      <span className="rounded-full bg-black/55 px-2.5 py-0.5 text-xs leading-[1.5] font-semibold text-white ring-1 ring-white/25">
+                        {categoryLabel}
+                      </span>
+                      {isMine ? (
+                        <span className="rounded-full bg-brand-solid px-2.5 py-0.5 text-xs leading-[1.5] font-bold text-white">
+                          {t("interactivePlay.selected")}
+                        </span>
+                      ) : null}
+                    </div>
                     <h3 lang="en" className="text-[22px] leading-[1.3] font-extrabold text-white">{game.title}</h3>
                     <p className="mt-1.5 line-clamp-3 text-sm leading-[1.6] text-white/85">{game.description}</p>
                     <span

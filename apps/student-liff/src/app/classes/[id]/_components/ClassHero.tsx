@@ -2,6 +2,7 @@ import { CheckCircle2, GraduationCap, Users } from "lucide-react";
 import { Chip } from "@/components/mobile";
 import { formatLevelLabel } from "@/lib/cefr";
 import { getSeatInfo } from "@/lib/classAccess";
+import { noOrphan } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import type { ClassDetail } from "./types";
 
@@ -35,8 +36,8 @@ export function ClassHero({ cls }: { cls: ClassDetail }) {
           </Chip>
         )}
       </div>
-      <h2 className="relative mt-3 text-[22px] leading-[1.45] font-extrabold">{cls.name}</h2>
-      <p className="relative mt-1 text-sm leading-[1.6] text-hero-fg-muted">
+      <h2 className="relative mt-3 text-[22px] leading-[1.45] font-extrabold text-balance">{noOrphan(cls.name)}</h2>
+      <p className="relative mt-1 text-sm leading-[1.6] text-pretty text-hero-fg-muted">
         {cls.book}
         {hours ? ` · ${hours}` : ""}
       </p>

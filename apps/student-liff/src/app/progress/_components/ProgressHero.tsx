@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, BookOpen, Target } from "lucide-react";
 import { ProgressBar } from "@/components/mobile";
+import { noOrphan } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import {
   buildReadHref,
@@ -31,8 +32,8 @@ export function ProgressHero({ stats, currentArticle }: { stats: ProgressStats; 
         </span>
         <span className="shrink-0 text-2xl leading-[1.3] font-extrabold tabular-nums">{percent}%</span>
       </div>
-      <h2 id="progress-book-title" className="mt-1 line-clamp-2 text-xl leading-[1.4] font-extrabold">
-        {stats.level}
+      <h2 id="progress-book-title" className="mt-1 line-clamp-2 text-xl leading-[1.4] font-extrabold text-balance">
+        {noOrphan(stats.level)}
       </h2>
       <div className="mt-4 flex items-center justify-between gap-3 text-[13px] leading-[1.5] text-hero-fg-muted">
         <span>

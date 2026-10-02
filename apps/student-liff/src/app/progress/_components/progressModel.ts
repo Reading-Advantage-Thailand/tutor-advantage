@@ -4,6 +4,8 @@
  * config maps "@" to another app.
  */
 
+import { getSequentialLessonPlan, type LessonLockState } from "../../../lib/lessonLock";
+
 export interface ProgressStats {
   level: string;
   cefr: string;
@@ -59,9 +61,9 @@ export interface ProgressData {
   articles: ProgressArticle[];
 }
 
-/* ─── Lessons: lock / unlock / current (unchanged rules) ─────────────────── */
+/* ─── Lessons: lock / unlock / current (shared rule, lib/lessonLock) ─────── */
 
-export type LessonState = "done" | "current" | "locked";
+export type LessonState = LessonLockState;
 
 export interface LessonPlan {
   /** Index of the first lesson not done yet; -1 when every lesson is done (or none). */
@@ -73,11 +75,8 @@ export interface LessonPlan {
 }
 
 export function getLessonPlan(articles: ProgressArticle[]): LessonPlan {
-  const currentIndex = articles.findIndex((article) => !article.done);
+  const { currentIndex, states } = getSequentialLessonPlan(articles);
   const currentArticle = currentIndex >= 0 ? articles[currentIndex] : articles.at(-1);
-  const states = articles.map<LessonState>((article, index) =>
-    article.done ? "done" : index === currentIndex ? "current" : "locked",
-  );
   return { currentIndex, currentArticle, states };
 }
 

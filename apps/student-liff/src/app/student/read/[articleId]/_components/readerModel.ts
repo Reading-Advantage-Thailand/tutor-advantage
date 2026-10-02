@@ -1,4 +1,8 @@
 // Pure helpers for the article reader (/student/read/[articleId]).
+// Relative imports only: vitest maps "@" to another app.
+import { getGameRowView, isGameAnswer, isScoredAnswer, parseGameResultAnswer, type GameRowView } from "../../../../../lib/gameResultAnswer";
+
+export { parseGameResultAnswer };
 
 export interface ArticleWord {
   vocabulary?: string;
@@ -32,9 +36,11 @@ export interface SessionAnswer {
   questionText?: string;
   answerText?: string;
   correctAnswer?: string;
-  isCorrect?: boolean;
+  isCorrect?: boolean | null;
   score: number;
   aiFeedback?: string;
+  /** "game" for live-lesson game results (newer API responses). */
+  kind?: string;
 }
 
 export function getWordText(w: ArticleWord): string {
@@ -69,10 +75,18 @@ export function getReviewAnswers(answers: SessionAnswer[] | null | undefined): S
   return (answers ?? []).filter((a) => a.questionText);
 }
 
-/** "ตอบถูก x/y ข้อ" counts for the review banner. */
+/**
+ * "ตอบถูก x/y ข้อ" counts for the review banner. Game results and other
+ * unscored rows (isCorrect null) are not questions, so they are left out.
+ */
 export function countCorrect(answers: SessionAnswer[] | null | undefined): { correct: number; total: number } {
-  const list = answers ?? [];
-  return { correct: list.filter((a) => a.isCorrect).length, total: list.length };
+  const scored = (answers ?? []).filter(isScoredAnswer);
+  return { correct: scored.filter((a) => a.isCorrect === true).length, total: scored.length };
+}
+
+/** Game name + "ได้ N คะแนน" when the row is a live-lesson game result, else null. */
+export function getReviewGameRow(answer: SessionAnswer): GameRowView | null {
+  return isGameAnswer(answer) ? getGameRowView(answer) : null;
 }
 
 /** Option letter: A, B, C… */

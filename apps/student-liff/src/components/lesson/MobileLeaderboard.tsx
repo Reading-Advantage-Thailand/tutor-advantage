@@ -13,7 +13,8 @@ interface Participant {
 
 /**
  * Class ranking during the live lesson (and the final results on wrap-up):
- * medal/rank tile, avatar (initials fallback, no external avatar service),
+ * medal/rank tile (competition ranking: ties share a rank; medals only for
+ * podium players who scored), avatar (initials fallback, no external avatar service),
  * name ("คุณ" for the current student) and score. Server-compatible.
  */
 export function MobileLeaderboard({ participants, studentId, title }: {
@@ -22,7 +23,7 @@ export function MobileLeaderboard({ participants, studentId, title }: {
   /** Defaults to "อันดับตอนนี้". */
   title?: string;
 }) {
-  const { entries, myRank } = rankParticipants(participants, studentId);
+  const { entries, myRank, myScore } = rankParticipants(participants, studentId);
   if (entries.length === 0) return null;
   const heading = title ?? t("interactivePlay.leaderboardTitle");
 
@@ -30,21 +31,22 @@ export function MobileLeaderboard({ participants, studentId, title }: {
     <section aria-label={heading} className="w-full">
       <div className="mb-2 flex min-h-8 items-center justify-between gap-2 px-1">
         <h3 className="text-[15px] leading-[1.5] font-bold text-fg">{heading}</h3>
-        {myRank > 0 ? (
+        {myRank > 0 && myScore > 0 ? (
           <Chip tone="brand" size="sm">
             {t("interactivePlay.youRankPrefix")} {myRank}
           </Chip>
         ) : null}
       </div>
       <ListGroup>
-        {entries.map(({ participant, rank, score, isMe }) => (
+        {entries.map(({ participant, rank, score, isMe, medal }, index) => (
           <ListRow
-            key={participant.studentId || rank}
+            key={participant.studentId || `row-${index}`}
             lines={1}
             className={cn(isMe && "bg-brand-soft")}
             leading={
               <span className="flex items-center gap-2">
-                <RankBadge rank={rank} size="sm" />
+                {/* Shared rank for ties; no medal and no rank ("–") until the player scores. */}
+                <RankBadge rank={score > 0 ? rank : null} medal={medal} size="sm" />
                 <UserAvatar src={participant.pictureUrl} name={participant.name || "?"} size="sm" decorative />
               </span>
             }
