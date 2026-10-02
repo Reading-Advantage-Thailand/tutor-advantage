@@ -143,7 +143,7 @@ export const th = {
   },
   // Privacy, terms and "my consents" screens (components/legal/**).
   legal: {
-    lastUpdated: "ปรับปรุงล่าสุด: 10 พฤษภาคม 2026",
+    lastUpdated: "ปรับปรุงล่าสุด: 10 พฤษภาคม 2569",
     lineOfficial: "LINE Official: @readingadvantage",
     privacyMetaTitle: "นโยบายความเป็นส่วนตัว - Tutor Advantage",
     termsMetaTitle: "เงื่อนไขการใช้งาน - Tutor Advantage",
