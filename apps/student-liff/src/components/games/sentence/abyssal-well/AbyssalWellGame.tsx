@@ -22,6 +22,7 @@ import { GameEndScreen } from '@/components/games/game/GameEndScreen'
 import { GameStartScreen } from '@/components/games/game/GameStartScreen'
 import { Flame, BookOpen, AlertTriangle, Target } from 'lucide-react'
 import { tx } from '@/lib/games/gameText'
+import { computeLetterbox } from '@/lib/games/letterbox'
 
 export type AbyssalWellGameResult = {
   xp: number
@@ -93,7 +94,7 @@ export function AbyssalWellGame({ sentences, onComplete }: AbyssalWellGameProps)
       clearInterval(interval)
       clearTimeout(timeout)
     }
-  }, [containerRef])
+  }, [containerRef, gamePhase])
 
   useEffect(() => {
     if (gamePhase !== 'playing') return
@@ -163,6 +164,9 @@ export function AbyssalWellGame({ sentences, onComplete }: AbyssalWellGameProps)
     return Math.min(dimensions.width / ABYSSAL_WELL_CONFIG.gameWidth, dimensions.height / ABYSSAL_WELL_CONFIG.gameHeight)
   }, [dimensions])
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: ABYSSAL_WELL_CONFIG.gameWidth, height: ABYSSAL_WELL_CONFIG.gameHeight })
+
   const handleRotate = useCallback((direction: number) => {
     if (gameState && gameState.phase === 'playing' && gamePhase === 'playing') {
       setGameState(prevState => {
@@ -221,7 +225,7 @@ export function AbyssalWellGame({ sentences, onComplete }: AbyssalWellGameProps)
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameStartScreen
           gameTitle={tx("The Abyssal Well")}
@@ -281,7 +285,7 @@ export function AbyssalWellGame({ sentences, onComplete }: AbyssalWellGameProps)
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameEndScreen
           status={gameState?.phase === 'victory' ? 'victory' : 'defeat'}
@@ -306,14 +310,16 @@ export function AbyssalWellGame({ sentences, onComplete }: AbyssalWellGameProps)
   return (
     <div
       ref={containerRef}
-      className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+      className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       onTouchStart={handleTouchStart}
     >
       {gameState && (
         <Stage
-          width={ABYSSAL_WELL_CONFIG.gameWidth}
-          height={ABYSSAL_WELL_CONFIG.gameHeight}
+          width={dimensions.width || ABYSSAL_WELL_CONFIG.gameWidth}
+          height={dimensions.height || ABYSSAL_WELL_CONFIG.gameHeight}
           scale={{ x: scale, y: scale }}
+          x={boardOffset.x}
+          y={boardOffset.y}
         >
           <Layer>
             <Rect

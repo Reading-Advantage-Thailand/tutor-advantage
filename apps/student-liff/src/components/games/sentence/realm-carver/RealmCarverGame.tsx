@@ -20,6 +20,7 @@ import { useGameFullscreen } from "@/hooks/useGameFullscreen";
 import { useAccessibilitySettings } from "@/hooks/useAccessibilitySettings";
 import type { VocabularyItem } from "@/store/useGameStore";
 import { tx } from "@/lib/games/gameText";
+import { computeLetterbox } from "@/lib/games/letterbox";
 
 interface RealmCarverGameProps {
   sentences: SentenceItem[];
@@ -69,7 +70,7 @@ export function RealmCarverGame({ sentences, onComplete }: RealmCarverGameProps)
     updateDimensions();
 
     return () => observer.disconnect();
-  }, []);
+  }, [gamePhase]);
 
   // Update game state with input
   useEffect(() => {
@@ -169,11 +170,14 @@ export function RealmCarverGame({ sentences, onComplete }: RealmCarverGameProps)
     return Math.min(dimensions.width / GAME_WIDTH, dimensions.height / GAME_HEIGHT);
   }, [dimensions]);
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: GAME_WIDTH, height: GAME_HEIGHT });
+
   const cellScale = GAME_WIDTH / GRID_SIZE;
 
   if (gamePhase === "start") {
     return (
-      <div ref={containerRef} className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto">
+      <div ref={containerRef} className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none">
         <GameStartScreen
           gameTitle={tx("Realm Carver")}
           gameSubtitle={tx("Magical Cartographer")}
@@ -196,7 +200,7 @@ export function RealmCarverGame({ sentences, onComplete }: RealmCarverGameProps)
   }
 
   return (
-    <div ref={containerRef} className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto flex flex-col items-center">
+    <div ref={containerRef} className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none flex flex-col items-center">
       {gamePhase === "playing" && gameState && (
         <>
           {/* HUD */}
@@ -235,7 +239,7 @@ export function RealmCarverGame({ sentences, onComplete }: RealmCarverGameProps)
           </div>
 
           <Stage width={dimensions.width} height={dimensions.height} className="mt-auto mb-auto">
-            <Layer scaleX={scale} scaleY={scale}>
+            <Layer scaleX={scale} scaleY={scale} x={boardOffset.x} y={boardOffset.y}>
               {/* Background */}
               <Rect x={0} y={0} width={GAME_WIDTH} height={GAME_HEIGHT} fill={REALM_CARVER_CONFIG.colors.wild} />
               

@@ -22,6 +22,7 @@ import { Skull, Heart, BookOpen, AlertTriangle, Zap, Target } from 'lucide-react
 import { useGameFullscreen } from '@/hooks/useGameFullscreen'
 import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings'
 import { tx } from '@/lib/games/gameText'
+import { computeLetterbox } from '@/lib/games/letterbox'
 
 export type LabyrinthGoblinKingGameResult = {
   xp: number
@@ -92,7 +93,7 @@ export function LabyrinthGoblinKingGame({ sentences, onComplete }: LabyrinthGobl
       clearInterval(interval)
       clearTimeout(timeout)
     }
-  }, [containerRef])
+  }, [containerRef, gamePhase])
 
   useEffect(() => {
     if (gamePhase !== 'playing') return
@@ -153,6 +154,9 @@ export function LabyrinthGoblinKingGame({ sentences, onComplete }: LabyrinthGobl
     return Math.min(dimensions.width / GAME_WIDTH, dimensions.height / GAME_HEIGHT)
   }, [dimensions])
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: GAME_WIDTH, height: GAME_HEIGHT })
+
   const handleDPadInput = useCallback((input: { dx: number; dy: number }) => {
     inputRef.current = input
   }, [])
@@ -185,7 +189,7 @@ export function LabyrinthGoblinKingGame({ sentences, onComplete }: LabyrinthGobl
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameStartScreen
           gameTitle={tx("Labyrinth of the Goblin King")}
@@ -246,7 +250,7 @@ export function LabyrinthGoblinKingGame({ sentences, onComplete }: LabyrinthGobl
     <div
       ref={containerRef}
       style={{ minHeight: '400px' }}
-      className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+      className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
     >
       {gamePhase === 'playing' && gameState && (
         <>
@@ -256,7 +260,7 @@ export function LabyrinthGoblinKingGame({ sentences, onComplete }: LabyrinthGobl
             style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
           >
             <Layer>
-              <Group scale={{ x: scale, y: scale }} offsetX={0} offsetY={0}>
+              <Group scale={{ x: scale, y: scale }} x={boardOffset.x} y={boardOffset.y}>
                 <Rect x={0} y={0} width={GAME_WIDTH} height={GAME_HEIGHT} fill="#1a1a2e" />
 
                 {gameState.maze.map((row, rowIndex) =>
@@ -349,23 +353,28 @@ export function LabyrinthGoblinKingGame({ sentences, onComplete }: LabyrinthGobl
                   ))}
                 </Group>
 
+                {/* Status sits in the top HUD (left of the hearts); at the bottom it ran under the joystick. */}
+                <Text
+                  x={10}
+                  y={48}
+                  width={GAME_WIDTH - 120}
+                  text={tx("Words: {length}/{length1} | Goblins Eaten: {goblinsEaten}", { length: gameState.collectedWords.length, length1: gameState.wordOrbs.length, goblinsEaten: gameState.goblinsEaten })}
+                  fontSize={getEffectiveTextSize(14)}
+                  fill="white"
+                  wrap="none"
+                  ellipsis
+                />
+
                 {gameState.player.heroicAura && (
                   <Rect
                     x={10}
-                    y={50}
+                    y={68}
                     width={(gameState.player.heroicAuraTimer / LABYRINTH_CONFIG.heroicAuraDuration) * 100}
                     height={10}
                     fill="#ffd700"
                   />
                 )}
 
-                <Text
-                  x={10}
-                  y={GAME_HEIGHT - 30}
-                  text={tx("Words: {length}/{length1} | Goblins Eaten: {goblinsEaten}", { length: gameState.collectedWords.length, length1: gameState.wordOrbs.length, goblinsEaten: gameState.goblinsEaten })}
-                  fontSize={getEffectiveTextSize(16)}
-                  fill="white"
-                />
               </Group>
             </Layer>
           </Stage>

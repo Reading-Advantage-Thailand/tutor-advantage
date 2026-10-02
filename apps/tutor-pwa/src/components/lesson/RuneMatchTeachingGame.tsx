@@ -90,19 +90,16 @@ export function RuneMatchTeachingGame({ vocabulary, mode, fullscreen = false }: 
         tutorialStep={tutorialStep}
         disableAutoFullscreen={true}
         restartOnComplete={mode === "teacher"}
+        statusBanner={
+          mode === "teacher" ? (
+            <div className="flex items-center gap-2 rounded-2xl border border-amber-300/40 bg-slate-950/90 p-2.5 text-xs font-black leading-snug text-amber-200 shadow-2xl backdrop-blur-md">
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-xl bg-amber-400 text-sm text-slate-950">👀</span>
+              <span>โหมดสาธิต: คุณครูกำลังกดจับคู่เล่นสาธิตให้ดูสดบนหน้าจอ</span>
+            </div>
+          ) : undefined
+        }
         onComplete={handleComplete}
       />
-
-      {mode === "teacher" && (
-        // Sits in the 90px strip the game reserves under the board, so it never covers the top row of runes.
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-40 w-full max-w-lg px-4 pointer-events-none">
-          <div className="flex items-center gap-3 rounded-2xl border border-amber-300/40 bg-slate-950/90 p-3 shadow-2xl backdrop-blur-md text-amber-200 text-xs font-black">
-            <span className="flex size-7 items-center justify-center rounded-xl bg-amber-400 text-slate-950 font-black text-sm">👀</span>
-            <span>โหมดสาธิต: คุณครูกำลังกดจับคู่เล่นสาธิตให้ดูสดบนหน้าจอ</span>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 }

@@ -20,6 +20,7 @@ import { GameStartScreen } from '@/components/games/game/GameStartScreen'
 import { VirtualDPad } from '@/components/games/ui/VirtualDPad'
 import { Castle, BookOpen, AlertTriangle, Heart, Clock, Eye } from 'lucide-react'
 import { tx } from '@/lib/games/gameText'
+import { computeLetterbox } from '@/lib/games/letterbox'
 
 export type ShadowGateDungeonGameResult = {
   xp: number
@@ -98,7 +99,7 @@ export function ShadowGateDungeonGame({ vocabulary, onComplete }: ShadowGateDung
       clearInterval(interval)
       clearTimeout(timeout)
     }
-  }, [containerRef])
+  }, [containerRef, gamePhase])
 
   const lastFrameRef = useRef<number>(0)
   const rafRef = useRef<number>(0)
@@ -148,6 +149,9 @@ export function ShadowGateDungeonGame({ vocabulary, onComplete }: ShadowGateDung
     if (dimensions.width === 0 || dimensions.height === 0) return 1
     return Math.min(dimensions.width / GAME_WIDTH, dimensions.height / GAME_HEIGHT)
   }, [dimensions])
+
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: GAME_WIDTH, height: GAME_HEIGHT })
 
   const handleDPadInput = useCallback((input: { dx: number; dy: number }) => {
     if (gameState && gameState.status === 'playing' && gamePhase === 'playing') {
@@ -199,7 +203,7 @@ export function ShadowGateDungeonGame({ vocabulary, onComplete }: ShadowGateDung
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameStartScreen
           gameTitle={tx("Shadow Gate Dungeon")}
@@ -260,7 +264,7 @@ export function ShadowGateDungeonGame({ vocabulary, onComplete }: ShadowGateDung
     <div
       ref={containerRef}
       style={{ minHeight: '400px' }}
-      className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+      className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
     >
       {gamePhase === 'playing' && gameState && (
         <>
@@ -270,7 +274,7 @@ export function ShadowGateDungeonGame({ vocabulary, onComplete }: ShadowGateDung
             style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
           >
             <Layer>
-              <Group scale={{ x: scale, y: scale }} offsetX={0} offsetY={0}>
+              <Group scale={{ x: scale, y: scale }} x={boardOffset.x} y={boardOffset.y}>
                 <Rect
                   x={0}
                   y={0}

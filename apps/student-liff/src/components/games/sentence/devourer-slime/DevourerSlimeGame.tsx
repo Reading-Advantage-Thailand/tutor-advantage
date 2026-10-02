@@ -132,22 +132,32 @@ export function DevourerSlimeGame({ sentences, difficulty = 'medium', onComplete
     }
   }, [gameState?.lastEvent, playSound])
 
+  // Real elapsed time per step (the interval drifts / throttles), so speeds
+  // are the same at any frame rate. The sim clamps long gaps (MAX_TICK_MS).
+  const lastStepRef = React.useRef<number | null>(null)
   useInterval(() => {
     if (gameState && gameState.phase === 'playing') {
+      const now = performance.now()
+      const dt = lastStepRef.current === null ? 16.6 : now - lastStepRef.current
+      lastStepRef.current = now
       let nextState = { ...gameState }
 
       // Handle Input
       if (input.dx !== 0 || input.dy !== 0) {
-        nextState = moveSlime(nextState, input.dx, input.dy, 16.6)
+        nextState = moveSlime(nextState, input.dx, input.dy, dt)
       }
 
-      const tickedState = tickSlime(nextState, 16.6)
+      const tickedState = tickSlime(nextState, dt)
       if (tickedState.phase !== 'playing') {
         endGame(tickedState)
       }
       setGameState(tickedState)
     }
   }, gameState?.phase === 'playing' ? 16.6 : null)
+
+  useEffect(() => {
+    if (gameState?.phase !== 'playing') lastStepRef.current = null
+  }, [gameState?.phase])
 
   // Calculate off-screen indicators for orbs and enemies
   const getIndicators = useCallback(() => {

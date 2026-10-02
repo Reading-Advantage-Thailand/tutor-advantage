@@ -22,6 +22,7 @@ import { useGameFullscreen } from '@/hooks/useGameFullscreen'
 import { useAccessibilitySettings } from '@/hooks/useAccessibilitySettings'
 import { useScopedI18n } from '@/locales/client'
 import { tx } from '@/lib/games/gameText'
+import { computeLetterbox } from '@/lib/games/letterbox'
 
 export type VillageGuardianGameResult = {
   xp: number
@@ -102,7 +103,7 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
       clearInterval(interval)
       clearTimeout(timeout)
     }
-  }, [containerRef])
+  }, [containerRef, gamePhase])
 
   useEffect(() => {
     if (gamePhase !== 'playing') return
@@ -153,6 +154,9 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
     return Math.min(dimensions.width / GAME_WIDTH, dimensions.height / GAME_HEIGHT)
   }, [dimensions])
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: GAME_WIDTH, height: GAME_HEIGHT })
+
   const handleDPadInput = useCallback((input: { dx: number; dy: number }) => {
     inputRef.current = input
   }, [])
@@ -188,7 +192,7 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameStartScreen
           gameTitle={tx("Village Guardian")}
@@ -249,7 +253,7 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
     <div
       ref={containerRef}
       style={{ minHeight: '400px' }}
-      className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+      className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
     >
       {gamePhase === 'playing' && gameState && (
         <>
@@ -259,7 +263,7 @@ export function VillageGuardianGame({ vocabulary, onComplete }: VillageGuardianG
             style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
           >
             <Layer>
-              <Group scale={{ x: scale, y: scale }} offsetX={0} offsetY={0}>
+              <Group scale={{ x: scale, y: scale }} x={boardOffset.x} y={boardOffset.y}>
                 <Rect
                   x={0}
                   y={0}

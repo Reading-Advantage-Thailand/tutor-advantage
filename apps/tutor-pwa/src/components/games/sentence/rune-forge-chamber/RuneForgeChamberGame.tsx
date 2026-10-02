@@ -20,6 +20,7 @@ import { GameEndScreen } from '@/components/games/game/GameEndScreen'
 import { GameStartScreen } from '@/components/games/game/GameStartScreen'
 import { Gem, BookOpen, AlertTriangle, Heart } from 'lucide-react'
 import { tx } from '@/lib/games/gameText'
+import { computeLetterbox } from '@/lib/games/letterbox'
 
 export type RuneForgeChamberGameResult = {
   xp: number
@@ -101,7 +102,7 @@ export function RuneForgeChamberGame({ vocabulary, onComplete }: RuneForgeChambe
       clearInterval(interval)
       clearTimeout(timeout)
     }
-  }, [containerRef])
+  }, [containerRef, gamePhase])
 
   // requestAnimationFrame game loop with delta-time clamping
   useEffect(() => {
@@ -179,6 +180,9 @@ export function RuneForgeChamberGame({ vocabulary, onComplete }: RuneForgeChambe
     return Math.min(dimensions.width / GAME_WIDTH, dimensions.height / GAME_HEIGHT)
   }, [dimensions])
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: GAME_WIDTH, height: GAME_HEIGHT })
+
   const handleCircleClick = useCallback((circleId: string) => {
     setGameState(prevState => {
       if (!prevState || prevState.status !== 'playing') return prevState
@@ -190,7 +194,7 @@ export function RuneForgeChamberGame({ vocabulary, onComplete }: RuneForgeChambe
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameStartScreen
           gameTitle={tx("Rune Forge Chamber")}
@@ -250,7 +254,7 @@ export function RuneForgeChamberGame({ vocabulary, onComplete }: RuneForgeChambe
     <div
       ref={containerRef}
       style={{ minHeight: '400px' }}
-      className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+      className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
     >
       {gamePhase === 'playing' && gameState && (
         <Stage
@@ -259,7 +263,7 @@ export function RuneForgeChamberGame({ vocabulary, onComplete }: RuneForgeChambe
           style={{ position: 'absolute', top: 0, left: 0 }}
         >
           <Layer>
-            <Group scale={{ x: scale, y: scale }} offsetX={0} offsetY={0}>
+            <Group scale={{ x: scale, y: scale }} x={boardOffset.x} y={boardOffset.y}>
               <Rect
                 x={0}
                 y={0}

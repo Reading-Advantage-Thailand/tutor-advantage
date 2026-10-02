@@ -19,6 +19,7 @@ import { GameStartScreen } from '@/components/games/game/GameStartScreen'
 import { Wand2, BookOpen, AlertTriangle } from 'lucide-react'
 import type { Difficulty } from '@/store/useGameStore'
 import { tx } from '@/lib/games/gameText'
+import { computeLetterbox } from '@/lib/games/letterbox'
 
 export type SpellweaversRunGameResult = {
   xp: number
@@ -101,7 +102,7 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
       clearTimeout(timeout)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [gamePhase])
 
   useEffect(() => {
     if (gamePhase !== 'playing') {
@@ -155,6 +156,9 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
     return Math.min(dimensions.width / GAME_WIDTH, dimensions.height / GAME_HEIGHT)
   }, [dimensions])
 
+  // Centre the board in its frame (letterbox) instead of pinning it top-left.
+  const boardOffset = computeLetterbox(dimensions, { width: GAME_WIDTH, height: GAME_HEIGHT })
+
   const laneWidth = GAME_WIDTH / SPELLWEAVERS_RUN_CONFIG.laneCount
 
   const handleLaneTap = useCallback((lane: Lane) => {
@@ -185,7 +189,7 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
     }
     
     const x = clientX - rect.left
-    const gameX = x / scale
+    const gameX = (x - boardOffset.x) / scale
     const laneIndex = Math.floor(gameX / laneWidth)
     const lanes: Lane[] = ['left', 'center', 'right']
     const lane = lanes[Math.min(Math.max(laneIndex, 0), 2)]
@@ -217,7 +221,7 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
     return (
       <div
         ref={containerRef}
-        className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+        className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       >
         <GameStartScreen
           gameTitle={tx("Spellweaver's Run")}
@@ -262,7 +266,7 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
     <div
       ref={containerRef}
       style={{ minHeight: '400px' }}
-      className="relative h-[75vh] w-full overflow-hidden rounded-3xl bg-slate-900 shadow-2xl ring-1 ring-white/10 touch-none md:aspect-video md:h-auto"
+      className="relative h-full min-h-[400px] w-full overflow-hidden bg-slate-900 touch-none"
       onClick={handleStageClick}
       onTouchStart={handleStageClick}
     >
@@ -274,7 +278,7 @@ export function SpellweaversRunGame({ vocabulary, onComplete }: SpellweaversRunG
             style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
           >
             <Layer>
-              <Group scale={{ x: scale, y: scale }} offsetX={0} offsetY={0}>
+              <Group scale={{ x: scale, y: scale }} x={boardOffset.x} y={boardOffset.y}>
                 <Rect
                   x={0}
                   y={0}

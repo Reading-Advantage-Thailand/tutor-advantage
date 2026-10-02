@@ -63,6 +63,12 @@ export type RuneMatchGameProps = {
   tutorialStep?: number;
   disableAutoFullscreen?: boolean;
   restartOnComplete?: boolean;
+  /**
+   * Small note shown by the host (e.g. the tutor's "demo mode" banner). On
+   * wide layouts it sits at the foot of the sidebar so the board keeps the
+   * full height; on narrow layouts a strip is reserved for it under the board.
+   */
+  statusBanner?: React.ReactNode;
   onComplete: (result: RuneMatchGameResult) => void;
 };
 
@@ -117,6 +123,7 @@ export function RuneMatchGame({
   tutorialStep = 0,
   disableAutoFullscreen = false,
   restartOnComplete = false,
+  statusBanner,
   onComplete,
 }: RuneMatchGameProps) {
   const [gameState, setGameState] = useState<RuneMatchState | null>(null);
@@ -151,10 +158,14 @@ export function RuneMatchGame({
     [fullscreenRef],
   );
 
+  const hasStatusBanner = Boolean(statusBanner);
   const layout = useMemo(() => {
     const padding = 12;
-    const bottomOffset = disableAutoFullscreen || tutorialMode ? 90 : 0;
     const isMobile = dimensions.width < 768;
+    // Only reserve space under the board for something that is drawn there:
+    // the tutorial step card, or the host banner on narrow layouts. (A flat
+    // 90px whenever auto-fullscreen was off shrank the presenter's tiles.)
+    const bottomOffset = tutorialMode ? 90 : hasStatusBanner && isMobile ? 72 : 0;
 
     if (isMobile) {
       const monsterAreaHeight = Math.min(124, (dimensions.height - bottomOffset) * 0.22);
@@ -205,7 +216,7 @@ export function RuneMatchGame({
         isMobile: false,
       };
     }
-  }, [dimensions, disableAutoFullscreen, tutorialMode]);
+  }, [dimensions, tutorialMode, hasStatusBanner]);
 
   useEffect(() => {
     const rInt = setInterval(() => setAnimFrame((f) => (f + 1) % 3), 500);
@@ -1577,6 +1588,18 @@ export function RuneMatchGame({
         ดูเวลา จำนวนคู่ และคำเป้าหมายได้จากแถบสถานะด้านบน
         ปุ่มสกิลที่จางลงคือสกิลที่ยังใช้ไม่ได้หรือใช้หมดแล้ว
       </p>
+      {statusBanner && !tutorialMode && (
+        <div
+          className="absolute z-40 pointer-events-none"
+          style={
+            layout.isMobile
+              ? { left: 12, right: 12, bottom: 12 }
+              : { left: 10, bottom: 12, width: layout.sidebarWidth - 20 }
+          }
+        >
+          {statusBanner}
+        </div>
+      )}
       {tutorialMode && (
         <div
           className="absolute z-40 w-[92%] max-w-lg -translate-x-1/2 pointer-events-none transition-all duration-300"

@@ -55,6 +55,21 @@ export const INITIAL_SLIME_RADIUS = 25
 export const ORB_RADIUS = 20
 export const KNIGHT_RADIUS = 35
 export const MAX_LIVES = 3
+/**
+ * Units: positions are arena px and every tick/move takes dt in milliseconds,
+ * so velocities are px per ms. Knights used to get a random component in
+ * [-1, 1] px/ms on each axis (up to ~1400 px/s, an 800px arena in half a
+ * second); they now walk at a fixed speed per difficulty, below the slime's.
+ */
+export const SLIME_SPEED_PX_PER_MS = 0.2
+export const KNIGHT_SPEED_PX_PER_MS: Record<Difficulty, number> = {
+  easy: 0.06,
+  medium: 0.09,
+  hard: 0.12,
+}
+/** Longest step simulated at once (a background tab or slow frame). */
+export const MAX_TICK_MS = 50
+
 /** Knights never spawn closer than this (centre to centre) to the slime. */
 export const SPAWN_SAFE_RADIUS = 220
 /** Grace period at the start of each sentence before knights can hurt. */
@@ -123,10 +138,7 @@ function spawnLevel(state: SlimeState, rng: () => number): SlimeState {
   const enemies: KnightEnemy[] = Array.from({ length: enemyCount }).map((_, i) => ({
     id: `knight-${i}-${Date.now()}-${rng()}`,
     pos: pickSafeSpawn(rng, state.slime.pos, SPAWN_SAFE_RADIUS + state.slime.radius - INITIAL_SLIME_RADIUS),
-    vel: {
-      x: (rng() - 0.5) * 2,
-      y: (rng() - 0.5) * 2,
-    },
+    vel: knightVelocity(rng, state.difficulty),
     radius: KNIGHT_RADIUS,
     patrolPoints: [],
     currentPatrolIndex: 0
@@ -177,6 +189,13 @@ export function pickSafeSpawn(rng: () => number, avoid: Point, minDistance: numb
   }
 }
 
+/** Random heading at the difficulty's fixed walking speed (px per ms). */
+export function knightVelocity(rng: () => number, difficulty: Difficulty): Velocity {
+  const angle = rng() * Math.PI * 2
+  const speed = KNIGHT_SPEED_PX_PER_MS[difficulty] ?? KNIGHT_SPEED_PX_PER_MS.medium
+  return { x: Math.cos(angle) * speed, y: Math.sin(angle) * speed }
+}
+
 export function isSlimeInvulnerable(state: SlimeState): boolean {
   return state.gameTime < (state.invulnerableUntil ?? 0)
 }
@@ -184,7 +203,8 @@ export function isSlimeInvulnerable(state: SlimeState): boolean {
 export function moveSlime(state: SlimeState, dx: number, dy: number, dt: number): SlimeState {
   if (state.phase !== 'playing') return state
 
-  const speed = 0.2
+  const speed = SLIME_SPEED_PX_PER_MS
+  dt = Math.min(Math.max(dt, 0), MAX_TICK_MS)
   const nx = state.slime.pos.x + dx * speed * dt
   const ny = state.slime.pos.y + dy * speed * dt
 
@@ -201,6 +221,7 @@ export function moveSlime(state: SlimeState, dx: number, dy: number, dt: number)
 export function tickSlime(state: SlimeState, dt: number, rng: () => number = Math.random): SlimeState {
   if (state.phase !== 'playing') return state
 
+  dt = Math.min(Math.max(dt, 0), MAX_TICK_MS)
   let nextState: SlimeState = { ...state, gameTime: state.gameTime + dt, lastEvent: undefined }
 
   // 1. Move Enemies
